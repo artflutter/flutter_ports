@@ -6,13 +6,14 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 17 cases, 14 widths.
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -47,9 +48,14 @@ typedef PluginTitleReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
-typedef PluginTitleReferenceWidth = ({String font, String text, double width});
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
+typedef PluginTitleReferenceWidth = ({
+  ChartTextStyle font,
+  String text,
+  double width,
+});
 
 /// The cases.
 const List<PluginTitleReferenceCase> pluginTitleReference = [
@@ -627,7 +633,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'options': <String, Object?>{
             'align': ChartAlign.center,
             'display': false,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -1198,7 +1204,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'text': 'Later',
                 'align': ChartAlign.center,
                 'display': false,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -1764,7 +1770,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'text': 'Later',
                 'display': true,
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -2021,7 +2027,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -2042,7 +2048,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2051,7 +2057,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2060,7 +2066,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2069,7 +2075,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2091,7 +2097,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2100,7 +2106,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2109,7 +2115,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,355.2571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2118,7 +2124,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,291.08571428571423]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2127,7 +2133,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,226.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2136,7 +2142,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,162.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2145,7 +2151,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,98.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2154,7 +2160,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,34.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2830,7 +2836,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 'Chart title',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -3400,7 +3406,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'display': false,
                 'text': 'Chart title',
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -4515,7 +4521,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'display': true,
                 'text': 'Back',
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -4784,7 +4790,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4793,7 +4799,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4802,7 +4808,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4811,7 +4817,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4833,7 +4839,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4842,7 +4848,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4851,7 +4857,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,355.2571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4860,7 +4866,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,291.08571428571423]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4869,7 +4875,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,226.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4878,7 +4884,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,162.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4887,7 +4893,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,98.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4896,7 +4902,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,34.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4906,7 +4912,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["restore"]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -5578,7 +5584,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'text': 'Bottom title',
             'position': ChartPosition.bottom,
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'weight': 2000.0,
@@ -5833,7 +5839,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,494.79999999999995]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -5854,7 +5860,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,449.2,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,460.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5863,7 +5869,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,460.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5872,7 +5878,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,460.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5881,7 +5887,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,460.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5903,7 +5909,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,449.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5912,7 +5918,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,386.4857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5921,7 +5927,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,323.77142857142854]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5930,7 +5936,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,261.0571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5939,7 +5945,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,198.34285714285716]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5948,7 +5954,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,135.6285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5957,7 +5963,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,72.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5966,7 +5972,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6658,7 +6664,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'text': 'Left title',
             'position': ChartPosition.left,
             'align': ChartAlign.start,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'weight': 2000.0,
@@ -6913,7 +6919,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",17.2,512]
 ["rotate",-1.5707963267948966]
 ["setFillStyle","#666"]
@@ -6934,7 +6940,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",61.74765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6943,7 +6949,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",206.83079427083334,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6952,7 +6958,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",351.91393229166664,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6961,7 +6967,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6983,7 +6989,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",34.4,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6992,7 +6998,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7001,7 +7007,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7010,7 +7016,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7019,7 +7025,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7028,7 +7034,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7037,7 +7043,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7046,7 +7052,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7738,7 +7744,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'text': 'Left title',
             'position': ChartPosition.left,
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'weight': 2000.0,
@@ -8308,7 +8314,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'text': 'Left title',
                 'position': ChartPosition.left,
                 'align': ChartAlign.end,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'weight': 2000.0,
@@ -8564,7 +8570,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",17.2,0]
 ["rotate",-1.5707963267948966]
 ["setFillStyle","#666"]
@@ -8585,7 +8591,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",61.74765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8594,7 +8600,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",206.83079427083334,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8603,7 +8609,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",351.91393229166664,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8612,7 +8618,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8634,7 +8640,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",34.4,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8643,7 +8649,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8652,7 +8658,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8661,7 +8667,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8670,7 +8676,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8679,7 +8685,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8688,7 +8694,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8697,7 +8703,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9380,7 +9386,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'text': 'Right title',
             'position': ChartPosition.right,
             'align': ChartAlign.start,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'weight': 2000.0,
@@ -9635,7 +9641,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",494.8,0]
 ["rotate",1.5707963267948966]
 ["setFillStyle","#666"]
@@ -9656,7 +9662,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9665,7 +9671,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",177.43177083333333,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9674,7 +9680,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",327.51588541666666,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9683,7 +9689,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",477.6,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9705,7 +9711,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9714,7 +9720,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9723,7 +9729,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9732,7 +9738,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9741,7 +9747,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9750,7 +9756,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9759,7 +9765,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9768,7 +9774,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10451,7 +10457,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'text': 'Right title',
             'position': ChartPosition.right,
             'align': ChartAlign.end,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'weight': 2000.0,
@@ -10706,7 +10712,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",494.8,512]
 ["rotate",1.5707963267948966]
 ["setFillStyle","#666"]
@@ -10727,7 +10733,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10736,7 +10742,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",177.43177083333333,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10745,7 +10751,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",327.51588541666666,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10754,7 +10760,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",477.6,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10776,7 +10782,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10785,7 +10791,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10794,7 +10800,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10803,7 +10809,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10812,7 +10818,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10821,7 +10827,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10830,7 +10836,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10839,7 +10845,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11519,7 +11525,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 'Aligned',
             'align': ChartAlign.start,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -12085,7 +12091,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'display': true,
                 'text': 'Aligned',
                 'align': ChartAlign.end,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -12342,7 +12348,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",512,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -12363,7 +12369,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12372,7 +12378,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12381,7 +12387,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12390,7 +12396,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12412,7 +12418,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12421,7 +12427,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12430,7 +12436,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,355.2571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12439,7 +12445,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,291.08571428571423]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12448,7 +12454,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,226.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12457,7 +12463,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,162.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12466,7 +12472,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,98.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12475,7 +12481,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,34.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13155,7 +13161,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 'Aligned',
             'align': ChartAlign.end,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -13721,7 +13727,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'display': true,
                 'text': 'Aligned',
                 'align': ChartAlign.start,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -13978,7 +13984,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",0,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -13999,7 +14005,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14008,7 +14014,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14017,7 +14023,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14026,7 +14032,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14048,7 +14054,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14057,7 +14063,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14066,7 +14072,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,355.2571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14075,7 +14081,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,291.08571428571423]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14084,7 +14090,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,226.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14093,7 +14099,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,162.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14102,7 +14108,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,98.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14111,7 +14117,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,34.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -14792,7 +14798,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'text': 'Not full size',
             'fullSize': false,
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'padding': 10.0,
             'position': ChartPosition.top,
             'weight': 2000.0,
@@ -15367,7 +15373,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'fullSize': false,
                 'position': ChartPosition.left,
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'padding': 10.0,
                 'weight': 2000.0,
                 'color': '#666',
@@ -15622,7 +15628,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",17.2,246.89999999999998]
 ["rotate",-1.5707963267948966]
 ["setFillStyle","#666"]
@@ -15643,7 +15649,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",61.74765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15652,7 +15658,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",206.83079427083334,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15661,7 +15667,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",351.91393229166664,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15670,7 +15676,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15692,7 +15698,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",34.4,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15701,7 +15707,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15710,7 +15716,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15719,7 +15725,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15728,7 +15734,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15737,7 +15743,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15746,7 +15752,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15755,7 +15761,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16423,7 +16429,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'text': 'Padded',
             'padding': 25.0,
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'position': ChartPosition.top,
             'weight': 2000.0,
@@ -16678,7 +16684,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,32.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -16699,7 +16705,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16708,7 +16714,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16717,7 +16723,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16726,7 +16732,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16748,7 +16754,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16757,7 +16763,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,423.7142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16766,7 +16772,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,363.8285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16775,7 +16781,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,303.9428571428572]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16784,7 +16790,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,244.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16793,7 +16799,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,184.17142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16802,7 +16808,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,124.28571428571432]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16811,7 +16817,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,64.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17500,7 +17506,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'left': 30.0,
             },
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'position': ChartPosition.top,
             'weight': 2000.0,
@@ -18079,7 +18085,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 },
                 'position': ChartPosition.left,
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'weight': 2000.0,
                 'color': '#666',
@@ -18334,7 +18340,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",11.2,256]
 ["rotate",-1.5707963267948966]
 ["setFillStyle","#666"]
@@ -18355,7 +18361,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",61.74765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18364,7 +18370,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",206.83079427083334,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18373,7 +18379,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",351.91393229166664,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18382,7 +18388,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18404,7 +18410,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",34.4,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18413,7 +18419,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18422,7 +18428,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18431,7 +18437,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18440,7 +18446,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18449,7 +18455,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18458,7 +18464,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18467,7 +18473,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",50.74765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18600,7 +18606,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'title': <String, Object?>{
             'display': true,
             'text': <Object?>['Line one', 'Line two', 'Line three'],
-            'font': <String, Object?>{'lineHeight': 1.5},
+            'font': ChartTextStyle(height: 1.5),
           },
           'tooltip': false,
         },
@@ -19130,7 +19136,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'options': <String, Object?>{
             'display': true,
             'text': <Object?>['Line one', 'Line two', 'Line three'],
-            'font': <String, Object?>{'lineHeight': 1.5, 'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold, height: 1.5),
             'align': ChartAlign.center,
             'fullSize': true,
             'padding': 10.0,
@@ -19697,7 +19703,10 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'options': <String, Object?>{
                 'display': true,
                 'text': <Object?>['Line one', 'Line two', 'Line three'],
-                'font': <String, Object?>{'lineHeight': 1.5, 'weight': 'bold'},
+                'font': ChartTextStyle(
+                  fontWeight: FontWeight.bold,
+                  height: 1.5,
+                ),
                 'position': ChartPosition.right,
                 'align': ChartAlign.center,
                 'fullSize': true,
@@ -19955,7 +19964,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",493,256]
 ["rotate",1.5707963267948966]
 ["setFillStyle","#666"]
@@ -19978,7 +19987,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -19987,7 +19996,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",164.23177083333331,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -19996,7 +20005,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",301.11588541666663,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20005,7 +20014,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",438,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20027,7 +20036,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20036,7 +20045,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20045,7 +20054,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20054,7 +20063,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20063,7 +20072,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20072,7 +20081,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20081,7 +20090,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20090,7 +20099,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20224,12 +20233,13 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 'Styled',
             'color': 'rgb(255, 0, 0)',
-            'font': <String, Object?>{
-              'size': 18.0,
-              'family': 'Arial',
-              'style': 'italic',
-              'weight': 'normal',
-            },
+            'font': ChartTextStyle(
+              fontFamily: 'Arial',
+              fontFamilyFallback: [],
+              fontSize: 18,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.normal,
+            ),
           },
           'tooltip': false,
         },
@@ -20771,12 +20781,13 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 'Styled',
             'color': 'rgb(255, 0, 0)',
-            'font': <String, Object?>{
-              'size': 18.0,
-              'family': 'Arial',
-              'style': 'italic',
-              'weight': 'normal',
-            },
+            'font': ChartTextStyle(
+              fontFamily: 'Arial',
+              fontFamilyFallback: [],
+              fontSize: 18,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.normal,
+            ),
             'align': ChartAlign.center,
             'fullSize': true,
             'padding': 10.0,
@@ -21032,7 +21043,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","italic normal 18px Arial"]
+["setFont",{"font":{"family":"Arial","fallback":[],"size":18,"weight":400,"style":"italic"}}]
 ["translate",256,20.799999999999997]
 ["rotate",0]
 ["setFillStyle","rgb(255, 0, 0)"]
@@ -21053,7 +21064,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21062,7 +21073,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21071,7 +21082,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21080,7 +21091,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21102,7 +21113,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21111,7 +21122,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,420.4571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21120,7 +21131,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,357.3142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21129,7 +21140,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,294.1714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21138,7 +21149,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,231.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21147,7 +21158,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,167.88571428571427]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21156,7 +21167,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,104.74285714285716]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21165,7 +21176,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,41.599999999999994]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21841,7 +21852,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 'Chart of type line',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -22097,7 +22108,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -22118,7 +22129,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22127,7 +22138,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22136,7 +22147,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22145,7 +22156,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22167,7 +22178,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22176,7 +22187,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22185,7 +22196,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,355.2571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22194,7 +22205,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,291.08571428571423]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22203,7 +22214,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,226.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22212,7 +22223,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,162.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22221,7 +22232,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,98.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22230,7 +22241,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,34.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22906,7 +22917,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 0.0,
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -23162,7 +23173,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -23183,7 +23194,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23192,7 +23203,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23201,7 +23212,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23210,7 +23221,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23232,7 +23243,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23241,7 +23252,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23250,7 +23261,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,355.2571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23259,7 +23270,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,291.08571428571423]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23268,7 +23279,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,226.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23277,7 +23288,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,162.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23286,7 +23297,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,98.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23295,7 +23306,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,34.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23976,7 +23987,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'display': true,
             'text': 'Chart title',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -24575,7 +24586,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'display': true,
                 'text': 'Chart title',
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -24838,7 +24849,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","one"]
@@ -24856,7 +24867,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","one",56,245,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -24876,12 +24887,12 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","two",56,267,null]
 ["restore"]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -24902,7 +24913,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",113.369140625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24911,7 +24922,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",241.2451171875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24920,7 +24931,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",369.12109375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24929,7 +24940,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24951,7 +24962,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["rect",86.021484375,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24960,7 +24971,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,419.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24969,7 +24980,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,355.2571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24978,7 +24989,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,291.08571428571423]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24987,7 +24998,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,226.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -24996,7 +25007,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,162.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25005,7 +25016,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,98.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25014,7 +25025,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.369140625,34.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25123,72 +25134,142 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
 /// Each text that the cases measured, with its font and width.
 const List<PluginTitleReferenceWidth> pluginTitleReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '15',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '25',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '30',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '35',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '40',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 42.69140625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'February',
     width: 48.017578125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'March',
     width: 33.33984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'April',
     width: 24.005859375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'one',
     width: 20.021484375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'two',
     width: 18.673828125,
   ),

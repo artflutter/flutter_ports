@@ -389,9 +389,6 @@ enum OptionKey {
   /// The key `external`.
   external('external'),
 
-  /// The key `family`.
-  family('family'),
-
   /// The key `fill`.
   fill('fill'),
 
@@ -562,9 +559,6 @@ enum OptionKey {
 
   /// The key `line`.
   line('line'),
-
-  /// The key `lineHeight`.
-  lineHeight('lineHeight'),
 
   /// The key `lineWidth`.
   lineWidth('lineWidth'),
@@ -824,9 +818,6 @@ enum OptionKey {
   /// The key `showLine`.
   showLine('showLine'),
 
-  /// The key `size`.
-  size('size'),
-
   /// The key `skipNull`.
   skipNull('skipNull'),
 
@@ -868,9 +859,6 @@ enum OptionKey {
 
   /// The key `strokeWidth`.
   strokeWidth('strokeWidth'),
-
-  /// The key `style`.
-  style('style'),
 
   /// The key `subtitle`.
   subtitle('subtitle'),

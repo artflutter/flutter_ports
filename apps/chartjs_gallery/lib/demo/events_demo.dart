@@ -158,7 +158,7 @@ class _EventsDemoState extends State<EventsDemo> {
         ..lineTo(w, y + 0.5);
     }
     ctx.stroke();
-    final small = toFont(<String, Object?>{'size': 12});
+    final small = toFont(const ChartTextStyle(fontSize: 12));
     renderText(
       ctx,
       [
@@ -231,7 +231,7 @@ class _EventsDemoState extends State<EventsDemo> {
       '(${jsNumberText(hit.dx)}, ${jsNumberText(hit.dy)})',
       hit.dx + (right ? -16 : 16),
       hit.dy - 12,
-      toFont(<String, Object?>{'size': 13, 'weight': 'bold'}),
+      toFont(const ChartTextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
       TextOpts(
         color: chartColors[1],
         textAlign: right ? TextAlign.right : TextAlign.left,

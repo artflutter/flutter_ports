@@ -47,6 +47,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
@@ -64,8 +65,6 @@ import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart'
     show UiCanvasGradient, UiCanvasPattern, UiImageSource;
-export 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart'
-    show CanvasFont, parseCanvasFont;
 
 /// The retained paint generations before flattening (ADR 0066). A large
 /// generation can span multiple pictures without triggering rasterization.
@@ -110,13 +109,16 @@ const double _maxLineFanExtent = 1e30;
 const ui.Color _black = ui.Color(0xFF000000);
 const ui.Color _transparent = ui.Color(0x00000000);
 
-const String _defaultFontString = '10px sans-serif';
+/// The default font of a canvas state: the `'10px sans-serif'` of the DOM
+/// (row `adapt-text-style-fonts`).
+const TextStyle _defaultFont = TextStyle(
+  fontFamily: 'sans-serif',
+  fontSize: 10,
+);
 
 /// The step of the rotation of drawn text: 2 degrees (see
 /// `UiCanvasContext._snappedTextMatrix`).
 const double _textAngleStep = math.pi / 90;
-
-final CanvasFont _defaultFont = parseCanvasFont(_defaultFontString)!;
 
 const Set<String> _directions = {'ltr', 'rtl', 'inherit'};
 
@@ -457,8 +459,7 @@ final class _State {
   double miterLimit = 10;
   List<double> lineDash = const [];
   double lineDashOffset = 0;
-  String font = _defaultFontString;
-  CanvasFont fontValue = _defaultFont;
+  TextStyle font = _defaultFont;
   ui.TextAlign textAlign = ui.TextAlign.start;
   CanvasTextBaseline textBaseline = CanvasTextBaseline.alphabetic;
   String direction = 'inherit';
@@ -493,7 +494,6 @@ final class _State {
     lineDash = other.lineDash;
     lineDashOffset = other.lineDashOffset;
     font = other.font;
-    fontValue = other.fontValue;
     textAlign = other.textAlign;
     textBaseline = other.textBaseline;
     direction = other.direction;
@@ -2539,18 +2539,14 @@ final class UiCanvasContext
 
   // Text.
 
-  /// Reads back the string as set. A font that does not parse does nothing.
+  /// Reads back the `TextStyle` as set (row `adapt-text-style-fonts`).
   @override
-  String? get font => _s.font;
+  TextStyle? get font => _s.font;
 
   @override
-  set font(String? value) {
+  set font(TextStyle? value) {
     if (value == null) return;
-    final parsed = parseCanvasFont(value);
-    if (parsed == null) return;
-    _s
-      ..font = value
-      ..fontValue = parsed;
+    _s.font = value;
   }
 
   @override
@@ -2627,7 +2623,7 @@ final class UiCanvasContext
     final prepared = prepareCanvasText(text);
     final rtl = _isRtl;
     final direction = rtl ? ui.TextDirection.rtl : ui.TextDirection.ltr;
-    final font = s.fontValue;
+    final font = s.font;
     final color = stroke ? s.strokeColor : s.fillColor;
     final source = stroke ? s.strokeShader : s.fillShader;
 
@@ -2688,7 +2684,7 @@ final class UiCanvasContext
     }
     final shift = canvasBaselineShift(
       s.textBaseline,
-      font.size,
+      canvasFontSize(font),
       layout.ascent,
       layout.descent,
       layout.ideographic,
@@ -2814,13 +2810,13 @@ final class UiCanvasContext
         actualBoundingBoxDescent: 0,
       );
     }
-    final font = s.fontValue;
+    final font = s.font;
     final metrics = measureCanvasText(font, prepared);
     final width = metrics.width;
     final dx = _alignOffset(width, _isRtl);
     final shift = canvasBaselineShift(
       s.textBaseline,
-      font.size,
+      canvasFontSize(font),
       metrics.ascent,
       metrics.descent,
       metrics.ideographic,

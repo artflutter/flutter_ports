@@ -28,6 +28,9 @@ import 'dart:core' as core show override;
 import 'dart:core';
 import 'dart:ui' as ui;
 
+import 'dart:ui' show FontStyle;
+
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
@@ -43,6 +46,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -172,12 +176,14 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
       'touchstart',
       'touchmove',
     ];
-    font = FontSpecScope()
-      ..family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
-      ..size = 12.0
-      ..style = 'normal'
-      ..lineHeight = 1.2
-      ..weightCell = optNull;
+    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+    font = const ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+      height: 1.2,
+    );
     hover = InteractionOptionsScope();
     // getHoverColor gives Dart null for the JavaScript undefined of a color
     // that does not parse. `?? undefined` gives the sentinel back.
@@ -335,6 +341,12 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
     // The getter of core.defaults.js:144-151, read at each access.
     Object? read(Object? local) {
       final value = jsGet(target, targetName);
+      // `Object.assign({}, target, local)` of two fonts: the local font
+      // merges over the target font (row adapt-text-style-fonts).
+      // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
+      if (local is TextStyle) {
+        return value is TextStyle ? value.merge(local) : local;
+      }
       if (isObject(local)) {
         return _assign(<String, Object?>{}, [value, local]);
       }

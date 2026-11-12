@@ -6,7 +6,10 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 8 cases, 95 widths.
 
+import 'dart:ui' show FontStyle, FontWeight;
+
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -41,10 +44,11 @@ typedef ScaleChartHarnessReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
 typedef ScaleChartHarnessReferenceWidth = ({
-  String font,
+  ChartTextStyle font,
   String text,
   double width,
 });
@@ -349,7 +353,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -367,7 +371,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -384,7 +388,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",124.115234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -393,7 +397,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","-1234.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",216.165283203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -402,7 +406,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","23765.375",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",308.21533203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -411,7 +415,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","48765.25",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",400.265380859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -420,7 +424,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","73765.125",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",492.3154296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -442,7 +446,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,0,124.115234375,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",113.115234375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -451,7 +455,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","0.001",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",113.115234375,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -460,7 +464,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","3.18825",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",113.115234375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -469,7 +473,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","6.375500000000001",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",113.115234375,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -478,7 +482,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","9.56275",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",113.115234375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -534,17 +538,17 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             'title': <String, Object?>{
               'display': true,
               'text': 'Total revenue (USD)',
-              'font': <String, Object?>{'weight': 'bold'},
+              'font': ChartTextStyle(fontWeight: FontWeight.bold),
             },
           },
           'y': <String, Object?>{
             'title': <String, Object?>{
               'display': true,
               'text': 'Average',
-              'font': <String, Object?>{'size': 14.0},
+              'font': ChartTextStyle(fontSize: 14),
             },
             'ticks': <String, Object?>{
-              'font': <String, Object?>{'weight': 'bold', 'size': 13.0},
+              'font': ChartTextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             },
           },
         },
@@ -719,7 +723,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",280.690771484375,500.8]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -828,7 +832,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["translate",12.4,246.6]
 ["rotate",-1.5707963267948966]
 ["setFillStyle","#666"]
@@ -843,7 +847,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -861,7 +865,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -878,7 +882,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,461.2,512,50.80000000000001]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",59.05537109375,472.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -887,7 +891,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",169.8730712890625,472.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -896,7 +900,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","12.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",280.690771484375,472.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -905,7 +909,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","25",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",391.5084716796875,472.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -914,7 +918,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","37.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",502.326171875,472.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -936,7 +940,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,0,59.05537109375,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",48.05537109375,461.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -945,7 +949,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","11",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",48.05537109375,353.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -954,7 +958,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","36",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",48.05537109375,246.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -963,7 +967,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","61",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",48.05537109375,139.3]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -972,7 +976,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","86",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",48.05537109375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1329,7 +1333,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -1347,7 +1351,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",96.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -1364,7 +1368,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,217.32599722414216,200,82.67400277585784]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",48.005547849608234,228.32599722414216]
 ["rotate",-0.7753247744415597]
 ["setFillStyle","#666"]
@@ -1373,7 +1377,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1000000.125",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",81.47444134089112,228.32599722414216]
 ["rotate",-0.7753247744415597]
 ["setFillStyle","#666"]
@@ -1382,7 +1386,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","3249999.96875",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",114.943334832174,228.32599722414216]
 ["rotate",-0.7753247744415597]
 ["setFillStyle","#666"]
@@ -1391,7 +1395,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","5499999.8125",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",148.4122283234569,228.32599722414216]
 ["rotate",-0.7753247744415597]
 ["setFillStyle","#666"]
@@ -1400,7 +1404,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","7749999.65625",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",181.88112181473977,228.32599722414216]
 ["rotate",-0.7753247744415597]
 ["setFillStyle","#666"]
@@ -1422,7 +1426,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",15.689705161361658,0,37.35546875,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.04517391136166,217.32599722414216]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1431,7 +1435,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.04517391136166,170.99449791810662]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1440,7 +1444,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1.25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.04517391136166,124.66299861207108]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1449,7 +1453,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.04517391136166,78.33149930603554]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1458,7 +1462,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1.75",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.04517391136166,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1504,9 +1508,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'position': ChartPosition.top,
-            'ticks': <String, Object?>{
-              'font': <String, Object?>{'size': 15.0},
-            },
+            'ticks': <String, Object?>{'font': ChartTextStyle(fontSize: 15)},
           },
           'y': <String, Object?>{
             'position': ChartPosition.right,
@@ -1790,7 +1792,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -1808,7 +1810,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -1825,7 +1827,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,32,512,32]
 ["clip",null,null]
 ["save"]
-["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":15,"weight":null,"style":"normal"}}]
 ["translate",7.171142578125,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1834,7 +1836,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","2",0,-9,null]
 ["restore"]
 ["save"]
-["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":15,"weight":null,"style":"normal"}}]
 ["translate",124.87298583984375,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1843,7 +1845,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","6",0,-9,null]
 ["restore"]
 ["save"]
-["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":15,"weight":null,"style":"normal"}}]
 ["translate",242.5748291015625,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1852,7 +1854,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","10",0,-9,null]
 ["restore"]
 ["save"]
-["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":15,"weight":null,"style":"normal"}}]
 ["translate",360.27667236328125,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1861,7 +1863,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","14",0,-9,null]
 ["restore"]
 ["save"]
-["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":15,"weight":null,"style":"normal"}}]
 ["translate",477.978515625,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1883,7 +1885,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",477.978515625,0,34.021484375,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",488.978515625,64]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1892,7 +1894,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","-40",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",488.978515625,173.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1901,7 +1903,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",488.978515625,282.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1910,7 +1912,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","110",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",488.978515625,392.35]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1919,7 +1921,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","185",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",488.978515625,501.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2254,7 +2256,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -2272,7 +2274,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["measureText","undefined"]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
@@ -2299,7 +2301,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -2316,7 +2318,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2325,7 +2327,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",146.926513671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2334,7 +2336,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1.75",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",266.50537109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2343,7 +2345,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","2.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",386.084228515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2352,7 +2354,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","3.25",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",505.6630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2374,7 +2376,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2383,7 +2385,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2392,7 +2394,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2401,7 +2403,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2410,7 +2412,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2741,7 +2743,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -2759,7 +2761,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -2776,7 +2778,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,0,53.36328125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.36328125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2785,7 +2787,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1.25 kg",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.36328125,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2794,7 +2796,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","2.5 kg",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.36328125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2803,7 +2805,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","3.75 kg",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.36328125,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2812,7 +2814,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","5 kg",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",42.36328125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2834,7 +2836,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",53.36328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2843,7 +2845,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","0.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",165.187255859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2852,7 +2854,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",277.01123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2861,7 +2863,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","1.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",388.835205078125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2870,7 +2872,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","2",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2916,14 +2918,12 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'harnessMeasure',
-            'ticks': <String, Object?>{
-              'font': <String, Object?>{'size': 9.0},
-            },
+            'ticks': <String, Object?>{'font': ChartTextStyle(fontSize: 9)},
           },
           'y': <String, Object?>{
             'type': 'harnessMeasure',
             'ticks': <String, Object?>{
-              'font': <String, Object?>{'weight': 'bold', 'size': 13.0},
+              'font': ChartTextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             },
           },
         },
@@ -3206,7 +3206,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -3224,7 +3224,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -3241,7 +3241,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,487.2,512,24.80000000000001]
 ["clip",null,null]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["translate",46.53173828125,498.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3250,7 +3250,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","3",0,5.3999999999999995,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["translate",161.52313232421875,498.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3259,7 +3259,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","4",0,5.3999999999999995,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["translate",276.5145263671875,498.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3268,7 +3268,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","5",0,5.3999999999999995,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["translate",391.50592041015625,498.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3277,7 +3277,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","6",0,5.3999999999999995,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["translate",506.497314453125,498.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3299,7 +3299,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["rect",0,0,46.53173828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",35.53173828125,487.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3308,7 +3308,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",35.53173828125,373.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3317,7 +3317,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","318.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",35.53173828125,259.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3326,7 +3326,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","629",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",35.53173828125,145.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3335,7 +3335,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["fillText","939.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":13,"weight":700,"style":"normal"}}]
 ["translate",35.53173828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3426,7 +3426,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -3444,7 +3444,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -3464,466 +3464,977 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 /// Each text that the cases measured, with its font and width.
 const List<ScaleChartHarnessReferenceWidth> scaleChartHarnessReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'undefined',
     width: 52.716796875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.001',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.18825',
     width: 43.376953125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.375500000000001',
     width: 110.115234375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '9.56275',
     width: 43.376953125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '12.75',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-1234.5',
     width: 40.69921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '23765.375',
     width: 56.724609375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '48765.25',
     width: 50.05078125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '73765.125',
     width: 56.724609375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '98765',
     width: 33.369140625,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '11',
     width: 13.74267578125,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '36',
     width: 14.4599609375,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '61',
     width: 14.4599609375,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '86',
     width: 14.4599609375,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '111',
     width: 20.25537109375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '12.5',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '25',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '37.5',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '50',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.25',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.75',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1000000.125',
     width: 70.072265625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3249999.96875',
     width: 83.419921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5499999.8125',
     width: 76.74609375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7749999.65625',
     width: 83.419921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '9999999.5',
     width: 56.724609375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-40',
     width: 17.34375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '35',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '110',
     width: 19.130859375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '185',
     width: 20.021484375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '260',
     width: 20.021484375,
   ),
   (
-    font: "normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 15,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2',
     width: 8.34228515625,
   ),
   (
-    font: "normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 15,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6',
     width: 8.34228515625,
   ),
   (
-    font: "normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 15,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 16.6845703125,
   ),
   (
-    font: "normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 15,
+      fontStyle: FontStyle.normal,
+    ),
     text: '14',
     width: 16.6845703125,
   ),
   (
-    font: "normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 15,
+      fontStyle: FontStyle.normal,
+    ),
     text: '18',
     width: 16.6845703125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '15',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '30',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.25',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.25 kg',
     width: 39.36328125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.5 kg',
     width: 32.689453125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.75 kg',
     width: 39.36328125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5 kg',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.25 kg',
     width: 39.36328125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 42.69140625,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '8',
     width: 7.22998046875,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '318.5',
     width: 32.53173828125,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '629',
     width: 21.68994140625,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '939.5',
     width: 32.53173828125,
   ),
   (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1250',
     width: 28.919921875,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3',
     width: 5.00537109375,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4',
     width: 5.00537109375,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5',
     width: 5.00537109375,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6',
     width: 5.00537109375,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7',
     width: 5.00537109375,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 32.0185546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '59',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '90',
     width: 13.34765625,
   ),
   (
-    font: '10px sans-serif',
+    font: ChartTextStyle(
+      fontFamily: 'sans-serif',
+      fontFamilyFallback: [],
+      fontSize: 10,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 132.8271484375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 159.392578125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 114.5390625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 166.037109375,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 117.6328125,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 46.025390625,
   ),
   (
-    font: "normal 600 16px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 221.3828125,
   ),
   (
-    font: "normal 600 16px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 156.84375,
   ),
   (
-    font: "normal 600 16px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 61.3671875,
   ),
   (
-    font: "normal 500 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontWeight: FontWeight.w500,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 119.54443359375,
   ),
   (
-    font: "normal 500 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontWeight: FontWeight.w500,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 85.904296875,
   ),
   (
-    font: "normal 500 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontWeight: FontWeight.w500,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 32.0185546875,
   ),
   (
-    font: "normal 100 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.w100,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 159.392578125,
   ),
   (
-    font: "normal 100 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.w100,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 114.5390625,
   ),
   (
-    font: "normal 100 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.w100,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 42.69140625,
   ),
   (
-    font: "normal 550 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight(550),
+      fontStyle: FontStyle.normal,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 166.037109375,
   ),
   (
-    font: "normal 550 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight(550),
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 117.6328125,
   ),
   (
-    font: "normal 550 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight(550),
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 46.025390625,
   ),
   (
-    font: "normal 1000 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight(1000),
+      fontStyle: FontStyle.normal,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 166.037109375,
   ),
   (
-    font: "normal 1000 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight(1000),
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 117.6328125,
   ),
   (
-    font: "normal 1000 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight(1000),
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 46.025390625,
   ),
   (
-    font: 'bold 20px Arial',
+    font: ChartTextStyle(
+      fontFamily: 'Arial',
+      fontFamilyFallback: [],
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 276.728515625,
   ),
-  (font: 'bold 20px Arial', text: 'Te Yo LT P. F, 11 1111', width: 196.0546875),
-  (font: 'bold 20px Arial', text: 'January', width: 76.708984375),
   (
-    font: "13px 'Liberation Sans'",
+    font: ChartTextStyle(
+      fontFamily: 'Arial',
+      fontFamilyFallback: [],
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
+    text: 'Te Yo LT P. F, 11 1111',
+    width: 196.0546875,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Arial',
+      fontFamilyFallback: [],
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
+    text: 'January',
+    width: 76.708984375,
+  ),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Liberation Sans',
+      fontFamilyFallback: [],
+      fontSize: 13,
+    ),
     text: 'AVAWAY Total revenue (USD)',
     width: 172.67529296875,
   ),
   (
-    font: "13px 'Liberation Sans'",
+    font: ChartTextStyle(
+      fontFamily: 'Liberation Sans',
+      fontFamilyFallback: [],
+      fontSize: 13,
+    ),
     text: 'Te Yo LT P. F, 11 1111',
     width: 124.083984375,
   ),
-  (font: "13px 'Liberation Sans'", text: 'January', width: 46.2490234375),
+  (
+    font: ChartTextStyle(
+      fontFamily: 'Liberation Sans',
+      fontFamilyFallback: [],
+      fontSize: 13,
+    ),
+    text: 'January',
+    width: 46.2490234375,
+  ),
 ];

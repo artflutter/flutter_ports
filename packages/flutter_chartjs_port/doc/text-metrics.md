@@ -49,7 +49,8 @@ ink box is more than 0.5 px outside the box of the canvas layer.
 
 The fonts are the Chart.js default family list in the `toFontString` form
 (`helpers.canvas.ts`), `<style> <weight> <size>px 'Helvetica Neue', 'Helvetica', 'Arial',
-sans-serif`:
+sans-serif`. The Chrome page sets these texts. The data hold the fields of each text as a
+`ChartTextStyle`, which the Flutter side gives to the canvas (Chart.js ADR 0116):
 
 - `normal 12px` (the Chart.js default font)
 - `normal bold 12px`

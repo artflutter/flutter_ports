@@ -18,6 +18,8 @@ Chart.js ADR 0061: the historical "pure layer" names below now mean framework-fr
 core layers. They may use `dart:ui.Color`, but no `package:flutter` framework APIs.
 One exception: a core layer can import `package:flutter/animation.dart` for the curve
 classes (`Curve`, `Curves`), the value of the option `easing` (row `adapt-flutter-curves`).
+A second exception: a core layer can import `package:flutter/painting.dart` with `show` of
+`TextStyle` and `TextOverflow`, for the font (Chart.js ADR 0116).
 The chart core and harness run through Flutter; standalone Dart execution is no
 longer supported. No global color installer or intermediate option color exists.
 
@@ -59,7 +61,9 @@ longer supported. No global color installer or intermediate option color exists.
     `plugins/`, or `lib/src/index.dart` or `lib/src/index.umd.dart`: the widget registers no
     component (Chart.js ADR 0048 §3). It fails when a ported file imports `lib/src/typed/`, and
     when a file of `lib/src/typed/` imports a library outside the allowlist of Chart.js ADR 0052
-    §8. It keeps the `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer. An
+    §8. It fails when a core layer imports `package:flutter/painting.dart` with a name other
+    than `TextStyle` and `TextOverflow` (Chart.js ADR 0116 item 6). It keeps the
+    `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer. An
     add-on port names its host in the top-level key `host` of its `tool/port_sources.yaml`. Its
     `lib/` and `test/` import only the libraries directly in the `lib/` of the host
     (`package:<host>/<name>.dart`), never `package:<host>/src/` (ADR 0009 item 3). Its `test/`
@@ -825,6 +829,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `AxisTicks`. Each typed atom of the option model (a native type of an option that was a name
       in Chart.js) has the cell `classifyTyped<T>` of `opt.dart`, and `ShapeBits.typed` is the
       mask of their bits; the generator lists them in its map `typedAtoms`.
+    - A font is a Flutter `TextStyle` from the option to the canvas (Chart.js ADR 0116, row
+      `adapt-text-style-fonts`), also in a raw config: the options `font`, `titleFont`,
+      `bodyFont` and `footerFont`, the canvas `font`, the font of a label item and the result of
+      `toFont`. The port-only `ChartTextStyle` of the pure `lib/src/types/chart_text_style.dart`
+      extends `TextStyle` with the field `lineHeight`, `fontSize * height`, which the constructor
+      computes once; `merge` and `copyWith` give a new `ChartTextStyle`. The resolver merges the
+      fonts of the scopes of a font option with `TextStyle.merge` (`_mergeTextStyles` of
+      `helpers.config.dart`), as a route and `helpers.merge` do. The canvas lays out each text
+      with the whole style. `toFontString`, `toLineHeight`, `ParsedFont`, the CSS parse of the
+      canvas and the scope kind `FontSpec` are gone. A font function returns a `ChartTextStyle`;
+      a font object stops a debug build in `toFont`. The generators write a font object of a
+      config as a `ChartTextStyle` literal and a font text of the canvas as a record
+      (`tool/reference/font_record.mjs`, `test/support/font_record.dart`).
     - The `align` of the legend, the title, the subtitle and an axis title, and the `position` of
       the legend title, hold the enum `ChartAlign` (`start`, `center`, `end`) of the pure
       `lib/src/types/align.dart` (row `adapt-chart-align-enum`), also in a raw config. The
@@ -1149,7 +1166,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     from its `_props` list (`props.dart`). Each class has `extra`, the Chart.js options with no
     parameter. `lower.dart` (internal) gives the typed option scopes of the chart for a config
     (`ChartConfigLowering`: a `ChartConfigurationScope` root, `put`, the typed `mergeExtra`), with
-    `colorToRgba` and `fontScopeOf` of `lib/src/theme/css.dart`. Ported files never import
+    `colorToRgba` of `lib/src/theme/css.dart`; a font goes to the chart as the `TextStyle`
+    itself (Chart.js ADR 0116). Ported files never import
     `lib/src/typed/`, and no file of it imports
     a component (`check:lib-imports`).
   - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
@@ -1275,7 +1293,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0115. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0116. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1344,7 +1362,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       passes the tests. It states the complete decision of Chart.js ADR 0089 (the partitioned
       fill) and supersedes it. Chart.js ADR 0115 (the hand ports of the data fixtures with a class
       value) is accepted (2026-11-12): its code passes the tests. It supersedes Chart.js ADR 0029
-      §4 item 1, the last sentence of §4 item 2 and the last sentence of §5 item 7. The other
+      §4 item 1, the last sentence of §4 item 2 and the last sentence of §5 item 7. Chart.js ADR
+      0116 (the font is a Flutter `TextStyle`) is accepted (2026-11-12): its code passes the
+      tests. It supersedes parts of Chart.js ADRs 0061, 0015, 0050 and 0052. The other
       ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -2012,8 +2032,9 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `harness-release-at-unmount` of `packages/chartjs_test_utils/test/index_test.dart`.
 - A core (historically pure-layer) file may use `dart:ui.Color`, but reaches no
   `package:flutter` framework library through its direct or indirect imports (ADR 0061),
-  except `package:flutter/animation.dart` for the curve classes of the option `easing`.
-  `check:lib-imports` computes the core layers from the roots in
+  except `package:flutter/animation.dart` for the curve classes of the option `easing`, and
+  `package:flutter/painting.dart` with `show TextOverflow, TextStyle` for the font (Chart.js ADR
+  0116). `check:lib-imports` computes the core layers from the roots in
   `packages/flutter_chartjs_port/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
   `lib/src/types/`, `lib/src/kurkle_color/`, the helpers except `helpers.extras`, the files of
   `lib/src/elements/`, `plugin.decimation` and the files of `plugin.filler/` of `lib/src/plugins/`,

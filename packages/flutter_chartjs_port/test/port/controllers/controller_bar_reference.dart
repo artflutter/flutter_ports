@@ -21,11 +21,14 @@
 //       .getDatasetMeta(0)
 //       ._parsed.map((p) => Object.keys(p._stacks || {}))
 
+import 'dart:ui' show FontStyle;
+
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -60,10 +63,11 @@ typedef ControllerBarReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
 typedef ControllerBarReferenceWidth = ({
-  String font,
+  ChartTextStyle font,
   String text,
   double width,
 });
@@ -6358,7 +6362,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","one"]
@@ -6375,7 +6379,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","one",231.65234375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -6395,7 +6399,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","two",307.673828125,16,null]
 ["restore"]
 ["restore"]
@@ -6412,7 +6416,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",75.812890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6421,7 +6425,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",172.74335937499998,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6430,7 +6434,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6439,7 +6443,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",366.604296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6448,7 +6452,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","d",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",463.53476562500003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6470,7 +6474,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6479,7 +6483,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6488,7 +6492,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6497,7 +6501,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6506,7 +6510,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6515,7 +6519,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7408,7 +7412,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -7425,7 +7429,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -7445,7 +7449,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -7462,7 +7466,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,20.673828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,107.26666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7471,7 +7475,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7480,7 +7484,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7502,7 +7506,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7511,7 +7515,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-3",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",74.5615234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7520,7 +7524,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",128.44921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7529,7 +7533,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",182.3369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7538,7 +7542,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",236.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7547,7 +7551,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",290.1123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7556,7 +7560,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",344,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7565,7 +7569,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",397.8876953125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7574,7 +7578,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",451.775390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7583,7 +7587,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",505.6630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8567,7 +8571,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -8585,7 +8589,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",143.9248046875,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -8605,7 +8609,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -8625,7 +8629,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",361.3583984375,16,null]
 ["restore"]
 ["restore"]
@@ -8642,7 +8646,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",111.453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8651,7 +8655,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8660,7 +8664,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8682,7 +8686,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,31.34375,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",20.34375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8691,7 +8695,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",20.34375,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8700,7 +8704,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",20.34375,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8709,7 +8713,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",20.34375,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8718,7 +8722,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",20.34375,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8727,7 +8731,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",20.34375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9837,7 +9841,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -9854,7 +9858,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",143.9248046875,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -9873,7 +9877,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -9892,7 +9896,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",361.3583984375,16,null]
 ["restore"]
 ["restore"]
@@ -9909,7 +9913,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",105.8916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9918,7 +9922,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9927,7 +9931,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.7783203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9949,7 +9953,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9958,7 +9962,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9967,7 +9971,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9976,7 +9980,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9985,7 +9989,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9994,7 +9998,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10003,7 +10007,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10012,7 +10016,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10021,7 +10025,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11242,7 +11246,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -11259,7 +11263,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",89.56640625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -11278,7 +11282,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -11297,7 +11301,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -11316,7 +11320,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",415.716796875,16,null]
 ["restore"]
 ["restore"]
@@ -11333,7 +11337,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",105.8916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11342,7 +11346,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11351,7 +11355,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.7783203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11373,7 +11377,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11382,7 +11386,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11391,7 +11395,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11400,7 +11404,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11409,7 +11413,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11418,7 +11422,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11427,7 +11431,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11436,7 +11440,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12523,7 +12527,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -12540,7 +12544,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -12559,7 +12563,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -12576,7 +12580,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",85.586181640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12585,7 +12589,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",207.418701171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12594,7 +12598,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",329.251220703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12603,7 +12607,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",451.083740234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12625,7 +12629,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12634,7 +12638,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12643,7 +12647,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12652,7 +12656,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12661,7 +12665,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12670,7 +12674,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12679,7 +12683,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12688,7 +12692,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12697,7 +12701,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12706,7 +12710,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12715,7 +12719,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13682,7 +13686,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -13699,7 +13703,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -13718,7 +13722,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -13735,7 +13739,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",105.8916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13744,7 +13748,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13753,7 +13757,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.7783203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13775,7 +13779,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13784,7 +13788,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13793,7 +13797,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13802,7 +13806,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13811,7 +13815,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13820,7 +13824,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13829,7 +13833,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13838,7 +13842,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13847,7 +13851,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13856,7 +13860,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13865,7 +13869,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16426,7 +16430,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -16443,7 +16447,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",143.9248046875,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -16462,7 +16466,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -16481,7 +16485,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",361.3583984375,16,null]
 ["measureText","undefined"]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
@@ -16505,7 +16509,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",110.9013671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16514,7 +16518,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.3408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16523,7 +16527,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.7802734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16545,7 +16549,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16554,7 +16558,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16563,7 +16567,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16572,7 +16576,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16581,7 +16585,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16590,7 +16594,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16599,7 +16603,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17770,7 +17774,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -17787,7 +17791,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",143.9248046875,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -17806,7 +17810,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -17825,7 +17829,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",361.3583984375,16,null]
 ["restore"]
 ["restore"]
@@ -17842,7 +17846,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",90.846435546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17851,7 +17855,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",211.176025390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17860,7 +17864,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",331.505615234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17869,7 +17873,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",451.835205078125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17891,7 +17895,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17900,7 +17904,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17909,7 +17913,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17918,7 +17922,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17927,7 +17931,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17936,7 +17940,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17945,7 +17949,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17954,7 +17958,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17963,7 +17967,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17972,7 +17976,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -17981,7 +17985,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18798,7 +18802,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -18815,7 +18819,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -18834,7 +18838,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -18851,7 +18855,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",110.9013671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18860,7 +18864,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.3408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18869,7 +18873,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.7802734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18891,7 +18895,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18900,7 +18904,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18909,7 +18913,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18918,7 +18922,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18927,7 +18931,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18936,7 +18940,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18945,7 +18949,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20108,7 +20112,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -20125,7 +20129,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",143.9248046875,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -20144,7 +20148,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -20163,7 +20167,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",361.3583984375,16,null]
 ["restore"]
 ["restore"]
@@ -20180,7 +20184,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",90.846435546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20189,7 +20193,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",211.176025390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20198,7 +20202,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",331.505615234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20207,7 +20211,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",451.835205078125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20229,7 +20233,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20238,7 +20242,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20247,7 +20251,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20256,7 +20260,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20265,7 +20269,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20274,7 +20278,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20283,7 +20287,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20292,7 +20296,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20301,7 +20305,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20310,7 +20314,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20319,7 +20323,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21350,7 +21354,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -21367,7 +21371,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -21386,7 +21390,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -21403,7 +21407,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",73.4029296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21412,7 +21416,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",170.8689453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21421,7 +21425,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21430,7 +21434,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",365.80097656249995,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21439,7 +21443,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","d",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",463.2669921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21461,7 +21465,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21470,7 +21474,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21479,7 +21483,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21488,7 +21492,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21497,7 +21501,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21506,7 +21510,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21515,7 +21519,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21524,7 +21528,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -21533,7 +21537,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22508,7 +22512,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -22525,7 +22529,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -22544,7 +22548,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -22561,7 +22565,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",85.586181640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22570,7 +22574,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",207.418701171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22579,7 +22583,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",329.251220703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22588,7 +22592,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",451.083740234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22610,7 +22614,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22619,7 +22623,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22628,7 +22632,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22637,7 +22641,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22646,7 +22650,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22655,7 +22659,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22664,7 +22668,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22673,7 +22677,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22682,7 +22686,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22691,7 +22695,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23737,7 +23741,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -23755,7 +23759,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",89.56640625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -23775,7 +23779,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -23795,7 +23799,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -23815,7 +23819,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",415.716796875,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -23835,7 +23839,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,38,null]
 ["restore"]
 ["restore"]
@@ -23852,7 +23856,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",146.50244140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23861,7 +23865,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",390.16748046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23883,7 +23887,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23892,7 +23896,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,422.22857142857146]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23901,7 +23905,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,360.8571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23910,7 +23914,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,299.48571428571427]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23919,7 +23923,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,238.11428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23928,7 +23932,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,176.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23937,7 +23941,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,115.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23946,7 +23950,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,54]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25100,7 +25104,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -25118,7 +25122,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",143.9248046875,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -25137,7 +25141,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -25157,7 +25161,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",361.3583984375,16,null]
 ["restore"]
 ["restore"]
@@ -25174,7 +25178,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",105.8916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25183,7 +25187,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25192,7 +25196,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.7783203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25214,7 +25218,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25223,7 +25227,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25232,7 +25236,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25241,7 +25245,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25250,7 +25254,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25259,7 +25263,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25268,7 +25272,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25277,7 +25281,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25286,7 +25290,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26435,7 +26439,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -26452,7 +26456,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -26471,7 +26475,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -26488,7 +26492,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",65.0615234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26497,7 +26501,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",133.8212890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26506,7 +26510,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",202.5810546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26515,7 +26519,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.3408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26524,7 +26528,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.1005859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26533,7 +26537,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",408.8603515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26542,7 +26546,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",477.6201171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26564,7 +26568,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26573,7 +26577,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26582,7 +26586,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26591,7 +26595,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26600,7 +26604,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26609,7 +26613,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26618,7 +26622,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26627,7 +26631,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26636,7 +26640,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26645,7 +26649,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -26654,7 +26658,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27520,7 +27524,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -27537,7 +27541,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -27556,7 +27560,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -27573,7 +27577,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",69.8064453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27582,7 +27586,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","12AM",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",168.07167968750002,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27591,7 +27595,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","12AM",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",266.3369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27600,7 +27604,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","12AM",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",364.60214843750003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27609,7 +27613,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","12AM",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",462.8673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27631,7 +27635,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,20.673828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27640,7 +27644,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27649,7 +27653,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27658,7 +27662,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27667,7 +27671,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27676,7 +27680,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27685,7 +27689,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27694,7 +27698,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -28897,7 +28901,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -28914,7 +28918,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -28933,7 +28937,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -28950,7 +28954,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,54.037109375,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -28959,7 +28963,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,433.5031722985843]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -28968,7 +28972,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,401.89559314221816]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -28977,7 +28981,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,388.77726253090196]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -28986,7 +28990,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,378.60189478909155]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -28995,7 +28999,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,346.99431563272543]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29004,7 +29008,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,315.38673647635943]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29013,7 +29017,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,296.89748793130974]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29022,7 +29026,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,283.77915731999343]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29031,7 +29035,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,273.603789578183]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29040,7 +29044,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","10.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,241.996210421817]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29049,7 +29053,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","20.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,210.38863126545095]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29058,7 +29062,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,191.89938272040118]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29067,7 +29071,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,178.78105210908492]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29076,7 +29080,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,168.6056843672745]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29085,7 +29089,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","100.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,136.9981052109085]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29094,7 +29098,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","200.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,105.39052605454245]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29103,7 +29107,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,86.90127750949273]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29112,7 +29116,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","600.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,73.78294689817643]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29121,7 +29125,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","800.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,63.607579156366015]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29130,7 +29134,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1,000.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",43.037109375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29152,7 +29156,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",111.282470703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29161,7 +29165,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",225.773193359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29170,7 +29174,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.263916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29179,7 +29183,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",454.754638671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29991,7 +29995,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -30009,7 +30013,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -30029,7 +30033,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -30046,7 +30050,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.7783203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30055,7 +30059,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30064,7 +30068,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",105.89160156249999,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30086,7 +30090,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30095,7 +30099,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,419.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30104,7 +30108,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30113,7 +30117,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30122,7 +30126,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,225.54285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30131,7 +30135,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30140,7 +30144,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,96.51428571428572]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30149,7 +30153,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31047,7 +31051,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -31064,7 +31068,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -31083,7 +31087,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -31100,7 +31104,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31109,7 +31113,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31118,7 +31122,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31127,7 +31131,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31136,7 +31140,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31145,7 +31149,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31154,7 +31158,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31163,7 +31167,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31172,7 +31176,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31181,7 +31185,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31190,7 +31194,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31212,7 +31216,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",110.9013671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31221,7 +31225,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.3408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31230,7 +31234,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.7802734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31932,7 +31936,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -31949,7 +31953,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -31968,7 +31972,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -31985,7 +31989,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",105.8916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -31994,7 +31998,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32003,7 +32007,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.7783203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32025,7 +32029,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32034,7 +32038,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32043,7 +32047,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32052,7 +32056,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32061,7 +32065,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32070,7 +32074,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32079,7 +32083,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32852,7 +32856,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -32869,7 +32873,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -32888,7 +32892,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -32905,7 +32909,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",105.8916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32914,7 +32918,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",268.3349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32923,7 +32927,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.7783203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32945,7 +32949,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,24.669921875,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32954,7 +32958,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32963,7 +32967,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32972,7 +32976,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32981,7 +32985,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32990,7 +32994,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32999,7 +33003,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -33008,7 +33012,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",13.669921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -33919,7 +33923,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -33936,7 +33940,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -33955,7 +33959,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -33972,7 +33976,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",87.92919921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -33981,7 +33985,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",209.09228515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -33990,7 +33994,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",330.25537109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -33999,7 +34003,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","c",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",451.41845703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34021,7 +34025,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34030,7 +34034,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34039,7 +34043,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34048,7 +34052,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34057,7 +34061,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34066,7 +34070,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34075,7 +34079,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34084,7 +34088,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34093,7 +34097,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34745,7 +34749,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -34762,7 +34766,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -34779,7 +34783,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",151.01123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34788,7 +34792,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",391.67041015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34810,7 +34814,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34819,7 +34823,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34828,7 +34832,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34837,7 +34841,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34846,7 +34850,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34855,7 +34859,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34864,7 +34868,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34873,7 +34877,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34882,7 +34886,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.7",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34891,7 +34895,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34900,7 +34904,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.9",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35506,7 +35510,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -35524,7 +35528,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -35541,7 +35545,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35550,7 +35554,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35559,7 +35563,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35581,7 +35585,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35590,7 +35594,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35599,7 +35603,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35608,7 +35612,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35617,7 +35621,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35626,7 +35630,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35635,7 +35639,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -35644,7 +35648,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36301,7 +36305,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -36319,7 +36323,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -36336,7 +36340,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36345,7 +36349,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36354,7 +36358,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36376,7 +36380,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36385,7 +36389,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36394,7 +36398,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36403,7 +36407,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36412,7 +36416,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36421,7 +36425,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36430,7 +36434,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36439,7 +36443,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37096,7 +37100,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -37114,7 +37118,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -37131,7 +37135,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37140,7 +37144,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37149,7 +37153,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37171,7 +37175,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37180,7 +37184,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37189,7 +37193,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37198,7 +37202,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37207,7 +37211,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37216,7 +37220,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37225,7 +37229,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37234,7 +37238,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37891,7 +37895,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -37909,7 +37913,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -37926,7 +37930,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37935,7 +37939,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37944,7 +37948,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37966,7 +37970,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37975,7 +37979,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37984,7 +37988,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37993,7 +37997,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38002,7 +38006,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38011,7 +38015,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38020,7 +38024,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38029,7 +38033,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38685,7 +38689,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -38702,7 +38706,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -38719,7 +38723,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38728,7 +38732,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38737,7 +38741,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38759,7 +38763,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38768,7 +38772,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38777,7 +38781,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38786,7 +38790,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38795,7 +38799,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38804,7 +38808,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38813,7 +38817,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -38822,7 +38826,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39439,7 +39443,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -39456,7 +39460,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -39473,7 +39477,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39482,7 +39486,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39491,7 +39495,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39513,7 +39517,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39522,7 +39526,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39531,7 +39535,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39540,7 +39544,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39549,7 +39553,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39558,7 +39562,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39567,7 +39571,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39576,7 +39580,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40176,7 +40180,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -40193,7 +40197,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -40210,7 +40214,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.5615234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40219,7 +40223,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",266.3369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40228,7 +40232,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.1123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40250,7 +40254,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,20.673828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40259,7 +40263,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40268,7 +40272,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40277,7 +40281,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40286,7 +40290,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40295,7 +40299,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40304,7 +40308,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40904,7 +40908,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -40921,7 +40925,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -40938,7 +40942,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.5615234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40947,7 +40951,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",266.3369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40956,7 +40960,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.1123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40978,7 +40982,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,20.673828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40987,7 +40991,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -40996,7 +41000,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41005,7 +41009,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41014,7 +41018,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41023,7 +41027,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41032,7 +41036,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41629,7 +41633,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -41646,7 +41650,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -41663,7 +41667,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",110.9013671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41672,7 +41676,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.3408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41681,7 +41685,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.7802734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41703,7 +41707,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41712,7 +41716,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41721,7 +41725,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41730,7 +41734,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41739,7 +41743,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41748,7 +41752,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41757,7 +41761,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42354,7 +42358,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -42371,7 +42375,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -42388,7 +42392,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",110.9013671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42397,7 +42401,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.3408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42406,7 +42410,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.7802734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42428,7 +42432,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42437,7 +42441,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42446,7 +42450,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42455,7 +42459,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42464,7 +42468,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42473,7 +42477,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -42482,7 +42486,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43099,7 +43103,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -43116,7 +43120,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -43133,7 +43137,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43142,7 +43146,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43151,7 +43155,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43173,7 +43177,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43182,7 +43186,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43191,7 +43195,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43200,7 +43204,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43209,7 +43213,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43218,7 +43222,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43227,7 +43231,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43236,7 +43240,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43852,7 +43856,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -43869,7 +43873,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -43886,7 +43890,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43895,7 +43899,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43904,7 +43908,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43926,7 +43930,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43935,7 +43939,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43944,7 +43948,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43953,7 +43957,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43962,7 +43966,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43971,7 +43975,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43980,7 +43984,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43989,7 +43993,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44624,7 +44628,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -44641,7 +44645,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -44658,7 +44662,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44667,7 +44671,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44676,7 +44680,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44698,7 +44702,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44707,7 +44711,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44716,7 +44720,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44725,7 +44729,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44734,7 +44738,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44743,7 +44747,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44752,7 +44756,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44761,7 +44765,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45445,7 +45449,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -45462,7 +45466,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -45479,7 +45483,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",125.3544921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45488,7 +45492,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",280.0126953125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45497,7 +45501,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",434.6708984375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45519,7 +45523,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,48.025390625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45528,7 +45532,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-0.010",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45537,7 +45541,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-0.008",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45546,7 +45550,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-0.006",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45555,7 +45559,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-0.004",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45564,7 +45568,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-0.002",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45573,7 +45577,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45582,7 +45586,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.002",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45591,7 +45595,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.004",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45600,7 +45604,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.006",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,77.15999999999994]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -45609,7 +45613,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.008",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",37.025390625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46227,7 +46231,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -46244,7 +46248,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -46261,7 +46265,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46270,7 +46274,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46279,7 +46283,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46301,7 +46305,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46310,7 +46314,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46319,7 +46323,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46328,7 +46332,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46337,7 +46341,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46346,7 +46350,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46355,7 +46359,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46364,7 +46368,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46983,7 +46987,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -47000,7 +47004,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -47017,7 +47021,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47026,7 +47030,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47035,7 +47039,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47057,7 +47061,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47066,7 +47070,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47075,7 +47079,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47084,7 +47088,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47093,7 +47097,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47102,7 +47106,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47111,7 +47115,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47120,7 +47124,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47756,7 +47760,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -47773,7 +47777,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -47790,7 +47794,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47799,7 +47803,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47808,7 +47812,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47830,7 +47834,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47839,7 +47843,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47848,7 +47852,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47857,7 +47861,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47866,7 +47870,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47875,7 +47879,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47884,7 +47888,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -47893,7 +47897,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48511,7 +48515,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -48528,7 +48532,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -48545,7 +48549,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48554,7 +48558,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48563,7 +48567,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48585,7 +48589,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48594,7 +48598,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48603,7 +48607,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","-2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48612,7 +48616,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48621,7 +48625,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48630,7 +48634,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48639,7 +48643,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48648,7 +48652,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -49159,7 +49163,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -49176,7 +49180,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -49193,7 +49197,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,20.673828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -49202,7 +49206,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -49211,7 +49215,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -49233,7 +49237,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",102.5615234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -49242,7 +49246,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",266.3369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -49251,7 +49255,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","b",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",430.1123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -49958,7 +49962,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -49975,7 +49979,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -49992,7 +49996,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",151.01123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50001,7 +50005,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","a",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",391.67041015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50023,7 +50027,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50032,7 +50036,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50041,7 +50045,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50050,7 +50054,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50059,7 +50063,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50068,7 +50072,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50077,7 +50081,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50086,7 +50090,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50095,7 +50099,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.7",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50104,7 +50108,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50113,7 +50117,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0.9",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50911,7 +50915,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -50928,7 +50932,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -50945,7 +50949,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,469.2,512,42.80000000000001]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",69.8064453125,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50955,7 +50959,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","line 2",0,21.599999999999998,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",168.0716796875,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50964,7 +50968,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",266.3369140625,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50973,7 +50977,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",364.6021484375,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50995,7 +50999,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,20.673828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,469.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51004,7 +51008,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,396.3333333333333]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51013,7 +51017,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,323.4666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51022,7 +51026,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,250.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51031,7 +51035,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,177.73333333333335]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51040,7 +51044,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,104.86666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51049,7 +51053,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51804,7 +51808,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -51821,7 +51825,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -51838,7 +51842,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,469.2,512,42.80000000000001]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",69.8064453125,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51848,7 +51852,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","line 2",0,21.599999999999998,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",168.0716796875,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51857,7 +51861,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","7",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",266.3369140625,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51866,7 +51870,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",462.8673828125,480.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51888,7 +51892,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["rect",0,0,20.673828125,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,469.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51897,7 +51901,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,396.3333333333333]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51906,7 +51910,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,323.4666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51915,7 +51919,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,250.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51924,7 +51928,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,177.73333333333335]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51933,7 +51937,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,104.86666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51942,7 +51946,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -52012,417 +52016,832 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
 /// Each text that the cases measured, with its font and width.
 const List<ControllerBarReferenceWidth> controllerBarReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'one',
     width: 20.021484375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'two',
     width: 18.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-10',
     width: 17.34375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-5',
     width: 10.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '15',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'a',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'b',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'c',
     width: 6.0,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'd',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'e',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'undefined',
     width: 52.716796875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-3',
     width: 10.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-2',
     width: 10.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-1',
     width: 10.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-8',
     width: 10.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-6',
     width: 10.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-4',
     width: 10.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '8',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-1.0',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.5',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '12:00:00.000 am',
     width: 90.0703125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '12AM',
     width: 31.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.1',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.3',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10.0',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '15.0',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20.0',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '30.0',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '50.0',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '100.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '150.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '200.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '300.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '500.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '600.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '700.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '800.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '900.0',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1,000.0',
     width: 40.037109375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1,500.0',
     width: 40.037109375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2,000.0',
     width: 40.037109375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.4',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.4',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.7',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.9',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.010',
     width: 34.025390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.008',
     width: 34.025390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.006',
     width: 34.025390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.004',
     width: 34.025390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.002',
     width: 34.025390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.002',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.004',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.006',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.008',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.010',
     width: 30.029296875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'line 1',
     width: 28.6875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'line 2',
     width: 28.6875,
   ),

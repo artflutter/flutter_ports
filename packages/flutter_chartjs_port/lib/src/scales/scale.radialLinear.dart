@@ -39,6 +39,7 @@ library;
 
 import 'dart:ui' show TextAlign;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
@@ -64,12 +65,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, normalizeAngle, pi, tau, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show
-        ParsedFont,
-        ScriptableScalePointLabelContext,
-        toFont,
-        toPadding,
-        toTRBLCorners;
+    show ScriptableScalePointLabelContext, toFont, toPadding, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsCos, jsMax, jsMin, jsRound, jsSin;
@@ -83,13 +79,13 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AngleLineOptionsScope,
         DescriptorsScope,
-        FontSpecScope,
         GridLineOptionsScope,
         PointLabelOptionsScope,
         ScaleOptionsScope,
         TickOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' as types;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -238,21 +234,24 @@ final class _RenderTextOpts implements types.RenderTextOpts {
 
 /// scale.radialLinear.js:9 `getTickBackdropHeight(opts)`.
 ///
-/// [opts] are the options of the scale. `tickOpts.font && tickOpts.font.size`
-/// gives the font itself when it is falsy. The font size is a raw option
-/// value: a string size joins the padding height (`'12' + 4` gives
-/// `'124'`, [jsAdd]). The three callers divide the result. Thus the
-/// function gives the [jsToNumber] of the sum.
+/// [opts] are the options of the scale. The font is a `TextStyle` (row
+/// `adapt-text-style-fonts`): `tickOpts.font && tickOpts.font.size` is its
+/// `fontSize`, else the `fontSize` of `defaults.font`.
 double _getTickBackdropHeight(CoreScaleOptions opts) {
   final tickOpts = opts.ticks;
 
   if (jsTruthy(tickOpts.display) && jsTruthy(opts.display)) {
     final padding = toPadding(tickOpts.backdropPadding);
     final font = tickOpts.font;
+    // DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
+    // `tickOpts.font && tickOpts.font.size`: a null font stays null, which
+    // valueOrDefault keeps and the `+` reads as 0, as upstream.
     return jsToNumber(
       jsAdd(
         valueOrDefault<Object?>(
-          jsTruthy(font) ? FontSpecOptions(font).size : font,
+          jsTruthy(font)
+              ? (font is TextStyle ? font.fontSize : null) ?? undefined
+              : font,
           _defaultFontSize(),
         ),
         padding.height,
@@ -262,11 +261,11 @@ double _getTickBackdropHeight(CoreScaleOptions opts) {
   return 0;
 }
 
-/// `defaults.font.size` of scale.radialLinear.js:14: the cell of the key `font`
-/// of the typed root `defaults`, then its size.
-Object? _defaultFontSize() {
-  final font = defaults.lookup(OptionKey.font);
-  return FontSpecOptions(font == null ? undefined : font.raw).size;
+/// `defaults.font.size` of scale.radialLinear.js:14: the `fontSize` of the
+/// font of the typed root `defaults`.
+double? _defaultFontSize() {
+  final font = defaults.lookup(OptionKey.font)?.raw;
+  return font is TextStyle ? font.fontSize : null;
 }
 
 /// scale.radialLinear.js:19 `measureLabelSize(ctx, font, label)`.
@@ -275,14 +274,14 @@ Object? _defaultFontSize() {
 /// item.
 _LabelSize _measureLabelSize(
   CanvasRenderingContext2D ctx,
-  ParsedFont font,
+  ChartTextStyle font,
   Object? label,
 ) {
   // Upstream reassigns its parameter with the List of the lines.
   final lines = isArray(label) ? label! as List<Object?> : <Object?>[label];
   return (
-    w: longestText(ctx, font.string, lines),
-    h: lines.length * font.lineHeight,
+    w: longestText(ctx, font, lines),
+    h: lines.length * font.lineHeight!,
   );
 }
 
@@ -443,7 +442,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
 int _fitStaticPointLabels(
   RadialLinearScale scale,
   RadialPositions positions,
-  ParsedFont font,
+  ChartTextStyle font,
   num staticPadding,
   double additionalAngle,
   int valueCount,
@@ -455,7 +454,7 @@ int _fitStaticPointLabels(
   final ctx = scale.ctx!;
   final labels = scale.pointLabels;
   final distance = jsToNumber(jsAdd(scale.drawingArea, staticPadding));
-  final lineHeight = font.lineHeight;
+  final lineHeight = font.lineHeight!;
   _LabelSize? emptySize;
   // `longestText` of one line: a width that is not above 0 gives 0. The font
   // is the state of each measure of the ordinary loop.
@@ -466,7 +465,7 @@ int _fitStaticPointLabels(
 
   ctx
     ..save()
-    ..font = font.string;
+    ..font = font;
   var i = 1;
   for (; i < valueCount; i++) {
     final label = labels[i];
@@ -736,7 +735,7 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
       ctx,
       scale.pointLabels[i],
       x,
-      y + (plFont.lineHeight / 2),
+      y + (plFont.lineHeight! / 2),
       plFont,
       _RenderTextOpts(
         color: optsAtIndex.color,
@@ -773,14 +772,14 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
 /// `String`, or -1. The ordinary loop continues there.
 int _drawStaticPointLabels(
   RadialLinearScale scale,
-  ParsedFont font,
+  ChartTextStyle font,
   Object? color,
   int start,
 ) {
   final ctx = scale.ctx!;
   final items = scale.pointLabelItems;
   final labels = scale.pointLabels;
-  final middle = font.lineHeight / 2;
+  final middle = font.lineHeight! / 2;
   for (var i = start; i >= 0; i--) {
     final item = items[i];
     if (!item.visible) {
@@ -820,7 +819,7 @@ bool _nativeStaticPlan(RadialLinearScale scale) =>
 
 /// Whether each new context of [pointLabels] gives the font [resolved]: all
 /// inputs are cached scalars, and the ordinary resolution gave these inputs.
-bool _staticFont(OptionView pointLabels, ParsedFont resolved) {
+bool _staticFont(OptionView pointLabels, ChartTextStyle resolved) {
   final inputs = TickFontCache.staticInputs(pointLabels);
   return inputs != null && TickFontCache.matchesResolved(inputs, resolved);
 }
@@ -1070,7 +1069,8 @@ class RadialLinearScale extends LinearScaleBase
       // Boolean - if true, show point labels
       ..display = true
       // Number - Point label font size in pixels
-      ..font = (FontSpecScope()..size = 10.0)
+      // DIVERGES(chartjs): adapt-text-style-fonts, the font is a style.
+      ..font = const ChartTextStyle(fontSize: 10)
       // Function - Used to convert point labels
       ..callback = _pointLabelCallback
       // Number - Additionl padding between scale and pointLabel
@@ -1623,16 +1623,16 @@ class RadialLinearScale extends LinearScaleBase
       final offset = getDistanceFromCenterForValue(this.ticks![index].value);
 
       if (jsTruthy(optsAtIndex.showLabelBackdrop)) {
-        ctx.font = tickFont.string;
+        ctx.font = tickFont;
         final width = ctx.measureText(jsToString(tick.label)).width;
         ctx.fillStyle = canvasStyle(optsAtIndex.backdropColor);
 
         final padding = toPadding(optsAtIndex.backdropPadding);
         ctx.fillRect(
           -width / 2 - padding.left,
-          -offset - jsToNumber(tickFont.size) / 2 - padding.top,
+          -offset - tickFont.fontSize! / 2 - padding.top,
           width + padding.width,
-          jsToNumber(tickFont.size) + padding.height,
+          tickFont.fontSize! + padding.height,
         );
       }
 

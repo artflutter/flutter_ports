@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -20,9 +21,9 @@ import 'draw_point_reference.dart';
 import 'rounded_rect_upstream.dart';
 
 // Upstream behaviour that test/specs/helpers.canvas.tests.js does not check
-// (AGENTS.md rule 3). The expected values of toFontString and isPointInArea
-// come from the helpers of the chart.js 4.5.1 npm package
-// (dist/chart.umd.js) in Node.js v24.12.0 on x64.
+// (AGENTS.md rule 3). The expected values of isPointInArea come from the
+// helpers of the chart.js 4.5.1 npm package (dist/chart.umd.js) in Node.js
+// v24.12.0 on x64.
 //
 // The other call sequences of the canvas functions come from
 // src/helpers/helpers.canvas.ts at v4.5.1, run with type stripping in
@@ -32,27 +33,6 @@ import 'rounded_rect_upstream.dart';
 // tool/reference/draw_point_reference.mjs writes on the reference engine
 // (Chart.js ADR 0045). The tests compare every number with closeTo
 // (Chart.js ADR 0034).
-
-/// A JavaScript font object literal, passed as a [FontSpec]. A null member
-/// is an absent key or JS `null`.
-final class _Font implements FontSpec {
-  const _Font({this.style, this.weight, this.size, this.family});
-
-  @override
-  Object? get lineHeight => null;
-
-  @override
-  final String? style;
-
-  @override
-  final Object? weight;
-
-  @override
-  final double? size;
-
-  @override
-  final String? family;
-}
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
 final class _Point implements Point {
@@ -309,29 +289,18 @@ final class _Corners implements TRBLCorners {
   final double bottomRight;
 }
 
-/// The JavaScript font object literal `{string, lineHeight}`, passed as a
-/// [CanvasFontSpec].
-final class _CanvasFont implements CanvasFontSpec {
-  const _CanvasFont(this.string, this.lineHeight);
+/// A font of the family `x` and the size 10 with the line height
+/// [lineHeight] (Chart.js ADR 0116, row `adapt-text-style-fonts`).
+ChartTextStyle _xFont(double lineHeight) => ChartTextStyle(
+  fontFamily: 'x',
+  fontFamilyFallback: const [],
+  fontSize: 10,
+  height: lineHeight / 10,
+);
 
-  @override
-  final String string;
-
-  @override
-  final Object? lineHeight;
-
-  @override
-  String? get family => null;
-
-  @override
-  double? get size => null;
-
-  @override
-  String? get style => null;
-
-  @override
-  Object? get weight => null;
-}
+/// The fonts `f` and `g` of the longestText cases.
+const _f = ChartTextStyle(fontFamily: 'f');
+const _g = ChartTextStyle(fontFamily: 'g');
 
 /// A JavaScript object literal of render options, passed as a
 /// [RenderTextOpts]. A null member is an absent key.
@@ -459,81 +428,6 @@ final List<DrawPointReferenceCase> _drawPointCases = [
 ];
 
 void main() {
-  group('toFontString', () {
-    test('returns null without a font, a size or a family', () {
-      expect(toFontString(null), isNull);
-      expect(toFontString(const _Font(family: 'Arial')), isNull);
-      expect(toFontString(const _Font(size: 12)), isNull);
-    });
-
-    test('joins style, weight, size and family', () {
-      expect(
-        toFontString(const _Font(size: 12, family: 'Arial')),
-        '12px Arial',
-      );
-      expect(
-        toFontString(
-          const _Font(
-            style: 'italic',
-            weight: 'bold',
-            size: 12,
-            family: 'Arial',
-          ),
-        ),
-        'italic bold 12px Arial',
-      );
-      expect(
-        toFontString(
-          const _Font(
-            style: 'normal',
-            weight: 300.5,
-            size: 1 / 3,
-            family: "'Helvetica Neue', sans-serif",
-          ),
-        ),
-        "normal 300.5 0.3333333333333333px 'Helvetica Neue', sans-serif",
-      );
-    });
-
-    test('leaves out a falsy style or weight', () {
-      expect(
-        toFontString(
-          const _Font(style: '', weight: 0, size: 12, family: 'Arial'),
-        ),
-        '12px Arial',
-      );
-      expect(
-        toFontString(
-          const _Font(weight: double.nan, size: 1e21, family: 'Arial'),
-        ),
-        '1e+21px Arial',
-      );
-    });
-
-    test('writes the weight and the size with Number::toString', () {
-      expect(
-        toFontString(const _Font(weight: 600, size: 12.5, family: 'Arial')),
-        '600 12.5px Arial',
-      );
-      expect(
-        toFontString(const _Font(size: -0, family: 'Arial')),
-        '0px Arial',
-      );
-      expect(
-        toFontString(const _Font(size: double.nan, family: 'Arial')),
-        'NaNpx Arial',
-      );
-      expect(
-        toFontString(const _Font(size: 1e-7, family: 'Arial')),
-        '1e-7px Arial',
-      );
-    });
-
-    test('keeps an empty family', () {
-      expect(toFontString(const _Font(size: 12, family: '')), '12px ');
-    });
-  });
-
   group('isPointInArea', () {
     const area = _Area(left: 0, top: 0, right: 512, bottom: 256);
 
@@ -639,12 +533,12 @@ void main() {
         // neither and gives 30 for this array.
         final ctx = createMockContext();
         expect(
-          longestText(ctx, 'f', ['constructor', 'toString', 'ab']),
+          longestText(ctx, _f, ['constructor', 'toString', 'ab']),
           110,
         );
         expect(ctx.getCalls().map((call) => call['args']), [
           <Object?>[],
-          ['f'],
+          [_f],
           ['constructor'],
           ['toString'],
           ['ab'],
@@ -669,12 +563,12 @@ void main() {
         undefined,
         5,
       ];
-      expect(longestText(ctx, 'f', things), 30);
+      expect(longestText(ctx, _f, things), 30);
       // Upstream passes the number 5 to ctx.measureText, which converts it
       // to '5'.
       expect(ctx.getCalls().map((call) => call['args']), [
         <Object?>[],
-        ['f'],
+        [_f],
         ['ab'],
         ['abc'],
         ['5'],
@@ -685,18 +579,18 @@ void main() {
     test('collects garbage as upstream, also for an odd gc length', () {
       final ctx = createMockContext();
       final cache = LongestTextCache();
-      longestText(ctx, 'f', ['a', 'b', 'c', 'd'], cache);
+      longestText(ctx, _f, ['a', 'b', 'c', 'd'], cache);
       expect(cache.data, {'a': 10, 'b': 10, 'c': 10, 'd': 10});
       expect(cache.garbageCollect, ['a', 'b', 'c', 'd']);
-      expect(cache.font, 'f');
+      expect(cache.font, _f);
 
       // gc.length / 2 is 2.5: the loop deletes 'a', 'b' and 'c', and
       // splice removes 2 entries.
-      longestText(ctx, 'f', ['eeeee'], cache);
+      longestText(ctx, _f, ['eeeee'], cache);
       expect(cache.data, {'d': 10, 'eeeee': 50});
       expect(cache.garbageCollect, ['c', 'd', 'eeeee']);
 
-      longestText(ctx, 'f', ['c'], cache);
+      longestText(ctx, _f, ['c'], cache);
       expect(cache.data, {'eeeee': 50});
       expect(cache.garbageCollect, ['eeeee', 'c']);
     });
@@ -704,19 +598,19 @@ void main() {
     test('drops the cache when the font changes', () {
       final ctx = createMockContext();
       final cache = LongestTextCache();
-      longestText(ctx, 'f', ['a', 'b', 'c', 'd'], cache);
-      expect(longestText(ctx, 'g', ['xy'], cache), 20);
+      longestText(ctx, _f, ['a', 'b', 'c', 'd'], cache);
+      expect(longestText(ctx, _g, ['xy'], cache), 20);
       expect(cache.data, {'xy': 20});
       expect(cache.garbageCollect, ['xy']);
-      expect(cache.font, 'g');
+      expect(cache.font, _g);
     });
 
     test('reuses the widths of the cache', () {
       final ctx = createMockContext();
       final cache = LongestTextCache();
-      longestText(ctx, 'f', ['abc'], cache);
+      longestText(ctx, _f, ['abc'], cache);
       ctx.resetCalls();
-      expect(longestText(ctx, 'f', ['abc'], cache), 30);
+      expect(longestText(ctx, _f, ['abc'], cache), 30);
       expect(ctx.getCalls().map((call) => call['name']), [
         'save',
         'setFont',
@@ -1068,7 +962,7 @@ void main() {
         ['a', 'b'],
         1,
         2,
-        const _CanvasFont('9px x', '15'),
+        _xFont(15),
         const _Opts(
           backdrop: _Backdrop(
             1,
@@ -1129,7 +1023,7 @@ void main() {
         {'name': 'save', 'args': <Object?>[]},
         {
           'name': 'setFont',
-          'args': ['9px x'],
+          'args': [_xFont(15)],
         },
         // A rotation of 0 is not null or undefined.
         {
@@ -1147,7 +1041,6 @@ void main() {
         },
         ...underline(10),
         ...backdrop,
-        // Number('15') is 15.
         {
           'name': 'fillText',
           'args': ['b', 1, 17, null],
@@ -1168,7 +1061,7 @@ void main() {
         'a',
         1,
         2,
-        const _CanvasFont('9px x', 20),
+        _xFont(20),
         const _Opts(strokeWidth: 3),
       );
       expect(ctx.getCalls().map((call) => call['name']), [
@@ -1189,7 +1082,7 @@ void main() {
           'a',
           1,
           2,
-          const _CanvasFont('9px x', 20),
+          _xFont(20),
           _Opts(
             strokeColor: const ui.Color.fromRGBO(255, 0, 0, 1),
             strokeWidth: width,
@@ -1203,17 +1096,9 @@ void main() {
       }
     });
 
-    test("gives NaN lines for a line height of '1.2em'", () {
-      final ctx = createMockContext();
-      renderText(ctx, ['a', 'b'], 1, 2, const _CanvasFont('9px x', '1.2em'));
-      final second = ctx.getCalls()[3]['args']! as List<Object?>;
-      expect(second[0], 'b');
-      expect(second[2], isNaN);
-    });
-
     test('draws a number text as its ToString', () {
       final ctx = createMockContext();
-      renderText(ctx, [5, 0.5], 0, 0, const _CanvasFont('9px x', 10));
+      renderText(ctx, [5, 0.5], 0, 0, _xFont(10));
       expect(ctx.getCalls()[2]['args'], ['5', 0, 0, null]);
       expect(ctx.getCalls()[3]['args'], ['0.5', 0, 10, null]);
     });

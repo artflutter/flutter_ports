@@ -238,19 +238,6 @@ void main() {
       expect(options.startAngle, '30');
     });
 
-    test('a string font size stays a string', () {
-      final options = CoreScaleOptions(
-        _view([
-          <String, Object?>{
-            'ticks': <String, Object?>{
-              'font': <String, Object?>{'size': '12'},
-            },
-          },
-        ]),
-      );
-      expect(FontSpecOptions(options.ticks.font).size, '12');
-    });
-
     test('a string point label padding stays a string', () {
       final options = RadialLinearScaleOptions(
         _view([

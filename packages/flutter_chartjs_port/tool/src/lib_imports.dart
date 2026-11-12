@@ -57,6 +57,7 @@ const Set<String> purePackageLibraries = {
   collectionLibrary,
   'package:clock/clock.dart',
   animationLibrary,
+  paintingLibrary,
   'package:meta/meta.dart',
   'package:intl/intl.dart',
   'package:intl/number_symbols.dart',
@@ -67,6 +68,15 @@ const Set<String> purePackageLibraries = {
 /// the value of the option `easing`, a Flutter `Curve`, and for no other
 /// framework API.
 const String animationLibrary = 'package:flutter/animation.dart';
+
+/// The Flutter library of `TextStyle`. A core layer imports it for the font
+/// of the options, a `ChartTextStyle` (Chart.js ADR 0116), with a `show` list
+/// of [paintingNames] only.
+const String paintingLibrary = 'package:flutter/painting.dart';
+
+/// The names that a core layer shows from [paintingLibrary]: `TextStyle`,
+/// and `TextOverflow`, the type of one field of `TextStyle`.
+const Set<String> paintingNames = {'TextOverflow', 'TextStyle'};
 
 /// The library of `package:collection` that `lib/` can import.
 const String collectionLibrary = 'package:collection/collection.dart';
@@ -197,6 +207,7 @@ const Set<String> webTestLibraries = {
   'package:test/',
   'package:chartjs_test_utils/pure.dart',
   animationLibrary,
+  paintingLibrary,
 };
 
 /// The directory that ported files never import.
@@ -447,6 +458,24 @@ final class _Edge {
         'imports ${edge.uri}, but the file is in the pure layer'
         '${_chain(path, pure)} ($reason, porting-flow.md 3).',
       );
+    }
+  }
+
+  // The painting library in a pure layer: TextStyle only (Chart.js ADR 0116).
+  for (final path in pure.keys) {
+    final library = libraries[path]!;
+    for (final directive in library.source.directives) {
+      if (!directive.uris.contains(paintingLibrary)) continue;
+      final shown = directive.shown;
+      if (shown == null || !shown.every(paintingNames.contains)) {
+        report(
+          library,
+          directive.line,
+          '${directive.keyword}s $paintingLibrary without '
+          '"show ${paintingNames.join(', ')}" in a core layer (Chart.js ADR '
+          '0116).',
+        );
+      }
     }
   }
 

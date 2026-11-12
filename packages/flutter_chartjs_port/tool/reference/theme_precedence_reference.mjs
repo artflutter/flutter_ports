@@ -111,6 +111,12 @@ import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
 import {fileURLToPath} from 'node:url';
 
+import {
+  FONT_OPTION_KEYS,
+  fontObjectRecord,
+  resolvedFontRecord,
+} from './font_record.mjs';
+
 /**
  * The submodules that the script reads: the header of the entry in
  * tool/port_sources.yaml, the folder in third_party/ and the folders that the
@@ -454,10 +460,20 @@ const pluginExports = await import(PLUGINS.href);
 // ---------------------------------------------------------------------------
 // The observations.
 
-/** The JSON text of [value] with the replacer of the observations. */
+/**
+ * The JSON text of [value] with the replacer of the observations. A font
+ * object of an option key is its record (fontObjectRecord): the port holds
+ * a font as a TextStyle (Chart.js ADR 0116).
+ */
 function json(value) {
   return JSON.stringify(value, (key, v) =>
-    v === undefined ? '<undefined>' : typeof v === 'function' ? '<fn>' : v,
+    v === undefined
+      ? '<undefined>'
+      : typeof v === 'function'
+        ? '<fn>'
+        : FONT_OPTION_KEYS.has(key) && v !== null && typeof v === 'object' && !Array.isArray(v)
+          ? fontObjectRecord(v)
+          : v,
   );
 }
 
@@ -1190,7 +1206,7 @@ scenario('radial point label fonts', (observe) => {
         levels.includes('themeType') || levels.includes('themeScale');
       const o = radialChart(r, themed ? theme : null).scales.r.options;
       const font = toFont(o.pointLabels.font);
-      return [font.family, font.size, font.string];
+      return resolvedFontRecord(font);
     },
     observe,
   );
@@ -1366,24 +1382,13 @@ function snapshot(name, theme, user) {
     // the title (core.scale.js:1595).
     const tickFont = chart.scales.x._resolveTickFontOptions(0);
     const titleFont = toFont(x.title.font);
-    observe('scale x fonts', [
-      tickFont.family,
-      tickFont.size,
-      tickFont.string,
-      titleFont.family,
-      titleFont.size,
-      titleFont.string,
-    ]);
+    observe('scale x fonts', [resolvedFontRecord(tickFont), resolvedFontRecord(titleFont)]);
     const o = chart.options;
     observe('chart', [
       o.color,
       o.backgroundColor,
       o.borderColor,
-      o.font.family,
-      o.font.size,
-      o.font.style,
-      o.font.weight,
-      o.font.lineHeight,
+      fontObjectRecord(o.font),
     ]);
     observe('plugin', probeK);
   });
@@ -1596,14 +1601,7 @@ function radialSnapshot(name, theme, replace) {
     // _resolveTickFontOptions (core.scale.js:1700-1703).
     const pointLabelFont = toFont(o.pointLabels.font);
     const tickFont = r._resolveTickFontOptions(0);
-    observe('fonts', [
-      pointLabelFont.family,
-      pointLabelFont.size,
-      pointLabelFont.string,
-      tickFont.family,
-      tickFont.size,
-      tickFont.string,
-    ]);
+    observe('fonts', [resolvedFontRecord(pointLabelFont), resolvedFontRecord(tickFont)]);
     observe('size', [r.width, r.height]);
   }));
 }

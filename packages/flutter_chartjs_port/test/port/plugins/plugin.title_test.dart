@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -291,7 +292,7 @@ void main() {
         'display': true,
         'text': 'a',
         'padding': 10,
-        'font': <String, Object?>{'size': 12},
+        'font': const ChartTextStyle(fontSize: 12),
         'position': ChartPosition.top,
       };
       final withMargins = Title((chart: null, options: options(), ctx: null))

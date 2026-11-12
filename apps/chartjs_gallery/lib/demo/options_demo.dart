@@ -5,8 +5,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/helpers.dart'
-    show ParsedFont, toFont, toFontString, toPadding;
+import 'package:flutter_chartjs_port/helpers.dart' show toFont, toPadding;
 // The demo calls pure resolvers without constructing a Chart first.
 // Not public: _createResolver and _attachContext, upstream `_` helpers.
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -31,24 +30,25 @@ final List<_Scope> _scopes = [
   ),
 ];
 
-/// The font options of the `toFont` card.
-final List<({String label, Object? options})> _fonts = [
-  (label: '{}  → defaults.font', options: <String, Object?>{}),
+/// The fonts of the `toFont` card: `ChartTextStyle`s (Chart.js ADR 0116).
+final List<({String label, TextStyle options})> _fonts = [
+  (label: 'ChartTextStyle()  → defaults.font', options: const ChartTextStyle()),
   (
-    label: "{size: '18px'}",
-    options: <String, Object?>{'size': '18px'},
+    label: 'ChartTextStyle(fontSize: 18)',
+    options: const ChartTextStyle(fontSize: 18),
   ),
   (
     label:
-        "{size: 16, style: 'italic', weight: 600, family: 'Georgia, "
-        "serif', lineHeight: '150%'}",
-    options: <String, Object?>{
-      'size': 16.0,
-      'style': 'italic',
-      'weight': 600.0,
-      'family': 'Georgia, serif',
-      'lineHeight': '150%',
-    },
+        'ChartTextStyle(fontSize: 16, fontStyle: italic, fontWeight: w600, '
+        "fontFamily: 'Georgia', height: 1.5)",
+    options: const ChartTextStyle(
+      fontSize: 16,
+      fontStyle: FontStyle.italic,
+      fontWeight: FontWeight.w600,
+      fontFamily: 'Georgia',
+      fontFamilyFallback: ['serif'],
+      height: 1.5,
+    ),
   ),
 ];
 
@@ -105,8 +105,8 @@ class OptionsDemo extends StatelessWidget {
         DemoCard(
           title: 'toFont',
           source:
-              'helpers.options toFont(options) → '
-              'helpers.canvas toFontString(font)',
+              'helpers.options toFont(font): the font merged over '
+              'defaults.font',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -152,10 +152,10 @@ class OptionsDemo extends StatelessWidget {
   Widget _nested(BuildContext context) {
     final dataset = <String, Object?>{
       'backgroundColor': const ui.Color(0xFF36A2EB),
-      'font': <String, Object?>{'size': 20.0, 'weight': 'bold'},
+      'font': const ChartTextStyle(fontSize: 20, fontWeight: FontWeight.bold),
     };
     final resolver = createResolver([dataset, defaults]);
-    final font = resolver['font']! as JsObjectFace;
+    final font = resolver['font']! as ChartTextStyle;
     final context0 = attachContext(resolver, <String, Object?>{});
     final hover = context0['hoverBackgroundColor'];
     return Column(
@@ -163,17 +163,17 @@ class OptionsDemo extends StatelessWidget {
       children: [
         const Mono(
           'dataset = {backgroundColor: Color(0xFF36A2EB), '
-          "font: {size: 20, weight: 'bold'}}",
+          'font: ChartTextStyle(fontSize: 20, fontWeight: bold)}',
         ),
         const SizedBox(height: 8),
         _table(
           context,
           const ['read', 'resolved', 'from'],
           [
-            ['font.size', showJs(font['size']), 'dataset'],
-            ['font.weight', showJs(font['weight']), 'dataset'],
-            ['font.family', showJs(font['family']), 'defaults.font'],
-            ['font.lineHeight', showJs(font['lineHeight']), 'defaults.font'],
+            ['font.fontSize', showJs(font.fontSize), 'dataset'],
+            ['font.fontWeight', '${font.fontWeight?.value}', 'dataset'],
+            ['font.fontFamily', '${font.fontFamily}', 'defaults.font'],
+            ['font.lineHeight', showJs(font.lineHeight), 'fontSize × height'],
             [
               'hoverBackgroundColor',
               showJs(hover),
@@ -246,24 +246,12 @@ class OptionsDemo extends StatelessWidget {
   }
 }
 
-/// One `toFont` result: the CSS string, the sizes and a sample text.
+/// One `toFont` result: the merged font, its line height and a sample text.
 class _FontRow extends StatelessWidget {
   const _FontRow({required this.label, required this.font});
 
   final String label;
-  final ParsedFont font;
-
-  /// The Flutter weight of a CSS font weight: `bold`, `normal` or a number.
-  static FontWeight? _weight(Object? weight) => switch (weight) {
-    'bold' => FontWeight.w700,
-    'normal' => FontWeight.w400,
-    final num n => FontWeight.values[((n / 100).round() - 1).clamp(0, 8)],
-    _ => null,
-  };
-
-  /// The first family of a CSS family list, without quotes.
-  static String? _family(String? families) =>
-      families?.split(',').first.trim().replaceAll(RegExp('[\'"]'), '');
+  final ChartTextStyle font;
 
   @override
   Widget build(BuildContext context) {
@@ -274,25 +262,17 @@ class _FontRow extends StatelessWidget {
         Mono('toFont($label)', style: theme.textTheme.bodySmall),
         const SizedBox(height: 4),
         Mono(
-          '${toFontString(font)}',
+          '${font.fontFamily} · size ${showJs(font.fontSize)} · height '
+          '${showJs(font.height)}',
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         Mono(
-          'size ${showJs(font.size)} · lineHeight ${showJs(font.lineHeight)}px'
-          ' · weight ${showJs(font.weight)} · style ${showJs(font.style)}',
+          'lineHeight ${showJs(font.lineHeight)}px · weight '
+          '${font.fontWeight?.value} · style ${font.fontStyle?.name}',
           style: theme.textTheme.bodySmall,
         ),
         const SizedBox(height: 4),
-        Text(
-          'The quick brown fox · 1,234.56',
-          style: TextStyle(
-            fontSize: font.size,
-            height: font.size == null ? null : font.lineHeight / font.size!,
-            fontWeight: _weight(font.weight),
-            fontStyle: font.style == 'italic' ? FontStyle.italic : null,
-            fontFamily: _family(font.family),
-          ),
-        ),
+        Text('The quick brown fox · 1,234.56', style: font),
       ],
     );
   }

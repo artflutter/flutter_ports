@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -142,7 +143,7 @@ void main() {
             'backdropPadding': 2,
             'color': jsGet(Chart.defaults, 'color'),
             'display': true,
-            'font': <String, Object?>{'size': 10},
+            'font': const ChartTextStyle(fontSize: 10),
             'callback': jsGet(jsGet(defaultConfig, 'pointLabels'), 'callback'),
             'padding': 5,
             'centerPointLabels': false,

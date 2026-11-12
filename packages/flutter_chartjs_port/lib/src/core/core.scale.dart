@@ -49,6 +49,7 @@ import 'dart:math' as math;
 
 import 'dart:ui' show TextAlign;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
@@ -77,13 +78,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, halfPi, int16Range, limitValue, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show
-        ParsedFont,
-        ScriptableScaleContext,
-        addGrace,
-        createContext,
-        toFont,
-        toPadding;
+    show ScriptableScaleContext, addGrace, createContext, toFont, toPadding;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -92,10 +87,10 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     as types
@@ -315,7 +310,7 @@ final class _TextCache {
 /// `each` gives the values of [caches] in the `Object.keys` order. The keys
 /// are font strings, which are never array indexes. Thus the order is the
 /// insertion order of the Map.
-void _garbageCollect(Map<String, _TextCache> caches, int length) {
+void _garbageCollect(Map<TextStyle, _TextCache> caches, int length) {
   for (final cache in caches.values) {
     final gc = cache.gc;
     final gcLen = gc.length / 2;
@@ -357,7 +352,7 @@ double _getTitleHeight(ScaleTitleOptions options, Object? fallback) {
   final text = options.text;
   final lines = isArray(text) ? (text! as List<Object?>).length : 1;
 
-  return (lines * font.lineHeight) + padding.height;
+  return (lines * font.lineHeight!) + padding.height;
 }
 
 /// core.scale.js:107 `createScaleContext`.
@@ -476,10 +471,10 @@ final class _AxisLabelPlan {
   _AxisLabelPlan(this.labels, this.font, this.sizes);
 
   final List<String> labels;
-  final StaticFontInputs font;
+  final TextStyle font;
   final _LabelSizes sizes;
 
-  bool matches(List<Tick> ticks, StaticFontInputs currentFont) {
+  bool matches(List<Tick> ticks, TextStyle currentFont) {
     if (font != currentFont || labels.length != ticks.length) return false;
     for (var i = 0; i < labels.length; i++) {
       final label = ticks[i].label;
@@ -659,7 +654,7 @@ final class _LabelItem implements types.LabelItem {
   final Object? label;
 
   @override
-  final types.CanvasFontSpec font;
+  final ChartTextStyle font;
 
   @override
   final double textOffset;
@@ -924,7 +919,7 @@ class Scale extends _ScalePrototype
 
   /// core.scale.js:235 `_longestTextCache`, the measured label widths of
   /// each font string.
-  final Map<String, _TextCache> _longestTextCache = {};
+  final Map<TextStyle, _TextCache> _longestTextCache = {};
 
   /// core.scale.js:237 `_startPixel`. NaN stands for JS `undefined`.
   /// controller.bar.js:549 reads it.
@@ -1955,7 +1950,7 @@ class Scale extends _ScalePrototype
         increment == 1 &&
         identical(ticks, this.ticks) &&
         ticks.runtimeType == _nativeTickListType;
-    StaticFontInputs? planFont;
+    TextStyle? planFont;
     List<String>? planLabels;
     final planOptions = canPlan ? options : null;
     final planTicks = planOptions?.ticks.raw;
@@ -1963,8 +1958,7 @@ class Scale extends _ScalePrototype
     var highestLabelSize = 0.0;
     double i;
     Object? label;
-    types.CanvasFontSpec tickFont;
-    String? fontString;
+    ChartTextStyle tickFont;
     _TextCache cache;
     double lineHeight;
     double width;
@@ -1975,21 +1969,21 @@ class Scale extends _ScalePrototype
       final index = i.toInt();
       label = ticks[index].label;
       tickFont = resolveTickFontOptions(index);
-      ctx!.font = fontString = tickFont.string;
+      // DIVERGES(chartjs): adapt-text-style-fonts, the font is a style.
+      ctx!.font = tickFont;
       if (canPlan &&
           index == 0 &&
-          ctx.font == fontString &&
+          ctx.font == tickFont &&
           $context != null &&
           identical(ticks, this.ticks) &&
           identical(options, planOptions) &&
           identical(options.ticks.raw, planTicks) &&
           label is String &&
-          label == ticks[0].label &&
-          tickFont is ParsedFont) {
+          label == ticks[0].label) {
         final inputs = TickFontCache.staticInputs(planTicks);
         planFont =
             inputs != null && TickFontCache.matchesResolved(inputs, tickFont)
-            ? inputs
+            ? tickFont
             : null;
         final plan = _labelPlan;
         if (planFont != null && plan != null && plan.matches(ticks, planFont)) {
@@ -2003,11 +1997,9 @@ class Scale extends _ScalePrototype
         }
         if (planFont != null) planLabels = _AxisLabelPlan.captureLabels(ticks);
       }
-      // `caches[fontString]` converts a `null` font string to the key
-      // 'null'.
-      final key = fontString ?? 'null';
-      cache = caches[key] ??= _TextCache();
-      lineHeight = jsToNumber(tickFont.lineHeight);
+      // `caches[fontString]`: the caches by font, a TextStyle.
+      cache = caches[tickFont] ??= _TextCache();
+      lineHeight = tickFont.lineHeight!;
       width = height = 0;
       // Undefined labels and arrays should not be measured
       if (!isNullOrUndef(label) && !isArray(label)) {
@@ -2476,7 +2468,7 @@ class Scale extends _ScalePrototype
     // TickAlign.inner of `_getXAxisLabelAlignment`.
     Object? textAlign;
     Object pixel;
-    types.CanvasFontSpec font;
+    ChartTextStyle font;
     double lineHeight;
     int lineCount;
     double textOffset;
@@ -2540,7 +2532,7 @@ class Scale extends _ScalePrototype
       final optsAtIndex = optionTicks.setContext(getContext(i));
       pixel = jsAdd(getPixelForTick(i), optionTicks.labelOffset);
       font = resolveTickFontOptions(i);
-      lineHeight = jsToNumber(font.lineHeight);
+      lineHeight = font.lineHeight!;
       lineCount = isArray(label) ? (label! as List<Object?>).length : 1;
       final halfCount = lineCount / 2;
       final color = optsAtIndex.color;
@@ -2994,7 +2986,7 @@ class Scale extends _ScalePrototype
     final font = toFont(title.font);
     final padding = toPadding(title.padding);
     final align = title.align;
-    var offset = font.lineHeight / 2;
+    var offset = font.lineHeight! / 2;
 
     if (position == ChartPosition.bottom ||
         position == ChartPosition.center ||
@@ -3002,7 +2994,7 @@ class Scale extends _ScalePrototype
       offset += padding.bottom;
       final text = title.text;
       if (isArray(text)) {
-        offset += font.lineHeight * ((text! as List<Object?>).length - 1);
+        offset += font.lineHeight! * ((text! as List<Object?>).length - 1);
       }
     } else {
       offset += padding.top;
@@ -3130,7 +3122,7 @@ class Scale extends _ScalePrototype
   /// @return {object}
   /// @protected
   @internal
-  types.CanvasFontSpec resolveTickFontOptions(int index) {
+  ChartTextStyle resolveTickFontOptions(int index) {
     // DIVERGES(chartjs): adapt-static-tick-font, guarded scalar font reuse.
     final ticks = options.ticks;
     final context = getContext(index);
@@ -3149,7 +3141,7 @@ class Scale extends _ScalePrototype
   /// @protected
   @internal
   double maxDigits() {
-    final fontSize = jsToNumber(resolveTickFontOptions(0).lineHeight);
+    final fontSize = resolveTickFontOptions(0).lineHeight!;
     return (isHorizontal() ? width : height) / fontSize;
   }
 }

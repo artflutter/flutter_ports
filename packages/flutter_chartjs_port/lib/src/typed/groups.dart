@@ -41,7 +41,6 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/theme/css.dart' show fontScopeOf;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show ChartAnimationDetails, ChartLegendEventDetails, ChartTooltipItem;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
@@ -210,7 +209,7 @@ LegendOptionsScope lowerLegend(
 ) {
   final labels = LegendLabelOptionsScope();
   put(labels, OptionKey.color, colorValue(legend.labelColor));
-  put(labels, OptionKey.font, fontScopeOf(legend.labelFont));
+  put(labels, OptionKey.font, legend.labelFont);
   put(labels, OptionKey.boxWidth, legend.boxWidth);
   put(labels, OptionKey.boxHeight, legend.boxHeight);
   put(labels, OptionKey.padding, legend.labelPadding);
@@ -345,7 +344,7 @@ TitleOptionsScope lowerTitle(ChartTitle title) {
   put(scope, OptionKey.display, title.display);
   put(scope, OptionKey.text, title.text);
   put(scope, OptionKey.color, colorValue(title.color));
-  put(scope, OptionKey.font, fontScopeOf(title.font));
+  put(scope, OptionKey.font, title.font);
   put(scope, OptionKey.align, title.align);
   put(scope, OptionKey.position, title.position);
   put(scope, OptionKey.padding, paddingScope(title.padding));
@@ -587,11 +586,11 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.yAlign, tooltip.yAlign);
   put(scope, OptionKey.backgroundColor, colorValue(tooltip.backgroundColor));
   put(scope, OptionKey.titleColor, colorValue(tooltip.titleColor));
-  put(scope, OptionKey.titleFont, fontScopeOf(tooltip.titleFont));
+  put(scope, OptionKey.titleFont, tooltip.titleFont);
   put(scope, OptionKey.bodyColor, colorValue(tooltip.bodyColor));
-  put(scope, OptionKey.bodyFont, fontScopeOf(tooltip.bodyFont));
+  put(scope, OptionKey.bodyFont, tooltip.bodyFont);
   put(scope, OptionKey.footerColor, colorValue(tooltip.footerColor));
-  put(scope, OptionKey.footerFont, fontScopeOf(tooltip.footerFont));
+  put(scope, OptionKey.footerFont, tooltip.footerFont);
   put(scope, OptionKey.padding, paddingScope(tooltip.padding));
   put(scope, OptionKey.cornerRadius, tooltip.cornerRadius);
   put(scope, OptionKey.displayColors, tooltip.displayColors);

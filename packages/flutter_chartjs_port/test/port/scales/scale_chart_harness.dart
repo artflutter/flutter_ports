@@ -62,6 +62,7 @@ import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
@@ -81,6 +82,7 @@ import 'package:flutter_chartjs_port/src/upstream.dart' show chartJsVersion;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/font_record.dart';
 import '../canvas/path2d_record.dart';
 import '../helpers/rounded_rect_upstream.dart';
 
@@ -294,10 +296,10 @@ final class RecordingContext extends MockContext {
   HTMLCanvasElement get canvas => target.canvas;
 
   @override
-  String? get font => target.font;
+  TextStyle? get font => target.font;
 
   @override
-  set font(String? font) {
+  set font(TextStyle? font) {
     super.font = font;
     target.font = font;
   }
@@ -499,7 +501,8 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
 /// - `{'num': s}`, a number that JSON cannot hold: `'NaN'`, `'Infinity'`,
 ///   `'-Infinity'` or `'-0'`. `'-0'` matches both zeros: no behavior
 ///   depends on the sign of a zero pixel (Chart.js ADR 0034).
-/// - Lists and maps: item by item. Other values: `==`.
+/// - Lists and maps: item by item. A font: [fontFieldsMatcher]. Other
+///   values: `==`.
 Object? referenceMatcher(Object? expected) => switch (expected) {
   final String text when isReferenceColor(text) => referenceColorOrString(text),
   final num n when n.isNaN => isNaN,
@@ -518,8 +521,28 @@ Object? referenceMatcher(Object? expected) => switch (expected) {
     for (final MapEntry(:key, :value) in map.entries)
       key: referenceMatcher(value),
   },
+  final TextStyle font => fontFieldsMatcher(font),
   _ => expected,
 };
+
+/// The matcher of a resolved font against the font [expected] of upstream
+/// data (row adapt-text-style-fonts): each field that [expected] sets.
+///
+/// `Object.keys` of an upstream font resolver gives the keys of its first
+/// scope only, and each value comes from all scopes
+/// (helpers.config.ts:73-75, :94-96). The generator writes these keys as
+/// a `ChartTextStyle`, and the port merges all fields into one `TextStyle`.
+Matcher fontFieldsMatcher(TextStyle expected) => isA<TextStyle>()
+    .having((f) => f.fontFamily, 'fontFamily', expected.fontFamily ?? anything)
+    .having(
+      (f) => f.fontFamilyFallback,
+      'fontFamilyFallback',
+      expected.fontFamilyFallback ?? anything,
+    )
+    .having((f) => f.fontSize, 'fontSize', expected.fontSize ?? anything)
+    .having((f) => f.fontStyle, 'fontStyle', expected.fontStyle ?? anything)
+    .having((f) => f.fontWeight, 'fontWeight', expected.fontWeight ?? anything)
+    .having((f) => f.height, 'height', expected.height ?? anything);
 
 /// The matchers of the calls of a reference text: one JSON array
 /// `[name, ...args]` for each line, as the records `{name, args}` of
@@ -540,6 +563,9 @@ Map<String, Object?> _callMatcher(List<Object?> call) => {
 /// The matcher of one argument of a reference call: a `Path2D` record
 /// `{path, calls}`, a List item by item, or [referenceMatcher].
 Object? _argMatcher(Object? arg) => switch (arg) {
+  // The record of a font (row adapt-text-style-fonts, font_record.dart).
+  {'font': final Map<String, Object?> _} when arg.length == 1 =>
+    fontRecordMatcher(arg),
   {'path': final int id, 'calls': final List<Object?> calls}
       when arg.length == 2 =>
     <String, Object?>{
@@ -803,7 +829,7 @@ typedef ScaleChartCase = ({
 
 /// One width of a reference file: the `ReferenceWidth` typedef of the
 /// generated file has this record type.
-typedef ScaleChartWidth = ({String font, String text, double width});
+typedef ScaleChartWidth = ({TextStyle font, String text, double width});
 
 /// A test that the reference comes from Node.js v24.22.1 on arm64
 /// (Chart.js ADR 0045) and from a build of the pinned Chart.js: [dist] is
@@ -849,30 +875,39 @@ void testScaleChartCases(
   }
 }
 
-/// The first font of a canvas (HTML), and of the mock of the generators.
-const String _firstFont = '10px sans-serif';
+/// The record of the first font of a canvas (HTML), and of the mock of the
+/// generators: `'10px sans-serif'` (row adapt-text-style-fonts).
+final Map<String, Object?> _firstFont = fontRecordOf(
+  const TextStyle(fontFamily: 'sans-serif', fontSize: 10),
+);
 
 /// A test for each font of [widths]: each text in that font on the canvas
 /// of the harness has the width of the generator.
 ///
 /// A test writes its font on a new canvas. For the first font of a canvas,
 /// `'10px sans-serif'`, it writes no font: the first font of the canvas of
-/// the harness must be the first font of the mock of the generator.
+/// the harness must be the first font of the mock of the generator. The
+/// fonts compare by their records (`font_record.dart`).
 ///
 /// The generator adds the advances and the `kern` pairs of Liberation Sans
 /// 2.1.5 in float64. Flutter adds float32 advances. For integer px sizes
 /// each advance is `units * size / 2048`, a dyadic number, and both sums
 /// are exact. Thus the widths are equal to 1e-9.
 void testReferenceWidths(List<ScaleChartWidth> widths) {
-  final fonts = <String, List<ScaleChartWidth>>{};
+  final fonts = <TextStyle, List<ScaleChartWidth>>{};
   for (final width in widths) {
     (fonts[width.font] ??= []).add(width);
   }
   for (final MapEntry(key: font, value: texts) in fonts.entries) {
-    test('${texts.length} texts in $font', () {
+    final record = fontRecordOf(font);
+    test('${texts.length} texts in ${jsonEncode(record['font'])}', () {
       final ctx = UiCanvasElement().getContext2d();
-      if (font != _firstFont) ctx.font = font;
-      expect(ctx.font, font, reason: 'the canvas takes the font');
+      if (!fontRecordMatcher(_firstFont).matches(font, {})) ctx.font = font;
+      expect(
+        ctx.font,
+        fontRecordMatcher(record),
+        reason: 'the canvas takes the font',
+      );
       for (final (font: _, :text, :width) in texts) {
         expect(
           ctx.measureText(text).width,

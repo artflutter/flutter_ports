@@ -29,6 +29,8 @@ import {arch, platform, release, tmpdir} from 'node:os';
 import {extname, join, normalize, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
+import {dartCanvasFont} from '../font_record.mjs';
+
 const PACKAGES = fileURLToPath(new URL('../../../../', import.meta.url));
 const PAGE = 'flutter_chartjs_port/tool/reference/text_metrics/text_metrics.html';
 const OUT = fileURLToPath(
@@ -136,10 +138,12 @@ function str(s) {
   return pieces.map((p) => `${quote}${p}${quote}`).join(' ');
 }
 
-/** The Dart literal of the CSS font [font], with the family as a constant. */
+/**
+ * The Dart literal of the CSS font [font]: a ChartTextStyle with its fields
+ * (Chart.js ADR 0116, tool/reference/font_record.mjs).
+ */
 function fontLiteral(font) {
-  if (!font.endsWith(result.family)) return str(font);
-  return `'${font.slice(0, -result.family.length)}$textMetricsFamily'`;
+  return dartCanvasFont(font);
 }
 
 const fontIndex = new Map(result.fonts.map((f, i) => [f.font, i]));
@@ -178,8 +182,11 @@ const dart = `// Original code, not ported from Chart.js: Chrome text-metric ref
 // Do not edit. ${chrome} on ${machine}, headless:
 // canvas measureText with Liberation Sans 2.1.5. ${result.cases.length} cases.
 
+import 'dart:ui' show FontStyle, FontWeight;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasTextBaseline;
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// The Chrome version that generated the reference.
 const String textMetricsChrome = ${str(chrome)};
@@ -196,13 +203,13 @@ const String textMetricsFamily = ${str(result.family)};
 /// The text of the \`baselines\` values of [TextMetricsFont].
 const String textMetricsBaselineText = ${str(result.baselineText)};
 
-/// One CSS font of the probe and its Chrome metrics, with \`textAlign\`
+/// One font of the probe and its Chrome metrics, with \`textAlign\`
 /// \`start\` and \`direction\` \`ltr\`: \`fontBoundingBoxAscent\` and
 /// \`fontBoundingBoxDescent\` with \`textBaseline\` \`alphabetic\`, and the
 /// \`actualBoundingBoxAscent\` of [textMetricsBaselineText] for each
 /// \`textBaseline\`.
 typedef TextMetricsFont = ({
-  String font,
+  ChartTextStyle font,
   double fontAscent,
   double fontDescent,
   Map<CanvasTextBaseline, double> baselines,

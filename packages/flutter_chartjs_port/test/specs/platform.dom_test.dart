@@ -8,6 +8,7 @@ import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 // The spec builds charts of flutter_chartjs_port and reads the UMD entry of
 // lib/src, which no public library exports (Chart.js ADR 0048, section 1).
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -383,7 +384,10 @@ void main() {
 
         // https://www.w3.org/TR/2dcontext/#conformance-requirements
         expect(context.fillStyle, const ui.Color.fromRGBO(0, 0, 0, 1));
-        expect(context.font, '10px sans-serif');
+        expect(
+          context.font,
+          const TextStyle(fontFamily: 'sans-serif', fontSize: 10),
+        );
         expect(context.lineJoin, ui.StrokeJoin.miter);
         expect(context.lineCap, ui.StrokeCap.butt);
         expect(context.lineWidth, 1);

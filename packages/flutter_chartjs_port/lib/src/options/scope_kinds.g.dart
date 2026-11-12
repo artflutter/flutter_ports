@@ -69,10 +69,6 @@ enum ScopeKind {
   /// the scope `animation` and each entry of `animations`.
   animationOptions('AnimationOptions'),
 
-  /// index.d.ts:1812 FontSpec, a font object (read by toFont,
-  /// helpers.options.ts).
-  fontSpec('FontSpec'),
-
   /// Port-only kind for geometric.d.ts Padding (TRBL and Point), the padding
   /// object of toPadding and toTRBL (helpers.options.ts).
   padding('Padding'),
@@ -300,8 +296,6 @@ enum ScopeKind {
         return TransitionOptionsScope();
       case ScopeKind.animationOptions:
         return AnimationOptionsScope();
-      case ScopeKind.fontSpec:
-        return FontSpecScope();
       case ScopeKind.padding:
         return PaddingScope();
       case ScopeKind.layoutOptions:
@@ -419,8 +413,6 @@ enum ScopeKind {
         return TransitionOptionsScope;
       case ScopeKind.animationOptions:
         return AnimationOptionsScope;
-      case ScopeKind.fontSpec:
-        return FontSpecScope;
       case ScopeKind.padding:
         return PaddingScope;
       case ScopeKind.layoutOptions:
@@ -708,14 +700,6 @@ enum ScopeKind {
           OptionKey.onComplete,
           OptionKey.animateRotate,
           OptionKey.animateScale,
-        ];
-      case ScopeKind.fontSpec:
-        return const [
-          OptionKey.family,
-          OptionKey.size,
-          OptionKey.style,
-          OptionKey.weight,
-          OptionKey.lineHeight,
         ];
       case ScopeKind.padding:
         return const [
@@ -1583,7 +1567,7 @@ enum ScopeKind {
           case OptionKey.hoverBorderColor:
             return 64;
           case OptionKey.font:
-            return 32;
+            return 4096;
           case OptionKey.responsive:
             return 2;
           case OptionKey.maintainAspectRatio:
@@ -1906,21 +1890,6 @@ enum ScopeKind {
             return 2;
           case OptionKey.animateScale:
             return 2;
-          default:
-            return 0;
-        }
-      case ScopeKind.fontSpec:
-        switch (key) {
-          case OptionKey.family:
-            return 4;
-          case OptionKey.size:
-            return 1;
-          case OptionKey.style:
-            return 4;
-          case OptionKey.weight:
-            return 5;
-          case OptionKey.lineHeight:
-            return 5;
           default:
             return 0;
         }
@@ -2987,7 +2956,7 @@ enum ScopeKind {
           case OptionKey.color:
             return 64;
           case OptionKey.font:
-            return 32;
+            return 4096;
           case OptionKey.padding:
             return 1;
           case OptionKey.showLabelBackdrop:
@@ -3109,7 +3078,7 @@ enum ScopeKind {
           case OptionKey.strokeWidth:
             return 1;
           case OptionKey.font:
-            return 32;
+            return 4096;
           case OptionKey.padding:
             return 33;
           default:
@@ -3187,7 +3156,7 @@ enum ScopeKind {
           case OptionKey.color:
             return 64;
           case OptionKey.font:
-            return 32;
+            return 4096;
           case OptionKey.callback:
             return 8;
           case OptionKey.padding:
@@ -3243,7 +3212,7 @@ enum ScopeKind {
           case OptionKey.color:
             return 64;
           case OptionKey.font:
-            return 32;
+            return 4096;
           case OptionKey.padding:
             return 1;
           case OptionKey.pointStyleWidth:
@@ -3274,7 +3243,7 @@ enum ScopeKind {
           case OptionKey.color:
             return 64;
           case OptionKey.font:
-            return 32;
+            return 4096;
           case OptionKey.position:
             return 1536;
           case OptionKey.padding:
@@ -3295,7 +3264,7 @@ enum ScopeKind {
           case OptionKey.color:
             return 64;
           case OptionKey.font:
-            return 32;
+            return 4096;
           case OptionKey.fullSize:
             return 2;
           case OptionKey.padding:
@@ -3340,7 +3309,7 @@ enum ScopeKind {
           case OptionKey.titleColor:
             return 64;
           case OptionKey.titleFont:
-            return 32;
+            return 4096;
           case OptionKey.titleSpacing:
             return 1;
           case OptionKey.titleMarginBottom:
@@ -3352,7 +3321,7 @@ enum ScopeKind {
           case OptionKey.bodyColor:
             return 64;
           case OptionKey.bodyFont:
-            return 32;
+            return 4096;
           case OptionKey.bodyAlign:
             return 2688;
           case OptionKey.footerSpacing:
@@ -3362,7 +3331,7 @@ enum ScopeKind {
           case OptionKey.footerColor:
             return 64;
           case OptionKey.footerFont:
-            return 32;
+            return 4096;
           case OptionKey.footerAlign:
             return 2688;
           case OptionKey.padding:
@@ -3537,8 +3506,6 @@ enum ScopeKind {
             return ScopeKind.datasetOptionsByType;
           case OptionKey.clip:
             return ScopeKind.chartArea;
-          case OptionKey.font:
-            return ScopeKind.fontSpec;
           case OptionKey.interaction:
             return ScopeKind.interactionOptions;
           case OptionKey.hover:
@@ -3682,8 +3649,6 @@ enum ScopeKind {
             return null;
         }
       case ScopeKind.animationOptions:
-        return null;
-      case ScopeKind.fontSpec:
         return null;
       case ScopeKind.padding:
         return null;
@@ -3926,8 +3891,6 @@ enum ScopeKind {
         switch (key) {
           case OptionKey.backdropPadding:
             return ScopeKind.padding;
-          case OptionKey.font:
-            return ScopeKind.fontSpec;
           case OptionKey.major:
             return ScopeKind.majorTickOptions;
           case OptionKey.minor:
@@ -3945,8 +3908,6 @@ enum ScopeKind {
         return null;
       case ScopeKind.scaleTitleOptions:
         switch (key) {
-          case OptionKey.font:
-            return ScopeKind.fontSpec;
           case OptionKey.padding:
             return ScopeKind.padding;
           default:
@@ -3969,8 +3930,6 @@ enum ScopeKind {
             return ScopeKind.padding;
           case OptionKey.borderRadius:
             return ScopeKind.borderRadius;
-          case OptionKey.font:
-            return ScopeKind.fontSpec;
           default:
             return null;
         }
@@ -3984,16 +3943,9 @@ enum ScopeKind {
             return null;
         }
       case ScopeKind.legendLabelOptions:
-        switch (key) {
-          case OptionKey.font:
-            return ScopeKind.fontSpec;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.legendTitleOptions:
         switch (key) {
-          case OptionKey.font:
-            return ScopeKind.fontSpec;
           case OptionKey.padding:
             return ScopeKind.padding;
           default:
@@ -4001,8 +3953,6 @@ enum ScopeKind {
         }
       case ScopeKind.titleOptions:
         switch (key) {
-          case OptionKey.font:
-            return ScopeKind.fontSpec;
           case OptionKey.padding:
             return ScopeKind.padding;
           default:
@@ -4010,12 +3960,6 @@ enum ScopeKind {
         }
       case ScopeKind.tooltipOptions:
         switch (key) {
-          case OptionKey.titleFont:
-            return ScopeKind.fontSpec;
-          case OptionKey.bodyFont:
-            return ScopeKind.fontSpec;
-          case OptionKey.footerFont:
-            return ScopeKind.fontSpec;
           case OptionKey.padding:
             return ScopeKind.padding;
           case OptionKey.cornerRadius:
@@ -4078,8 +4022,6 @@ enum ScopeKind {
       case ScopeKind.transitionOptions:
         return 64;
       case ScopeKind.animationOptions:
-        return 64;
-      case ScopeKind.fontSpec:
         return 64;
       case ScopeKind.padding:
         return 64;
@@ -4198,8 +4140,6 @@ enum ScopeKind {
         return null;
       case ScopeKind.animationOptions:
         return null;
-      case ScopeKind.fontSpec:
-        return null;
       case ScopeKind.padding:
         return null;
       case ScopeKind.layoutOptions:
@@ -4316,8 +4256,6 @@ enum ScopeKind {
       case ScopeKind.transitionOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.animationOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.fontSpec:
         return classifyUnion(raw, 64);
       case ScopeKind.padding:
         return classifyUnion(raw, 64);

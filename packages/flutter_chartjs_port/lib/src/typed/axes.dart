@@ -30,7 +30,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleTitleOptionsScope,
         TickOptionsScope,
         TimeScaleTimeOptionsScope;
-import 'package:flutter_chartjs_port/src/theme/css.dart' show fontScopeOf;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show AxisTickInfo;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
@@ -814,7 +813,7 @@ final class RadialLinearAxis extends ChartAxis {
     final pointLabels = PointLabelOptionsScope();
     put(pointLabels, OptionKey.display, pointLabelsDisplay);
     put(pointLabels, OptionKey.color, colorValue(pointLabelsColor));
-    put(pointLabels, OptionKey.font, fontScopeOf(pointLabelsFont));
+    put(pointLabels, OptionKey.font, pointLabelsFont);
     put(pointLabels, OptionKey.padding, pointLabelsPadding);
     final angleLines = AngleLineOptionsScope();
     put(angleLines, OptionKey.display, angleLinesDisplay);
@@ -987,7 +986,7 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   final scope = TickOptionsScope();
   put(scope, OptionKey.display, ticks.display);
   put(scope, OptionKey.color, colorValue(ticks.color));
-  put(scope, OptionKey.font, fontScopeOf(ticks.font));
+  put(scope, OptionKey.font, ticks.font);
   put(scope, OptionKey.padding, ticks.padding);
   put(scope, OptionKey.stepSize, ticks.stepSize);
   put(scope, OptionKey.maxRotation, ticks.maxRotation);
@@ -1207,7 +1206,7 @@ ScaleTitleOptionsScope? _lowerTitle(AxisTitle? title) {
   put(scope, OptionKey.display, title.display);
   put(scope, OptionKey.text, title.text);
   put(scope, OptionKey.color, colorValue(title.color));
-  put(scope, OptionKey.font, fontScopeOf(title.font));
+  put(scope, OptionKey.font, title.font);
   put(scope, OptionKey.align, title.align);
   put(scope, OptionKey.padding, paddingScope(title.padding));
   return mergeExtra(scope, title.extra);

@@ -5,7 +5,7 @@ library;
 
 import 'dart:ui' as native_ui;
 
-import 'dart:ui' show TextAlign;
+import 'dart:ui' show FontStyle, TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     as helpers;
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' hide Chart;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -110,29 +111,15 @@ final class _Area implements TRBL {
   final double bottom;
 }
 
-/// The JavaScript font object literal `{string, lineHeight}`, passed as a
-/// [CanvasFontSpec]. The other members are absent keys.
-final class _Font implements CanvasFontSpec {
-  const _Font({required this.string, required this.lineHeight});
-
-  @override
-  final String string;
-
-  @override
-  final Object? lineHeight;
-
-  @override
-  String? get family => null;
-
-  @override
-  double? get size => null;
-
-  @override
-  String? get style => null;
-
-  @override
-  Object? get weight => null;
-}
+/// The font object `{string: '12px arial', lineHeight: 20}` of the spec, as
+/// a font (Chart.js ADR 0116, row `adapt-text-style-fonts`): its line height
+/// is `12 * (20 / 12)`, 20.
+const _arial = ChartTextStyle(
+  fontFamily: 'arial',
+  fontFamilyFallback: [],
+  fontSize: 12,
+  height: 20 / 12,
+);
 
 /// A JavaScript object literal of render options, passed as a
 /// [RenderTextOpts]. A null member is an absent key.
@@ -248,8 +235,12 @@ void main() {
       'should return the width of the longest text in an Array and 2D Array',
       () {
         final context = createMockContext();
-        const font =
-            "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+        const font = ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: FontStyle.normal,
+        );
         const arrayOfThings1D = ['FooBar', 'Bar'];
         const arrayOfThings2D = [
           ['FooBar_1', 'Bar_2'],
@@ -281,9 +272,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': [
-              "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-            ],
+            'args': [font],
           },
           {
             'name': 'measureText',
@@ -297,9 +286,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': [
-              "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-            ],
+            'args': [font],
           },
           {
             'name': 'measureText',
@@ -351,14 +338,14 @@ void main() {
 
       test('should render multiple lines of text', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(context, ['foo', 'foo2'], 0, 0, font);
 
         expect(context.getCalls(), [
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'fillText',
@@ -374,7 +361,7 @@ void main() {
 
       test('should accept the text maxWidth', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(
           context,
           'foo',
@@ -387,7 +374,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'fillText',
@@ -399,7 +386,7 @@ void main() {
 
       test('should underline the text', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(
           context,
           'foo',
@@ -413,7 +400,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'fillText',
@@ -450,7 +437,7 @@ void main() {
 
       test('should strikethrough the text', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(
           context,
           'foo',
@@ -464,7 +451,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'fillText',
@@ -501,7 +488,7 @@ void main() {
 
       test('should set the fill style if supplied', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(
           context,
           'foo',
@@ -515,7 +502,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'setFillStyle',
@@ -531,7 +518,7 @@ void main() {
 
       test('should set the stroke style if supplied', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(
           context,
           'foo',
@@ -547,7 +534,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'setStrokeStyle',
@@ -571,7 +558,7 @@ void main() {
 
       test('should set the text alignment', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(
           context,
           'foo',
@@ -588,7 +575,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'setTextAlign',
@@ -608,7 +595,7 @@ void main() {
 
       test('should translate and rotate text', () {
         final context = createMockContext();
-        const font = _Font(string: '12px arial', lineHeight: 20);
+        const font = _arial;
         helpers.renderText(
           context,
           'foo',
@@ -622,7 +609,7 @@ void main() {
           {'name': 'save', 'args': <Object?>[]},
           {
             'name': 'setFont',
-            'args': ['12px arial'],
+            'args': [_arial],
           },
           {
             'name': 'translate',

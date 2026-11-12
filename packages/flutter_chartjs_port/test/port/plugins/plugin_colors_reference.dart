@@ -6,7 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 14 cases, 44 widths.
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show FontStyle, StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -50,9 +51,14 @@ typedef PluginColorsReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
-typedef PluginColorsReferenceWidth = ({String font, String text, double width});
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
+typedef PluginColorsReferenceWidth = ({
+  ChartTextStyle font,
+  String text,
+  double width,
+});
 
 /// The cases.
 const List<PluginColorsReferenceCase> pluginColorsReference = [
@@ -1630,7 +1636,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1639,7 +1645,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1648,7 +1654,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1670,7 +1676,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1679,7 +1685,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,404.7]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1688,7 +1694,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,325.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1697,7 +1703,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1706,7 +1712,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1715,7 +1721,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,89.09999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1724,7 +1730,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2806,7 +2812,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2815,7 +2821,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",186.341796875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2824,7 +2830,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",345.3359375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2833,7 +2839,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l2",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",504.330078125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2855,7 +2861,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2864,7 +2870,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,436.26]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2873,7 +2879,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,388.92]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2882,7 +2888,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,341.5799999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2891,7 +2897,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,294.23999999999995]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2900,7 +2906,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2909,7 +2915,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,199.56]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2918,7 +2924,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","7",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,152.22]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2927,7 +2933,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,104.87999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2936,7 +2942,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","9",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,57.53999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2945,7 +2951,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -5176,57 +5182,57 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-49.333333333333336,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-41.333333333333336,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-90.66666666666667,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-82.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-132,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-124,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-173.33333333333334,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-165.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-214.66666666666669,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-206.66666666666669,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","12"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-256,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","12",0,-248,null]
 ["restore"]
@@ -6060,35 +6066,35 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","l4",23.94221002398251,182.59985337251288,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","l3",112.58039844063657,467.4001466274872,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","l2",399.41960155936346,467.4001466274872,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","l1",488.0577899760175,182.59985337251283,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -6281,93 +6287,93 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-31.1,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-23.1,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-54.2,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3",0,-46.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-77.30000000000001,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-69.30000000000001,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-100.4,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-92.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-123.5,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-115.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-146.60000000000002,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-138.60000000000002,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-169.70000000000002,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-161.70000000000002,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","9"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-192.8,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","9",0,-184.8,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-215.9,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-207.9,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","11"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.228515625,-239,16.45703125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","11",0,-231,null]
 ["restore"]
@@ -7192,7 +7198,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.681640625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7201,7 +7207,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",77.67939453124998,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7210,7 +7216,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.2",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",124.67714843749998,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7219,7 +7225,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.4",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",171.67490234375003,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7228,7 +7234,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.6",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",218.67265625000002,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7237,7 +7243,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.8",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",265.67041015625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7246,7 +7252,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",312.66816406250007,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7255,7 +7261,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.2",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",359.66591796874997,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7264,7 +7270,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.4",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",406.66367187500003,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7273,7 +7279,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.6",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",453.66142578124993,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7282,7 +7288,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.8",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",500.6591796875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7304,7 +7310,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7313,7 +7319,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,404.7]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7322,7 +7328,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,325.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7331,7 +7337,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7340,7 +7346,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,168]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7349,7 +7355,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","3.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,89.09999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7358,7 +7364,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","3.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8474,7 +8480,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",108.123046875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8483,7 +8489,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",269.673828125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8492,7 +8498,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.224609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8514,7 +8520,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8523,7 +8529,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,404.7]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8532,7 +8538,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,325.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8541,7 +8547,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8550,7 +8556,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8559,7 +8565,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,89.09999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8568,7 +8574,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9415,7 +9421,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9424,7 +9430,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",265.8388671875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9433,7 +9439,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",504.330078125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9455,7 +9461,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9464,7 +9470,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,436.26]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9473,7 +9479,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,388.92]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9482,7 +9488,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,341.5799999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9491,7 +9497,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,294.23999999999995]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9500,7 +9506,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9509,7 +9515,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,199.56]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9518,7 +9524,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","7",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,152.22]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9527,7 +9533,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,104.87999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9536,7 +9542,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","9",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,57.53999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9545,7 +9551,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10424,7 +10430,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10433,7 +10439,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",265.8388671875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10442,7 +10448,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",504.330078125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10464,7 +10470,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10473,7 +10479,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,436.26]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10482,7 +10488,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,388.92]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10491,7 +10497,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","3",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,341.5799999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10500,7 +10506,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,294.23999999999995]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10509,7 +10515,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10518,7 +10524,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,199.56]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10527,7 +10533,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","7",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,152.22]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10536,7 +10542,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,104.87999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10545,7 +10551,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","9",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,57.53999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10554,7 +10560,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11180,7 +11186,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",110.9013671875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11189,7 +11195,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",271.3408203125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11198,7 +11204,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","l1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",431.7802734375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11220,7 +11226,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,30.681640625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11229,7 +11235,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,404.7]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11238,7 +11244,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","0.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,325.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11247,7 +11253,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11256,7 +11262,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,168]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11265,7 +11271,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,89.09999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11274,7 +11280,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2.5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",19.681640625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12784,7 +12790,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",87.30419921875,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12793,7 +12799,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","0",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",207.21728515625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12802,7 +12808,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","1",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",327.13037109375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12811,7 +12817,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",447.04345703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12833,7 +12839,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12842,7 +12848,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,436.26]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12851,7 +12857,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","2",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,388.92]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12860,7 +12866,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","4",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,341.5799999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12869,7 +12875,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","6",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,294.23999999999995]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12878,7 +12884,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","8",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,246.89999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12887,7 +12893,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,199.56]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12896,7 +12902,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","12",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,152.22]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12905,7 +12911,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","14",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,104.87999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12914,7 +12920,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","16",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,57.53999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12923,7 +12929,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["fillText","18",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -12937,66 +12943,66 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-40.57142857142857,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1",0,-32.57142857142857,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-73.14285714285714,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-65.14285714285714,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-105.71428571428571,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3",0,-97.71428571428571,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-138.28571428571428,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-130.28571428571428,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-170.85714285714283,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-162.85714285714283,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-203.42857142857142,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-195.42857142857142,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-236,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-228,null]
 ["restore"]
@@ -13908,35 +13914,35 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","l4",39.15911428470497,203.54412528251203,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","l3",121.98496247731615,470.45587471748803,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","l2",390.0150375226839,470.45587471748803,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","l1",472.84088571529503,203.544125282512,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -14131,7 +14137,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","d0"]
@@ -14149,7 +14155,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","d0",237.65234375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -14169,7 +14175,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","d1",307,16,null]
 ["restore"]
 ["restore"]
@@ -14178,93 +14184,93 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-29.5,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-21.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-51,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3",0,-43,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-72.5,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-64.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-94,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-86,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-115.5,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-137,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-129,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-158.5,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-150.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","9"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-180,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","9",0,-172,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-201.5,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-193.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","11"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.228515625,-223,16.45703125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","11",0,-215,null]
 ["restore"]
@@ -14427,222 +14433,442 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 /// Each text that the cases measured, with its font and width.
 const List<PluginColorsReferenceWidth> pluginColorsReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '8',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '12',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l0',
     width: 9.33984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l1',
     width: 9.33984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l2',
     width: 9.33984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '9',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '11',
     width: 12.45703125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l3',
     width: 9.33984375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l0',
     width: 7.783203125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l1',
     width: 7.783203125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l2',
     width: 7.783203125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l3',
     width: 7.783203125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'l4',
     width: 7.783203125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.4',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.4',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '14',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '16',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '18',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'd0',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'd1',
     width: 13.34765625,
   ),

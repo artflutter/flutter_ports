@@ -4,14 +4,15 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // a build of Chart.js v4.6.1 at the commit
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 80 cases, 218 widths.
+// context of tool/reference/scale_chart_common.mjs. 78 cases, 218 widths.
 
-import 'dart:ui' show TextAlign;
+import 'dart:ui' show FontStyle, FontWeight, TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -46,10 +47,11 @@ typedef ScaleRadialLinearReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
 typedef ScaleRadialLinearReferenceWidth = ({
-  String font,
+  ChartTextStyle font,
   String text,
   double width,
 });
@@ -247,21 +249,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",58.546207937148125,400.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",453.4537920628521,399.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -372,7 +374,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -390,7 +392,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -399,57 +401,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-43.833333333333336,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-35.833333333333336,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-79.66666666666667,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-115.5,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-151.33333333333334,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-187.16666666666669,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-179.16666666666669,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-215,null]
 ["restore"]
@@ -685,28 +687,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",47.47265625,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",259,489.52734375,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",470.52734375,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -831,7 +833,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -849,7 +851,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -858,57 +860,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-41.087890625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-33.087890625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-74.17578125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-66.17578125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-107.263671875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-99.263671875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-140.3515625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-132.3515625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-173.439453125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-165.439453125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-206.52734375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-198.52734375,null]
 ["restore"]
@@ -1197,35 +1199,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",36.15911428470497,203.54412528251203,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",118.98496247731615,470.45587471748803,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",387.0150375226839,470.45587471748803,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",469.84088571529503,203.544125282512,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -1406,7 +1408,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -1424,7 +1426,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -1433,84 +1435,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-31.88888888888889,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-23.88888888888889,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-55.77777777777778,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-47.77777777777778,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-79.66666666666667,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-103.55555555555556,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-95.55555555555556,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-127.44444444444444,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-119.44444444444444,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-151.33333333333334,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-175.22222222222223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-167.22222222222223,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-199.11111111111111,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-191.11111111111111,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-215,null]
 ["restore"]
@@ -1826,42 +1828,42 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",58.5462079371479,152.00000000000014,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",58.546207937148125,392.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",453.4537920628521,391.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",453.453792062852,151.99999999999994,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -2059,7 +2061,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -2077,7 +2079,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -2086,84 +2088,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-31.88888888888889,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-23.88888888888889,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-55.77777777777778,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-47.77777777777778,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-79.66666666666667,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-103.55555555555556,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-95.55555555555556,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-127.44444444444444,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-119.44444444444444,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-151.33333333333334,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-175.22222222222223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-167.22222222222223,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-199.11111111111111,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-191.11111111111111,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","100"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-223,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","100",0,-215,null]
 ["restore"]
@@ -2515,49 +2517,49 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Running",78.07692682911468,135.30097743357183,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",35.12147514004542,335.50110803464656,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",155.47997618619033,486.4258946470473,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",348.5200238138097,486.4258946470473,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",468.8785248599546,335.50110803464656,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",425.92307317088535,135.3009774335718,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -2756,7 +2758,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -2774,7 +2776,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -2783,75 +2785,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-34.1819950288164,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-26.181995028816402,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-60.363990057632805,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-52.363990057632805,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-86.5459850864492,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-78.5459850864492,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-112.72798011526561,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-104.72798011526561,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-138.909975144082,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-130.909975144082,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-165.0919701728984,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-157.0919701728984,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.27396520171482,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-183.27396520171482,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-217.45596023053122,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-209.45596023053122,null]
 ["restore"]
@@ -3221,56 +3223,56 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Swimming",101.50189523127284,112.50189523127315,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Running",37.9208984375,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",101.50189523127287,431.4981047687269,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",255,495.0791015625,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",408.49810476872716,431.4981047687269,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",472.0791015625,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",408.498104768727,112.50189523127301,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -3519,7 +3521,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -3537,7 +3539,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -3546,93 +3548,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-28.40791015625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-20.40791015625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-48.8158203125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-40.8158203125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.22373046875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-61.22373046875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-89.631640625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-81.631640625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-110.03955078125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-102.03955078125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.4474609375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-122.4474609375,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-150.85537109375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-142.85537109375,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-171.26328125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-163.26328125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.67119140625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-183.67119140625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","100"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-212.0791015625,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","100",0,-204.0791015625,null]
 ["restore"]
@@ -4052,63 +4054,63 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Reading",122.08868901420996,109.83545326590138,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Swimming",49.23970203840233,236.01359998792356,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Running",74.5398897048643,391.498094333645,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",186.1510130241926,485.15094674617507,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",331.84898697580746,485.15094674617507,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",443.4601102951359,391.49809433364464,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",468.76029796159764,236.01359998792356,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",395.9113109857902,109.83545326590149,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -4357,7 +4359,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -4375,7 +4377,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -4384,84 +4386,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-30.221798740809938,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-22.221798740809938,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-52.443597481619875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-44.443597481619875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-74.66539622242982,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-66.66539622242982,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-96.88719496323975,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-88.88719496323975,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-119.1089937040497,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-111.1089937040497,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-141.33079244485964,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-133.33079244485964,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-163.55259118566957,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-155.55259118566957,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-185.7743899264795,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-177.7743899264795,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","100"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-207.99618866728946,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","100",0,-199.99618866728946,null]
 ["restore"]
@@ -4906,70 +4908,70 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Walking",126.52788166105518,87.79691711317216,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Reading",46.50971193213874,197.93247923724653,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Swimming",46.50971193213877,346.06752076275353,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Running",126.52788166105523,456.2030828868279,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",256,498.2711242481487,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",385.4721183389448,456.2030828868279,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",465.49028806786123,346.0675207627535,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",465.49028806786123,197.9324792372465,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",385.4721183389448,87.79691711317213,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -5235,7 +5237,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -5253,7 +5255,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -5262,84 +5264,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-31.030124916460966,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-23.030124916460966,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-54.06024983292193,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-46.06024983292193,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-77.0903747493829,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-69.0903747493829,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-100.12049966584387,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-92.12049966584387,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-123.15062458230483,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-115.15062458230483,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-146.1807494987658,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-138.1807494987658,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-169.21087441522675,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-161.21087441522675,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-192.24099933168773,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-184.24099933168773,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-215.27112424814868,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-207.27112424814868,null]
 ["restore"]
@@ -5819,77 +5821,77 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cooking",136.50816718000908,90.2912003014921,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Walking",57.684175254068975,181.25893627802418,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Reading",40.55408471495255,312.4013329718896,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Swimming",90.55657827339357,421.8915212527345,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Running",191.8162175253235,486.96713996209246,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",312.18378247467655,486.96713996209246,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",413.4434217266064,421.8915212527345,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",463.4459152850474,312.40133297188976,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",446.3158247459311,181.2589362780243,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",367.4918328199909,90.2912003014921,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -6192,7 +6194,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -6210,7 +6212,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -6219,93 +6221,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-28.0620261532466,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-20.0620261532466,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-48.1240523064932,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-40.1240523064932,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-68.18607845973979,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-60.18607845973979,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-88.2481046129864,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-80.2481046129864,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-108.31013076623299,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-100.31013076623299,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-128.37215691947958,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-120.37215691947958,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-148.43418307272617,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-140.43418307272617,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-168.4962092259728,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-160.4962092259728,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-188.55823537921938,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-180.55823537921938,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","100"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-208.62026153246597,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","100",0,-200.62026153246597,null]
 ["restore"]
@@ -6802,84 +6804,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Writing",145.23632812500009,82.81194671745646,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cooking",67.81194671745641,160.2363281250001,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Walking",39.47265625,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Reading",67.81194671745664,383.7636718750002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Swimming",145.2363281250001,461.1880532825436,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Running",251,489.52734375,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",356.7636718749999,461.1880532825436,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",434.1880532825436,383.7636718749999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",462.52734375,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",434.1880532825435,160.23632812499994,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",356.76367187500006,82.81194671745652,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -7179,7 +7181,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -7197,7 +7199,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -7206,84 +7208,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-30.05859375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-22.05859375,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-52.1171875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-44.1171875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-74.17578125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-66.17578125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-96.234375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-88.234375,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-118.29296875000001,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-110.29296875000001,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-140.3515625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-132.3515625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-162.41015625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-154.41015625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-184.46875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-176.46875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","100"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-206.52734375000003,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","100",0,-198.52734375000003,null]
 ["restore"]
@@ -7669,42 +7671,42 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",143.3398437499999,76.06303780905827,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",33.6796875,272.00000000000034,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",143.33984375000006,467.9369621909418,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",362.6601562500001,467.9369621909417,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",472.3203125,271.99999999999994,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -7917,7 +7919,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -7935,7 +7937,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -7944,93 +7946,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","15"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-28.632031249999997,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","15",0,-20.632031249999997,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-49.264062499999994,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-41.264062499999994,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","25"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.89609374999999,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","25",0,-61.89609374999999,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-90.52812499999999,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-82.52812499999999,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","35"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-111.16015624999999,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","35",0,-103.16015624999999,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-131.79218749999998,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-123.79218749999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","45"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-152.42421875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","45",0,-144.42421875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-173.05624999999998,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-165.05624999999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","55"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-193.68828125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","55",0,-185.68828125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-214.32031249999997,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-206.32031249999997,null]
 ["restore"]
@@ -8339,7 +8341,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setFillStyle","rgba(0, 0, 255, 0.5)"]
 ["fillRect",7.514594744638742,193.9493267944187,26.8916015625,20]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -8348,7 +8350,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setFillStyle","rgba(0, 0, 255, 0.5)"]
 ["fillRect",88.75081874143919,459.3950433870234,28.0048828125,20]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -8357,7 +8359,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setFillStyle","rgba(0, 0, 255, 0.5)"]
 ["fillRect",375.24429844606084,459.3950433870234,35.783203125,20]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -8366,7 +8368,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setFillStyle","rgba(0, 0, 255, 0.5)"]
 ["fillRect",457.59380369286123,193.9493267944187,48.0146484375,20]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -8375,7 +8377,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setFillStyle","rgba(0, 0, 255, 0.5)"]
 ["fillRect",224.2119140625,37.31125963711577,43.576171875,20]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -8528,7 +8530,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -8546,7 +8548,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -8555,66 +8557,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -8930,7 +8932,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",13.514594744638742,196.9493267944187]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -8948,7 +8950,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",94.75081874143919,462.3950433870234]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -8966,7 +8968,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",381.24429844606084,462.3950433870234]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -8984,7 +8986,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",463.59380369286123,196.9493267944187]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -9002,7 +9004,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",230.2119140625,40.31125963711577]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -9155,7 +9157,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -9173,7 +9175,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -9182,66 +9184,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -9554,7 +9556,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",12.514594744638742,195.9493267944187]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -9572,7 +9574,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",93.75081874143919,461.3950433870234]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -9590,7 +9592,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",380.24429844606084,461.3950433870234]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -9608,7 +9610,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",462.59380369286123,195.9493267944187]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -9626,7 +9628,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["lineTo",229.2119140625,39.31125963711577]
 ["fill",null,null]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -9779,7 +9781,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -9797,7 +9799,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -9806,66 +9808,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -10162,14 +10164,14 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",47.57179248024681,213.2523292150114,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -10178,14 +10180,14 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["fillText","Now",126.03838550482583,490.74767078498866,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",379.9616144951742,466.74767078498866,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -10193,7 +10195,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["fillText","Water",458.4282075197532,213.25232921501134,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -10347,7 +10349,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -10365,7 +10367,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -10374,66 +10376,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-37,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-29,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-66,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-58,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-95,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-87,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-124,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-116,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-153,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-145,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-182,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-174,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-211,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-203,null]
 ["restore"]
@@ -10532,7 +10534,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
           'r': <String, Object?>{
             'pointLabels': <String, Object?>{
               'display': 'auto',
-              'font': <String, Object?>{'size': 14.0},
+              'font': ChartTextStyle(fontSize: 14),
             },
           },
         },
@@ -10959,84 +10961,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,300,300]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 15",99.25988462982232,102.85988462982245,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 14",82.78515552914222,127.51605914025315,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 13",77,165,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 12",82.78515552914223,202.48394085974687,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 11",99.25988462982235,227.1401153701776,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 9",153,249.4,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 7",206.74011537017768,227.14011537017757,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 6",223.21484447085777,202.48394085974687,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 5",229,165,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 4",223.21484447085777,127.51605914025315,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Label number 3",206.74011537017762,102.8598846298224,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -11304,7 +11306,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -11322,7 +11324,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",146.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -11331,48 +11333,48 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-20.6,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-12.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-33.2,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-25.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-45.8,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-37.8,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-58.4,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-50.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-71,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-63,null]
 ["restore"]
@@ -11924,84 +11926,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,250,250]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 12",109.67073547293369,69.32630432718744,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 11",79.65556885425374,86.65556885425379,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 10",62.326304327187444,116.67073547293367,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 9",62.32630432718746,163.32926452706639,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 8",79.65556885425379,193.34443114574626,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 7",109.67073547293369,210.67369567281256,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 6",144.3292645270663,210.67369567281258,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 5",174.34443114574628,193.3444311457462,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 4",191.67369567281256,163.32926452706633,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 3",191.67369567281256,116.67073547293366,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Long label 2",174.34443114574626,86.65556885425377,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -12238,7 +12240,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -12256,7 +12258,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",121.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -12265,57 +12267,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-16.992522771525586,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-8.992522771525584,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-25.985045543051168,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-17.985045543051168,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-34.97756831457675,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-26.97756831457675,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-43.970091086102336,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-35.970091086102336,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-52.96261385762792,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-44.96261385762792,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","12"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-61.9551366291535,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","12",0,-53.9551366291535,null]
 ["restore"]
@@ -12731,7 +12733,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -12749,7 +12751,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -12758,66 +12760,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-41.142857142857146,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-33.142857142857146,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-74.28571428571429,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-66.28571428571429,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-107.42857142857143,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-99.42857142857143,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-140.57142857142858,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-132.57142857142858,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-173.71428571428572,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-165.71428571428572,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-206.85714285714286,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-198.85714285714286,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-240.00000000000003,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-232.00000000000003,null]
 ["restore"]
@@ -13035,7 +13037,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -13053,7 +13055,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -13353,35 +13355,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -13534,7 +13536,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -13552,7 +13554,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -13561,66 +13563,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -13864,28 +13866,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","D",28,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","C",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",484,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -13898,7 +13900,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -13916,7 +13918,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -13925,57 +13927,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-43.833333333333336,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-35.833333333333336,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-79.66666666666667,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-151.33333333333334,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-187.16666666666669,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-179.16666666666669,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-215,null]
 ["restore"]
@@ -14255,35 +14257,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","E",27.746436089163126,198.83592135001265,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","red"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","D",116.6948952066839,476.73702766686256,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","C",393.5417490364387,474.3099766837377,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","red"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",475.69405526418046,201.61707429938716,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -14450,7 +14452,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -14468,7 +14470,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -14477,75 +14479,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","15"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-35.25,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","15",0,-27.25,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-62.5,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-54.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","25"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-89.75,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","25",0,-81.75,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-117,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-109,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","35"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-144.25,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","35",0,-136.25,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-171.5,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-163.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","45"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-198.75,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","45",0,-190.75,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-226,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-218,null]
 ["restore"]
@@ -14792,28 +14794,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","D",28,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","C",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",484,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -14844,7 +14846,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -14862,7 +14864,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -14871,57 +14873,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-43.833333333333336,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-35.833333333333336,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-79.66666666666667,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-151.33333333333334,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-187.16666666666669,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-179.16666666666669,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-215,null]
 ["restore"]
@@ -15213,35 +15215,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -15366,7 +15368,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -15384,7 +15386,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -15393,66 +15395,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -15752,35 +15754,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -15933,7 +15935,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -15951,7 +15953,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -15960,66 +15962,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -16318,7 +16320,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -16336,7 +16338,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -16345,93 +16347,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-31.2,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1",0,-23.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-54.4,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-46.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-77.6,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3",0,-69.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-100.8,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-92.8,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-124,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-116,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-147.2,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-139.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-170.4,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-162.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-193.6,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-185.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","9"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-216.79999999999998,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","9",0,-208.79999999999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-240,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-232,null]
 ["restore"]
@@ -16687,35 +16689,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -16770,7 +16772,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -16788,7 +16790,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -16797,66 +16799,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -17161,35 +17163,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -17342,7 +17344,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -17360,7 +17362,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -17369,66 +17371,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -17733,35 +17735,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -17886,7 +17888,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -17904,7 +17906,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -17913,66 +17915,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -18287,42 +18289,42 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","F",194.98062530433248,37.27259338968756,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","E",28.272593389687415,203.98062530433293,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","D",89.29196808535448,443.7080319146453,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","C",317.0193746956671,504.7274066103125,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",483.7274066103125,338.01937469566707,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -18535,7 +18537,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -18553,7 +18555,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -18562,93 +18564,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0.7853981633974483]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-30.276075969021825,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-22.276075969021825,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-52.55215193804365,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-44.55215193804365,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-74.82822790706547,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-66.82822790706547,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-97.1043038760873,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-89.1043038760873,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-119.38037984510913,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-111.38037984510913,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-141.65645581413094,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-133.65645581413094,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-163.93253178315277,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.5",0,-155.93253178315277,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-186.2086077521746,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.0",0,-178.2086077521746,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-208.48468372119643,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.5",0,-200.48468372119643,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-230.76075969021826,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6.0",0,-222.76075969021826,null]
 ["restore"]
@@ -18920,21 +18922,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","C",411.6311639407864,464.47399874605094,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",338.8096126851698,39.48245903371273,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -19093,7 +19095,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -19111,7 +19113,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -19120,93 +19122,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",4.537856055185257]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-30.91191099447006,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.2",0,-22.91191099447006,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-53.82382198894012,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.4",0,-45.82382198894012,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-76.7357329834102,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.6",0,-68.7357329834102,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-99.64764397788025,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.8",0,-91.64764397788025,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-122.55955497235031,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-114.55955497235031,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-145.4714659668204,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.2",0,-137.4714659668204,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-168.38337696129042,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.4",0,-160.38337696129042,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-191.2952879557605,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.6",0,-183.2952879557605,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-214.20719895023055,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.8",0,-206.20719895023055,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-237.11910994470063,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-229.11910994470063,null]
 ["restore"]
@@ -19459,28 +19461,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","D",43.82377607281265,143.49999999999977,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","C",133.50000000000014,490.1762239271876,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",468.17622392718755,400.4999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -19605,7 +19607,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -19623,7 +19625,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -19632,57 +19634,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0.5235987755982991]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-46.666666666666664,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-38.666666666666664,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-85.33333333333333,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-77.33333333333333,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-124,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-116,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-162.66666666666666,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-154.66666666666666,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-201.33333333333331,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-193.33333333333331,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-240,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-232,null]
 ["restore"]
@@ -19972,35 +19974,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -20153,7 +20155,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -20171,7 +20173,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -20180,75 +20182,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-8,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,{"num":"-0"},null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","55"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","55",0,-213.68874036288423,null]
 ["restore"]
@@ -20542,35 +20544,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -20737,7 +20739,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -20755,7 +20757,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -20764,75 +20766,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-8,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,{"num":"-0"},null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-160.63481454491733,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.671875,-191.16177745390078,21.34375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-10",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.671875,-221.68874036288423,21.34375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-20",0,-213.68874036288423,null]
 ["restore"]
@@ -21122,35 +21124,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -21317,7 +21319,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -21335,7 +21337,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -21344,75 +21346,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.671875,-8,21.34375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-20",0,{"num":"-0"},null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.671875,-38.526962908983464,21.34375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-10",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-69.05392581796693,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-213.68874036288423,null]
 ["restore"]
@@ -21704,35 +21706,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -21899,7 +21901,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -21917,7 +21919,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -21926,75 +21928,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-34.71109254536053,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-26.71109254536053,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-61.42218509072106,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-53.42218509072106,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-88.13327763608159,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-80.13327763608159,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-114.84437018144212,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-106.84437018144212,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-141.55546272680266,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-133.55546272680266,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-168.26655527216317,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-160.26655527216317,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-194.97764781752372,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-186.97764781752372,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","100"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-221.68874036288423,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","100",0,-213.68874036288423,null]
 ["restore"]
@@ -22282,35 +22284,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -22449,7 +22451,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -22467,7 +22469,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -22476,57 +22478,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-43.6147900604807,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-35.6147900604807,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-79.2295801209614,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-71.2295801209614,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-114.84437018144212,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-106.84437018144212,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-150.4591602419228,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-142.4591602419228,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","100"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-186.07395030240352,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","100",0,-178.07395030240352,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","120"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-221.68874036288423,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","120",0,-213.68874036288423,null]
 ["restore"]
@@ -22814,35 +22816,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -22953,7 +22955,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -22971,7 +22973,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -22980,39 +22982,39 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-61.42218509072106,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-53.42218509072106,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-114.84437018144212,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-106.84437018144212,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-168.26655527216317,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-160.26655527216317,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","120"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.0107421875,-221.68874036288423,24.021484375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","120",0,-213.68874036288423,null]
 ["restore"]
@@ -23300,35 +23302,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -23397,7 +23399,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -23415,7 +23417,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -23424,12 +23426,12 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-152.23989974494685,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.7",0,-144.23989974494685,null]
 ["restore"]
@@ -23712,35 +23714,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -23795,7 +23797,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -23813,7 +23815,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -24061,21 +24063,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","C",58.546207937148125,400.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",453.4537920628521,399.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -24210,7 +24212,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -24228,7 +24230,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -24237,75 +24239,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6.7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-34.874999999999915,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6.7",0,-26.87499999999991,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-61.75000000000006,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6.8",0,-53.75000000000006,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6.9"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-88.62499999999997,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6.9",0,-80.62499999999997,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.50000000000011,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7.0",0,-107.50000000000011,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7.1"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-142.37500000000003,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7.1",0,-134.37500000000003,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-169.25000000000017,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7.2",0,-161.25000000000017,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7.3"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-196.12499999999986,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7.3",0,-188.12499999999986,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7.4",0,-215,null]
 ["restore"]
@@ -24358,7 +24360,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
               'color': 'blue',
               'textStrokeColor': 'red',
               'textStrokeWidth': 2.0,
-              'font': <String, Object?>{'size': 14.0, 'weight': 'bold'},
+              'font': ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             },
           },
         },
@@ -24592,35 +24594,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -24773,7 +24775,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -24791,7 +24793,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -24800,84 +24802,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","yellow"]
 ["fillRect",-11.7861328125,-38.526962908983464,23.572265625,16]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setStrokeStyle","red"]
 ["setLineWidth",2]
 ["strokeText","60",0,-30.526962908983464,null]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","yellow"]
 ["fillRect",-11.7861328125,-69.05392581796693,23.572265625,16]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setStrokeStyle","red"]
 ["setLineWidth",2]
 ["strokeText","65",0,-61.05392581796693,null]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","yellow"]
 ["fillRect",-11.7861328125,-99.58088872695039,23.572265625,16]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setStrokeStyle","red"]
 ["setLineWidth",2]
 ["strokeText","70",0,-91.58088872695039,null]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","yellow"]
 ["fillRect",-11.7861328125,-130.10785163593386,23.572265625,16]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setStrokeStyle","red"]
 ["setLineWidth",2]
 ["strokeText","75",0,-122.10785163593386,null]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","yellow"]
 ["fillRect",-11.7861328125,-160.63481454491733,23.572265625,16]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setStrokeStyle","red"]
 ["setLineWidth",2]
 ["strokeText","80",0,-152.63481454491733,null]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","yellow"]
 ["fillRect",-11.7861328125,-191.16177745390078,23.572265625,16]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setStrokeStyle","red"]
 ["setLineWidth",2]
 ["strokeText","85",0,-183.16177745390078,null]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","yellow"]
 ["fillRect",-11.7861328125,-221.68874036288423,23.572265625,16]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","blue"]
 ["setStrokeStyle","red"]
 ["setLineWidth",2]
@@ -24946,7 +24948,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
             'ticks': <String, Object?>{
               'showLabelBackdrop': false,
               'callback': 'fn:tickUnit',
-              'font': <String, Object?>{'size': 9.0},
+              'font': ChartTextStyle(fontSize: 9),
             },
           },
         },
@@ -25180,35 +25182,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",31.332781081581402,203.92547274163175,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",113.71032844925301,469.45749410798913,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",380.289671550747,469.45749410798913,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",462.6672189184186,203.92547274163172,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -25361,7 +25363,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -25379,7 +25381,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -25389,37 +25391,37 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60 u",0,-30.752276242748813,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65 u",0,-61.504552485497626,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70 u",0,-92.25682872824645,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75 u",0,-123.00910497099525,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80 u",0,-153.76138121374407,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85 u",0,-184.5136574564929,null]
 ["restore"]
 ["save"]
-["setFont","normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":9,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90 u",0,-215.2659336992417,null]
 ["restore"]
@@ -25715,35 +25717,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",31.0146484375,203.82210517955505,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",113.51371166227983,469.72811389884015,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",380.4862883377202,469.72811389884015,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",462.9853515625,203.82210517955502,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -25896,7 +25898,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -25914,7 +25916,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -26209,35 +26211,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.112535404909664,203.853910583271,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.57420913519465,469.644846270886,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.4257908648054,469.644846270886,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.8874645950903,203.85391058327093,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -26390,7 +26392,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -26408,7 +26410,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -26417,66 +26419,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-39.42821624404483,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-31.428216244044833,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-70.85643248808967,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-62.856432488089666,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-102.2846487321345,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-94.2846487321345,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-133.71286497617933,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-125.71286497617933,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-165.14108122022418,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-157.14108122022418,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-196.569297464269,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-188.569297464269,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-227.99751370831382,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-219.99751370831382,null]
 ["restore"]
@@ -26770,35 +26772,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,200,200]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",28.40619630713875,97.63679940675209,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",51.16900379892276,179.6935172841052,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",124.83099620107726,179.6935172841052,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",147.59380369286123,97.63679940675208,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -26951,7 +26953,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -26969,7 +26971,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",96.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -26978,66 +26980,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-14.534293866015073,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-6.534293866015072,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","13"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-21.068587732030146,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","13",0,-13.068587732030144,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","18"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-27.602881598045215,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","18",0,-19.602881598045215,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","23"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-34.13717546406029,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","23",0,-26.137175464060288,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","28"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-40.67146933007536,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","28",0,-32.67146933007536,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","33"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-47.20576319609043,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","33",0,-39.20576319609043,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","38"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-53.7400570621055,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","38",0,-45.7400570621055,null]
 ["restore"]
@@ -27353,35 +27355,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,200,200]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",28.40619630713875,97.63679940675209,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",51.16900379892276,179.6935172841052,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",124.83099620107726,179.6935172841052,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",147.59380369286123,97.63679940675208,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -27688,7 +27690,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -27706,7 +27708,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",96.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -27715,165 +27717,165 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-10.75892407676192,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-2.7589240767619194,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-13.51784815352384,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-5.517848153523839,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-16.276772230285758,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-8.276772230285758,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-19.03569630704768,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-11.035696307047678,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-21.794620383809598,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-13.794620383809598,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","9"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-24.553544460571516,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","9",0,-16.553544460571516,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-27.312468537333437,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-19.312468537333437,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","11"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.228515625,-30.071392614095355,16.45703125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","11",0,-22.071392614095355,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","12"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-32.83031669085727,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","12",0,-24.830316690857273,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","13"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-35.589240767619195,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","13",0,-27.589240767619195,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","14"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.34816484438112,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","14",0,-30.348164844381113,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","15"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-41.10708892114303,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","15",0,-33.10708892114303,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","16"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-43.86601299790495,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","16",0,-35.86601299790495,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","17"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-46.624937074666875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","17",0,-38.624937074666875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","18"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-49.38386115142879,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","18",0,-41.38386115142879,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","19"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-52.14278522819071,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","19",0,-44.14278522819071,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-54.90170930495263,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-46.90170930495263,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","21"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-57.66063338171455,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","21",0,-49.66063338171455,null]
 ["restore"]
@@ -28165,35 +28167,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -28360,7 +28362,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -28378,7 +28380,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -28387,75 +28389,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-36.11693952143214,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-28.116939521432137,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","13"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-64.23387904286427,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","13",0,-56.233879042864274,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","18"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-92.3508185642964,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","18",0,-84.3508185642964,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","23"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-120.46775808572855,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","23",0,-112.46775808572855,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","28"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-148.58469760716068,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","28",0,-140.58469760716068,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","33"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-176.7016371285928,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","33",0,-168.7016371285928,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","38"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-204.81857665002497,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","38",0,-196.81857665002497,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","41"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","41",0,-213.68874036288423,null]
 ["restore"]
@@ -28519,7 +28521,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'pointLabels': <String, Object?>{
-              'font': <String, Object?>{'size': 14.0, 'weight': 'bold'},
+              'font': ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               'color': 'green',
               'padding': 10.0,
             },
@@ -28755,35 +28757,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","green"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",42.30170411963877,213.01376914925564,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","green"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",117.05180160550326,459.87091358374596,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","green"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",358.9481983944968,459.87091358374596,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","green"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",433.69829588036123,213.0137691492556,null]
 ["restore"]
 ["save"]
-["setFont","normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":700,"style":"normal"}}]
 ["setFillStyle","green"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -28936,7 +28938,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -28954,7 +28956,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -28963,66 +28965,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-34.824195066571875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-26.824195066571875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-61.64839013314375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-53.64839013314375,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-88.47258519971562,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-80.47258519971562,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-115.2967802662875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-107.2967802662875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-142.1209753328594,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-134.1209753328594,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-168.94517039943125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-160.94517039943125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-195.76936546600314,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-187.76936546600314,null]
 ["restore"]
@@ -29348,21 +29350,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Zeta!",68.93851278256116,152.0000000000001,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Epsilon!",68.93851278256139,380.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -29370,21 +29372,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["fillText","x3",256,500,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","",443.0614872174388,379.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","",443.06148721743875,151.99999999999994,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -29597,7 +29599,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -29615,7 +29617,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -29624,93 +29626,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-28.3,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-20.3,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-48.6,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-40.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-68.9,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-60.900000000000006,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-89.2,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-81.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-109.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-101.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-129.8,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-121.80000000000001,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-150.1,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.5",0,-142.1,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-170.4,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.0",0,-162.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-190.70000000000002,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.5",0,-182.70000000000002,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-211,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6.0",0,-203,null]
 ["restore"]
@@ -29967,21 +29969,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",58.546207937148125,400.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",453.4537920628521,399.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -30104,7 +30106,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -30122,7 +30124,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -30131,66 +30133,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.714285714285715,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.714285714285715,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.42857142857143,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.42857142857143,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-100.14285714285715,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-92.14285714285715,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.85714285714286,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.85714285714286,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-161.57142857142858,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-153.57142857142858,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-192.2857142857143,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-184.2857142857143,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-215,null]
 ["restore"]
@@ -30442,28 +30444,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","D",28,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","C",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",484,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -30627,7 +30629,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -30645,7 +30647,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",198.283203125,16,null]
 ["measureText","undefined"]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
@@ -30672,7 +30674,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",307,16,null]
 ["restore"]
 ["restore"]
@@ -30681,84 +30683,84 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-31.88888888888889,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-23.88888888888889,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-55.77777777777778,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-47.77777777777778,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-79.66666666666667,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-103.55555555555556,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-95.55555555555556,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-127.44444444444444,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-119.44444444444444,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","9"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-151.33333333333334,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","9",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-175.22222222222223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-167.22222222222223,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","11"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.228515625,-199.11111111111111,16.45703125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","11",0,-191.11111111111111,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","12"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","12",0,-215,null]
 ["restore"]
@@ -30941,7 +30943,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -30959,7 +30961,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -30968,102 +30970,102 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-1.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-8,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-1.0",0,{"num":"-0"},null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-31.199999999999996,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.8",0,-23.199999999999996,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-54.400000000000006,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.6",0,-46.400000000000006,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-77.6,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.4",0,-69.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-100.80000000000001,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.2",0,-92.80000000000001,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-124,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0",0,-116,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-147.2,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.2",0,-139.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-170.39999999999998,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.4",0,-162.39999999999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-193.60000000000002,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.6",0,-185.60000000000002,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-216.8,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.8",0,-208.8,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-240,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.0",0,-232,null]
 ["restore"]
@@ -31270,21 +31272,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","C",58.546207937148125,400.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",453.4537920628521,399.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -31455,7 +31457,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -31473,7 +31475,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -31482,102 +31484,102 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-1.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-8,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-1.0",0,{"num":"-0"},null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-29.499999999999996,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.8",0,-21.499999999999996,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-51,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.6",0,-43,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-72.5,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.4",0,-64.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-94,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.2",0,-86,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-115.5,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-137,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.2",0,-129,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-158.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.4",0,-150.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-180,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.6",0,-172,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-201.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.8",0,-193.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.0",0,-215,null]
 ["restore"]
@@ -31833,42 +31835,42 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","F",58.5462079371479,152.00000000000014,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","E",58.546207937148125,392.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","D",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","C",453.4537920628521,391.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",453.453792062852,151.99999999999994,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -32006,7 +32008,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -32024,7 +32026,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -32033,48 +32035,48 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-51,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-43,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-94,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-86,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-137,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-129,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-180,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-172,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-215,null]
 ["restore"]
@@ -32302,28 +32304,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","S",28,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","R",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Q",484,272,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -32448,7 +32450,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -32466,7 +32468,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -32475,57 +32477,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-43.833333333333336,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-35.833333333333336,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-79.66666666666667,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-151.33333333333334,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-187.16666666666669,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-179.16666666666669,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-215,null]
 ["restore"]
@@ -32764,21 +32766,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","y3",58.546207937148125,400.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","y2",453.4537920628521,399.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -32937,7 +32939,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -32955,7 +32957,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -32964,93 +32966,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-29.499999999999996,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.2",0,-21.499999999999996,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-50.99999999999999,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.4",0,-42.99999999999999,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-72.50000000000001,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.6",0,-64.50000000000001,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-94,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.8",0,-86,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-137.00000000000003,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.2",0,-129.00000000000003,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-158.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.4",0,-150.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-180,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.6",0,-172,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-201.49999999999997,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.8",0,-193.49999999999997,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-215,null]
 ["restore"]
@@ -33311,35 +33313,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,400,250]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",107.7475179193701,113.02535154563012,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",142.98483052763012,233.4746484543699,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",257.0151694723699,233.4746484543699,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",292.2524820806299,113.0253515456301,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -33450,7 +33452,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -33468,7 +33470,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",196.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -33477,39 +33479,39 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-29,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-21,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-50,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-42,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-71,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-63,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-92,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-84,null]
 ["restore"]
@@ -33851,49 +33853,49 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,220,400]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Running",49.15983625662106,164.67148199493687,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Cycling",35.121475140045405,238.17756077368466,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","Coding",74.45608890143411,287.5016063277477,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Designing",137.5439110985659,287.5016063277477,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Sleeping",176.8785248599546,238.17756077368466,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","Drinking",162.84016374337892,164.67148199493687,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -34060,7 +34062,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -34078,7 +34080,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",106.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -34087,57 +34089,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-17.95021636545639,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-9.950216365456393,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-27.900432730912787,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3",0,-19.900432730912787,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-37.85064909636918,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-29.85064909636918,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-47.80086546182557,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-39.80086546182557,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-57.751081827281965,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-49.751081827281965,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-67.70129819273836,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-59.70129819273836,null]
 ["restore"]
@@ -34195,830 +34197,6 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
 ["arc",82.66182276435272,197.3884247095502,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-''',
-    },
-  ),
-  (
-    name: 'a string tick font size',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{
-              'font': <String, Object?>{'size': '12'},
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
-      'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
-      'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'type': 'radialLinear',
-          'axis': RAxis(),
-          'position': ChartPosition.chartArea,
-          'min': 50.0,
-          'max': 100.0,
-          'ticks': <Object?>[
-            <Object?>[50.0, '50', false],
-            <Object?>[100.0, '100', false],
-          ],
-          'box': <Object?>[0.0, 32.0, 512.0, 512.0],
-          'labelRotation': 0.0,
-          'paddings': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'tickPixels': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'valuePixels': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'valueForPixel': <Object?>[null, null, null],
-          'basePixel': <String, Object?>{'num': 'NaN'},
-          'xCenter': 245.0,
-          'yCenter': 280.0,
-          'drawingArea': 156.9097802540178,
-          'startValue': 50.0,
-          'endValue': 100.0,
-          'valueRange': 50.0,
-          'tickLimit': 2.0,
-          'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-          'pointLabels': <Object?>[
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-          ],
-          'pointLabelItems': <Object?>[
-            <Object?>[
-              true,
-              245.0,
-              44.09021974598221,
-              TextAlign.center,
-              227.2119140625,
-              44.09021974598221,
-              262.7880859375,
-              56.09021974598221,
-            ],
-            <Object?>[
-              true,
-              457.9508555727995,
-              198.8080726947485,
-              TextAlign.left,
-              457.9508555727995,
-              198.8080726947485,
-              497.9655040102995,
-              210.8080726947485,
-            ],
-            <Object?>[
-              true,
-              376.61086667736004,
-              461.14681743226043,
-              TextAlign.left,
-              376.61086667736004,
-              461.14681743226043,
-              404.39406980236004,
-              473.14681743226043,
-            ],
-            <Object?>[
-              true,
-              113.38913332263996,
-              461.14681743226043,
-              TextAlign.right,
-              93.38425051013996,
-              461.14681743226043,
-              113.38913332263996,
-              473.14681743226043,
-            ],
-            <Object?>[
-              true,
-              32.049144427200446,
-              198.8080726947485,
-              TextAlign.right,
-              13.157542864700446,
-              198.8080726947485,
-              32.049144427200446,
-              210.8080726947485,
-            ],
-          ],
-          'pointLabelPositions': <Object?>[
-            <Object?>[
-              227.2119140625,
-              44.09021974598221,
-              262.7880859375,
-              56.09021974598221,
-            ],
-            <Object?>[
-              457.9508555727995,
-              198.8080726947485,
-              497.9655040102995,
-              210.8080726947485,
-            ],
-            <Object?>[
-              376.61086667736004,
-              461.14681743226043,
-              404.39406980236004,
-              473.14681743226043,
-            ],
-            <Object?>[
-              93.38425051013996,
-              461.14681743226043,
-              113.38913332263996,
-              473.14681743226043,
-            ],
-            <Object?>[
-              13.157542864700446,
-              198.8080726947485,
-              32.049144427200446,
-              210.8080726947485,
-            ],
-          ],
-          'pointLabelContexts': <Object?>[
-            'undefined',
-            <Object?>['pointLabel', 0.0, 'January'],
-            <Object?>['pointLabel', 4.0, 'May'],
-            'undefined',
-          ],
-          'indexAngles': <Object?>[
-            0.0,
-            1.2566370614359172,
-            2.5132741228718345,
-            0.6283185307179586,
-            0.0,
-            5.026548245743669,
-          ],
-          'distances': <Object?>[
-            0.0,
-            78.4548901270089,
-            156.9097802540178,
-            -31.381956050803556,
-            -156.9097802540178,
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            -141.218802228616,
-            -153.77158464893742,
-            <String, Object?>{'num': 'Infinity'},
-          ],
-          'valuesForDistances': <Object?>[
-            50.0,
-            75.0,
-            100.0,
-            46.81345548256736,
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'pointPositions': <Object?>[
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[
-              319.61503449051213,
-              255.75610565893498,
-              -0.3141592653589793,
-            ],
-            <Object?>[245.0, 436.9097802540178, 1.5707963267948966],
-            <Object?>[
-              <String, Object?>{'num': 'NaN'},
-              <String, Object?>{'num': 'NaN'},
-              -1.5707963267948966,
-            ],
-            <Object?>[245.0, 421.218802228616, -1.5707963267948966],
-          ],
-          'pointPosition': <Object?>[
-            294.9949879638496,
-            279.2920603877924,
-            -0.014159265358979323,
-          ],
-          'basePositions': <Object?>[
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[245.0, 280.0, -0.3141592653589793],
-            <Object?>[245.0, 280.0, 1.5707963267948966],
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-          ],
-        },
-      },
-      'points': <Object?>[
-        <Object?>[
-          <Object?>[245.0, 232.92706592379466],
-          <Object?>[271.86141241658436, 271.2721980372166],
-          <Object?>[318.7834038190115, 381.5541430473112],
-          <Object?>[187.8178620402661, 358.7044608616661],
-          <Object?>[227.09239172227709, 274.1814653581444],
-        ],
-      ],
-      'drawCalls': '''
-["save"]
-["resetTransform"]
-["clearRect",0,0,512,512]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","May",32.049144427200446,204.8080726947485,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","April",113.38913332263996,467.14681743226043,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["fillText","March",376.61086667736004,467.14681743226043,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["fillText","February",457.9508555727995,204.8080726947485,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","center"]
-["setTextBaseline","middle"]
-["fillText","January",245,50.09021974598221,null]
-["restore"]
-["save"]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,123.09021974598221]
-["lineTo",394.23006898102426,231.51221131786997]
-["lineTo",337.22925477376435,406.94267880913895]
-["lineTo",152.77074522623565,406.94267880913895]
-["lineTo",95.76993101897574,231.51221131786997]
-["closePath"]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",95.76993101897574,231.51221131786997]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",152.77074522623565,406.94267880913895]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",337.22925477376435,406.94267880913895]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",394.23006898102426,231.51221131786997]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",245,123.09021974598221]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",0,0,512,32]
-["clip",null,null]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setStrokeStyle","#666"]
-["setFillStyle","#666"]
-["measureText","undefined"]
-["save"]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["setLineCap","butt"]
-["setLineDashOffset",0]
-["setLineJoin","miter"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["beginPath"]
-["rect",206.6416015625,10,40,12]
-["fill",null,null]
-["stroke",null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["fillText","undefined",252.6416015625,16,null]
-["restore"]
-["restore"]
-["save"]
-["translate",245,280]
-["rotate",0]
-["setTextAlign","center"]
-["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["measureText","100"]
-["setFillStyle","rgba(255, 255, 255, 0.75)"]
-["fillRect",-12.0107421875,-164.9097802540178,24.021484375,16]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["fillText","100",0,-156.9097802540178,null]
-["restore"]
-["restore"]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",245,232.92706592379466,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",271.86141241658436,271.2721980372166,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",318.7834038190115,381.5541430473112,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",187.8178620402661,358.7044608616661,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",227.09239172227709,274.1814653581444,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-''',
-    },
-  ),
-  (
-    name: 'an array tick font size',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{
-              'font': <String, Object?>{
-                'size': <Object?>[12.0],
-              },
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
-      'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
-      'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'type': 'radialLinear',
-          'axis': RAxis(),
-          'position': ChartPosition.chartArea,
-          'min': 50.0,
-          'max': 100.0,
-          'ticks': <Object?>[
-            <Object?>[50.0, '50', false],
-            <Object?>[100.0, '100', false],
-          ],
-          'box': <Object?>[0.0, 32.0, 512.0, 512.0],
-          'labelRotation': 0.0,
-          'paddings': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'tickPixels': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'valuePixels': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'valueForPixel': <Object?>[null, null, null],
-          'basePixel': <String, Object?>{'num': 'NaN'},
-          'xCenter': 245.0,
-          'yCenter': 280.0,
-          'drawingArea': 156.9097802540178,
-          'startValue': 50.0,
-          'endValue': 100.0,
-          'valueRange': 50.0,
-          'tickLimit': 2.0,
-          'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-          'pointLabels': <Object?>[
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-          ],
-          'pointLabelItems': <Object?>[
-            <Object?>[
-              true,
-              245.0,
-              44.09021974598221,
-              TextAlign.center,
-              227.2119140625,
-              44.09021974598221,
-              262.7880859375,
-              56.09021974598221,
-            ],
-            <Object?>[
-              true,
-              457.9508555727995,
-              198.8080726947485,
-              TextAlign.left,
-              457.9508555727995,
-              198.8080726947485,
-              497.9655040102995,
-              210.8080726947485,
-            ],
-            <Object?>[
-              true,
-              376.61086667736004,
-              461.14681743226043,
-              TextAlign.left,
-              376.61086667736004,
-              461.14681743226043,
-              404.39406980236004,
-              473.14681743226043,
-            ],
-            <Object?>[
-              true,
-              113.38913332263996,
-              461.14681743226043,
-              TextAlign.right,
-              93.38425051013996,
-              461.14681743226043,
-              113.38913332263996,
-              473.14681743226043,
-            ],
-            <Object?>[
-              true,
-              32.049144427200446,
-              198.8080726947485,
-              TextAlign.right,
-              13.157542864700446,
-              198.8080726947485,
-              32.049144427200446,
-              210.8080726947485,
-            ],
-          ],
-          'pointLabelPositions': <Object?>[
-            <Object?>[
-              227.2119140625,
-              44.09021974598221,
-              262.7880859375,
-              56.09021974598221,
-            ],
-            <Object?>[
-              457.9508555727995,
-              198.8080726947485,
-              497.9655040102995,
-              210.8080726947485,
-            ],
-            <Object?>[
-              376.61086667736004,
-              461.14681743226043,
-              404.39406980236004,
-              473.14681743226043,
-            ],
-            <Object?>[
-              93.38425051013996,
-              461.14681743226043,
-              113.38913332263996,
-              473.14681743226043,
-            ],
-            <Object?>[
-              13.157542864700446,
-              198.8080726947485,
-              32.049144427200446,
-              210.8080726947485,
-            ],
-          ],
-          'pointLabelContexts': <Object?>[
-            'undefined',
-            <Object?>['pointLabel', 0.0, 'January'],
-            <Object?>['pointLabel', 4.0, 'May'],
-            'undefined',
-          ],
-          'indexAngles': <Object?>[
-            0.0,
-            1.2566370614359172,
-            2.5132741228718345,
-            0.6283185307179586,
-            0.0,
-            5.026548245743669,
-          ],
-          'distances': <Object?>[
-            0.0,
-            78.4548901270089,
-            156.9097802540178,
-            -31.381956050803556,
-            -156.9097802540178,
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            -141.218802228616,
-            -153.77158464893742,
-            <String, Object?>{'num': 'Infinity'},
-          ],
-          'valuesForDistances': <Object?>[
-            50.0,
-            75.0,
-            100.0,
-            46.81345548256736,
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-          ],
-          'pointPositions': <Object?>[
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[
-              319.61503449051213,
-              255.75610565893498,
-              -0.3141592653589793,
-            ],
-            <Object?>[245.0, 436.9097802540178, 1.5707963267948966],
-            <Object?>[
-              <String, Object?>{'num': 'NaN'},
-              <String, Object?>{'num': 'NaN'},
-              -1.5707963267948966,
-            ],
-            <Object?>[245.0, 421.218802228616, -1.5707963267948966],
-          ],
-          'pointPosition': <Object?>[
-            294.9949879638496,
-            279.2920603877924,
-            -0.014159265358979323,
-          ],
-          'basePositions': <Object?>[
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-            <Object?>[245.0, 280.0, -0.3141592653589793],
-            <Object?>[245.0, 280.0, 1.5707963267948966],
-            <Object?>[245.0, 280.0, -1.5707963267948966],
-          ],
-        },
-      },
-      'points': <Object?>[
-        <Object?>[
-          <Object?>[245.0, 232.92706592379466],
-          <Object?>[271.86141241658436, 271.2721980372166],
-          <Object?>[318.7834038190115, 381.5541430473112],
-          <Object?>[187.8178620402661, 358.7044608616661],
-          <Object?>[227.09239172227709, 274.1814653581444],
-        ],
-      ],
-      'drawCalls': '''
-["save"]
-["resetTransform"]
-["clearRect",0,0,512,512]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","May",32.049144427200446,204.8080726947485,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","April",113.38913332263996,467.14681743226043,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["fillText","March",376.61086667736004,467.14681743226043,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["fillText","February",457.9508555727995,204.8080726947485,null]
-["restore"]
-["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["setTextAlign","center"]
-["setTextBaseline","middle"]
-["fillText","January",245,50.09021974598221,null]
-["restore"]
-["save"]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,123.09021974598221]
-["lineTo",394.23006898102426,231.51221131786997]
-["lineTo",337.22925477376435,406.94267880913895]
-["lineTo",152.77074522623565,406.94267880913895]
-["lineTo",95.76993101897574,231.51221131786997]
-["closePath"]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",95.76993101897574,231.51221131786997]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",152.77074522623565,406.94267880913895]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",337.22925477376435,406.94267880913895]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",394.23006898102426,231.51221131786997]
-["stroke",null]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",245,280]
-["lineTo",245,123.09021974598221]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",0,0,512,32]
-["clip",null,null]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setStrokeStyle","#666"]
-["setFillStyle","#666"]
-["measureText","undefined"]
-["save"]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["setLineCap","butt"]
-["setLineDashOffset",0]
-["setLineJoin","miter"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["beginPath"]
-["rect",206.6416015625,10,40,12]
-["fill",null,null]
-["stroke",null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["fillText","undefined",252.6416015625,16,null]
-["restore"]
-["restore"]
-["save"]
-["translate",245,280]
-["rotate",0]
-["setTextAlign","center"]
-["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["measureText","100"]
-["setFillStyle","rgba(255, 255, 255, 0.75)"]
-["fillRect",-12.0107421875,-164.9097802540178,24.021484375,16]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setFillStyle","#666"]
-["fillText","100",0,-156.9097802540178,null]
-["restore"]
-["restore"]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",245,232.92706592379466,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",271.86141241658436,271.2721980372166,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",318.7834038190115,381.5541430473112,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",187.8178620402661,358.7044608616661,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",227.09239172227709,274.1814653581444,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -35264,35 +34442,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",-940.0653627874663,-93.72615799680938,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",-487.79263910412897,1310.2261579968094,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",975.7926391041291,1310.2261579968094,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",1428.0653627874663,-93.72615799680949,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -35445,7 +34623,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -35463,7 +34641,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -35472,66 +34650,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-24.571428571428573,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-16.571428571428573,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-41.142857142857146,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-33.142857142857146,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-57.714285714285715,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-49.714285714285715,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-74.28571428571429,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-66.28571428571429,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-90.85714285714286,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-82.85714285714286,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-107.42857142857143,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-99.42857142857143,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-124.00000000000001,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-116.00000000000001,null]
 ["restore"]
@@ -35829,35 +35007,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",34.91676147009028,207.0394967381682,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",107.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",368.3664459231361,461.30487344327395,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",456.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -36010,7 +35188,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -36028,7 +35206,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -36037,66 +35215,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-37.09839148041203,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-29.098391480412033,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-66.19678296082407,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-58.196782960824066,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-95.2951744412361,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-87.2951744412361,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-124.39356592164813,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-116.39356592164813,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-153.49195740206017,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-145.49195740206017,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-182.5903488824722,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-174.5903488824722,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-211.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-203.68874036288423,null]
 ["restore"]
@@ -36394,35 +35572,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 16px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":16,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",34.40619630713874,199.34932679441872,null]
 ["restore"]
 ["save"]
-["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":14,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",116.75570155393919,470.7950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",383.24429844606084,469.5950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",465.59380369286123,202.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 8px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":8,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -36575,7 +35753,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -36593,7 +35771,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -36602,66 +35780,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -36989,35 +36167,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -37170,7 +36348,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -37188,7 +36366,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -37197,72 +36375,72 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60,x"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.3408203125,-38.526962908983464,26.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["fillText","x",0,-16.126962908983465,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65,x"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.3408203125,-69.05392581796693,26.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["fillText","x",0,-46.65392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70,x"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.3408203125,-99.58088872695039,26.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["fillText","x",0,-77.1808887269504,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75,x"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.3408203125,-130.10785163593386,26.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["fillText","x",0,-107.70785163593385,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80,x"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.3408203125,-160.63481454491733,26.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["fillText","x",0,-138.23481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85,x"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.3408203125,-191.16177745390078,26.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["fillText","x",0,-168.76177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90,x"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.3408203125,-221.68874036288423,26.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["fillText","x",0,-199.28874036288423,null]
@@ -37571,35 +36749,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -37740,7 +36918,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -37758,7 +36936,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -37767,66 +36945,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -38032,7 +37210,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -38050,7 +37228,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -38059,93 +37237,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-31.2,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1",0,-23.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-54.4,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2",0,-46.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-77.6,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3",0,-69.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-100.8,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4",0,-92.8,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-124,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5",0,-116,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-147.2,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6",0,-139.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-170.4,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7",0,-162.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-193.6,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8",0,-185.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","9"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-216.79999999999998,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","9",0,-208.79999999999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-240,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-232,null]
 ["restore"]
@@ -38444,35 +37622,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,12,12]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",{"num":"Infinity"},26.755321559063056,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",{"num":"Infinity"},50.49467844093695,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",{"num":"Infinity"},50.49467844093695,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",{"num":"Infinity"},26.75532155906305,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -38527,7 +37705,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -38545,7 +37723,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",2.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -38554,39 +37732,39 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-7.375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,0.625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-6.75,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,1.25,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-6.125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,1.875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-5.5,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,2.5,null]
 ["restore"]
@@ -38840,35 +38018,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",30.406196307138742,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",112.75570155393919,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",379.24429844606084,469.3950433870234,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",461.59380369286123,203.9493267944187,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -39021,7 +38199,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -39039,7 +38217,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -39048,66 +38226,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.526962908983464,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.526962908983464,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.05392581796693,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.05392581796693,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-99.58088872695039,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-91.58088872695039,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.10785163593386,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.10785163593386,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-160.63481454491733,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-152.63481454491733,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-191.16177745390078,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-183.16177745390078,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-221.68874036288423,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-213.68874036288423,null]
 ["restore"]
@@ -39418,7 +38596,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -39436,7 +38614,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["measureText","undefined"]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
@@ -39702,42 +38880,42 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","",58.5462079371479,152.00000000000014,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","",58.546207937148125,392.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","",453.4537920628521,391.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","",453.453792062852,151.99999999999994,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -39920,7 +39098,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -39938,7 +39116,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -39947,75 +39125,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-34.875,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","10",0,-26.875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-61.75,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","20",0,-53.75,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","30"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-88.625,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","30",0,-80.625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","40"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-115.5,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","40",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","50"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-142.375,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","50",0,-134.375,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-169.25,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-161.25,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-196.125,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-188.125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-215,null]
 ["restore"]
@@ -40308,35 +39486,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","",39.15911428470497,203.54412528251203,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","",121.98496247731615,470.45587471748803,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","",390.0150375226839,470.45587471748803,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","",472.84088571529503,203.544125282512,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -40489,7 +39667,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -40507,7 +39685,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -40516,66 +39694,66 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","60"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-38.714285714285715,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","60",0,-30.714285714285715,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","65"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-69.42857142857143,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","65",0,-61.42857142857143,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","70"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-100.14285714285715,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","70",0,-92.14285714285715,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","75"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-130.85714285714286,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","75",0,-122.85714285714286,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-161.57142857142858,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","80",0,-153.57142857142858,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-192.2857142857143,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","85",0,-184.2857142857143,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-8.673828125,-223,17.34765625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","90",0,-215,null]
 ["restore"]
@@ -40777,7 +39955,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -40900,7 +40078,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -40918,7 +40096,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -40927,93 +40105,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.80"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-29.499999999999922,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.80",0,-21.499999999999922,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.85"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-50.999999999999844,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.85",0,-42.999999999999844,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.90"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-72.50000000000016,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.90",0,-64.50000000000016,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.95"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-94.00000000000007,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.95",0,-86.00000000000007,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.00"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-115.5,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.00",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.05"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-136.99999999999991,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.05",0,-128.99999999999991,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.10"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-158.49999999999986,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.10",0,-150.49999999999986,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.15"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-180.00000000000014,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.15",0,-172.00000000000014,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.20"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-201.50000000000009,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.20",0,-193.50000000000009,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.25"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-13.677734375,-223,27.35546875,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.25",0,-215,null]
 ["restore"]
@@ -41198,14 +40376,14 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Right",256,506,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -41324,7 +40502,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -41342,7 +40520,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -41351,75 +40529,75 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","5.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-34.875,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","5.5",0,-26.875,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-61.75,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6.0",0,-53.75,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","6.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-88.625,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","6.5",0,-80.625,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7.0",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","7.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-142.375,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","7.5",0,-134.375,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-169.25,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8.0",0,-161.25,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","8.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-196.125,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","8.5",0,-188.125,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","9.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","9.0",0,-215,null]
 ["restore"]
@@ -41664,28 +40842,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","D",28.00000000001222,271.00039793506943,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","C",256.00039793506943,504.9999999999878,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","B",483.9999999999878,270.99960206493057,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -41810,7 +40988,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -41828,7 +41006,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -41837,57 +41015,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",6.283183561850334]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-43.83333333338917,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-35.83333333338917,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-79.66666666677834,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-71.66666666677834,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.50000000016752,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-107.50000000016752,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-151.33333333355668,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-143.33333333355668,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-187.16666666694584,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-179.16666666694584,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223.00000000033504,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-215.00000000033504,null]
 ["restore"]
@@ -42176,35 +41354,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",95.24887415025478,93.90575055117014,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",41.27948594952505,359.81175927045524,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",266.080991938451,489.6009692673947,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",458.9853515625,315.9091036992158,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
@@ -42357,7 +41535,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -42375,7 +41553,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -42675,21 +41853,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","C",{"num":"NaN"},{"num":"NaN"},null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","B",{"num":"NaN"},{"num":"NaN"},null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
@@ -42848,7 +42026,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -42866,7 +42044,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -42875,93 +42053,93 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",{"num":"NaN"}]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-31.199999999999996,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.2",0,-23.199999999999996,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-54.39999999999999,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.4",0,-46.39999999999999,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-77.60000000000001,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.6",0,-69.60000000000001,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-100.80000000000001,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.8",0,-92.80000000000001,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-124,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-116,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-147.20000000000002,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.2",0,-139.20000000000002,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-170.39999999999998,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.4",0,-162.39999999999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-193.60000000000002,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.6",0,-185.60000000000002,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-216.79999999999998,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.8",0,-208.79999999999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-240,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-232,null]
 ["restore"]
@@ -43248,35 +42426,35 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","May",{"num":"NaN"},{"num":"NaN"},null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","April",{"num":"NaN"},{"num":"NaN"},null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","March",{"num":"NaN"},{"num":"NaN"},null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","February",{"num":"NaN"},{"num":"NaN"},null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -43331,7 +42509,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -43349,7 +42527,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -43559,21 +42737,21 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["clearRect",0,0,512,512]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["fillText","c",58.546207937148125,400.0000000000002,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["fillText","b",453.4537920628521,399.9999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":10,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
@@ -43684,7 +42862,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","undefined"]
@@ -43702,7 +42880,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","undefined",252.6416015625,16,null]
 ["restore"]
 ["restore"]
@@ -43711,57 +42889,57 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-43.833333333333336,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.5",0,-35.833333333333336,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-79.66666666666667,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.0",0,-71.66666666666667,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","2.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-115.5,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","2.5",0,-107.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-151.33333333333334,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.0",0,-143.33333333333334,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","3.5"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-187.16666666666669,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","3.5",0,-179.16666666666669,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","4.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-223,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","4.0",0,-215,null]
 ["restore"]
@@ -43941,109 +43119,109 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["restore"]
 ["save"]
 ["translate",256,261]
 ["rotate",0]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-1.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-8,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-1.0",0,{"num":"-0"},null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-32.3,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.8",0,-24.299999999999994,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-56.6,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.6",0,-48.6,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-80.89999999999999,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.4",0,-72.89999999999999,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","-0.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-12.3388671875,-105.2,24.677734375,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","-0.2",0,-97.2,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-5.3369140625,-129.5,10.673828125,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0",0,-121.5,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.2"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-153.79999999999998,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.2",0,-145.79999999999998,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.4"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-178.1,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.4",0,-170.1,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.6"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-202.4,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.6",0,-194.4,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","0.8"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-226.70000000000002,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","0.8",0,-218.70000000000002,null]
 ["restore"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["measureText","1.0"]
 ["setFillStyle","rgba(255, 255, 255, 0.75)"]
 ["fillRect",-10.3408203125,-251,20.681640625,16]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#666"]
 ["fillText","1.0",0,-243,null]
 ["restore"]
@@ -44056,1092 +43234,2195 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
 /// Each text that the cases measured, with its font and width.
 const List<ScaleRadialLinearReferenceWidth> scaleRadialLinearReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'undefined',
     width: 52.716796875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '30',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '40',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '50',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '60',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '70',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '80',
     width: 13.34765625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Eating',
     width: 28.3544921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Drinking',
     width: 36.6796875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Sleeping',
     width: 38.9208984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '90',
     width: 13.34765625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Designing',
     width: 44.47265625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 13.34765625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Coding',
     width: 31.689453125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '100',
     width: 20.021484375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Cycling',
     width: 32.7880859375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Running',
     width: 37.2509765625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Swimming',
     width: 46.1181640625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Reading',
     width: 37.2509765625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Walking',
     width: 35.1953125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Cooking',
     width: 36.689453125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Writing',
     width: 30.9326171875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '15',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '25',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '35',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '45',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '55',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '65',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '75',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '85',
     width: 13.34765625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 35.576171875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'February',
     width: 40.0146484375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'March',
     width: 27.783203125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'April',
     width: 20.0048828125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'May',
     width: 18.8916015625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dinner',
     width: 29.4580078125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Water',
     width: 26.298828125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Graphics',
     width: 40.0146484375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Now',
     width: 20.0048828125,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 1',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 2',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 3',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 4',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 5',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 6',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 7',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 8',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 9',
     width: 97.2890625,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 10',
     width: 105.0751953125,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 11',
     width: 104.0361328125,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 12',
     width: 105.0751953125,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 13',
     width: 105.0751953125,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 14',
     width: 105.0751953125,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 15',
     width: 105.0751953125,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Label number 16',
     width: 105.0751953125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '8',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '12',
     width: 13.34765625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 1',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 2',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 3',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 4',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 5',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 6',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 7',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 8',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 9',
     width: 54.4921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 10',
     width: 60.0537109375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 11',
     width: 59.3115234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Long label 12',
     width: 60.0537109375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'A',
     width: 6.669921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'B',
     width: 6.669921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'C',
     width: 7.2216796875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'D',
     width: 7.2216796875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'E',
     width: 6.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '9',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'F',
     width: 6.1083984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.4',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.4',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-10',
     width: 17.34375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-20',
     width: 17.34375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '120',
     width: 20.021484375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.3',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.7',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.7',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.9',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7.1',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7.3',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7.4',
     width: 16.681640625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '55',
     width: 15.572265625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '60',
     width: 15.572265625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '65',
     width: 15.572265625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '70',
     width: 15.572265625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '75',
     width: 15.572265625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '80',
     width: 15.572265625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '85',
     width: 15.572265625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: '90',
     width: 15.572265625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '55 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '60 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '65 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '70 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '75 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '80 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '85 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 9,
+      fontStyle: FontStyle.normal,
+    ),
     text: '90 u',
     width: 17.5166015625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '11',
     width: 12.45703125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '13',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '14',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '16',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '17',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '18',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '19',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '21',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '22',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '23',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '24',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '26',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '27',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '28',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '29',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '31',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '32',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '33',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '34',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '36',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '37',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '38',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '39',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '41',
     width: 13.34765625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 53.6962890625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'February',
     width: 59.91015625,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'March',
     width: 41.234375,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'April',
     width: 31.8896484375,
   ),
   (
-    font: "normal bold 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'May',
     width: 27.234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0',
     width: 5.5615234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Delta',
     width: 23.3447265625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'x3',
     width: 10.5615234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Epsilon!',
     width: 35.576171875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Zeta!',
     width: 22.7880859375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-1.0',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.8',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.6',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.4',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '-0.2',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.2',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.4',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.6',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0.8',
     width: 16.681640625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'P',
     width: 6.669921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Q',
     width: 7.7783203125,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'R',
     width: 7.2216796875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'S',
     width: 6.669921875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'y1',
     width: 10.5615234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'y2',
     width: 10.5615234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'y3',
     width: 10.5615234375,
   ),
   (
-    font: "normal 8px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 8,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 28.4609375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'March',
     width: 33.33984375,
   ),
   (
-    font: "normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 14,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'April',
     width: 28.0068359375,
   ),
   (
-    font: "normal 16px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 16,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'May',
     width: 30.2265625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'x',
     width: 6.0,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '60,x',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '65,x',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '70,x',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '75,x',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '80,x',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '85,x',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '90,x',
     width: 22.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.75',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.80',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.85',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.90',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.95',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.00',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.05',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.10',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.15',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.20',
     width: 23.35546875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.25',
     width: 23.35546875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Only',
     width: 20.5615234375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '7.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '8.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '8.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '9.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Left',
     width: 16.6796875,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Right',
     width: 23.3447265625,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'a',
     width: 5.5615234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'b',
     width: 5.5615234375,
   ),
   (
-    font: "normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'c',
     width: 5.0,
   ),

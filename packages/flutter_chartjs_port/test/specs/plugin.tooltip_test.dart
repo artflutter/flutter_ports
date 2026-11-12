@@ -10,6 +10,7 @@ import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -19,6 +20,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -30,6 +33,7 @@ import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -69,7 +73,40 @@ JsClass _tooltipClass() => jsGet(_tooltipPlugin(), '_element')! as JsClass;
 JsObjectFace _defaults() => Chart.defaults;
 
 /// `Chart.defaults.font`.
-Object? _font(String key) => jsGet(jsGet(_defaults(), 'font'), key);
+TextStyle get _defaultFont => jsGet(_defaults(), 'font')! as TextStyle;
+
+/// The font object `{family, style, size}` of the body, or `{family,
+/// weight: 'bold', size}` of the title and the footer ([bold]), with the
+/// values of `Chart.defaults.font`. A font is a `ChartTextStyle` (Chart.js
+/// ADR 0116, row adapt-text-style-fonts).
+ChartTextStyle _modelFont({bool bold = false}) => ChartTextStyle(
+  fontFamily: _defaultFont.fontFamily,
+  fontFamilyFallback: _defaultFont.fontFamilyFallback,
+  fontStyle: bold ? null : _defaultFont.fontStyle,
+  fontWeight: bold ? native_ui.FontWeight.bold : null,
+  fontSize: _defaultFont.fontSize,
+);
+
+/// The `toEqualOptions` of the font object [expected]: each field that
+/// [expected] sets equals the field of the font.
+Matcher _fontFields(TextStyle expected) => isA<TextStyle>()
+    .having((f) => f.fontFamily, 'fontFamily', expected.fontFamily)
+    .having(
+      (f) => f.fontFamilyFallback,
+      'fontFamilyFallback',
+      expected.fontFamilyFallback,
+    )
+    .having((f) => f.fontSize, 'fontSize', expected.fontSize)
+    .having(
+      (f) => f.fontStyle,
+      'fontStyle',
+      expected.fontStyle ?? anything,
+    )
+    .having(
+      (f) => f.fontWeight,
+      'fontWeight',
+      expected.fontWeight ?? anything,
+    );
 
 /// `chart.tooltip`, the tooltip of [chart], as the class of the plugin.
 Tooltip _tooltipOf(Chart chart) => chart.tooltip! as Tooltip;
@@ -211,13 +248,13 @@ bool _hasOwnProperty(Object? value, String key) => switch (value) {
   _ => false,
 };
 
-/// The font string of the title and the footer of the text align cases.
-const String _boldFont =
-    "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+/// The font of the title and the footer of the text align cases: the
+/// `toFont` result of their font object.
+ChartTextStyle get _boldFont => toFont(_modelFont(bold: true));
 
-/// The font string of the body of the text align cases.
-const String _normalFont =
-    "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+/// The font of the body of the text align cases: the `toFont` result of its
+/// font object.
+ChartTextStyle get _normalFont => toFont(_modelFont());
 
 /// The chart of the text align cases (:1487-1496): `getContext` and
 /// `options` only. The draw of these cases reads only `getContext()`.
@@ -355,12 +392,8 @@ void main() {
         );
 
         expect(
-          jsGet(options, 'bodyFont')! as JsObjectFace,
-          toEqualOptions(<String, Object?>{
-            'family': _font('family'),
-            'style': _font('style'),
-            'size': _font('size'),
-          }),
+          jsGet(options, 'bodyFont'),
+          _fontFields(_modelFont()),
         );
 
         expect(
@@ -376,12 +409,8 @@ void main() {
           const native_ui.Color.fromRGBO(255, 255, 255, 1),
         );
         expect(
-          jsGet(options, 'titleFont')! as JsObjectFace,
-          toEqualOptions(<String, Object?>{
-            'family': _font('family'),
-            'weight': 'bold',
-            'size': _font('size'),
-          }),
+          jsGet(options, 'titleFont'),
+          _fontFields(_modelFont(bold: true)),
         );
 
         expect(
@@ -398,12 +427,8 @@ void main() {
           const native_ui.Color.fromRGBO(255, 255, 255, 1),
         );
         expect(
-          jsGet(options, 'footerFont')! as JsObjectFace,
-          toEqualOptions(<String, Object?>{
-            'family': _font('family'),
-            'weight': 'bold',
-            'size': _font('size'),
-          }),
+          jsGet(options, 'footerFont'),
+          _fontFields(_modelFont(bold: true)),
         );
 
         expect(
@@ -508,12 +533,8 @@ void main() {
       expect(tooltip.yAlign, TooltipYAlign.center);
 
       expect(
-        JasmineOptions(jsGet(options, 'bodyFont')! as JsObjectFace),
-        objectContaining(<String, Object?>{
-          'family': _font('family'),
-          'style': _font('style'),
-          'size': _font('size'),
-        }),
+        jsGet(options, 'bodyFont'),
+        _fontFields(_modelFont()),
       );
 
       expect(
@@ -525,12 +546,8 @@ void main() {
       );
 
       expect(
-        JasmineOptions(jsGet(options, 'titleFont')! as JsObjectFace),
-        objectContaining(<String, Object?>{
-          'family': _font('family'),
-          'weight': 'bold',
-          'size': _font('size'),
-        }),
+        jsGet(options, 'titleFont'),
+        _fontFields(_modelFont(bold: true)),
       );
 
       expect(
@@ -543,12 +560,8 @@ void main() {
       );
 
       expect(
-        jsGet(options, 'footerFont')! as JsObjectFace,
-        toEqualOptions(<String, Object?>{
-          'family': _font('family'),
-          'weight': 'bold',
-          'size': _font('size'),
-        }),
+        jsGet(options, 'footerFont'),
+        _fontFields(_modelFont(bold: true)),
       );
 
       expect(
@@ -647,12 +660,8 @@ void main() {
       expect(tooltip.yAlign, TooltipYAlign.center);
 
       expect(
-        JasmineOptions(jsGet(options, 'bodyFont')! as JsObjectFace),
-        objectContaining(<String, Object?>{
-          'family': _font('family'),
-          'style': _font('style'),
-          'size': _font('size'),
-        }),
+        jsGet(options, 'bodyFont'),
+        _fontFields(_modelFont()),
       );
 
       expect(
@@ -664,12 +673,8 @@ void main() {
       );
 
       expect(
-        JasmineOptions(jsGet(options, 'titleFont')! as JsObjectFace),
-        objectContaining(<String, Object?>{
-          'family': _font('family'),
-          'weight': 'bold',
-          'size': _font('size'),
-        }),
+        jsGet(options, 'titleFont'),
+        _fontFields(_modelFont(bold: true)),
       );
 
       expect(
@@ -681,12 +686,8 @@ void main() {
       );
 
       expect(
-        JasmineOptions(jsGet(options, 'footerFont')! as JsObjectFace),
-        objectContaining(<String, Object?>{
-          'family': _font('family'),
-          'weight': 'bold',
-          'size': _font('size'),
-        }),
+        jsGet(options, 'footerFont'),
+        _fontFields(_modelFont(bold: true)),
       );
 
       expect(
@@ -1444,12 +1445,8 @@ void main() {
       expect(tooltip.yAlign, TooltipYAlign.top);
 
       expect(
-        jsGet(options, 'bodyFont')! as JsObjectFace,
-        toEqualOptions(<String, Object?>{
-          'family': _font('family'),
-          'style': _font('style'),
-          'size': _font('size'),
-        }),
+        jsGet(options, 'bodyFont'),
+        _fontFields(_modelFont()),
       );
 
       expect(
@@ -1461,12 +1458,8 @@ void main() {
       );
 
       expect(
-        jsGet(options, 'titleFont')! as JsObjectFace,
-        toEqualOptions(<String, Object?>{
-          'family': _font('family'),
-          'weight': 'bold',
-          'size': _font('size'),
-        }),
+        jsGet(options, 'titleFont'),
+        _fontFields(_modelFont(bold: true)),
       );
 
       expect(
@@ -1479,12 +1472,8 @@ void main() {
       );
 
       expect(
-        jsGet(options, 'footerFont')! as JsObjectFace,
-        toEqualOptions(<String, Object?>{
-          'family': _font('family'),
-          'weight': 'bold',
-          'size': _font('size'),
-        }),
+        jsGet(options, 'footerFont'),
+        _fontFields(_modelFont(bold: true)),
       );
 
       expect(
@@ -1575,32 +1564,20 @@ void main() {
             'padding': 5,
 
             // Body
-            'bodyFont': <String, Object?>{
-              'family': _font('family'),
-              'style': _font('style'),
-              'size': _font('size'),
-            },
+            'bodyFont': _modelFont(),
             'bodyColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
             'bodyAlign': body,
             'bodySpacing': 2,
 
             // Title
-            'titleFont': <String, Object?>{
-              'family': _font('family'),
-              'weight': 'bold',
-              'size': _font('size'),
-            },
+            'titleFont': _modelFont(bold: true),
             'titleColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
             'titleAlign': title,
             'titleSpacing': 2,
             'titleMarginBottom': 6,
 
             // Footer
-            'footerFont': <String, Object?>{
-              'family': _font('family'),
-              'weight': 'bold',
-              'size': _font('size'),
-            },
+            'footerFont': _modelFont(bold: true),
             'footerColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
             'footerAlign': footer,
             'footerSpacing': 2,

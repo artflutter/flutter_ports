@@ -64,6 +64,7 @@ import 'dart:core';
 import 'dart:typed_data' show Uint16List;
 import 'dart:ui' show Color, StrokeJoin;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show nativeOptionScope;
@@ -93,10 +94,10 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
     show ArcOptions, BarOptions, PointOptions;
-import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
@@ -1692,30 +1693,24 @@ final class OptionView implements ContextProxy {
   /// the cache object. Dart `null` before the first one.
   Set<String>? _removedSlots;
 
-  /// The already-resolved scalar inputs of `ticks.font`, or null when a fresh
-  /// context can change them. This probe never resolves an uncached property,
-  /// invokes a descriptor, or populates a contextual view's cache.
+  /// The already-resolved static `TextStyle` of `ticks.font`, or null when a
+  /// fresh context can change it. This probe never resolves an uncached
+  /// property, invokes a descriptor, or populates a contextual view's cache.
   ///
   /// Only the ordinary setContext/descriptor path is eligible. The caller
   /// still creates the tick context, checks the global font fallback and
-  /// compares these inputs on every call; resolver writes/deletes are visible.
+  /// compares the font on every call; resolver writes/deletes are visible.
+  /// A font function stays in the cache as a function: no static font.
   @internal
-  StaticFontInputs? cachedStaticFont([StaticFontInputs? fallback]) {
-    // DIVERGES(chartjs): adapt-static-tick-font, cached scalar inputs only.
+  TextStyle? cachedStaticFont([TextStyle? fallback]) {
+    // DIVERGES(chartjs): adapt-static-tick-font, cached static fonts only.
     final proxy = _staticProxy;
     if (proxy == null) return null;
     final font = proxy._cache.get(OptionKey.font);
-    // An absent ticks.font uses the live global font. The caller supplies its
-    // scalar inputs only after ruling out routed or custom fallback getters.
+    // An absent ticks.font uses the live global font. The caller supplies it
+    // only after ruling out routed or custom fallback getters.
     if (identical(font, undefined)) return fallback;
-    if (font is! OptionResolver || !_hasCachedDescriptors(font)) return null;
-    return staticFontInputs(
-      font._cache.get(OptionKey.size),
-      font._cache.get(OptionKey.family),
-      font._cache.get(OptionKey.style),
-      font._cache.get(OptionKey.lineHeight),
-      font._cache.get(OptionKey.weight),
-    );
+    return font is TextStyle ? font : null;
   }
 
   /// The resolver of this ordinary setContext/descriptor view, or null when a
@@ -2397,6 +2392,15 @@ Object? _resolveScriptable(
 }
 
 Object? _resolveScriptableReturn(String prop, Object? value, Object? proxy) {
+  // DIVERGES(chartjs): adapt-text-style-fonts, a returned font merges too.
+  if (value is TextStyle) {
+    return _mergeTextStyles(
+      _targetGet(proxy, '_scopes')! as List<Object?>,
+      proxy,
+      prop,
+      value,
+    );
+  }
   if (_needsSubResolver(prop, value)) {
     // When scriptable option returns an object, create a resolver on that.
     return _createSubResolver(
@@ -2640,6 +2644,58 @@ Object _createSubResolver(
   );
 }
 
+/// The font of [prop] (Chart.js ADR 0116, row `adapt-text-style-fonts`):
+/// the `TextStyle`s of the scopes that `createSubResolver` gathers for a font
+/// object upstream (the scopes of [prop], then the scopes of its `_fallback`
+/// key), merged with [TextStyle.merge]. A style of a scope with higher
+/// priority wins for each field that it sets, as a key of a font object
+/// wins in the sub-resolver upstream. The result is a [ChartTextStyle] when
+/// the lowest style is one, or `false` where `createSubResolver` gives
+/// `false`.
+Object _mergeTextStyles(
+  List<Object?> parentScopes,
+  Object? resolver,
+  String prop,
+  TextStyle value,
+) {
+  final rootScopes = _targetGet(resolver, '_rootScopes')! as List<Object?>;
+  final fallback = _resolveFallback(
+    _targetGet(resolver, '_fallback'),
+    prop,
+    value,
+  );
+  final twice = identical(parentScopes, rootScopes);
+  final allScopes = twice
+      ? [...parentScopes]
+      : [...parentScopes, ...rootScopes];
+  final set = <Object?>{value};
+  var key = _addScopesFromKey(
+    set,
+    allScopes,
+    prop,
+    jsTruthy(fallback) ? fallback : prop,
+    value,
+    twice,
+  );
+  if (key == null) {
+    return false;
+  }
+  if (!identical(fallback, undefined) && fallback != prop) {
+    key = _addScopesFromKey(set, allScopes, fallback, key, value, twice);
+    if (key == null) {
+      return false;
+    }
+  }
+  var merged = value;
+  var first = true;
+  for (final style in set.toList().reversed) {
+    if (style is! TextStyle) continue;
+    merged = first ? style : merged.merge(style);
+    first = false;
+  }
+  return merged;
+}
+
 /// helpers.config.ts:360 `addScopesFromKey`.
 ///
 /// [twice] is the flag of [_addScopes]: [allScopes] stands for itself two
@@ -2703,6 +2759,10 @@ Object? _resolveWithPrefixes(
       prefix.isEmpty ? key : null,
     );
     if (!identical(value, undefined)) {
+      // DIVERGES(chartjs): adapt-text-style-fonts, the fonts merge.
+      if (value is TextStyle) {
+        return _mergeTextStyles(scopes, proxy, prop, value);
+      }
       return _needsSubResolver(prop, value)
           ? _createSubResolver(scopes, proxy, prop, value)
           : value;

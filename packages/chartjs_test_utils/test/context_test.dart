@@ -3,6 +3,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:chartjs_test_utils/src/context.dart' as context;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:test/test.dart';
 
@@ -71,7 +72,7 @@ void main() {
     test('records each property setter under its set name', () {
       final ctx = createMockContext()
         ..fillStyle = 'a'
-        ..font = '12px Arial'
+        ..font = const TextStyle(fontFamily: 'Arial', fontSize: 12)
         ..lineCap = StrokeCap.round
         ..lineDashOffset = 1.5
         ..lineJoin = StrokeJoin.bevel
@@ -94,7 +95,10 @@ void main() {
         ],
       );
       expect(ctx.fillStyle, 'a');
-      expect(ctx.font, '12px Arial');
+      expect(
+        ctx.font,
+        const TextStyle(fontFamily: 'Arial', fontSize: 12),
+      );
       expect(ctx.lineCap, StrokeCap.round);
       expect(ctx.lineDashOffset, 1.5);
       expect(ctx.lineJoin, StrokeJoin.bevel);

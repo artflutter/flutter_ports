@@ -541,20 +541,11 @@ cases.push(
   }),
 );
 
-// The cases of the fidelity review. The first three pin the JS `+` of a raw
-// option value (scale.radialLinear.js:14, :95, :142): a string or an array
-// joins the number as a string.
+// The cases of the fidelity review. The first one pins the JS `+` of a raw
+// option value (scale.radialLinear.js:95): a string joins the number as a
+// string. A font size is a number of a ChartTextStyle (row
+// adapt-text-style-fonts): a string or an array size has no form.
 cases.push(
-  runCase(
-    'a string tick font size',
-    radar(FIVE, DATA, {scales: {r: {ticks: {font: {size: '12'}}}}}),
-    {extra},
-  ),
-  runCase(
-    'an array tick font size',
-    radar(FIVE, DATA, {scales: {r: {ticks: {font: {size: [12]}}}}}),
-    {extra},
-  ),
   runCase(
     'a string point label padding',
     radar(FIVE, DATA, {scales: {r: {pointLabels: {padding: '5'}}}}),

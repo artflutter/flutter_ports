@@ -7,6 +7,8 @@
 
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
+    show InteractionAxis;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
 Object? _fn(Object? ctx) => ctx;
@@ -112,15 +115,19 @@ void main() {
     });
 
     test('clone gives a typed copy of a typed scope', () {
-      final font = FontSpecScope()..size = 12.0;
+      final interaction = InteractionOptionsScope()..intersect = false;
+      const font = ChartTextStyle(fontSize: 12);
       final scope = ChartOptionsScope()
+        ..interaction = interaction
         ..font = font
         ..jsWrite('onClick', _fn);
       final copy = clone(scope)! as ChartOptionsScope;
       expect(copy, isNot(same(scope)));
-      expect(copy.jsKeys(), ['font', 'onClick']);
-      expect(copy.fontCell!.raw, isA<FontSpecScope>());
-      expect(copy.fontCell!.raw, isNot(same(font)));
+      expect(copy.jsKeys(), ['interaction', 'font', 'onClick']);
+      expect(copy.interactionCell!.raw, isA<InteractionOptionsScope>());
+      expect(copy.interactionCell!.raw, isNot(same(interaction)));
+      // A font is an immutable TextStyle (Chart.js ADR 0116): a leaf.
+      expect(copy.fontCell!.raw, same(font));
       expect(copy.jsRead('onClick'), same(_fn));
     });
   });
@@ -129,46 +136,80 @@ void main() {
     test('merge into a typed scope makes typed children', () {
       final scope = ChartOptionsScope()
         ..color = const ui.Color.fromRGBO(255, 0, 0, 1);
+      const font = ChartTextStyle(fontSize: 14, fontFamily: 'x');
       merge(scope, <String, Object?>{
-        'font': <String, Object?>{'size': 14.0, 'family': 'x'},
+        'interaction': <String, Object?>{
+          'intersect': false,
+          'axis': InteractionAxis.x,
+        },
+        'font': font,
         'color': const ui.Color.fromRGBO(0, 0, 255, 1),
         'extra': <String, Object?>{'a': 1.0},
       });
-      expect(scope.jsKeys(), ['color', 'font', 'extra']);
+      expect(scope.jsKeys(), ['color', 'interaction', 'font', 'extra']);
       expect(
         scope.jsRead('color'),
         const ui.Color.fromRGBO(0, 0, 255, 1),
       );
-      final font = scope.fontCell!.raw;
-      expect(font, isA<FontSpecScope>());
-      expect((font! as FontSpecScope).jsKeys(), ['size', 'family']);
+      final interaction = scope.interactionCell!.raw;
+      expect(interaction, isA<InteractionOptionsScope>());
+      expect((interaction! as InteractionOptionsScope).jsKeys(), [
+        'intersect',
+        'axis',
+      ]);
+      expect(scope.fontCell!.raw, same(font));
       expect(scope.jsRead('extra'), isA<Map<String, Object?>>());
     });
 
     test('merge into a nested typed scope', () {
-      final scope = ChartOptionsScope()..font = (FontSpecScope()..size = 12.0);
-      final font = scope.fontCell!.raw;
+      final scope = ChartOptionsScope()
+        ..interaction = (InteractionOptionsScope()..intersect = false)
+        ..font = const ChartTextStyle(fontSize: 12);
+      final interaction = scope.interactionCell!.raw;
       merge(scope, <String, Object?>{
-        'font': <String, Object?>{'weight': 'bold'},
+        'interaction': <String, Object?>{'includeInvisible': true},
+        'font': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
       });
-      expect(scope.fontCell!.raw, same(font));
-      expect((font! as FontSpecScope).jsKeys(), ['size', 'weight']);
+      expect(scope.interactionCell!.raw, same(interaction));
+      expect((interaction! as InteractionOptionsScope).jsKeys(), [
+        'intersect',
+        'includeInvisible',
+      ]);
+      // A font merges with TextStyle.merge: a field of the source wins.
+      expect(
+        scope.fontCell!.raw,
+        const ChartTextStyle(fontSize: 12, fontWeight: ui.FontWeight.bold),
+      );
     });
 
     test('mergeIf keeps the own keys, also undefined', () {
       final scope = ChartOptionsScope()
         ..jsWrite('color', undefined)
-        ..font = (FontSpecScope()..size = 12.0);
+        ..interaction = (InteractionOptionsScope()..intersect = false)
+        ..font = const ChartTextStyle(fontSize: 12);
       mergeIf(scope, <String, Object?>{
         'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-        'font': <String, Object?>{'size': 20.0, 'style': 'italic'},
+        'interaction': <String, Object?>{
+          'intersect': true,
+          'includeInvisible': true,
+        },
+        'font': const ChartTextStyle(
+          fontSize: 20,
+          fontStyle: ui.FontStyle.italic,
+        ),
         'indexAxis': const YAxis(),
       });
       expect(scope.jsRead('color'), same(undefined));
       expect(scope.jsRead('indexAxis'), isA<YAxis>());
-      final font = scope.fontCell!.raw! as FontSpecScope;
-      expect(font.jsKeys(), ['size', 'style']);
-      expect(font.jsRead('size'), 12.0);
+      final interaction =
+          scope.interactionCell!.raw! as InteractionOptionsScope;
+      expect(interaction.jsKeys(), ['intersect', 'includeInvisible']);
+      expect(interaction.jsRead('intersect'), false);
+      // A font merges with TextStyle.merge: a field of the target wins.
+      expect(
+        scope.fontCell!.raw,
+        const ChartTextStyle(fontSize: 12, fontStyle: ui.FontStyle.italic),
+      );
     });
   });
 

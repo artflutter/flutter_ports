@@ -4,6 +4,7 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' show FontWeight;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
@@ -19,6 +20,7 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -256,7 +258,10 @@ void main() {
       ]);
       expect(defaults['align'], ChartAlign.center);
       expect(defaults['display'], isFalse);
-      expect(_plain(defaults['font']), <String, Object?>{'weight': 'normal'});
+      expect(
+        defaults['font'],
+        const ChartTextStyle(fontWeight: FontWeight.normal),
+      );
       expect(defaults['fullSize'], isTrue);
       expect(defaults['padding'], 0);
       expect(defaults['position'], ChartPosition.top);

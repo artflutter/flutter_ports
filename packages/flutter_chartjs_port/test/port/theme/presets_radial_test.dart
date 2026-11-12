@@ -9,15 +9,17 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ParsedFont, toFont;
+    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/font_record.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the radial linear scale case of phase 6: the light
@@ -47,15 +49,10 @@ Object? _at(Object? root, String path) {
   return node;
 }
 
-/// The fields of the `toFont` result [font], as the generator writes them.
-Map<String, Object?> _fontFields(ParsedFont font) => {
-  'family': font.family,
-  'lineHeight': font.lineHeight,
-  'size': font.size,
-  'style': font.style,
-  'weight': font.weight,
-  'string': font.string,
-};
+/// The fields of the `toFont` result [font], as the generator writes them
+/// (`font_record.dart`).
+Map<String, Object?> _fontFields(ChartTextStyle font) =>
+    resolvedFontRecordOf(font);
 
 /// The options of the scale `r` of the type `radialLinear`, by the keys of
 /// [themeLightRadial], with the theme [theme].

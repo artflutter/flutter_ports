@@ -45,6 +45,7 @@ import 'dart:ui' as ui;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/animation.dart' show Curves;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -85,7 +86,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         AnimationOptionsScope,
         AnimationsSpecScope,
         DescriptorsScope,
-        FontSpecScope,
         TooltipCallbacksScope,
         TooltipOptionsScope;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
@@ -95,6 +95,7 @@ import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
@@ -375,24 +376,24 @@ double _lengthOf(Object? list) =>
 
   if (titleLineCount != 0) {
     height +=
-        titleLineCount * titleFont.lineHeight +
+        titleLineCount * titleFont.lineHeight! +
         (titleLineCount - 1) * jsToNumber(options.titleSpacing) +
         jsToNumber(options.titleMarginBottom);
   }
   if (jsTruthy(combinedBodyLength)) {
     // Body lines may include some extra height depending on boxHeight
     final bodyLineHeight = jsTruthy(options.displayColors)
-        ? jsMax(boxHeight, bodyFont.lineHeight)
-        : bodyFont.lineHeight;
+        ? jsMax(boxHeight, bodyFont.lineHeight!)
+        : bodyFont.lineHeight!;
     height +=
         bodyLineItemCount * bodyLineHeight +
-        (combinedBodyLength - bodyLineItemCount) * bodyFont.lineHeight +
+        (combinedBodyLength - bodyLineItemCount) * bodyFont.lineHeight! +
         (combinedBodyLength - 1) * jsToNumber(options.bodySpacing);
   }
   if (footerLineCount != 0) {
     height +=
         jsToNumber(options.footerMarginTop) +
-        footerLineCount * footerFont.lineHeight +
+        footerLineCount * footerFont.lineHeight! +
         (footerLineCount - 1) * jsToNumber(options.footerSpacing);
   }
 
@@ -407,11 +408,11 @@ double _lengthOf(Object? list) =>
 
   ctx
     ..save()
-    ..font = titleFont.string;
+    ..font = titleFont;
   each(tooltip.title, maxLineWidth);
 
   // Body width
-  ctx.font = bodyFont.string;
+  ctx.font = bodyFont;
   each([...tooltip.beforeBody!, ...tooltip.afterBody!], maxLineWidth);
 
   // Body lines may include some extra width due to the color box
@@ -428,7 +429,7 @@ double _lengthOf(Object? list) =>
   widthPadding = 0;
 
   // Footer width
-  ctx.font = footerFont.string;
+  ctx.font = footerFont;
   each(tooltip.footer, maxLineWidth);
 
   ctx.restore();
@@ -1722,15 +1723,15 @@ class Tooltip extends Element implements types.TooltipModel {
 
       ctx
         ..fillStyle = canvasStyle(options.titleColor)
-        ..font = titleFont.string;
+        ..font = titleFont;
 
       for (i = 0; i < length; ++i) {
         ctx.fillText(
           jsToString(title[i]),
           rtlHelper.x(pt.x),
-          pt.y + titleFont.lineHeight / 2,
+          pt.y + titleFont.lineHeight! / 2,
         );
-        pt.y += titleFont.lineHeight + titleSpacing; // Line Height and spacing
+        pt.y += titleFont.lineHeight! + titleSpacing; // Line Height and spacing
 
         if (i + 1 == length) {
           // If Last, add margin, remove spacing
@@ -1759,8 +1760,8 @@ class Tooltip extends Element implements types.TooltipModel {
     final bodyFont = toFont(options.bodyFont);
     final colorX = _getAlignedX(this, TextAlign.left, options);
     final rtlColorX = rtlHelper.x(colorX);
-    final yOffSet = boxHeight < bodyFont.lineHeight
-        ? (bodyFont.lineHeight - boxHeight) / 2
+    final yOffSet = boxHeight < bodyFont.lineHeight!
+        ? (bodyFont.lineHeight! - boxHeight) / 2
         : 0;
     final colorY = pt.y + yOffSet;
 
@@ -1896,7 +1897,7 @@ class Tooltip extends Element implements types.TooltipModel {
     final boxWidth = jsToNumber(options.boxWidth);
     final boxPadding = jsToNumber(options.boxPadding);
     final bodyFont = toFont(options.bodyFont);
-    var bodyLineHeight = bodyFont.lineHeight;
+    var bodyLineHeight = bodyFont.lineHeight!;
     var xLinePadding = 0.0;
 
     final rtlHelper = getRtlAdapter(options.rtl, x, width);
@@ -1919,7 +1920,7 @@ class Tooltip extends Element implements types.TooltipModel {
       ..textAlign = bodyAlign
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle
-      ..font = bodyFont.string;
+      ..font = bodyFont;
 
     pt.x = _getAlignedX(this, bodyAlignForCalculation, options);
 
@@ -1946,13 +1947,13 @@ class Tooltip extends Element implements types.TooltipModel {
       // Draw Legend-like boxes if needed
       if (jsTruthy(displayColors) && lines.isNotEmpty) {
         _drawColorBox(ctx, pt, i, rtlHelper, options);
-        bodyLineHeight = jsMax(bodyFont.lineHeight, boxHeight);
+        bodyLineHeight = jsMax(bodyFont.lineHeight!, boxHeight);
       }
 
       for (var j = 0, jlen = lines.length; j < jlen; ++j) {
         fillLineOfText(lines[j]);
         // Reset for any lines that don't include colorbox
-        bodyLineHeight = bodyFont.lineHeight;
+        bodyLineHeight = bodyFont.lineHeight!;
       }
 
       each(bodyItem.after, fillLineOfText);
@@ -1960,7 +1961,7 @@ class Tooltip extends Element implements types.TooltipModel {
 
     // Reset back to 0 for after body
     xLinePadding = 0;
-    bodyLineHeight = bodyFont.lineHeight;
+    bodyLineHeight = bodyFont.lineHeight!;
 
     // After body lines
     each(afterBody, fillLineOfText);
@@ -1995,15 +1996,15 @@ class Tooltip extends Element implements types.TooltipModel {
 
       ctx
         ..fillStyle = canvasStyle(options.footerColor)
-        ..font = footerFont.string;
+        ..font = footerFont;
 
       for (i = 0; i < length; ++i) {
         ctx.fillText(
           jsToString(footer[i]),
           rtlHelper.x(pt.x),
-          pt.y + footerFont.lineHeight / 2,
+          pt.y + footerFont.lineHeight! / 2,
         );
-        pt.y += footerFont.lineHeight + jsToNumber(options.footerSpacing);
+        pt.y += footerFont.lineHeight! + jsToNumber(options.footerSpacing);
       }
     }
   }
@@ -2498,8 +2499,14 @@ Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 
 /// plugin.tooltip.js:1303-1304 the default `boxHeight` and `boxWidth`:
 /// `(ctx, opts) => opts.bodyFont.size`, the typed reads of the sub-resolver.
-Object? _bodyFontSize(Object? ctx, Object? opts) =>
-    optionOf(TooltipOptions(opts).bodyFont, OptionKey.size);
+///
+/// The font is a `TextStyle` (row `adapt-text-style-fonts`): the size is its
+/// `fontSize`.
+// DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
+Object? _bodyFontSize(Object? ctx, Object? opts) {
+  final font = TooltipOptions(opts).bodyFont;
+  return font is TextStyle ? font.fontSize ?? undefined : undefined;
+}
 
 /// plugin.tooltip.js:1334 the `_scriptable` descriptor of the plugin.
 bool _scriptableDescriptor(String name) =>
@@ -2593,20 +2600,23 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
     ..position = const AverageTooltipPositioner()
     ..backgroundColor = const ui.Color.fromRGBO(0, 0, 0, 0.8)
     ..titleColor = const ui.Color.fromRGBO(255, 255, 255, 1)
-    ..titleFont = (FontSpecScope()..weight = 'bold')
+    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+    ..titleFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
     ..titleSpacing = 2.0
     ..titleMarginBottom = 6.0
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
     ..titleAlign = TextAlign.left
     ..bodyColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..bodySpacing = 2.0
-    ..bodyFont = FontSpecScope()
+    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+    ..bodyFont = const ChartTextStyle()
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
     ..bodyAlign = TextAlign.left
     ..footerColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..footerSpacing = 2.0
     ..footerMarginTop = 6.0
-    ..footerFont = (FontSpecScope()..weight = 'bold')
+    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+    ..footerFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
     ..footerAlign = TextAlign.left
     ..padding = 6.0

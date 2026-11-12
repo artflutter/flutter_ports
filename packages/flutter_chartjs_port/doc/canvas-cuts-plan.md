@@ -167,7 +167,10 @@ Changes to the cited files:
   keywords, and reads the angle after `oblique` (`oblique 20deg`, a style that
   `helpers.options.ts:8` accepts). `canvas_ui_text.dart` has 66 lines more and 12 lines fewer
   (507 lines). The new test file `test/port/canvas/canvas_ui_text_test.dart` (8 tests) pins the
-  faces and the keywords. This plan cites no line of `canvas_ui_text.dart`, and the cuts do not
+  faces and the keywords. On 2026-11-12, Chart.js ADR 0116 removed `parseCanvasFont`: the canvas
+  font is a `TextStyle`, and the paragraph takes its fields with no parse. The engine then gives
+  the bold face from the weight 501, as Chromium does for `@font-face` fonts. This plan cites no
+  line of `canvas_ui_text.dart`, and the cuts do not
   remove its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
 - 2026-10-20, the phase 6 docs in porting-flow.md (§2, §2.3, §2.5, §2.10, §2.19, §3 and

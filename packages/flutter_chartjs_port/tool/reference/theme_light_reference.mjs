@@ -81,6 +81,8 @@ import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
 import {fileURLToPath} from 'node:url';
 
+import {fontObjectRecord, resolvedFontRecord} from './font_record.mjs';
+
 /**
  * The submodules that the script reads: the header of the entry in
  * tool/port_sources.yaml, the folder in third_party/ and the folders that the
@@ -311,6 +313,11 @@ Object.assign(
   restated['scales.radialLinear.pointLabels.font'],
   defaults.scales.radialLinear.pointLabels.font,
 );
+// A font is a ChartTextStyle in the port (Chart.js ADR 0116): the data hold
+// the record of the font object (tool/reference/font_record.mjs).
+for (const [path, source] of RESTATED) {
+  if (source === 'font') restated[path] = fontObjectRecord(restated[path]);
+}
 
 // BORDER_COLORS and BACKGROUND_COLORS (plugin.colors.ts:14-25): the colors
 // that beforeLayout gives to 7 datasets of a chart with a controller that
@@ -360,15 +367,11 @@ for (const type of ['point', 'line', 'bar', 'arc']) {
   }
 }
 
-/** The fields of a toFont result, in the order of helpers.options.ts:131. */
-const fontFields = (font) => ({
-  family: font.family,
-  lineHeight: font.lineHeight,
-  size: font.size,
-  style: font.style,
-  weight: font.weight,
-  string: font.string,
-});
+/**
+ * The fields of a toFont result: its record without string (Chart.js ADR
+ * 0116, tool/reference/font_record.mjs).
+ */
+const fontFields = resolvedFontRecord;
 
 // The scale options of a scale `x` of the type `tlin`, and the chart color.
 const scaleConfig = new Config({

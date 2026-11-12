@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
@@ -22,12 +23,14 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
@@ -62,6 +65,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final bool b => b ? 'true' : 'false',
   final num n => jsNumberToString(n),
   final String s => jsonEncode(s),
+  final TextStyle font => _jsonRaw(fontObjectRecordOf(font)),
   _ when jsIsFunction(value) => '"<fn>"',
   final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
   Curve() => curveJson,
@@ -211,7 +215,11 @@ final Map<String, Map<String, Object?>> _testThemes = {
     'colors.$token': _colorTheme(token, _red),
   'typography.font': {
     'typography': <String, Object?>{
-      'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+      'font': const ChartTextStyle(
+        fontFamily: 'serif',
+        fontFamilyFallback: [],
+        fontSize: 14,
+      ),
     },
   },
   'palette': {
@@ -222,8 +230,15 @@ final Map<String, Map<String, Object?>> _testThemes = {
   },
   'typography.pointLabels': {
     'typography': <String, Object?>{
-      'font': <String, Object?>{'family': 'serif', 'size': 14.0},
-      'pointLabels': <String, Object?>{'size': 9.0, 'weight': 'bold'},
+      'font': const ChartTextStyle(
+        fontFamily: 'serif',
+        fontFamilyFallback: [],
+        fontSize: 14,
+      ),
+      'pointLabels': const ChartTextStyle(
+        fontSize: 9,
+        fontWeight: ui.FontWeight.bold,
+      ),
     },
   },
   'raw': {
@@ -282,11 +297,11 @@ void main() {
         },
         {'colors': null, 'typography': null, 'raw': null},
         {
-          'typography': <String, Object?>{'font': <String, Object?>{}},
+          'typography': <String, Object?>{'font': const ChartTextStyle()},
         },
         {
           'typography': <String, Object?>{
-            'font': <String, Object?>{'weight': null, 'size': undefined},
+            'font': const ChartTextStyle(color: ui.Color(0xFFFF0000)),
           },
         },
         {'raw': <String, Object?>{}},
@@ -303,7 +318,6 @@ void main() {
 
     test('the light preset', () {
       // The same leaves, in the same order, on the VM, dart2js and dart2wasm.
-      const font = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
       const gray = ui.Color.fromRGBO(102, 102, 102, 1);
       const tenth = ui.Color.fromRGBO(0, 0, 0, 0.1);
       const white = ui.Color.fromRGBO(255, 255, 255, 1);
@@ -317,41 +331,62 @@ void main() {
           255,
           0.75,
         ),
-        'scale.ticks.font.family': font,
-        'scale.ticks.font.size': 12.0,
-        'scale.ticks.font.style': 'normal',
-        'scale.ticks.font.lineHeight': 1.2,
+        'scale.ticks.font': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
         'scale.title.color': gray,
-        'scale.title.font.family': font,
-        'scale.title.font.size': 12.0,
-        'scale.title.font.style': 'normal',
-        'scale.title.font.lineHeight': 1.2,
+        'scale.title.font': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
         'scale.grid.color': tenth,
         'scale.border.color': tenth,
         'scales.radialLinear.pointLabels.color': gray,
-        'scales.radialLinear.pointLabels.font.family': font,
-        'scales.radialLinear.pointLabels.font.style': 'normal',
-        'scales.radialLinear.pointLabels.font.lineHeight': 1.2,
-        'scales.radialLinear.pointLabels.font.size': 10.0,
+        'scales.radialLinear.pointLabels.font': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+          fontSize: 10,
+        ),
         'scales.radialLinear.angleLines.color': tenth,
         'plugins.title.color': gray,
-        'plugins.title.font.family': font,
-        'plugins.title.font.size': 12.0,
-        'plugins.title.font.style': 'normal',
-        'plugins.title.font.lineHeight': 1.2,
+        'plugins.title.font': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
         'plugins.subtitle.color': gray,
-        'plugins.subtitle.font.family': font,
-        'plugins.subtitle.font.size': 12.0,
-        'plugins.subtitle.font.style': 'normal',
-        'plugins.subtitle.font.lineHeight': 1.2,
-        'plugins.legend.labels.font.family': font,
-        'plugins.legend.labels.font.size': 12.0,
-        'plugins.legend.labels.font.style': 'normal',
-        'plugins.legend.labels.font.lineHeight': 1.2,
-        'plugins.legend.title.font.family': font,
-        'plugins.legend.title.font.size': 12.0,
-        'plugins.legend.title.font.style': 'normal',
-        'plugins.legend.title.font.lineHeight': 1.2,
+        'plugins.subtitle.font': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
+        'plugins.legend.labels.font': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
+        'plugins.legend.title.font': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
         'plugins.tooltip.backgroundColor': const ui.Color.fromRGBO(
           0,
           0,
@@ -362,18 +397,27 @@ void main() {
         'plugins.tooltip.bodyColor': white,
         'plugins.tooltip.footerColor': white,
         'plugins.tooltip.multiKeyBackground': white,
-        'plugins.tooltip.titleFont.family': font,
-        'plugins.tooltip.titleFont.size': 12.0,
-        'plugins.tooltip.titleFont.style': 'normal',
-        'plugins.tooltip.titleFont.lineHeight': 1.2,
-        'plugins.tooltip.bodyFont.family': font,
-        'plugins.tooltip.bodyFont.size': 12.0,
-        'plugins.tooltip.bodyFont.style': 'normal',
-        'plugins.tooltip.bodyFont.lineHeight': 1.2,
-        'plugins.tooltip.footerFont.family': font,
-        'plugins.tooltip.footerFont.size': 12.0,
-        'plugins.tooltip.footerFont.style': 'normal',
-        'plugins.tooltip.footerFont.lineHeight': 1.2,
+        'plugins.tooltip.titleFont': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
+        'plugins.tooltip.bodyFont': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
+        'plugins.tooltip.footerFont': const ChartTextStyle(
+          fontFamily: 'Helvetica Neue',
+          fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+          fontSize: 12,
+          fontStyle: ui.FontStyle.normal,
+          height: 1.2,
+        ),
         r'plugins.colors.$borderColors': [
           const ui.Color.fromRGBO(54, 162, 235, 1),
           const ui.Color.fromRGBO(255, 99, 132, 1),
@@ -403,58 +447,28 @@ void main() {
         'color',
         'scale.ticks.color',
         'scale.ticks.backdropColor',
-        'scale.ticks.font.family',
-        'scale.ticks.font.size',
-        'scale.ticks.font.style',
-        'scale.ticks.font.lineHeight',
+        'scale.ticks.font',
         'scale.title.color',
-        'scale.title.font.family',
-        'scale.title.font.size',
-        'scale.title.font.style',
-        'scale.title.font.lineHeight',
+        'scale.title.font',
         'scale.grid.color',
         'scale.border.color',
         'scales.radialLinear.pointLabels.color',
-        'scales.radialLinear.pointLabels.font.family',
-        'scales.radialLinear.pointLabels.font.style',
-        'scales.radialLinear.pointLabels.font.lineHeight',
-        'scales.radialLinear.pointLabels.font.size',
+        'scales.radialLinear.pointLabels.font',
         'scales.radialLinear.angleLines.color',
         'plugins.title.color',
-        'plugins.title.font.family',
-        'plugins.title.font.size',
-        'plugins.title.font.style',
-        'plugins.title.font.lineHeight',
+        'plugins.title.font',
         'plugins.subtitle.color',
-        'plugins.subtitle.font.family',
-        'plugins.subtitle.font.size',
-        'plugins.subtitle.font.style',
-        'plugins.subtitle.font.lineHeight',
-        'plugins.legend.labels.font.family',
-        'plugins.legend.labels.font.size',
-        'plugins.legend.labels.font.style',
-        'plugins.legend.labels.font.lineHeight',
-        'plugins.legend.title.font.family',
-        'plugins.legend.title.font.size',
-        'plugins.legend.title.font.style',
-        'plugins.legend.title.font.lineHeight',
+        'plugins.subtitle.font',
+        'plugins.legend.labels.font',
+        'plugins.legend.title.font',
         'plugins.tooltip.backgroundColor',
         'plugins.tooltip.titleColor',
         'plugins.tooltip.bodyColor',
         'plugins.tooltip.footerColor',
         'plugins.tooltip.multiKeyBackground',
-        'plugins.tooltip.titleFont.family',
-        'plugins.tooltip.titleFont.size',
-        'plugins.tooltip.titleFont.style',
-        'plugins.tooltip.titleFont.lineHeight',
-        'plugins.tooltip.bodyFont.family',
-        'plugins.tooltip.bodyFont.size',
-        'plugins.tooltip.bodyFont.style',
-        'plugins.tooltip.bodyFont.lineHeight',
-        'plugins.tooltip.footerFont.family',
-        'plugins.tooltip.footerFont.size',
-        'plugins.tooltip.footerFont.style',
-        'plugins.tooltip.footerFont.lineHeight',
+        'plugins.tooltip.titleFont',
+        'plugins.tooltip.bodyFont',
+        'plugins.tooltip.footerFont',
         r'plugins.colors.$borderColors',
         r'plugins.colors.$backgroundColors',
         'elements.point.borderColor',
@@ -548,57 +562,87 @@ void main() {
     test('a font emits its fields that are not null into each slot', () {
       final compiled = compileChartTheme({
         'typography': <String, Object?>{
-          'font': <String, Object?>{
-            'family': 'serif',
-            'size': null,
-            'style': 'italic',
-            'weight': 'bold',
-            'lineHeight': undefined,
-          },
+          'font': const ChartTextStyle(
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+            fontStyle: ui.FontStyle.italic,
+            fontWeight: ui.FontWeight.bold,
+          ),
         },
       });
       expect(_leaves(compiled), {
-        'scale.ticks.font.family': 'serif',
-        'scale.ticks.font.style': 'italic',
-        'scale.ticks.font.weight': 'bold',
-        'scale.title.font.family': 'serif',
-        'scale.title.font.style': 'italic',
-        'scale.title.font.weight': 'bold',
-        'scales.radialLinear.pointLabels.font.family': 'serif',
-        'scales.radialLinear.pointLabels.font.style': 'italic',
-        'scales.radialLinear.pointLabels.font.weight': 'bold',
+        'scale.ticks.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+          fontWeight: ui.FontWeight.bold,
+        ),
+        'scale.title.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+          fontWeight: ui.FontWeight.bold,
+        ),
+        'scales.radialLinear.pointLabels.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+          fontWeight: ui.FontWeight.bold,
+        ),
         // No weight: the title keeps its local 'bold'
         // (plugin.title.js:148-150) and the subtitle its local 'normal'
         // (plugin.subtitle.js:35-37, theming.md §3.4).
-        'plugins.title.font.family': 'serif',
-        'plugins.title.font.style': 'italic',
-        'plugins.subtitle.font.family': 'serif',
-        'plugins.subtitle.font.style': 'italic',
+        'plugins.title.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+        ),
+        'plugins.subtitle.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+        ),
         // The legend has no font defaults (plugin.legend.js:636-712): the
         // whole font, with the weight.
-        'plugins.legend.labels.font.family': 'serif',
-        'plugins.legend.labels.font.style': 'italic',
-        'plugins.legend.labels.font.weight': 'bold',
-        'plugins.legend.title.font.family': 'serif',
-        'plugins.legend.title.font.style': 'italic',
-        'plugins.legend.title.font.weight': 'bold',
+        'plugins.legend.labels.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+          fontWeight: ui.FontWeight.bold,
+        ),
+        'plugins.legend.title.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+          fontWeight: ui.FontWeight.bold,
+        ),
         // The tooltip title and footer keep their local 'bold'
         // (plugin.tooltip.js:1281-1283, 1295-1297). The body font is the
         // whole font.
-        'plugins.tooltip.titleFont.family': 'serif',
-        'plugins.tooltip.titleFont.style': 'italic',
-        'plugins.tooltip.bodyFont.family': 'serif',
-        'plugins.tooltip.bodyFont.style': 'italic',
-        'plugins.tooltip.bodyFont.weight': 'bold',
-        'plugins.tooltip.footerFont.family': 'serif',
-        'plugins.tooltip.footerFont.style': 'italic',
+        'plugins.tooltip.titleFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+        ),
+        'plugins.tooltip.bodyFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+          fontWeight: ui.FontWeight.bold,
+        ),
+        'plugins.tooltip.footerFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+        ),
         ..._transitionLeaves,
       });
-      // No root font (theming.md §3.4), and one Map for each slot.
+      // No root font (theming.md §3.4). A font is immutable (Chart.js ADR
+      // 0116): the slots of the whole font share the token.
       expect(compiled!.jsHas('font'), isFalse);
       expect(
         _at(compiled, 'scale.ticks.font'),
-        isNot(same(_at(compiled, 'scale.title.font'))),
+        same(_at(compiled, 'scale.title.font')),
       );
     });
 
@@ -606,101 +650,125 @@ void main() {
         'token', () {
       // theming.md §3.4 and §4, the last row: upstream sets the point-label
       // size 10 locally (scale.radialLinear.js:383-385).
-      Object? pointLabels(Map<String, Object?> typography) => _plain(
-        _at(
-          compileChartTheme({'typography': typography}),
-          'scales.radialLinear.pointLabels.font',
-        ),
+      Object? pointLabels(Map<String, Object?> typography) => _at(
+        compileChartTheme({'typography': typography}),
+        'scales.radialLinear.pointLabels.font',
       );
 
       // The token wins field by field. The base size never reaches it.
       expect(
         pointLabels(<String, Object?>{
-          'font': <String, Object?>{
-            'family': 'serif',
-            'size': 14.0,
-            'style': 'italic',
-          },
-          'pointLabels': <String, Object?>{'style': 'normal', 'size': 9.0},
+          'font': const ChartTextStyle(
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+            fontSize: 14,
+            fontStyle: ui.FontStyle.italic,
+          ),
+          'pointLabels': const ChartTextStyle(
+            fontStyle: ui.FontStyle.normal,
+            fontSize: 9,
+          ),
         }),
-        <String, Object?>{'family': 'serif', 'style': 'normal', 'size': 9.0},
+        const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.normal,
+          fontSize: 9,
+        ),
       );
       // The base font without the token: its fields without size. The size
       // 10 of defaults.scales.radialLinear then stays.
       expect(
         pointLabels(<String, Object?>{
-          'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+          'font': const ChartTextStyle(
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+            fontSize: 14,
+          ),
         }),
-        <String, Object?>{'family': 'serif'},
+        const ChartTextStyle(fontFamily: 'serif', fontFamilyFallback: []),
       );
       // The token without the base font.
       expect(
         pointLabels(<String, Object?>{
-          'pointLabels': <String, Object?>{'size': 9.0},
+          'pointLabels': const ChartTextStyle(fontSize: 9),
         }),
-        <String, Object?>{'size': 9.0},
+        const ChartTextStyle(fontSize: 9),
       );
       // A null token field themes nothing, also over a base field.
       expect(
         pointLabels(<String, Object?>{
-          'font': <String, Object?>{'family': 'serif', 'weight': 'bold'},
-          'pointLabels': <String, Object?>{
-            'family': null,
-            'weight': undefined,
-            'lineHeight': 1.5,
-          },
+          'font': const ChartTextStyle(
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+            fontWeight: ui.FontWeight.bold,
+          ),
+          'pointLabels': const ChartTextStyle(height: 1.5),
         }),
-        <String, Object?>{
-          'family': 'serif',
-          'weight': 'bold',
-          'lineHeight': 1.5,
-        },
+        const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          height: 1.5,
+        ),
       );
       // A base font with a size only gives no point-label font.
       final sizeOnly = compileChartTheme({
         'typography': <String, Object?>{
-          'font': <String, Object?>{'size': 14.0},
+          'font': const ChartTextStyle(fontSize: 14),
         },
       });
       expect(_at(sizeOnly, 'scales'), same(undefined));
-      expect(_at(sizeOnly, 'scale.ticks.font.size'), 14.0);
+      expect((_at(sizeOnly, 'scale.ticks.font')! as TextStyle).fontSize, 14.0);
       // A token without fields themes nothing.
       expect(
         compileChartTheme({
           'typography': <String, Object?>{
-            'pointLabels': <String, Object?>{'size': null},
+            'pointLabels': const ChartTextStyle(),
           },
         }),
         isNull,
       );
     });
 
-    test('the point-label font keeps the field order', () {
-      // The base fields in their order without size, then the new token
-      // fields in their order. A token field over a base field keeps the
-      // position of the base field.
+    test('the point-label token wins over the base font', () {
+      // The base fields without size, then each field of the token over
+      // them (TextStyle.merge, Chart.js ADR 0116).
       final compiled = compileChartTheme({
         'typography': <String, Object?>{
-          'font': <String, Object?>{
-            'lineHeight': 1.2,
-            'size': 14.0,
-            'family': 'serif',
-          },
-          'pointLabels': <String, Object?>{'weight': 'bold', 'family': 'mono'},
+          'font': const ChartTextStyle(
+            height: 1.2,
+            fontSize: 14,
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+          ),
+          'pointLabels': const ChartTextStyle(
+            fontWeight: ui.FontWeight.bold,
+            fontFamily: 'mono',
+            fontFamilyFallback: [],
+          ),
         },
       });
-      final font = _at(compiled, 'scales.radialLinear.pointLabels.font')!;
-      expect(_keys(font), ['lineHeight', 'family', 'weight']);
-      expect(jsGet(font, 'family'), 'mono');
-      // One Map for each slot.
-      expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
+      expect(
+        _at(compiled, 'scales.radialLinear.pointLabels.font'),
+        const ChartTextStyle(
+          height: 1.2,
+          fontFamily: 'mono',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+        ),
+      );
     });
 
     test('the raw keys beat the token keys, key by key', () {
       final compiled = compileChartTheme({
         'colors': <String, Object?>{'color': _red},
         'typography': <String, Object?>{
-          'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+          'font': const ChartTextStyle(
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+            fontSize: 14,
+          ),
         },
         'raw': <String, Object?>{
           'color': 'raw-color',
@@ -708,7 +776,7 @@ void main() {
             'ticks': <String, Object?>{
               'color': 'raw-ticks',
               'textStrokeColor': 'raw-stroke',
-              'font': <String, Object?>{'size': 10.0},
+              'font': const ChartTextStyle(fontSize: 10),
             },
             'title': 'raw-title',
           },
@@ -717,8 +785,11 @@ void main() {
       expect(_leaves(compiled), {
         'color': 'raw-color',
         'scale.ticks.color': 'raw-ticks',
-        'scale.ticks.font.family': 'serif',
-        'scale.ticks.font.size': 10.0,
+        'scale.ticks.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 10,
+        ),
         'scale.ticks.textStrokeColor': 'raw-stroke',
         'scale.title': 'raw-title',
         'scales.radialLinear.pointLabels.color': const ui.Color.fromRGBO(
@@ -727,7 +798,10 @@ void main() {
           0,
           1,
         ),
-        'scales.radialLinear.pointLabels.font.family': 'serif',
+        'scales.radialLinear.pointLabels.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+        ),
         'plugins.title.color': const ui.Color.fromRGBO(200, 0, 0, 1),
         'plugins.subtitle.color': const ui.Color.fromRGBO(
           200,
@@ -735,20 +809,41 @@ void main() {
           0,
           1,
         ),
-        'plugins.title.font.family': 'serif',
-        'plugins.title.font.size': 14.0,
-        'plugins.subtitle.font.family': 'serif',
-        'plugins.subtitle.font.size': 14.0,
-        'plugins.legend.labels.font.family': 'serif',
-        'plugins.legend.labels.font.size': 14.0,
-        'plugins.legend.title.font.family': 'serif',
-        'plugins.legend.title.font.size': 14.0,
-        'plugins.tooltip.titleFont.family': 'serif',
-        'plugins.tooltip.titleFont.size': 14.0,
-        'plugins.tooltip.bodyFont.family': 'serif',
-        'plugins.tooltip.bodyFont.size': 14.0,
-        'plugins.tooltip.footerFont.family': 'serif',
-        'plugins.tooltip.footerFont.size': 14.0,
+        'plugins.title.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+        'plugins.subtitle.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+        'plugins.legend.labels.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+        'plugins.legend.title.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+        'plugins.tooltip.titleFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+        'plugins.tooltip.bodyFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+        'plugins.tooltip.footerFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
         ..._transitionLeaves,
       });
     });
@@ -757,14 +852,17 @@ void main() {
       final compiled = compileChartTheme({
         'colors': <String, Object?>{'color': _red, 'borderColor': _red},
         'typography': <String, Object?>{
-          'pointLabels': <String, Object?>{'size': 9.0, 'style': 'italic'},
+          'pointLabels': const ChartTextStyle(
+            fontSize: 9,
+            fontStyle: ui.FontStyle.italic,
+          ),
         },
         'raw': <String, Object?>{
           'scales': <String, Object?>{
             'radialLinear': <String, Object?>{
               'pointLabels': <String, Object?>{
                 'color': 'raw-point-labels',
-                'font': <String, Object?>{'size': 11.0},
+                'font': const ChartTextStyle(fontSize: 11),
               },
               'angleLines': <String, Object?>{'lineWidth': 2.0},
             },
@@ -773,8 +871,10 @@ void main() {
       });
       expect(_leaves(_at(compiled, 'scales')), {
         'radialLinear.pointLabels.color': 'raw-point-labels',
-        'radialLinear.pointLabels.font.size': 11.0,
-        'radialLinear.pointLabels.font.style': 'italic',
+        'radialLinear.pointLabels.font': const ChartTextStyle(
+          fontSize: 11,
+          fontStyle: ui.FontStyle.italic,
+        ),
         'radialLinear.angleLines.color': const ui.Color.fromRGBO(
           200,
           0,
@@ -1186,27 +1286,39 @@ void main() {
       // (plugin.title.js:148-150).
       final compiled = compileChartTheme({
         'typography': <String, Object?>{
-          'font': <String, Object?>{
-            'weight': 'bold',
-            'family': 'serif',
-            'size': 14.0,
-          },
+          'font': const ChartTextStyle(
+            fontWeight: ui.FontWeight.bold,
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+            fontSize: 14,
+          ),
         },
       });
-      expect(_at(compiled, 'scale.ticks.font.weight'), 'bold');
-      final font = _at(compiled, 'plugins.title.font')!;
-      expect(_keys(font), ['family', 'size']);
-      // One Map for each slot.
-      expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
+      expect(
+        (_at(compiled, 'scale.ticks.font')! as TextStyle).fontWeight,
+        ui.FontWeight.bold,
+      );
+      final font = _at(compiled, 'plugins.title.font')! as TextStyle;
+      expect(
+        font,
+        const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+      );
       // A font with a weight only gives no title font. The legend fonts and
       // the tooltip body font keep the weight (the groups `the subtitle and
       // legend keys` and `the tooltip keys`).
       final weightOnly = compileChartTheme({
         'typography': <String, Object?>{
-          'font': <String, Object?>{'weight': 'bold'},
+          'font': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
         },
       });
-      expect(_at(weightOnly, 'scale.ticks.font.weight'), 'bold');
+      expect(
+        (_at(weightOnly, 'scale.ticks.font')! as TextStyle).fontWeight,
+        ui.FontWeight.bold,
+      );
       expect(_at(weightOnly, 'plugins.title'), same(undefined));
       expect(_keys(_at(weightOnly, 'plugins')), [
         'legend',
@@ -1271,12 +1383,13 @@ void main() {
     // whole font token into its two fonts and no color key.
     final serifBold = <String, Object?>{
       'typography': <String, Object?>{
-        'font': <String, Object?>{
-          'family': 'serif',
-          'weight': 'bold',
-          'size': 14.0,
-          'lineHeight': 1.5,
-        },
+        'font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          fontSize: 14,
+          height: 1.5,
+        ),
       },
     };
 
@@ -1306,18 +1419,19 @@ void main() {
       // (plugin.subtitle.js:35-37).
       final compiled = compileChartTheme(serifBold);
       final font = _at(compiled, 'plugins.subtitle.font')!;
-      expect(_plain(font), <String, Object?>{
-        'family': 'serif',
-        'size': 14.0,
-        'lineHeight': 1.5,
-      });
-      expect(_keys(font), ['family', 'size', 'lineHeight']);
-      // One Map for each slot.
-      expect(font, isNot(same(_at(compiled, 'plugins.title.font'))));
+      expect(
+        font,
+        const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+          height: 1.5,
+        ),
+      );
       // A font with a weight only gives no subtitle font.
       final weightOnly = compileChartTheme({
         'typography': <String, Object?>{
-          'font': <String, Object?>{'weight': 'bold'},
+          'font': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
         },
       });
       expect(_at(weightOnly, 'plugins.subtitle'), same(undefined));
@@ -1329,36 +1443,27 @@ void main() {
       // for the label font (plugin.legend.js:136, 288) and the title font
       // (:446, 495).
       final compiled = compileChartTheme(serifBold);
-      const whole = <String, Object?>{
-        'family': 'serif',
-        'weight': 'bold',
-        'size': 14.0,
-        'lineHeight': 1.5,
-      };
       final labels = _at(compiled, 'plugins.legend.labels.font')!;
       final title = _at(compiled, 'plugins.legend.title.font')!;
-      expect(_plain(labels), whole);
-      expect(_plain(title), whole);
-      expect(_keys(labels), ['family', 'weight', 'size', 'lineHeight']);
-      expect(_keys(title), ['family', 'weight', 'size', 'lineHeight']);
+      expect(
+        labels,
+        const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          fontSize: 14,
+          height: 1.5,
+        ),
+      );
+      expect(title, same(labels));
       // The legend gets no other key: no color (plugin.legend.js:661, 707
       // read the root color) and no point-label size rule.
       expect(_leaves(_at(compiled, 'plugins.legend')).keys, [
-        'labels.font.family',
-        'labels.font.weight',
-        'labels.font.size',
-        'labels.font.lineHeight',
-        'title.font.family',
-        'title.font.weight',
-        'title.font.size',
-        'title.font.lineHeight',
+        'labels.font',
+        'title.font',
       ]);
-      // One Map for each slot.
-      expect(labels, isNot(same(title)));
-      expect(labels, isNot(same(_at(compiled, 'scale.ticks.font'))));
-      // The legend fonts are frozen with the rest.
-      expect(jsObjectIsFrozen(labels), isTrue);
-      expect(jsObjectIsFrozen(title), isTrue);
+      // A font is immutable (Chart.js ADR 0116): the slots share the token.
+      expect(labels, same(_at(compiled, 'scale.ticks.font')));
     });
 
     test('the plugins keys come after scales, in one order', () {
@@ -1402,11 +1507,11 @@ void main() {
           'plugins': <String, Object?>{
             'subtitle': <String, Object?>{
               'color': 'raw-subtitle',
-              'font': <String, Object?>{'weight': 'lighter'},
+              'font': const ChartTextStyle(fontWeight: ui.FontWeight.w300),
             },
             'legend': <String, Object?>{
               'labels': <String, Object?>{
-                'font': <String, Object?>{'size': 10.0},
+                'font': const ChartTextStyle(fontSize: 10),
                 'color': 'raw-labels',
               },
               'title': <String, Object?>{'color': 'raw-legend-title'},
@@ -1416,21 +1521,30 @@ void main() {
       });
       expect(_leaves(_at(compiled, 'plugins.subtitle')), {
         'color': 'raw-subtitle',
-        'font.family': 'serif',
-        'font.size': 14.0,
-        'font.lineHeight': 1.5,
-        'font.weight': 'lighter',
+        'font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+          height: 1.5,
+          fontWeight: ui.FontWeight.w300,
+        ),
       });
       expect(_leaves(_at(compiled, 'plugins.legend')), {
-        'labels.font.family': 'serif',
-        'labels.font.weight': 'bold',
-        'labels.font.size': 10.0,
-        'labels.font.lineHeight': 1.5,
+        'labels.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          fontSize: 10,
+          height: 1.5,
+        ),
         'labels.color': 'raw-labels',
-        'title.font.family': 'serif',
-        'title.font.weight': 'bold',
-        'title.font.size': 14.0,
-        'title.font.lineHeight': 1.5,
+        'title.font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          fontSize: 14,
+          height: 1.5,
+        ),
         'title.color': 'raw-legend-title',
       });
     });
@@ -1481,12 +1595,13 @@ void main() {
     ];
     final serifBold = <String, Object?>{
       'typography': <String, Object?>{
-        'font': <String, Object?>{
-          'family': 'serif',
-          'weight': 'bold',
-          'size': 14.0,
-          'lineHeight': 1.5,
-        },
+        'font': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          fontSize: 14,
+          height: 1.5,
+        ),
       },
     };
 
@@ -1583,15 +1698,17 @@ void main() {
       // plugin.tooltip.js:1289-1290: no local field.
       final compiled = compileChartTheme(serifBold);
       final font = _at(compiled, 'plugins.tooltip.bodyFont')!;
-      expect(_plain(font), <String, Object?>{
-        'family': 'serif',
-        'weight': 'bold',
-        'size': 14.0,
-        'lineHeight': 1.5,
-      });
-      expect(_keys(font), ['family', 'weight', 'size', 'lineHeight']);
-      expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
-      expect(jsObjectIsFrozen(font), isTrue);
+      expect(
+        font,
+        const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          fontSize: 14,
+          height: 1.5,
+        ),
+      );
+      expect(font, same(_at(compiled, 'scale.ticks.font')));
     });
 
     test('the title and footer fonts have no weight', () {
@@ -1600,31 +1717,25 @@ void main() {
       final compiled = compileChartTheme(serifBold);
       for (final key in ['titleFont', 'footerFont']) {
         final font = _at(compiled, 'plugins.tooltip.$key')!;
-        expect(_plain(font), <String, Object?>{
-          'family': 'serif',
-          'size': 14.0,
-          'lineHeight': 1.5,
-        }, reason: key);
-        expect(_keys(font), ['family', 'size', 'lineHeight'], reason: key);
-        expect(jsObjectIsFrozen(font), isTrue, reason: key);
+        expect(
+          font,
+          const ChartTextStyle(
+            fontFamily: 'serif',
+            fontFamilyFallback: [],
+            fontSize: 14,
+            height: 1.5,
+          ),
+          reason: key,
+        );
       }
-      // One Map for each slot.
-      expect(
-        _at(compiled, 'plugins.tooltip.titleFont'),
-        isNot(same(_at(compiled, 'plugins.tooltip.footerFont'))),
-      );
-      expect(
-        _at(compiled, 'plugins.tooltip.titleFont'),
-        isNot(same(_at(compiled, 'plugins.title.font'))),
-      );
       // A font with a weight only gives the body font only.
       final weightOnly = compileChartTheme({
         'typography': <String, Object?>{
-          'font': <String, Object?>{'weight': 'bold'},
+          'font': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
         },
       });
       expect(_leaves(_at(weightOnly, 'plugins.tooltip')), {
-        'bodyFont.weight': 'bold',
+        'bodyFont': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
       });
     });
 
@@ -1682,8 +1793,10 @@ void main() {
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{
               'backgroundColor': 'raw-background',
-              'titleFont': <String, Object?>{'weight': 'lighter'},
-              'bodyFont': <String, Object?>{'size': 10.0},
+              'titleFont': const ChartTextStyle(
+                fontWeight: ui.FontWeight.w300,
+              ),
+              'bodyFont': const ChartTextStyle(fontSize: 10),
               'borderColor': 'raw-border',
             },
           },
@@ -1695,17 +1808,26 @@ void main() {
         'bodyColor': const ui.Color.fromRGBO(200, 0, 0, 1),
         'footerColor': const ui.Color.fromRGBO(200, 0, 0, 1),
         'multiKeyBackground': const ui.Color.fromRGBO(200, 0, 0, 1),
-        'titleFont.family': 'serif',
-        'titleFont.size': 14.0,
-        'titleFont.lineHeight': 1.5,
-        'titleFont.weight': 'lighter',
-        'bodyFont.family': 'serif',
-        'bodyFont.weight': 'bold',
-        'bodyFont.size': 10.0,
-        'bodyFont.lineHeight': 1.5,
-        'footerFont.family': 'serif',
-        'footerFont.size': 14.0,
-        'footerFont.lineHeight': 1.5,
+        'titleFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+          height: 1.5,
+          fontWeight: ui.FontWeight.w300,
+        ),
+        'bodyFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontWeight: ui.FontWeight.bold,
+          fontSize: 10,
+          height: 1.5,
+        ),
+        'footerFont': const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+          height: 1.5,
+        ),
         'borderColor': 'raw-border',
       });
     });

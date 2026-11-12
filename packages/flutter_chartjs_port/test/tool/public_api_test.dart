@@ -63,6 +63,11 @@ const Map<String, String> _notExportedHelpers = {
       '(row adapt-length-objects)',
   'toPercentage':
       'the method fractionOf of RadiusLength (row adapt-length-objects)',
+  'toFontString':
+      'no CSS font text: the canvas takes the TextStyle '
+      '(row adapt-text-style-fonts)',
+  'toLineHeight':
+      'the field lineHeight of ChartTextStyle (row adapt-text-style-fonts)',
 };
 
 /// The Flutter libraries of case 2.

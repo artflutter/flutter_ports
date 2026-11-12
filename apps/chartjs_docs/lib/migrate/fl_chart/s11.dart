@@ -8,8 +8,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' as core;
 import 'package:material_ui/material_ui.dart';
 
-const Map<String, Object> _bold = {'size': 18, 'weight': 'bold'};
-const _plain = {'size': 14};
+const _bold = ChartTextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+const _plain = ChartTextStyle(fontSize: 14);
 
 class Sample11 extends StatefulWidget {
   const Sample11({super.key});

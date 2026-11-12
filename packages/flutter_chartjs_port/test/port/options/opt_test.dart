@@ -70,16 +70,19 @@ void main() {
 
     test('an object is a scope cell with the same object', () {
       final map = <String, Object?>{'a': 1.0};
-      final scope = FontSpecScope();
+      final scope = InteractionOptionsScope();
       expect(classifyNumber(map).raw, same(map));
       expect(classifyNumber(map), isA<OptScope<double>>());
-      expect(classifyScope<FontSpecScope>(scope).raw, same(scope));
+      expect(classifyScope<InteractionOptionsScope>(scope).raw, same(scope));
       expect(classifyUnion(scope, ShapeBits.number), isA<OptScope<Object>>());
     });
 
     test('a plain value outside a scope shape is foreign', () {
-      expect(classifyScope<FontSpecScope>('bold'), isA<OptForeign<Object?>>());
-      expect(classifyScope<FontSpecScope>(false).raw, false);
+      expect(
+        classifyScope<InteractionOptionsScope>('bold'),
+        isA<OptForeign<Object?>>(),
+      );
+      expect(classifyScope<InteractionOptionsScope>(false).raw, false);
     });
   });
 

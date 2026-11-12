@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter/widgets.dart' show Directionality, SizedBox;
 import 'package:flutter/widgets.dart' as widgets show TextDirection;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
@@ -88,10 +89,10 @@ class _Recorder extends MockContext implements CanvasTextMetricsSource {
   HTMLCanvasElement get canvas => target.canvas;
 
   @override
-  String? get font => target.font;
+  TextStyle? get font => target.font;
 
   @override
-  set font(String? font) {
+  set font(TextStyle? font) {
     super.font = font;
     target.font = font;
   }

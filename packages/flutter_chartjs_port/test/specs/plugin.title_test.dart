@@ -8,15 +8,19 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show clone;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -65,10 +69,11 @@ JsObjectFace _pluginOptions(Chart chart) =>
 /// rotation [rotate] (:131-158, :192-219, :234-261).
 List<Object?> _textCalls(List<Object?> translate, double rotate) => [
   <String, Object?>{'name': 'save', 'args': <Object?>[]},
+  // The font of the title: a ChartTextStyle (row adapt-text-style-fonts).
   <String, Object?>{
     'name': 'setFont',
     'args': <Object?>[
-      "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+      toFont(const ChartTextStyle(fontWeight: native_ui.FontWeight.bold)),
     ],
   },
   <String, Object?>{'name': 'translate', 'args': translate},
@@ -111,7 +116,7 @@ void main() {
           'position': ChartPosition.top,
           'fullSize': true,
           'weight': 2000,
-          'font': <String, Object?>{'weight': 'bold'},
+          'font': const ChartTextStyle(fontWeight: native_ui.FontWeight.bold),
           'padding': 10,
           'text': '',
         }),
@@ -174,7 +179,9 @@ void main() {
         options['text'] = <Object?>['line1', 'line2'];
         options['position'] = ChartPosition.left;
         options['display'] = true;
-        (options['font']! as JsObjectFace)['lineHeight'] = 1.5;
+        options['font'] = (options['font']! as TextStyle).merge(
+          const ChartTextStyle(height: 1.5),
+        );
 
         final title = _newTitle(<String, Object?>{
           'chart': chart,

@@ -38,7 +38,11 @@ final Map<String, Object?> _radialAxis = {
       ..lineTo(x, y - scale.drawingArea)
       ..stroke()
       ..fillStyle = Gx.text
-      ..font = "10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
+      ..font = const TextStyle(
+        fontFamily: 'Helvetica Neue',
+        fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+        fontSize: 10,
+      )
       ..textAlign = TextAlign.right
       ..textBaseline = CanvasTextBaseline.middle;
     for (final tick in scale.ticks ?? const <Tick>[]) {

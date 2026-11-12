@@ -7,6 +7,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
@@ -101,7 +102,11 @@ final class _HarnessMeasureScale extends _HarnessLinearScale {
   List<Tick>? buildTicks() {
     final ctx = this.ctx!
       ..save()
-      ..font = 'normal bold 20px Arial'
+      ..font = const TextStyle(
+        fontFamily: 'Arial',
+        fontSize: 20,
+        fontWeight: native_ui.FontWeight.bold,
+      )
       ..restore();
     measures.add(ctx.measureText('January').width);
     return super.buildTicks();

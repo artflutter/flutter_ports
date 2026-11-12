@@ -6,29 +6,23 @@
 /// - [rawColorOf] gives the [RawThemeColor] of a `Color`, the color token of
 ///   a raw Map theme of `compile.dart`. [colorToRgba] is a legacy formatter
 ///   for reference tests; compiled themes hold native colors (ADR 0057).
-/// - [fontSpecOf] gives the `FontSpec` Map of a `TextStyle`, the font token
-///   of a raw Map theme. [fontScopeOf] gives the same keys and values as a
-///   typed `FontSpecScope` (Chart.js ADR 0054 §7), the font of the typed
-///   API.
+/// - A font has no conversion: the theme, the typed API and the core take
+///   the `TextStyle` itself (Chart.js ADR 0116).
 ///
-/// `theme_data.dart` converts the tokens of `ChartThemeData` with these
-/// functions. The typed API of Chart.js ADR 0052 converts its values with the
-/// same functions, so that a `Color` or a `TextStyle` gives one option value
-/// in both places. `test/port/theme/css_test.dart` pins that equality.
+/// `theme_data.dart` converts the color tokens of `ChartThemeData` with these
+/// functions. The typed API of Chart.js ADR 0052 converts its colors with the
+/// same functions, so that a `Color` gives one option value in both places.
+/// `test/port/theme/css_test.dart` pins that equality.
 ///
-/// Not a pure layer: the file imports `dart:ui` and the painting library.
+/// Not a pure layer: the file imports `dart:ui`.
 /// Ported files never import it (Chart.js ADR 0050, invariant 4). No public
 /// library exports it.
 library;
 
-import 'dart:ui' show Color, ColorSpace, FontStyle;
+import 'dart:ui' show Color, ColorSpace;
 
-import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show FontSpecScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart'
     show RawThemeColor, themeColorToRgba;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The [RawThemeColor] of [color] through `ColorSpace.extendedSRGB`, or
 /// Dart `null`.
@@ -48,80 +42,3 @@ RawThemeColor? rawColorOf(Color? color) {
 /// `'rgba(0, 0, 0, 0.1)'` for `Color.from(alpha: 0.1, red: 0, green: 0,
 /// blue: 0)`.
 String colorToRgba(Color color) => themeColorToRgba(rawColorOf(color)!);
-
-/// The CSS generic families (CSS Fonts 4 §4.2), the names that the family
-/// string gives without quotes. The canvas layer knows the same names.
-const Set<String> _genericFamilies = {
-  'serif',
-  'sans-serif',
-  'monospace',
-  'cursive',
-  'fantasy',
-  'system-ui',
-  'ui-serif',
-  'ui-sans-serif',
-  'ui-monospace',
-  'ui-rounded',
-  'math',
-  'emoji',
-  'fangsong',
-};
-
-/// The `FontSpec` Map of [font] (`index.d.ts:1817-1836`), or Dart `null`.
-///
-/// The keys come in the order `family`, `size`, `style`, `weight`,
-/// `lineHeight`, each only for a field that is not null:
-/// - `family`: `fontFamily` and `fontFamilyFallback`, joined with `', '`.
-///   Each name is in single quotes (in double quotes when it holds a single
-///   quote), except a CSS generic family. An empty name is left out.
-/// - `size`: `fontSize`.
-/// - `style`: `'italic'` for `FontStyle.italic`, else `'normal'`.
-/// - `weight`: `fontWeight.value` as a number.
-/// - `lineHeight`: `height`, a factor of the size.
-///
-/// The other fields of [font], for example `color` and `letterSpacing`, are
-/// left out with no assert. Each call gives a new Map.
-AnyObject? fontSpecOf(TextStyle? font) {
-  if (font == null) return null;
-  final names = [
-    ?font.fontFamily,
-    ...?font.fontFamilyFallback,
-  ].where((name) => name.isNotEmpty);
-  final fontStyle = font.fontStyle;
-  return <String, Object?>{
-    if (names.isNotEmpty) 'family': names.map(_familyName).join(', '),
-    'size': ?font.fontSize,
-    if (fontStyle != null)
-      'style': fontStyle == FontStyle.italic ? 'italic' : 'normal',
-    'weight': ?font.fontWeight?.value.toDouble(),
-    'lineHeight': ?font.height,
-  };
-}
-
-/// The `FontSpec` of [font] as a typed `FontSpecScope` (Chart.js ADR 0054
-/// §7), or Dart `null`: the keys and the values of [fontSpecOf] in the same
-/// order. Each call gives a new scope.
-FontSpecScope? fontScopeOf(TextStyle? font) {
-  if (font == null) return null;
-  final names = [
-    ?font.fontFamily,
-    ...?font.fontFamilyFallback,
-  ].where((name) => name.isNotEmpty);
-  final scope = FontSpecScope();
-  if (names.isNotEmpty) scope.family = names.map(_familyName).join(', ');
-  if (font.fontSize case final size?) scope.size = size;
-  if (font.fontStyle case final fontStyle?) {
-    scope.style = fontStyle == FontStyle.italic ? 'italic' : 'normal';
-  }
-  if (font.fontWeight case final weight?) {
-    scope.weight = weight.value.toDouble();
-  }
-  if (font.height case final height?) scope.lineHeight = height;
-  return scope;
-}
-
-/// The CSS form of the family [name] in a family list.
-String _familyName(String name) {
-  if (_genericFamilies.contains(name.toLowerCase())) return name;
-  return name.contains("'") ? '"$name"' : "'$name'";
-}

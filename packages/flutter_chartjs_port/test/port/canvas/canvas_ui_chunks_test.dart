@@ -5,6 +5,7 @@ library;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasCompositeOperation;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -237,7 +238,7 @@ void main() {
         boundary();
         context
           ..fillStyle = _red
-          ..font = '12px sans-serif'
+          ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 12)
           ..fillText('Bars', 10, 25);
         boundary();
         context.drawImage(source, 35, 5, 20, 20);

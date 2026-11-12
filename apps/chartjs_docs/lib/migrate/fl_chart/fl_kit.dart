@@ -231,7 +231,11 @@ Map<String, Object?> annotations(List<Annotation> items) => {
           if (item.label case final text?) {
             ctx
               ..fillStyle = Colors.white
-              ..font = 'bold 9px sans-serif'
+              ..font = const TextStyle(
+                fontFamily: 'sans-serif',
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+              )
               ..textAlign = TextAlign.right
               ..textBaseline = CanvasTextBaseline.bottom
               ..fillText(text, area.right - 5, pixel - 5);
@@ -252,7 +256,11 @@ Map<String, Object?> annotations(List<Annotation> items) => {
               ..translate(pixel + 5, area.bottom - 5)
               ..rotate(-math.pi / 2)
               ..fillStyle = Colors.white
-              ..font = 'bold 9px sans-serif'
+              ..font = const TextStyle(
+                fontFamily: 'sans-serif',
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+              )
               ..textAlign = TextAlign.left
               ..textBaseline = CanvasTextBaseline.top
               ..fillText(text, 0, 0)

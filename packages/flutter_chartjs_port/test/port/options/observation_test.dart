@@ -11,6 +11,7 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -30,6 +31,7 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -616,7 +618,8 @@ String _throwText(Object e) => switch (e) {
 ///   of zero that reaches a division or `atan2` changes other values of the
 ///   text.
 /// - A function is `<fn>`, a class value is `<class Name>`, a `DateTime` is
-///   `Date(<time value>)` and an element is `<element Class>`.
+///   `Date(<time value>)`, an element is `<element Class>` and a font is
+///   `Font(family; fallback; size; weight; style; height)`.
 /// - A List is `[a, b]`. A `Map<String, Object?>` is `{"k": v}` with the
 ///   keys of `Object.keys` ([jsObjectKeys]) and the values of the JS
 ///   property read ([jsGet]). Another Map is `{k: v}` over its entries.
@@ -628,6 +631,10 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
     case final native_ui.Color color:
       return 'Color(${color.colorSpace.name}; '
           '${[color.a, color.r, color.g, color.b].map(jsNumberToString).join(', ')})';
+    // A font is a TextStyle (Chart.js ADR 0116): its family, fallback
+    // families, size, weight, style and height.
+    case final TextStyle font:
+      return 'Font(${[font.fontFamily, font.fontFamilyFallback ?? const <String>[], font.fontSize, font.fontWeight?.value, font.fontStyle?.name, font.height].map((v) => _canon(v, depth + 1, maxDepth)).join('; ')})';
     case null:
       return 'null';
     case final bool b:
@@ -1259,7 +1266,7 @@ final List<_Case> _focusedCases = [
           },
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'font': (Object? ctx) => <String, Object?>{'size': 11.0},
+              'font': (Object? ctx) => const ChartTextStyle(fontSize: 11),
               'color': (Object? ctx) =>
                   const native_ui.Color.fromRGBO(51, 51, 51, 1),
             },

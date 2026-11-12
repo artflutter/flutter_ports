@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 
 import 'dart:ui' show TextAlign;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -184,6 +185,10 @@ int _worstDifference(ByteData a, ByteData b) {
   return worst;
 }
 
+/// The default font of a canvas state, the `'10px sans-serif'` of the DOM
+/// (row `adapt-text-style-fonts`).
+const _defaultFont = TextStyle(fontFamily: 'sans-serif', fontSize: 10);
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -215,7 +220,11 @@ void main() {
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..lineWidth = 5
         ..globalCompositeOperation = CanvasCompositeOperation.multiply
-        ..font = 'bold 20px Arial'
+        ..font = const TextStyle(
+          fontFamily: 'Arial',
+          fontSize: 20,
+          fontWeight: ui.FontWeight.bold,
+        )
         ..translate(10, 10)
         ..save()
         ..fillRect(0, 0, 10, 10);
@@ -224,7 +233,7 @@ void main() {
       expect(ctx.isEmpty, isTrue);
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(ctx.lineWidth, 1);
-      expect(ctx.font, '10px sans-serif');
+      expect(ctx.font, _defaultFont);
       expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
       // The stack is empty: this restore does nothing, and a fill at the
       // origin lands at the origin.
@@ -530,7 +539,7 @@ void main() {
         ..globalAlpha = 2
         ..globalAlpha = double.nan
         ..globalCompositeOperation = null
-        ..font = 'not a font'
+        ..font = null
         ..textAlign = null
         ..textBaseline = null
         ..direction = 'bogus';
@@ -542,7 +551,7 @@ void main() {
       expect(ctx.miterLimit, 10);
       expect(ctx.globalAlpha, 1);
       expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
-      expect(ctx.font, '10px sans-serif');
+      expect(ctx.font, _defaultFont);
       expect(ctx.textAlign, TextAlign.start);
       expect(ctx.textBaseline, CanvasTextBaseline.alphabetic);
       expect(ctx.direction, 'inherit');
@@ -1175,7 +1184,8 @@ void main() {
 
   group('text', () {
     Future<ui.Rect> inkOf(void Function(UiCanvasContext ctx) draw) async {
-      final ctx = _context(width: 200)..font = '20px Arial';
+      final ctx = _context(width: 200)
+        ..font = const TextStyle(fontFamily: 'Arial', fontSize: 20);
       draw(ctx);
       final pixels = await _render(ctx);
       return pixels.ink()!;
@@ -1233,7 +1243,8 @@ void main() {
     });
 
     test('measureText has the signs of the DOM', () {
-      final ctx = _context()..font = '20px Arial';
+      final ctx = _context()
+        ..font = const TextStyle(fontFamily: 'Arial', fontSize: 20);
       final metrics = ctx.measureText('Hello');
       expect(metrics.width, greaterThan(0));
       expect(metrics.actualBoundingBoxLeft, 0);
@@ -1267,7 +1278,7 @@ void main() {
       }
       expect(ctx.measureText('').width, 0);
       // A bigger font is wider.
-      ctx.font = '40px Arial';
+      ctx.font = const TextStyle(fontFamily: 'Arial', fontSize: 40);
       expect(ctx.measureText('Hello').width, greaterThan(metrics.width * 1.5));
     });
 
@@ -1278,7 +1289,7 @@ void main() {
         double shift = 0,
       }) async {
         final ctx = _context()
-          ..font = '16px Arial'
+          ..font = const TextStyle(fontFamily: 'Arial', fontSize: 16)
           ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 0, 1)
           ..translate(50, 50)
           ..rotate(angle)
@@ -1376,7 +1387,8 @@ void main() {
         void Function(UiCanvasContext ctx) draw, {
         double split = 100,
       }) async {
-        final ctx = _context(width: 200)..font = '20px Arial';
+        final ctx = _context(width: 200)
+          ..font = const TextStyle(fontFamily: 'Arial', fontSize: 20);
         draw(ctx);
         final pixels = await _render(ctx);
         var red = 0;
@@ -1449,12 +1461,12 @@ void main() {
 
     test('a disposed paragraph still paints in the recording', () async {
       final ctx = _context(width: 200)
-        ..font = '20px sans-serif'
+        ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 20)
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillText('HH', 10, 50);
       // The paragraph that the context drew, from the cache.
       final first = layoutCanvasText(
-        parseCanvasFont('20px sans-serif')!,
+        const TextStyle(fontFamily: 'sans-serif', fontSize: 20),
         'HH',
         ui.TextDirection.ltr,
         color: const ui.Color(0xFFFF0000),
@@ -1493,52 +1505,17 @@ void main() {
   });
 
   group('font', () {
-    test('parses the toFontString outputs', () {
-      final arial = parseCanvasFont('12px arial')!;
-      expect(arial.size, 12);
-      expect(arial.family, 'arial');
-      expect(arial.fallback, isEmpty);
-      expect(arial.weight, ui.FontWeight.normal);
-      expect(arial.style, ui.FontStyle.normal);
-
-      final defaults = parseCanvasFont(
-        "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-      )!;
-      expect(defaults.size, 12);
-      expect(defaults.family, 'Helvetica Neue');
-      expect(defaults.fallback, ['Helvetica', 'Arial', 'sans-serif']);
-      expect(defaults.weight, ui.FontWeight.normal);
-
-      final bold = parseCanvasFont('italic bold 16px Arial')!;
-      expect(bold.size, 16);
-      expect(bold.family, 'Arial');
-      expect(bold.weight, ui.FontWeight.bold);
-      expect(bold.style, ui.FontStyle.italic);
-    });
-
-    test('parses weights, units, line heights and quotes', () {
-      expect(parseCanvasFont('600 10px a')!.weight, ui.FontWeight.w600);
-      expect(parseCanvasFont('lighter 10px a')!.weight, ui.FontWeight.w100);
-      expect(parseCanvasFont('12pt a')!.size, 16);
-      expect(parseCanvasFont('1.5e1px a')!.size, 15);
-      expect(parseCanvasFont('12px/1.2 a')!.family, 'a');
-      expect(parseCanvasFont('12px / 1.2 a b')!.family, 'a b');
-      expect(parseCanvasFont('12px "Times New Roman", serif')!.families, [
-        'Times New Roman',
-        'serif',
-      ]);
-      expect(parseCanvasFont('10px sans-serif')!.families, ['sans-serif']);
-    });
-
-    test('a font that does not parse is null', () {
-      expect(parseCanvasFont(''), isNull);
-      expect(parseCanvasFont('12px'), isNull);
-      expect(parseCanvasFont('Arial'), isNull);
-      expect(parseCanvasFont('bogus 12px Arial'), isNull);
-      expect(parseCanvasFont('12em Arial'), isNull);
-      expect(parseCanvasFont("12px 'Arial"), isNull);
-      expect(parseCanvasFont('12px Arial,'), isNull);
-      expect(parseCanvasFont('2000 12px Arial'), isNull);
+    test('a font reads back, and a write of null does nothing', () {
+      const bold = TextStyle(
+        fontFamily: 'Arial',
+        fontSize: 16,
+        fontWeight: ui.FontWeight.bold,
+        fontStyle: ui.FontStyle.italic,
+      );
+      final ctx = _context()..font = bold;
+      expect(ctx.font, same(bold));
+      ctx.font = null;
+      expect(ctx.font, same(bold));
     });
   });
 

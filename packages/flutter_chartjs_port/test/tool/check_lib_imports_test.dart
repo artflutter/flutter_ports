@@ -335,6 +335,30 @@ void main() {
     }
   });
 
+  test('lets a core layer import the painting library for TextStyle only', () {
+    // Chart.js ADR 0116 item 6: show TextStyle and TextOverflow, no other
+    // name.
+    const path = 'lib/src/core/tick_font_cache.dart';
+    tree.write(path, [
+      _portOnly,
+      "import 'package:flutter/painting.dart' show TextOverflow, TextStyle;",
+    ]);
+    expect(run(), isEmpty);
+    for (final directive in [
+      "import 'package:flutter/painting.dart';",
+      "import 'package:flutter/painting.dart' show TextStyle, TextPainter;",
+    ]) {
+      tree.write(path, [_portOnly, directive]);
+      expect(run(), [
+        equals(
+          'error: $path:2: imports package:flutter/painting.dart without '
+          '"show TextOverflow, TextStyle" in a core layer (Chart.js ADR '
+          '0116).',
+        ),
+      ], reason: directive);
+    }
+  });
+
   test('treats core.config, core.adapters, core.interaction and core.layouts '
       'as roots', () {
     const roots = [

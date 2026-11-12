@@ -2,6 +2,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
@@ -10,15 +11,17 @@ import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ParsedFont, toFont;
+    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/font_record.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the parts of phases 5 and 6, and the values that
@@ -43,10 +46,6 @@ import 'light_reference.dart';
 /// The parsed form of the CSS color [value]: the `rgbString` of the ported
 /// @kurkle/color, as the canvas layer parses a color.
 String? _parsed(Object? value) => referenceParsedColor(value).rgbString();
-
-/// A field of a font: `.font.<field>` or `.<name>Font.<field>` at the end of
-/// a dot path, with the font key as group 1.
-final RegExp _fontField = RegExp(r'\.(font|[a-z]+Font)\.[^.]+$');
 
 /// Whether [key] names a color option.
 bool _isColorKey(String key) => key.endsWith('Color');
@@ -74,24 +73,10 @@ Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
 bool _isObject(Object? value) =>
     value is Map<String, Object?> || value is JsObjectFace;
 
-/// [value] as plain Dart values for a compare with a Map literal: an object
-/// gives a new Map of its own keys in the `Object.keys` order, each value
-/// read through its face; another value is itself.
-Object? _plain(Object? value) => _isObject(value)
-    ? <String, Object?>{
-        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
-      }
-    : value;
-
-/// The fields of the `toFont` result [font], as the generator writes them.
-Map<String, Object?> _fontFields(ParsedFont font) => {
-  'family': font.family,
-  'lineHeight': font.lineHeight,
-  'size': font.size,
-  'style': font.style,
-  'weight': font.weight,
-  'string': font.string,
-};
+/// The fields of the `toFont` result [font], as the generator writes them
+/// (`font_record.dart`).
+Map<String, Object?> _fontFields(ChartTextStyle font) =>
+    resolvedFontRecordOf(font);
 
 /// A configuration of the chart type `tthm` with one dataset, the user
 /// options [options] and the theme [theme].
@@ -182,12 +167,13 @@ void main() {
         final value = _at(compiled, path);
         final upstream = themeLightRestated[path];
         if (upstream is Map<String, Object?>) {
-          // A font: the fields that are not null.
-          expect(_plain(value), {
-            for (final MapEntry(key: field, value: fieldValue)
-                in upstream.entries)
-              field: ?fieldValue,
-          }, reason: path);
+          // A font: its record (font_record.dart).
+          expect(value, isA<TextStyle>(), reason: path);
+          expect(
+            fontObjectRecordOf(value! as TextStyle),
+            upstream,
+            reason: path,
+          );
         } else if (upstream is List<Object?>) {
           // A palette: the colors after the parse (plugin.colors.ts:14-25).
           expect(value, isA<List<Object?>>(), reason: path);
@@ -202,15 +188,10 @@ void main() {
           expect(_parsed(value), isNotNull, reason: path);
         }
       }
-      // The preset emits these keys and no other key. A font field counts
-      // as its font, for example plugins.tooltip.bodyFont.size as
-      // plugins.tooltip.bodyFont.
+      // The preset emits these keys and no other key. A font is one leaf, a
+      // TextStyle (Chart.js ADR 0116).
       final leafPaths = _leaves(compiled).keys
           .where((path) => !path.startsWith('transitions'))
-          .map(
-            (path) =>
-                path.replaceFirstMapped(_fontField, (match) => '.${match[1]}'),
-          )
           .toSet();
       expect(leafPaths, keys);
       expect(emitted, {'color', 'scale', 'scales', 'plugins', 'elements'});

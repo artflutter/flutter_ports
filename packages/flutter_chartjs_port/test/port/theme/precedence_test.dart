@@ -4,10 +4,12 @@ library;
 
 import 'dart:convert';
 import 'dart:ui' as native_ui;
+import 'dart:ui' show FontStyle;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
@@ -41,12 +43,14 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
@@ -303,6 +307,7 @@ String _json(Object? value) => switch (value) {
   final bool b => b ? 'true' : 'false',
   final num n => jsNumberToString(n),
   final String s => jsonEncode(s),
+  final TextStyle font => _json(fontObjectRecordOf(font)),
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
@@ -366,8 +371,9 @@ List<Object?> _points() => <Object?>[
 ];
 
 /// Writes [value] at the dot path [path] of the global scope [root], and
-/// creates the missing objects. The restore of the harness removes the write
-/// after the test.
+/// creates the missing objects. A font merges over the font at [path], as a
+/// write of each key of a font object. The restore of the harness removes
+/// the write after the test.
 void _put(Object root, String path, Object? value) {
   final keys = path.split('.');
   var node = root;
@@ -381,7 +387,12 @@ void _put(Object root, String path, Object? value) {
       node = created;
     }
   }
-  jsSet(node, keys.last, value);
+  final old = jsGet(node, keys.last);
+  jsSet(
+    node,
+    keys.last,
+    old is TextStyle && value is TextStyle ? old.merge(value) : value,
+  );
 }
 
 /// The value at the dot path [path] of [root].
@@ -439,8 +450,12 @@ const AnyObject _tokenTheme = <String, Object?>{
     'surface': (alpha: 1.0, red: 0.0, green: 0.0, blue: 0.0),
   },
   'typography': <String, Object?>{
-    'font': <String, Object?>{'family': 'Arial', 'size': 14.0},
-    'pointLabels': <String, Object?>{'style': 'italic', 'size': 11.0},
+    'font': ChartTextStyle(
+      fontFamily: 'Arial',
+      fontFamilyFallback: [],
+      fontSize: 14,
+    ),
+    'pointLabels': ChartTextStyle(fontStyle: FontStyle.italic, fontSize: 11),
   },
 };
 
@@ -448,28 +463,42 @@ const AnyObject _tokenTheme = <String, Object?>{
 /// without size': the font token without the token `pointLabels`.
 const AnyObject _fontTheme = <String, Object?>{
   'typography': <String, Object?>{
-    'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+    'font': ChartTextStyle(
+      fontFamily: 'serif',
+      fontFamilyFallback: [],
+      fontSize: 14,
+    ),
   },
 };
 
 /// The values that the tokens of [_tokenTheme] replace (theming.md §4, the
 /// column "Replaces"), by the dot path in `defaults`, as the generator
-/// writes them.
+/// writes them. A font is a `ChartTextStyle` (Chart.js ADR 0116): [_put]
+/// merges it over the font at its path, as the generator writes each key of
+/// the font object.
 const Map<String, Object?> _tokenReplaced = {
   'color': native_ui.Color.fromRGBO(51, 102, 153, 1),
   'borderColor': native_ui.Color.fromRGBO(0, 128, 0, 0.5),
   'scale.ticks.backdropColor': native_ui.Color.fromRGBO(0, 0, 0, 0.75),
-  'font.family': 'Arial',
-  'font.size': 14.0,
-  'scales.radialLinear.pointLabels.font.style': 'italic',
-  'scales.radialLinear.pointLabels.font.size': 11.0,
+  'font': ChartTextStyle(
+    fontFamily: 'Arial',
+    fontFamilyFallback: [],
+    fontSize: 14,
+  ),
+  'scales.radialLinear.pointLabels.font': ChartTextStyle(
+    fontStyle: FontStyle.italic,
+    fontSize: 11,
+  ),
 };
 
 /// The values that the token `font` of [_fontTheme] replaces, by the dot
 /// path in `defaults`, as the generator writes them.
 const Map<String, Object?> _fontReplaced = {
-  'font.family': 'serif',
-  'font.size': 14.0,
+  'font': ChartTextStyle(
+    fontFamily: 'serif',
+    fontFamilyFallback: [],
+    fontSize: 14,
+  ),
 };
 
 /// The no-theme marker of [_snapshot] and [_scopes]: no `$theme` key.
@@ -525,23 +554,15 @@ List<String> _snapshot(Object? theme, {bool user = false}) {
   final tickFont = x.resolveTickFontOptions(0);
   final titleFont = toFont(_at(x.options, 'title.font'));
   observe('scale x fonts', [
-    tickFont.family,
-    tickFont.size,
-    tickFont.string,
-    titleFont.family,
-    titleFont.size,
-    titleFont.string,
+    resolvedFontRecordOf(tickFont),
+    resolvedFontRecordOf(titleFont),
   ]);
   final o = chart.options;
   observe('chart', [
     o['color'],
     o['backgroundColor'],
     o['borderColor'],
-    _at(o, 'font.family'),
-    _at(o, 'font.size'),
-    _at(o, 'font.style'),
-    _at(o, 'font.weight'),
-    _at(o, 'font.lineHeight'),
+    _at(o, 'font'),
   ]);
   observe('plugin', _probeK);
   return lines;
@@ -722,12 +743,8 @@ List<String> _radialSnapshot(Object? theme) {
   final pointLabelFont = toFont(_at(o, 'pointLabels.font'));
   final tickFont = r.resolveTickFontOptions(0);
   observe('fonts', [
-    pointLabelFont.family,
-    pointLabelFont.size,
-    pointLabelFont.string,
-    tickFont.family,
-    tickFont.size,
-    tickFont.string,
+    resolvedFontRecordOf(pointLabelFont),
+    resolvedFontRecordOf(tickFont),
   ]);
   observe('size', [r.width, r.height]);
   return lines;
@@ -1794,17 +1811,22 @@ void main() {
           final theme = <String, Object?>{};
           if (levels.contains('user')) {
             r['pointLabels'] = <String, Object?>{
-              'font': <String, Object?>{'family': 'F1-user', 'size': 31},
+              'font': const ChartTextStyle(
+                fontFamily: 'F1-user',
+                fontFamilyFallback: [],
+                fontSize: 31,
+              ),
             };
           }
           if (levels.contains('themeType')) {
             theme['scales'] = <String, Object?>{
               'radialLinear': <String, Object?>{
                 'pointLabels': <String, Object?>{
-                  'font': <String, Object?>{
-                    'family': 'F2-theme-type',
-                    'size': 32,
-                  },
+                  'font': const ChartTextStyle(
+                    fontFamily: 'F2-theme-type',
+                    fontFamilyFallback: [],
+                    fontSize: 32,
+                  ),
                 },
               },
             };
@@ -1812,30 +1834,41 @@ void main() {
           if (levels.contains('themeScale')) {
             theme['scale'] = <String, Object?>{
               'pointLabels': <String, Object?>{
-                'font': <String, Object?>{
-                  'family': 'F3-theme-scale',
-                  'size': 33,
-                },
+                'font': const ChartTextStyle(
+                  fontFamily: 'F3-theme-scale',
+                  fontFamilyFallback: [],
+                  fontSize: 33,
+                ),
               },
             };
           }
           if (levels.contains('scaleDefaults')) {
             _put(
               defaults,
-              'scales.radialLinear.pointLabels.font.family',
-              'F4-scale-defaults',
+              'scales.radialLinear.pointLabels.font',
+              const ChartTextStyle(
+                fontFamily: 'F4-scale-defaults',
+                fontFamilyFallback: [],
+                fontSize: 34,
+              ),
             );
-            _put(defaults, 'scales.radialLinear.pointLabels.font.size', 34.0);
           }
           if (levels.contains('rootFont')) {
-            _put(defaults, 'font.family', 'F5-root-font');
-            _put(defaults, 'font.size', 35.0);
+            _put(
+              defaults,
+              'font',
+              const ChartTextStyle(
+                fontFamily: 'F5-root-font',
+                fontFamilyFallback: [],
+                fontSize: 35,
+              ),
+            );
           }
           final themed =
               levels.contains('themeType') || levels.contains('themeScale');
           final options = _r(_radialChart(r, themed ? theme : null)).options;
           final font = toFont(_at(options, 'pointLabels.font'));
-          return [font.family, font.size, font.string];
+          return resolvedFontRecordOf(font);
         },
       );
     });
@@ -2283,11 +2316,13 @@ void main() {
     // in setDimensions (scale.radialLinear.js:426-434). The width and the
     // height of the scale show it, without a text measurement.
     List<Object?> backdrop(Object? theme, [double? fontSize]) {
-      if (fontSize != null) _put(defaults, 'font.size', fontSize);
+      if (fontSize != null) {
+        _put(defaults, 'font', ChartTextStyle(fontSize: fontSize));
+      }
       final scale = _r(_radialChart(<String, Object?>{}, theme));
       final font = _at(scale.options, 'ticks.font');
       return [
-        if (jsTruthy(font)) jsGet(font, 'size') else font,
+        if (font is TextStyle) font.fontSize else font,
         scale.width,
         scale.height,
       ];
@@ -2319,7 +2354,7 @@ void main() {
           backdrop(<String, Object?>{
             'scale': <String, Object?>{
               'ticks': <String, Object?>{
-                'font': <String, Object?>{'size': 20.0},
+                'font': const ChartTextStyle(fontSize: 20),
               },
             },
           }, 30),
@@ -2337,7 +2372,10 @@ void main() {
         backdrop(<String, Object?>{
           'scale': <String, Object?>{
             'ticks': <String, Object?>{
-              'font': <String, Object?>{'family': 'serif'},
+              'font': const ChartTextStyle(
+                fontFamily: 'serif',
+                fontFamilyFallback: [],
+              ),
             },
           },
         }, 30),

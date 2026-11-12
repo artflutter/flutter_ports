@@ -4,8 +4,11 @@
 // Do not edit. Google Chrome 155.0.8059.80 on macOS 26.5.1 (arm64), headless:
 // canvas measureText with Liberation Sans 2.1.5. 80 cases.
 
+import 'dart:ui' show FontStyle, FontWeight;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasTextBaseline;
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// The Chrome version that generated the reference.
 const String textMetricsChrome = 'Google Chrome 155.0.8059.80';
@@ -25,13 +28,13 @@ const String textMetricsFamily =
 /// The text of the `baselines` values of [TextMetricsFont].
 const String textMetricsBaselineText = 'Dataset 1';
 
-/// One CSS font of the probe and its Chrome metrics, with `textAlign`
+/// One font of the probe and its Chrome metrics, with `textAlign`
 /// `start` and `direction` `ltr`: `fontBoundingBoxAscent` and
 /// `fontBoundingBoxDescent` with `textBaseline` `alphabetic`, and the
 /// `actualBoundingBoxAscent` of [textMetricsBaselineText] for each
 /// `textBaseline`.
 typedef TextMetricsFont = ({
-  String font,
+  ChartTextStyle font,
   double fontAscent,
   double fontDescent,
   Map<CanvasTextBaseline, double> baselines,
@@ -54,7 +57,12 @@ typedef TextMetricsCase = ({
 /// The fonts of the probe.
 const List<TextMetricsFont> textMetricsFonts = [
   (
-    font: 'normal 12px $textMetricsFamily',
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     fontAscent: 11,
     fontDescent: 3,
     baselines: {
@@ -67,7 +75,13 @@ const List<TextMetricsFont> textMetricsFonts = [
     },
   ),
   (
-    font: 'normal bold 12px $textMetricsFamily',
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     fontAscent: 11,
     fontDescent: 3,
     baselines: {
@@ -80,7 +94,13 @@ const List<TextMetricsFont> textMetricsFonts = [
     },
   ),
   (
-    font: 'normal bold 16px $textMetricsFamily',
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     fontAscent: 14,
     fontDescent: 3,
     baselines: {
@@ -93,7 +113,12 @@ const List<TextMetricsFont> textMetricsFonts = [
     },
   ),
   (
-    font: 'normal 10px $textMetricsFamily',
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 10,
+      fontStyle: FontStyle.normal,
+    ),
     fontAscent: 9,
     fontDescent: 2,
     baselines: {
@@ -106,7 +131,12 @@ const List<TextMetricsFont> textMetricsFonts = [
     },
   ),
   (
-    font: 'normal 24px $textMetricsFamily',
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 24,
+      fontStyle: FontStyle.normal,
+    ),
     fontAscent: 22,
     fontDescent: 5,
     baselines: {

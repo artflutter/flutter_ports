@@ -237,7 +237,7 @@ void main() {
     await _scrollTo(tester, find.text('Color(0xFF059BFF)'));
     expect(find.text('Color(0xFF059BFF)'), findsOneWidget);
 
-    await _scrollTo(tester, find.text('italic 600 16px Georgia, serif'));
+    await _scrollTo(tester, find.text('Georgia · size 16 · height 1.5'));
     await _scrollTo(tester, find.text('{top: 1, left: 2}'));
     expect(find.text('{x: 5, y: 10}'), findsOneWidget);
   });

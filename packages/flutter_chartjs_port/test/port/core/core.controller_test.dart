@@ -12,7 +12,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart'
-    show Directionality, SizedBox, TextDirection, TickerMode, Widget;
+    show Directionality, SizedBox, TextDirection, TextStyle, TickerMode, Widget;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -2040,7 +2040,11 @@ void main() {
       final chart = Chart(canvas, <String, Object?>{});
       final context = chart.ctx!
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
-        ..font = 'bold 12px Arial'
+        ..font = const TextStyle(
+          fontFamily: 'Arial',
+          fontSize: 12,
+          fontWeight: native_ui.FontWeight.bold,
+        )
         ..lineJoin = native_ui.StrokeJoin.round
         ..lineCap = native_ui.StrokeCap.square
         ..lineWidth = 3
@@ -2057,7 +2061,10 @@ void main() {
 
       // https://www.w3.org/TR/2dcontext/#conformance-requirements
       expect(context.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
-      expect(context.font, '10px sans-serif');
+      expect(
+        context.font,
+        const TextStyle(fontFamily: 'sans-serif', fontSize: 10),
+      );
       expect(context.lineJoin, native_ui.StrokeJoin.miter);
       expect(context.lineCap, native_ui.StrokeCap.butt);
       expect(context.lineWidth, 1);

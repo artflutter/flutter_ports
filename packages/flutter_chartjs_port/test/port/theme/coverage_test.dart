@@ -6,9 +6,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as native_ui;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/theme/css.dart' show colorToRgba;
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
@@ -181,8 +183,11 @@ Directory? _repositoryRoot() {
   }
 }
 
-/// The leaves of [value] by dot path, in key order. A List is a leaf.
+/// The leaves of [value] by dot path, in key order. A List is a leaf. A font
+/// gives a leaf for each field that it sets, with the key of the upstream
+/// font object ([_fontLeaves]).
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
+  if (value is TextStyle) return _fontLeaves(prefix, value);
   if (!_isObject(value)) return {prefix: value};
   return {
     for (final key in jsObjectKeys(value))
@@ -194,6 +199,31 @@ Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
 /// with its face (Chart.js ADR 0054 §5).
 bool _isObject(Object? value) =>
     value is Map<String, Object?> || value is JsObjectFace;
+
+/// The leaves of the font [font] at [path] (Chart.js ADR 0116), with the key
+/// of the upstream font object for each field that the font sets: `family`
+/// (the first family and the fallback families, a List), `size`, `style`
+/// (the name of the `FontStyle`), `weight` (the value of the `FontWeight`)
+/// and `lineHeight` (the height, a multiple of the size).
+Map<String, Object?> _fontLeaves(String path, TextStyle font) => {
+  if (font.fontFamily != null)
+    '$path.family': [font.fontFamily, ...?font.fontFamilyFallback],
+  if (font.fontSize != null) '$path.size': font.fontSize,
+  if (font.fontStyle != null) '$path.style': font.fontStyle!.name,
+  if (font.fontWeight != null) '$path.weight': font.fontWeight!.value,
+  if (font.height != null) '$path.lineHeight': font.height,
+};
+
+/// The families of the upstream family list [text] of a font object, without
+/// quotes: the rule of `families` of `tool/reference/font_record.mjs`.
+List<String> _families(String text) => [
+  for (final name in text.split(','))
+    if (name.trim().isNotEmpty)
+      name.trim().replaceAllMapped(
+        RegExp(r'''^(['"])(.*)\1$'''),
+        (m) => m[2]!,
+      ),
+];
 
 /// The leaves of the compiled light preset without the `transitions` keys:
 /// the content of the snapshot.
@@ -280,6 +310,10 @@ String _encode(Object? value) => jsonEncode(
 );
 
 bool _same(String path, Object? value, Object? upstream) {
+  // A font family: the List of the port and the family list of upstream.
+  if (path.endsWith('.family') && value is List && upstream is String) {
+    return _encode(value) == _encode(_families(upstream));
+  }
   if (_isColorKey(path) && value is List && upstream is List) {
     return value.length == upstream.length &&
         List.generate(
@@ -420,9 +454,14 @@ void main() {
     test('the snapshot holds the compiled light preset', () {
       final leaves = _lightLeaves();
       if (Platform.environment[_updateVariable] == '1') {
-        snapshotFile!.writeAsStringSync(
-          '${const JsonEncoder.withIndent('  ').convert(leaves)}\n',
+        // A color is its rgba() string, as the snapshot holds it.
+        final encoder = JsonEncoder.withIndent(
+          '  ',
+          (value) => value is native_ui.Color
+              ? colorToRgba(value)
+              : throw ArgumentError.value(value),
         );
+        snapshotFile!.writeAsStringSync('${encoder.convert(leaves)}\n');
       }
       final snapshot =
           jsonDecode(snapshotFile!.readAsStringSync()) as Map<String, Object?>;

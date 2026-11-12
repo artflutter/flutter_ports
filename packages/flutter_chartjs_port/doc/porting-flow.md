@@ -375,8 +375,9 @@ decision, its evidence and the items that stay open. In short:
 ### 2.8 Chart.js ADR 0015: Text (gate 3)
 
 [Chart.js ADR 0015](adr/0015-text.md) holds the decision and its evidence. In short:
-- `parseCanvasFont` parses the CSS shorthand of `toFontString`. Generic families stay family
-  names. `measureText` and `fillText` use one `ui.Paragraph` for each font and text, in LRU caches.
+- The canvas font is a `TextStyle` ([Chart.js ADR 0116](adr/0116-text-style-fonts.md)): the
+  CSS shorthand of `toFontString` and its parse are gone. Generic families stay family names.
+  `measureText` and `fillText` use one `ui.Paragraph` for each font and text, in LRU caches.
 - The harness installs Liberation Sans 2.1.5 (SIL OFL 1.1) under the families of the Chart.js
   default font and `sans-serif`.
 - The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to the

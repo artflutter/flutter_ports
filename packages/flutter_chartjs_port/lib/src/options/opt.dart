@@ -29,6 +29,7 @@ library;
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
@@ -319,6 +320,9 @@ abstract final class ShapeBits {
   /// `radialAxis`: an `RAxis`, the `indexAxis` of a radial dataset.
   static const int radialAxis = 3968;
 
+  /// `textStyle`: a Flutter `TextStyle`, the value of a font option.
+  static const int textStyle = 4096;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -439,6 +443,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.scaleAxis => classifyTyped<ScaleAxis>(raw),
   ShapeBits.cartesianAxis => classifyTyped<CartesianAxis>(raw),
   ShapeBits.radialAxis => classifyTyped<RAxis>(raw),
+  ShapeBits.textStyle => classifyTyped<TextStyle>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

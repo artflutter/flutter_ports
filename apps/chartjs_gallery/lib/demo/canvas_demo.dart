@@ -52,7 +52,7 @@ void drawCaption(
     text,
     x,
     y,
-    toFont(<String, Object?>{'size': 12}),
+    toFont(const ChartTextStyle(fontSize: 12)),
     const TextOpts(
       color: labelColor,
       textAlign: TextAlign.center,
@@ -308,19 +308,21 @@ class _RenderTextCardState extends State<_RenderTextCard> {
   static const double _maxWidthValue = 140;
 
   void _draw(DemoChart chart, CanvasRenderingContext2D ctx) {
-    final font = toFont(<String, Object?>{'size': 26, 'weight': 'bold'});
+    final font = toFont(
+      const ChartTextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+    );
     final lines = _multiLine
         ? const ['Chart.js', 'renderText', 'on a canvas']
         : const ['Chart.js renderText'];
     final x = chart.width / 2;
     final y = chart.height / 2;
-    final lineHeight = font.lineHeight;
+    final lineHeight = font.lineHeight!;
     // renderText advances y by the line height after each line.
     final firstY = y - (lines.length - 1) * lineHeight / 2;
 
     // The backdrop is in the rotated space of the label, as core.scale
     // draws it: around the anchor.
-    ctx.font = font.string;
+    ctx.font = font;
     var widest = 0.0;
     for (final line in lines) {
       widest = math.max(widest, ctx.measureText(line).width);
@@ -635,7 +637,7 @@ class _LinesCardState extends State<_LinesCard> {
         caption,
         12,
         top + 4,
-        toFont(<String, Object?>{'size': 12}),
+        toFont(const ChartTextStyle(fontSize: 12)),
         const TextOpts(color: labelColor, textBaseline: CanvasTextBaseline.top),
       );
     }

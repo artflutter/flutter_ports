@@ -1,16 +1,16 @@
 // Original code, not ported from Chart.js: helpers.options cases with no spec.
-import 'dart:async';
+import 'dart:ui' show FontStyle, FontWeight;
 
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter/painting.dart' show TextStyle;
+
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show PercentGrace, ValueGrace;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show attachContext, createResolver;
+    show createResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:test/test.dart';
 
@@ -63,72 +63,24 @@ const List<Object?> _notObjects = [
   undefined,
 ];
 
-/// Runs [body] and returns the lines that it prints (`console.warn`).
-List<String> _warnings(void Function() body) {
-  final lines = <String>[];
-  runZoned(
-    body,
-    zoneSpecification: ZoneSpecification(
-      print: (self, parent, zone, line) => lines.add(line),
-    ),
-  );
-  return lines;
-}
-
 void main() {
-  group('toLineHeight', () {
-    test('numeric fast path preserves decimal boundaries and signed zero', () {
-      // The string path still executes the pinned upstream regular expression.
-      for (final value in [
-        0.0,
-        -0.0,
-        double.minPositive,
-        1e-7,
-        9.999999999999997e-7,
-        1e-6,
-        1.0000000000000002e-6,
-        1.2,
-        1.2345678901234567,
-        999999999999999900000.0,
-        1e21,
-        -1.2,
-        double.nan,
-        double.infinity,
-        double.negativeInfinity,
-      ]) {
-        for (final size in [0.0, -0.0, 12.0, -12.0, double.infinity]) {
-          expect(
-            toLineHeight(value, size),
-            _isNumber(toLineHeight(jsToString(value), size)),
-            reason: '$value, size $size',
-          );
-        }
-      }
+  // Row adapt-text-style-fonts: the line height is a field of the font.
+  group('ChartTextStyle.lineHeight', () {
+    test('is fontSize * height, or null without one of them', () {
+      expect(
+        const ChartTextStyle(fontSize: 12, height: 1.2).lineHeight,
+        12 * 1.2,
+      );
+      expect(const ChartTextStyle(fontSize: 12).lineHeight, isNull);
+      expect(const ChartTextStyle(height: 1.2).lineHeight, isNull);
     });
-    test('reads ToString of the value with the anchored pattern', () {
-      for (final value in <Object?>[
-        '1.5PX',
-        '-1px',
-        ' 2',
-        '2 ',
-        '2.',
-        '.5',
-        '2px\n',
-        1e21,
-        1e-7,
-        '1.5e1',
-        true,
-        'normal',
-      ]) {
-        expect(toLineHeight(value, 16), 16 * 1.2, reason: '$value');
-      }
-      expect(toLineHeight(<Object?>['2'], 16), 32);
-      expect(toLineHeight(0.0, 16), _isNumber(0));
-      expect(toLineHeight(-0.0, 16), _isNumber(0));
-      expect(toLineHeight('200%', 16), 32);
-      expect(toLineHeight('3em', 16), 48);
-      expect(toLineHeight('0.5', 16), 8);
-      expect(toLineHeight(2.0, double.nan), isNaN);
+
+    test('follows the merged size and height', () {
+      const base = ChartTextStyle(fontSize: 12, height: 1.2);
+      final merged = base.merge(const ChartTextStyle(fontSize: 20));
+      expect(merged.lineHeight, 20 * 1.2);
+      expect(base.merge(const TextStyle(height: 2)).lineHeight, 24);
+      expect(base.copyWith(fontSize: 10).lineHeight, 10 * 1.2);
     });
   });
 
@@ -273,221 +225,57 @@ void main() {
     });
   });
 
+  // Row adapt-text-style-fonts: toFont merges a TextStyle over the fallback.
   group('toFont', () {
-    test('typed reads preserve scriptable and indexed font fields', () {
-      final calls = <int>[];
-      final raw = <String, Object?>{
-        'size': (Map<String, Object?> context) {
-          final index = context['index']! as int;
-          calls.add(index);
-          return 10.0 + index;
-        },
-        'family': ['a', 'b'],
-        'style': 'italic',
-        'lineHeight': 1.5,
-      };
-      final resolver = createResolver([raw]);
-      for (var index = 0; index < 3; index++) {
-        final font = toFont(attachContext(resolver, {'index': index}));
-        expect(font.size, 10.0 + index);
-        expect(font.family, index.isEven ? 'a' : 'b');
-        expect(font.lineHeight, (10.0 + index) * 1.5);
-      }
-      expect(calls, [0, 1, 2]);
+    test('merges the font over defaults.font', () {
+      final font = toFont(const ChartTextStyle(fontWeight: FontWeight.bold));
+      expect(font.fontFamily, 'Helvetica Neue');
+      expect(font.fontFamilyFallback, ['Helvetica', 'Arial', 'sans-serif']);
+      expect(font.fontSize, 12);
+      expect(font.fontWeight, FontWeight.bold);
+      expect(font.fontStyle, FontStyle.normal);
+      expect(font.lineHeight, 12 * 1.2);
     });
-    test('literal style alternatives retain their font strings', () {
-      for (final style in [
-        'normal',
-        'italic',
-        'initial',
-        'inherit',
-        'unset',
-        'oblique',
-      ]) {
-        expect(
-          toFont({'style': style, 'size': 12.0, 'family': 'a'}).string,
-          '$style 12px a',
-        );
-      }
-    });
-    test('warns about an invalid style and drops it', () {
-      late ParsedFont font;
-      final warnings = _warnings(() {
-        font = toFont(<String, Object?>{
-          'style': 'bold',
-          'size': 12.0,
-          'family': 'a',
-        });
-      });
-      expect(warnings, ['Invalid font style specified: "bold"']);
-      expect(font.style, isNull);
-      expect(font.string, '12px a');
-      expect(font.lineHeight, 14.399999999999999);
 
+    test('merges the font over the fallback', () {
+      const fallback = ChartTextStyle(fontSize: 10, height: 2);
+      final font = toFont(const ChartTextStyle(fontSize: 20), fallback);
+      expect(font.fontSize, 20);
+      expect(font.height, 2);
+      expect(font.lineHeight, 40);
+      expect(font.fontFamily, isNull);
+    });
+
+    test('a plain TextStyle gives a ChartTextStyle', () {
+      final font = toFont(const TextStyle(fontSize: 30));
+      expect(font, isA<ChartTextStyle>());
+      expect(font.lineHeight, 30 * 1.2);
+    });
+
+    test('a value that is not a font gives the fallback', () {
+      expect(toFont(undefined), toFont(const ChartTextStyle()));
+      expect(toFont(null).fontSize, 12);
+      expect(toFont(5.0).fontSize, 12);
+    });
+
+    test('a font object of Chart.js stops a debug build', () {
       expect(
-        _warnings(() {
-          font = toFont(<String, Object?>{
-            'style': 'oblique 100deg',
-            'size': 12.0,
-            'family': 'a',
-          });
-        }),
-        ['Invalid font style specified: "oblique 100deg"'],
+        () => toFont(<String, Object?>{'size': 12}),
+        throwsA(isA<AssertionError>()),
       );
-      expect(font.string, '12px a');
     });
-    test('accepts an oblique angle of two digits', () {
-      final font = toFont(<String, Object?>{
-        'style': 'oblique 90deg',
-        'size': 12.0,
-        'family': 'a',
-      });
-      expect(font.string, 'oblique 90deg 12px a');
-    });
-    test('keeps an empty style without a warning', () {
-      late ParsedFont font;
-      expect(
-        _warnings(() {
-          font = toFont(<String, Object?>{
-            'style': '',
-            'size': 10.0,
-            'family': 'f',
-          });
-        }),
-        isEmpty,
-      );
-      expect(font.style, '');
-      expect(font.string, '10px f');
-    });
-    test('reads a string size with parseInt', () {
-      var font = toFont(<String, Object?>{'size': '21px', 'family': 'a'});
-      expect(
-        [font.size, font.lineHeight, font.string],
-        [
-          21,
-          25.2,
-          'normal 21px a',
-        ],
-      );
 
-      font = toFont(<String, Object?>{'size': '  12.9', 'family': 'a'});
-      expect([font.size, font.string], [12, 'normal 12px a']);
-
-      font = toFont(<String, Object?>{'size': 'abc', 'family': 'a'});
-      expect(font.size, isNaN);
-      expect(font.lineHeight, isNaN);
-      expect(font.string, 'normal NaNpx a');
-
-      font = toFont(<String, Object?>{'size': '-0', 'family': 'a'});
-      expect(font.size, _isNumber(-0));
-      expect(font.lineHeight, _isNumber(-0));
-      expect(font.string, 'normal 0px a');
-    });
-    test('gives a null string for a null size', () {
-      final font = toFont(<String, Object?>{'size': null, 'family': 'a'});
-      expect(font.size, isNull);
-      expect(font.lineHeight, _isNumber(0));
-      expect(font.string, isNull);
-    });
-    test('puts the weight into the string', () {
-      expect(
-        toFont(<String, Object?>{
-          'weight': 'bold',
-          'size': 12.0,
-          'family': 'a',
-        }).string,
-        'normal bold 12px a',
-      );
-      final font = toFont(<String, Object?>{
-        'weight': 600.0,
-        'size': 12.5,
-        'family': 'a',
-      });
-      expect(font.weight, 600);
-      expect(font.lineHeight, 15);
-      expect(font.string, 'normal 600 12.5px a');
-    });
-    test('reads the fallback object', () {
-      var font = toFont(<String, Object?>{}, <String, Object?>{
-        'family': 'x',
-        'size': 10.0,
-        'lineHeight': '20px',
-      });
-      expect(font.lineHeight, 20);
-      expect(font.style, isNull);
-      expect(font.weight, same(undefined));
-      expect(font.string, '10px x');
-
-      font = toFont(
-        <String, Object?>{'size': 8.0},
+    test('reads a resolver font, merged through its scopes', () {
+      final resolver = createResolver([
+        <String, Object?>{'font': const ChartTextStyle(fontSize: 20)},
         <String, Object?>{
-          'family': 'x',
-          'size': 10.0,
-          'lineHeight': '150%',
-          'style': 'italic',
-          'weight': 'bold',
+          'font': const ChartTextStyle(fontWeight: FontWeight.bold),
         },
-      );
-      expect(font.lineHeight, 12);
-      expect(font.string, 'italic bold 8px x');
-    });
-    test('reads a resolver through its get trap', () {
-      // The has trap of a prefixed resolver does not know 'size'. The get
-      // trap gives the null of 'hoverSize'.
-      final resolver = createResolver(
-        [
-          <String, Object?>{'hoverSize': null, 'family': 'a'},
-        ],
-        ['hover', ''],
-      );
-      final font = toFont(resolver, <String, Object?>{
-        'size': 12.0,
-        'family': 'b',
-      });
-      expect(font.size, isNull);
-      expect(font.string, isNull);
-      expect(font.family, 'a');
-
-      final trbl = createResolver(
-        [
-          <String, Object?>{'hoverTop': null, 'y': 5.0},
-        ],
-        ['hover', ''],
-      );
-      expect(_trbl(toTRBL(trbl)), {
-        'top': 0,
-        'right': 0,
-        'bottom': 5,
-        'left': 0,
-      });
-    });
-    test('reads defaults.font for empty options', () {
-      for (final options in <Object?>[null, undefined]) {
-        final font = toFont(options);
-        expect(
-          font.family,
-          "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-        );
-        expect(font.lineHeight, 14.399999999999999);
-        expect(font.size, 12);
-        expect(font.style, 'normal');
-        expect(font.weight, isNull);
-        expect(
-          font.string,
-          "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-        );
-      }
-      expect(defaults['font'], isA<JsObjectFace>());
-    });
-    test('converts a lineHeight string', () {
-      expect(
-        toFont(<String, Object?>{
-          'lineHeight': '2em',
-          'size': 10.0,
-          'family': 'f',
-        }).lineHeight,
-        20,
-      );
+      ]);
+      final font = toFont(resolver['font']);
+      expect(font.fontSize, 20);
+      expect(font.fontWeight, FontWeight.bold);
+      expect(font.lineHeight, 24);
     });
   });
 
@@ -789,41 +577,8 @@ void main() {
     });
   });
 
-  // The typed results of toTRBL, toPadding and toFont.
+  // The typed results of toTRBL and toPadding.
   group('adapt-options-typed-results', () {
-    test('converts the font members to the types of CanvasFontSpec', () {
-      // Upstream keeps the values: {family: 5, size: true, style:
-      // ['italic']}, and the string 'italic truepx 5'.
-      var font = toFont(<String, Object?>{
-        'family': 5.0,
-        'size': true,
-        'style': <Object?>['italic'],
-      });
-      expect([font.family, font.size, font.style], ['5', 1, 'italic']);
-      expect(font.lineHeight, 1.2);
-      expect(font.string, 'italic 1px 5');
-
-      // Upstream keeps the array [14]. The string is the same.
-      font = toFont(<String, Object?>{
-        'family': 'f',
-        'size': <Object?>[14.0],
-      });
-      expect(font.size, 14);
-      expect(font.lineHeight, 16.8);
-      expect(font.string, 'normal 14px f');
-    });
-    test('a falsy style that is not a string becomes null', () {
-      // Upstream keeps the value, and the string is '12px a' for each.
-      for (final style in <Object?>[0.0, -0.0, double.nan, false]) {
-        final font = toFont(<String, Object?>{
-          'style': style,
-          'size': 12.0,
-          'family': 'a',
-        });
-        expect(font.style, isNull, reason: '$style');
-        expect(font.string, '12px a', reason: '$style');
-      }
-    });
     test('the TRBL object has no width before toPadding sets it', () {
       final trbl = toTRBL(1.0);
       expect(trbl, isA<ChartArea>());
