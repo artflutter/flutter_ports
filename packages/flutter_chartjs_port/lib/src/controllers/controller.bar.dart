@@ -96,6 +96,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         GridLineOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -439,28 +441,35 @@ double _barSign(double size, types.Scale vScale, Object? actualBase) {
 /// controller.bar.js:181 `borderProps(properties)`.
 ///
 /// `base`, `x` and `y` are numbers: `a > b` compares two `double` values.
-({String start, String end, bool reverse, String top, String bottom})
+// DIVERGES(chartjs): adapt-border-skipped-enum, the enum values.
+({
+  BorderSkippedEdge start,
+  BorderSkippedEdge end,
+  bool reverse,
+  BorderSkippedEdge top,
+  BorderSkippedEdge bottom,
+})
 _borderProps(BarProperties properties) {
   bool reverse;
-  String start;
-  String end;
-  String top;
-  String bottom;
+  BorderSkippedEdge start;
+  BorderSkippedEdge end;
+  BorderSkippedEdge top;
+  BorderSkippedEdge bottom;
   if (properties.horizontal) {
     reverse = properties.base > properties.x;
-    start = 'left';
-    end = 'right';
+    start = BorderSkippedEdge.left;
+    end = BorderSkippedEdge.right;
   } else {
     reverse = properties.base < properties.y;
-    start = 'bottom';
-    end = 'top';
+    start = BorderSkippedEdge.bottom;
+    end = BorderSkippedEdge.top;
   }
   if (reverse) {
-    top = 'end';
-    bottom = 'start';
+    top = BorderSkippedEdge.end;
+    bottom = BorderSkippedEdge.start;
   } else {
-    top = 'start';
-    bottom = 'end';
+    top = BorderSkippedEdge.start;
+    bottom = BorderSkippedEdge.end;
   }
   return (start: start, end: end, reverse: reverse, top: top, bottom: bottom);
 }
@@ -490,20 +499,25 @@ bool _strictEquals(Object? a, Object? b) {
 Object? _orZero(Object? value) => jsTruthy(value) ? value : 0.0;
 
 /// `res[edge] = true` of `setBorderSkipped` (:222, :226): the typed field of
-/// the edge `top`, `right`, `bottom` or `left`, else an extra of the edge
-/// name (the property key of a user `borderSkipped` value).
+/// the edge `top`, `right`, `bottom` or `left`, else an extra with the name
+/// of the edge (the property key `ToString(edge)` of upstream: `start`,
+/// `end` or `middle` of a [BorderSkippedEdge], or another value of the
+/// user).
+// DIVERGES(chartjs): adapt-border-skipped-enum, the enum values.
 void _skipEdge(BorderSkipped res, Object? edge) {
-  switch (jsToString(edge)) {
-    case 'top':
+  switch (edge) {
+    case BorderSkippedEdge.top:
       res.top = true;
-    case 'right':
+    case BorderSkippedEdge.right:
       res.right = true;
-    case 'bottom':
+    case BorderSkippedEdge.bottom:
       res.bottom = true;
-    case 'left':
+    case BorderSkippedEdge.left:
       res.left = true;
-    case final name:
-      res.jsWrite(name, true);
+    case final BorderSkippedEdge other:
+      res.jsWrite(other.name, true);
+    default:
+      res.jsWrite(jsToString(edge), true);
   }
 }
 
@@ -541,7 +555,8 @@ void _setBorderSkipped(
 
   final (:start, :end, :reverse, :top, :bottom) = _borderProps(properties);
 
-  if (edge == 'middle' && jsTruthy(stack)) {
+  // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
+  if (edge == BorderSkippedEdge.middle && jsTruthy(stack)) {
     properties.enableBorderRadius = true;
     if (_strictEquals(_orZero(_stackTop(stack)), index)) {
       edge = top;
@@ -558,7 +573,12 @@ void _setBorderSkipped(
 }
 
 /// controller.bar.js:234 `parseEdge(edge, a, b, reverse)`.
-Object? _parseEdge(Object? edge, String a, String b, bool reverse) {
+Object? _parseEdge(
+  Object? edge,
+  BorderSkippedEdge a,
+  BorderSkippedEdge b,
+  bool reverse,
+) {
   var result = edge;
   if (reverse) {
     result = _swap(result, a, b);
@@ -570,7 +590,7 @@ Object? _parseEdge(Object? edge, String a, String b, bool reverse) {
 }
 
 /// controller.bar.js:244 `swap(orig, v1, v2)`.
-Object? _swap(Object? orig, String v1, String v2) {
+Object? _swap(Object? orig, BorderSkippedEdge v1, BorderSkippedEdge v2) {
   return orig == v1
       ? v2
       : orig == v2
@@ -579,10 +599,10 @@ Object? _swap(Object? orig, String v1, String v2) {
 }
 
 /// controller.bar.js:248 `startEnd(v, start, end)`.
-Object? _startEnd(Object? v, String start, String end) {
-  return v == 'start'
+Object? _startEnd(Object? v, BorderSkippedEdge start, BorderSkippedEdge end) {
+  return v == BorderSkippedEdge.start
       ? start
-      : v == 'end'
+      : v == BorderSkippedEdge.end
       ? end
       : v;
 }
@@ -1035,7 +1055,8 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     if (!(edge == null ||
         identical(edge, undefined) ||
         edge is bool ||
-        edge is String)) {
+        // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
+        edge is BorderSkippedEdge)) {
       return false;
     }
     final amount = representative.inflateAmountValue;
@@ -1153,13 +1174,13 @@ class BarController extends DatasetController implements NativeBarIndexReads {
         skipped = BorderSkipped.all();
       } else {
         skipped = BorderSkipped();
-        if (edge is String && edge.isNotEmpty) {
+        if (edge is BorderSkippedEdge) {
           _skipEdge(
             skipped,
             _parseEdge(
               edge,
-              horizontal ? 'left' : 'bottom',
-              horizontal ? 'right' : 'top',
+              horizontal ? BorderSkippedEdge.left : BorderSkippedEdge.bottom,
+              horizontal ? BorderSkippedEdge.right : BorderSkippedEdge.top,
               horizontal ? base > head : base < head,
             ),
           );

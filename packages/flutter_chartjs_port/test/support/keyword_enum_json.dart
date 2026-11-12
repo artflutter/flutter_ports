@@ -31,7 +31,11 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 
 /// Whether [value] is a value of an enum whose names are upstream keywords.
 bool isKeywordEnum(Object? value) =>
@@ -49,6 +53,8 @@ bool isKeywordEnum(Object? value) =>
     value is ArcSpacingMode ||
     value is FillerDrawTime ||
     value is TextAlign ||
+    value is SteppedLine ||
+    value is BorderSkippedEdge ||
     value is TimeUnit ||
     value is ChartPosition;
 

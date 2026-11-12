@@ -3,6 +3,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -15,8 +16,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           'data': <Object?>[0, -0.01, 0.01, 30, -30],
           'backgroundColor': '#00ff00',
           'borderColor': '#000',
+          // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
           'borderSkipped': (Object? ctx) =>
-              jsGet(ctx, 'raw') == 0 ? false : 'start',
+              jsGet(ctx, 'raw') == 0 ? false : BorderSkippedEdge.start,
           'borderWidth': 4,
           'minBarLength': 20,
         },

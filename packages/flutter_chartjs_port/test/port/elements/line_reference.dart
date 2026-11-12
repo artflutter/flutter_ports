@@ -7,6 +7,8 @@
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
+
 /// The Node.js version that generated [lineReference].
 const String lineReferenceNode = 'v24.22.1';
 
@@ -1896,7 +1898,7 @@ const List<LineReferenceCase> lineReference = [
       'cubicInterpolationMode': 'default',
       'fill': false,
       'spanGaps': false,
-      'stepped': 'before',
+      'stepped': SteppedLine.before,
       'tension': 0,
       'backgroundColor': 'green',
       'borderColor': 'black',
@@ -2006,7 +2008,7 @@ const List<LineReferenceCase> lineReference = [
       'cubicInterpolationMode': 'default',
       'fill': false,
       'spanGaps': false,
-      'stepped': 'after',
+      'stepped': SteppedLine.after,
       'tension': 0,
       'backgroundColor': 'green',
       'borderColor': 'black',
@@ -2116,7 +2118,7 @@ const List<LineReferenceCase> lineReference = [
       'cubicInterpolationMode': 'default',
       'fill': false,
       'spanGaps': false,
-      'stepped': 'middle',
+      'stepped': SteppedLine.middle,
       'tension': 0,
       'backgroundColor': 'green',
       'borderColor': 'black',

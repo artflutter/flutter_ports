@@ -48,6 +48,8 @@ const Map<String, int> shapeAtoms = {
   'chartPosition': 33554432,
   'layoutPosition': 67108864,
   'textAlign': 134217728,
+  'steppedLine': 268435456,
+  'borderSkippedEdge': 536870912,
 };
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
@@ -148,6 +150,16 @@ const Map<String, TypedAtom> typedAtoms = {
     field: null,
   ),
   'textAlign': (type: 'TextAlign', uri: 'dart:ui', field: null),
+  'steppedLine': (
+    type: 'SteppedLine',
+    uri: 'package:flutter_chartjs_port/src/types/line_option_enums.dart',
+    field: null,
+  ),
+  'borderSkippedEdge': (
+    type: 'BorderSkippedEdge',
+    uri: 'package:flutter_chartjs_port/src/types/bar_option_enums.dart',
+    field: null,
+  ),
 };
 
 /// The import lines of the typed atoms whose types [types] lists, and of

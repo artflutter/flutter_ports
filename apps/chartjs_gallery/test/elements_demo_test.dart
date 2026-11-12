@@ -138,7 +138,7 @@ void main() {
     // The options are the class defaults plus the colors and the controls.
     expect(
       (state.bars.first.options! as JsObjectFace)['borderSkipped'],
-      'start',
+      BorderSkippedEdge.start,
     );
     expect(state.bars.first.borderSkipped, {'bottom': true});
     expect((state.points.first.options! as JsObjectFace)['hitRadius'], 1);

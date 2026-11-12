@@ -10,6 +10,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 
 /// The object literal `{x, y}` that the three functions return
 /// (helpers.interpolation.ts:7-10, :21-26), and the control-point literals
@@ -51,8 +53,10 @@ InterpolatedPoint pointInLine(
   );
 }
 
-/// helpers.interpolation.ts:16 `_steppedInterpolation`. JS `===` on a
-/// string is Dart `==`.
+/// helpers.interpolation.ts:16 `_steppedInterpolation`. [mode] is the
+/// `stepped` option value: `true` or a [SteppedLine] (row
+/// `adapt-stepped-line-enum`).
+// DIVERGES(chartjs): adapt-stepped-line-enum, the enum values.
 InterpolatedPoint steppedInterpolation(
   Point p1,
   Point p2,
@@ -61,11 +65,11 @@ InterpolatedPoint steppedInterpolation(
 ) {
   return InterpolatedPoint(
     (p1.x ?? 0) + t * ((p2.x ?? 0) - (p1.x ?? 0)),
-    mode == 'middle'
+    mode == SteppedLine.middle
         ? t < 0.5
               ? p1.y
               : p2.y
-        : mode == 'after'
+        : mode == SteppedLine.after
         ? t < 1
               ? p1.y
               : p2.y

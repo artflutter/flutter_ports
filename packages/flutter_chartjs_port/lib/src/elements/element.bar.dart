@@ -65,6 +65,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show BarOptionsScope;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
     show TypedRecord;
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -400,7 +402,8 @@ class BarElement extends Element
   /// element.bar.js:148 `static defaults`, in the upstream key order: a
   /// typed scope of the kind `BarOptions` (Chart.js ADR 0054 §3).
   static final BarOptionsScope defaults = BarOptionsScope()
-    ..borderSkipped = 'start'
+    // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
+    ..borderSkipped = BorderSkippedEdge.start
     ..borderWidth = 0.0
     ..borderRadius = 0.0
     ..inflateAmount = 'auto'

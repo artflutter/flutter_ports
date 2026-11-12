@@ -296,7 +296,7 @@ const stepTrue = LineDataset(
   label: 'stepped: true',
   data: stepValues,
   borderColor: .constant(blue),
-  stepped: true,
+  extra: {'stepped': true},
 );
 // #enddocregion stepped-true
 
@@ -305,7 +305,7 @@ const stepBefore = LineDataset(
   label: "stepped: 'before'",
   data: stepValues,
   borderColor: .constant(blue),
-  extra: {'stepped': 'before'},
+  stepped: SteppedLine.before,
 );
 // #enddocregion stepped-before
 
@@ -314,7 +314,7 @@ const stepAfter = LineDataset(
   label: "stepped: 'after'",
   data: stepValues,
   borderColor: .constant(blue),
-  extra: {'stepped': 'after'},
+  stepped: SteppedLine.after,
 );
 // #enddocregion stepped-after
 
@@ -323,7 +323,7 @@ const stepMiddle = LineDataset(
   label: "stepped: 'middle'",
   data: stepValues,
   borderColor: .constant(blue),
-  extra: {'stepped': 'middle'},
+  stepped: SteppedLine.middle,
 );
 // #enddocregion stepped-middle
 

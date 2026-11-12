@@ -445,6 +445,10 @@ function strokeEnum(k, x) {
   if ((k === 'borderJoinStyle' || k === 'lineJoin') && ['miter', 'round', 'bevel'].includes(x)) {
     return `StrokeJoin.${x}`;
   }
+  // The keyword form of `stepped` (row adapt-stepped-line-enum).
+  if (k === 'stepped' && ['before', 'after', 'middle'].includes(x)) {
+    return `SteppedLine.${x}`;
+  }
   return undefined;
 }
 
@@ -680,6 +684,8 @@ const out = `// Original code, not ported from Chart.js: LineElement reference d
 // of chartjs-test-utils. ${cases.length} cases.
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
+
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 
 /// The Node.js version that generated [lineReference].
 const String lineReferenceNode = '${process.version}';

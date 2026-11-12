@@ -47,10 +47,14 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 
 /// One option value of a typed scope (Chart.js ADR 0054 §1).
 sealed class Opt<T> {
@@ -264,6 +268,13 @@ abstract final class ShapeBits {
   /// and the `titleAlign`, `bodyAlign` and `footerAlign` of the tooltip.
   static const int textAlign = 134217728;
 
+  /// `steppedLine`: a [SteppedLine], the keyword form of `stepped`.
+  static const int steppedLine = 268435456;
+
+  /// `borderSkippedEdge`: a [BorderSkippedEdge], the keyword form of
+  /// `borderSkipped`.
+  static const int borderSkippedEdge = 536870912;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -287,7 +298,9 @@ abstract final class ShapeBits {
       timeUnit |
       chartPosition |
       layoutPosition |
-      textAlign;
+      textAlign |
+      steppedLine |
+      borderSkippedEdge;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -398,6 +411,8 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.chartPosition => classifyTyped<ChartPosition>(raw),
   ShapeBits.layoutPosition => classifyTyped<LayoutPosition>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
+  ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
+  ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

@@ -12,6 +12,7 @@ BarController
 BarElement
 BasePlatform
 BasicPlatform
+BorderSkippedEdge
 BubbleController
 CSSStyleDeclaration
 CancelableHookArgs
@@ -89,6 +90,7 @@ ScaleBounds
 ScaleValuePosition
 ScatterController
 Segment
+SteppedLine
 TRBL
 TextMetrics
 Tick
@@ -156,6 +158,7 @@ BaseAnimation
 BasePlatform
 BasicPlatform
 BorderColorAnimation
+BorderSkippedEdge
 BorderWidthAnimation
 BubbleController
 BubbleDataset
@@ -295,6 +298,7 @@ Segment
 ShowTransition
 SpacingAnimation
 StartAngleAnimation
+SteppedLine
 TRBL
 TensionAnimation
 TextMetrics

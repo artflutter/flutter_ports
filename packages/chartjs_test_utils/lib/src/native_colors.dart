@@ -21,8 +21,12 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, ScaleValuePosition;
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 
 final _callbacks = Expando<Object>('fixture native color callback');
 
@@ -173,6 +177,13 @@ void nativeFixtureColors(Object? config) {
           key == 'footerAlign') {
         // A text align takes the Flutter enum (row adapt-flutter-text-align).
         value[key] = _enumValue(ui.TextAlign.values, value[key]);
+      } else if (key == 'stepped') {
+        // The keyword form takes its enum (row adapt-stepped-line-enum); a
+        // boolean stays.
+        value[key] = _enumValue(SteppedLine.values, value[key]);
+      } else if (key == 'borderSkipped') {
+        // The keyword form takes its enum (row adapt-border-skipped-enum).
+        value[key] = _enumValue(BorderSkippedEdge.values, value[key]);
       } else if (key == 'drawTime' && owner == 'filler') {
         // The filler draw time takes its enum (row
         // adapt-filler-draw-time-enum).

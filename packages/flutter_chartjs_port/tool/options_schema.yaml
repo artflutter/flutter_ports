@@ -40,7 +40,9 @@
 # `ChartPosition`, the `position` of the legend and a title; a keyword is a foreign value),
 # `layoutPosition` (a `LayoutPosition`, the `position` of a scale: a `ChartPosition` or a
 # `ScaleValuePosition`; a keyword or an object is a foreign value), `textAlign` (a Flutter
-# `TextAlign`, the text align of the legend labels and of the tooltip; a keyword is a foreign value), `any` (any JS value: a color, a point
+# `TextAlign`, the text align of the legend labels and of the tooltip; a keyword is a foreign value),
+# `steppedLine` and `borderSkippedEdge` (the keyword forms of the line `stepped` and the bar
+# `borderSkipped`, with `bool` in their unions; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -123,7 +125,7 @@ kinds:
       stack: string
       hidden: bool
       base: number
-      borderSkipped: string | bool
+      borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
       inflateAmount: number | string
       borderWidth: number | scope Padding
@@ -162,7 +164,7 @@ kinds:
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number
-      stepped: string | bool
+      stepped: steppedLine | bool
       segment: scope SegmentOptions
       hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
@@ -369,7 +371,7 @@ kinds:
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number
-      stepped: string | bool
+      stepped: steppedLine | bool
       fill: number | string | bool | scope FillTarget
       spanGaps: bool | number
       segment: scope SegmentOptions
@@ -399,7 +401,7 @@ kinds:
       borderColor: any
       backgroundColor: any
       base: number
-      borderSkipped: string | bool
+      borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
       inflateAmount: number | string
       borderWidth: number | scope Padding
@@ -507,7 +509,7 @@ kinds:
       borderColor: any
       backgroundColor: any
       base: number
-      borderSkipped: string | bool
+      borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
       inflateAmount: number | string
       borderWidth: number | scope Padding
@@ -568,7 +570,7 @@ kinds:
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number
-      stepped: string | bool
+      stepped: steppedLine | bool
       fill: number | string | bool | scope FillTarget
       spanGaps: bool | number
       segment: scope SegmentOptions
@@ -779,7 +781,7 @@ kinds:
       capBezierPoints: bool
       cubicInterpolationMode: string
       tension: number
-      stepped: string | bool
+      stepped: steppedLine | bool
       fill: number | string | bool | scope FillTarget
       spanGaps: bool | number
       segment: scope SegmentOptions

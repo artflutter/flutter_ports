@@ -513,11 +513,25 @@ function strokeEnum(k, x) {
     usesArcEnums = true;
     return `ArcSpacingMode.${x}`;
   }
+  // The keyword forms of `stepped` and `borderSkipped` (rows
+  // adapt-stepped-line-enum and adapt-border-skipped-enum).
+  if (k === 'stepped' && ['before', 'after', 'middle'].includes(x)) {
+    usesSteppedLines = true;
+    return `SteppedLine.${x}`;
+  }
+  if (k === 'borderSkipped' && ['start', 'end', 'middle', 'bottom', 'left', 'top', 'right'].includes(x)) {
+    usesBorderSkips = true;
+    return `BorderSkippedEdge.${x}`;
+  }
   return undefined;
 }
 
 /** Whether the data have a value of an arc enum, which needs its import. */
 let usesArcEnums = false;
+
+/** Whether the data have a stepped line or a skipped edge, for the imports. */
+let usesSteppedLines = false;
+let usesBorderSkips = false;
 
 /** The Dart literal of a JS value. */
 function dart(v) {
@@ -568,7 +582,7 @@ const out = `// Original code, not ported from Chart.js: light theme reference d
 // ${elementCases.length} element cases.
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
-${usesUndefined || usesArcEnums ? '\n' : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}
+${usesUndefined || usesArcEnums || usesSteppedLines || usesBorderSkips ? '\n' : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${usesBorderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${usesSteppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = '${process.version}';
 

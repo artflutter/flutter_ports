@@ -19,6 +19,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -790,7 +792,7 @@ void main() {
           'elements': <String, Object?>{
             'bar': <String, Object?>{
               'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-              'borderSkipped': 'top',
+              'borderSkipped': BorderSkippedEdge.top,
               'borderColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
               'borderWidth': 2,
             },
@@ -830,7 +832,7 @@ void main() {
           _options(meta.data[i]),
           objectContaining(<String, Object?>{
             'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-            'borderSkipped': 'top',
+            'borderSkipped': BorderSkippedEdge.top,
             'borderColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
             'borderWidth': 1,
           }),

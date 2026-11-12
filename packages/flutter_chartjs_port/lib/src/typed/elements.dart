@@ -32,6 +32,8 @@ import 'package:flutter_chartjs_port/src/typed/values.dart'
     show ChartFill, ChartPointStyle;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 import 'package:meta/meta.dart' show internal;
 
 /// The options of the element types: `options.elements`
@@ -275,9 +277,9 @@ final class LineElementStyle with Diagnosticable {
   /// is no fill.
   final ChartFill? fill;
 
-  /// Whether a line is a stepped line: `stepped` as a boolean. The other
-  /// forms go through [extra].
-  final bool? stepped;
+  /// The form of a stepped line: `stepped`, a [SteppedLine] (row
+  /// `adapt-stepped-line-enum`). Dart `null`, the default, draws no steps.
+  final SteppedLine? stepped;
 
   /// The Chart.js line options that have no parameter, for example
   /// `{'cubicInterpolationMode': 'monotone'}`. The rules of
@@ -295,7 +297,7 @@ final class LineElementStyle with Diagnosticable {
     StrokeCap? borderCapStyle,
     StrokeJoin? borderJoinStyle,
     ChartFill? fill,
-    bool? stepped,
+    SteppedLine? stepped,
     Map<String, Object?>? extra,
   }) => LineElementStyle(
     tension: tension ?? this.tension,

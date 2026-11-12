@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
+    show SteppedLine;
 
 /// helpers.canvas.ts:25 `toFontString`.
 ///
@@ -563,9 +565,9 @@ void unclipArea(CanvasRenderingContext2D ctx) {
 ///
 /// A null [previous] stands for JS `undefined`, the `prev` of the first
 /// point of a segment. A null [flip] is JS `undefined`. [mode] is the
-/// `stepped` option value (`element.line.js:89`): `true`, `'before'`,
-/// `'after'` or `'middle'`. A null coordinate is JS `null`, which `ToNumber`
-/// makes 0 (Chart.js ADR 0045).
+/// `stepped` option value (`element.line.js:89`): `true` or a [SteppedLine]
+/// (row `adapt-stepped-line-enum`). A null coordinate is JS `null`, which
+/// `ToNumber` makes 0 (Chart.js ADR 0045).
 void steppedLineTo(
   CanvasPath ctx,
   Point? previous,
@@ -576,12 +578,13 @@ void steppedLineTo(
   if (previous == null) {
     return ctx.lineTo(target.x ?? 0, target.y ?? 0);
   }
-  if (mode == 'middle') {
+  // DIVERGES(chartjs): adapt-stepped-line-enum, the enum values.
+  if (mode == SteppedLine.middle) {
     final midpoint = ((previous.x ?? 0) + (target.x ?? 0)) / 2.0;
     ctx
       ..lineTo(midpoint, previous.y ?? 0)
       ..lineTo(midpoint, target.y ?? 0);
-  } else if ((mode == 'after') != (flip ?? false)) {
+  } else if ((mode == SteppedLine.after) != (flip ?? false)) {
     ctx.lineTo(previous.x ?? 0, target.y ?? 0);
   } else {
     ctx.lineTo(target.x ?? 0, previous.y ?? 0);

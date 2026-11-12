@@ -1343,6 +1343,17 @@ function keyedValue(k, value, owner) {
   if (k === 'spacingMode' && ['angular', 'proportional', 'parallel'].includes(value)) {
     return new DartEnum('ArcSpacingMode', value);
   }
+  // The keyword forms of the line `stepped` and the bar `borderSkipped`
+  // (rows adapt-stepped-line-enum and adapt-border-skipped-enum).
+  if (k === 'stepped' && ['before', 'after', 'middle'].includes(value)) {
+    return new DartEnum('SteppedLine', value);
+  }
+  if (
+    k === 'borderSkipped' &&
+    ['start', 'end', 'middle', 'bottom', 'left', 'top', 'right'].includes(value)
+  ) {
+    return new DartEnum('BorderSkippedEdge', value);
+  }
   // The filler draw time (row adapt-filler-draw-time-enum).
   if (
     k === 'drawTime' &&
@@ -1447,6 +1458,10 @@ function dart(v, state, owner) {
       state.timeUnits = true;
     } else if (v.type === 'ChartPosition') {
       state.positions = true;
+    } else if (v.type === 'SteppedLine') {
+      state.steppedLines = true;
+    } else if (v.type === 'BorderSkippedEdge') {
+      state.borderSkips = true;
     } else {
       state.scaleEnums = true;
     }
@@ -1529,7 +1544,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 
