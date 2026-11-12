@@ -1,5 +1,5 @@
 // Original code, not ported from Chart.js: tests of the mock context.
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:chartjs_test_utils/src/context.dart' as context;
@@ -77,7 +77,7 @@ void main() {
         ..lineJoin = StrokeJoin.bevel
         ..lineWidth = 3
         ..strokeStyle = 'b'
-        ..textAlign = 'center'
+        ..textAlign = TextAlign.center
         ..textBaseline = CanvasTextBaseline.middle;
       expect(
         [for (final call in ctx.getCalls()) call['name']],
@@ -100,7 +100,7 @@ void main() {
       expect(ctx.lineJoin, StrokeJoin.bevel);
       expect(ctx.lineWidth, 3);
       expect(ctx.strokeStyle, 'b');
-      expect(ctx.textAlign, 'center');
+      expect(ctx.textAlign, TextAlign.center);
       expect(ctx.textBaseline, CanvasTextBaseline.middle);
     });
 

@@ -12,7 +12,7 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
@@ -20960,13 +20960,13 @@ base class LegendLabelOptionsScope extends OptionScope {
   set pointStyle(Object value) =>
       store(OptionKey.pointStyle, classify(OptionKey.pointStyle, value));
 
-  Opt<String>? _textAlign;
+  Opt<TextAlign>? _textAlign;
 
   /// The cell of `textAlign`, or Dart `null` when absent.
-  Opt<String>? get textAlignCell => _textAlign;
+  Opt<TextAlign>? get textAlignCell => _textAlign;
 
   /// Stores the cell of `textAlign`. Dart `null` deletes the key.
-  set textAlignCell(Opt<String>? cell) {
+  set textAlignCell(Opt<TextAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.textAlign);
     } else {
@@ -20975,8 +20975,8 @@ base class LegendLabelOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `textAlign`.
-  set textAlign(String value) =>
-      store(OptionKey.textAlign, OptValue<String>(value));
+  set textAlign(TextAlign value) =>
+      store(OptionKey.textAlign, OptValue<TextAlign>(value));
 
   Opt<bool>? _usePointStyle;
 
@@ -21092,7 +21092,7 @@ base class LegendLabelOptionsScope extends OptionScope {
       case OptionKey.pointStyle:
         _pointStyle = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.textAlign:
-        _textAlign = fitCell(cell, classifyString);
+        _textAlign = fitCell(cell, classifyTyped<TextAlign>);
       case OptionKey.usePointStyle:
         _usePointStyle = fitCell(cell, classifyBool);
       case OptionKey.useBorderRadius:
@@ -21155,7 +21155,7 @@ base class LegendLabelOptionsScope extends OptionScope {
       case OptionKey.pointStyle:
         return classifyUnion(raw, 64);
       case OptionKey.textAlign:
-        return classifyString(raw);
+        return classifyTyped<TextAlign>(raw);
       case OptionKey.usePointStyle:
         return classifyBool(raw);
       case OptionKey.useBorderRadius:
@@ -21969,13 +21969,13 @@ base class TooltipOptionsScope extends OptionScope {
   set titleMarginBottom(double value) =>
       store(OptionKey.titleMarginBottom, OptValue<double>(value));
 
-  Opt<String>? _titleAlign;
+  Opt<TextAlign>? _titleAlign;
 
   /// The cell of `titleAlign`, or Dart `null` when absent.
-  Opt<String>? get titleAlignCell => _titleAlign;
+  Opt<TextAlign>? get titleAlignCell => _titleAlign;
 
   /// Stores the cell of `titleAlign`. Dart `null` deletes the key.
-  set titleAlignCell(Opt<String>? cell) {
+  set titleAlignCell(Opt<TextAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.titleAlign);
     } else {
@@ -21984,8 +21984,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `titleAlign`.
-  set titleAlign(String value) =>
-      store(OptionKey.titleAlign, OptValue<String>(value));
+  set titleAlign(TextAlign value) =>
+      store(OptionKey.titleAlign, OptValue<TextAlign>(value));
 
   Opt<double>? _bodySpacing;
 
@@ -22041,13 +22041,13 @@ base class TooltipOptionsScope extends OptionScope {
   set bodyFont(FontSpecScope value) =>
       store(OptionKey.bodyFont, OptScope<FontSpecScope>(value));
 
-  Opt<String>? _bodyAlign;
+  Opt<TextAlign>? _bodyAlign;
 
   /// The cell of `bodyAlign`, or Dart `null` when absent.
-  Opt<String>? get bodyAlignCell => _bodyAlign;
+  Opt<TextAlign>? get bodyAlignCell => _bodyAlign;
 
   /// Stores the cell of `bodyAlign`. Dart `null` deletes the key.
-  set bodyAlignCell(Opt<String>? cell) {
+  set bodyAlignCell(Opt<TextAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.bodyAlign);
     } else {
@@ -22056,8 +22056,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `bodyAlign`.
-  set bodyAlign(String value) =>
-      store(OptionKey.bodyAlign, OptValue<String>(value));
+  set bodyAlign(TextAlign value) =>
+      store(OptionKey.bodyAlign, OptValue<TextAlign>(value));
 
   Opt<double>? _footerSpacing;
 
@@ -22131,13 +22131,13 @@ base class TooltipOptionsScope extends OptionScope {
   set footerFont(FontSpecScope value) =>
       store(OptionKey.footerFont, OptScope<FontSpecScope>(value));
 
-  Opt<String>? _footerAlign;
+  Opt<TextAlign>? _footerAlign;
 
   /// The cell of `footerAlign`, or Dart `null` when absent.
-  Opt<String>? get footerAlignCell => _footerAlign;
+  Opt<TextAlign>? get footerAlignCell => _footerAlign;
 
   /// Stores the cell of `footerAlign`. Dart `null` deletes the key.
-  set footerAlignCell(Opt<String>? cell) {
+  set footerAlignCell(Opt<TextAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.footerAlign);
     } else {
@@ -22146,8 +22146,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `footerAlign`.
-  set footerAlign(String value) =>
-      store(OptionKey.footerAlign, OptValue<String>(value));
+  set footerAlign(TextAlign value) =>
+      store(OptionKey.footerAlign, OptValue<TextAlign>(value));
 
   Opt<Object>? _padding;
 
@@ -22609,7 +22609,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.titleMarginBottom:
         _titleMarginBottom = fitCell(cell, classifyNumber);
       case OptionKey.titleAlign:
-        _titleAlign = fitCell(cell, classifyString);
+        _titleAlign = fitCell(cell, classifyTyped<TextAlign>);
       case OptionKey.bodySpacing:
         _bodySpacing = fitCell(cell, classifyNumber);
       case OptionKey.bodyColor:
@@ -22617,7 +22617,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.bodyFont:
         _bodyFont = fitCell(cell, classifyScope<FontSpecScope>);
       case OptionKey.bodyAlign:
-        _bodyAlign = fitCell(cell, classifyString);
+        _bodyAlign = fitCell(cell, classifyTyped<TextAlign>);
       case OptionKey.footerSpacing:
         _footerSpacing = fitCell(cell, classifyNumber);
       case OptionKey.footerMarginTop:
@@ -22627,7 +22627,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerFont:
         _footerFont = fitCell(cell, classifyScope<FontSpecScope>);
       case OptionKey.footerAlign:
-        _footerAlign = fitCell(cell, classifyString);
+        _footerAlign = fitCell(cell, classifyTyped<TextAlign>);
       case OptionKey.padding:
         _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.caretPadding:
@@ -22761,7 +22761,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.titleMarginBottom:
         return classifyNumber(raw);
       case OptionKey.titleAlign:
-        return classifyString(raw);
+        return classifyTyped<TextAlign>(raw);
       case OptionKey.bodySpacing:
         return classifyNumber(raw);
       case OptionKey.bodyColor:
@@ -22769,7 +22769,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.bodyFont:
         return classifyScope<FontSpecScope>(raw);
       case OptionKey.bodyAlign:
-        return classifyString(raw);
+        return classifyTyped<TextAlign>(raw);
       case OptionKey.footerSpacing:
         return classifyNumber(raw);
       case OptionKey.footerMarginTop:
@@ -22779,7 +22779,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerFont:
         return classifyScope<FontSpecScope>(raw);
       case OptionKey.footerAlign:
-        return classifyString(raw);
+        return classifyTyped<TextAlign>(raw);
       case OptionKey.padding:
         return classifyUnion(raw, 33);
       case OptionKey.caretPadding:

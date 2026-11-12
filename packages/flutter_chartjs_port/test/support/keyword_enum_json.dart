@@ -18,7 +18,7 @@
 /// name of the value with the upstream text: [keywordJson] gives it as JSON.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
@@ -48,6 +48,7 @@ bool isKeywordEnum(Object? value) =>
     value is ArcBorderAlign ||
     value is ArcSpacingMode ||
     value is FillerDrawTime ||
+    value is TextAlign ||
     value is TimeUnit ||
     value is ChartPosition;
 

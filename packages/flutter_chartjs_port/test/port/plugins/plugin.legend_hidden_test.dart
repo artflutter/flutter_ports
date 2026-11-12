@@ -601,7 +601,7 @@ void main() {
       ) async {
         final labels = <String, Object?>{
           'pointStyle': 'star',
-          'textAlign': 'right',
+          'textAlign': TextAlign.right,
           'color': _green,
           'useBorderRadius': true,
           'borderRadius': 3,
@@ -1560,7 +1560,7 @@ void main() {
   group('the guard reads only what the ordinary build reads', () {
     const written = <String, Object?>{
       'pointStyle': 'star',
-      'textAlign': 'right',
+      'textAlign': TextAlign.right,
       'color': _green,
       'useBorderRadius': true,
       'borderRadius': 7,

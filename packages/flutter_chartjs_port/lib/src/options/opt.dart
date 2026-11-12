@@ -26,7 +26,7 @@
 /// This library is a pure layer.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
@@ -260,6 +260,10 @@ abstract final class ShapeBits {
   /// `layoutPosition`: a [LayoutPosition], the `position` of a scale.
   static const int layoutPosition = 67108864;
 
+  /// `textAlign`: a Flutter [TextAlign], the `textAlign` of the legend labels
+  /// and the `titleAlign`, `bodyAlign` and `footerAlign` of the tooltip.
+  static const int textAlign = 134217728;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -282,7 +286,8 @@ abstract final class ShapeBits {
       fillerDrawTime |
       timeUnit |
       chartPosition |
-      layoutPosition;
+      layoutPosition |
+      textAlign;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -392,6 +397,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.timeUnit => classifyTyped<TimeUnit>(raw),
   ShapeBits.chartPosition => classifyTyped<ChartPosition>(raw),
   ShapeBits.layoutPosition => classifyTyped<LayoutPosition>(raw),
+  ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

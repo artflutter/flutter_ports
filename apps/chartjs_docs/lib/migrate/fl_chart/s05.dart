@@ -50,7 +50,7 @@ class _Sample5State extends State<Sample5> {
           ..roundRect(e.x - width / 2, e.y - 46, width, 34, 8)
           ..fill()
           ..fillStyle = Colors.white
-          ..textAlign = 'center'
+          ..textAlign = TextAlign.center
           ..textBaseline = CanvasTextBaseline.middle
           ..fillText(text, e.x, e.y - 29);
       }

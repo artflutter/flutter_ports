@@ -19,6 +19,8 @@ library;
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show lookupByKey;
@@ -167,13 +169,14 @@ final class Debounced<T> {
 /// @private
 ///
 /// [align] is a [ChartAlign] (row `adapt-chart-align-enum`). Dart `null`, a
-/// value that is not an align, gives `'center'`.
-// DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-String toLeftRightCenter(ChartAlign? align) => align == ChartAlign.start
-    ? 'left'
+/// value that is not an align, gives `center`. The result is the Flutter
+/// [TextAlign] (row `adapt-flutter-text-align`).
+// DIVERGES(chartjs): adapt-chart-align-enum, the enum values.
+TextAlign toLeftRightCenter(ChartAlign? align) => align == ChartAlign.start
+    ? TextAlign.left
     : align == ChartAlign.end
-    ? 'right'
-    : 'center';
+    ? TextAlign.right
+    : TextAlign.center;
 
 /// helpers.extras.ts:73 `_alignStartEnd`.
 ///
@@ -196,16 +199,17 @@ double alignStartEnd(ChartAlign? align, double start, double end) =>
 /// Returns `left`, `right` or `(left + right) / 2` depending on `align`.
 /// Defaults to `left`
 /// @private
+// DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
 double textX(
-  String align,
+  TextAlign? align,
   double left,
   double right,
   bool rtl,
 ) {
-  final check = rtl ? 'left' : 'right';
+  final check = rtl ? TextAlign.left : TextAlign.right;
   return align == check
       ? right
-      : align == 'center'
+      : align == TextAlign.center
       ? (left + right) / 2
       : left;
 }

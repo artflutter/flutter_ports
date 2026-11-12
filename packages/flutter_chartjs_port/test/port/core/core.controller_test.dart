@@ -6,6 +6,8 @@ import 'dart:typed_data';
 import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/scheduler.dart';
@@ -2043,7 +2045,7 @@ void main() {
         ..shadowOffsetX = 6
         ..shadowOffsetY = 7
         ..strokeStyle = const native_ui.Color.fromRGBO(0, 255, 0, 1)
-        ..textAlign = 'center'
+        ..textAlign = TextAlign.center
         ..textBaseline = CanvasTextBaseline.top;
 
       chart.destroy();
@@ -2060,7 +2062,7 @@ void main() {
       expect(context.shadowOffsetX, 0);
       expect(context.shadowOffsetY, 0);
       expect(context.strokeStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
-      expect(context.textAlign, 'start');
+      expect(context.textAlign, TextAlign.start);
       expect(context.textBaseline, CanvasTextBaseline.alphabetic);
 
       wrapper.parentNode!.removeChild(wrapper);

@@ -6,7 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 34 cases, 30 widths.
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
@@ -33871,7 +33871,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'filler': false,
           'legend': <String, Object?>{
             'position': ChartPosition.right,
-            'labels': <String, Object?>{'textAlign': 'right'},
+            'labels': <String, Object?>{'textAlign': TextAlign.right},
           },
           'subtitle': false,
           'title': false,
@@ -34643,7 +34643,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'strokeStyle': 'blue',
               'pointStyle': undefined,
               'rotation': undefined,
-              'textAlign': 'right',
+              'textAlign': TextAlign.right,
               'borderRadius': undefined,
               'datasetIndex': 0.0,
             },
@@ -34660,7 +34660,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'strokeStyle': 'green',
               'pointStyle': undefined,
               'rotation': undefined,
-              'textAlign': 'right',
+              'textAlign': TextAlign.right,
               'borderRadius': undefined,
               'datasetIndex': 1.0,
             },
@@ -34677,7 +34677,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'strokeStyle': 'rgba(0,0,0,0.1)',
               'pointStyle': undefined,
               'rotation': undefined,
-              'textAlign': 'right',
+              'textAlign': TextAlign.right,
               'borderRadius': undefined,
               'datasetIndex': 2.0,
             },
@@ -34711,7 +34711,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           'log': <Object?>[],
           'labels': <String, Object?>{
-            'textAlign': 'right',
+            'textAlign': TextAlign.right,
             'color': '#666',
             'boxWidth': 40.0,
             'padding': 10.0,

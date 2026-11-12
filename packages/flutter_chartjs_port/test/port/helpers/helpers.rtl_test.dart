@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: helpers.rtl cases with no spec.
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart';
@@ -111,14 +113,14 @@ void main() {
 
     test('textAlign swaps left and right', () {
       final adapter = getRtlAdapter(true, 10, 100);
-      expect(adapter.textAlign('center'), 'center');
-      expect(adapter.textAlign('left'), 'right');
-      expect(adapter.textAlign('right'), 'left');
-      // A value other than 'center' and 'right' gives 'right'.
-      expect(adapter.textAlign('start'), 'right');
-      expect(adapter.textAlign('end'), 'right');
-      expect(adapter.textAlign(undefined), 'right');
-      expect(adapter.textAlign(null), 'right');
+      expect(adapter.textAlign(TextAlign.center), TextAlign.center);
+      expect(adapter.textAlign(TextAlign.left), TextAlign.right);
+      expect(adapter.textAlign(TextAlign.right), TextAlign.left);
+      // A value other than center and right gives right. Dart null stands
+      // for the undefined of a legend item without an align.
+      expect(adapter.textAlign(TextAlign.start), TextAlign.right);
+      expect(adapter.textAlign(TextAlign.end), TextAlign.right);
+      expect(adapter.textAlign(null), TextAlign.right);
     });
 
     test('xPlus subtracts and leftForLtr subtracts the width', () {
@@ -141,11 +143,11 @@ void main() {
 
     test('textAlign returns its argument', () {
       final adapter = getRtlAdapter(false, 10, 100);
-      expect(adapter.textAlign('center'), 'center');
-      expect(adapter.textAlign('left'), 'left');
-      expect(adapter.textAlign('right'), 'right');
-      expect(adapter.textAlign('start'), 'start');
-      expect(identical(adapter.textAlign(undefined), undefined), isTrue);
+      expect(adapter.textAlign(TextAlign.center), TextAlign.center);
+      expect(adapter.textAlign(TextAlign.left), TextAlign.left);
+      expect(adapter.textAlign(TextAlign.right), TextAlign.right);
+      expect(adapter.textAlign(TextAlign.start), TextAlign.start);
+      expect(adapter.textAlign(null), isNull);
     });
 
     test('xPlus adds and leftForLtr returns x', () {

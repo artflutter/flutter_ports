@@ -167,6 +167,12 @@ void nativeFixtureColors(Object? config) {
           owner == 'time') {
         // A time unit takes its enum (row adapt-time-unit-enum).
         value[key] = _enumValue(TimeUnit.values, value[key]);
+      } else if (key == 'textAlign' ||
+          key == 'titleAlign' ||
+          key == 'bodyAlign' ||
+          key == 'footerAlign') {
+        // A text align takes the Flutter enum (row adapt-flutter-text-align).
+        value[key] = _enumValue(ui.TextAlign.values, value[key]);
       } else if (key == 'drawTime' && owner == 'filler') {
         // The filler draw time takes its enum (row
         // adapt-filler-draw-time-enum).

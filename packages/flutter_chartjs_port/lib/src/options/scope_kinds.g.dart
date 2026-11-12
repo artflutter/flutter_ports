@@ -3257,7 +3257,7 @@ enum ScopeKind {
           case OptionKey.pointStyle:
             return 64;
           case OptionKey.textAlign:
-            return 4;
+            return 134217728;
           case OptionKey.usePointStyle:
             return 2;
           case OptionKey.useBorderRadius:
@@ -3346,7 +3346,7 @@ enum ScopeKind {
           case OptionKey.titleMarginBottom:
             return 1;
           case OptionKey.titleAlign:
-            return 4;
+            return 134217728;
           case OptionKey.bodySpacing:
             return 1;
           case OptionKey.bodyColor:
@@ -3354,7 +3354,7 @@ enum ScopeKind {
           case OptionKey.bodyFont:
             return 32;
           case OptionKey.bodyAlign:
-            return 4;
+            return 134217728;
           case OptionKey.footerSpacing:
             return 1;
           case OptionKey.footerMarginTop:
@@ -3364,7 +3364,7 @@ enum ScopeKind {
           case OptionKey.footerFont:
             return 32;
           case OptionKey.footerAlign:
-            return 4;
+            return 134217728;
           case OptionKey.padding:
             return 33;
           case OptionKey.caretPadding:

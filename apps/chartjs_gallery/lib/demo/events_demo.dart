@@ -222,7 +222,7 @@ class _EventsDemoState extends State<EventsDemo> {
       toFont(<String, Object?>{'size': 13, 'weight': 'bold'}),
       TextOpts(
         color: chartColors[1],
-        textAlign: right ? 'right' : 'left',
+        textAlign: right ? TextAlign.right : TextAlign.left,
         textBaseline: CanvasTextBaseline.bottom,
       ),
     );

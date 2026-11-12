@@ -47,6 +47,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
@@ -104,10 +106,11 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
 import 'package:meta/meta.dart';
 
 /// core.scale.js:9 `reverseAlign`.
-String? _reverseAlign(String? align) => align == 'left'
-    ? 'right'
-    : align == 'right'
-    ? 'left'
+// DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+TextAlign? _reverseAlign(TextAlign? align) => align == TextAlign.left
+    ? TextAlign.right
+    : align == TextAlign.right
+    ? TextAlign.left
     : align;
 
 /// core.scale.js:10 `offsetFromEdge`.
@@ -383,9 +386,13 @@ ScriptableScaleContext _createTickContext(
 ///
 /// [align] is a [ChartAlign] (row `adapt-chart-align-enum`); Dart `null`, a
 /// value that is not an align, gives `'center'`.
-String? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
+TextAlign? _titleAlign(
+  ChartAlign? align,
+  Object? position,
+  Object? reverse,
+) {
   /** @type {CanvasTextAlign} */
-  String? ret = toLeftRightCenter(align);
+  TextAlign? ret = toLeftRightCenter(align);
   if ((jsTruthy(reverse) && position != ChartPosition.right) ||
       (!jsTruthy(reverse) && position == ChartPosition.right)) {
     ret = _reverseAlign(ret);
@@ -616,7 +623,7 @@ final class _RenderTextOpts implements types.RenderTextOpts {
   final double? strokeWidth;
 
   @override
-  final String? textAlign;
+  final TextAlign? textAlign;
 
   @override
   final CanvasTextBaseline? textBaseline;
@@ -2452,7 +2459,9 @@ class Scale extends _ScalePrototype
     Object? label;
     Object x = double.nan;
     Object y = double.nan;
-    String? textAlign;
+    // DIVERGES(chartjs): adapt-flutter-text-align, a TextAlign, or the
+    // TickAlign.inner of `_getXAxisLabelAlignment`.
+    Object? textAlign;
     Object pixel;
     types.CanvasFontSpec font;
     double lineHeight;
@@ -2524,18 +2533,22 @@ class Scale extends _ScalePrototype
       final color = optsAtIndex.color;
       final strokeColor = optsAtIndex.textStrokeColor;
       final strokeWidth = optsAtIndex.textStrokeWidth;
-      var tickTextAlign = textAlign;
+      var tickTextAlign = textAlign is TextAlign ? textAlign : null;
 
       if (isHorizontal) {
         x = pixel;
 
-        if (textAlign == 'inner') {
+        if (textAlign == TickAlign.inner) {
           if (i == ilen - 1) {
-            tickTextAlign = !jsTruthy(this.options.reverse) ? 'right' : 'left';
+            tickTextAlign = !jsTruthy(this.options.reverse)
+                ? TextAlign.right
+                : TextAlign.left;
           } else if (i == 0) {
-            tickTextAlign = !jsTruthy(this.options.reverse) ? 'left' : 'right';
+            tickTextAlign = !jsTruthy(this.options.reverse)
+                ? TextAlign.left
+                : TextAlign.right;
           } else {
-            tickTextAlign = 'center';
+            tickTextAlign = TextAlign.center;
           }
         }
 
@@ -2596,11 +2609,11 @@ class Scale extends _ScalePrototype
         }
 
         switch (textAlign) {
-          case 'center':
+          case TextAlign.center:
             left -= width / 2;
-          case 'right':
+          case TextAlign.right:
             left -= width;
-          case 'inner':
+          case TickAlign.inner:
             if (i == ilen - 1) {
               left -= width;
             } else if (i > 0) {
@@ -2642,27 +2655,30 @@ class Scale extends _ScalePrototype
     return items;
   }
 
-  /// core.scale.js:1331 `_getXAxisLabelAlignment()`.
-  String _getXAxisLabelAlignment() {
+  /// core.scale.js:1331 `_getXAxisLabelAlignment()`: a [TextAlign], or
+  /// [TickAlign.inner] for the `'inner'` of upstream, which is no canvas
+  /// align (row `adapt-flutter-text-align`).
+  // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+  Object _getXAxisLabelAlignment() {
     final options = this.options;
     final position = options.position;
     final ticks = options.ticks;
     final rotation = -_rotationRadians;
 
     if (rotation != 0 && !rotation.isNaN) {
-      return position == ChartPosition.top ? 'left' : 'right';
+      return position == ChartPosition.top ? TextAlign.left : TextAlign.right;
     }
 
-    var align = 'center';
+    Object align = TextAlign.center;
 
     // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
     final ticksAlign = ticks.align;
     if (ticksAlign == TickAlign.start) {
-      align = 'left';
+      align = TextAlign.left;
     } else if (ticksAlign == TickAlign.end) {
-      align = 'right';
+      align = TextAlign.right;
     } else if (ticksAlign == TickAlign.inner) {
-      align = 'inner';
+      align = TickAlign.inner;
     }
 
     return align;
@@ -2678,7 +2694,7 @@ class Scale extends _ScalePrototype
   /// joins `widest / 2` to that string. The only reader puts `x` in the
   /// translation of the label items, which the canvas call `translate`
   /// converts with `ToNumber`. Thus the record has the [jsToNumber] of `x`.
-  ({String textAlign, double x}) _getYAxisLabelAlignment(Object? tl) {
+  ({TextAlign textAlign, double x}) _getYAxisLabelAlignment(Object? tl) {
     final options = this.options;
     final position = options.position;
     final ticks = options.ticks;
@@ -2689,7 +2705,7 @@ class Scale extends _ScalePrototype
     final tickAndPadding = jsAdd(tl, padding);
     final widest = labelSizes.widest.width;
 
-    String textAlign;
+    TextAlign textAlign;
     Object x = double.nan;
 
     if (position == ChartPosition.left) {
@@ -2697,24 +2713,24 @@ class Scale extends _ScalePrototype
         x = jsAdd(right, padding);
 
         if (crossAlign == TickCrossAlign.near) {
-          textAlign = 'left';
+          textAlign = TextAlign.left;
         } else if (crossAlign == TickCrossAlign.center) {
-          textAlign = 'center';
+          textAlign = TextAlign.center;
           x = jsAdd(x, widest / 2);
         } else {
-          textAlign = 'right';
+          textAlign = TextAlign.right;
           x = jsAdd(x, widest);
         }
       } else {
         x = right - jsToNumber(tickAndPadding);
 
         if (crossAlign == TickCrossAlign.near) {
-          textAlign = 'right';
+          textAlign = TextAlign.right;
         } else if (crossAlign == TickCrossAlign.center) {
-          textAlign = 'center';
+          textAlign = TextAlign.center;
           x = jsToNumber(x) - widest / 2;
         } else {
-          textAlign = 'left';
+          textAlign = TextAlign.left;
           x = left;
         }
       }
@@ -2723,29 +2739,29 @@ class Scale extends _ScalePrototype
         x = jsAdd(left, padding);
 
         if (crossAlign == TickCrossAlign.near) {
-          textAlign = 'right';
+          textAlign = TextAlign.right;
         } else if (crossAlign == TickCrossAlign.center) {
-          textAlign = 'center';
+          textAlign = TextAlign.center;
           x = jsToNumber(x) - widest / 2;
         } else {
-          textAlign = 'left';
+          textAlign = TextAlign.left;
           x = jsToNumber(x) - widest;
         }
       } else {
         x = jsAdd(left, tickAndPadding);
 
         if (crossAlign == TickCrossAlign.near) {
-          textAlign = 'left';
+          textAlign = TextAlign.left;
         } else if (crossAlign == TickCrossAlign.center) {
-          textAlign = 'center';
+          textAlign = TextAlign.center;
           x = jsAdd(x, widest / 2);
         } else {
-          textAlign = 'right';
+          textAlign = TextAlign.right;
           x = right;
         }
       }
     } else {
-      textAlign = 'right';
+      textAlign = TextAlign.right;
     }
 
     return (textAlign: textAlign, x: jsToNumber(x));

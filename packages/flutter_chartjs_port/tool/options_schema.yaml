@@ -39,7 +39,8 @@
 # `minUnit` and `round` of the time options; a keyword is a foreign value), `chartPosition` (a
 # `ChartPosition`, the `position` of the legend and a title; a keyword is a foreign value),
 # `layoutPosition` (a `LayoutPosition`, the `position` of a scale: a `ChartPosition` or a
-# `ScaleValuePosition`; a keyword or an object is a foreign value), `any` (any JS value: a color, a point
+# `ScaleValuePosition`; a keyword or an object is a foreign value), `textAlign` (a Flutter
+# `TextAlign`, the text align of the legend labels and of the tooltip; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -1037,7 +1038,7 @@ kinds:
       filter: fn
       sort: fn
       pointStyle: any
-      textAlign: string
+      textAlign: textAlign
       usePointStyle: bool
       useBorderRadius: bool
       borderRadius: number
@@ -1083,16 +1084,16 @@ kinds:
       titleFont: scope FontSpec
       titleSpacing: number
       titleMarginBottom: number
-      titleAlign: string
+      titleAlign: textAlign
       bodySpacing: number
       bodyColor: any
       bodyFont: scope FontSpec
-      bodyAlign: string
+      bodyAlign: textAlign
       footerSpacing: number
       footerMarginTop: number
       footerColor: any
       footerFont: scope FontSpec
-      footerAlign: string
+      footerAlign: textAlign
       padding: number | scope Padding
       caretPadding: number
       caretSize: number

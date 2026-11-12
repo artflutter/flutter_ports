@@ -99,7 +99,7 @@ class _Sample13State extends State<Sample13> {
           ctx
             ..fillStyle = Colors.white
             ..font = '12px sans-serif'
-            ..textAlign = 'center'
+            ..textAlign = TextAlign.center
             ..textBaseline = CanvasTextBaseline.bottom
             ..fillText(days[i].max.toString(), x, high - 2)
             ..textBaseline = CanvasTextBaseline.top

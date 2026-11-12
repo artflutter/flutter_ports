@@ -607,7 +607,7 @@ final class TextOpts implements types.RenderTextOpts {
   final double? strokeWidth;
 
   @override
-  final String? textAlign;
+  final TextAlign? textAlign;
 
   @override
   final CanvasTextBaseline? textBaseline;

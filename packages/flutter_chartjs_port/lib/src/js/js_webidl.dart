@@ -34,7 +34,7 @@
 /// `package:flutter`.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -88,6 +88,20 @@ StrokeJoin? canvasLineJoin(Object? value) {
     'The line join takes a StrokeJoin, not the name "$value".',
   );
   return value is StrokeJoin ? value : null;
+}
+
+/// The value that the canvas setter `textAlign` gets for the option value
+/// [value] (the `textAlign` of the legend labels and of a legend item, the
+/// `titleAlign`, `bodyAlign` and `footerAlign` of the tooltip): the Flutter
+/// [TextAlign] itself, as [canvasLineCap] gives the cap (row
+/// `adapt-flutter-text-align`).
+// DIVERGES(chartjs): adapt-flutter-text-align, a Flutter enum.
+TextAlign? canvasTextAlign(Object? value) {
+  assert(
+    value is! String,
+    'The text align takes a TextAlign, not the name "$value".',
+  );
+  return value is TextAlign ? value : null;
 }
 
 /// The value that a canvas setter with a keyword gets for the option value

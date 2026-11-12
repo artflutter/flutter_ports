@@ -4,6 +4,8 @@ library;
 
 import 'dart:async';
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -235,10 +237,10 @@ void main() {
     test('converts start and end, and others to center', () {
       // adapt-chart-align-enum: the align is a ChartAlign; Dart null is a
       // value that is not an align.
-      expect(toLeftRightCenter(ChartAlign.start), 'left');
-      expect(toLeftRightCenter(ChartAlign.end), 'right');
-      expect(toLeftRightCenter(ChartAlign.center), 'center');
-      expect(toLeftRightCenter(null), 'center');
+      expect(toLeftRightCenter(ChartAlign.start), TextAlign.left);
+      expect(toLeftRightCenter(ChartAlign.end), TextAlign.right);
+      expect(toLeftRightCenter(ChartAlign.center), TextAlign.center);
+      expect(toLeftRightCenter(null), TextAlign.center);
     });
   });
 
@@ -260,17 +262,17 @@ void main() {
 
   group('_textX', () {
     test('returns left, right or the middle', () {
-      expect(textX('left', 10, 25, false), 10);
-      expect(textX('right', 10, 25, false), 25);
-      expect(textX('center', 10, 25, false), 17.5);
-      expect(textX('start', 10, 25, false), 10);
+      expect(textX(TextAlign.left, 10, 25, false), 10);
+      expect(textX(TextAlign.right, 10, 25, false), 25);
+      expect(textX(TextAlign.center, 10, 25, false), 17.5);
+      expect(textX(TextAlign.start, 10, 25, false), 10);
     });
 
     test('swaps left and right for rtl', () {
-      expect(textX('left', 10, 25, true), 25);
-      expect(textX('right', 10, 25, true), 10);
-      expect(textX('center', 10, 25, true), 17.5);
-      expect(textX('start', 10, 25, true), 10);
+      expect(textX(TextAlign.left, 10, 25, true), 25);
+      expect(textX(TextAlign.right, 10, 25, true), 10);
+      expect(textX(TextAlign.center, 10, 25, true), 17.5);
+      expect(textX(TextAlign.start, 10, 25, true), 10);
     });
   });
 

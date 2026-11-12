@@ -30,7 +30,13 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart' show longestText;
 import 'package:material_ui/material_ui.dart';
 
 /// The `textAlign` values of the canvas.
-const List<String> textAligns = ['left', 'center', 'right', 'start', 'end'];
+const List<TextAlign> textAligns = [
+  TextAlign.left,
+  TextAlign.center,
+  TextAlign.right,
+  TextAlign.start,
+  TextAlign.end,
+];
 
 /// The `textBaseline` values of the canvas.
 const List<CanvasTextBaseline> textBaselines = CanvasTextBaseline.values;
@@ -107,13 +113,13 @@ class _TextDemoState extends State<TextDemo> {
     for (var c = 0; c < textAligns.length; c++) {
       renderText(
         ctx,
-        textAligns[c],
+        textAligns[c].name,
         labelWidth + (c + 0.5) * cellWidth,
         _headerHeight - 6,
         small,
         const TextOpts(
           color: labelColor,
-          textAlign: 'center',
+          textAlign: TextAlign.center,
           textBaseline: CanvasTextBaseline.bottom,
         ),
       );
@@ -129,7 +135,7 @@ class _TextDemoState extends State<TextDemo> {
           small,
           const TextOpts(
             color: labelColor,
-            textAlign: 'left',
+            textAlign: TextAlign.left,
             textBaseline: CanvasTextBaseline.middle,
           ),
         );
@@ -186,14 +192,14 @@ class _TextDemoState extends State<TextDemo> {
 
   /// The x of the alignment point in a cell: the side that [align] puts
   /// the text against (`start` and `end` follow the direction).
-  double _anchorX(String align, double left, double width) {
+  double _anchorX(TextAlign align, double left, double width) {
     const inset = 10.0;
     final side = switch (align) {
-      'left' => -1,
-      'right' => 1,
-      'start' => _rtl ? 1 : -1,
-      'end' => _rtl ? -1 : 1,
-      _ => 0,
+      TextAlign.left => -1,
+      TextAlign.right => 1,
+      TextAlign.start => _rtl ? 1 : -1,
+      TextAlign.end => _rtl ? -1 : 1,
+      TextAlign.center || TextAlign.justify => 0,
     };
     return left + width / 2 + side * (width / 2 - inset);
   }
@@ -240,14 +246,14 @@ class _TextDemoState extends State<TextDemo> {
           ..strokeStyle = color
           ..lineWidth = 2
           ..strokeRect(boxLeft, y - boxHeight / 2, boxWidth, boxHeight)
-          ..textAlign = rtlHelper.textAlign('left')! as String
+          ..textAlign = rtlHelper.textAlign(TextAlign.left)
           ..fillStyle = labelColor
           ..fillText(text, rtlHelper.x(x + boxWidth + 8), y);
         x += boxWidth + 8 + textWidth + 18;
       }
       // textAlign 'start' follows the direction of the canvas style.
       ctx
-        ..textAlign = 'start'
+        ..textAlign = TextAlign.start
         ..fillStyle = const ui.Color(0xFF333333)
         ..fillText(
           "textAlign 'start', canvas style direction: "
@@ -304,7 +310,7 @@ class _TextDemoState extends State<TextDemo> {
             : const ui.Color.fromRGBO(54, 162, 235, 0.18)
         ..fillRect(x, y, width, rowHeight - 4)
         ..font = font.string
-        ..textAlign = 'left'
+        ..textAlign = TextAlign.left
         ..textBaseline = CanvasTextBaseline.middle
         ..fillStyle = skipped
             ? const ui.Color(0xFF999999)
@@ -327,7 +333,7 @@ class _TextDemoState extends State<TextDemo> {
     final font = _font;
     final ctx = _measureCanvas.getContext2d()
       ..font = font.string
-      ..textAlign = 'left'
+      ..textAlign = TextAlign.left
       ..textBaseline = CanvasTextBaseline.alphabetic;
     final metrics = ctx.measureText(_text);
     final longest = longestText(ctx, font.string, _labels, _cache);

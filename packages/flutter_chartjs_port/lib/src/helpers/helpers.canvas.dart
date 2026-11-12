@@ -18,6 +18,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isNullOrUndef;
@@ -713,7 +715,7 @@ final class _EmptyRenderTextOpts implements RenderTextOpts {
   double? get strokeWidth => null;
 
   @override
-  String? get textAlign => null;
+  TextAlign? get textAlign => null;
 
   @override
   CanvasTextBaseline? get textBaseline => null;

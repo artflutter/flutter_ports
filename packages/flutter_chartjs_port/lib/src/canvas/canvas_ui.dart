@@ -118,8 +118,6 @@ const double _textAngleStep = math.pi / 90;
 
 final CanvasFont _defaultFont = parseCanvasFont(_defaultFontString)!;
 
-const Set<String> _textAligns = {'start', 'end', 'left', 'right', 'center'};
-
 const Set<String> _directions = {'ltr', 'rtl', 'inherit'};
 
 /// A map-backed [CSSStyleDeclaration]: the inline style of a
@@ -461,7 +459,7 @@ final class _State {
   double lineDashOffset = 0;
   String font = _defaultFontString;
   CanvasFont fontValue = _defaultFont;
-  String textAlign = 'start';
+  ui.TextAlign textAlign = ui.TextAlign.start;
   CanvasTextBaseline textBaseline = CanvasTextBaseline.alphabetic;
   String direction = 'inherit';
   double globalAlpha = 1;
@@ -2556,12 +2554,14 @@ final class UiCanvasContext
   }
 
   @override
-  String? get textAlign => _s.textAlign;
+  ui.TextAlign? get textAlign => _s.textAlign;
 
   @override
-  set textAlign(String? value) {
-    if (!_textAligns.contains(value)) return;
-    _s.textAlign = value!;
+  set textAlign(ui.TextAlign? value) {
+    // The WebIDL setter ignores a value outside the enum: the type keeps out
+    // each value but Dart `null`.
+    if (value == null) return;
+    _s.textAlign = value;
   }
 
   @override
@@ -2593,12 +2593,13 @@ final class UiCanvasContext
   }
 
   /// The x of the left edge of a text of [width] from its anchor.
+  // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
   double _alignOffset(double width, bool rtl) => switch (_s.textAlign) {
-    'left' => 0,
-    'right' => -width,
-    'center' => -width / 2,
-    'end' => rtl ? 0 : -width,
-    _ => rtl ? -width : 0,
+    ui.TextAlign.left => 0,
+    ui.TextAlign.right => -width,
+    ui.TextAlign.center => -width / 2,
+    ui.TextAlign.end => rtl ? 0 : -width,
+    ui.TextAlign.start || ui.TextAlign.justify => rtl ? -width : 0,
   };
 
   @override

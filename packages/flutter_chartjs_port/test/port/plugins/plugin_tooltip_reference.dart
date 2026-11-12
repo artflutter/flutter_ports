@@ -12,7 +12,7 @@
 //     chart.canvas.style.getPropertyPriority('direction'),
 //   ]
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -48679,9 +48679,9 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
           'tooltip': <String, Object?>{
             'mode': IndexInteractionMode(),
             'intersect': false,
-            'titleAlign': 'center',
-            'bodyAlign': 'right',
-            'footerAlign': 'center',
+            'titleAlign': TextAlign.center,
+            'bodyAlign': TextAlign.right,
+            'footerAlign': TextAlign.center,
             'callbacks': <String, Object?>{'footer': 'fn:cbFooter'},
           },
         },

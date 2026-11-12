@@ -47,6 +47,7 @@ const Map<String, int> shapeAtoms = {
   'timeUnit': 16777216,
   'chartPosition': 33554432,
   'layoutPosition': 67108864,
+  'textAlign': 134217728,
 };
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
@@ -146,6 +147,7 @@ const Map<String, TypedAtom> typedAtoms = {
     uri: 'package:flutter_chartjs_port/src/types/layout.dart',
     field: null,
   ),
+  'textAlign': (type: 'TextAlign', uri: 'dart:ui', field: null),
 };
 
 /// The import lines of the typed atoms whose types [types] lists, and of
