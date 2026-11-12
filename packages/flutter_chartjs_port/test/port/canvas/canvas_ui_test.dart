@@ -541,8 +541,7 @@ void main() {
         ..globalCompositeOperation = null
         ..font = null
         ..textAlign = null
-        ..textBaseline = null
-        ..direction = 'bogus';
+        ..textBaseline = null;
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
       expect(ctx.strokeStyle, const native_ui.Color.fromRGBO(0, 0, 255, 0.5));
       expect(ctx.lineWidth, 1);
@@ -554,7 +553,22 @@ void main() {
       expect(ctx.font, _defaultFont);
       expect(ctx.textAlign, TextAlign.start);
       expect(ctx.textBaseline, CanvasTextBaseline.alphabetic);
-      expect(ctx.direction, 'inherit');
+      expect(ctx.direction, isNull);
+    });
+
+    test('direction null inherits and save/restore keeps that state', () {
+      final ctx = _context()
+        ..save()
+        ..direction = ui.TextDirection.rtl
+        ..restore();
+      expect(ctx.direction, isNull);
+      ctx
+        ..direction = ui.TextDirection.ltr
+        ..save()
+        ..direction = null;
+      expect(ctx.direction, isNull);
+      ctx.restore();
+      expect(ctx.direction, ui.TextDirection.ltr);
     });
 
     test('valid values read back', () {
@@ -566,7 +580,7 @@ void main() {
         ..globalCompositeOperation = null
         ..textAlign = TextAlign.center
         ..textBaseline = CanvasTextBaseline.middle
-        ..direction = 'rtl';
+        ..direction = ui.TextDirection.rtl;
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(170, 187, 204, 1));
       expect(ctx.lineCap, native_ui.StrokeCap.round);
       expect(ctx.lineJoin, native_ui.StrokeJoin.bevel);
@@ -576,7 +590,7 @@ void main() {
       );
       expect(ctx.textAlign, TextAlign.center);
       expect(ctx.textBaseline, CanvasTextBaseline.middle);
-      expect(ctx.direction, 'rtl');
+      expect(ctx.direction, ui.TextDirection.rtl);
     });
   });
 
@@ -1219,10 +1233,18 @@ void main() {
       expect(end.right, closeTo(right.right, 1));
       final rtlStart = await inkOf(
         (ctx) => ctx
-          ..direction = 'rtl'
+          ..direction = ui.TextDirection.rtl
           ..fillText('HHH', 100, 50),
       );
       expect(rtlStart.right, closeTo(right.right, 1));
+      final inheritedStart = await inkOf((ctx) {
+        ctx.canvas.style.setProperty('direction', 'rtl');
+        ctx
+          ..direction = ui.TextDirection.ltr
+          ..direction = null
+          ..fillText('HHH', 100, 50);
+      });
+      expect(inheritedStart.right, closeTo(right.right, 1));
     });
 
     test('textBaseline places the text around the anchor', () async {

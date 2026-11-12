@@ -12,7 +12,8 @@
 //     chart.canvas.style.getPropertyPriority('direction'),
 //   ]
 
-import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui'
+    show FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
@@ -34791,7 +34792,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
             'mode': IndexInteractionMode(),
             'intersect': false,
             'rtl': true,
-            'textDirection': 'rtl',
+            'textDirection': TextDirection.rtl,
           },
         },
       },
@@ -37098,9 +37099,6 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Dataset 3: 15",160.45279947916666,218.33333333333334,null]
 ["restore"]
 ''',
-      'extra': <String, Object?>{
-        'canvasDirection': <Object?>['rtl', 'important'],
-      },
     },
   ),
   (

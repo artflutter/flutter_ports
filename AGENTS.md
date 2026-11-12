@@ -1794,6 +1794,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     add-on libraries) is proposed. Its gate is zoom phase 0. An add-on port depends on its host
     port and imports only the public libraries of the host. ADR 0008 item 1 has the clause for it.
 
+Text direction options hold `dart:ui.TextDirection` in raw and typed configs (Chart.js ADR 0124). The canvas
+`direction` is nullable: null selects inherited element direction. `overrideTextDirection` returns the previous
+native value, and legend/tooltip restore it in finally blocks. They write no CSS direction. `prevTextDirectionOf`
+is removed. The fix corresponds to upstream PR #12371 without changing the pin.
+
 Padding options hold `EdgeInsets` through raw and typed configs (Chart.js ADR 0123). A supplied inset replaces all
 four sides; omitted options inherit. Scalar label spacing remains numeric. `PaddingScope` and `toPadding` remain
 for border widths and internal minimum padding, not padding option conversion.

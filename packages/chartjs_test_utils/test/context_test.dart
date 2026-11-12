@@ -1,5 +1,5 @@
 // Original code, not ported from Chart.js: tests of the mock context.
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:chartjs_test_utils/src/context.dart' as context;
@@ -399,11 +399,11 @@ void main() {
         ..globalAlpha = 0.5
         ..globalCompositeOperation = CanvasCompositeOperation.sourceOver
         ..miterLimit = 4
-        ..direction = 'rtl';
+        ..direction = TextDirection.rtl;
       expect(ctx.globalAlpha, 0.5);
       expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
       expect(ctx.miterLimit, 4);
-      expect(ctx.direction, 'rtl');
+      expect(ctx.direction, TextDirection.rtl);
       expect(ctx.getCalls(), isEmpty);
     });
   });

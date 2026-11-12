@@ -24,12 +24,14 @@
 /// This library is a pure layer.
 library;
 
+import 'dart:ui' show TextDirection;
+
 import 'package:flutter/painting.dart' show EdgeInsets;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show boolOption, paddingOption, readOption;
+    show boolOption, paddingOption, readOption, textDirectionOption;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
@@ -120,7 +122,8 @@ extension type const LegendOptions(Object? object) {
   bool get rtl => boolOption(optionOf(object, OptionKey.rtl), OptionKey.rtl);
 
   /// `textDirection`.
-  Object? get textDirection => optionOf(object, OptionKey.textDirection);
+  TextDirection? get textDirection =>
+      textDirectionOption(optionOf(object, OptionKey.textDirection));
 
   /// `title`.
   LegendTitleOptions get title =>
@@ -311,7 +314,8 @@ extension type const TooltipOptions(Object? object) {
   bool get rtl => boolOption(optionOf(object, OptionKey.rtl), OptionKey.rtl);
 
   /// `textDirection`.
-  Object? get textDirection => optionOf(object, OptionKey.textDirection);
+  TextDirection? get textDirection =>
+      textDirectionOption(optionOf(object, OptionKey.textDirection));
 
   /// `titleAlign`.
   Object? get titleAlign => optionOf(object, OptionKey.titleAlign);

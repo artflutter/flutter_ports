@@ -7,7 +7,7 @@
 /// `flutter_chartjs_port` (`lib/src/canvas/canvas.dart`), which has no `dart:ui`.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show TextStyle;
 
@@ -404,7 +404,7 @@ class MockContext implements CanvasRenderingContext2D {
   double? miterLimit;
 
   @override
-  String? direction;
+  TextDirection? direction;
 
   @override
   void ellipse(

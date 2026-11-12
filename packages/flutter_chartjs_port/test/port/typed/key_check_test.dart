@@ -80,6 +80,8 @@ const Map<String, int> _allowlist = {
   'options.plugins.legend.labels.boxHeight': 2479,
   'options.plugins.legend.labels.font': 2489,
   'options.plugins.legend.labels.usePointStyle': 2528,
+  'options.plugins.legend.textDirection': 2550,
+  'options.plugins.tooltip.textDirection': 2967,
   'options.plugins.tooltip.mode': 1610,
   'options.plugins.tooltip.intersect': 1615,
   'options.animation.onProgress': 1802,
@@ -282,6 +284,7 @@ List<ChartConfig> _configs() {
       aspectRatio: 2,
       padding: _padding,
       legend: const ChartLegend(
+        textDirection: .rtl,
         display: true,
         position: .top,
         align: .center,
@@ -317,6 +320,7 @@ List<ChartConfig> _configs() {
         fullSize: true,
       ),
       tooltip: const ChartTooltip(
+        textDirection: .rtl,
         enabled: true,
         mode: IndexInteractionMode(),
         intersect: false,

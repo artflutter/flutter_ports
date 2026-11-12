@@ -11,7 +11,7 @@
 /// chart.
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, TextDirection;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
@@ -74,6 +74,7 @@ final class ChartLegend with Diagnosticable {
     this.onClick,
     this.onHover,
     this.onLeave,
+    this.textDirection,
     this.extra,
   });
 
@@ -124,6 +125,9 @@ final class ChartLegend with Diagnosticable {
   /// The function of a pointer that leaves an item: `onLeave`.
   final ValueChanged<ChartLegendEventDetails>? onLeave;
 
+  /// The text direction during drawing. Null keeps the canvas direction.
+  final TextDirection? textDirection;
+
   /// The Chart.js legend options that have no parameter, for example
   /// `{'title': {'display': true, 'text': 'Votes'}}`.
   ///
@@ -149,6 +153,7 @@ final class ChartLegend with Diagnosticable {
     ValueChanged<ChartLegendEventDetails>? onClick,
     ValueChanged<ChartLegendEventDetails>? onHover,
     ValueChanged<ChartLegendEventDetails>? onLeave,
+    TextDirection? textDirection,
     Map<String, Object?>? extra,
   }) => ChartLegend(
     display: display ?? this.display,
@@ -164,6 +169,7 @@ final class ChartLegend with Diagnosticable {
     onClick: onClick ?? this.onClick,
     onHover: onHover ?? this.onHover,
     onLeave: onLeave ?? this.onLeave,
+    textDirection: textDirection ?? this.textDirection,
     extra: extra ?? this.extra,
   );
 
@@ -181,6 +187,7 @@ final class ChartLegend with Diagnosticable {
     ('onClick', byPresence(onClick)),
     ('onHover', byPresence(onHover)),
     ('onLeave', byPresence(onLeave)),
+    ('textDirection', textDirection),
     ('extra', byEntries(extra)),
   ];
 
@@ -229,6 +236,7 @@ LegendOptionsScope lowerLegend(
   if (legend.onLeave != null) {
     scope.onLeave = legendTrampoline(() => lowering.config.legend?.onLeave);
   }
+  put(scope, OptionKey.textDirection, legend.textDirection);
   return mergeExtra(scope, legend.extra);
 }
 
@@ -381,6 +389,7 @@ final class ChartTooltip with Diagnosticable {
     this.titleText,
     this.labelText,
     this.footerText,
+    this.textDirection,
     this.extra,
   });
 
@@ -462,6 +471,9 @@ final class ChartTooltip with Diagnosticable {
   /// the tooltip. `null` gives the default footer, no footer.
   final String? Function(List<ChartTooltipItem> items)? footerText;
 
+  /// The text direction during drawing. Null keeps the canvas direction.
+  final TextDirection? textDirection;
+
   /// The Chart.js tooltip options that have no parameter, for example
   /// `{'caretSize': 8}`. The rules of [ChartLegend.extra] apply.
   final Map<String, Object?>? extra;
@@ -489,6 +501,7 @@ final class ChartTooltip with Diagnosticable {
     String? Function(List<ChartTooltipItem> items)? titleText,
     String? Function(ChartTooltipItem item)? labelText,
     String? Function(List<ChartTooltipItem> items)? footerText,
+    TextDirection? textDirection,
     Map<String, Object?>? extra,
   }) => ChartTooltip(
     enabled: enabled ?? this.enabled,
@@ -511,6 +524,7 @@ final class ChartTooltip with Diagnosticable {
     titleText: titleText ?? this.titleText,
     labelText: labelText ?? this.labelText,
     footerText: footerText ?? this.footerText,
+    textDirection: textDirection ?? this.textDirection,
     extra: extra ?? this.extra,
   );
 
@@ -535,6 +549,7 @@ final class ChartTooltip with Diagnosticable {
     ('titleText', byPresence(titleText)),
     ('labelText', byPresence(labelText)),
     ('footerText', byPresence(footerText)),
+    ('textDirection', textDirection),
     ('extra', byEntries(extra)),
   ];
 
@@ -595,6 +610,7 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.cornerRadius, tooltip.cornerRadius);
   put(scope, OptionKey.displayColors, tooltip.displayColors);
   if (callbacks.ownKeyCount != 0) scope.callbacks = callbacks;
+  put(scope, OptionKey.textDirection, tooltip.textDirection);
   return mergeExtra(scope, tooltip.extra);
 }
 

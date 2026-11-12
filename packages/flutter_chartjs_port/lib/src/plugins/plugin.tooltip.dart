@@ -2118,9 +2118,8 @@ class Tooltip extends Element implements types.TooltipModel {
   /// plugin.tooltip.js:1040 `draw(ctx)`.
   ///
   /// The draw order of upstream: the background, the title, the body and
-  /// the footer, between `save` and `restore`. The direction override reads
-  /// the option `textDirection` by name: an absent key of plain options is
-  /// [undefined], which `restoreTextDirection` ignores.
+  /// the footer, between `save` and `restore`. The optional native text
+  /// direction is scoped to this draw and restored in a finally block.
   void draw(CanvasRenderingContext2D ctx) {
     final options = _resolveOptions();
     var opacity = _opacity ?? double.nan;
@@ -2155,22 +2154,25 @@ class Tooltip extends Element implements types.TooltipModel {
       // Draw Background
       drawBackground(pt, ctx, tooltipSize, options);
 
-      overrideTextDirection(ctx, options.textDirection);
+      final originalTextDirection = overrideTextDirection(
+        ctx,
+        options.textDirection,
+      );
+      try {
+        pt.y += padding.top;
 
-      pt.y += padding.top;
+        // Titles
+        drawTitle(pt, ctx, options);
 
-      // Titles
-      drawTitle(pt, ctx, options);
+        // Body
+        drawBody(pt, ctx, options);
 
-      // Body
-      drawBody(pt, ctx, options);
-
-      // Footer
-      drawFooter(pt, ctx, options);
-
-      restoreTextDirection(ctx, options.textDirection);
-
-      ctx.restore();
+        // Footer
+        drawFooter(pt, ctx, options);
+      } finally {
+        restoreTextDirection(ctx, originalTextDirection);
+        ctx.restore();
+      }
     }
   }
 

@@ -1260,6 +1260,7 @@ const STROKE_ENUMS = {
   lineJoin: 'StrokeJoin',
   // The text aligns (row adapt-flutter-text-align): the Flutter TextAlign.
   textAlign: 'TextAlign',
+  textDirection: 'TextDirection',
   titleAlign: 'TextAlign',
   bodyAlign: 'TextAlign',
   footerAlign: 'TextAlign',
@@ -1320,6 +1321,7 @@ export class DartScalePosition {
 const STROKE_VALUES = {
   StrokeCap: new Set(['butt', 'round', 'square']),
   StrokeJoin: new Set(['miter', 'round', 'bevel']),
+  TextDirection: new Set(['ltr', 'rtl']),
   TextAlign: new Set(['left', 'right', 'center', 'start', 'end']),
 };
 

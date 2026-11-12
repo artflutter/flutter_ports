@@ -860,6 +860,10 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
 
 /// The cases of the parameters of [ChartLegend] and the twin `legend` Map.
 const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
+  'textDirection': (
+    ChartLegend(textDirection: native_ui.TextDirection.rtl),
+    {'textDirection': native_ui.TextDirection.rtl},
+  ),
   'display': (ChartLegend(display: false), {'display': false}),
   'position': (
     ChartLegend(position: .chartArea),
@@ -941,6 +945,10 @@ const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
 
 /// The cases of the parameters of [ChartTooltip] and the twin Map.
 const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
+  'textDirection': (
+    ChartTooltip(textDirection: native_ui.TextDirection.rtl),
+    {'textDirection': native_ui.TextDirection.rtl},
+  ),
   'enabled': (ChartTooltip(enabled: false), {'enabled': false}),
   'mode': (
     ChartTooltip(mode: IndexInteractionMode()),

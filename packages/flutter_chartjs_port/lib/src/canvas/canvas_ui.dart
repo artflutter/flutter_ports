@@ -120,8 +120,6 @@ const TextStyle _defaultFont = TextStyle(
 /// `UiCanvasContext._snappedTextMatrix`).
 const double _textAngleStep = math.pi / 90;
 
-const Set<String> _directions = {'ltr', 'rtl', 'inherit'};
-
 /// A map-backed [CSSStyleDeclaration]: the inline style of a
 /// [UiCanvasElement], and the reflection of its `style` attribute
 /// (Chart.js ADR 0022, section 4).
@@ -462,7 +460,7 @@ final class _State {
   TextStyle font = _defaultFont;
   ui.TextAlign textAlign = ui.TextAlign.start;
   CanvasTextBaseline textBaseline = CanvasTextBaseline.alphabetic;
-  String direction = 'inherit';
+  ui.TextDirection? direction;
   double globalAlpha = 1;
   ui.BlendMode blendMode = ui.BlendMode.srcOver;
   List<_Clip> clips = const [];
@@ -2572,20 +2570,19 @@ final class UiCanvasContext
   }
 
   @override
-  String? get direction => _s.direction;
+  ui.TextDirection? get direction => _s.direction;
 
   @override
-  set direction(String? value) {
-    if (!_directions.contains(value)) return;
-    _s.direction = value!;
+  set direction(ui.TextDirection? value) {
+    _s.direction = value;
   }
 
   bool get _isRtl {
     final direction = _s.direction;
-    if (direction == 'inherit') {
+    if (direction == null) {
       return _element.style.getPropertyValue('direction') == 'rtl';
     }
-    return direction == 'rtl';
+    return direction == ui.TextDirection.rtl;
   }
 
   /// The x of the left edge of a text of [width] from its anchor.

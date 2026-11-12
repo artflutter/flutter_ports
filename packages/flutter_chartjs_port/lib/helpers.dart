@@ -103,6 +103,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         splitKey,
         steppedInterpolation,
         steppedLineTo,
+        textDirectionOption,
         textX,
         toLeftRightCenter,
         updateBezierControlPoints;

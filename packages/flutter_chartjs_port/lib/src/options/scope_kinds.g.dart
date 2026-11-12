@@ -3193,7 +3193,7 @@ enum ScopeKind {
           case OptionKey.rtl:
             return 2;
           case OptionKey.textDirection:
-            return 4;
+            return 4608;
           case OptionKey.title:
             return 32;
           case OptionKey.weight:
@@ -3359,7 +3359,7 @@ enum ScopeKind {
           case OptionKey.rtl:
             return 2;
           case OptionKey.textDirection:
-            return 4;
+            return 4608;
           case OptionKey.animation:
             return 34;
           case OptionKey.animations:

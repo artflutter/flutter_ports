@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show optionKeyOf;
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
@@ -1788,51 +1790,92 @@ void main() {
   });
 
   group('textDirection', () {
-    // plugin.tooltip.js:1074 and :1087 (helpers.rtl.ts:55-73). The
-    // reference cases `rtl` and `textDirection rtl` compare the style after
-    // one draw (the probe `canvasDirection`). This group pins each style
-    // call of two draws in a row. The expected values come from a
-    // probe of phase 8 (the pinned Chart.js build in Node.js v24.12.0 on
-    // x64): two draws of the probe chart after `setActiveElements`, on a
-    // canvas style with the DOM rules of `setProperty`. The restore gives
-    // the direction String as the `[value, priority]` pair, so its call
-    // reads `'r'` and `'t'` (or `'l'` and `'t'`), and the DOM ignores it: the
-    // override stays.
-    List<List<String?>> drawTwice(Chart chart) {
-      final t = _tooltipOf(chart);
-      final ctx = _StyleContext();
-      t
-        ..draw(ctx)
-        ..draw(ctx);
-      return ctx.canvas.style.log;
-    }
+    testWidgets(
+      'an RTL legend does not change the following tooltip direction',
+      (tester) async {
+        final chart = acquireChart(
+          _probeChart(null, {
+            'plugins': {
+              'legend': {'textDirection': native_ui.TextDirection.rtl},
+              'tooltip': <String, Object?>{},
+            },
+          }),
+        );
+        _activate(chart);
+        final ctx = _StyleContext()..direction = native_ui.TextDirection.ltr;
+        final legend = (chart.legend! as Legend)
+          ..ctx = ctx
+          ..draw();
+        expect(ctx.drawDirections, isNotEmpty);
+        expect(ctx.drawDirections, everyElement(native_ui.TextDirection.rtl));
+        expect(ctx.direction, native_ui.TextDirection.ltr);
+        ctx.drawDirections.clear();
+        _tooltipOf(chart).draw(ctx);
+        expect(ctx.drawDirections, isNotEmpty);
+        expect(ctx.drawDirections, everyElement(native_ui.TextDirection.ltr));
+        expect(ctx.direction, native_ui.TextDirection.ltr);
+        expect(ctx.canvas.style.log, isEmpty);
 
-    for (final (direction, l) in [('rtl', 'r'), ('ltr', 'l')]) {
-      testWidgets('textDirection $direction', (tester) async {
-        // The probe output `textDirection.$direction`, the first and the
-        // second draw.
+        ctx.throwOnText = true;
+        expect(legend.draw, throwsStateError);
+        expect(ctx.direction, native_ui.TextDirection.ltr);
+      },
+    );
+
+    for (final direction in native_ui.TextDirection.values) {
+      testWidgets('native ${direction.name} is scoped to each draw', (
+        tester,
+      ) async {
         final chart = acquireChart(
           _probeChart(<String, Object?>{'textDirection': direction}),
         );
         _activate(chart);
-        expect(drawTwice(chart), [
-          ['get', 'direction', ''],
-          ['prio', 'direction', ''],
-          ['set', 'direction', direction, 'important'],
-          ['set', 'direction', l, 't'],
-          ['get', 'direction', direction],
-          ['prio', 'direction', 'important'],
-          ['set', 'direction', direction, 'important'],
-          ['set', 'direction', l, 't'],
-        ]);
+        final tooltip = _tooltipOf(chart);
+        for (final original in <native_ui.TextDirection?>[
+          null,
+          ...native_ui.TextDirection.values,
+        ]) {
+          final ctx = _StyleContext()..direction = original;
+          tooltip
+            ..draw(ctx)
+            ..draw(ctx);
+          expect(ctx.drawDirections, isNotEmpty);
+          expect(ctx.drawDirections, everyElement(direction));
+          expect(ctx.direction, original);
+          expect(ctx.canvas.style.log, isEmpty);
+        }
       });
     }
 
-    testWidgets('no textDirection leaves the style', (tester) async {
-      // The probe output `textDirection.undefined`: no call.
-      final chart = acquireChart(_probeChart());
+    testWidgets(
+      'no override preserves the direction during and after drawing',
+      (tester) async {
+        final chart = acquireChart(_probeChart());
+        _activate(chart);
+        final ctx = _StyleContext()..direction = native_ui.TextDirection.rtl;
+        _tooltipOf(chart).draw(ctx);
+        expect(ctx.drawDirections, isNotEmpty);
+        expect(ctx.drawDirections, everyElement(native_ui.TextDirection.rtl));
+        expect(ctx.direction, native_ui.TextDirection.rtl);
+        expect(ctx.canvas.style.log, isEmpty);
+      },
+    );
+
+    testWidgets('a failed draw restores the previous direction', (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        _probeChart({
+          'textDirection': native_ui.TextDirection.rtl,
+        }),
+      );
       _activate(chart);
-      expect(drawTwice(chart), isEmpty);
+      final ctx = _StyleContext()
+        ..direction = native_ui.TextDirection.ltr
+        ..throwOnText = true;
+      expect(() => _tooltipOf(chart).draw(ctx), throwsStateError);
+      expect(ctx.direction, native_ui.TextDirection.ltr);
+      expect(ctx.canvas.style.log, isEmpty);
     });
   });
 
@@ -1970,6 +2013,16 @@ final class _StyleCanvas implements HTMLCanvasElement {
 
 /// A mock context whose canvas has a [_LogStyle].
 final class _StyleContext extends MockContext {
+  final List<native_ui.TextDirection?> drawDirections = [];
+  bool throwOnText = false;
+
+  @override
+  void fillText(String text, double x, double y, [double? maxWidth]) {
+    drawDirections.add(direction);
+    if (throwOnText) throw StateError('text draw failed');
+    super.fillText(text, x, y, maxWidth);
+  }
+
   @override
   final _StyleCanvas canvas = _StyleCanvas();
 }

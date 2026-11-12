@@ -12,7 +12,7 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
-import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
@@ -20426,13 +20426,13 @@ base class LegendOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `rtl`.
   set rtl(bool value) => store(OptionKey.rtl, OptValue<bool>(value));
 
-  Opt<String>? _textDirection;
+  Opt<TextDirection>? _textDirection;
 
   /// The cell of `textDirection`, or Dart `null` when absent.
-  Opt<String>? get textDirectionCell => _textDirection;
+  Opt<TextDirection>? get textDirectionCell => _textDirection;
 
   /// Stores the cell of `textDirection`. Dart `null` deletes the key.
-  set textDirectionCell(Opt<String>? cell) {
+  set textDirectionCell(Opt<TextDirection>? cell) {
     if (cell == null) {
       delete(OptionKey.textDirection);
     } else {
@@ -20441,8 +20441,8 @@ base class LegendOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `textDirection`.
-  set textDirection(String value) =>
-      store(OptionKey.textDirection, OptValue<String>(value));
+  set textDirection(TextDirection value) =>
+      store(OptionKey.textDirection, OptValue<TextDirection>(value));
 
   Opt<LegendTitleOptionsScope>? _title;
 
@@ -20565,7 +20565,7 @@ base class LegendOptionsScope extends OptionScope {
       case OptionKey.rtl:
         _rtl = fitCell(cell, classifyBool);
       case OptionKey.textDirection:
-        _textDirection = fitCell(cell, classifyString);
+        _textDirection = fitCell(cell, classifyTyped<TextDirection>);
       case OptionKey.title:
         _title = fitCell(cell, classifyScope<LegendTitleOptionsScope>);
       case OptionKey.weight:
@@ -20630,7 +20630,7 @@ base class LegendOptionsScope extends OptionScope {
       case OptionKey.rtl:
         return classifyBool(raw);
       case OptionKey.textDirection:
-        return classifyString(raw);
+        return classifyTyped<TextDirection>(raw);
       case OptionKey.title:
         return classifyScope<LegendTitleOptionsScope>(raw);
       case OptionKey.weight:
@@ -22240,13 +22240,13 @@ base class TooltipOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `rtl`.
   set rtl(bool value) => store(OptionKey.rtl, OptValue<bool>(value));
 
-  Opt<String>? _textDirection;
+  Opt<TextDirection>? _textDirection;
 
   /// The cell of `textDirection`, or Dart `null` when absent.
-  Opt<String>? get textDirectionCell => _textDirection;
+  Opt<TextDirection>? get textDirectionCell => _textDirection;
 
   /// Stores the cell of `textDirection`. Dart `null` deletes the key.
-  set textDirectionCell(Opt<String>? cell) {
+  set textDirectionCell(Opt<TextDirection>? cell) {
     if (cell == null) {
       delete(OptionKey.textDirection);
     } else {
@@ -22255,8 +22255,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `textDirection`.
-  set textDirection(String value) =>
-      store(OptionKey.textDirection, OptValue<String>(value));
+  set textDirection(TextDirection value) =>
+      store(OptionKey.textDirection, OptValue<TextDirection>(value));
 
   Opt<Object>? _animation;
 
@@ -22527,7 +22527,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.rtl:
         _rtl = fitCell(cell, classifyBool);
       case OptionKey.textDirection:
-        _textDirection = fitCell(cell, classifyString);
+        _textDirection = fitCell(cell, classifyTyped<TextDirection>);
       case OptionKey.animation:
         _animation = fitCell(cell, (raw) => classifyUnion(raw, 34));
       case OptionKey.animations:
@@ -22679,7 +22679,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.rtl:
         return classifyBool(raw);
       case OptionKey.textDirection:
-        return classifyString(raw);
+        return classifyTyped<TextDirection>(raw);
       case OptionKey.animation:
         return classifyUnion(raw, 34);
       case OptionKey.animations:

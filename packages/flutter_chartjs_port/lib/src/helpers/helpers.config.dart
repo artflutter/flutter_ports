@@ -62,7 +62,7 @@ import 'dart:collection' show LinkedHashMap;
 import 'dart:core' as core;
 import 'dart:core';
 import 'dart:typed_data' show Uint16List;
-import 'dart:ui' show Color, Locale, StrokeJoin;
+import 'dart:ui' show Color, Locale, StrokeJoin, TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
@@ -1602,6 +1602,17 @@ Object? readOption(Object? options, OptionKey key) => switch (options) {
   final OptionScope scope => scope.readKey(key),
   _ => jsGet(options, key.jsName),
 };
+
+/// The optional native text direction. Old keywords stop a debug build.
+// DIVERGES(chartjs): adapt-text-direction, the native enum.
+TextDirection? textDirectionOption(Object? value) {
+  if (value is TextDirection) return value;
+  assert(
+    value == null || value is Undefined,
+    'The textDirection option holds a TextDirection, not $value.',
+  );
+  return null;
+}
 
 /// A complete native padding value, or zero for an absent option.
 // DIVERGES(chartjs): adapt-edge-insets-padding, no scalar/object coercion.

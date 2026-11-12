@@ -5,7 +5,7 @@ library;
 // flutter_test, dart:io and dart:ui: the web legs cannot compile this file.
 import 'dart:io';
 
-import 'dart:ui' show FontWeight, TextAlign;
+import 'dart:ui' show FontWeight, TextAlign, TextDirection;
 
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
 import 'package:flutter/painting.dart' show TextStyle;
@@ -48,7 +48,7 @@ _Measured _measure(
     ..font = font
     ..textAlign = TextAlign.start
     ..textBaseline = baseline
-    ..direction = 'ltr';
+    ..direction = TextDirection.ltr;
   final m = ctx.measureText(text);
   return (
     width: m.width,

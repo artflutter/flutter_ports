@@ -603,6 +603,16 @@ void main() {
           const ChartLegend().copyWith(reverse: true),
         ),
         (
+          const ChartLegend(textDirection: .rtl),
+          const ChartLegend(textDirection: .rtl).copyWith(),
+          const ChartLegend(textDirection: .rtl).copyWith(textDirection: .ltr),
+        ),
+        (
+          const ChartTooltip(textDirection: .rtl),
+          const ChartTooltip(textDirection: .rtl).copyWith(),
+          const ChartTooltip(textDirection: .rtl).copyWith(textDirection: .ltr),
+        ),
+        (
           const ChartTitle(),
           const ChartTitle().copyWith(),
           const ChartTitle().copyWith(text: 'T'),
@@ -725,6 +735,7 @@ void main() {
         'onClick',
         'onHover',
         'onLeave',
+        'textDirection',
         'extra',
       ]);
       expect(names(ChartAnimation.none).first, 'none');

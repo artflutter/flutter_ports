@@ -1,77 +1,18 @@
 // Original code, not ported from Chart.js: helpers.rtl cases with no spec.
-import 'dart:ui' show TextAlign;
+import 'dart:ui' show TextAlign, TextDirection;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/opt.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart';
 import 'package:test/test.dart';
 
-// Upstream has no spec for helpers.rtl.ts (AGENTS.md rule 3). The expected
-// values come from src/helpers/helpers.rtl.ts at v4.5.1, run with type
-// stripping in Node.js v24.12.0 on x64. The text direction cases follow the
-// DOM rules of CSSStyleDeclaration.setProperty, which [_Style] models.
-
-/// A map-backed `CSSStyleDeclaration` with the DOM rules of `setProperty`:
-/// a priority other than `''` and `'important'` does nothing, a `direction`
-/// value that does not parse does nothing, and an empty value removes the
-/// property. It records the arguments of each `setProperty` call.
-final class _Style implements CSSStyleDeclaration {
-  final Map<String, (String, String)> _properties = {};
-
-  final List<List<String?>> calls = [];
-
-  static const _directions = {
-    'ltr',
-    'rtl',
-    'inherit',
-    'initial',
-    'unset',
-    'revert',
-    'revert-layer',
-  };
-
-  @override
-  String getPropertyValue(String property) => _properties[property]?.$1 ?? '';
-
-  @override
-  String getPropertyPriority(String property) =>
-      _properties[property]?.$2 ?? '';
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) {
-    calls.add([property, value, priority]);
-    final important = priority?.toLowerCase() == 'important';
-    if (priority != null && priority.isNotEmpty && !important) return;
-    if (value == null || value.isEmpty) {
-      _properties.remove(property);
-      return;
-    }
-    if (property == 'direction' && !_directions.contains(value)) return;
-    _properties[property] = (value, important ? 'important' : '');
-  }
-}
-
-/// A canvas element that has only a style.
-final class _Canvas implements HTMLCanvasElement {
-  @override
-  final _Style style = _Style();
-
-  @override
-  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-
-  @override
-  Future<String> toDataURL([String? type, Object? quality]) =>
-      throw UnimplementedError();
-}
-
-/// A mock context with a canvas.
-final class _Context extends MockContext {
-  @override
-  final _Canvas canvas = _Canvas();
-
-  _Style get style => canvas.style;
-}
+// The adapter cases follow pinned upstream. Native direction restoration
+// is the intentional fix of Chart.js ADR 0124 and upstream PR #12371.
 
 void main() {
   group('getRtlAdapter', () {
@@ -157,93 +98,80 @@ void main() {
     });
   });
 
-  group('overrideTextDirection', () {
-    test("sets the direction with priority 'important'", () {
-      final ctx = _Context();
-      overrideTextDirection(ctx, 'rtl');
-      expect(ctx.style.getPropertyValue('direction'), 'rtl');
-      expect(ctx.style.getPropertyPriority('direction'), 'important');
-      expect(prevTextDirectionOf(ctx), ['', '']);
+  group('native direction options', () {
+    test('typed scopes and raw options retain the native enum', () {
+      final legend = LegendOptionsScope()..textDirection = TextDirection.rtl;
+      final tooltip = TooltipOptionsScope()..textDirection = TextDirection.ltr;
+      expect(legend.textDirectionCell, isA<OptValue<TextDirection>>());
+      expect(legend.readKey(OptionKey.textDirection), TextDirection.rtl);
+      expect(LegendOptions(legend).textDirection, TextDirection.rtl);
+      expect(TooltipOptions(tooltip).textDirection, TextDirection.ltr);
+      expect(
+        const LegendOptions({'textDirection': TextDirection.rtl}).textDirection,
+        TextDirection.rtl,
+      );
+      expect(const LegendOptions({}).textDirection, isNull);
+      expect(
+        const TooltipOptions({'textDirection': null}).textDirection,
+        isNull,
+      );
     });
 
-    test('keeps the previous value and priority', () {
-      final ctx = _Context();
-      ctx.style.setProperty('direction', 'ltr');
-      overrideTextDirection(ctx, 'rtl');
-      expect(prevTextDirectionOf(ctx), ['ltr', '']);
-      overrideTextDirection(ctx, 'ltr');
-      expect(prevTextDirectionOf(ctx), ['rtl', 'important']);
+    test('a scriptable direction resolves at its context', () {
+      final resolver = createResolver([
+        {
+          'textDirection': (Map<String, Object?> ctx, Object? _) =>
+              ctx['rtl'] == true ? TextDirection.rtl : TextDirection.ltr,
+        },
+      ]);
+      expect(
+        LegendOptions(attachContext(resolver, {'rtl': true})).textDirection,
+        TextDirection.rtl,
+      );
+      expect(
+        LegendOptions(attachContext(resolver, {'rtl': false})).textDirection,
+        TextDirection.ltr,
+      );
     });
 
-    test("does nothing for a value other than 'ltr' and 'rtl'", () {
-      for (final direction in <Object?>[undefined, null, 'auto', 'RTL', 1]) {
-        final ctx = _Context();
-        overrideTextDirection(ctx, direction);
-        expect(ctx.style.calls, isEmpty, reason: '$direction');
-        expect(prevTextDirectionOf(ctx), isNull, reason: '$direction');
+    test('old keywords and non-direction values stop a debug build', () {
+      for (final value in <Object>['rtl', 'ltr', 'inherit', true, 1]) {
+        expect(
+          () => textDirectionOption(value),
+          throwsA(isA<AssertionError>()),
+        );
       }
     });
   });
 
-  group('restoreTextDirection', () {
-    test('does nothing for undefined', () {
-      final ctx = _Context();
-      overrideTextDirection(ctx, 'rtl');
-      restoreTextDirection(ctx);
-      // The explicit argument undefined, as an absent key gives it.
-      // ignore: avoid_redundant_argument_values
-      restoreTextDirection(ctx, undefined);
-      expect(ctx.style.calls, hasLength(1));
-      expect(prevTextDirectionOf(ctx), ['', '']);
+  group('native text direction', () {
+    test('an override returns and restores the previous direction', () {
+      final ctx = createMockContext()..direction = TextDirection.ltr;
+      final original = overrideTextDirection(ctx, TextDirection.rtl);
+      expect(original, TextDirection.ltr);
+      expect(ctx.direction, TextDirection.rtl);
+      restoreTextDirection(ctx, original);
+      expect(ctx.direction, TextDirection.ltr);
     });
 
-    test('puts back the value and priority of overrideTextDirection', () {
-      final ctx = _Context();
-      ctx.style.setProperty('direction', 'ltr');
-      overrideTextDirection(ctx, 'rtl');
-      restoreTextDirection(ctx, prevTextDirectionOf(ctx));
-      expect(ctx.style.calls.last, ['direction', 'ltr', '']);
-      expect(ctx.style.getPropertyValue('direction'), 'ltr');
-      expect(ctx.style.getPropertyPriority('direction'), '');
-      expect(prevTextDirectionOf(ctx), isNull);
+    test('restores inheritance and keeps nested overrides independent', () {
+      final ctx = createMockContext();
+      final outer = overrideTextDirection(ctx, TextDirection.rtl);
+      final inner = overrideTextDirection(ctx, TextDirection.ltr);
+      restoreTextDirection(ctx, inner);
+      expect(ctx.direction, TextDirection.rtl);
+      restoreTextDirection(ctx, outer);
+      expect(ctx.direction, isNull);
     });
 
-    test('removes a direction that was not set', () {
-      final ctx = _Context();
-      overrideTextDirection(ctx, 'ltr');
-      restoreTextDirection(ctx, const ['', '']);
-      expect(ctx.style.getPropertyValue('direction'), '');
-    });
-
-    test('keeps the override for the direction String that callers pass', () {
-      // plugin.legend.js:437 and plugin.tooltip.js:1087 pass
-      // options.textDirection. original[0] and original[1] of 'rtl' are 'r'
-      // and 't', and the DOM ignores the priority 't'.
-      final ctx = _Context();
-      overrideTextDirection(ctx, 'rtl');
-      restoreTextDirection(ctx, 'rtl');
-      expect(ctx.style.calls.last, ['direction', 'r', 't']);
-      expect(ctx.style.getPropertyValue('direction'), 'rtl');
-      expect(ctx.style.getPropertyPriority('direction'), 'important');
-      expect(prevTextDirectionOf(ctx), isNull);
-    });
-
-    test('converts undefined members with ToString', () {
-      // ['ltr'][1] is undefined: the priority is the default ''. [][0] is
-      // undefined: the value is 'undefined', which does not parse.
-      final ctx = _Context();
-      restoreTextDirection(ctx, const ['ltr']);
-      expect(ctx.style.calls.last, ['direction', 'ltr', '']);
-      restoreTextDirection(ctx, const <String>[]);
-      expect(ctx.style.calls.last, ['direction', 'undefined', '']);
-      expect(ctx.style.getPropertyValue('direction'), 'ltr');
-    });
-
-    test('throws for null after it deletes prevTextDirection', () {
-      final ctx = _Context();
-      overrideTextDirection(ctx, 'rtl');
-      expect(() => restoreTextDirection(ctx, null), throwsA(isA<TypeError>()));
-      expect(prevTextDirectionOf(ctx), isNull);
+    test('an absent override keeps the native direction', () {
+      for (final initial in <TextDirection?>[null, ...TextDirection.values]) {
+        final ctx = createMockContext()..direction = initial;
+        final original = overrideTextDirection(ctx, null);
+        expect(ctx.direction, initial);
+        restoreTextDirection(ctx, original);
+        expect(ctx.direction, initial);
+      }
     });
   });
 }

@@ -23,11 +23,11 @@
 // in the second data file. The draw calls come after the last step, so each
 // case ends on the state under test.
 //
-// The cases `rtl` and `textDirection rtl` have the probe `canvasDirection`:
+// The case `rtl` has the probe `canvasDirection`:
 // the `direction` value and priority of `canvas.style` after the draw
 // (helpers.rtl.ts:55-73). The fake canvas has the style of `domStyle`
 // (scale_chart_common.mjs). The draw calls do not show the calls of the
-// style.
+// style. ADR 0124 verifies the fixed textDirection restoration in native tests.
 //
 // The full case `full: title, filler and clickLegend` (Chart.js ADR 0041,
 // section 4 item 3) has the default plugin options with a title, a fill
@@ -393,7 +393,7 @@ const cases = [
     0,
     1,
     {y: 'top', dy: 10},
-    {extras: {canvasDirection}},
+    // ADR 0124 fixes the CSS leak; native tests cover restoration.
   ),
   hoverCase(
     'displayColors false',
