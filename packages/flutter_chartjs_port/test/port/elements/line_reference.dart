@@ -8,6 +8,7 @@
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 
 /// The Node.js version that generated [lineReference].
@@ -2326,7 +2327,7 @@ const List<LineReferenceCase> lineReference = [
     steps: <LineReferenceStep>[
       (
         action: 'updateControlPoints',
-        args: <Object?>[0, 8, 40, 22, 'x'],
+        args: <Object?>[0, 8, 40, 22, XAxis()],
         calls: <LineReferenceCall>[],
         result: <List<double>>[
           <double>[0, 10, 4, 14],
@@ -2735,7 +2736,7 @@ const List<LineReferenceCase> lineReference = [
     steps: <LineReferenceStep>[
       (
         action: 'updateControlPoints',
-        args: <Object?>[0, 0, 22, 40, 'y'],
+        args: <Object?>[0, 0, 22, 40, YAxis()],
         calls: <LineReferenceCall>[],
         result: <List<double>>[
           <double>[

@@ -302,8 +302,8 @@ ChartConfig(
 ```
 
 `subtitle` takes a `ChartTitle` too, `filler` sets the filler plugin, and
-`animation: ChartAnimation.none` turns the animations off. `indexAxis: .y` gives a horizontal bar
-chart. `responsive`, `maintainAspectRatio` and `aspectRatio` set the [size](#size).
+`animation: ChartAnimation.none` turns the animations off. `indexAxis: const YAxis()` gives a
+horizontal bar chart: the index axis takes `XAxis` or `YAxis` only. `responsive`, `maintainAspectRatio` and `aspectRatio` set the [size](#size).
 
 ### Callbacks
 

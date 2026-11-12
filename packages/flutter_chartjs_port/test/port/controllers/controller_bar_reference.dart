@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -97,7 +98,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -174,7 +175,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -10.0,
             'max': 20.0,
@@ -254,7 +255,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -428,7 +429,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -732,7 +733,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -813,7 +814,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -893,7 +894,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1073,7 +1074,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1465,7 +1466,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -1546,7 +1547,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -1626,7 +1627,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1806,7 +1807,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2193,7 +2194,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -2274,7 +2275,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -2354,7 +2355,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2534,7 +2535,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2921,7 +2922,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -3002,7 +3003,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
@@ -3082,7 +3083,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3299,7 +3300,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3690,7 +3691,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -3771,7 +3772,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -5.0,
                 'max': 20.0,
@@ -3849,7 +3850,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4063,7 +4064,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4492,7 +4493,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -4573,7 +4574,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -5.0,
                 'max': 20.0,
@@ -4651,7 +4652,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4871,7 +4872,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5309,7 +5310,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
@@ -5390,7 +5391,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -5.0,
                 'max': 20.0,
@@ -5468,7 +5469,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5682,7 +5683,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -6642,7 +6643,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
         ],
       },
-      'options': <String, Object?>{'indexAxis': 'y'},
+      'options': <String, Object?>{'indexAxis': YAxis()},
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
@@ -6651,7 +6652,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 2.0,
@@ -6682,7 +6683,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': -3.0,
             'max': 6.0,
@@ -6726,7 +6727,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6863,7 +6864,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7696,7 +7697,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -7719,7 +7720,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -10.0,
             'max': 15.0,
@@ -7782,7 +7783,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7931,7 +7932,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8080,7 +8081,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8893,7 +8894,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -8924,7 +8925,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -8.0,
             'max': 8.0,
@@ -8989,7 +8990,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9141,7 +9142,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9290,7 +9291,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10140,7 +10141,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -10171,7 +10172,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -6.0,
             'max': 8.0,
@@ -10254,7 +10255,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10406,7 +10407,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10555,7 +10556,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10707,7 +10708,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11572,7 +11573,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -11605,7 +11606,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 7.0,
@@ -11647,7 +11648,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11860,7 +11861,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12821,7 +12822,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -12852,7 +12853,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 7.0,
@@ -12918,7 +12919,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13089,7 +13090,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13949,7 +13950,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -13980,7 +13981,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -1.0,
             'max': 4.0,
@@ -14022,7 +14023,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14165,7 +14166,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14305,7 +14306,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14623,7 +14624,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 2.0,
@@ -14654,7 +14655,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -1.0,
                 'max': 4.0,
@@ -14696,7 +14697,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -14839,7 +14840,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -14982,7 +14983,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -15334,7 +15335,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 2.0,
@@ -15365,7 +15366,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 3.0,
@@ -15399,7 +15400,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -15542,7 +15543,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -15685,7 +15686,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               },
               <String, Object?>{
                 'type': 'bar',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -16685,7 +16686,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -16718,7 +16719,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -16760,7 +16761,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16941,7 +16942,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17122,7 +17123,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18105,7 +18106,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -18136,7 +18137,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 3.0,
@@ -18170,7 +18171,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18310,7 +18311,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19029,7 +19030,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -19062,7 +19063,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -19104,7 +19105,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19285,7 +19286,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19457,7 +19458,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20418,7 +20419,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -20453,7 +20454,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 5.0,
@@ -20491,7 +20492,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20697,7 +20698,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21639,7 +21640,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -21672,7 +21673,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 5.0,
@@ -21712,7 +21713,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21892,7 +21893,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22802,7 +22803,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
@@ -22828,7 +22829,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
@@ -22864,7 +22865,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22967,7 +22968,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23070,7 +23071,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23173,7 +23174,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23276,7 +23277,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24192,7 +24193,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -24223,7 +24224,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 5.0,
@@ -24261,7 +24262,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24401,7 +24402,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24544,7 +24545,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25605,7 +25606,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 4.0,
@@ -25640,7 +25641,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -25682,7 +25683,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25825,7 +25826,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26740,7 +26741,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'timeseries',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1609718400000.0,
             'max': 1610064000000.0,
@@ -26775,7 +26776,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 7.0,
@@ -26811,7 +26812,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26997,7 +26998,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -27779,7 +27780,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'logarithmic',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.1,
             'max': 2000.0,
@@ -27842,7 +27843,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -27878,7 +27879,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28061,7 +28062,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29279,7 +29280,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -29310,7 +29311,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -2.0,
             'max': 5.0,
@@ -29346,7 +29347,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29486,7 +29487,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30272,7 +30273,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 2.0,
@@ -30311,7 +30312,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -30345,7 +30346,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30482,7 +30483,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31321,7 +31322,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -31352,7 +31353,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -1.0,
             'max': 5.0,
@@ -31386,7 +31387,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31489,7 +31490,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32167,7 +32168,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -32198,7 +32199,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -2.0,
             'max': 5.0,
@@ -32234,7 +32235,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32371,7 +32372,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -33082,7 +33083,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -33115,7 +33116,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -6.0,
             'max': 10.0,
@@ -33153,7 +33154,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -33333,7 +33334,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34180,7 +34181,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
@@ -34206,7 +34207,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
@@ -34248,7 +34249,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34944,7 +34945,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -34975,7 +34976,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -35011,7 +35012,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35739,7 +35740,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -35770,7 +35771,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -35806,7 +35807,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -36534,7 +36535,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -36565,7 +36566,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -36601,7 +36602,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -37329,7 +37330,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -37360,7 +37361,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -37396,7 +37397,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38123,7 +38124,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -38154,7 +38155,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -38190,7 +38191,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38877,7 +38878,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -38908,7 +38909,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -38944,7 +38945,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39632,7 +39633,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -39663,7 +39664,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
@@ -39697,7 +39698,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -40360,7 +40361,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -40391,7 +40392,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
@@ -40425,7 +40426,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -41088,7 +41089,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -41119,7 +41120,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 3.0,
@@ -41153,7 +41154,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -41813,7 +41814,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -41844,7 +41845,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 3.0,
@@ -41878,7 +41879,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42537,7 +42538,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -42568,7 +42569,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -42604,7 +42605,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -43291,7 +43292,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -43322,7 +43323,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -43358,7 +43359,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -44062,7 +44063,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -44093,7 +44094,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -44129,7 +44130,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -44816,7 +44817,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -44847,7 +44848,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -0.01,
             'max': 0.01,
@@ -44889,7 +44890,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -45664,7 +45665,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -45695,7 +45696,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -45731,7 +45732,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -46420,7 +46421,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -46451,7 +46452,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -46487,7 +46488,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -47193,7 +47194,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -47224,7 +47225,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -47260,7 +47261,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -47948,7 +47949,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -47979,7 +47980,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -48015,7 +48016,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -48711,7 +48712,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 2.0,
@@ -48730,7 +48731,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
@@ -48764,7 +48765,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -49378,7 +49379,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
@@ -49404,7 +49405,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
@@ -49455,7 +49456,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -50224,7 +50225,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -50261,7 +50262,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
@@ -50295,7 +50296,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -51139,7 +51140,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -51176,7 +51177,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
@@ -51210,7 +51211,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,

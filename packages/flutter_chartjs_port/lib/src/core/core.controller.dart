@@ -38,9 +38,10 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show Config, determineAxis, getIndexAxis;
+    show Config, datasetIndexAxis, determineAxis;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
@@ -98,6 +99,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/platform/index.dart'
     show BasePlatform, detectPlatform;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutItem, LayoutItemConfigure, LayoutLayer;
@@ -132,10 +134,10 @@ const List<ChartPosition> _knownPositions = [
 /// [position] is an option value. `KNOWN_POSITIONS.indexOf(position)`
 /// compares with `===`, which is `==` for an enum value. Dart `null` for
 /// [axis] stands for an absent argument.
-bool _positionIsHorizontal(Object? position, [Object? axis]) {
+bool _positionIsHorizontal(Object? position, [ScaleAxis? axis]) {
   return position == ChartPosition.top ||
       position == ChartPosition.bottom ||
-      (!_knownPositions.contains(position) && axis == 'x');
+      (!_knownPositions.contains(position) && axis is XAxis);
 }
 
 /// core.controller.js:25 `compare2Level(l1, l2)`.
@@ -378,9 +380,10 @@ final class ChartMeta
   bool sorted = false;
 
   /// core.controller.js:432 `indexAxis`. Dart `null` stands for JS
-  /// `undefined`, the value before `buildOrUpdateControllers`.
+  /// `undefined`, the value before `buildOrUpdateControllers`. The axis is
+  /// a class (row `adapt-axis-objects`).
   @override
-  String? indexAxis;
+  ScaleAxis? indexAxis;
 
   /// core.controller.js:435 `meta.label = '' + dataset.label`. Dart `null`
   /// stands for JS `undefined`, the value before `buildOrUpdateControllers`.
@@ -574,7 +577,7 @@ final class ChartMeta
       case 'index':
         index = jsToNumber(value);
       case 'indexAxis':
-        indexAxis = value is Undefined ? null : value as String?;
+        indexAxis = value is Undefined ? null : value as ScaleAxis?;
       case 'stack':
         stack = value;
       case '_stacked':
@@ -1101,9 +1104,12 @@ class Chart
         !stacked.hasCachedBarStacking) {
       return false;
     }
-    final scaleAxis = scale.axis;
-    if ((scaleAxis != 'x' && scaleAxis != 'y') ||
-        (scaleAxis == 'x' ? meta.xAxisID : meta.yAxisID) is! String) {
+    final axisID = switch (scale.axis) {
+      XAxis() => meta.xAxisID,
+      YAxis() => meta.yAxisID,
+      _ => null,
+    };
+    if (axisID is! String) {
       return false;
     }
     // Preserve the first-scale search order and short circuit. A later custom
@@ -1111,7 +1117,7 @@ class Chart
     for (final key in _barScaleKeys.read(scales)) {
       final candidate = scales[key]!;
       if (!candidate.supportsNativeBarIndexReads) return false;
-      if (candidate.axis == axis) return true;
+      if (sameAxis(candidate.axis, axis)) return true;
     }
     return false;
   }
@@ -1302,22 +1308,14 @@ class Chart
         ...scaleOptionsById.jsKeys().map((id) {
           final scaleOptions = scaleOptionsById.jsRead(id)! as OptionView;
           final axis = determineAxis(id, [scaleOptions]);
-          final isRadial = axis == 'r';
-          final isHorizontal = axis == 'x';
-          return (
-            options: scaleOptions,
-            // DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
-            dposition: isRadial
-                ? ChartPosition.chartArea
-                : isHorizontal
-                ? ChartPosition.bottom
-                : ChartPosition.left,
-            dtype: isRadial
-                ? 'radialLinear'
-                : isHorizontal
-                ? 'category'
-                : 'linear',
-          );
+          // `isRadial ? ... : isHorizontal ? ... : ...` of the axis.
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
+          final (dposition, dtype) = switch (axis) {
+            RAxis() => (ChartPosition.chartArea, 'radialLinear'),
+            XAxis() => (ChartPosition.bottom, 'category'),
+            _ => (ChartPosition.left, 'linear'),
+          };
+          return (options: scaleOptions, dposition: dposition, dtype: dtype);
         }),
       ];
     }
@@ -1443,12 +1441,9 @@ class Chart
         _destroyDatasetMeta(i);
         meta = getDatasetMeta(i.toDouble());
       }
-      meta._type = type;
-      final indexAxis = readOption(dataset, OptionKey.indexAxis);
       meta
-        ..indexAxis =
-            (jsTruthy(indexAxis) ? indexAxis : getIndexAxis(type, options))!
-                as String
+        .._type = type
+        ..indexAxis = datasetIndexAxis(dataset, type, options)
         ..order = jsOrZero(readOption(dataset, OptionKey.order))
         ..index = i.toDouble()
         ..label = jsToString(readOption(dataset, OptionKey.label))

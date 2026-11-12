@@ -128,7 +128,7 @@ void main() {
         _chart(first, second: second, stacked: true),
       );
       final entry =
-          axisStackOf(stacksOf(first[0]), AxisKey.y, 'y')! as StackEntry;
+          axisStackOf(stacksOf(first[0]), const YAxis())! as StackEntry;
       expect(entry.datasetValues.hasIndex(0), isTrue);
       controller.updateIndex(5);
       expect(entry.datasetValues.hasIndex(0), isFalse);

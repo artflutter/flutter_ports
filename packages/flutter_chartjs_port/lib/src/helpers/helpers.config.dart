@@ -96,6 +96,7 @@ import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
 import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
@@ -265,7 +266,8 @@ final _nativeIndexedLists = <Type>{
 // An enum value (a `StrokeJoin`, an `ArcBorderAlign`) is a constant of its
 // type: its identity is its equality, and a read of it runs no user code. A
 // point style, a cubic interpolation mode and a length are such values too:
-// the resolution keeps the object, and only the draw calls its methods.
+// the resolution keeps the object, and only the draw calls its methods. An
+// axis class has no members (row adapt-axis-objects).
 bool _indexedScalar(Object? value) =>
     value == null ||
     value is Undefined ||
@@ -277,6 +279,7 @@ bool _indexedScalar(Object? value) =>
     value is CubicInterpolationMode ||
     value is RadiusLength ||
     value is GraceLength ||
+    value is ScaleAxis ||
     (value is Color && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list
@@ -1806,10 +1809,13 @@ final class OptionView implements ContextProxy {
   /// A cached cartesian index axis, without resolving or invoking anything.
   @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, inspect only resolved values.
-  String? get cachedBarIndexAxis {
+  CartesianAxis? get cachedBarIndexAxis {
     if (runtimeType != OptionView) return null;
-    final value = _cache.get(OptionKey.indexAxis);
-    return value is String && (value == 'x' || value == 'y') ? value : null;
+    return switch (_cache.get(OptionKey.indexAxis)) {
+      final XAxis axis => axis,
+      final YAxis axis => axis,
+      _ => null,
+    };
   }
 
   /// True only when category-trait reads are cached primitives. The normal

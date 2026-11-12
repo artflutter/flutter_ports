@@ -44,6 +44,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope, TickOptionsScope;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
 
@@ -251,7 +252,7 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
         horizontal:
             cached.position == ChartPosition.top ||
             cached.position == ChartPosition.bottom ||
-            axis == 'x',
+            axis is XAxis,
       ),
     );
   }
@@ -274,7 +275,7 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
               horizontal:
                   cached.position == ChartPosition.top ||
                   cached.position == ChartPosition.bottom ||
-                  axis == 'x',
+                  axis is XAxis,
             ) !=
             null;
   }
@@ -322,7 +323,7 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
             horizontal:
                 cached.position == ChartPosition.top ||
                 cached.position == ChartPosition.bottom ||
-                axis == 'x',
+                axis is XAxis,
           );
         }
       }

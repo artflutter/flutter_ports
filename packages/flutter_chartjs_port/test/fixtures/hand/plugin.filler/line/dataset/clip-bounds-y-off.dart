@@ -7,6 +7,7 @@ library;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show RelativeFill;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -110,14 +111,18 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
       'scales': <String, Object?>{
         'y2': <String, Object?>{
-          'axis': 'y',
+          // DIVERGES(chartjs): adapt-axis-objects, the axis
+          // class.
+          'axis': const YAxis(),
           'stack': 'stack',
           'max': 80,
           'display': false,
         },
         'y1': <String, Object?>{
           'min': 50,
-          'axis': 'y',
+          // DIVERGES(chartjs): adapt-axis-objects, the axis
+          // class.
+          'axis': const YAxis(),
           'stack': 'stack',
           'display': false,
         },

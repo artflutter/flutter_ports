@@ -13,6 +13,7 @@ library;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,7 +25,7 @@ final class _Scale implements Scale {
   _Scale(this.axis, this.bounds);
 
   @override
-  final String axis;
+  final ScaleAxis axis;
 
   final ({double min, double max, bool minDefined, bool maxDefined}) bounds;
 
@@ -113,13 +114,13 @@ List<BenchCase> _extrasCases() => [
     () {
       const count = 100000;
       final meta = _Meta(
-        _Scale('x', (
+        _Scale(const XAxis(), (
           min: 40000.5,
           max: 60000.5,
           minDefined: true,
           maxDefined: true,
         )),
-        _Scale('y', (
+        _Scale(const YAxis(), (
           min: double.negativeInfinity,
           max: double.infinity,
           minDefined: false,

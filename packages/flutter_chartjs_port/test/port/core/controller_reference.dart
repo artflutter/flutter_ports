@@ -28,7 +28,7 @@ aspectRatio: 2
 chartArea: 34,32,287,121.6
 boxes: undefined@top:0,0,300,32 undefined@top:0,0,300,0 undefined@top:0,0,300,0 x@bottom:34,121.6,287,150 y@left:0,32,34,121.6
 scales: x,y
-meta: test 0 0 a true x x y
+meta: test 0 0 a true <axis> x y
 elements: 59.3,103.67999999999999 160.5,49.919999999999995 261.70000000000005,85.75999999999999
 dataset element: null
 context: chart true

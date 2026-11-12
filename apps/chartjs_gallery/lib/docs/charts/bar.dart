@@ -2,6 +2,8 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show YAxis;
+
 /// The vertical bar chart of `docs/charts/bar.md:5-54`.
 ///
 /// The labels are the strings of `Utils.months({count: 7})`
@@ -71,7 +73,7 @@ Map<String, Object?> barHorizontalConfig() => <String, Object?>{
     ],
     'datasets': <Object?>[
       <String, Object?>{
-        'axis': 'y',
+        'axis': const YAxis(),
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
         'fill': false,
@@ -97,5 +99,5 @@ Map<String, Object?> barHorizontalConfig() => <String, Object?>{
       },
     ],
   },
-  'options': <String, Object?>{'indexAxis': 'y'},
+  'options': <String, Object?>{'indexAxis': const YAxis()},
 };

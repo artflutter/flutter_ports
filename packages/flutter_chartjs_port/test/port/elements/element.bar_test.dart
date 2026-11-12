@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/types/animation.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -225,8 +226,14 @@ void main() {
         for (final c in barRangeReference) {
           test(c.name, () {
             final bar = _bar(_withOptions(c.cfg, form), c.animations);
-            expect(bar.getRange('x'), c.rangeX.isNaN ? isNaN : c.rangeX);
-            expect(bar.getRange('y'), c.rangeY.isNaN ? isNaN : c.rangeY);
+            expect(
+              bar.getRange(const XAxis()),
+              c.rangeX.isNaN ? isNaN : c.rangeX,
+            );
+            expect(
+              bar.getRange(const YAxis()),
+              c.rangeY.isNaN ? isNaN : c.rangeY,
+            );
           });
         }
       });
@@ -234,9 +241,9 @@ void main() {
 
     test('gives half the height for an axis other than x', () {
       final bar = BarElement({'width': 6, 'height': 10});
-      expect(bar.getRange('x'), 3);
-      expect(bar.getRange('y'), 5);
-      expect(bar.getRange('r'), 5);
+      expect(bar.getRange(const XAxis()), 3);
+      expect(bar.getRange(const YAxis()), 5);
+      expect(bar.getRange(const RAxis()), 5);
     });
 
     test('reads the current width and height, not the final values', () {
@@ -247,8 +254,8 @@ void main() {
           ('height', true, 100),
         ],
       );
-      expect(bar.getRange('x'), 3);
-      expect(bar.getRange('y'), 5);
+      expect(bar.getRange(const XAxis()), 3);
+      expect(bar.getRange(const YAxis()), 5);
     });
   });
 

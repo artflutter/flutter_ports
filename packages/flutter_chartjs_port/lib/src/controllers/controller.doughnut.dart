@@ -87,6 +87,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         PluginOptionsByTypeScope;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.doughnut.js:34 the object `{ratioX, ratioY, offsetX,
@@ -232,7 +233,8 @@ class DoughnutController extends DatasetController {
         // Geometry used to apply spacing between arcs
         // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
         ..spacingMode = ArcSpacingMode.angular
-        ..indexAxis = 'r';
+        // DIVERGES(chartjs): adapt-axis-objects, the axis class.
+        ..indexAxis = const RAxis();
 
   /// controller.doughnut.js:80 `static descriptors`, in the form of
   /// `core.defaults.dart` (Chart.js ADR 0028, section 6): a typed scope of

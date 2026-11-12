@@ -689,6 +689,12 @@ function dart(v) {
   throw new Error(`No Dart literal for ${String(v)}`);
 }
 
+/** The Dart literal of the axis of a scale: the axis class (row adapt-axis-objects). */
+function dartAxis(v) {
+  if (!['x', 'y', 'r'].includes(v)) throw new Error(`No axis class for ${String(v)}`);
+  return `${v.toUpperCase()}Axis()`;
+}
+
 /** The Dart literal of an optional number: null for JS null. */
 function optNum(v) {
   return v === null ? 'null' : num(v);
@@ -698,8 +704,8 @@ function dartMeta(m) {
   return `(
         index: ${num(m.index)},
         sorted: ${m.sorted},
-        iAxis: ${m.iAxis === null ? 'null' : dart(m.iAxis)},
-        vAxis: ${dart(m.vAxis)},
+        iAxis: ${m.iAxis === null ? 'null' : dartAxis(m.iAxis)},
+        vAxis: ${dartAxis(m.vAxis)},
         reversePixels: ${m.reversePixels},
         sharedOptions: ${m.sharedOptions},
         spanGaps: ${dart(m.spanGaps)},
@@ -755,7 +761,8 @@ const out = `// Original code, not ported from Chart.js: core.interaction refere
 // ${queryCount} queries.
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+
 /// The Node.js version that generated the data.
 const String interactionReferenceNode = '${process.version}';
 
@@ -785,8 +792,8 @@ typedef InteractionReferenceElement = ({
 typedef InteractionReferenceMeta = ({
   double index,
   bool sorted,
-  String? iAxis,
-  String vAxis,
+  ScaleAxis? iAxis,
+  ScaleAxis vAxis,
   bool reversePixels,
   bool sharedOptions,
   Object? spanGaps,

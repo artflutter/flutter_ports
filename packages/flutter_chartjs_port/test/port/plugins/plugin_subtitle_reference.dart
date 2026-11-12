@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -101,7 +102,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -135,7 +136,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -180,7 +181,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -391,7 +392,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -1205,7 +1206,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -1234,7 +1235,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -1270,7 +1271,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -1475,7 +1476,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -1766,7 +1767,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -1795,7 +1796,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -1831,7 +1832,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2045,7 +2046,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2878,7 +2879,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -2912,7 +2913,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -2957,7 +2958,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -3168,7 +3169,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -3982,7 +3983,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -4016,7 +4017,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -4056,7 +4057,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -4264,7 +4265,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -4563,7 +4564,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -4597,7 +4598,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -4637,7 +4638,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4851,7 +4852,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5159,7 +5160,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -5193,7 +5194,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -5238,7 +5239,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5455,7 +5456,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5763,7 +5764,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -5797,7 +5798,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -5837,7 +5838,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -6051,7 +6052,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -6338,7 +6339,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -6372,7 +6373,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -6417,7 +6418,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -6634,7 +6635,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -7462,7 +7463,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -7491,7 +7492,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -7527,7 +7528,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7735,7 +7736,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8564,7 +8565,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -8593,7 +8594,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -8629,7 +8630,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8837,7 +8838,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9664,7 +9665,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -9698,7 +9699,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -9743,7 +9744,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9951,7 +9952,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,

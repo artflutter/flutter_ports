@@ -15,8 +15,7 @@ import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
     show NativeGapReads, nativeGapReadsEnabled, nativeGapReadsTaken;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show DataPoint;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -534,7 +533,7 @@ void main() {
     test('qualifies the native item classes with a number x', () {
       final meta = chart.getDatasetMeta(0);
       final gaps = NativeGapReads.of(meta, double.infinity)!;
-      final parsed = ParsedItem.of(AxisKey.x, 'x', 1.0, AxisKey.y, 'y', 2.0);
+      final parsed = ParsedItem.of(const XAxis(), 1.0, const YAxis(), 2.0);
       expect(gaps.qualify(parsed, 1.0, 2.0), 1.0);
       expect(gaps.qualify(<String, Object?>{'x': 1}, 1, null), 1.0);
       expect(gaps.qualify(<String, double>{'x': 1}, 1.0, undefined), 1.0);

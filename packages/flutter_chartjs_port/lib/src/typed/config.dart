@@ -1,8 +1,8 @@
 // Original code, not ported from Chart.js: the root of the typed config.
 
 /// The root of the typed config (Chart.js ADR 0052, sections 1 and 7):
-/// [ChartConfig], the chart type [ChartKind] and the index axis
-/// [IndexAxis].
+/// [ChartConfig] and the chart type [ChartKind]. The index axis is a
+/// [CartesianAxis] of the core (row `adapt-axis-objects`).
 library;
 
 import 'package:flutter/foundation.dart'
@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
         ChartTitle,
         ChartTooltip;
 import 'package:flutter_chartjs_port/src/typed/props.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
+    show CartesianAxis, XAxis, YAxis;
 import 'package:meta/meta.dart' show internal;
 
 /// The config of a chart: the chart type, the data and the options of a
@@ -113,9 +115,10 @@ final class ChartConfig with Diagnosticable {
   /// chart type has default axes: give only the axes with other options.
   final Map<String, ChartAxis>? scales;
 
-  /// The index axis of the chart: `options.indexAxis`. [IndexAxis.y] gives
-  /// a horizontal bar chart. It also sets the default axes.
-  final IndexAxis? indexAxis;
+  /// The index axis of the chart: `options.indexAxis`, [XAxis] or [YAxis].
+  /// `const YAxis()` gives a horizontal bar chart. It also sets the default
+  /// axes.
+  final CartesianAxis? indexAxis;
 
   /// Whether the chart resizes with its box: `options.responsive`. The
   /// default is `true`.
@@ -215,7 +218,7 @@ final class ChartConfig with Diagnosticable {
     List<Dataset>? datasets,
     List<Object>? labels,
     Map<String, ChartAxis>? scales,
-    IndexAxis? indexAxis,
+    CartesianAxis? indexAxis,
     bool? responsive,
     bool? maintainAspectRatio,
     double? aspectRatio,
@@ -359,18 +362,4 @@ extension type const ChartKind(String name) {
 
   /// `'radar'`, `RadarController`.
   static const ChartKind radar = ChartKind('radar');
-}
-
-/// The index axis of a chart or of a dataset: the `indexAxis` option. The
-/// option value is the [name].
-///
-/// The index axis holds the labels, and the value axis the data. Thus [x]
-/// gives vertical bars, and [y] gives horizontal bars
-/// (`docs/charts/bar.md`, "Horizontal Bar Chart").
-enum IndexAxis {
-  /// `'x'`: the labels on the x axis.
-  x,
-
-  /// `'y'`: the labels on the y axis.
-  y,
 }

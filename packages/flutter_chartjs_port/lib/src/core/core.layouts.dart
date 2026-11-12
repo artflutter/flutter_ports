@@ -23,6 +23,7 @@
 /// option keys and the type libraries.
 library;
 
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -36,6 +37,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -367,10 +369,12 @@ List<_LayoutWrap> _filterByPosition(
 /// core.layouts.js:14 `filterDynamicPositionByAxis`.
 List<_LayoutWrap> _filterDynamicPositionByAxis(
   List<_LayoutWrap> array,
-  String axis,
+  ScaleAxis axis,
 ) {
   return array
-      .where((v) => !_staticPositions.contains(v.pos) && v.box.axis == axis)
+      .where(
+        (v) => !_staticPositions.contains(v.pos) && sameAxis(v.box.axis, axis),
+      )
       .toList();
 }
 
@@ -542,8 +546,14 @@ _buildLayoutBoxes(List<LayoutItem> boxes) {
   final bottom = _sortByWeight(
     _filterByPosition(layoutBoxes, ChartPosition.bottom),
   );
-  final centerHorizontal = _filterDynamicPositionByAxis(layoutBoxes, 'x');
-  final centerVertical = _filterDynamicPositionByAxis(layoutBoxes, 'y');
+  final centerHorizontal = _filterDynamicPositionByAxis(
+    layoutBoxes,
+    const XAxis(),
+  );
+  final centerVertical = _filterDynamicPositionByAxis(
+    layoutBoxes,
+    const YAxis(),
+  );
 
   return (
     fullSize: fullSize,

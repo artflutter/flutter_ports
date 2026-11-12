@@ -54,6 +54,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
     show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -767,7 +768,7 @@ class PointElement extends Element
   /// The result is the JS `+` of the two options ([jsAdd]): a `double`, or a
   /// `String` when an option is a string (`'07' + 1` is `'071'`).
   @override
-  Object getRange([String? axis]) {
+  Object getRange([ScaleAxis? axis]) {
     final options = this.options ?? const <String, Object?>{};
     if (options is PointOptions &&
         plainOption(options, OptionKey.radius) &&

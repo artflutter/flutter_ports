@@ -33,6 +33,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
@@ -68,6 +69,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
@@ -75,67 +77,96 @@ import 'package:meta/meta.dart';
 /// core.config.js:5 `getIndexAxis`.
 ///
 /// [type] is the chart or dataset type and [options] the chart options: a
-/// Map or a resolver. The result is the first truthy `indexAxis` of the
-/// dataset type options, the options and the dataset type defaults, else
-/// `'x'`. A value that is not a string stays as it is.
-Object? getIndexAxis(Object? type, Object? options) {
+/// Map or a resolver. The result is the first `indexAxis` of the dataset
+/// type options, the options and the dataset type defaults, else [XAxis].
+///
+/// The [RAxis] of the defaults of a radial controller (doughnut, pie, polar
+/// area, radar) comes first: a cartesian axis of the options cannot reach a
+/// radial chart, where upstream takes it and throws later (row
+/// `adapt-axis-objects`). A value that is not a [ScaleAxis] is no axis, and
+/// an axis letter of Chart.js stops a debug build.
+// DIVERGES(chartjs): adapt-axis-objects, the radial default comes first.
+ScaleAxis getIndexAxis(Object? type, Object? options) {
   final datasetDefaults = _orObject(jsGet(defaults['datasets'], type));
+  final defaultAxis = jsGet(datasetDefaults, 'indexAxis');
+  if (defaultAxis is RAxis) return defaultAxis;
   final datasetOptions = _orObject(
     jsGet(_orObject(jsGet(options, 'datasets')), type),
   );
-  Object? indexAxis;
-  return jsTruthy(indexAxis = jsGet(datasetOptions, 'indexAxis')) ||
-          jsTruthy(indexAxis = jsGet(options, 'indexAxis')) ||
-          jsTruthy(indexAxis = jsGet(datasetDefaults, 'indexAxis'))
-      ? indexAxis
-      : 'x';
+  final datasetAxis = jsGet(datasetOptions, 'indexAxis');
+  final optionsAxis = jsGet(options, 'indexAxis');
+  assert(
+    datasetAxis is! String && optionsAxis is! String && defaultAxis is! String,
+    'The option indexAxis takes an XAxis or a YAxis, not a letter.',
+  );
+  return switch ((datasetAxis, optionsAxis)) {
+    (final ScaleAxis axis, _) || (_, final ScaleAxis axis) => axis,
+    _ => defaultAxis is ScaleAxis ? defaultAxis : const XAxis(),
+  };
+}
+
+/// The index axis of [dataset] of the type [type]: core.config.js:95 and
+/// core.controller.js:432 `dataset.indexAxis || getIndexAxis(type,
+/// options)`. The [RAxis] of a radial controller comes first, as in
+/// [getIndexAxis] (row `adapt-axis-objects`).
+// DIVERGES(chartjs): adapt-axis-objects, the radial default comes first.
+ScaleAxis datasetIndexAxis(Object? dataset, Object? type, Object? options) {
+  final axis = getIndexAxis(type, options);
+  if (axis is RAxis) return axis;
+  final own = jsGet(dataset, 'indexAxis');
+  assert(
+    own is! String,
+    'The option indexAxis takes an XAxis or a YAxis, not the text "$own".',
+  );
+  return own is ScaleAxis ? own : axis;
 }
 
 /// core.config.js:11 `getAxisFromDefaultScaleID`.
 ///
 /// [id] is a key of the `scales` of a dataset type override: `'_index_'`,
-/// `'_value_'` or a scale id.
-Object? _getAxisFromDefaultScaleID(String id, Object? indexAxis) {
-  Object? axis = id;
-  if (id == '_index_') {
-    axis = indexAxis;
-  } else if (id == '_value_') {
-    axis = 'x' == indexAxis ? 'y' : 'x';
-  }
-  return axis;
+/// `'_value_'` or a scale id. Upstream gives the id itself for a scale id.
+/// The port gives the axis of a scale id `x`, `y` or `r`
+/// ([_idMatchesAxis]), else Dart `null` (row `adapt-axis-objects`).
+ScaleAxis? _getAxisFromDefaultScaleID(String id, ScaleAxis indexAxis) {
+  return switch (id) {
+    '_index_' => indexAxis,
+    // `indexAxis === 'x' ? 'y' : 'x'`.
+    '_value_' => indexAxis is XAxis ? const YAxis() : const XAxis(),
+    _ => _idMatchesAxis(id),
+  };
 }
 
 /// core.config.js:21 `getDefaultScaleIDFromAxis`.
 ///
-/// `===` is `==`: it compares strings and numbers by value and other values
-/// by identity.
-String _getDefaultScaleIDFromAxis(Object? axis, Object? indexAxis) {
-  return axis == indexAxis ? '_index_' : '_value_';
+/// `axis === indexAxis` is [sameAxis].
+String _getDefaultScaleIDFromAxis(ScaleAxis axis, ScaleAxis indexAxis) {
+  return sameAxis(axis, indexAxis) ? '_index_' : '_value_';
 }
 
-/// core.config.js:25 `idMatchesAxis`.
+/// core.config.js:25 `idMatchesAxis`: the axis of the scale id [id].
 ///
-/// Dart `null` stands for the `undefined` of upstream. The callers test only
-/// its truth.
-String? _idMatchesAxis(String id) {
-  if (id == 'x' || id == 'y' || id == 'r') {
-    return id;
-  }
-  return null;
+/// A scale id is a name of the user, the key of the scale in `scales`.
+/// Upstream gives a scale with the id `x`, `y` or `r` that axis. Dart `null`
+/// stands for the `undefined` of upstream. The callers test only its truth.
+ScaleAxis? _idMatchesAxis(String id) {
+  return switch (id) {
+    'x' => const XAxis(),
+    'y' => const YAxis(),
+    'r' => const RAxis(),
+    _ => null,
+  };
 }
 
 /// core.config.js:31 `axisFromPosition`.
 ///
 /// Dart `null` stands for the `undefined` of upstream. The callers test only
 /// its truth.
-String? _axisFromPosition(Object? position) {
-  if (position == ChartPosition.top || position == ChartPosition.bottom) {
-    return 'x';
-  }
-  if (position == ChartPosition.left || position == ChartPosition.right) {
-    return 'y';
-  }
-  return null;
+ScaleAxis? _axisFromPosition(Object? position) {
+  return switch (position) {
+    ChartPosition.top || ChartPosition.bottom => const XAxis(),
+    ChartPosition.left || ChartPosition.right => const YAxis(),
+    _ => null,
+  };
 }
 
 /// core.config.js:40 `determineAxis`.
@@ -143,9 +174,10 @@ String? _axisFromPosition(Object? position) {
 /// The rest parameter `...scaleOptions` is one `List` (Chart.js ADR 0020,
 /// section 6). Each item is read with [jsGet]. Thus an `undefined` item that
 /// the loop reaches throws a [TypeError], as upstream does. The result is
-/// the first truthy `axis` option, the axis of a `position`, or the axis of
-/// the first character of [id]. An `axis` that is not a string stays as it
-/// is.
+/// the first `axis` option, the axis of a `position`, or the axis of the
+/// first character of [id]. The `axis` option holds a [ScaleAxis] (row
+/// `adapt-axis-objects`). Another value is no axis, and a letter stops a
+/// debug build.
 ///
 /// Upstream throws an `Error`. The port throws a [StateError] with the same
 /// message (Chart.js ADR 0020, section 5).
@@ -153,18 +185,22 @@ String? _axisFromPosition(Object? position) {
 /// `toLowerCase` is the Dart [String.toLowerCase]. Only `'X'`, `'Y'` and
 /// `'R'` give `'x'`, `'y'` and `'r'` with the case mappings of JavaScript and
 /// of Dart. Thus the result is the same on every platform.
-Object? determineAxis(String id, List<Object?> scaleOptions) {
-  if (_idMatchesAxis(id) != null) {
-    return id;
+ScaleAxis determineAxis(String id, List<Object?> scaleOptions) {
+  final idAxis = _idMatchesAxis(id);
+  if (idAxis != null) {
+    return idAxis;
   }
   for (final opts in scaleOptions) {
-    var axis = jsGet(opts, 'axis');
-    if (!jsTruthy(axis)) {
-      axis =
-          _axisFromPosition(jsGet(opts, 'position')) ??
-          (id.length > 1 ? _idMatchesAxis(id[0].toLowerCase()) : null);
-    }
-    if (jsTruthy(axis)) {
+    final option = jsGet(opts, 'axis');
+    assert(
+      option is! String,
+      'The option axis takes a ScaleAxis, not the text "$option".',
+    );
+    final axis = option is ScaleAxis
+        ? option
+        : _axisFromPosition(jsGet(opts, 'position')) ??
+              (id.length > 1 ? _idMatchesAxis(id[0].toLowerCase()) : null);
+    if (axis != null) {
       return axis;
     }
   }
@@ -176,9 +212,10 @@ Object? determineAxis(String id, List<Object?> scaleOptions) {
 
 /// core.config.js:55 `getAxisFromDataset`.
 ///
-/// The result is `{axis}`, or [undefined].
-Object? _getAxisFromDataset(String id, String axis, Object? dataset) {
-  if (id == jsGet(dataset, '${axis}AxisID')) {
+/// The result is `{axis}`, or [undefined]. `dataset[axis + 'AxisID']` reads
+/// the key of the axis ([axisDataKey]): `xAxisID` or `yAxisID`.
+Object? _getAxisFromDataset(String id, CartesianAxis axis, Object? dataset) {
+  if (id == jsGet(dataset, '${axisDataKey(axis)}AxisID')) {
     return <String, Object?>{'axis': axis};
   }
   return undefined;
@@ -196,8 +233,10 @@ Object? _retrieveAxisFromDatasets(String id, Object config) {
         )
         .toList();
     if (boundDs.isNotEmpty) {
-      final axis = _getAxisFromDataset(id, 'x', boundDs[0]);
-      return jsTruthy(axis) ? axis : _getAxisFromDataset(id, 'y', boundDs[0]);
+      final axis = _getAxisFromDataset(id, const XAxis(), boundDs[0]);
+      return jsTruthy(axis)
+          ? axis
+          : _getAxisFromDataset(id, const YAxis(), boundDs[0]);
     }
   }
   return <String, Object?>{};
@@ -240,10 +279,13 @@ ScaleOptionsByIdScope _mergeScaleConfig(Object config, Object options) {
     ]);
     final defaultId = _getDefaultScaleIDFromAxis(axis, chartIndexAxis);
     final defaultScaleOptions = _orObject(jsGet(chartDefaults, 'scales'));
+    // `defaultScaleOptions[axis]`: the default scale of the axis is the
+    // scale with the key of the axis ([axisDataKey]).
+    final axisKey = axisDataKey(axis);
     scales[id] = mergeIf(ScaleOptionsScope(), [
       <String, Object?>{'axis': axis},
       scaleConf,
-      jsGet(defaultScaleOptions, axis),
+      if (axisKey != null) jsGet(defaultScaleOptions, axisKey) else undefined,
       jsGet(defaultScaleOptions, defaultId),
     ]);
   }
@@ -253,21 +295,22 @@ ScaleOptionsByIdScope _mergeScaleConfig(Object config, Object options) {
   for (final dataset in datasets) {
     final datasetType = jsGet(dataset, 'type');
     final type = jsTruthy(datasetType) ? datasetType : jsGet(config, 'type');
-    final datasetIndexAxis = jsGet(dataset, 'indexAxis');
-    final indexAxis = jsTruthy(datasetIndexAxis)
-        ? datasetIndexAxis
-        : getIndexAxis(type, options);
+    final indexAxis = datasetIndexAxis(dataset, type, options);
     final datasetDefaults = _orObject(jsGet(overrides, type));
     final defaultScaleOptions = _orObject(jsGet(datasetDefaults, 'scales'));
     for (final defaultID in _objectKeys(defaultScaleOptions)) {
       final axis = _getAxisFromDefaultScaleID(defaultID, indexAxis);
-      final datasetAxisID = jsGet(dataset, '${jsToString(axis)}AxisID');
-      final id = jsTruthy(datasetAxisID) ? datasetAxisID : axis;
+      // `dataset[axis + 'AxisID'] || axis`: the scale id of the dataset, else
+      // the key of the axis ([axisDataKey]). Upstream takes the id itself for
+      // a scale id of another name, and so does the port.
+      final axisKey = axisDataKey(axis) ?? defaultID;
+      final datasetAxisID = jsGet(dataset, '${axisKey}AxisID');
+      final id = jsTruthy(datasetAxisID) ? datasetAxisID : axisKey;
       final key = jsToString(id);
       final current = jsGet(scales, key);
       scales[key] = jsTruthy(current) ? current : ScaleOptionsScope();
       mergeIf(scales[key], [
-        <String, Object?>{'axis': axis},
+        if (axis != null) <String, Object?>{'axis': axis} else undefined,
         jsGet(configScales, id),
         jsGet(defaultScaleOptions, defaultID),
       ]);
@@ -501,7 +544,7 @@ class Config implements types.ChartConfiguration {
   /// A live, effect-free proof of the ordinary single bar dataset container.
   @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, native source guard.
-  bool hasNativeSingleBarDataset(String axis) =>
+  bool hasNativeSingleBarDataset(CartesianAxis axis) =>
       _barDatasetSource?.read(axis) ?? false;
 
   late final SingleBarDatasetSource? _barDatasetSource = runtimeType == Config

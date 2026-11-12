@@ -44,6 +44,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -555,7 +556,7 @@ final class _LineSpy extends LineElement {
   }
 
   @override
-  void updateControlPoints(ChartArea? chartArea, [String? indexAxis]) {
+  void updateControlPoints(ChartArea? chartArea, [ScaleAxis? indexAxis]) {
     updates.add([chartArea, indexAxis], object: this);
     if (callThrough) super.updateControlPoints(chartArea, indexAxis);
   }

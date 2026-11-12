@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -102,7 +103,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -131,7 +132,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -167,7 +168,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -378,7 +379,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -589,7 +590,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -1577,7 +1578,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -1606,7 +1607,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -1642,7 +1643,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -1853,7 +1854,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -2064,7 +2065,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -3054,7 +3055,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -3088,7 +3089,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -3128,7 +3129,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -3339,7 +3340,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -3553,7 +3554,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -4540,7 +4541,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -4570,7 +4571,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -4610,7 +4611,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -4821,7 +4822,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -5032,7 +5033,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6024,7 +6025,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -6058,7 +6059,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -6098,7 +6099,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6309,7 +6310,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6523,7 +6524,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7510,7 +7511,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -7539,7 +7540,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -7575,7 +7576,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7786,7 +7787,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7997,7 +7998,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8985,7 +8986,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -9014,7 +9015,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -9050,7 +9051,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9261,7 +9262,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9472,7 +9473,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10468,7 +10469,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -10502,7 +10503,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -10542,7 +10543,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10753,7 +10754,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -10967,7 +10968,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11957,7 +11958,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -11987,7 +11988,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -12027,7 +12028,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12238,7 +12239,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12449,7 +12450,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13436,7 +13437,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -13465,7 +13466,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -13501,7 +13502,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13712,7 +13713,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13923,7 +13924,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14922,7 +14923,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -14956,7 +14957,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -14996,7 +14997,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -15207,7 +15208,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -15421,7 +15422,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16411,7 +16412,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -16440,7 +16441,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -16476,7 +16477,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16687,7 +16688,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16898,7 +16899,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17894,7 +17895,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -17928,7 +17929,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -17968,7 +17969,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18179,7 +18180,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18393,7 +18394,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19383,7 +19384,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -19413,7 +19414,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -19453,7 +19454,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19664,7 +19665,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19875,7 +19876,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20886,7 +20887,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -20915,7 +20916,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
@@ -20953,7 +20954,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21158,7 +21159,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21366,7 +21367,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21574,7 +21575,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21782,7 +21783,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21996,7 +21997,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22210,7 +22211,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22418,7 +22419,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22632,7 +22633,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24191,7 +24192,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -24220,7 +24221,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -24256,7 +24257,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24467,7 +24468,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24678,7 +24679,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25679,7 +25680,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -25708,7 +25709,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -25744,7 +25745,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25955,7 +25956,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26166,7 +26167,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26519,7 +26520,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -26548,7 +26549,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -26584,7 +26585,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -26798,7 +26799,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -27012,7 +27013,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -28009,7 +28010,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -28038,7 +28039,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -28074,7 +28075,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28285,7 +28286,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28496,7 +28497,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29493,7 +29494,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -29527,7 +29528,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -29567,7 +29568,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29778,7 +29779,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29992,7 +29993,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30981,7 +30982,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -31010,7 +31011,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -31046,7 +31047,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31257,7 +31258,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31468,7 +31469,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32414,7 +32415,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -32443,7 +32444,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -32479,7 +32480,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32690,7 +32691,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -32901,7 +32902,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -33892,7 +33893,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -33922,7 +33923,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -33962,7 +33963,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34173,7 +34174,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34384,7 +34385,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35386,7 +35387,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -35420,7 +35421,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -35460,7 +35461,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35671,7 +35672,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35885,7 +35886,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -36895,7 +36896,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -36929,7 +36930,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -36969,7 +36970,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -37180,7 +37181,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -37394,7 +37395,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38414,7 +38415,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -38443,7 +38444,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
@@ -38481,7 +38482,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38686,7 +38687,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38894,7 +38895,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39102,7 +39103,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39310,7 +39311,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39521,7 +39522,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39735,7 +39736,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39943,7 +39944,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -40157,7 +40158,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -41746,7 +41747,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -41780,7 +41781,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
@@ -41814,7 +41815,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42022,7 +42023,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42230,7 +42231,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42435,7 +42436,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42640,7 +42641,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -42848,7 +42849,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -43056,7 +43057,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -43267,7 +43268,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -43472,7 +43473,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -44909,7 +44910,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -44938,7 +44939,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -44974,7 +44975,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -45185,7 +45186,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -45396,7 +45397,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -45742,7 +45743,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -45771,7 +45772,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -45807,7 +45808,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -46021,7 +46022,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -46235,7 +46236,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -47188,7 +47189,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -47217,7 +47218,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -47253,7 +47254,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -47464,7 +47465,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -47675,7 +47676,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -48021,7 +48022,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -48050,7 +48051,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -48086,7 +48087,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -48300,7 +48301,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -48514,7 +48515,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -48860,7 +48861,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -48889,7 +48890,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -48925,7 +48926,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -49139,7 +49140,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -49353,7 +49354,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -49699,7 +49700,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -49728,7 +49729,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -49764,7 +49765,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -49978,7 +49979,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -50192,7 +50193,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -50542,7 +50543,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -50571,7 +50572,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -50607,7 +50608,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -50821,7 +50822,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -51035,7 +51036,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -52027,7 +52028,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -52056,7 +52057,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -52092,7 +52093,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -52303,7 +52304,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -52514,7 +52515,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -52860,7 +52861,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -52889,7 +52890,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -52925,7 +52926,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53139,7 +53140,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53353,7 +53354,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53699,7 +53700,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -53728,7 +53729,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 10.0,
                 'max': 40.0,
@@ -53762,7 +53763,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -53973,7 +53974,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -54187,7 +54188,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -54533,7 +54534,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -54562,7 +54563,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -54598,7 +54599,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -54812,7 +54813,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -55026,7 +55027,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -55964,7 +55965,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -55993,7 +55994,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -56029,7 +56030,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -56240,7 +56241,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -56451,7 +56452,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -56797,7 +56798,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -56826,7 +56827,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -56862,7 +56863,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -57076,7 +57077,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -57290,7 +57291,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -57636,7 +57637,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -57665,7 +57666,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -57701,7 +57702,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -57915,7 +57916,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -58129,7 +58130,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -59123,7 +59124,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -59157,7 +59158,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -59197,7 +59198,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -59408,7 +59409,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -59622,7 +59623,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -59943,7 +59944,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -59972,7 +59973,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -60008,7 +60009,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -60222,7 +60223,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -60436,7 +60437,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -61432,7 +61433,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -61465,7 +61466,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
@@ -61503,7 +61504,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -61677,7 +61678,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -61854,7 +61855,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'bar',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -62879,7 +62880,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'doughnut',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -63263,7 +63264,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'doughnut',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -63872,7 +63873,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -63901,7 +63902,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
@@ -63937,7 +63938,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -64148,7 +64149,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -64359,7 +64360,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -64729,7 +64730,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -64758,7 +64759,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -64794,7 +64795,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -65008,7 +65009,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -65222,7 +65223,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -65592,7 +65593,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -65621,7 +65622,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -65657,7 +65658,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -65871,7 +65872,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -66085,7 +66086,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -66455,7 +66456,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
@@ -66484,7 +66485,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
@@ -66520,7 +66521,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -66734,7 +66735,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -66948,7 +66949,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,

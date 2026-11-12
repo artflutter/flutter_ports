@@ -155,8 +155,8 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'indexAxis',
     section: 'general',
-    type: 'IndexAxis',
-    fallback: "'x'",
+    type: 'CartesianAxis',
+    fallback: 'XAxis()',
   ),
   DocProperty('label', section: 'general', type: 'String', fallback: "''"),
   DocProperty('order', section: 'general', type: 'int', fallback: '0'),
@@ -438,8 +438,8 @@ DocPageContent lineChartPage() => DocPageContent(
               ),
               (
                 'indexAxis',
-                'The base axis of the dataset. `.x` gives horizontal lines. '
-                    '`.y` gives vertical lines.',
+                'The base axis of the dataset. `XAxis()` gives horizontal '
+                    'lines. `YAxis()` gives vertical lines.',
               ),
               (
                 'label',
@@ -915,8 +915,8 @@ DocPageContent lineChartPage() => DocPageContent(
       body: [
         DocParagraph(
           'A vertical line chart is a variation of the horizontal line '
-          'chart. To make a vertical line chart, set `indexAxis` to `.y`. '
-          'The default is `.x`, which gives horizontal lines.',
+          'chart. To make a vertical line chart, set `indexAxis` to '
+          '`YAxis()`. The default is `XAxis()`, which gives horizontal lines.',
         ),
         LiveExample(
           id: 'vertical',

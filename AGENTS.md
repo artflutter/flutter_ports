@@ -343,7 +343,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - The cross-lane types of Chart.js ADR 0054 (B5, pure layers; the lanes adopt them):
     `lib/src/options/typed_record.dart` (`TypedRecord`: typed fields by slot, present and foreign
     bits, extras, the JS key order, the face), `parsed.dart` (`ParsedItem`, `ItemStacks`,
-    `StackEntry`, `IndexValues`, `FloatingBar`, `AxisKey`), `props.dart` (`PointProperties`,
+    `StackEntry`, `IndexValues`, `FloatingBar`), `props.dart` (`PointProperties`,
     `BarProperties`, `ArcProperties`, `LineProperties`), `animated_prop.dart` (`AnimatedProp`),
     `lib/src/types/data_item.dart` (`TypedDataItem`) and `lib/src/types/plugin.dart` (`Plugin`,
     `PluginHook`, `PluginHookFunction`, the hook argument classes, `MapPlugin`).
@@ -564,7 +564,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `axisStackOf`, `visualValuesOf`, `setStackValue`, all `@internal`); the dataset options are
       an `OptionView`; the contexts are typed `ScriptableContext` objects; `_cachedDataOpts` is
       two typed Maps (Chart.js ADR 0054 §8, §11). A parsed item reads with `parsedValueOf`
-      (`@internal`, the `AxisKey` of the scale), a `TypedDataItem` of `parsing: false` gives its typed `x` or `y`, another data item of
+      (`@internal`, the `ScaleAxis` of the scale), a `TypedDataItem` of `parsing: false` gives its typed `x` or `y`, another data item of
       `parsing: false` and a `_stacks` object that user code gave read with `jsGetKey`. The index reads
       use `jsGetIndex` and `jsSetIndex`, and `getParsed` and the item reads of the parse functions read
       their List directly (Chart.js ADR 0096). `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
@@ -852,6 +852,21 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       form computes itself (`fractionOf`, `pixelsOf`, `amountOf`); a new form is a subclass.
       `toPercentage` and `toDimension` are gone, also from the UMD `Chart.helpers`. The typed
       API takes a `RadiusLength` (`ChartLength` is gone).
+    - An axis is a class with no members of the pure `lib/src/types/chart_axis.dart` (row
+      `adapt-axis-objects`), also in a raw config: `XAxis`, `YAxis` and `RAxis`.
+      `CartesianAxis` (`XAxis` or `YAxis`) is the type of the `indexAxis` of a chart and of a
+      cartesian dataset, also in the typed API (`indexAxis: const YAxis()`); the `indexAxis`
+      defaults of doughnut, pie, polar area and radar hold `RAxis`, and `getIndexAxis` and
+      `datasetIndexAxis` of `core.config.dart` take that `RAxis` first. `ScaleAxis` (any of
+      the three) is the type of the scale option `axis`, `Scale.axis`, `meta.indexAxis` and
+      `LayoutItem.axis`. The core matches an axis with pattern matching; `sameAxis` and
+      `axisDataKey` of the pure `lib/src/core/chart_axis_reads.dart` compare two axes and give
+      the key `x`, `y` or `r` of a plain object of the user. `AxisKey` is gone: `ParsedItem`,
+      `ItemStacks`, `parsedValueOf`, `axisStackOf` and `setPointAxis` take the axis class, and
+      `lookupByAxis` and `rlookupByAxis` of `helpers.collection.dart` search by it. A scale id
+      `x`, `y` or `r` still gives its axis. An axis letter stops a debug build. A compare with
+      upstream JSON text puts a marker on both sides (`withAxisMarkers` of
+      `test/support/axis_json.dart`).
     - The option `fill` holds a number, a boolean, an object `{value}`, a `FillBoundary`
       (`origin`, `start`, `end`, `stack`, `shape`) or a `RelativeFill(offset)` of the pure
       `lib/src/plugins/fill_target.dart` (row `adapt-fill-target-objects`), also in a raw
@@ -1097,7 +1112,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 75 names. 26 of them are the classes of
+    `typed.dart` is its export list of 74 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1117,8 +1132,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     these cells of `options.animation` holds the `ChartAnimation` itself, not a copy, and
     `core.animation.dart` reads the parameter from it (`AnimationSettings`). Thus the lowering has
     no `millisecondsOf` for an animation. A color animates with no `type` (row
-    `adapt-color-animation-by-value`). `config.dart` has `ChartConfig`, `ChartKind` and
-    `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
+    `adapt-color-animation-by-value`). `config.dart` has `ChartConfig` and `ChartKind`; its
+    `indexAxis` takes a `CartesianAxis` of the core. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver
     variants. `Dataset.backgroundColor` and `Dataset.borderColor` use it (ADR 0077);
@@ -1232,12 +1247,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (213 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (248 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
-    `cubicInterpolationMode`, the 25 with `pointStyle`, the 11 with a relative `fill` as text
-    and the 8 with a length) also has a hand port, of `<path>.js` or `<path>.json`, with the
+    `cubicInterpolationMode`, the 25 with `pointStyle`, the 11 with a relative `fill` as text,
+    the 8 with a length and the 35 with an axis letter) also has a hand port, of `<path>.js` or
+    `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.
     `test/port/fixtures/index_test.dart` checks the registry against the manifest, the files of

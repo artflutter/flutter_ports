@@ -84,6 +84,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
     show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -1034,7 +1035,7 @@ class LineElement extends Element
   /// `_updateBezierControlPoints` then throws a [TypeError] only when it caps
   /// a control point (`capBezierPoints`), as upstream does.
   @override
-  void updateControlPoints(ChartArea? chartArea, [String? indexAxis]) {
+  void updateControlPoints(ChartArea? chartArea, [ScaleAxis? indexAxis]) {
     final options = this.options;
     if (_drawsCurves(options) &&
         !jsTruthy(_stepped(options)) &&
@@ -1047,7 +1048,7 @@ class LineElement extends Element
         options!,
         chartArea,
         loop ?? false,
-        indexAxis ?? 'x',
+        indexAxis ?? const XAxis(),
       );
       _pointsUpdated = true;
     }

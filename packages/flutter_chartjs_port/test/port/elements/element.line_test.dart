@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -214,7 +215,7 @@ void _run(LineReferenceCase c, Object Function(AnyObject) form) {
       case 'updateControlPoints':
         line.updateControlPoints(
           _Area(_arg(args, 0)!, _arg(args, 1)!, _arg(args, 2)!, _arg(args, 3)!),
-          args.length > 4 ? args[4]! as String : null,
+          args.length > 4 ? args[4]! as ScaleAxis : null,
         );
         result = [
           for (final p in points.cast<SplinePoint>())

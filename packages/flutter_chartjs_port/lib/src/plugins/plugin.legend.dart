@@ -119,6 +119,7 @@ import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show LegendLabelOptions, LegendOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -367,7 +368,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// core.layouts.js:15 `box.axis`. The legend has no axis: Dart `null`
   /// stands for JS `undefined`.
   @override
-  String? get axis => null;
+  ScaleAxis? get axis => null;
 
   /// plugin.legend.js:63 `options`, the resolver of the legend options.
   ///

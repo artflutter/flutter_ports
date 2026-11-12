@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 
 /// helpers.curve.ts:6 `EPSILON`. `Number.EPSILON` is truthy, so the
@@ -39,36 +40,42 @@ final double _epsilon = numberEpsilon != 0 && !numberEpsilon.isNaN
 SplinePoint? _getPoint(List<SplinePoint> points, int i) =>
     i < points.length && !(points[i].skip ?? false) ? points[i] : null;
 
-/// helpers.curve.ts:10 `getValueAxis`.
-String _getValueAxis(String indexAxis) => indexAxis == 'x' ? 'y' : 'x';
+/// helpers.curve.ts:10 `getValueAxis`: `indexAxis === 'x' ? 'y' : 'x'`.
+ScaleAxis _getValueAxis(ScaleAxis indexAxis) =>
+    indexAxis is XAxis ? const YAxis() : const XAxis();
 
 /// The read `point[axis]` of helpers.curve.ts:101-109 and :141-144. Each
-/// read is arithmetic. Thus another axis, for example `'r'`, reads
+/// read is arithmetic. Thus another axis, for example [RAxis], reads
 /// undefined, which `ToNumber` makes NaN.
-double _axisValue(SplinePoint point, String axis) => switch (axis) {
-  'x' => point.x,
-  'y' => point.y,
+double _axisValue(SplinePoint point, ScaleAxis axis) => switch (axis) {
+  XAxis() => point.x,
+  YAxis() => point.y,
   _ => double.nan,
 };
 
 /// The write `` point[`${cp}${axis}`] = value `` of helpers.curve.ts:105-111.
 /// [cp] is `'cp1'` or `'cp2'`. The key is `'cp1x'`, `'cp1y'`, `'cp2x'` or
-/// `'cp2y'`. Another axis, for example `'r'`, gives a key such as `'cp1r'`,
+/// `'cp2y'`. Another axis, for example [RAxis], gives a key such as `'cp1r'`,
 /// which has no [SplinePoint] member. Nothing reads it upstream. Thus the
 /// port does not store it.
 ///
 /// The function selects the member from [cp] and [axis]. It does not build
 /// the key string, so a point costs no new string.
-void _setControlPoint(SplinePoint point, String cp, String axis, double value) {
+void _setControlPoint(
+  SplinePoint point,
+  String cp,
+  ScaleAxis axis,
+  double value,
+) {
   final first = cp == 'cp1';
   switch (axis) {
-    case 'x' when first:
+    case XAxis() when first:
       point.cp1x = value;
-    case 'x':
+    case XAxis():
       point.cp2x = value;
-    case 'y' when first:
+    case YAxis() when first:
       point.cp1y = value;
-    case 'y':
+    case YAxis():
       point.cp2y = value;
   }
 }
@@ -199,7 +206,7 @@ void _monotoneAdjust(
 void _monotoneCompute(
   List<SplinePoint> points,
   List<double> mK, [
-  String indexAxis = 'x',
+  ScaleAxis indexAxis = const XAxis(),
 ]) {
   final valueAxis = _getValueAxis(indexAxis);
   final pointsLen = points.length;
@@ -237,7 +244,10 @@ void _monotoneCompute(
 /// no local extremums are added between the dataset discrete points due to
 /// the interpolation.
 /// See : https://en.wikipedia.org/wiki/Monotone_cubic_interpolation
-void splineCurveMonotone(List<SplinePoint> points, [String indexAxis = 'x']) {
+void splineCurveMonotone(
+  List<SplinePoint> points, [
+  ScaleAxis indexAxis = const XAxis(),
+]) {
   final valueAxis = _getValueAxis(indexAxis);
   final pointsLen = points.length;
   final deltaK = List<double>.filled(pointsLen, 0);
@@ -344,7 +354,7 @@ void updateBezierControlPoints(
   Object options,
   ChartArea? area,
   bool loop,
-  String indexAxis,
+  ScaleAxis indexAxis,
 ) {
   // Only consider points that are drawn in case the spanGaps option is used
   if (jsTruthy(readOption(options, OptionKey.spanGaps))) {
@@ -415,7 +425,7 @@ final class DefaultCubicInterpolationMode extends CubicInterpolationMode {
     List<SplinePoint> points, {
     required double tension,
     required bool loop,
-    required String indexAxis,
+    required ScaleAxis indexAxis,
   }) => splineCurveDefault(points, tension, loop);
 }
 
@@ -435,6 +445,6 @@ final class MonotoneCubicInterpolationMode extends CubicInterpolationMode {
     List<SplinePoint> points, {
     required double tension,
     required bool loop,
-    required String indexAxis,
+    required ScaleAxis indexAxis,
   }) => splineCurveMonotone(points, indexAxis);
 }

@@ -12,7 +12,15 @@ import 'dart:async';
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, NativeEvent, Scale, undefined;
+    show
+        CartesianAxis,
+        Chart,
+        NativeEvent,
+        Scale,
+        ScaleAxis,
+        XAxis,
+        YAxis,
+        undefined;
 import 'package:flutter_chartjs_port/helpers.dart'
     show isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
@@ -94,17 +102,18 @@ final class _Directions {
   bool x;
   bool y;
 
-  /// `enabled[axis]` for the `axis` of a scale. Another axis (`'r'`) gives
-  /// `undefined` upstream, which is false.
-  bool operator [](String axis) => switch (axis) {
-    'x' => x,
-    'y' => y,
+  /// `enabled[axis]` for the `axis` of a scale, a class of the host (row
+  /// `adapt-axis-classes`). Another axis (`RAxis`) gives `undefined`
+  /// upstream, which is false.
+  bool operator [](ScaleAxis axis) => switch (axis) {
+    XAxis() => x,
+    YAxis() => y,
     _ => false,
   };
 
-  /// `enabled[axis] = value` for `'x'` and `'y'`.
-  void operator []=(String axis, bool value) {
-    if (axis == 'x') {
+  /// `enabled[axis] = value` for [XAxis] and [YAxis].
+  void operator []=(CartesianAxis axis, bool value) {
+    if (axis is XAxis) {
       x = value;
     } else {
       y = value;
@@ -179,7 +188,8 @@ void _convertOverScaleMode(
   }
 
   final overScaleEnabled = _directionsEnabled(overScaleMode, chart);
-  for (final axis in const ['x', 'y']) {
+  // DIVERGES(zoom): adapt-axis-classes, the axis classes of the host.
+  for (final axis in const <CartesianAxis>[XAxis(), YAxis()]) {
     if (overScaleEnabled[axis]) {
       scaleEnabled[axis] = enabled[axis];
       enabled[axis] = false;

@@ -7,7 +7,8 @@
 #   getDataset and `dataset.data` in getContext are typed reads (readOption,
 #   Chart.js ADR 0096).
 # jsGetKey: the user data items of `parsing: false` and their `_stacks`
-#   objects: parsedValueOf, axisStackOf, _stackValueOf and visualValuesOf.
+#   objects: parsedValueOf (one read for the key of each axis class, row
+#   adapt-axis-objects), axisStackOf, _stackValueOf and visualValuesOf.
 # stringIndex: the write `dataset.data = []` into the dataset of the user,
 #   `item._stacks = {}` into a Map item and a class value item, the read
 #   `item._stacks` of a Map item (stacksOf), and the statics
@@ -20,7 +21,7 @@
 #   chart.scales (user scale ids, getFirstScaleId), and of a user object in
 #   `defaults.elements`.
 jsGet 10
-jsGetKey 4
+jsGetKey 6
 stringIndex 5
 jsCall 1
 jsObjectKeys 3

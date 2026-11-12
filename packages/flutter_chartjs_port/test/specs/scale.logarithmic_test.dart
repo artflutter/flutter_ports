@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.logarithmic.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -1183,17 +1184,19 @@ void main() {
       ];
       for (final setup in config) {
         final scaleConfig = <String, Object?>{};
-        final String indexAxis;
+        // `setup.axis` is the id of the scale; the index axis is the other
+        // axis class (row adapt-axis-objects).
+        final CartesianAxis indexAxis;
         final String chartStart;
         final String chartEnd;
         final axis = setup['axis']! as String;
 
         if (axis == 'x') {
-          indexAxis = 'y';
+          indexAxis = const YAxis();
           chartStart = 'left';
           chartEnd = 'right';
         } else {
-          indexAxis = 'x';
+          indexAxis = const XAxis();
           chartStart = 'bottom';
           chartEnd = 'top';
         }

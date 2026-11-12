@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, ScaleValuePosition;
@@ -601,7 +602,7 @@ void main() {
     final scale = _TestScale(_cfg(chart), {})
       ..init(
         _scaleOptions({
-          'axis': 'x',
+          'axis': const XAxis(),
           'position': ChartPosition.bottom,
           'ticks': {
             'font': {
@@ -641,7 +642,7 @@ void main() {
           })
           ..init(
             _scaleOptions({
-              'axis': 'x',
+              'axis': const XAxis(),
               'position': ChartPosition.bottom,
             }, chart),
           )
@@ -680,7 +681,7 @@ void main() {
   group('_layers', () {
     /// The options of a horizontal scale with the given user options.
     ContextResolver options(_Chart chart, [AnyObject? user]) => _scaleOptions({
-      'axis': 'x',
+      'axis': const XAxis(),
       'position': ChartPosition.bottom,
       ...?user,
     }, chart);
@@ -835,7 +836,7 @@ void main() {
       final scale = Scale(_cfg(chart))
         ..init(
           _scaleOptions(<String, Object?>{
-            'axis': 'x',
+            'axis': const XAxis(),
             'position': ChartPosition.bottom,
           }, chart),
         );
@@ -857,7 +858,7 @@ void main() {
             'max': 1,
           })..init(
             _scaleOptions({
-              'axis': 'x',
+              'axis': const XAxis(),
               'position': ChartPosition.bottom,
             }, chart),
           );
@@ -894,7 +895,7 @@ void main() {
             })
             ..init(
               _scaleOptions({
-                'axis': 'x',
+                'axis': const XAxis(),
                 'position': const ScaleValuePosition('absent', 0),
               }, chart),
             )
@@ -918,7 +919,7 @@ void main() {
             )
             ..init(
               _scaleOptions({
-                'axis': 'x',
+                'axis': const XAxis(),
                 'position': ChartPosition.bottom,
               }, chart),
             )
@@ -933,8 +934,9 @@ void main() {
   group('adapt-scale-option-types', () {
     // Upstream `this.axis = options.axis` (core.scale.js:259) keeps any
     // value, and `getLabels` (:358-361) returns the first truthy value.
-    // `types.Scale.axis` is a String and `getLabels` returns a List.
-    test('an axis option that is not a string throws a TypeError', () {
+    // `types.Scale.axis` is an axis class (row adapt-axis-objects) and
+    // `getLabels` returns a List.
+    test('an axis option that is not an axis class throws a TypeError', () {
       final chart = _plainChart();
       for (final axis in <Object?>[true, 1]) {
         final scale = Scale(_cfg(chart));
@@ -951,9 +953,12 @@ void main() {
       }
       final scale = Scale(_cfg(chart))
         ..init(
-          _scaleOptions({'axis': 'x', 'position': ChartPosition.bottom}, chart),
+          _scaleOptions({
+            'axis': const XAxis(),
+            'position': ChartPosition.bottom,
+          }, chart),
         );
-      expect(scale.axis, 'x');
+      expect(scale.axis, isA<XAxis>());
     });
 
     test('labels that are not a List throw a TypeError', () {
@@ -961,7 +966,7 @@ void main() {
       final scale = Scale(_cfg(chart))
         ..init(
           _scaleOptions({
-            'axis': 'x',
+            'axis': const XAxis(),
             'position': ChartPosition.bottom,
             'labels': 'abc',
           }, chart),
@@ -971,7 +976,10 @@ void main() {
       chart.data['xLabels'] = 5;
       final other = Scale(_cfg(chart))
         ..init(
-          _scaleOptions({'axis': 'x', 'position': ChartPosition.bottom}, chart),
+          _scaleOptions({
+            'axis': const XAxis(),
+            'position': ChartPosition.bottom,
+          }, chart),
         );
       expect(other.getLabels, throwsA(isA<TypeError>()));
 
@@ -997,7 +1005,7 @@ void main() {
       final hidden = _TestScale(_cfg(chart), spec)
         ..init(
           _scaleOptions({
-            'axis': 'x',
+            'axis': const XAxis(),
             'position': ChartPosition.bottom,
             'ticks': <String, Object?>{'display': false},
             'grid': <String, Object?>{'tickLength': '8'},
@@ -1009,7 +1017,7 @@ void main() {
       final bottom = _TestScale(_cfg(chart), spec)
         ..init(
           _scaleOptions({
-            'axis': 'x',
+            'axis': const XAxis(),
             'position': ChartPosition.bottom,
             'ticks': <String, Object?>{'labelOffset': '5'},
           }, chart),
@@ -1046,7 +1054,7 @@ void main() {
         })
         ..init(
           _scaleOptions({
-            'axis': 'y',
+            'axis': const YAxis(),
             'position': ChartPosition.left,
             'ticks': <String, Object?>{'padding': padding},
           }, chart),
@@ -1098,7 +1106,7 @@ void main() {
         })
         ..init(
           _scaleOptions({
-            'axis': 'x',
+            'axis': const XAxis(),
             'position': ChartPosition.bottom,
             'ticks': {'callback': _functions['longLabel'], ...ticks},
           }, chart),
@@ -1119,7 +1127,7 @@ void main() {
                 })
                 ..init(
                   _scaleOptions({
-                    'axis': 'x',
+                    'axis': const XAxis(),
                     'position': ChartPosition.bottom,
                     'ticks': <String, Object?>{'minRotation': minRotation},
                   }, chart),
@@ -1157,7 +1165,10 @@ void main() {
     // getPixelForValue. So does the port (Chart.js ADR 0025). Each scale
     // with a title makes three calls: the label items (:1182, :1191), the
     // grid line items (:1064, :1077) and the title (:145, :156).
-    for (final (axis, otherAxis) in [('x', 'y'), ('y', 'x')]) {
+    for (final (axis, axisClass, otherAxis) in const [
+      ('x', XAxis(), 'y'),
+      ('y', YAxis(), 'x'),
+    ]) {
       group('$axis scale', () {
         for (final (value, expected) in <(Object?, Matcher)>[
           ('B', equals('B')),
@@ -1178,7 +1189,7 @@ void main() {
               })
               ..init(
                 _scaleOptions({
-                  'axis': axis,
+                  'axis': axisClass,
                   'position': ScaleValuePosition(otherAxis, value),
                   'title': <String, Object?>{'display': true, 'text': 'T'},
                 }, chart),

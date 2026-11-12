@@ -4,6 +4,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:test/test.dart';
@@ -133,7 +134,7 @@ final class _Scale implements types.Scale {
   String get type => 'linear';
 
   @override
-  String get axis => 'x';
+  ScaleAxis get axis => const XAxis();
 
   @override
   ({double min, double max, bool minDefined, bool maxDefined})

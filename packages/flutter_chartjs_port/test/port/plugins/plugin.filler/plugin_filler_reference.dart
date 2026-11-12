@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -94,7 +95,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -128,7 +129,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
@@ -166,7 +167,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -476,7 +477,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -1029,7 +1030,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -1063,7 +1064,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
@@ -1109,7 +1110,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -1416,7 +1417,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.start,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -2085,7 +2086,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -2119,7 +2120,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
@@ -2165,7 +2166,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -2472,7 +2473,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.end,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -3141,7 +3142,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -3175,7 +3176,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
@@ -3221,7 +3222,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -3528,7 +3529,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': <String, Object?>{'value': 4.0},
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -4197,7 +4198,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -4231,7 +4232,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
@@ -4269,7 +4270,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -4579,7 +4580,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -5132,7 +5133,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -5166,7 +5167,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
@@ -5212,7 +5213,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -5519,7 +5520,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -6166,7 +6167,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -6200,7 +6201,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
@@ -6238,7 +6239,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6515,7 +6516,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -6822,14 +6823,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -7467,7 +7468,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -7501,7 +7502,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
@@ -7539,7 +7540,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7816,7 +7817,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8123,14 +8124,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': 1.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -8773,7 +8774,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -8807,7 +8808,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 7.0,
@@ -8853,7 +8854,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9136,7 +9137,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9419,7 +9420,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -9735,21 +9736,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': 2.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -10585,7 +10586,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 16.0,
@@ -10624,7 +10625,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -10712,7 +10713,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11013,7 +11014,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11317,7 +11318,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -11651,21 +11652,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': FillBoundary.stack,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
             'fill': FillBoundary.stack,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -12502,7 +12503,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -12536,7 +12537,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
@@ -12574,7 +12575,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -12884,7 +12885,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.shape,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -13419,7 +13420,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -13453,7 +13454,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 3.0,
             'max': 7.0,
@@ -13495,7 +13496,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13803,7 +13804,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -14422,7 +14423,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -14456,7 +14457,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 3.0,
             'max': 7.0,
@@ -14498,7 +14499,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -14805,7 +14806,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -15399,7 +15400,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -15433,7 +15434,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
@@ -15471,7 +15472,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -15781,7 +15782,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -16345,7 +16346,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -16379,7 +16380,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
@@ -16417,7 +16418,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16694,7 +16695,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17001,14 +17002,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -17641,7 +17642,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -17675,7 +17676,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
@@ -17713,7 +17714,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18023,7 +18024,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -18558,7 +18559,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -18581,7 +18582,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -18614,7 +18615,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': -3.0,
             'max': 3.0,
@@ -18657,7 +18658,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18970,7 +18971,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'y',
+            'axis': YAxis(),
             'scale': 'x',
           },
         ],
@@ -19513,7 +19514,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -19536,7 +19537,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -19569,7 +19570,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 7.0,
@@ -19612,7 +19613,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19898,7 +19899,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20211,14 +20212,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'y',
+            'axis': YAxis(),
             'scale': 'x',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'y',
+            'axis': YAxis(),
             'scale': 'x',
           },
         ],
@@ -20855,7 +20856,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -20889,7 +20890,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
@@ -20927,7 +20928,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21241,7 +21242,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -21819,7 +21820,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -21842,7 +21843,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -21875,7 +21876,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': -3.0,
             'max': 3.0,
@@ -21918,7 +21919,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22235,7 +22236,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'y',
+            'axis': YAxis(),
             'scale': 'x',
           },
         ],
@@ -22843,7 +22844,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -22877,7 +22878,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
@@ -22917,7 +22918,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23203,7 +23204,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23523,14 +23524,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -24243,7 +24244,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -24277,7 +24278,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
@@ -24315,7 +24316,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24625,7 +24626,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -25180,7 +25181,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -25214,7 +25215,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
@@ -25252,7 +25253,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25529,7 +25530,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -25836,14 +25837,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -26481,7 +26482,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -26515,7 +26516,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
@@ -26553,7 +26554,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -26830,7 +26831,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -27137,14 +27138,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -27818,7 +27819,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -27852,7 +27853,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
@@ -27892,7 +27893,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28178,7 +28179,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28461,7 +28462,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28777,21 +28778,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': false,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
             'fill': 1.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -28809,7 +28810,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 5.0,
@@ -28843,7 +28844,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -3.0,
                 'max': 7.0,
@@ -28889,7 +28890,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -29178,7 +29179,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -29464,7 +29465,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -29780,21 +29781,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'visible': true,
                 'index': 0.0,
                 'fill': FillBoundary.origin,
-                'axis': 'x',
+                'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 1.0,
                 'fill': 0.0,
-                'axis': 'x',
+                'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 2.0,
                 'fill': 1.0,
-                'axis': 'x',
+                'axis': XAxis(),
                 'scale': 'y',
               },
             ],
@@ -30692,7 +30693,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -30726,7 +30727,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
@@ -30766,7 +30767,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31052,7 +31053,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31335,7 +31336,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31651,21 +31652,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': false,
             'index': 1.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
             'fill': 0.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -31683,7 +31684,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 5.0,
@@ -31717,7 +31718,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -3.0,
                 'max': 7.0,
@@ -31763,7 +31764,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -32052,7 +32053,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -32338,7 +32339,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               },
               <String, Object?>{
                 'type': 'line',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -32654,21 +32655,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'visible': true,
                 'index': 0.0,
                 'fill': FillBoundary.origin,
-                'axis': 'x',
+                'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 1.0,
                 'fill': 0.0,
-                'axis': 'x',
+                'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 2.0,
                 'fill': 1.0,
-                'axis': 'x',
+                'axis': XAxis(),
                 'scale': 'y',
               },
             ],
@@ -33559,7 +33560,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -33593,7 +33594,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -33635,7 +33636,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -33878,7 +33879,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34149,14 +34150,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': FillBoundary.stack,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -34849,7 +34850,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 6.0,
@@ -34889,7 +34890,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -34931,7 +34932,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35142,7 +35143,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -35344,14 +35345,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': FillBoundary.stack,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -36012,7 +36013,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -36046,7 +36047,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -36088,7 +36089,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -36329,7 +36330,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -36600,14 +36601,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': FillBoundary.stack,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -37290,7 +37291,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
@@ -37334,7 +37335,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 3.0,
@@ -37380,7 +37381,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -37581,7 +37582,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.stack,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -38321,7 +38322,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -38355,7 +38356,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 3.0,
@@ -38401,7 +38402,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38646,7 +38647,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38730,14 +38731,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': 1.0,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -39383,7 +39384,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         ],
       },
       'options': <String, Object?>{
-        'indexAxis': 'y',
+        'indexAxis': YAxis(),
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -39406,7 +39407,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -39439,7 +39440,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
@@ -39490,7 +39491,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39741,7 +39742,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'y',
+            'indexAxis': YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39825,14 +39826,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': 1.0,
-            'axis': 'y',
+            'axis': YAxis(),
             'scale': 'x',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': false,
-            'axis': 'y',
+            'axis': YAxis(),
             'scale': 'x',
           },
         ],
@@ -40489,7 +40490,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 4.0,
@@ -40523,7 +40524,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 6.0,
@@ -40565,7 +40566,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -40887,7 +40888,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -41554,7 +41555,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 120.0,
@@ -41594,7 +41595,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
@@ -41630,7 +41631,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -46257,7 +46258,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -46879,7 +46880,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -1.0,
             'max': 3.0,
@@ -46926,7 +46927,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -47226,7 +47227,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -47703,7 +47704,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
@@ -47754,7 +47755,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -48051,7 +48052,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.start,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -48540,7 +48541,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
@@ -48591,7 +48592,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -48888,7 +48889,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.end,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -49393,7 +49394,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
@@ -49444,7 +49445,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -49741,7 +49742,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': <String, Object?>{'value': 2.0},
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -50248,7 +50249,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 2.0,
@@ -50299,7 +50300,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -50602,7 +50603,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -51087,7 +51088,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 5.0,
@@ -51138,7 +51139,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -51420,7 +51421,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -51717,14 +51718,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': 1.0,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': FillBoundary.start,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -52326,7 +52327,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
@@ -52377,7 +52378,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -52674,7 +52675,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.start,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -53172,7 +53173,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -3.0,
             'max': 4.0,
@@ -53217,7 +53218,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -53517,7 +53518,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -53976,7 +53977,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': -5.0,
             'max': -1.0,
@@ -54023,7 +54024,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -54323,7 +54324,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -54806,7 +54807,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 4.0,
@@ -54849,7 +54850,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -55143,7 +55144,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -55541,7 +55542,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
@@ -55584,7 +55585,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -55884,7 +55885,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -56238,7 +56239,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 2.0,
@@ -56289,7 +56290,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -56592,7 +56593,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -57072,7 +57073,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'radialLinear',
-            'axis': 'r',
+            'axis': RAxis(),
             'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 6.0,
@@ -57123,7 +57124,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -57369,7 +57370,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'radar',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': undefined,
             'yAxisID': undefined,
             'rAxisID': 'r',
@@ -57666,14 +57667,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.start,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': FillBoundary.start,
-            'axis': 'r',
+            'axis': RAxis(),
             'scale': 'r',
           },
         ],
@@ -58327,7 +58328,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
@@ -58358,7 +58359,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -10.0,
             'max': 15.0,
@@ -58390,7 +58391,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -58970,7 +58971,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': FillBoundary.origin,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],
@@ -59650,7 +59651,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 200.0,
@@ -59672,7 +59673,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -100.0,
             'max': 100.0,
@@ -59693,7 +59694,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -61821,7 +61822,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -64006,14 +64007,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'visible': true,
             'index': 0.0,
             'fill': false,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
             'fill': FillBoundary.stack,
-            'axis': 'x',
+            'axis': XAxis(),
             'scale': 'y',
           },
         ],

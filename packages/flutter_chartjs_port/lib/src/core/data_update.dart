@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:meta/meta.dart';
 
@@ -151,6 +152,7 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         node is CubicInterpolationMode ||
         node is RadiusLength ||
         node is GraceLength ||
+        node is ScaleAxis ||
         node.runtimeType == Color) {
       return true;
     }

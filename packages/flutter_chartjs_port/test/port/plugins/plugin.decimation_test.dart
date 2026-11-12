@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -311,8 +312,9 @@ void main() {
         _decimatedKeys,
       ),
       (
-        "indexAxis: 'y'",
-        (Chart chart, AnyObject dataset) => dataset['indexAxis'] = 'y',
+        'indexAxis: YAxis()',
+        (Chart chart, AnyObject dataset) =>
+            dataset['indexAxis'] = const YAxis(),
         [..._decimatedKeys, 'indexAxis'],
       ),
       // plugin.decimation.js:225. The new bar controller runs `_dataCheck`

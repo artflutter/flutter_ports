@@ -105,9 +105,15 @@ void main() {
     });
   });
 
-  group('IndexAxis', () {
-    test('the names of the indexAxis option', () {
-      expect([for (final axis in IndexAxis.values) axis.name], ['x', 'y']);
+  group('indexAxis', () {
+    test('takes a cartesian axis class (row adapt-axis-objects)', () {
+      const config = ChartConfig(
+        type: ChartKind.bar,
+        datasets: [],
+        indexAxis: YAxis(),
+      );
+      expect(config.indexAxis, same(const YAxis()));
+      expect(config.copyWith(indexAxis: const XAxis()).indexAxis, isA<XAxis>());
     });
   });
 

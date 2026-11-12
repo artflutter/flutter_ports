@@ -32,6 +32,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/typed/typed.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _blue = ui.Color(0xff4f6bed);
@@ -147,7 +148,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
   return ChartConfig(
     type: ChartKind.line,
     datasets: datasets,
-    indexAxis: horizontal ? IndexAxis.y : null,
+    indexAxis: horizontal ? const YAxis() : null,
     scales: const {
       'x': LinearAxis(min: 0, max: 100, grid: grid, ticks: ticks),
       'y': LinearAxis(min: 0, max: 110, grid: grid, ticks: ticks),

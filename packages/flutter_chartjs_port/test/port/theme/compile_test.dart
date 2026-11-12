@@ -21,9 +21,11 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
+import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
@@ -65,6 +67,7 @@ String _jsonRaw(Object? value) => switch (value) {
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
+  ScaleAxis() => axisJson,
   InteractionMode() => modeJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>

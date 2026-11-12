@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -796,7 +797,7 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'foo': <String, Object?>{
-                'axis': 'x',
+                'axis': const XAxis(),
                 'type': 'logarithmic',
                 '_jasmineCheckC': 'c2',
                 '_jasmineCheckD': 'd2',

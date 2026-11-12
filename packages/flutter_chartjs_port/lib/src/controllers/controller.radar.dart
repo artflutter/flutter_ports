@@ -52,8 +52,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show LineProperties, PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -66,6 +65,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.radar.js:4 `RadarController extends DatasetController`.
@@ -93,7 +93,8 @@ class RadarController extends DatasetController {
       RadarControllerDatasetOptionsScope()
         ..datasetElementType = 'line'
         ..dataElementType = 'point'
-        ..indexAxis = 'r'
+        // DIVERGES(chartjs): adapt-axis-objects, the axis class.
+        ..indexAxis = const RAxis()
         ..showLine = true
         ..elements = (ElementOptionsByTypeScope()
           // DIVERGES(chartjs): adapt-fill-target-objects, the enum value.
@@ -140,7 +141,7 @@ class RadarController extends DatasetController {
     return (
       label: label,
       value: jsToString(
-        vScale.getLabelForValue(parsedValueOf(parsed, AxisKey.of(axis), axis)),
+        vScale.getLabelForValue(parsedValueOf(parsed, axis)),
       ),
     );
   }
@@ -256,7 +257,7 @@ class RadarController extends DatasetController {
       final radial = scale! as types.RadialLinearScale;
       final pointPosition = radial.getPointPositionForValue(
         i,
-        parsedValueOf(getParsed(i), AxisKey.r, 'r'),
+        parsedValueOf(getParsed(i), const RAxis()),
       );
 
       final x = reset ? radial.xCenter : pointPosition.x;

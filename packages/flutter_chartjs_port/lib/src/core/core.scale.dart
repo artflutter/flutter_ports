@@ -95,6 +95,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
 import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     as types
@@ -853,9 +854,9 @@ class Scale extends _ScalePrototype
   ///
   /// `core.config` gives each scale an `axis` option, or throws. A read
   /// before [init] throws a `LateInitializationError`, where JavaScript
-  /// reads `undefined`.
+  /// reads `undefined`. The axis is a class (row `adapt-axis-objects`).
   @override
-  late String axis;
+  late ScaleAxis axis;
 
   /// core.scale.js:221 `labelRotation`, in degrees. It starts as
   /// [undefined].
@@ -1085,10 +1086,10 @@ class Scale extends _ScalePrototype
   /// (core.controller.js:367), which JavaScript ignores here. [opts] takes
   /// them. `scale.time.js:266` reads them.
   ///
-  /// `types.Scale` declares `axis` as a `String` (index.d.ts:1317). Thus an
-  /// `axis` option that is not a string throws a [TypeError], where upstream
-  /// keeps the value (differences.md row `adapt-scale-option-types`).
-  /// index.d.ts:3286 types the option as `'x' | 'y' | 'r'`.
+  /// The `axis` option holds a [ScaleAxis] (row `adapt-axis-objects`).
+  /// Another value throws a [TypeError], where upstream keeps the value
+  /// (differences.md row `adapt-scale-option-types`). index.d.ts:3286 types
+  /// the option as `'x' | 'y' | 'r'`.
   ///
   /// [options] is an [OptionView]: the reads after `setContext` read the
   /// view of the parameter, as upstream does, through the facade
@@ -1097,8 +1098,8 @@ class Scale extends _ScalePrototype
     this.options = _setContext(options, getContext());
     final view = CoreScaleOptions(options as OptionView);
 
-    // DIVERGES(chartjs): adapt-scale-option-types, a String axis only.
-    axis = view.axis! as String;
+    // DIVERGES(chartjs): adapt-axis-objects, the axis is a class.
+    axis = view.axis! as ScaleAxis;
 
     // parse min/max value, so we can properly determine min/max for other
     // scales
@@ -1759,7 +1760,7 @@ class Scale extends _ScalePrototype
     final padding = tickOpts.padding;
     final position = options.position;
     final isRotated = _isRotated;
-    final labelsBelowTicks = position != ChartPosition.top && axis == 'x';
+    final labelsBelowTicks = position != ChartPosition.top && axis is XAxis;
 
     if (isHorizontal()) {
       final offsetLeft = (getPixelForTick(0) ?? 0) - left;
@@ -1849,7 +1850,7 @@ class Scale extends _ScalePrototype
     final position = options.position;
     return position == ChartPosition.top ||
         position == ChartPosition.bottom ||
-        axis == 'x';
+        axis is XAxis;
   }
 
   /// core.scale.js:767 `isFullSize()`.
@@ -2329,7 +2330,7 @@ class Scale extends _ScalePrototype
       x2 = alignBorderValue(chartArea.right) - axisHalfWidth;
       tx1 = borderValue + axisHalfWidth;
       tx2 = jsToNumber(jsAdd(left, tl));
-    } else if (axis == 'x') {
+    } else if (axis is XAxis) {
       if (position == ChartPosition.center) {
         borderValue = alignBorderValue(
           (chartArea!.top + chartArea.bottom) / 2 + 0.5,
@@ -2346,7 +2347,7 @@ class Scale extends _ScalePrototype
       y2 = chartArea.bottom;
       ty1 = borderValue + axisHalfWidth;
       ty2 = jsToNumber(jsAdd(ty1, tl));
-    } else if (axis == 'y') {
+    } else if (axis is YAxis) {
       if (position == ChartPosition.center) {
         borderValue = alignBorderValue(
           (chartArea!.left + chartArea.right) / 2,
@@ -2496,7 +2497,7 @@ class Scale extends _ScalePrototype
       final ret = _getYAxisLabelAlignment(tl);
       textAlign = ret.textAlign;
       x = ret.x;
-    } else if (axis == 'x') {
+    } else if (axis is XAxis) {
       if (position == ChartPosition.center) {
         y = jsAdd((chartArea!.top + chartArea.bottom) / 2, tickAndPadding);
       } else if (position is ScaleValuePosition) {
@@ -2508,7 +2509,7 @@ class Scale extends _ScalePrototype
         );
       }
       textAlign = _getXAxisLabelAlignment();
-    } else if (axis == 'y') {
+    } else if (axis is YAxis) {
       if (position == ChartPosition.center) {
         x =
             ((chartArea!.left + chartArea.right) / 2) -
@@ -2521,7 +2522,7 @@ class Scale extends _ScalePrototype
       textAlign = _getYAxisLabelAlignment(tl).textAlign;
     }
 
-    if (axis == 'y') {
+    if (axis is YAxis) {
       if (align == TickAlign.start) {
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         textBaseline = CanvasTextBaseline.top;
@@ -3098,10 +3099,9 @@ class Scale extends _ScalePrototype
   /// @param {string} [type] - if specified, also filter by dataset type
   /// @return {object[]}
   ///
-  /// `meta[this.axis + 'AxisID']` reads `xAxisID`, `yAxisID` or `rAxisID`.
-  /// `core.config` gives each scale one of these three axes. Another axis
-  /// names no property of a meta: JavaScript reads `undefined`, which equals
-  /// no scale id.
+  /// `meta[this.axis + 'AxisID']` reads `xAxisID`, `yAxisID` or `rAxisID`
+  /// by the class of the axis. An axis of another class names no property
+  /// of a meta: JavaScript reads `undefined`, which equals no scale id.
   @override
   List<types.ChartMeta> getMatchingVisibleMetas([String? type]) {
     final metas = chart.getSortedVisibleDatasetMetas();
@@ -3111,9 +3111,9 @@ class Scale extends _ScalePrototype
     for (var i = 0, ilen = metas.length; i < ilen; ++i) {
       final meta = metas[i];
       final axisID = switch (axis) {
-        'x' => meta.xAxisID,
-        'y' => meta.yAxisID,
-        'r' => meta.rAxisID,
+        XAxis() => meta.xAxisID,
+        YAxis() => meta.yAxisID,
+        RAxis() => meta.rAxisID,
         _ => null,
       };
       if (axisID == id && (type == null || type.isEmpty || meta.type == type)) {

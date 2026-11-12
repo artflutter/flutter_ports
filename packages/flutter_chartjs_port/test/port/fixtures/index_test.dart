@@ -60,10 +60,12 @@ String _fixturePath(String stem, Set<String> paths) =>
 /// The option keys whose value is a class of the port: a data fixture with
 /// such a key in its config gets a hand port (Chart.js ADR 0115).
 const Set<String> _classValueKeys = {
+  'axis',
   'cubicInterpolationMode',
   'cutout',
   'fill',
   'grace',
+  'indexAxis',
   'pointStyle',
   'radius',
 };

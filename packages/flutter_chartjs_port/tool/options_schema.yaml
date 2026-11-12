@@ -48,7 +48,10 @@
 # `false`; a style name is a foreign value), `fillTarget` (a `FillTarget`, a `FillBoundary` or a
 # `RelativeFill` of `fill`; a keyword or a relative index as text is a foreign value),
 # `radiusLength` (a `RadiusLength`, the doughnut `cutout` and `radius`) and `graceLength` (a
-# `GraceLength`, the scale `grace`; a number or a percent text is a foreign value), `any` (any
+# `GraceLength`, the scale `grace`; a number or a percent text is a foreign value), `scaleAxis`,
+# `cartesianAxis` and `radialAxis` (a `ScaleAxis` for the `axis` of a scale, a `CartesianAxis` for
+# the `indexAxis` of a chart and of a cartesian dataset, an `RAxis` for the `indexAxis` of a radial
+# dataset; an axis letter is a foreign value), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -85,7 +88,7 @@ kinds:
       animations: bool | scope AnimationsSpec
       transitions: scope TransitionsSpec
       datasets: scope DatasetOptionsByType
-      indexAxis: string
+      indexAxis: cartesianAxis
       clip: number | bool | scope ChartArea
       color: any
       backgroundColor: any
@@ -507,7 +510,7 @@ kinds:
     keys:
       parsing: bool | scope ParsingOptions
       normalized: bool
-      indexAxis: string
+      indexAxis: cartesianAxis
       clip: number | bool | scope ChartArea
       label: string
       order: number
@@ -553,7 +556,7 @@ kinds:
     keys:
       parsing: bool | scope ParsingOptions
       normalized: bool
-      indexAxis: string
+      indexAxis: cartesianAxis
       clip: number | bool | scope ChartArea
       label: string
       order: number
@@ -612,7 +615,7 @@ kinds:
     keys:
       parsing: bool | scope ParsingOptions
       normalized: bool
-      indexAxis: string
+      indexAxis: cartesianAxis
       clip: number | bool | scope ChartArea
       label: string
       order: number
@@ -650,7 +653,7 @@ kinds:
     keys:
       parsing: bool | scope ParsingOptions
       normalized: bool
-      indexAxis: string
+      indexAxis: radialAxis
       clip: number | bool | scope ChartArea
       label: string
       order: number
@@ -701,7 +704,7 @@ kinds:
     keys:
       parsing: bool | scope ParsingOptions
       normalized: bool
-      indexAxis: string
+      indexAxis: radialAxis
       clip: number | bool | scope ChartArea
       label: string
       order: number
@@ -753,7 +756,7 @@ kinds:
     keys:
       parsing: bool | scope ParsingOptions
       normalized: bool
-      indexAxis: string
+      indexAxis: radialAxis
       clip: number | bool | scope ChartArea
       label: string
       order: number
@@ -817,7 +820,7 @@ kinds:
     keys:
       parsing: bool | scope ParsingOptions
       normalized: bool
-      indexAxis: string
+      indexAxis: scaleAxis
       clip: number | bool | scope ChartArea
       label: string
       order: number
@@ -873,7 +876,7 @@ kinds:
       position: layoutPosition
       stack: string
       stackWeight: number
-      axis: string
+      axis: scaleAxis
       offset: bool
       grid: scope GridLineOptions
       border: scope BorderOptions

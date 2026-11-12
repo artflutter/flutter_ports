@@ -71,7 +71,7 @@ final class _OrderLinear extends LinearScale {
 
   @override
   Object? parse(Object? raw, [double? index]) {
-    log.add('$axis$index');
+    log.add('$id$index');
     return super.parse(raw, index);
   }
 }
@@ -431,36 +431,41 @@ void main() {
         typed.DataPoint.bubble(1, 2, 3),
       ];
       for (final item in items) {
-        for (final axis in ['x', 'y', 'r', 'u', 'length']) {
-          final value = parsedValueOf(item, AxisKey.of(axis), axis);
-          expect(value, same(jsGetKey(item, axis)), reason: '$item $axis');
+        for (final (axis, key) in const <(ScaleAxis, String)>[
+          (XAxis(), 'x'),
+          (YAxis(), 'y'),
+          (RAxis(), 'r'),
+        ]) {
+          final value = parsedValueOf(item, axis);
+          expect(value, same(jsGetKey(item, key)), reason: '$item $key');
         }
       }
-      expect(parsedValueOf(items[1], AxisKey.y, 'y'), isNull);
-      expect(parsedValueOf(items[0], AxisKey.r, 'r'), same(undefined));
-      expect(parsedValueOf(items[4], AxisKey.r, 'r'), 3);
+      expect(parsedValueOf(items[1], const YAxis()), isNull);
+      expect(parsedValueOf(items[0], const RAxis()), same(undefined));
+      expect(parsedValueOf(items[4], const RAxis()), 3);
     });
 
     test('another item reads by name', () {
       final map = <String, Object?>{'x': 1.0, 'y': null, 'extra': 'e'};
-      expect(parsedValueOf(map, AxisKey.x, 'x'), 1.0);
-      expect(parsedValueOf(map, AxisKey.y, 'y'), isNull);
-      expect(parsedValueOf(map, AxisKey.r, 'r'), same(undefined));
-      expect(parsedValueOf(map, AxisKey.other, 'extra'), 'e');
-      expect(parsedValueOf(4.0, AxisKey.x, 'x'), same(undefined));
-      expect(parsedValueOf(false, AxisKey.y, 'y'), same(undefined));
+      expect(parsedValueOf(map, const XAxis()), 1.0);
+      expect(parsedValueOf(map, const YAxis()), isNull);
+      expect(parsedValueOf(map, const RAxis()), same(undefined));
+      // An axis of another class has no key (row adapt-axis-objects).
+      expect(parsedValueOf(map, _OtherAxis()), same(undefined));
+      expect(parsedValueOf(4.0, const XAxis()), same(undefined));
+      expect(parsedValueOf(false, const YAxis()), same(undefined));
       expect(
-        () => parsedValueOf(null, AxisKey.x, 'x'),
+        () => parsedValueOf(null, const XAxis()),
         throwsA(isA<TypeError>()),
       );
       expect(
-        () => parsedValueOf(undefined, AxisKey.x, 'x'),
+        () => parsedValueOf(undefined, const XAxis()),
         throwsA(isA<TypeError>()),
       );
-      final parsed = ParsedItem.of(AxisKey.x, 'x', 1.0, AxisKey.y, 'y', null);
-      expect(parsedValueOf(parsed, AxisKey.x, 'x'), 1.0);
-      expect(parsedValueOf(parsed, AxisKey.y, 'y'), isNull);
-      expect(parsedValueOf(parsed, AxisKey.r, 'r'), same(undefined));
+      final parsed = ParsedItem.of(const XAxis(), 1.0, const YAxis(), null);
+      expect(parsedValueOf(parsed, const XAxis()), 1.0);
+      expect(parsedValueOf(parsed, const YAxis()), isNull);
+      expect(parsedValueOf(parsed, const RAxis()), same(undefined));
     });
 
     test('a chart of points and of Maps with extra keys draw the same', () {
@@ -515,7 +520,7 @@ void main() {
 
     /// The stack entry of the axis `y` of [item].
     StackEntry entryOf(Object? item) =>
-        axisStackOf(stacksOf(item), AxisKey.y, 'y')! as StackEntry;
+        axisStackOf(stacksOf(item), const YAxis())! as StackEntry;
 
     final forms = <String, List<Object?> Function(List<typed.DataPoint>)>{
       'a List of points': (points) => points,
@@ -569,7 +574,7 @@ void main() {
 
   group('stacksOf', () {
     test('a parsed item without stacks gives undefined', () {
-      final item = ParsedItem.of(AxisKey.x, 'x', 1.0, AxisKey.y, 'y', 2.0);
+      final item = ParsedItem.of(const XAxis(), 1.0, const YAxis(), 2.0);
       expect(stacksOf(item), same(undefined));
       expect(item['_stacks'], same(undefined));
     });
@@ -973,3 +978,6 @@ extension type JsObjectLike(Object object) {
     }
   }
 }
+
+/// An axis of a class that the core does not know.
+final class _OtherAxis implements ScaleAxis {}

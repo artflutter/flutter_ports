@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -42,7 +43,7 @@ void main() {
         },
         null,
         loop,
-        'x',
+        const XAxis(),
       );
       var prev = loop ? points.last : points.first;
       final ilen = points.length;
@@ -86,7 +87,7 @@ void main() {
       <String, Object?>{'tension': .4, 'capBezierPoints': false},
       null,
       false,
-      'x',
+      const XAxis(),
     );
     expect((points[1] as PointElement)['cp1x'], isA<double>());
     expect((points[1] as PointElement)['cp2y'], isA<double>());

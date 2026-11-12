@@ -9,6 +9,7 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -41,9 +42,11 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/easing_json.dart';
@@ -274,11 +277,15 @@ final class _TestController extends DatasetController {
       final point = points[i.toInt()] as Element;
       final parsed = getParsed(i)!;
       final properties = <String, Object?>{};
-      properties[iAxis] = iScale.getPixelForValue(jsGet(parsed, iAxis), i);
-      properties[vAxis] = vScale.getPixelForValue(
+      // `properties[iAxis]`: the key of the axis class.
+      properties[axisDataKey(iAxis)!] = iScale.getPixelForValue(
+        parsedValueOf(parsed, iAxis),
+        i,
+      );
+      properties[axisDataKey(vAxis)!] = vScale.getPixelForValue(
         jsTruthy(stacked)
             ? applyStack(vScale, parsed, stacked)
-            : jsGet(parsed, vAxis),
+            : parsedValueOf(parsed, vAxis),
         i,
       );
       if (includeOptions) {
@@ -330,7 +337,7 @@ final class _Area implements types.ChartArea {
 final class _FakeScale implements types.Scale {
   _FakeScale(this.chart, AnyObject spec)
     : id = spec['id']! as String,
-      axis = spec['axis']! as String,
+      axis = spec['axis']! as ScaleAxis,
       kind = spec['kind']! as String,
       options =
           _materialize(spec['options'] ?? <String, Object?>{})! as AnyObject,
@@ -346,7 +353,7 @@ final class _FakeScale implements types.Scale {
   final String id;
 
   @override
-  final String axis;
+  final ScaleAxis axis;
 
   final String kind;
 
@@ -417,9 +424,9 @@ final class _FakeScale implements types.Scale {
     final result = <types.ChartMeta>[];
     for (final meta in metas) {
       final axisID = switch (axis) {
-        'x' => meta.xAxisID,
-        'y' => meta.yAxisID,
-        'r' => meta.rAxisID,
+        XAxis() => meta.xAxisID,
+        YAxis() => meta.yAxisID,
+        RAxis() => meta.rAxisID,
         _ => null,
       };
       if (axisID == id && (type == null || type.isEmpty || meta.type == type)) {
@@ -503,7 +510,7 @@ final class _Meta implements types.ChartMeta {
   Object? stack = undefined;
 
   @override
-  String? indexAxis;
+  ScaleAxis? indexAxis;
 
   @override
   Object? stacked;
@@ -687,6 +694,7 @@ String _enc(Object? v) => switch (v) {
   PointStyle() => pointStyleJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
+  ScaleAxis() => axisJson,
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
   final Map<String, Object?> m => _encMap(m),
@@ -1050,14 +1058,9 @@ final class _Run {
       final meta = chart.getDatasetMeta(i) as _Meta;
       final datasetType = jsGet(dataset, 'type');
       final type = (jsTruthy(datasetType) ? datasetType : config.type)!;
-      final indexAxis = jsGet(dataset, 'indexAxis');
       meta
         ..type = type as String
-        ..indexAxis =
-            (jsTruthy(indexAxis)
-                    ? indexAxis
-                    : getIndexAxis(type, chart.options))
-                as String?
+        ..indexAxis = datasetIndexAxis(dataset, type, chart.options)
         ..order = jsOrZero(jsGet(dataset, 'order'))
         ..index = i.toDouble()
         ..label = jsToString(jsGet(dataset, 'label'))
@@ -1143,8 +1146,10 @@ void main() {
         final run = _Run(spec);
         expect(
           run.runAll().map(referenceColorTokens).toList(),
-          withPointStyleMarkers(
-            withCubicModeMarkers(withCurveMarkers(observations)),
+          withAxisMarkers(
+            withPointStyleMarkers(
+              withCubicModeMarkers(withCurveMarkers(observations)),
+            ),
           ).split('\n').map(referenceColorTokens).toList(),
         );
       });
@@ -1176,7 +1181,7 @@ void main() {
         ..['datasetElementType'] = false;
       final meta = run.chart.getDatasetMeta(0) as _Meta
         ..type = 'test'
-        ..indexAxis = 'x';
+        ..indexAxis = const XAxis();
       final controller =
           jsConstruct(subclass, [run.chart, 0.0]) as DatasetController;
       meta.controllerValue = controller;
@@ -1361,10 +1366,10 @@ void main() {
     Map<String, Object?> spec(Object? data) => {
       'name': 'stacked data items',
       'scales': <Object?>[
-        <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
+        <String, Object?>{'id': 'x', 'axis': const XAxis(), 'kind': 'linear'},
         <String, Object?>{
           'id': 'y',
-          'axis': 'y',
+          'axis': const YAxis(),
           'kind': 'linear',
           'options': <String, Object?>{'stacked': true},
         },
@@ -1867,7 +1872,7 @@ void main() {
         ...base,
         'scales': <Object?>[
           ...base['scales']! as List<Object?>,
-          <String, Object?>{'id': '5', 'axis': 'x', 'kind': 'linear'},
+          <String, Object?>{'id': '5', 'axis': const XAxis(), 'kind': 'linear'},
         ],
       });
       final steps = run.spec['steps']! as List<Object?>;

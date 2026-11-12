@@ -6,6 +6,7 @@
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The Node.js version that generated the data.
 const String fillerTargetReferenceNode = 'v24.22.1';
@@ -1352,7 +1353,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -1433,7 +1434,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.start,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -1514,7 +1515,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.end,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -1595,7 +1596,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': <String, Object?>{'value': 3.0},
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -1676,7 +1677,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'y',
+        'axis': YAxis(),
       },
       'property': 'y',
     },
@@ -1757,7 +1758,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -1835,7 +1836,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -1884,7 +1885,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.start,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -1933,7 +1934,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': <String, Object?>{'value': 3.0},
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -2003,7 +2004,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
       'property': 'x',
     },
     result: <String, Object?>{
@@ -2095,7 +2096,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
       'property': 'x',
     },
     result: <String, Object?>{'target': null, 'parts': <Object?>[]},
@@ -2164,7 +2165,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
       'property': 'x',
     },
     result: <String, Object?>{
@@ -2256,7 +2257,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
       'property': 'x',
     },
     result: <String, Object?>{
@@ -2334,7 +2335,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
       'property': 'x',
     },
     result: <String, Object?>{
@@ -2402,7 +2403,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.shape,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -2502,7 +2503,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 2.0,
         'fill': FillBoundary.stack,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -2615,7 +2616,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 2.0,
         'fill': FillBoundary.stack,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -2713,7 +2714,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 1.0,
         'fill': FillBoundary.stack,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -2804,7 +2805,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 1.0,
         'fill': FillBoundary.stack,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -2878,7 +2879,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.stack,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'x',
     },
@@ -2939,7 +2940,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3024,7 +3025,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.start,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3109,7 +3110,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.end,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3194,7 +3195,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.start,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3279,7 +3280,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': <String, Object?>{'value': 3.0},
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3369,7 +3370,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3454,7 +3455,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3530,7 +3531,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': <String, Object?>{'value': 3.0},
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3611,7 +3612,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
       'property': 'angle',
     },
@@ -3683,7 +3684,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -3743,7 +3744,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{'calls': <Object?>[], 'error': 'TypeError'},
@@ -3805,7 +3806,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
     },
     result: <String, Object?>{
       'calls': <Object?>[
@@ -3895,7 +3896,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
     },
     result: <String, Object?>{
       'calls': <Object?>[
@@ -3986,7 +3987,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'y'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': YAxis()},
     },
     result: <String, Object?>{
       'calls': <Object?>[
@@ -4072,7 +4073,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.shape,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -4144,7 +4145,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.shape,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -4225,7 +4226,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -4313,7 +4314,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'y',
+        'axis': YAxis(),
       },
     },
     result: <String, Object?>{
@@ -4392,7 +4393,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -4497,7 +4498,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
           'baseValue': 0.0,
         },
       },
-      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': 'x'},
+      'source': <String, Object?>{'index': 0.0, 'fill': 1.0, 'axis': XAxis()},
     },
     result: <String, Object?>{
       'calls': <Object?>[
@@ -4631,7 +4632,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -4720,7 +4721,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -4801,7 +4802,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 0.0,
         'fill': FillBoundary.origin,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{
@@ -4898,7 +4899,7 @@ const List<FillerTargetReferenceCase> fillerTargetReference = [
       'source': <String, Object?>{
         'index': 1.0,
         'fill': FillBoundary.stack,
-        'axis': 'x',
+        'axis': XAxis(),
       },
     },
     result: <String, Object?>{

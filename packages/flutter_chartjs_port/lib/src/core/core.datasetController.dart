@@ -15,7 +15,7 @@
 ///   give a [ParsedItem] for each item, `item._stacks` is an [ItemStacks],
 ///   the stack objects of `getOrCreateStack` are [StackEntry] objects and
 ///   their `_visualValues` are [IndexValues]. The hot read of a parsed value
-///   is [parsedValueOf] with the [AxisKey] of the scale. A parsed item of
+///   is [parsedValueOf] with the [ScaleAxis] of the scale. A parsed item of
 ///   another class (a data item of `parsing: false`) and a `_stacks` object
 ///   that user code gave read by name. The work objects `{keys, values}` of
 ///   the stacks and `{min, max}` of `getMinMax` are classes.
@@ -43,6 +43,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 // DatasetController has a static `defaults`. Inside the class, upstream
@@ -81,7 +82,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
 import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, IndexValues, ItemStacks, ParsedItem, StackEntry;
+    show IndexValues, ItemStacks, ParsedItem, StackEntry;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
     show ChartAnimationItems, transitionIn;
 import 'package:flutter_chartjs_port/src/options/props.dart'
@@ -93,6 +94,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         GenericDatasetOptionsScope,
         PointOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -301,8 +303,9 @@ Object _plus(Object? value, num other) {
 List<Object?> _convertObjectDataToArray(Object data, types.ChartMeta meta) {
   final iScale = meta.iScale!;
   final vScale = meta.vScale!;
-  final iAxisKey = iScale.axis == 'x' ? 'x' : 'y';
-  final vAxisKey = vScale.axis == 'x' ? 'x' : 'y';
+  // `iScale.axis === 'x' ? 'x' : 'y'`: the keys of the plain data objects.
+  final iAxisKey = iScale.axis is XAxis ? 'x' : 'y';
+  final vAxisKey = vScale.axis is XAxis ? 'x' : 'y';
   final map = data is AnyObject ? data : null;
   final face = map == null ? data as TypedDataItem : null;
   final keys = map != null ? jsObjectKeys(map) : face!.jsKeys();
@@ -480,14 +483,17 @@ Object? visualValuesOf(Object? stack) => stack is StackEntry
 /// (core.datasetController.js:218, :599, :610; controller.bar.js:405,
 /// :615). An [ItemStacks] reads typed; a value of another class that user
 /// code wrote reads through the face. Another object is a `_stacks` object
-/// that user code gave a data item of `parsing: false`: it reads by name,
-/// and Dart `null` and [undefined] throw a [TypeError].
+/// that user code gave a data item of `parsing: false`: it reads by the key
+/// of the axis ([axisDataKey]), and Dart `null` and [undefined] throw a
+/// [TypeError]. An axis of another class has no key: [undefined].
 @internal
-Object? axisStackOf(Object? itemStacks, AxisKey key, String axis) {
+Object? axisStackOf(Object? itemStacks, ScaleAxis axis) {
+  final key = axisDataKey(axis);
   if (itemStacks is ItemStacks) {
-    return itemStacks.entryOf(key, axis) ?? itemStacks.jsRead(axis);
+    return itemStacks.entryOf(axis) ??
+        (key == null ? undefined : itemStacks.jsRead(key));
   }
-  return jsGetKey(itemStacks, axis);
+  return key == null ? undefined : jsGetKey(itemStacks, key);
 }
 
 /// `item._stacks || (item._stacks = {})` (core.datasetController.js:165).
@@ -551,23 +557,23 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
   final datasetIndex = meta.index;
   final iAxis = iScale.axis;
   final vAxis = vScale.axis;
-  final iKey = AxisKey.of(iAxis);
-  final vKey = AxisKey.of(vAxis);
   final key = _getStackKey(iScale, vScale, meta);
   final ilen = parsed.length;
 
   for (var i = 0; i < ilen; ++i) {
     final item = parsed[i];
-    final index = parsedValueOf(item, iKey, iAxis);
-    final value = parsedValueOf(item, vKey, vAxis);
+    final index = parsedValueOf(item, iAxis);
+    final value = parsedValueOf(item, vAxis);
     final itemStacks = _itemStacksOf(item);
     final stack = _getOrCreateStack(stacks, key, index);
     if (itemStacks is ItemStacks) {
-      itemStacks.setEntry(vKey, vAxis, stack);
+      itemStacks.setEntry(vAxis, stack);
     } else {
       // The `_stacks` object of a user data item: a Map, else the cast
-      // throws a TypeError, as the JS write into a primitive does.
-      (itemStacks as AnyObject)[vAxis] = stack;
+      // throws a TypeError, as the JS write into a primitive does. The key
+      // is the key of the axis ([axisDataKey]).
+      final vKey = axisDataKey(vAxis);
+      if (vKey != null) (itemStacks as AnyObject)[vKey] = stack;
     }
     _setIndexValue(stack.datasetValues, datasetIndex, value);
 
@@ -597,12 +603,13 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
 }
 
 /// core.datasetController.js:177 `getFirstScaleId`: the first key of
-/// `chart.scales` whose scale has [axis], or Dart `null` for `undefined`.
-String? _getFirstScaleId(types.Chart chart, String axis) {
+/// `chart.scales` whose scale has [axis] ([sameAxis]), or Dart `null` for
+/// `undefined`.
+String? _getFirstScaleId(types.Chart chart, ScaleAxis axis) {
   final scales = chart.scales;
   return jsObjectKeys(
     scales,
-  ).where((key) => scales[key]!.axis == axis).firstOrNull;
+  ).where((key) => sameAxis(scales[key]!.axis, axis)).firstOrNull;
 }
 
 /// core.datasetController.js:182 `createDatasetContext`.
@@ -638,11 +645,10 @@ void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
   // dataset changed location
   final datasetIndex = meta.controller!.index;
   final axis = meta.vScale?.axis;
-  if (axis == null || axis.isEmpty) {
+  if (axis == null) {
     return;
   }
 
-  final key = AxisKey.of(axis);
   final parsedItems = items ?? meta.parsed;
   // DIVERGES(chartjs): adapt-clear-stacks-guard, a typed data item holds
   // stacks only through [_objectStacks]: with no entry, the walk of a native
@@ -657,7 +663,7 @@ void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
     if (!jsTruthy(stacks)) {
       continue;
     }
-    final axisStack = axisStackOf(stacks, key, axis);
+    final axisStack = axisStackOf(stacks, axis);
     if (identical(axisStack, undefined) ||
         identical(_stackValueOf(axisStack, datasetIndex), undefined)) {
       continue;
@@ -824,43 +830,43 @@ String _indexKey(double index) {
 /// The JS read `item[axis]` of a parsed item: the hot read of Chart.js ADR
 /// 0054 §8.
 ///
-/// A [ParsedItem] reads its typed field ([ParsedItem.valueOf]) by the key
-/// [key] of the axis [axis] (`AxisKey.of(scale.axis)`, once for each loop).
-/// A parsed item is any value (index.d.ts:503): a [TypedDataItem] of
-/// `parsing: false` gives its typed field for the axis `x` or `y`, as
-/// [dataItemValue] does. Another data item, and another axis, read by name
-/// ([jsGetKey]), which gives [undefined] for a number or a boolean and throws
-/// a [TypeError] for `null` and [undefined].
+/// A [ParsedItem] reads the typed field of the axis [axis]
+/// ([ParsedItem.valueOf]). A parsed item is any value (index.d.ts:503): a
+/// [TypedDataItem] of `parsing: false` gives its typed field for [XAxis] or
+/// [YAxis], as [dataItemValue] does. Another data item, and the axis
+/// [RAxis], read by the key of the axis ([axisDataKey], [jsGetKey]), which
+/// gives [undefined] for a number or a boolean and throws a [TypeError] for
+/// `null` and [undefined]. An axis of another class has no key: [undefined]
+/// (row `adapt-axis-objects`).
 @internal
 @pragma('vm:prefer-inline')
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
-Object? parsedValueOf(Object? item, AxisKey key, String axis) {
-  if (item is ParsedItem) return item.valueOf(key, axis);
-  if (item is TypedDataItem) {
-    if (key == AxisKey.x) return item.x;
-    if (key == AxisKey.y) return item.y;
-  }
-  return jsGetKey(item, axis);
+Object? parsedValueOf(Object? item, ScaleAxis axis) {
+  if (item is ParsedItem) return item.valueOf(axis);
+  return switch (axis) {
+    XAxis() => item is TypedDataItem ? item.x : jsGetKey(item, 'x'),
+    YAxis() => item is TypedDataItem ? item.y : jsGetKey(item, 'y'),
+    RAxis() => jsGetKey(item, 'r'),
+    _ => undefined,
+  };
 }
 
 /// `properties[axis] = value` of the properties of a point (for example
 /// controller.line.js:100-101, controller.bubble.js:127-128): the typed
-/// setter for the axis `x` or `y`, else the write by name of the face.
+/// setter for [XAxis] or [YAxis], else the write by the key of the axis
+/// ([axisDataKey]) of the face. An axis of another class has no key: no
+/// write.
 @internal
-void setPointAxis(
-  PointProperties properties,
-  AxisKey key,
-  String axis,
-  double value,
-) {
-  switch (key) {
-    case AxisKey.x:
+void setPointAxis(PointProperties properties, ScaleAxis axis, double value) {
+  switch (axis) {
+    case XAxis():
       properties.x = value;
-    case AxisKey.y:
+    case YAxis():
       properties.y = value;
-    case AxisKey.r || AxisKey.other:
-      properties.jsWrite(axis, value);
+    default:
+      final key = axisDataKey(axis);
+      if (key != null) properties.jsWrite(key, value);
   }
 }
 
@@ -1307,29 +1313,30 @@ class DatasetController
     final meta = cachedMeta;
     final dataset = getDataset();
 
-    Object? chooseId(String? axis, Object? x, Object? y, Object? r) =>
-        axis == 'x'
-        ? x
-        : axis == 'r'
-        ? r
-        : y;
+    // `axis === 'x' ? x : axis === 'r' ? r : y`.
+    Object? chooseId(ScaleAxis? axis, Object? x, Object? y, Object? r) =>
+        switch (axis) {
+          XAxis() => x,
+          RAxis() => r,
+          _ => y,
+        };
 
     final xid = meta.xAxisID = _axisId(
       valueOrDefault(
         jsGet(dataset, 'xAxisID'),
-        _getFirstScaleId(chart, 'x') ?? undefined,
+        _getFirstScaleId(chart, const XAxis()) ?? undefined,
       ),
     );
     final yid = meta.yAxisID = _axisId(
       valueOrDefault(
         jsGet(dataset, 'yAxisID'),
-        _getFirstScaleId(chart, 'y') ?? undefined,
+        _getFirstScaleId(chart, const YAxis()) ?? undefined,
       ),
     );
     final rid = meta.rAxisID = _axisId(
       valueOrDefault(
         jsGet(dataset, 'rAxisID'),
-        _getFirstScaleId(chart, 'r') ?? undefined,
+        _getFirstScaleId(chart, const RAxis()) ?? undefined,
       ),
     );
     final indexAxis = meta.indexAxis;
@@ -1549,7 +1556,6 @@ class DatasetController
     final iScale = meta.iScale!;
     final stacked = meta.stacked;
     final iAxis = iScale.axis;
-    final iKey = AxisKey.of(iAxis);
 
     var sorted = (start == 0 && count == data.length) || meta.sorted;
     // `start > 0 && meta._parsed[start - 1]`.
@@ -1574,11 +1580,11 @@ class DatasetController
       }
 
       bool isNotInOrderComparedToPrev() =>
-          parsedValueOf(cur, iKey, iAxis) == null ||
+          parsedValueOf(cur, iAxis) == null ||
           (jsTruthy(prev) &&
               jsLessThan(
-                parsedValueOf(cur, iKey, iAxis),
-                parsedValueOf(prev, iKey, iAxis),
+                parsedValueOf(cur, iAxis),
+                parsedValueOf(prev, iAxis),
               ));
       final parsedItems = meta.parsed;
       final offset = start.toInt();
@@ -1589,7 +1595,7 @@ class DatasetController
         if (sorted) {
           // The comparison runs the `toString` of a value that is not a
           // number. That user code sees the list of upstream.
-          if (presized && parsedValueOf(cur, iKey, iAxis) is! num?) {
+          if (presized && parsedValueOf(cur, iAxis) is! num?) {
             parsedItems.length = i + offset + 1;
             presized = false;
           }
@@ -1633,8 +1639,6 @@ class DatasetController
     final vScale = meta.vScale!;
     final iAxis = iScale.axis;
     final vAxis = vScale.axis;
-    final iKey = AxisKey.of(iAxis);
-    final vKey = AxisKey.of(vAxis);
     final labels = iScale.getLabels();
     final singleScale = identical(iScale, vScale);
     // DIVERGES(chartjs): adapt-radial-numeric-parse, one scale on both axes.
@@ -1656,11 +1660,9 @@ class DatasetController
     return List<ParsedItem>.generate(_itemCount(count), (i) {
       final index = i + start;
       return ParsedItem.of(
-        iKey,
         iAxis,
         // `singleScale || iScale.parse(...)`.
         singleScale ? singleScale : iScale.parse(_itemAt(labels, index), index),
-        vKey,
         vAxis,
         vScale.parse(_itemAt(data, index), index),
       );
@@ -1695,11 +1697,9 @@ class DatasetController
       final index = i + start;
       final item = _itemAt(data, index);
       return ParsedItem.of(
-        AxisKey.x,
-        'x',
+        const XAxis(),
         xScale.parse(jsGetIndex(item, 0), index),
-        AxisKey.y,
-        'y',
+        const YAxis(),
         yScale.parse(jsGetIndex(item, 1), index),
       );
     });
@@ -1747,11 +1747,9 @@ class DatasetController
       final index = i + start;
       final item = _itemAt(data, index);
       return ParsedItem.of(
-        AxisKey.x,
-        'x',
+        const XAxis(),
         xScale.parse(dataItemValue(item, xAxisKey! as String), index),
-        AxisKey.y,
-        'y',
+        const YAxis(),
         yScale.parse(dataItemValue(item, yAxisKey! as String), index),
       );
     });
@@ -1790,11 +1788,10 @@ class DatasetController
     final chart = this.chart;
     final meta = cachedMeta;
     final axis = scale.axis;
-    final key = AxisKey.of(axis);
-    final value = parsedValueOf(parsed, key, axis);
+    final value = parsedValueOf(parsed, axis);
     final stack = DatasetStack(
       _getSortedDatasetIndices(chart, true),
-      visualValuesOf(axisStackOf(stacksOf(parsed), key, axis)),
+      visualValuesOf(axisStackOf(stacksOf(parsed), axis)),
     );
     return _applyStack(stack, value, meta.index, mode: mode);
   }
@@ -1811,13 +1808,10 @@ class DatasetController
     DatasetStack? stack,
   ) {
     final axis = scale.axis;
-    final key = AxisKey.of(axis);
-    final parsedValue = parsedValueOf(parsed, key, axis);
+    final parsedValue = parsedValueOf(parsed, axis);
     // `parsedValue === null ? NaN : parsedValue`.
     Object? value = parsedValue ?? double.nan;
-    final values = stack == null
-        ? null
-        : axisStackOf(stacksOf(parsed), key, axis);
+    final values = stack == null ? null : axisStackOf(stacksOf(parsed), axis);
     if (stack != null && jsTruthy(values)) {
       stack.values = values;
       value = _applyStack(stack, parsedValue, cachedMeta.index);
@@ -1847,16 +1841,14 @@ class DatasetController
     final range = _Range(double.infinity, double.negativeInfinity);
     final (min: otherMin, max: otherMax) = _getUserBounds(otherScale);
     final axis = scale.axis;
-    final key = AxisKey.of(axis);
     final otherAxis = otherScale.axis;
-    final otherKey = AxisKey.of(otherAxis);
     var i = 0;
     Object? parsed;
 
     bool skip() {
       parsed = parsedItems[i];
-      final otherValue = jsToNumber(parsedValueOf(parsed, otherKey, otherAxis));
-      return !isFinite(parsedValueOf(parsed, key, axis)) ||
+      final otherValue = jsToNumber(parsedValueOf(parsed, otherAxis));
+      return !isFinite(parsedValueOf(parsed, axis)) ||
           otherMin > otherValue ||
           otherMax < otherValue;
     }
@@ -1892,11 +1884,10 @@ class DatasetController
     final parsed = cachedMeta.parsed;
     final values = <double>[];
     final axis = scale.axis;
-    final key = AxisKey.of(axis);
     Object? value;
 
     for (var i = 0, ilen = parsed.length; i < ilen; ++i) {
-      value = parsedValueOf(parsed[i], key, axis);
+      value = parsedValueOf(parsed[i], axis);
       if (isFinite(value)) {
         values.add((value! as num).toDouble());
       }
@@ -1944,11 +1935,9 @@ class DatasetController
     );
   }
 
-  /// `parsed[scale.axis]`: [parsedValueOf] with the key of the axis of
-  /// [scale].
+  /// `parsed[scale.axis]`: [parsedValueOf] with the axis of [scale].
   static Object? _axisValueOf(Object? parsed, types.Scale scale) {
-    final axis = scale.axis;
-    return parsedValueOf(parsed, AxisKey.of(axis), axis);
+    return parsedValueOf(parsed, scale.axis);
   }
 
   /// core.datasetController.js:701 `_update(mode)`. core.controller.js:677

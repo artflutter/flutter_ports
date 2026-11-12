@@ -4,6 +4,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:test/test.dart';
 
@@ -114,7 +115,7 @@ void main() {
         {'tension': 0.4, 'capBezierPoints': true},
         _area,
         false,
-        'x',
+        const XAxis(),
       );
       expect(
         points,
@@ -140,7 +141,13 @@ void main() {
 
     test('splines a loop and does not cap without capBezierPoints', () {
       final points = _points();
-      updateBezierControlPoints(points, {'tension': 0.4}, _area, true, 'x');
+      updateBezierControlPoints(
+        points,
+        {'tension': 0.4},
+        _area,
+        true,
+        const XAxis(),
+      );
       expect(
         points,
         _hasControlPoints([
@@ -184,7 +191,7 @@ void main() {
         <String, Object?>{'tension': undefined},
       ]) {
         final points = _points();
-        updateBezierControlPoints(points, options, _area, false, 'x');
+        updateBezierControlPoints(points, options, _area, false, const XAxis());
         expect(
           points,
           _hasControlPoints([
@@ -202,7 +209,7 @@ void main() {
         {'tension': null},
         _area,
         false,
-        'x',
+        const XAxis(),
       );
       expect(
         points,
@@ -230,7 +237,7 @@ void main() {
         ),
         _area,
         false,
-        'x',
+        const XAxis(),
       );
       expect(
         points,
@@ -261,7 +268,7 @@ void main() {
         },
         const _Area(0, 0, 28, 40),
         false,
-        'y',
+        const YAxis(),
       );
       expect(
         points,
@@ -276,14 +283,14 @@ void main() {
     });
 
     test('reads the radar index axis r as undefined, monotone', () {
-      // plugin.filler passes the indexAxis 'r' of a radar chart.
+      // plugin.filler passes the index axis RAxis of a radar chart.
       final points = _points();
       updateBezierControlPoints(
         points,
         {'cubicInterpolationMode': const MonotoneCubicInterpolationMode()},
         _area,
         false,
-        'r',
+        const RAxis(),
       );
       expect(
         points,
@@ -305,7 +312,7 @@ void main() {
         },
         _area,
         false,
-        'r',
+        const RAxis(),
       );
       expect(
         capped,
@@ -331,7 +338,7 @@ void main() {
         {'tension': 0.5},
         _area,
         false,
-        'x',
+        const XAxis(),
       );
       expect(
         points,
@@ -351,7 +358,7 @@ void main() {
         {'tension': 0.4, 'capBezierPoints': true},
         _area,
         true,
-        'x',
+        const XAxis(),
       );
       expect(empty, isEmpty);
 
@@ -361,7 +368,7 @@ void main() {
         {'spanGaps': true, 'capBezierPoints': true},
         _area,
         true,
-        'x',
+        const XAxis(),
       );
       expect(skipped, _hasControlPoints([(null, null, null, null)]));
     });
@@ -413,7 +420,7 @@ void main() {
         },
         _area,
         false,
-        'x',
+        const XAxis(),
       );
       expect([points[2].cp1x, points[2].cp1y], everyElement(isNaN));
       expect(points[2].cp2x, 23.333333333333332);
@@ -436,7 +443,7 @@ void main() {
           {'tension': 0.4, 'capBezierPoints': true},
           null,
           false,
-          'x',
+          const XAxis(),
         ),
         throwsA(isA<TypeError>()),
       );
@@ -449,7 +456,7 @@ void main() {
         {'tension': 0.4, 'capBezierPoints': true},
         null,
         false,
-        'x',
+        const XAxis(),
       );
       expect(points, _hasControlPoints([(10, 20, 10, 20)]));
     });
@@ -461,7 +468,7 @@ void main() {
         {'tension': 0.4},
         _area,
         false,
-        'x',
+        const XAxis(),
       );
       final points = _points();
       updateBezierControlPoints(
@@ -469,7 +476,7 @@ void main() {
         {'tension': 0.4},
         null,
         false,
-        'x',
+        const XAxis(),
       );
       for (var i = 0; i < points.length; i++) {
         expect(

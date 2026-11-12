@@ -22,7 +22,9 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
+import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
@@ -71,6 +73,7 @@ final class Observations {
       _ when jsIsFunction(value) => '"<fn>"',
       final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
       RadiusLength() || GraceLength() => lengthJson,
+      ScaleAxis() => axisJson,
       InteractionMode() => modeJson,
       final List<Object?> list => '[${list.map(json).join(',')}]',
       final Object map

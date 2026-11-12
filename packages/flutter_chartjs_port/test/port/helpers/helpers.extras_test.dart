@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -27,7 +28,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// `{min, max}`), passed as a [Scale]. The other members are absent.
 final class _Scale implements Scale {
   _Scale({
-    this.axis = 'x',
+    this.axis = const XAxis(),
     this.min = 0,
     this.max = 0,
     this.bounds = (
@@ -42,7 +43,7 @@ final class _Scale implements Scale {
   static double _times10(double value) => value * 10;
 
   @override
-  final String axis;
+  final ScaleAxis axis;
 
   @override
   double min;
@@ -185,7 +186,7 @@ const List<double> _xs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   final meta = _Meta(
     sorted: sorted,
     iScale: _Scale(bounds: bounds, pixel: pixel),
-    vScale: _Scale(axis: 'y'),
+    vScale: _Scale(axis: const YAxis()),
     parsed: [
       for (var i = 0; i < xs.length; i++) {'x': xs[i], 'y': ys[i]},
     ],

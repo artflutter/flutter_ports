@@ -34,7 +34,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show lookupByKey;
+    show lookupByAxis;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -57,6 +57,7 @@ import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show DecimationOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
@@ -491,7 +492,7 @@ List<Object?> _datasets(types.Chart chart) =>
 /// points)`.
 ///
 /// `start` and `count` are JS numbers: `double` values. The `lo` and `hi`
-/// of [lookupByKey] are `int` values, which the port converts. [points] is
+/// of [lookupByAxis] are `int` values, which the port converts. [points] is
 /// the raw data of the dataset. Data that is not an array throws a
 /// [TypeError] here (differences.md row `js-semantics-decimation-data`).
 ({double start, double count}) _getStartAndCountOfVisiblePointsSimplified(
@@ -509,7 +510,7 @@ List<Object?> _datasets(types.Chart chart) =>
 
   if (minDefined) {
     start = limitValue(
-      lookupByKey(table, iScale.axis, min).lo.toDouble(),
+      lookupByAxis(table, iScale.axis, min).lo.toDouble(),
       0,
       pointCount - 1,
     );
@@ -517,7 +518,7 @@ List<Object?> _datasets(types.Chart chart) =>
   if (maxDefined) {
     count =
         limitValue(
-          lookupByKey(table, iScale.axis, max).hi + 1.0,
+          lookupByAxis(table, iScale.axis, max).hi + 1.0,
           start,
           pointCount,
         ) -
@@ -566,8 +567,9 @@ void _beforeElementsUpdate(
     final meta = chart.getDatasetMeta(datasetIndex.toDouble());
     final data = jsTruthy(dataOwn) ? dataOwn : target.read(OptionKey.data);
 
-    if (resolve([indexAxis, optionOf(chart.options, OptionKey.indexAxis)]) ==
-        'y') {
+    // `resolve([indexAxis, chart.options.indexAxis]) === 'y'`.
+    if (resolve([indexAxis, optionOf(chart.options, OptionKey.indexAxis)])
+        is YAxis) {
       // Decimation is only supported for lines that have an X indexAxis
       continue;
     }

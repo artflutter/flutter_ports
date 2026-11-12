@@ -722,7 +722,7 @@ void main() {
     (type, _) => _config(
       type,
       {'backgroundColor': red},
-      options: {'indexAxis': 'y'},
+      options: {'indexAxis': const YAxis()},
     ),
     types: const ['bubble'],
   );
@@ -1039,7 +1039,7 @@ void main() {
       expect(results[0], results[1]);
     });
 
-    test('a bubble axis with another name goes by name', () {
+    test('a bubble axis of another class takes the ordinary path', () {
       final results = <Object?>[];
       for (final kind in ['bubble', _refType('bubble')]) {
         final cfg = _config(kind, {'backgroundColor': red});
@@ -1047,13 +1047,13 @@ void main() {
         final meta = chart.getDatasetMeta(0);
         final writes = <String>[];
         meta.data[2] = _UserPoint(writes);
-        // A scale of a user axis name: the ordinary write by name.
-        final scale = (meta.vScale! as Scale)..axis = 'z';
+        // A scale of an axis class that the core does not know: the ordinary
+        // path, which writes no value for that axis (row adapt-axis-objects).
+        final scale = (meta.vScale! as Scale)..axis = _OtherAxis();
         meta.controller!.updateElements(meta.data, 0, 8, 'none');
-        expect(writes, containsAll(<String>['x', 'z', 'skip', 'options']));
-        expect((meta.data[1] as Element)['z'], isA<double>());
-        scale.axis = 'y';
-        results.add([writes, (meta.data[1] as Element)['z']]);
+        expect(writes, <String>['x', 'skip', 'options']);
+        scale.axis = const YAxis();
+        results.add(writes);
       }
       expect(results[0], results[1]);
     });
@@ -1937,3 +1937,6 @@ void main() {
     });
   });
 }
+
+/// An axis of a class that the core does not know.
+final class _OtherAxis implements ScaleAxis {}

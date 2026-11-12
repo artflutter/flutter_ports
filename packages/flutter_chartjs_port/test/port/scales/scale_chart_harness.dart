@@ -64,6 +64,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -74,6 +75,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/upstream.dart' show chartJsVersion;
 import 'package:flutter_test/flutter_test.dart';
@@ -115,9 +117,16 @@ final class ScaleTestController extends DatasetController {
     for (var i = start; i < start + count; ++i) {
       final point = points[i.toInt()] as Element;
       final parsed = getParsed(i);
+      // `properties[iAxis]`: the key of the axis class.
       final properties = <String, Object?>{
-        iAxis: iScale.getPixelForValue(jsGet(parsed, iAxis), i),
-        vAxis: vScale.getPixelForValue(jsGet(parsed, vAxis), i),
+        axisDataKey(iAxis)!: iScale.getPixelForValue(
+          parsedValueOf(parsed, iAxis),
+          i,
+        ),
+        axisDataKey(vAxis)!: vScale.getPixelForValue(
+          parsedValueOf(parsed, vAxis),
+          i,
+        ),
       };
       if (includeOptions) {
         properties['options'] =
@@ -242,7 +251,7 @@ JsClass radialTestController(
     'defaults': <String, Object?>{
       'datasetElementType': false,
       'dataElementType': 'point',
-      'indexAxis': 'r',
+      'indexAxis': const RAxis(),
     },
     'overrides': overrides,
   },

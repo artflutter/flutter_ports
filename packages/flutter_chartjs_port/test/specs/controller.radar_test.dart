@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -618,7 +619,7 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'test': <String, Object?>{'axis': 'r'},
+            'test': <String, Object?>{'axis': const RAxis()},
           },
         },
       });

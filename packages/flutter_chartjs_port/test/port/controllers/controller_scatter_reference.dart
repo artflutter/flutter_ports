@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -94,7 +95,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': -10.0,
             'max': 10.0,
@@ -183,7 +184,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
@@ -265,7 +266,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -448,7 +449,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -721,7 +722,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
@@ -810,7 +811,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
@@ -892,7 +893,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1081,7 +1082,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1445,7 +1446,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
@@ -1534,7 +1535,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
@@ -1616,7 +1617,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -1805,7 +1806,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2164,7 +2165,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
@@ -2253,7 +2254,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
@@ -2335,7 +2336,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2524,7 +2525,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -2887,7 +2888,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
@@ -2976,7 +2977,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
@@ -3058,7 +3059,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3286,7 +3287,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -3656,7 +3657,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
@@ -3745,7 +3746,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
@@ -3827,7 +3828,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4055,7 +4056,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4461,7 +4462,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
@@ -4550,7 +4551,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
@@ -4632,7 +4633,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -4863,7 +4864,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5265,7 +5266,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
@@ -5354,7 +5355,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
@@ -5436,7 +5437,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -5664,7 +5665,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -6841,7 +6842,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
@@ -6884,7 +6885,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -6.0,
             'max': 8.0,
@@ -6920,7 +6921,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7236,7 +7237,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7557,7 +7558,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -7761,7 +7762,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -8001,7 +8002,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 10.0,
@@ -8044,7 +8045,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -6.0,
                 'max': 8.0,
@@ -8080,7 +8081,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8414,7 +8415,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8753,7 +8754,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -8963,7 +8964,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -9290,7 +9291,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 12.0,
@@ -9325,7 +9326,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -6.0,
                 'max': 8.0,
@@ -9361,7 +9362,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -9734,7 +9735,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -10073,7 +10074,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -10283,7 +10284,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -10610,7 +10611,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 12.0,
@@ -10645,7 +10646,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': -6.0,
                 'max': 8.0,
@@ -10681,7 +10682,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -11054,7 +11055,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -11393,7 +11394,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -11567,7 +11568,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -12701,7 +12702,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 2.0,
             'max': 7.0,
@@ -12744,7 +12745,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 2.0,
             'max': 4.0,
@@ -12786,7 +12787,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13112,7 +13113,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -13531,7 +13532,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 2.0,
                 'max': 7.0,
@@ -13574,7 +13575,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 2.0,
                 'max': 4.0,
@@ -13616,7 +13617,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -13942,7 +13943,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -14441,7 +14442,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 2.0,
                 'max': 7.0,
@@ -14484,7 +14485,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 2.0,
                 'max': 4.0,
@@ -14526,7 +14527,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -14852,7 +14853,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -16200,7 +16201,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
@@ -16243,7 +16244,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
@@ -16277,7 +16278,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -16493,7 +16494,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17529,7 +17530,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1000.0,
@@ -17572,7 +17573,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -4.0,
             'max': 16.0,
@@ -17614,7 +17615,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -17809,7 +17810,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18802,7 +18803,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
@@ -18845,7 +18846,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
@@ -18887,7 +18888,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -18998,7 +18999,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19112,7 +19113,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -19410,7 +19411,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 5.0,
@@ -19453,7 +19454,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 5.0,
@@ -19495,7 +19496,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -19606,7 +19607,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -19720,7 +19721,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -20052,7 +20053,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 4.0,
@@ -20087,7 +20088,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -20121,7 +20122,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -20232,7 +20233,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -20343,7 +20344,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -21445,7 +21446,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'logarithmic',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 10.0,
             'max': 100.0,
@@ -21516,7 +21517,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -21558,7 +21559,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -22777,7 +22778,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'logarithmic',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 10.0,
             'max': 100.0,
@@ -22848,7 +22849,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
@@ -22890,7 +22891,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24107,7 +24108,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 4.5,
             'max': 9.5,
@@ -24150,7 +24151,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -24184,7 +24185,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -24647,7 +24648,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
@@ -24690,7 +24691,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -24724,7 +24725,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -25274,7 +25275,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
@@ -25317,7 +25318,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -25351,7 +25352,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -25938,7 +25939,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
@@ -25981,7 +25982,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
@@ -26015,7 +26016,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -27285,7 +27286,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
@@ -27324,7 +27325,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -27366,7 +27367,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -28596,7 +28597,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
@@ -28631,7 +28632,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
@@ -28665,7 +28666,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29530,7 +29531,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': -3.0,
             'max': 6.0,
@@ -29567,7 +29568,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
@@ -29637,7 +29638,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -29793,7 +29794,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30832,7 +30833,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
@@ -30875,7 +30876,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
@@ -30917,7 +30918,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -30970,7 +30971,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -31881,7 +31882,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
@@ -31924,7 +31925,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -31966,7 +31967,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -33134,7 +33135,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
@@ -33177,7 +33178,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
@@ -33219,7 +33220,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34388,7 +34389,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'linear',
-            'axis': 'x',
+            'axis': XAxis(),
             'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
@@ -34431,7 +34432,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'axis': 'y',
+            'axis': YAxis(),
             'position': ChartPosition.left,
             'min': 0.0,
             'max': 10.0,
@@ -34473,7 +34474,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34581,7 +34582,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           },
           <String, Object?>{
             'type': 'scatter',
-            'indexAxis': 'x',
+            'indexAxis': XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -34806,7 +34807,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 10.0,
@@ -34849,7 +34850,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 10.0,
@@ -34891,7 +34892,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -35002,7 +35003,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -35310,7 +35311,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
-                'axis': 'x',
+                'axis': XAxis(),
                 'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 10.0,
@@ -35353,7 +35354,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'axis': 'y',
+                'axis': YAxis(),
                 'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 10.0,
@@ -35395,7 +35396,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,
@@ -35506,7 +35507,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               },
               <String, Object?>{
                 'type': 'scatter',
-                'indexAxis': 'x',
+                'indexAxis': XAxis(),
                 'xAxisID': 'x',
                 'yAxisID': 'y',
                 'rAxisID': undefined,

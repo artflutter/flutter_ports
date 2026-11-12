@@ -474,6 +474,18 @@ function dart(v) {
   throw new Error(`No Dart literal for ${v}`);
 }
 
+/**
+ * The Dart literal of the arguments of a step. The index axis of
+ * `updateControlPoints` (the fifth argument) is the axis class of the port
+ * (row adapt-axis-objects).
+ */
+function dartArgs(action, args) {
+  if (action !== 'updateControlPoints' || args.length < 5) return dart(args);
+  const axis = args[4];
+  if (!['x', 'y', 'r'].includes(axis)) throw new Error(`No axis class for ${String(axis)}`);
+  return `<Object?>[${args.slice(0, 4).map(dart).join(', ')}, ${axis.toUpperCase()}Axis()]`;
+}
+
 /** The Dart literal of a list of [name, args] calls. */
 function dartCalls(calls) {
   const items = calls.map(
@@ -659,7 +671,7 @@ const body = cases
       .map(
         (s) => `      (
         action: ${str(s.action)},
-        args: ${dart(s.args)},
+        args: ${dartArgs(s.action, s.args)},
         calls: ${dartCalls(s.calls)},
         result: ${dartResult(s.action, s.result)},
         path: ${s.path ?? 'null'},
@@ -691,6 +703,7 @@ const out = `// Original code, not ported from Chart.js: LineElement reference d
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 
 /// The Node.js version that generated [lineReference].

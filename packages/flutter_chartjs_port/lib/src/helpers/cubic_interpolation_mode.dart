@@ -15,6 +15,7 @@
 /// This library is a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
 
 /// The mode of the control points of a curved line: the option
@@ -62,12 +63,12 @@ abstract class CubicInterpolationMode {
   /// `spanGaps`, the skipped points are out. [tension] is the `ToNumber` of
   /// the option `tension`. [loop] is true for a closed line, for example
   /// the line of a radar chart. [indexAxis] is the index axis of the
-  /// dataset: `'x'`, `'y'`, or `'r'` for the fill of a radar chart.
+  /// dataset: [XAxis], [YAxis], or [RAxis] for the fill of a radar chart.
   void updateControlPoints(
     List<SplinePoint> points, {
     required double tension,
     required bool loop,
-    required String indexAxis,
+    required ScaleAxis indexAxis,
   });
 
   /// The mode of [value], the value of the option, or Dart `null` for a

@@ -50,6 +50,7 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -129,9 +130,9 @@ abstract interface class ChartMeta {
   /// index.d.ts:482 `indexAxis: 'x' | 'y'`. `buildOrUpdateControllers`
   /// writes it before it constructs the controller
   /// (core.controller.js:432), and `linkScales` reads it
-  /// (core.datasetController.js:309). Dart `null` stands for JS
-  /// `undefined`.
-  String? get indexAxis;
+  /// (core.datasetController.js:309). A radial controller has [RAxis]. Dart
+  /// `null` stands for JS `undefined` (row `adapt-axis-objects`).
+  ScaleAxis? get indexAxis;
 
   /// index.d.ts:484 `data: TElement[]`, the data elements of the dataset.
   ///
@@ -680,9 +681,10 @@ abstract interface class Scale implements Element, LayoutItem {
   /// index.d.ts:1307 `readonly chart: Chart`.
   Chart get chart;
 
-  /// index.d.ts:1317 `axis: string`.
+  /// index.d.ts:1317 `axis: string`: the axis class (row
+  /// `adapt-axis-objects`).
   @override
-  String get axis;
+  ScaleAxis get axis;
 
   /// index.d.ts:1319 `min: number`.
   double get min;
@@ -1049,7 +1051,8 @@ abstract interface class VisualElementRange implements VisualElement {
   /// The declared type is `number`, but `PointElement.getRange` gives the JS
   /// `+` of two options (element.point.ts:105): a `String` when an option is
   /// a string. Thus the result is an [Object]: a `double` or a `String`.
-  Object getRange(String axis);
+  /// [axis] is the axis of the index scale (row `adapt-axis-objects`).
+  Object getRange(ScaleAxis axis);
 }
 
 /// index.d.ts:1867 `Segment`.
@@ -1128,7 +1131,9 @@ abstract interface class LineElement implements Element {
   /// Dart `null` for [chartArea] is JS `undefined`: the `chartArea` of a
   /// chart whose plugin cancels the first layout (`beforeLayout` returns
   /// `false`).
-  void updateControlPoints(ChartArea? chartArea, [String? indexAxis]);
+  ///
+  /// [indexAxis] is the index axis of the meta (row `adapt-axis-objects`).
+  void updateControlPoints(ChartArea? chartArea, [ScaleAxis? indexAxis]);
 
   /// index.d.ts:2028 `first()`: the first point that is not skipped.
   /// filler.drawing.js:93 and :123 call it.

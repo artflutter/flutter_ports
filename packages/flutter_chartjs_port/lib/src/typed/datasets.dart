@@ -44,11 +44,12 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         RadarControllerDatasetOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/chart_value.dart'
     show ChartValue;
-import 'package:flutter_chartjs_port/src/typed/config.dart'
-    show ChartKind, IndexAxis;
+import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartKind;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
+    show CartesianAxis;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -355,7 +356,7 @@ OptionScope _datasetScopeOf(ChartKind kind) => switch (kind) {
 /// A dataset of a bar chart: the bar controller (`docs/charts/bar.md`).
 ///
 /// Give the values in [data], one for each label of the chart, or the
-/// items in [points]. A bar chart with `indexAxis: IndexAxis.y` has
+/// items in [points]. A bar chart with `indexAxis: const YAxis()` has
 /// horizontal bars.
 final class BarDataset extends Dataset {
   /// A bar dataset.
@@ -428,7 +429,7 @@ final class BarDataset extends Dataset {
   /// The index axis of the dataset: `indexAxis`. The default is the index
   /// axis of the chart.
   /// {@endtemplate}
-  final IndexAxis? indexAxis;
+  final CartesianAxis? indexAxis;
 
   /// The radius of the bar corners in pixels: `borderRadius` as a number.
   ///
@@ -478,7 +479,7 @@ final class BarDataset extends Dataset {
     String? xAxisID,
     String? yAxisID,
     String? stack,
-    IndexAxis? indexAxis,
+    CartesianAxis? indexAxis,
     double? borderRadius,
     double? barPercentage,
     double? categoryPercentage,
@@ -526,7 +527,7 @@ final class BarDataset extends Dataset {
     put(scope, OptionKey.xAxisID, xAxisID);
     put(scope, OptionKey.yAxisID, yAxisID);
     put(scope, OptionKey.stack, stack);
-    put(scope, OptionKey.indexAxis, indexAxis?.name);
+    put(scope, OptionKey.indexAxis, indexAxis);
     put(scope, OptionKey.borderRadius, borderRadius);
     put(scope, OptionKey.barPercentage, barPercentage);
     put(scope, OptionKey.categoryPercentage, categoryPercentage);
@@ -697,7 +698,7 @@ final class LineDataset extends Dataset with _LineStyle {
   final String? stack;
 
   /// {@macro flutter_chartjs_port.typed.indexAxis}
-  final IndexAxis? indexAxis;
+  final CartesianAxis? indexAxis;
 
   /// {@template flutter_chartjs_port.typed.fill}
   /// The fill of the area under or between the lines: `fill`
@@ -834,7 +835,7 @@ final class LineDataset extends Dataset with _LineStyle {
     String? xAxisID,
     String? yAxisID,
     String? stack,
-    IndexAxis? indexAxis,
+    CartesianAxis? indexAxis,
     ChartFill? fill,
     double? tension,
     List<double>? borderDash,
@@ -904,7 +905,7 @@ final class LineDataset extends Dataset with _LineStyle {
     put(scope, OptionKey.xAxisID, xAxisID);
     put(scope, OptionKey.yAxisID, yAxisID);
     put(scope, OptionKey.stack, stack);
-    put(scope, OptionKey.indexAxis, indexAxis?.name);
+    put(scope, OptionKey.indexAxis, indexAxis);
     _lowerLine(scope);
   }
 

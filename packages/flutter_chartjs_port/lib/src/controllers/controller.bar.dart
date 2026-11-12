@@ -45,6 +45,7 @@ import 'dart:typed_data';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
@@ -84,7 +85,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show AxisKey, FloatingBar, ParsedItem, StackEntry;
+    show FloatingBar, ParsedItem, StackEntry;
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show BarProperties, BorderSkipped;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -98,6 +99,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -284,13 +286,11 @@ _CategoryTraits _computeFlexCategoryTraits(
 ///
 /// [entry] is a List (`isArray`, :145). `Math.min` and `Math.max` apply
 /// `ToNumber` to the parsed values. `_custom` is a [FloatingBar]: it keeps
-/// the parsed values as they are in `start` and `end`. [vKey] is the key of
-/// the axis of [vScale].
+/// the parsed values as they are in `start` and `end`.
 void _parseFloatBar(
   Object? entry,
   ParsedItem item,
   types.Scale vScale,
-  AxisKey vKey,
   double i,
 ) {
   final startValue = vScale.parse(jsGetIndex(entry, 0), i);
@@ -308,7 +308,7 @@ void _parseFloatBar(
   // Store `barEnd` (furthest away from origin) as parsed value,
   // to make stacking straight forward
   item
-    ..setValue(vKey, vScale.axis, barEnd)
+    ..setValue(vScale.axis, barEnd)
     ..custom = FloatingBar(
       barStart: barStart,
       barEnd: barEnd,
@@ -319,19 +319,17 @@ void _parseFloatBar(
     );
 }
 
-/// controller.bar.js:144 `parseValue(entry, item, vScale, i)`. [vKey] is
-/// the key of the axis of [vScale].
+/// controller.bar.js:144 `parseValue(entry, item, vScale, i)`.
 ParsedItem _parseValue(
   Object? entry,
   ParsedItem item,
   types.Scale vScale,
-  AxisKey vKey,
   double i,
 ) {
   if (isArray(entry)) {
-    _parseFloatBar(entry, item, vScale, vKey, i);
+    _parseFloatBar(entry, item, vScale, i);
   } else {
-    item.setValue(vKey, vScale.axis, vScale.parse(entry, i));
+    item.setValue(vScale.axis, vScale.parse(entry, i));
   }
   return item;
 }
@@ -360,9 +358,6 @@ List<ParsedItem> _parseArrayOrPrimitive(
   );
   if (numeric != null) return numeric;
   final singleScale = identical(iScale, vScale);
-  final iKey = AxisKey.of(iScale.axis);
-  // Upstream reads `vScale.axis` in the loop: no read for no item.
-  final vKey = vScale == null ? AxisKey.other : AxisKey.of(vScale.axis);
   final parsed = <ParsedItem>[];
 
   for (var i = start, ilen = start + count; i < ilen; ++i) {
@@ -371,11 +366,10 @@ List<ParsedItem> _parseArrayOrPrimitive(
     // `true` for a single scale.
     final item = ParsedItem()
       ..setValue(
-        iKey,
         iScale.axis,
         singleScale ? true : iScale.parse(jsGetIndex(labels, i), i),
       );
-    parsed.add(_parseValue(entry, item, vScale!, vKey, i));
+    parsed.add(_parseValue(entry, item, vScale!, i));
   }
   return parsed;
 }
@@ -769,27 +763,19 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       readOption(parsing, OptionKey.yAxisKey),
       'y',
     );
-    final iAxisKey = iScale!.axis == 'x' ? xAxisKey : yAxisKey;
-    final vAxisKey = vScale!.axis == 'x' ? xAxisKey : yAxisKey;
-    final iKey = AxisKey.of(iScale.axis);
-    final vKey = AxisKey.of(vScale.axis);
+    // `iScale.axis === 'x' ? xAxisKey : yAxisKey`.
+    final iAxisKey = iScale!.axis is XAxis ? xAxisKey : yAxisKey;
+    final vAxisKey = vScale!.axis is XAxis ? xAxisKey : yAxisKey;
     final parsed = <ParsedItem>[];
     for (var i = start, ilen = start + count; i < ilen; ++i) {
       final obj = jsGetIndex(data, i);
       final item = ParsedItem()
         ..setValue(
-          iKey,
           iScale.axis,
           iScale.parse(dataItemValue(obj, iAxisKey! as String), i),
         );
       parsed.add(
-        _parseValue(
-          dataItemValue(obj, vAxisKey! as String),
-          item,
-          vScale,
-          vKey,
-          i,
-        ),
+        _parseValue(dataItemValue(obj, vAxisKey! as String), item, vScale, i),
       );
     }
     return parsed;
@@ -870,7 +856,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
   /// [scale].
   static Object? _axisValueOf(Object? parsed, types.Scale scale) {
     final axis = scale.axis;
-    return parsedValueOf(parsed, AxisKey.of(axis), axis);
+    return parsedValueOf(parsed, axis);
   }
 
   /// controller.bar.js:379 `initialize()`.
@@ -913,11 +899,10 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final ruler = _getRuler();
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     final vAxis = vScale.axis;
-    final vKey = AxisKey.of(vAxis);
 
     for (var i = start; i < start + count; i++) {
       final parsed = getParsed(i);
-      final vpixels = reset || isNullOrUndef(parsedValueOf(parsed, vKey, vAxis))
+      final vpixels = reset || isNullOrUndef(parsedValueOf(parsed, vAxis))
           ? (size: double.nan, base: base, head: base, center: double.nan)
           : _calculateBarValuePixels(i);
       final ipixels = _calculateBarIndexPixels(i, ruler);
@@ -925,7 +910,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       // `(parsed._stacks || {})[vScale.axis]`: the read of the empty object
       // gives `undefined` (Chart.js ADR 0036, section 8).
       final stack = jsTruthy(itemStacks)
-          ? axisStackOf(itemStacks, vKey, vAxis)
+          ? axisStackOf(itemStacks, vAxis)
           : undefined;
 
       final properties = BarProperties.geometry(
@@ -1009,7 +994,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     double end,
     _Ruler ruler,
     types.Scale valueScale,
-    String valueAxis,
+    ScaleAxis valueAxis,
     bool horizontal,
     BarOptions shared, {
     bool individualOptions = false,
@@ -1031,8 +1016,8 @@ class BarController extends DatasetController implements NativeBarIndexReads {
         !(valueScale as BulkBarScale).supportsBulkBarUpdate ||
         !identical(valueScale.chart, owner) ||
         !identical(cachedMeta.vScale, valueScale) ||
-        valueScale.axis != valueAxis ||
-        !(valueAxis == 'x' || valueAxis == 'y') ||
+        !sameAxis(valueScale.axis, valueAxis) ||
+        !(valueAxis is XAxis || valueAxis is YAxis) ||
         !identical(cachedMeta.stacked, false) ||
         !identical(ruler.grouped, true) ||
         !(owner as SingleBarIndexSource).hasSingleBarIndexLayout(
@@ -1087,7 +1072,6 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final begin = first.toInt();
     final stop = end.toInt();
     final values = Float64List(stop - begin);
-    final key = AxisKey.of(valueAxis);
     for (var i = begin; i < stop; i++) {
       final element = bars[i];
       final item = parsed[i];
@@ -1104,7 +1088,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
         return false;
       }
       // Data-only updates preflight native prepared values before these reads.
-      final value = parsedValueOf(item, key, valueAxis);
+      final value = parsedValueOf(item, valueAxis);
       // The type tests come first: `isFinite` and `toDouble()` on a num are
       // calls in an AOT build (performance.md §72).
       if (value is double) {
@@ -1230,16 +1214,15 @@ class BarController extends DatasetController implements NativeBarIndexReads {
       dataIndex ?? double.nan,
     );
     final iAxis = iScale.axis;
-    final iKey = AxisKey.of(iAxis);
     final iScaleValue = jsTruthy(currentParsed)
-        ? parsedValueOf(currentParsed, iKey, iAxis)
+        ? parsedValueOf(currentParsed, iAxis)
         : currentParsed;
 
     // :443-450: `true`, or Dart `null` for the JS `undefined` of no return.
     bool? skipNull(types.ChartMeta meta) {
       // `Array.prototype.find` gives `undefined` when no item matches.
       final parsed = meta.parsed.firstWhere(
-        (item) => _strictEquals(parsedValueOf(item, iKey, iAxis), iScaleValue),
+        (item) => _strictEquals(parsedValueOf(item, iAxis), iScaleValue),
         orElse: () => undefined,
       );
       final val = jsTruthy(parsed)
@@ -1305,15 +1288,16 @@ class BarController extends DatasetController implements NativeBarIndexReads {
   /// controller.bar.js:493 `getFirstScaleIdForIndexAxis()`.
   ///
   /// The first key of `chart.scales` whose scale has the axis of the
-  /// `indexAxis` option. Dart `null` stands for the JS `undefined` of
-  /// `shift()` on an empty array.
+  /// `indexAxis` option ([sameAxis]). Dart `null` stands for the JS
+  /// `undefined` of `shift()` on an empty array.
   String? getFirstScaleIdForIndexAxis() {
     final scales = chart.scales;
-    final indexScaleId = readOption(chart.options, OptionKey.indexAxis);
+    final indexAxis = readOption(chart.options, OptionKey.indexAxis);
+    final indexScaleId = indexAxis is ScaleAxis ? indexAxis : null;
     // The `Object.keys` order of the scale ids of the user.
     return jsObjectKeys(
       scales,
-    ).where((key) => scales[key]!.axis == indexScaleId).firstOrNull;
+    ).where((key) => sameAxis(scales[key]!.axis, indexScaleId)).firstOrNull;
   }
 
   /// `indexAxis === 'x' ? dataset.xAxisID : dataset.yAxisID` (:503-504,
@@ -1321,7 +1305,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
   /// by name.
   Object? _indexAxisIdOf(Object? dataset) => jsGet(
     dataset,
-    readOption(chart.options, OptionKey.indexAxis) == 'x'
+    readOption(chart.options, OptionKey.indexAxis) is XAxis
         ? 'xAxisID'
         : 'yAxisID',
   );
@@ -1412,12 +1396,10 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final iScale = meta.iScale;
     final ilen = meta.data.length;
     final pixels = Float64List(ilen);
-    // Upstream reads `iScale.axis` in the loop: no read for no element.
-    final iKey = iScale == null ? AxisKey.other : AxisKey.of(iScale.axis);
 
     for (var i = 0; i < ilen; ++i) {
       pixels[i] = iScale!.getPixelForValue(
-        parsedValueOf(getParsed(i * 1.0), iKey, iScale.axis),
+        parsedValueOf(getParsed(i * 1.0), iScale.axis),
         i * 1.0,
       );
     }
@@ -1479,8 +1461,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final custom = _customOf(parsed);
     final floating = _isFloatBar(custom);
     final vAxis = vScale!.axis;
-    final vKey = AxisKey.of(vAxis);
-    var value = parsedValueOf(parsed, vKey, vAxis);
+    var value = parsedValueOf(parsed, vAxis);
     Object? start = 0.0;
     var length = jsTruthy(stacked)
         ? applyStack(vScale, parsed, stacked)
@@ -1550,7 +1531,7 @@ class BarController extends DatasetController implements NativeBarIndexReads {
         // object: a Map takes the write, and another value throws a
         // TypeError, as the JS write into a primitive does.
         setStackValue(
-          visualValuesOf(axisStackOf(stacksOf(parsed), vKey, vAxis)),
+          visualValuesOf(axisStackOf(stacksOf(parsed), vAxis)),
           datasetIndex,
           (vScale.getValueForPixel(head) ?? double.nan) -
               (vScale.getValueForPixel(base) ?? double.nan),
@@ -1670,11 +1651,9 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final rects = meta.data;
     final ilen = rects.length;
     var i = 0;
-    // Upstream reads `vScale.axis` in the loop: no read for no element.
-    final vKey = vScale == null ? AxisKey.other : AxisKey.of(vScale.axis);
 
     for (; i < ilen; ++i) {
-      if (parsedValueOf(getParsed(i * 1.0), vKey, vScale!.axis) != null &&
+      if (parsedValueOf(getParsed(i * 1.0), vScale!.axis) != null &&
           !jsTruthy(rects[i].hidden)) {
         (rects[i] as types.VisualElement).draw(ctx!);
       }

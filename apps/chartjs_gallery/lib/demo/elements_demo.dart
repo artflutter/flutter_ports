@@ -528,7 +528,7 @@ class ElementsDemoState extends State<ElementsDemo> {
     final line = _line;
     if (line != null) {
       line
-        ..updateControlPoints(_plot, 'x')
+        ..updateControlPoints(_plot, const XAxis())
         ..draw(ctx, _plot);
     }
     _drawElements(ctx, _points, _plot);

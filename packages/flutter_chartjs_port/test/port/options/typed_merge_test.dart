@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
@@ -204,7 +205,7 @@ void main() {
     test('a list of sources: a Map, typed scopes and values', () {
       _expectTwins(
         () => mergeIf(_target(), [
-          <String, Object?>{'axis': 'x', 'display': 'auto'},
+          <String, Object?>{'axis': const XAxis(), 'display': 'auto'},
           _source(),
           null,
           5.0,

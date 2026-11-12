@@ -68,6 +68,7 @@ import 'package:flutter_chartjs_port/src/options/typed_record.dart'
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -938,10 +939,10 @@ class BarElement extends Element
   }
 
   /// element.bar.js:223 `getRange(axis)`: half the [width] for the axis
-  /// `'x'`, else half the [height].
+  /// [XAxis], else half the [height].
   @override
-  double getRange(String axis) {
-    return axis == 'x' ? width / 2 : height / 2;
+  double getRange(ScaleAxis axis) {
+    return axis is XAxis ? width / 2 : height / 2;
   }
 }
 

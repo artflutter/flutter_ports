@@ -26,6 +26,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The Node.js version that generated the data.
 const String controllerPieReferenceNode = 'v24.22.1';
@@ -92,7 +93,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -460,7 +461,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -913,7 +914,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -1361,7 +1362,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -1809,7 +1810,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -2314,7 +2315,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -2876,7 +2877,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -3438,7 +3439,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -4296,7 +4297,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -4546,7 +4547,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
           },
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -4922,7 +4923,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -5172,7 +5173,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               },
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -5790,7 +5791,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -6034,7 +6035,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               },
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -6640,7 +6641,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -6878,7 +6879,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               },
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -7775,7 +7776,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -8025,7 +8026,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
           },
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -8730,7 +8731,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -9032,7 +9033,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -9414,7 +9415,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -9796,7 +9797,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -10357,7 +10358,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -10607,7 +10608,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
           },
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -11337,7 +11338,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -12121,7 +12122,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -12917,7 +12918,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -13569,7 +13570,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -13874,7 +13875,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -14752,7 +14753,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'pie',
-            'indexAxis': 'r',
+            'indexAxis': RAxis(),
             'xAxisID': null,
             'yAxisID': null,
             'rAxisID': undefined,
@@ -15057,7 +15058,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,
@@ -15604,7 +15605,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
             'datasets': <Object?>[
               <String, Object?>{
                 'type': 'pie',
-                'indexAxis': 'r',
+                'indexAxis': RAxis(),
                 'xAxisID': null,
                 'yAxisID': null,
                 'rAxisID': undefined,

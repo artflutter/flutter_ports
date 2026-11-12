@@ -14,6 +14,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasPath, CanvasRenderingContext2D;
+import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show clipArea, unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.dataset.dart'
@@ -42,6 +43,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/partitioned_basel
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show FillTargetOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -173,9 +175,11 @@ final class _Trbl implements types.TRBL {
   final double left;
 }
 
-/// The property key of `cfg.axis` (filler.drawing.js:42): the String
-/// itself, else its `ToString`.
-String _axisKey(Object? axis) => axis is String ? axis : jsToString(axis);
+/// The property key of `cfg.axis` (filler.drawing.js:42): the key of the
+/// axis class in a point (`x` or `y`, [axisDataKey]), else the `ToString`
+/// of the value (row `adapt-axis-objects`).
+String _axisKey(Object? axis) =>
+    axisDataKey(axis is ScaleAxis ? axis : null) ?? jsToString(axis);
 
 /// filler.drawing.js:40 `doFill(ctx, cfg)`. The keys of `cfg` are named
 /// parameters.

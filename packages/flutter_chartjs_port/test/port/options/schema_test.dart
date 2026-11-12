@@ -29,6 +29,7 @@ import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart' show ScaleAxis;
 import 'package:test/test.dart';
 
 // The schema drift test of Chart.js ADR 0054 §2 and §15. It walks the
@@ -215,6 +216,8 @@ String? _mismatch(Object? actual, Object? expected) {
   // The same for a cubic interpolation mode and a point style.
   if (expected is String && actual is CubicInterpolationMode) return null;
   if (expected is String && actual is PointStyle) return null;
+  // The same for an axis letter and an axis class (row adapt-axis-objects).
+  if (expected is String && actual is ScaleAxis) return null;
   // The same for a length: upstream has a number or a percent text.
   if ((expected is String || expected is num) &&
       (actual is RadiusLength || actual is GraceLength)) {

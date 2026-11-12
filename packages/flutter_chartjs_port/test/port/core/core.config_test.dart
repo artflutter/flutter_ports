@@ -31,10 +31,12 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
+import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/keyword_enum_json.dart';
@@ -78,6 +80,7 @@ String _jsonRaw(Object? value) => switch (value) {
   PointStyle() => pointStyleJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
+  ScaleAxis() => axisJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -164,12 +167,12 @@ Matcher _axisError(String id) => throwsA(
 void _setUpScaleTypes() {
   defaults
     ..set('scales.tlin', <String, Object?>{
-      'axis': 'y',
+      'axis': const YAxis(),
       'beginAtZero': false,
       'lin': 1.0,
     })
     ..set('scales.tcat', <String, Object?>{'offset': false, 'cat': 1.0})
-    ..set('scales.trad', <String, Object?>{'axis': 'r', 'rad': 1.0})
+    ..set('scales.trad', <String, Object?>{'axis': const RAxis(), 'rad': 1.0})
     ..override('tbar', <String, Object?>{
       'scales': <String, Object?>{
         '_index_': <String, Object?>{
@@ -191,15 +194,18 @@ void _setUpScaleTypes() {
 /// The summary of the scale `x` of the scale probe for the chart type
 /// `tbar` and one dataset.
 const String _tbarX =
-    '"axis":"x","type":"tcat","offset":true,"grid":"{...}","cat":1,'
+    '"axis":$axisJson,"type":"tcat","offset":true,"grid":"{...}","cat":1,'
     '"display":true,"reverse":false,"beginAtZero":false,"bounds":"ticks",'
     '"clip":true,"grace":"<length>","border":"{...}","title":"{...}",'
     '"ticks":"{...}"';
 
+/// The text of the axis member at the start of a scale summary.
+const String _axisPrefix = '"axis":$axisJson,';
+
 /// The summary of the scale `y` of the scale probe for the chart type
 /// `tbar` and one dataset.
 const String _tbarY =
-    '"axis":"y","type":"tlin","beginAtZero":true,"lin":1,"display":true,'
+    '"axis":$axisJson,"type":"tlin","beginAtZero":true,"lin":1,"display":true,'
     '"offset":false,"reverse":false,"bounds":"ticks","clip":true,'
     '"grace":"<length>","grid":"{...}","border":"{...}","title":"{...}",'
     '"ticks":"{...}"';
@@ -256,51 +262,90 @@ void main() {
 
   group('getIndexAxis', () {
     setUp(() {
-      defaults.set('datasets.dsY', <String, Object?>{'indexAxis': 'y'});
+      defaults
+        ..set('datasets.dsY', <String, Object?>{'indexAxis': const YAxis()})
+        ..set('datasets.dsR', <String, Object?>{'indexAxis': const RAxis()});
     });
 
     test('the dataset options, the options, the dataset defaults, x', () {
-      expect(getIndexAxis('nothing', <String, Object?>{}), 'x');
-      expect(getIndexAxis('dsY', <String, Object?>{}), 'y');
-      expect(getIndexAxis('dsY', <String, Object?>{'indexAxis': 'r'}), 'r');
+      expect(getIndexAxis('nothing', <String, Object?>{}), isA<XAxis>());
+      expect(getIndexAxis('dsY', <String, Object?>{}), isA<YAxis>());
       expect(
-        getIndexAxis('dsY', <String, Object?>{
-          'indexAxis': 'r',
-          'datasets': <String, Object?>{
-            'dsY': <String, Object?>{'indexAxis': 'q'},
-          },
-        }),
-        'q',
+        getIndexAxis('dsY', <String, Object?>{'indexAxis': const XAxis()}),
+        isA<XAxis>(),
       );
       expect(
         getIndexAxis('dsY', <String, Object?>{
-          'indexAxis': 'r',
+          'indexAxis': const XAxis(),
           'datasets': <String, Object?>{
-            'other': <String, Object?>{'indexAxis': 'q'},
+            'dsY': <String, Object?>{'indexAxis': const YAxis()},
           },
         }),
-        'r',
+        isA<YAxis>(),
+      );
+      expect(
+        getIndexAxis('dsY', <String, Object?>{
+          'indexAxis': const XAxis(),
+          'datasets': <String, Object?>{
+            'other': <String, Object?>{'indexAxis': const YAxis()},
+          },
+        }),
+        isA<XAxis>(),
       );
     });
 
-    test('a falsy value goes to the next source', () {
+    // Row adapt-axis-objects: the RAxis of the defaults of a radial type
+    // comes first, so a cartesian axis of the options cannot reach it.
+    test('the RAxis of the defaults of a radial type comes first', () {
+      expect(
+        getIndexAxis('dsR', <String, Object?>{
+          'indexAxis': const XAxis(),
+          'datasets': <String, Object?>{
+            'dsR': <String, Object?>{'indexAxis': const YAxis()},
+          },
+        }),
+        isA<RAxis>(),
+      );
+      expect(
+        datasetIndexAxis(
+          <String, Object?>{'indexAxis': const XAxis()},
+          'dsR',
+          <String, Object?>{},
+        ),
+        isA<RAxis>(),
+      );
+      expect(
+        datasetIndexAxis(
+          <String, Object?>{'indexAxis': const XAxis()},
+          'dsY',
+          <String, Object?>{},
+        ),
+        isA<XAxis>(),
+      );
+      expect(
+        datasetIndexAxis(<String, Object?>{}, 'dsY', <String, Object?>{}),
+        isA<YAxis>(),
+      );
+    });
+
+    test('a value that is not an axis goes to the next source', () {
       expect(
         getIndexAxis('nothing', <String, Object?>{
           'indexAxis': 0.0,
           'datasets': <String, Object?>{
-            'nothing': <String, Object?>{'indexAxis': ''},
+            'nothing': <String, Object?>{'indexAxis': false},
           },
         }),
-        'x',
+        isA<XAxis>(),
       );
-      expect(getIndexAxis(undefined, <String, Object?>{}), 'x');
+      expect(getIndexAxis(undefined, <String, Object?>{}), isA<XAxis>());
     });
 
     test('reads a resolver', () {
       final options = helpers.createResolver([
-        <String, Object?>{'indexAxis': 'y'},
+        <String, Object?>{'indexAxis': const YAxis()},
       ]);
-      expect(getIndexAxis('nothing', options), 'y');
+      expect(getIndexAxis('nothing', options), isA<YAxis>());
     });
 
     test('null options throw a TypeError', () {
@@ -310,47 +355,58 @@ void main() {
 
   group('determineAxis', () {
     test('an id x, y or r is the axis', () {
-      expect(determineAxis('x', const []), 'x');
-      expect(determineAxis('y', const []), 'y');
-      expect(determineAxis('r', const []), 'r');
+      expect(determineAxis('x', const []), isA<XAxis>());
+      expect(determineAxis('y', const []), isA<YAxis>());
+      expect(determineAxis('r', const []), isA<RAxis>());
       expect(() => determineAxis('z', [<String, Object?>{}]), _axisError('z'));
     });
 
     test('the axis option, the position, the first character', () {
-      Object? axis(String id, List<Object?> options) =>
+      ScaleAxis axis(String id, List<Object?> options) =>
           determineAxis(id, options);
       Map<String, Object?> o(String key, Object? value) => {key: value};
-      expect(axis('foo', [o('axis', 'y')]), 'y');
-      expect(axis('foo', [o('position', ChartPosition.top)]), 'x');
-      expect(axis('foo', [o('position', ChartPosition.bottom)]), 'x');
-      expect(axis('foo', [o('position', ChartPosition.left)]), 'y');
-      expect(axis('foo', [o('position', ChartPosition.right)]), 'y');
+      expect(axis('foo', [o('axis', const YAxis())]), isA<YAxis>());
+      expect(axis('foo', [o('position', ChartPosition.top)]), isA<XAxis>());
+      expect(axis('foo', [o('position', ChartPosition.bottom)]), isA<XAxis>());
+      expect(axis('foo', [o('position', ChartPosition.left)]), isA<YAxis>());
+      expect(axis('foo', [o('position', ChartPosition.right)]), isA<YAxis>());
       expect(
         () => axis('foo', [o('position', 'chartArea')]),
         _axisError('foo'),
       );
-      expect(axis('xAxis', [<String, Object?>{}]), 'x');
-      expect(axis('Yaxis', [<String, Object?>{}]), 'y');
-      expect(axis('R2', [<String, Object?>{}]), 'r');
-      expect(axis('ra', [<String, Object?>{}]), 'r');
-      expect(axis('foo', [<String, Object?>{}, o('axis', 'x')]), 'x');
+      expect(axis('xAxis', [<String, Object?>{}]), isA<XAxis>());
+      expect(axis('Yaxis', [<String, Object?>{}]), isA<YAxis>());
+      expect(axis('R2', [<String, Object?>{}]), isA<RAxis>());
+      expect(axis('ra', [<String, Object?>{}]), isA<RAxis>());
       expect(
-        axis('foo', [<String, Object?>{}, <String, Object?>{}, o('axis', 'r')]),
-        'r',
+        axis('foo', [<String, Object?>{}, o('axis', const XAxis())]),
+        isA<XAxis>(),
       );
       expect(
         axis('foo', [
-          <String, Object?>{'axis': 'y', 'position': ChartPosition.top},
+          <String, Object?>{},
+          <String, Object?>{},
+          o('axis', const RAxis()),
         ]),
-        'y',
+        isA<RAxis>(),
       );
-      expect(axis('xfoo', [o('position', ChartPosition.left)]), 'y');
-      expect(axis('foo', [o('axis', 7.0)]), 7.0);
+      expect(
+        axis('foo', [
+          <String, Object?>{
+            'axis': const YAxis(),
+            'position': ChartPosition.top,
+          },
+        ]),
+        isA<YAxis>(),
+      );
+      expect(axis('xfoo', [o('position', ChartPosition.left)]), isA<YAxis>());
+      // A value that is not an axis class is no axis (row
+      // adapt-axis-objects).
       expect(
         axis('foo', [
           <String, Object?>{'axis': 0.0, 'position': ChartPosition.top},
         ]),
-        'x',
+        isA<XAxis>(),
       );
     });
 
@@ -362,6 +418,12 @@ void main() {
       expect(() => determineAxis('foo', const []), _axisError('foo'));
       expect(() => determineAxis('foo', [5.0]), _axisError('foo'));
       expect(() => determineAxis('foo', ['top']), _axisError('foo'));
+      expect(
+        () => determineAxis('foo', [
+          <String, Object?>{'axis': 7.0},
+        ]),
+        _axisError('foo'),
+      );
     });
 
     test('an undefined or null item that the loop reaches throws', () {
@@ -377,7 +439,10 @@ void main() {
         () => determineAxis('foo', [<String, Object?>{}, undefined]),
         throwsA(isA<TypeError>()),
       );
-      expect(determineAxis('xx', [<String, Object?>{}, undefined]), 'x');
+      expect(
+        determineAxis('xx', [<String, Object?>{}, undefined]),
+        isA<XAxis>(),
+      );
       expect(() => determineAxis('foo', [null]), throwsA(isA<TypeError>()));
     });
   });
@@ -557,15 +622,17 @@ void main() {
     });
 
     test('indexAxis y swaps _index_ and _value_', () {
-      final y = _tbarX.replaceFirst('"axis":"x"', '"axis":"y"');
-      final x = _tbarY.replaceFirst('"axis":"y"', '"axis":"x"');
+      // The axis is a marker on both sides (row adapt-axis-objects): the
+      // types of the scales show the swap.
+      const y = _tbarX;
+      const x = _tbarY;
       expect(
         _scales(<String, Object?>{
           'type': 'tbar',
           'data': <String, Object?>{
             'datasets': [<String, Object?>{}],
           },
-          'options': <String, Object?>{'indexAxis': 'y'},
+          'options': <String, Object?>{'indexAxis': const YAxis()},
         }),
         '{"y":{$y},"x":{$x}}',
       );
@@ -574,7 +641,7 @@ void main() {
           'type': 'tbar',
           'data': <String, Object?>{
             'datasets': [
-              <String, Object?>{'indexAxis': 'y'},
+              <String, Object?>{'indexAxis': const YAxis()},
             ],
           },
         }),
@@ -607,7 +674,7 @@ void main() {
             ],
           },
         }),
-        '{"x":{$_tbarX},"y":{$_tbarY},"right":{"axis":"y","type":"tlin",'
+        '{"x":{$_tbarX},"y":{$_tbarY},"right":{"axis":$axisJson,"type":"tlin",'
         '"beginAtZero":false,"lin":1,"display":true,"offset":false,'
         '"reverse":false,"bounds":"ticks","clip":true,"grace":"<length>",'
         '"grid":"{...}","border":"{...}","title":"{...}","ticks":"{...}"}}',
@@ -633,12 +700,13 @@ void main() {
             },
           },
         }),
-        '{"x":{"axis":"x","offset":false,"type":"tlin","extra":1,'
+        '{"x":{"axis":$axisJson,"offset":false,"type":"tlin","extra":1,'
         '"grid":"{...}","beginAtZero":false,"lin":1,"display":true,'
         '"reverse":false,"bounds":"ticks","clip":true,"grace":"<length>",'
         '"border":"{...}","title":"{...}","ticks":"{...}"},'
-        '"myY":{"axis":"y","position":"left",${_tbarY.substring(11)}},'
-        '"r2":{"axis":"r",${_tbarY.substring(11)}},'
+        '"myY":{"axis":$axisJson,"position":"left",'
+        '${_tbarY.substring(_axisPrefix.length)}},'
+        '"r2":{"axis":$axisJson,${_tbarY.substring(_axisPrefix.length)}},'
         '"y":{$_tbarY}}',
       );
     });
@@ -653,7 +721,7 @@ void main() {
             },
           },
         }),
-        '{"foo":{"axis":"r","type":"trad","rad":1,$_scaleTail}}',
+        '{"foo":{"axis":$axisJson,"type":"trad","rad":1,$_scaleTail}}',
       );
       expect(
         _scales(<String, Object?>{
@@ -667,11 +735,11 @@ void main() {
             'scales': <String, Object?>{'foo': <String, Object?>{}},
           },
         }),
-        '{"foo":{"axis":"y","type":"tlin","beginAtZero":false,"lin":1,'
+        '{"foo":{"axis":$axisJson,"type":"tlin","beginAtZero":false,"lin":1,'
         '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
         '"clip":true,"grace":"<length>","grid":"{...}","border":"{...}",'
         '"title":"{...}","ticks":"{...}"},'
-        '"x":{"axis":"x","type":"tcat","offset":false,"cat":1,'
+        '"x":{"axis":$axisJson,"type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
         '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"}}',
@@ -688,7 +756,7 @@ void main() {
             'scales': <String, Object?>{'foo': <String, Object?>{}},
           },
         }),
-        '{"foo":{"axis":"x","type":"tcat","offset":false,"cat":1,'
+        '{"foo":{"axis":$axisJson,"type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
         '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"}}',
@@ -752,7 +820,8 @@ void main() {
       expect(invalid, '{}');
       expect(
         proxy,
-        '{"y":{"axis":"y","a":1,"type":"tlin","beginAtZero":false,"lin":1,'
+        '{"y":{"axis":$axisJson,"a":1,"type":"tlin","beginAtZero":false,'
+        '"lin":1,'
         '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
         '"clip":true,"grace":"<length>","grid":"{...}","border":"{...}",'
         '"title":"{...}","ticks":"{...}"}}',
@@ -778,18 +847,18 @@ void main() {
             'scales': <String, Object?>{'x': <String, Object?>{}},
           },
         }),
-        '{"x":{"axis":"x",$_scaleTail}}',
+        '{"x":{"axis":$axisJson,$_scaleTail}}',
       );
       expect(
         _scales(<String, Object?>{
           'type': 'tline',
           'options': <String, Object?>{
             'scales': [
-              <String, Object?>{'axis': 'x'},
+              <String, Object?>{'axis': const XAxis()},
             ],
           },
         }),
-        '{"0":{"axis":"x","type":"tcat","offset":false,"cat":1,'
+        '{"0":{"axis":$axisJson,"type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
         '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"}}',
@@ -802,15 +871,15 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'axis': 'y'},
+              'x': <String, Object?>{'axis': const YAxis()},
             },
           },
         }),
-        '{"x":{"axis":"x","type":"tcat","offset":false,"cat":1,'
+        '{"x":{"axis":$axisJson,"type":"tcat","offset":false,"cat":1,'
         '"display":true,"reverse":false,"beginAtZero":false,'
         '"bounds":"ticks","clip":true,"grace":"<length>","grid":"{...}",'
         '"border":"{...}","title":"{...}","ticks":"{...}"},'
-        '"y":{"axis":"y","type":"tlin","beginAtZero":false,"lin":1,'
+        '"y":{"axis":$axisJson,"type":"tlin","beginAtZero":false,"lin":1,'
         '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
         '"clip":true,"grace":"<length>","grid":"{...}","border":"{...}",'
         '"title":"{...}","ticks":"{...}"}}',
@@ -856,8 +925,9 @@ void main() {
             ],
           },
         }),
-        '{"7":{${_tbarX.replaceFirst('"axis":"x"', '"axis":7')}},'
-        '"x":{${_tbarY.replaceFirst('"axis":"y"', '"axis":"x"')}}}',
+        // A number is no axis class: the dataset takes the index axis of the
+        // chart (row adapt-axis-objects).
+        '{"x":{$_tbarX},"y":{$_tbarY}}',
       );
     });
 
@@ -896,7 +966,8 @@ void main() {
       expect(
         _json(_at(config.options, 'scales.x')),
         referenceColorTokens(
-          '{"axis":"x","grid":{"color":"red","offset":true,"display":true,'
+          '{"axis":$axisJson,"grid":{"color":"red","offset":true,'
+          '"display":true,'
           '"lineWidth":1,"drawOnChartArea":true,"drawTicks":true,'
           '"tickLength":8,"tickWidth":"<fn>","tickColor":"<fn>"},'
           '"type":"tcat","offset":true,"cat":1,"display":true,'
@@ -907,7 +978,7 @@ void main() {
       expect(
         _json(_at(config.options, 'scales.y')),
         referenceColorTokens(
-          '{"axis":"y","type":"tlin","beginAtZero":true,"lin":1,'
+          '{"axis":$axisJson,"type":"tlin","beginAtZero":true,"lin":1,'
           '"display":true,"offset":false,"reverse":false,"bounds":"ticks",'
           '"clip":true,"grace":"<length>","grid":{"display":true,"lineWidth":1,'
           '"drawOnChartArea":true,"drawTicks":true,"tickLength":8,'
@@ -943,7 +1014,8 @@ void main() {
       expect(
         _json(_scaleSummary(scales['x'])),
         referenceColorTokens(
-          '{"axis":"x","min":1,"type":"tcat","offset":true,"grid":"{...}",'
+          '{"axis":$axisJson,"min":1,"type":"tcat","offset":true,'
+          '"grid":"{...}",'
           '"cat":1,"display":true,"reverse":false,"beginAtZero":false,'
           '"bounds":"ticks","clip":true,"grace":"<length>","border":"{...}",'
           '"title":"{...}","ticks":"{...}","max":9}',
@@ -2654,7 +2726,7 @@ void main() {
 
   group('theme-H1', () {
     setUp(() {
-      defaults.set('scales.tlin', <String, Object?>{'axis': 'y'});
+      defaults.set('scales.tlin', <String, Object?>{'axis': const YAxis()});
     });
 
     test('the scale precedence of theming.md §3.2', () {
@@ -2664,7 +2736,7 @@ void main() {
           ..jsDelete('tthm')
           ..jsDelete('tthm2');
         (defaults['scales']! as JsObjectFace)['tlin'] = <String, Object?>{
-          'axis': 'y',
+          'axis': const YAxis(),
         };
         final scale = defaults['scale']! as JsObjectFace;
         defaults
