@@ -28,6 +28,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 /// plugin.subtitle.js:4 `const map = new WeakMap()`.
@@ -84,7 +85,7 @@ final Plugin subTitle = Plugin(supportsDataUpdates: true)
     ..font = (FontSpecScope()..weight = 'normal')
     ..fullSize = true
     ..padding = 0.0
-    ..position = 'top'
+    ..position = ChartPosition.top
     ..text = ''
     // by default greater than legend (1000) and smaller than title (2000)
     ..weight = 1500.0)

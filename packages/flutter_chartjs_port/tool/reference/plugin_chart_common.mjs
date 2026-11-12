@@ -33,6 +33,7 @@ import {
   runControllerCase,
   writeControllerReference,
 } from './controller_chart_common.mjs';
+import {positionValue} from './scale_chart_common.mjs';
 
 export {loadChartJs, plain, registerBuiltins, runControllerCase, writeControllerReference};
 
@@ -113,7 +114,8 @@ function boxKind(chart, box) {
 export function observeBoxes(chart) {
   return chart.boxes.map((b) => [
     boxKind(chart, b),
-    b.position,
+    // The enum value of the port (row adapt-chart-position-enum).
+    positionValue(b.position),
     b.weight,
     b.fullSize,
     b.left,

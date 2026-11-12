@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -965,19 +966,19 @@ void main() {
           'scales': <String, Object?>{
             'firstXScaleID': <String, Object?>{
               'type': 'category',
-              'position': 'bottom',
+              'position': ChartPosition.bottom,
             },
             'secondXScaleID': <String, Object?>{
               'type': 'category',
-              'position': 'bottom',
+              'position': ChartPosition.bottom,
             },
             'firstYScaleID': <String, Object?>{
               'type': 'linear',
-              'position': 'left',
+              'position': ChartPosition.left,
             },
             'secondYScaleID': <String, Object?>{
               'type': 'linear',
-              'position': 'left',
+              'position': ChartPosition.left,
             },
           },
         },

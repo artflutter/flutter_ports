@@ -67,7 +67,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
         isArray,
         isFinite,
         isNullOrUndef,
-        isObject,
         valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, toLeftRightCenter;
@@ -81,7 +80,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
         createContext,
         toFont,
         toPadding;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -101,6 +99,8 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
         LayoutItemConfigure,
         LayoutItemPadding,
         LayoutLayer;
+import 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ChartPosition, ScaleValuePosition;
 import 'package:meta/meta.dart';
 
 /// core.scale.js:9 `reverseAlign`.
@@ -112,21 +112,21 @@ String? _reverseAlign(String? align) => align == 'left'
 
 /// core.scale.js:10 `offsetFromEdge`.
 ///
-/// `scale[edge]` is the edge getter of the scale for `'top'`, `'left'`,
-/// `'bottom'` and `'right'`. Another position (`'chartArea'`) names no edge.
+/// `scale[edge]` is the edge getter of the scale for the [ChartPosition]
+/// `top`, `left`, `bottom` and `right`. Another position names no edge.
 /// JavaScript reads `undefined` there, and the arithmetic gives NaN.
 double _offsetFromEdge(Scale scale, Object? edge, double offset) {
-  // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
-  // value that is neither null nor a String. Such a value switches as null
-  // and takes the default branch, as before.
-  final value = switch (edge is String ? edge : null) {
-    'top' => scale.top,
-    'left' => scale.left,
-    'bottom' => scale.bottom,
-    'right' => scale.right,
+  // DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
+  final value = switch (edge) {
+    ChartPosition.top => scale.top,
+    ChartPosition.left => scale.left,
+    ChartPosition.bottom => scale.bottom,
+    ChartPosition.right => scale.right,
     _ => double.nan,
   };
-  return edge == 'top' || edge == 'left' ? value + offset : value - offset;
+  return edge == ChartPosition.top || edge == ChartPosition.left
+      ? value + offset
+      : value - offset;
 }
 
 /// core.scale.js:11 `getTicksLimit`.
@@ -386,8 +386,8 @@ ScriptableScaleContext _createTickContext(
 String? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
   /** @type {CanvasTextAlign} */
   String? ret = toLeftRightCenter(align);
-  if ((jsTruthy(reverse) && position != 'right') ||
-      (!jsTruthy(reverse) && position == 'right')) {
+  if ((jsTruthy(reverse) && position != ChartPosition.right) ||
+      (!jsTruthy(reverse) && position == ChartPosition.right)) {
     ret = _reverseAlign(ret);
   }
   return ret;
@@ -417,55 +417,35 @@ String? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
   if (scale.isHorizontal()) {
     titleX = alignStartEnd(alignName, left, right);
 
-    if (isObject(position)) {
-      final (:positionAxisID, :value) = _positionAxis(position);
+    if (position is ScaleValuePosition) {
+      // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+      final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
       titleY =
           scales[positionAxisID]!.getPixelForValue(value) + height - offset;
-    } else if (position == 'center') {
+    } else if (position == ChartPosition.center) {
       titleY = (chartArea!.bottom + chartArea.top) / 2 + height - offset;
     } else {
       titleY = _offsetFromEdge(scale, position, offset);
     }
     maxWidth = right - left;
   } else {
-    if (isObject(position)) {
-      final (:positionAxisID, :value) = _positionAxis(position);
+    if (position is ScaleValuePosition) {
+      // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+      final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
       titleX = scales[positionAxisID]!.getPixelForValue(value) - width + offset;
-    } else if (position == 'center') {
+    } else if (position == ChartPosition.center) {
       titleX = (chartArea!.left + chartArea.right) / 2 - width + offset;
     } else {
       titleX = _offsetFromEdge(scale, position, offset);
     }
     titleY = alignStartEnd(alignName, bottom, top);
-    rotation = position == 'left' ? -halfPi : halfPi;
+    rotation = position == ChartPosition.left ? -halfPi : halfPi;
   }
   return (
     titleX: titleX,
     titleY: titleY,
     maxWidth: maxWidth,
     rotation: rotation,
-  );
-}
-
-/// The two reads of an object position `{<scale id>: number}`
-/// (core.scale.js:143-144, :154-155, :1062-1063, :1075-1076, :1180-1181,
-/// :1189-1190):
-/// `const positionAxisID = Object.keys(position)[0];` and
-/// `const value = position[positionAxisID];`.
-///
-/// `positionAxisID` is Dart `null` for an object without keys, JS
-/// `undefined`: the read of the value then reads the key `'undefined'`,
-/// the scale lookup gives Dart `null`, and the call on it throws a
-/// `TypeError`, as upstream does.
-///
-/// The key is the id of a scale that the user names, not a key of the
-/// schema. Thus the object reads it by name.
-({String? positionAxisID, Object? value}) _positionAxis(Object? position) {
-  final keys = jsObjectKeys(position);
-  final positionAxisID = keys.isEmpty ? null : keys[0];
-  return (
-    positionAxisID: positionAxisID,
-    value: jsGet(position, positionAxisID ?? undefined),
   );
 }
 
@@ -1760,7 +1740,7 @@ class Scale extends _ScalePrototype
     final padding = tickOpts.padding;
     final position = options.position;
     final isRotated = _isRotated;
-    final labelsBelowTicks = position != 'top' && axis == 'x';
+    final labelsBelowTicks = position != ChartPosition.top && axis == 'x';
 
     if (isHorizontal()) {
       final offsetLeft = (getPixelForTick(0) ?? 0) - left;
@@ -1848,7 +1828,9 @@ class Scale extends _ScalePrototype
     final options = this.options;
     final axis = options.axis;
     final position = options.position;
-    return position == 'top' || position == 'bottom' || axis == 'x';
+    return position == ChartPosition.top ||
+        position == ChartPosition.bottom ||
+        axis == 'x';
   }
 
   /// core.scale.js:767 `isFullSize()`.
@@ -2304,37 +2286,38 @@ class Scale extends _ScalePrototype
     var x2 = double.nan;
     var y2 = double.nan;
 
-    if (position == 'top') {
+    if (position == ChartPosition.top) {
       borderValue = alignBorderValue(bottom);
       ty1 = bottom - jsToNumber(tl);
       ty2 = borderValue - axisHalfWidth;
       y1 = alignBorderValue(chartArea!.top) + axisHalfWidth;
       y2 = chartArea.bottom;
-    } else if (position == 'bottom') {
+    } else if (position == ChartPosition.bottom) {
       borderValue = alignBorderValue(top);
       y1 = chartArea!.top;
       y2 = alignBorderValue(chartArea.bottom) - axisHalfWidth;
       ty1 = borderValue + axisHalfWidth;
       ty2 = jsToNumber(jsAdd(top, tl));
-    } else if (position == 'left') {
+    } else if (position == ChartPosition.left) {
       borderValue = alignBorderValue(right);
       tx1 = right - jsToNumber(tl);
       tx2 = borderValue - axisHalfWidth;
       x1 = alignBorderValue(chartArea!.left) + axisHalfWidth;
       x2 = chartArea.right;
-    } else if (position == 'right') {
+    } else if (position == ChartPosition.right) {
       borderValue = alignBorderValue(left);
       x1 = chartArea!.left;
       x2 = alignBorderValue(chartArea.right) - axisHalfWidth;
       tx1 = borderValue + axisHalfWidth;
       tx2 = jsToNumber(jsAdd(left, tl));
     } else if (axis == 'x') {
-      if (position == 'center') {
+      if (position == ChartPosition.center) {
         borderValue = alignBorderValue(
           (chartArea!.top + chartArea.bottom) / 2 + 0.5,
         );
-      } else if (isObject(position)) {
-        final (:positionAxisID, :value) = _positionAxis(position);
+      } else if (position is ScaleValuePosition) {
+        // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+        final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
         borderValue = alignBorderValue(
           chart.scales[positionAxisID]!.getPixelForValue(value),
         );
@@ -2345,12 +2328,13 @@ class Scale extends _ScalePrototype
       ty1 = borderValue + axisHalfWidth;
       ty2 = jsToNumber(jsAdd(ty1, tl));
     } else if (axis == 'y') {
-      if (position == 'center') {
+      if (position == ChartPosition.center) {
         borderValue = alignBorderValue(
           (chartArea!.left + chartArea.right) / 2,
         );
-      } else if (isObject(position)) {
-        final (:positionAxisID, :value) = _positionAxis(position);
+      } else if (position is ScaleValuePosition) {
+        // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+        final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
         borderValue = alignBorderValue(
           chart.scales[positionAxisID]!.getPixelForValue(value),
         );
@@ -2477,25 +2461,26 @@ class Scale extends _ScalePrototype
     // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
     var textBaseline = CanvasTextBaseline.middle;
 
-    if (position == 'top') {
+    if (position == ChartPosition.top) {
       y = bottom - jsToNumber(hTickAndPadding);
       textAlign = _getXAxisLabelAlignment();
-    } else if (position == 'bottom') {
+    } else if (position == ChartPosition.bottom) {
       y = jsAdd(top, hTickAndPadding);
       textAlign = _getXAxisLabelAlignment();
-    } else if (position == 'left') {
+    } else if (position == ChartPosition.left) {
       final ret = _getYAxisLabelAlignment(tl);
       textAlign = ret.textAlign;
       x = ret.x;
-    } else if (position == 'right') {
+    } else if (position == ChartPosition.right) {
       final ret = _getYAxisLabelAlignment(tl);
       textAlign = ret.textAlign;
       x = ret.x;
     } else if (axis == 'x') {
-      if (position == 'center') {
+      if (position == ChartPosition.center) {
         y = jsAdd((chartArea!.top + chartArea.bottom) / 2, tickAndPadding);
-      } else if (isObject(position)) {
-        final (:positionAxisID, :value) = _positionAxis(position);
+      } else if (position is ScaleValuePosition) {
+        // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+        final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
         y = jsAdd(
           chart.scales[positionAxisID]!.getPixelForValue(value),
           tickAndPadding,
@@ -2503,12 +2488,13 @@ class Scale extends _ScalePrototype
       }
       textAlign = _getXAxisLabelAlignment();
     } else if (axis == 'y') {
-      if (position == 'center') {
+      if (position == ChartPosition.center) {
         x =
             ((chartArea!.left + chartArea.right) / 2) -
             jsToNumber(tickAndPadding);
-      } else if (isObject(position)) {
-        final (:positionAxisID, :value) = _positionAxis(position);
+      } else if (position is ScaleValuePosition) {
+        // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+        final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
         x = chart.scales[positionAxisID]!.getPixelForValue(value);
       }
       textAlign = _getYAxisLabelAlignment(tl).textAlign;
@@ -2553,7 +2539,7 @@ class Scale extends _ScalePrototype
           }
         }
 
-        if (position == 'top') {
+        if (position == ChartPosition.top) {
           if (crossAlign == TickCrossAlign.near || rotation != 0) {
             textOffset = -lineCount * lineHeight + lineHeight / 2;
           } else if (crossAlign == TickCrossAlign.center) {
@@ -2664,7 +2650,7 @@ class Scale extends _ScalePrototype
     final rotation = -_rotationRadians;
 
     if (rotation != 0 && !rotation.isNaN) {
-      return position == 'top' ? 'left' : 'right';
+      return position == ChartPosition.top ? 'left' : 'right';
     }
 
     var align = 'center';
@@ -2706,7 +2692,7 @@ class Scale extends _ScalePrototype
     String textAlign;
     Object x = double.nan;
 
-    if (position == 'left') {
+    if (position == ChartPosition.left) {
       if (jsTruthy(mirror)) {
         x = jsAdd(right, padding);
 
@@ -2732,7 +2718,7 @@ class Scale extends _ScalePrototype
           x = left;
         }
       }
-    } else if (position == 'right') {
+    } else if (position == ChartPosition.right) {
       if (jsTruthy(mirror)) {
         x = jsAdd(left, padding);
 
@@ -2778,10 +2764,10 @@ class Scale extends _ScalePrototype
     final chart = this.chart;
     final position = options.position;
 
-    if (position == 'left' || position == 'right') {
+    if (position == ChartPosition.left || position == ChartPosition.right) {
       return _LabelArea(0, left, chart.height, right);
     }
-    if (position == 'top' || position == 'bottom') {
+    if (position == ChartPosition.top || position == ChartPosition.bottom) {
       return _LabelArea(top, 0, bottom, chart.width);
     }
     return null;
@@ -2981,7 +2967,9 @@ class Scale extends _ScalePrototype
     final align = title.align;
     var offset = font.lineHeight / 2;
 
-    if (position == 'bottom' || position == 'center' || isObject(position)) {
+    if (position == ChartPosition.bottom ||
+        position == ChartPosition.center ||
+        position is ScaleValuePosition) {
       offset += padding.bottom;
       final text = title.text;
       if (isArray(text)) {

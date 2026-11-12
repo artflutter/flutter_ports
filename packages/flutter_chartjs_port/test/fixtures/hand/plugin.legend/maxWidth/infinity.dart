@@ -2,6 +2,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
 /// `Infinity` is [double.infinity].
@@ -33,7 +35,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'tooltip': false,
         'filler': false,
         'legend': <String, Object?>{
-          'position': 'left',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.left,
           'maxWidth': double.infinity,
         },
       },

@@ -2,6 +2,9 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show ChartPosition;
+
 /// The scatter chart of `docs/charts/scatter.md:5-47`, with each key and
 /// value of the docs block.
 Map<String, Object?> scatterConfig() => <String, Object?>{
@@ -22,7 +25,10 @@ Map<String, Object?> scatterConfig() => <String, Object?>{
   },
   'options': <String, Object?>{
     'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+      'x': <String, Object?>{
+        'type': 'linear',
+        'position': ChartPosition.bottom,
+      },
     },
   },
 };

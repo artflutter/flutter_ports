@@ -38,6 +38,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String controllerPolarAreaReferenceNode = 'v24.22.1';
@@ -110,7 +111,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -879,7 +880,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -1763,7 +1764,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -2642,7 +2643,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -3521,7 +3522,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -4455,7 +4456,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -5444,7 +5445,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -6433,7 +6434,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -8041,7 +8042,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
             'ticks': <Object?>[
@@ -8916,7 +8917,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 16.0,
             'ticks': <Object?>[
@@ -9613,7 +9614,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 16.0,
                 'ticks': <Object?>[
@@ -10916,7 +10917,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -11352,7 +11353,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -12097,7 +12098,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 30.0,
                 'ticks': <Object?>[
@@ -12831,7 +12832,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 30.0,
                 'ticks': <Object?>[
@@ -13933,7 +13934,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
             'ticks': <Object?>[
@@ -14810,7 +14811,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
             'ticks': <Object?>[
@@ -15688,7 +15689,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 5.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -16406,7 +16407,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': -4.0,
             'max': 16.0,
             'ticks': <Object?>[
@@ -16847,7 +16848,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': -4.0,
                 'max': 16.0,
                 'ticks': <Object?>[
@@ -17373,7 +17374,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': -4.0,
                 'max': 16.0,
                 'ticks': <Object?>[
@@ -18375,7 +18376,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 8.0,
             'ticks': <Object?>[
@@ -19220,7 +19221,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -19891,7 +19892,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -20564,7 +20565,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -21242,7 +21243,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -21924,7 +21925,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 9.0,
             'ticks': <Object?>[
@@ -22664,7 +22665,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 30.0,
             'ticks': <Object?>[
@@ -23388,7 +23389,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -24352,7 +24353,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -25311,7 +25312,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -25629,7 +25630,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -26392,7 +26393,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -26710,7 +26711,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -27472,7 +27473,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -27790,7 +27791,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -28557,7 +28558,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -28875,7 +28876,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -29642,7 +29643,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -29960,7 +29961,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -30727,7 +30728,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -31045,7 +31046,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -31810,7 +31811,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -32128,7 +32129,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -32893,7 +32894,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -33211,7 +33212,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -33976,7 +33977,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -34294,7 +34295,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -35055,7 +35056,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -35373,7 +35374,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -36134,7 +36135,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -36452,7 +36453,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -37219,7 +37220,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -37542,7 +37543,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -37970,7 +37971,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -38752,7 +38753,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -39044,7 +39045,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -39750,7 +39751,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -40042,7 +40043,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -40753,7 +40754,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -41045,7 +41046,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -41756,7 +41757,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -42048,7 +42049,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -42807,7 +42808,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -43099,7 +43100,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -43808,7 +43809,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -44100,7 +44101,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -44861,7 +44862,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -45657,7 +45658,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -46031,7 +46032,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -47150,7 +47151,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -47524,7 +47525,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -48210,7 +48211,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -49113,7 +49114,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -49740,7 +49741,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[

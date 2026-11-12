@@ -1251,7 +1251,7 @@ void main() {
               expect(readByName(box.options, 'display'), true, reason: reason);
               expect(
                 readByName(box.options, 'position'),
-                'top',
+                ChartPosition.top,
                 reason: reason,
               );
               expect(box.legendItems, hasLength(3), reason: reason);

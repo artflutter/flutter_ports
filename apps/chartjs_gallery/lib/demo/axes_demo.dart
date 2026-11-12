@@ -161,8 +161,8 @@ class AxesDemoState extends State<AxesDemo> {
   String _xType = 'linear';
   String _yType = 'linear';
   int _count = axesDemoCounts.first;
-  String _xPosition = 'bottom';
-  String _yPosition = 'left';
+  ChartPosition _xPosition = ChartPosition.bottom;
+  ChartPosition _yPosition = ChartPosition.left;
   bool _autoSkip = true;
   double _maxRotation = 50;
   double _minRotation = 0;
@@ -337,33 +337,36 @@ class AxesDemoState extends State<AxesDemo> {
     'y': _scale('y', _yType, _yPosition),
   };
 
-  Map<String, Object?> _scale(String axis, String type, String position) =>
-      <String, Object?>{
-        'type': type,
-        'position': position,
-        'reverse': _reverse,
-        'beginAtZero': _beginAtZero,
-        if (_bounds != null) 'bounds': _bounds,
-        if (type == 'time' && _timeUnit != null)
-          'time': <String, Object?>{'unit': _timeUnit},
-        'ticks': <String, Object?>{
-          'autoSkip': _autoSkip,
-          'maxRotation': _maxRotation,
-          'minRotation': _minRotation,
-          if (_maxTicksLimit > 0) 'maxTicksLimit': _maxTicksLimit,
-          'align': _align,
-          'font': <String, Object?>{'size': _fontSize},
-        },
-        'grid': <String, Object?>{
-          'display': _gridDisplay,
-          'offset': _gridOffset,
-        },
-        'border': <String, Object?>{'display': _borderDisplay},
-        'title': <String, Object?>{
-          'display': _titleDisplay,
-          'text': '$axis: $type',
-        },
-      };
+  Map<String, Object?> _scale(
+    String axis,
+    String type,
+    ChartPosition position,
+  ) => <String, Object?>{
+    'type': type,
+    'position': position,
+    'reverse': _reverse,
+    'beginAtZero': _beginAtZero,
+    if (_bounds != null) 'bounds': _bounds,
+    if (type == 'time' && _timeUnit != null)
+      'time': <String, Object?>{'unit': _timeUnit},
+    'ticks': <String, Object?>{
+      'autoSkip': _autoSkip,
+      'maxRotation': _maxRotation,
+      'minRotation': _minRotation,
+      if (_maxTicksLimit > 0) 'maxTicksLimit': _maxTicksLimit,
+      'align': _align,
+      'font': <String, Object?>{'size': _fontSize},
+    },
+    'grid': <String, Object?>{
+      'display': _gridDisplay,
+      'offset': _gridOffset,
+    },
+    'border': <String, Object?>{'display': _borderDisplay},
+    'title': <String, Object?>{
+      'display': _titleDisplay,
+      'text': '$axis: $type',
+    },
+  };
 
   /// The config of the `ChartView`, made once: a rebuild of the tab gives
   /// the view the same Map, thus no update (Chart.js ADR 0049, section 4).
@@ -703,7 +706,7 @@ class AxesDemoState extends State<AxesDemo> {
               _choice(
                 'x.position',
                 'x pos',
-                const ['bottom', 'top'],
+                const [ChartPosition.bottom, ChartPosition.top],
                 _xPosition,
                 (v) => _xPosition = v,
               ),
@@ -711,7 +714,7 @@ class AxesDemoState extends State<AxesDemo> {
               _choice(
                 'y.position',
                 'y pos',
-                const ['left', 'right'],
+                const [ChartPosition.left, ChartPosition.right],
                 _yPosition,
                 (v) => _yPosition = v,
               ),

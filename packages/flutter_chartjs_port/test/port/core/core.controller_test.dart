@@ -38,6 +38,7 @@ import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'controller_reference.dart';
@@ -462,6 +463,11 @@ JsClass _plainClass(String name, String id, [AnyObject? defaults]) {
   return value;
 }
 
+/// The upstream text of a position: the name of a [ChartPosition] (row
+/// adapt-chart-position-enum), else the string of the value.
+String _positionText(Object? position) =>
+    position is ChartPosition ? position.name : '$position';
+
 void main() {
   Chart.register(registerables);
   Chart.register([_testController, _testScale]);
@@ -505,7 +511,8 @@ void main() {
           chart.boxes
               .map(
                 (b) =>
-                    '${b is Scale ? b.id : 'undefined'}@${b.position}:'
+                    '${b is Scale ? b.id : 'undefined'}@'
+                    '${_positionText(b.position)}:'
                     '${_edges(b)}',
               )
               .join(' '),
@@ -1101,7 +1108,10 @@ void main() {
       chart.options = <String, Object?>{
         'animation': false,
         'scales': <String, Object?>{
-          'y': <String, Object?>{'type': 'testlinear', 'position': 'bottom'},
+          'y': <String, Object?>{
+            'type': 'testlinear',
+            'position': ChartPosition.bottom,
+          },
           'x2': <String, Object?>{'type': 'testlinear', 'axis': 'x'},
         },
         'layout': <String, Object?>{'padding': 10},
@@ -1124,7 +1134,7 @@ void main() {
               .map(
                 (id) =>
                     '$id:${chart.scales[id]!.options['id']}:'
-                    '${chart.scales[id]!.position}',
+                    '${_positionText(chart.scales[id]!.position)}',
               )
               .join(' '),
         )
@@ -1245,7 +1255,7 @@ void main() {
             '1': <String, Object?>{
               'type': 'category',
               'axis': 'x',
-              'position': 'top',
+              'position': ChartPosition.top,
             },
           },
         },

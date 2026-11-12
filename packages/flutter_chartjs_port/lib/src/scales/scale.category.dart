@@ -44,6 +44,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope, TickOptionsScope;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
 
 /// An item of `_addedLabels`: the object literal `{index, label}` of
@@ -248,8 +249,8 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
       (chart as CategoryLabelSource).categoryLabels(
         cached.labels,
         horizontal:
-            cached.position == 'top' ||
-            cached.position == 'bottom' ||
+            cached.position == ChartPosition.top ||
+            cached.position == ChartPosition.bottom ||
             axis == 'x',
       ),
     );
@@ -271,8 +272,8 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
         (chart as CategoryLabelSource).categoryLabels(
               cached.labels,
               horizontal:
-                  cached.position == 'top' ||
-                  cached.position == 'bottom' ||
+                  cached.position == ChartPosition.top ||
+                  cached.position == ChartPosition.bottom ||
                   axis == 'x',
             ) !=
             null;
@@ -319,8 +320,8 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
           labels = (chart as CategoryLabelSource).categoryLabels(
             cached.labels,
             horizontal:
-                cached.position == 'top' ||
-                cached.position == 'bottom' ||
+                cached.position == ChartPosition.top ||
+                cached.position == ChartPosition.bottom ||
                 axis == 'x',
           );
         }

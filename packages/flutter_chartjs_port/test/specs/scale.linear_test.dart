@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -131,7 +132,10 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'linear'},
-              'y2': <String, Object?>{'type': 'linear', 'position': 'right'},
+              'y2': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.right,
+              },
             },
           },
         });
@@ -214,7 +218,10 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'linear'},
-              'y2': <String, Object?>{'type': 'linear', 'position': 'right'},
+              'y2': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.right,
+              },
             },
           },
         });
@@ -304,7 +311,10 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'linear'},
-              'y2': <String, Object?>{'position': 'right', 'type': 'linear'},
+              'y2': <String, Object?>{
+                'position': ChartPosition.right,
+                'type': 'linear',
+              },
             },
           },
         });
@@ -412,7 +422,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{'type': 'linear'},
             },
           },
@@ -446,7 +459,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'linear',
+              'position': ChartPosition.bottom,
+            },
             'y': <String, Object?>{'type': 'linear'},
           },
         },
@@ -477,7 +493,10 @@ void main() {
           'options': <String, Object?>{
             'locale': 'de-DE',
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{'type': 'linear'},
             },
           },
@@ -520,7 +539,10 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'linear', 'stacked': true},
-              'y2': <String, Object?>{'position': 'right', 'type': 'linear'},
+              'y2': <String, Object?>{
+                'position': ChartPosition.right,
+                'type': 'linear',
+              },
             },
           },
         })..update();
@@ -561,7 +583,10 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'linear', 'stacked': true},
-              'y2': <String, Object?>{'position': 'right', 'type': 'linear'},
+              'y2': <String, Object?>{
+                'position': ChartPosition.right,
+                'type': 'linear',
+              },
             },
           },
         })..update();
@@ -1282,7 +1307,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'linear',
+              'position': ChartPosition.bottom,
+            },
             'y': <String, Object?>{'type': 'linear'},
           },
         },
@@ -1341,7 +1369,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'linear',
+              'position': ChartPosition.bottom,
+            },
             'y': <String, Object?>{'type': 'linear'},
           },
         },
@@ -1404,7 +1435,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'linear',
+              'position': ChartPosition.bottom,
+            },
             'y': <String, Object?>{
               'type': 'linear',
               'grid': <String, Object?>{'drawTicks': false},

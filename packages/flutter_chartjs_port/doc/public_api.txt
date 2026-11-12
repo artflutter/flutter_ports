@@ -32,6 +32,7 @@ ChartConfiguration
 ChartEvent
 ChartMeta
 ChartMetaClip
+ChartPosition
 CssStyleProperties
 DOMRect
 DatasetController
@@ -56,6 +57,7 @@ InteractionMode
 JsClass
 JsObjectFace
 LabelItem
+LayoutPosition
 LegendElement
 LineController
 LineElement
@@ -84,6 +86,7 @@ RenderTextOpts
 ResizeHookArgs
 Scale
 ScaleBounds
+ScaleValuePosition
 ScatterController
 Segment
 TRBL
@@ -241,6 +244,7 @@ InteractionMode
 JsClass
 JsObjectFace
 LabelItem
+LayoutPosition
 LegendElement
 LineController
 LineDataset
@@ -284,6 +288,7 @@ ResizeHookArgs
 ResizeTransition
 Scale
 ScaleBounds
+ScaleValuePosition
 ScatterController
 ScatterDataset
 Segment

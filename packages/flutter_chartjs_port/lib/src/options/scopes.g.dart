@@ -34,6 +34,8 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ChartPosition, LayoutPosition;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
@@ -16941,13 +16943,13 @@ base class ScaleOptionsScope extends OptionScope {
   set bounds(ScaleBounds value) =>
       store(OptionKey.bounds, OptValue<ScaleBounds>(value));
 
-  Opt<Object>? _position;
+  Opt<LayoutPosition>? _position;
 
   /// The cell of `position`, or Dart `null` when absent.
-  Opt<Object>? get positionCell => _position;
+  Opt<LayoutPosition>? get positionCell => _position;
 
   /// Stores the cell of `position`. Dart `null` deletes the key.
-  set positionCell(Opt<Object>? cell) {
+  set positionCell(Opt<LayoutPosition>? cell) {
     if (cell == null) {
       delete(OptionKey.position);
     } else {
@@ -16956,8 +16958,8 @@ base class ScaleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `position`.
-  set position(Object value) =>
-      store(OptionKey.position, classify(OptionKey.position, value));
+  set position(LayoutPosition value) =>
+      store(OptionKey.position, OptValue<LayoutPosition>(value));
 
   Opt<String>? _stack;
 
@@ -17518,7 +17520,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.bounds:
         _bounds = fitCell(cell, classifyTyped<ScaleBounds>);
       case OptionKey.position:
-        _position = fitCell(cell, (raw) => classifyUnion(raw, 36));
+        _position = fitCell(cell, classifyTyped<LayoutPosition>);
       case OptionKey.stack:
         _stack = fitCell(cell, classifyString);
       case OptionKey.stackWeight:
@@ -17679,7 +17681,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.bounds:
         return classifyTyped<ScaleBounds>(raw);
       case OptionKey.position:
-        return classifyUnion(raw, 36);
+        return classifyTyped<LayoutPosition>(raw);
       case OptionKey.stack:
         return classifyString(raw);
       case OptionKey.stackWeight:
@@ -17728,30 +17730,6 @@ base class ScaleOptionsScope extends OptionScope {
         return kind.classifyOther(raw);
     }
   }
-}
-
-/// Port-only kind for the object form of index.d.ts:3270 CartesianScaleOptions
-/// `position` (layout.d.ts LayoutPosition), the value on the scale of each id.
-base class ScalePositionScope extends OptionScope {
-  /// An empty scope.
-  ScalePositionScope();
-
-  @override
-  ScopeKind get kind => ScopeKind.scalePosition;
-
-  @override
-  Opt<Object?>? cellOf(OptionKey key) => null;
-
-  @override
-  void setCell(OptionKey key, Opt<Object?>? cell) {
-    throw ArgumentError.value(key, 'key', 'Not a key of ScalePosition');
-  }
-
-  @override
-  bool hasField(OptionKey key) => false;
-
-  @override
-  Opt<Object?> classify(OptionKey key, Object? raw) => kind.classifyOther(raw);
 }
 
 /// The union of index.d.ts:3115 TickOptions, :3179 CartesianTickOptions, the
@@ -20379,13 +20357,13 @@ base class LegendOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `display`.
   set display(bool value) => store(OptionKey.display, OptValue<bool>(value));
 
-  Opt<Object>? _position;
+  Opt<LayoutPosition>? _position;
 
   /// The cell of `position`, or Dart `null` when absent.
-  Opt<Object>? get positionCell => _position;
+  Opt<LayoutPosition>? get positionCell => _position;
 
   /// Stores the cell of `position`. Dart `null` deletes the key.
-  set positionCell(Opt<Object>? cell) {
+  set positionCell(Opt<LayoutPosition>? cell) {
     if (cell == null) {
       delete(OptionKey.position);
     } else {
@@ -20394,8 +20372,8 @@ base class LegendOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `position`.
-  set position(Object value) =>
-      store(OptionKey.position, classify(OptionKey.position, value));
+  set position(LayoutPosition value) =>
+      store(OptionKey.position, OptValue<LayoutPosition>(value));
 
   Opt<ChartAlign>? _align;
 
@@ -20691,7 +20669,7 @@ base class LegendOptionsScope extends OptionScope {
       case OptionKey.display:
         _display = fitCell(cell, classifyBool);
       case OptionKey.position:
-        _position = fitCell(cell, (raw) => classifyUnion(raw, 36));
+        _position = fitCell(cell, classifyTyped<LayoutPosition>);
       case OptionKey.align:
         _align = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.maxHeight:
@@ -20756,7 +20734,7 @@ base class LegendOptionsScope extends OptionScope {
       case OptionKey.display:
         return classifyBool(raw);
       case OptionKey.position:
-        return classifyUnion(raw, 36);
+        return classifyTyped<LayoutPosition>(raw);
       case OptionKey.align:
         return classifyTyped<ChartAlign>(raw);
       case OptionKey.maxHeight:
@@ -21429,13 +21407,13 @@ base class TitleOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `display`.
   set display(bool value) => store(OptionKey.display, OptValue<bool>(value));
 
-  Opt<String>? _position;
+  Opt<ChartPosition>? _position;
 
   /// The cell of `position`, or Dart `null` when absent.
-  Opt<String>? get positionCell => _position;
+  Opt<ChartPosition>? get positionCell => _position;
 
   /// Stores the cell of `position`. Dart `null` deletes the key.
-  set positionCell(Opt<String>? cell) {
+  set positionCell(Opt<ChartPosition>? cell) {
     if (cell == null) {
       delete(OptionKey.position);
     } else {
@@ -21444,8 +21422,8 @@ base class TitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `position`.
-  set position(String value) =>
-      store(OptionKey.position, OptValue<String>(value));
+  set position(ChartPosition value) =>
+      store(OptionKey.position, OptValue<ChartPosition>(value));
 
   Opt<Object>? _color;
 
@@ -21607,7 +21585,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.display:
         _display = fitCell(cell, classifyBool);
       case OptionKey.position:
-        _position = fitCell(cell, classifyString);
+        _position = fitCell(cell, classifyTyped<ChartPosition>);
       case OptionKey.color:
         _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.font:
@@ -21654,7 +21632,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.display:
         return classifyBool(raw);
       case OptionKey.position:
-        return classifyString(raw);
+        return classifyTyped<ChartPosition>(raw);
       case OptionKey.color:
         return classifyUnion(raw, 64);
       case OptionKey.font:

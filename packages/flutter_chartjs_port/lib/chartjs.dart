@@ -117,6 +117,8 @@ export 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 export 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+export 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ChartPosition, LayoutPosition, ScaleValuePosition;
 export 'package:flutter_chartjs_port/src/types/plugin.dart'
     show
         CancelableHookArgs,

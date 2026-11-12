@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
@@ -1191,7 +1192,9 @@ void main() {
             },
           },
           'plugins': <String, Object?>{
-            'legend': legend ? <String, Object?>{'position': 'right'} : false,
+            'legend': legend
+                ? <String, Object?>{'position': ChartPosition.right}
+                : false,
             'title': false,
           },
         },

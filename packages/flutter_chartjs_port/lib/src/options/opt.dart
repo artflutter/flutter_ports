@@ -49,6 +49,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
+import 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ChartPosition, LayoutPosition;
 
 /// One option value of a typed scope (Chart.js ADR 0054 §1).
 sealed class Opt<T> {
@@ -251,6 +253,13 @@ abstract final class ShapeBits {
   /// `time.round`.
   static const int timeUnit = 16777216;
 
+  /// `chartPosition`: a [ChartPosition], the `position` of the legend, the
+  /// title and the subtitle.
+  static const int chartPosition = 33554432;
+
+  /// `layoutPosition`: a [LayoutPosition], the `position` of a scale.
+  static const int layoutPosition = 67108864;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -271,7 +280,9 @@ abstract final class ShapeBits {
       arcBorderAlign |
       arcSpacingMode |
       fillerDrawTime |
-      timeUnit;
+      timeUnit |
+      chartPosition |
+      layoutPosition;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -379,6 +390,8 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.arcSpacingMode => classifyTyped<ArcSpacingMode>(raw),
   ShapeBits.fillerDrawTime => classifyTyped<FillerDrawTime>(raw),
   ShapeBits.timeUnit => classifyTyped<TimeUnit>(raw),
+  ShapeBits.chartPosition => classifyTyped<ChartPosition>(raw),
+  ShapeBits.layoutPosition => classifyTyped<LayoutPosition>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

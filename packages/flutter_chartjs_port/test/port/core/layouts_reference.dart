@@ -5,6 +5,7 @@
 // src/core/core.layouts.js at the pinned Chart.js. 23 scenes.
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String layoutsReferenceNode = 'v24.22.1';
@@ -86,7 +87,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -98,7 +99,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -127,7 +128,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 205,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -139,7 +140,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 110,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
     ],
@@ -156,7 +157,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -168,7 +169,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'right',
+        position: ChartPosition.right,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -197,7 +198,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 205,
         height: 40,
         fullSize: false,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
       ),
       (
@@ -209,7 +210,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 110,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
     ],
@@ -226,7 +227,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -238,7 +239,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -250,7 +251,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'legend',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
         fullSize: true,
         axis: null,
@@ -281,7 +282,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 482,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -293,7 +294,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 455,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -305,7 +306,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 512,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
       ),
     ],
@@ -322,7 +323,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x0',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1,
         fullSize: undefined,
         axis: 'x',
@@ -334,7 +335,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'x1',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 2,
         fullSize: undefined,
         axis: 'x',
@@ -346,7 +347,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'x2',
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -358,7 +359,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'x3',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 1,
         fullSize: undefined,
         axis: 'x',
@@ -370,7 +371,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'x4',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 2,
         fullSize: undefined,
         axis: 'x',
@@ -382,7 +383,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y0',
-        position: 'left',
+        position: ChartPosition.left,
         weight: 1,
         fullSize: undefined,
         axis: 'y',
@@ -394,7 +395,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y1',
-        position: 'left',
+        position: ChartPosition.left,
         weight: 2,
         fullSize: undefined,
         axis: 'y',
@@ -406,7 +407,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y2',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -418,7 +419,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y3',
-        position: 'right',
+        position: ChartPosition.right,
         weight: 1,
         fullSize: undefined,
         axis: 'y',
@@ -430,7 +431,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y4',
-        position: 'right',
+        position: ChartPosition.right,
         weight: 2,
         fullSize: undefined,
         axis: 'y',
@@ -479,7 +480,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 362,
         height: 25,
         fullSize: false,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1,
       ),
       (
@@ -491,7 +492,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 362,
         height: 25,
         fullSize: false,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 2,
       ),
       (
@@ -503,7 +504,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 362,
         height: 25,
         fullSize: false,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
       ),
       (
@@ -515,7 +516,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 362,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 1,
       ),
       (
@@ -527,7 +528,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 362,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 2,
       ),
       (
@@ -539,7 +540,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 1,
       ),
       (
@@ -551,7 +552,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 2,
       ),
       (
@@ -563,7 +564,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -575,7 +576,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 1,
       ),
       (
@@ -587,7 +588,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 2,
       ),
     ],
@@ -604,7 +605,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'a',
-        position: 'left',
+        position: ChartPosition.left,
         weight: 3,
         fullSize: undefined,
         axis: 'y',
@@ -616,7 +617,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'b',
-        position: 'left',
+        position: ChartPosition.left,
         weight: 3,
         fullSize: undefined,
         axis: 'y',
@@ -628,7 +629,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'c',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
         fullSize: undefined,
         axis: 'x',
@@ -640,7 +641,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'd',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
         fullSize: undefined,
         axis: 'x',
@@ -674,7 +675,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 250,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 3,
       ),
       (
@@ -686,7 +687,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 250,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 3,
       ),
       (
@@ -698,7 +699,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 340,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -710,7 +711,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 340,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
     ],
@@ -727,7 +728,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -739,7 +740,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'x2',
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
         fullSize: true,
         axis: 'x',
@@ -751,7 +752,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -763,7 +764,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'legend',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
         fullSize: true,
         axis: null,
@@ -775,7 +776,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'title',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 2000,
         fullSize: true,
         axis: null,
@@ -787,7 +788,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'subtitle',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 1500,
         fullSize: true,
         axis: null,
@@ -799,7 +800,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'side',
-        position: 'left',
+        position: ChartPosition.left,
         weight: 100,
         fullSize: true,
         axis: null,
@@ -840,7 +841,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 387,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -852,7 +853,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 512,
         height: 25,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
       ),
       (
@@ -864,7 +865,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 154,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -876,7 +877,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 512,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
       ),
       (
@@ -888,7 +889,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 512,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 2000,
       ),
       (
@@ -900,7 +901,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 512,
         height: 32,
         fullSize: true,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 1500,
       ),
       (
@@ -912,7 +913,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 80,
         height: 300,
         fullSize: true,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 100,
       ),
     ],
@@ -929,7 +930,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -941,7 +942,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -953,7 +954,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'legend',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
         fullSize: true,
         axis: null,
@@ -984,7 +985,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 235,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -996,7 +997,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 98,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1008,7 +1009,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 280,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
       ),
     ],
@@ -1025,7 +1026,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1037,7 +1038,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1066,7 +1067,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 235,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1078,7 +1079,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 140,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
     ],
@@ -1095,7 +1096,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1107,7 +1108,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1136,7 +1137,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 255,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1148,7 +1149,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 130,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
     ],
@@ -1165,7 +1166,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1177,7 +1178,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1189,7 +1190,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y2',
-        position: 'right',
+        position: ChartPosition.right,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1223,7 +1224,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 210,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1235,7 +1236,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 110,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1247,7 +1248,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 110,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
     ],
@@ -1264,7 +1265,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'ya',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1276,7 +1277,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'yb',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1288,7 +1289,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'yc',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1300,7 +1301,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'yd',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1312,7 +1313,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'xa',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1324,7 +1325,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'xb',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1336,7 +1337,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'xc',
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1378,7 +1379,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 106.66666666666666,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1390,7 +1391,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 213.33333333333331,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1402,7 +1403,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 320,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1414,7 +1415,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 320,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1426,7 +1427,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 106.25,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1438,7 +1439,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 318.75,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1450,7 +1451,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 425,
         height: 40,
         fullSize: false,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
       ),
     ],
@@ -1467,7 +1468,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'xa',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: true,
         axis: 'x',
@@ -1479,7 +1480,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'xb',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1491,7 +1492,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'ya',
-        position: 'right',
+        position: ChartPosition.right,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1503,7 +1504,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'yb',
-        position: 'right',
+        position: ChartPosition.right,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1538,7 +1539,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 500,
         height: 40,
         fullSize: true,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1550,7 +1551,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 227.5,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1562,7 +1563,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 180,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
       (
@@ -1574,7 +1575,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 180,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
     ],
@@ -1591,7 +1592,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'r',
-        position: 'chartArea',
+        position: ChartPosition.chartArea,
         weight: undefined,
         fullSize: undefined,
         axis: 'r',
@@ -1603,7 +1604,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'legend',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
         fullSize: true,
         axis: null,
@@ -1631,7 +1632,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 368,
         fullSize: false,
-        position: 'chartArea',
+        position: ChartPosition.chartArea,
         weight: 0,
       ),
       (
@@ -1643,7 +1644,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 400,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
       ),
     ],
@@ -1660,7 +1661,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1672,7 +1673,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1684,7 +1685,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'xc',
-        position: 'center',
+        position: ChartPosition.center,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1696,7 +1697,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'yc',
-        position: <String, Object?>{'x': 0},
+        position: ScaleValuePosition('x', 0),
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1708,7 +1709,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'xd',
-        position: <String, Object?>{'y': 5},
+        position: ScaleValuePosition('y', 5),
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1744,7 +1745,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 470,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1756,7 +1757,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1768,7 +1769,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 470,
         height: 10,
         fullSize: false,
-        position: 'center',
+        position: ChartPosition.center,
         weight: 0,
       ),
       (
@@ -1780,7 +1781,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: <String, Object?>{'x': 0},
+        position: ScaleValuePosition('x', 0),
         weight: 0,
       ),
       (
@@ -1792,7 +1793,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 470,
         height: 10,
         fullSize: false,
-        position: <String, Object?>{'y': 5},
+        position: ScaleValuePosition('y', 5),
         weight: 0,
       ),
     ],
@@ -1809,7 +1810,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1821,7 +1822,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1833,7 +1834,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y2',
-        position: 'right',
+        position: ChartPosition.right,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1845,7 +1846,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y3',
-        position: 'right',
+        position: ChartPosition.right,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1880,7 +1881,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 310,
         height: 25,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -1892,7 +1893,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -1904,7 +1905,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
       (
@@ -1916,7 +1917,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 275,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
     ],
@@ -1933,7 +1934,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -1945,7 +1946,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1957,7 +1958,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y2',
-        position: 'right',
+        position: ChartPosition.right,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -1969,7 +1970,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'x2',
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -2003,7 +2004,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 290,
         height: 20,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -2015,7 +2016,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 30,
         height: 225,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -2027,7 +2028,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 10,
         height: 225,
         fullSize: false,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
       (
@@ -2039,7 +2040,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 290,
         height: 5,
         fullSize: false,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
       ),
     ],
@@ -2056,7 +2057,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -2068,7 +2069,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -2080,7 +2081,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'legend',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
         fullSize: true,
         axis: null,
@@ -2110,7 +2111,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 0,
         height: 40,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -2122,7 +2123,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 0,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -2134,7 +2135,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 40,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1000,
       ),
     ],
@@ -2163,7 +2164,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'b',
-        position: 'left',
+        position: ChartPosition.left,
         weight: null,
         fullSize: 0,
         axis: 'y',
@@ -2175,7 +2176,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'c',
-        position: 'left',
+        position: ChartPosition.left,
         weight: double.nan,
         fullSize: undefined,
         axis: 'y',
@@ -2187,7 +2188,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'd',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: -1,
         fullSize: 1,
         axis: 'x',
@@ -2222,7 +2223,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 210,
         height: 30,
         fullSize: false,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
       ),
       (
@@ -2234,7 +2235,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 145,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -2246,7 +2247,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 145,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -2258,7 +2259,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 300,
         height: 25,
         fullSize: 1,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: -1,
       ),
     ],
@@ -2275,7 +2276,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'x',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -2287,7 +2288,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'y',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -2310,7 +2311,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: double.nan,
         height: double.nan,
         fullSize: false,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 0,
       ),
       (
@@ -2322,7 +2323,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: double.nan,
         height: double.nan,
         fullSize: false,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
     ],
@@ -2339,7 +2340,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'l0',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -2351,7 +2352,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'l1',
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
         fullSize: undefined,
         axis: 'y',
@@ -2363,7 +2364,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'b0',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -2375,7 +2376,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'b1',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
         fullSize: undefined,
         axis: 'x',
@@ -2387,7 +2388,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 't0',
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
         fullSize: true,
         axis: null,
@@ -2399,7 +2400,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 't1',
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
         fullSize: true,
         axis: null,
@@ -2437,7 +2438,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 56,
         fullSize: undefined,
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
       ),
       (
@@ -2449,7 +2450,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 56,
         fullSize: undefined,
-        position: 'left',
+        position: ChartPosition.left,
         weight: undefined,
       ),
       (
@@ -2461,7 +2462,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 210,
         height: 40,
         fullSize: undefined,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
       ),
       (
@@ -2473,7 +2474,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 210,
         height: 40,
         fullSize: undefined,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: undefined,
       ),
       (
@@ -2485,7 +2486,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 300,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
       ),
       (
@@ -2497,7 +2498,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 300,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: undefined,
       ),
     ],
@@ -2514,7 +2515,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'l0',
-        position: 'left',
+        position: ChartPosition.left,
         weight: null,
         fullSize: undefined,
         axis: 'y',
@@ -2526,7 +2527,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'l1',
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
         fullSize: undefined,
         axis: 'y',
@@ -2538,7 +2539,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'r0',
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
         fullSize: undefined,
         axis: 'y',
@@ -2550,7 +2551,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'r1',
-        position: 'right',
+        position: ChartPosition.right,
         weight: null,
         fullSize: undefined,
         axis: 'y',
@@ -2562,7 +2563,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 't0',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
         fullSize: true,
         axis: null,
@@ -2574,7 +2575,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 't1',
-        position: 'top',
+        position: ChartPosition.top,
         weight: null,
         fullSize: true,
         axis: null,
@@ -2610,7 +2611,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 136,
         fullSize: undefined,
-        position: 'left',
+        position: ChartPosition.left,
         weight: null,
       ),
       (
@@ -2622,7 +2623,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 136,
         fullSize: undefined,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 0,
       ),
       (
@@ -2634,7 +2635,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 136,
         fullSize: undefined,
-        position: 'right',
+        position: ChartPosition.right,
         weight: 0,
       ),
       (
@@ -2646,7 +2647,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 136,
         fullSize: undefined,
-        position: 'right',
+        position: ChartPosition.right,
         weight: null,
       ),
       (
@@ -2658,7 +2659,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 300,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 0,
       ),
       (
@@ -2670,7 +2671,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 300,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: null,
       ),
     ],
@@ -2687,7 +2688,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
     boxes: [
       (
         name: 'l0',
-        position: 'left',
+        position: ChartPosition.left,
         weight: '5',
         fullSize: undefined,
         axis: 'y',
@@ -2699,7 +2700,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'l1',
-        position: 'left',
+        position: ChartPosition.left,
         weight: 5,
         fullSize: undefined,
         axis: 'y',
@@ -2711,7 +2712,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'l2',
-        position: 'left',
+        position: ChartPosition.left,
         weight: '5',
         fullSize: undefined,
         axis: 'y',
@@ -2723,7 +2724,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'b0',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: '10',
         fullSize: undefined,
         axis: 'x',
@@ -2735,7 +2736,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 'b1',
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 9,
         fullSize: undefined,
         axis: 'x',
@@ -2747,7 +2748,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 't0',
-        position: 'top',
+        position: ChartPosition.top,
         weight: true,
         fullSize: true,
         axis: null,
@@ -2759,7 +2760,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 't1',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1,
         fullSize: true,
         axis: null,
@@ -2771,7 +2772,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
       ),
       (
         name: 't2',
-        position: 'top',
+        position: ChartPosition.top,
         weight: 'a',
         fullSize: true,
         axis: null,
@@ -2814,7 +2815,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 154,
         fullSize: undefined,
-        position: 'left',
+        position: ChartPosition.left,
         weight: '5',
       ),
       (
@@ -2826,7 +2827,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 154,
         fullSize: undefined,
-        position: 'left',
+        position: ChartPosition.left,
         weight: 5,
       ),
       (
@@ -2838,7 +2839,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 45,
         height: 154,
         fullSize: undefined,
-        position: 'left',
+        position: ChartPosition.left,
         weight: '5',
       ),
       (
@@ -2850,7 +2851,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 265,
         height: 25,
         fullSize: undefined,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: '10',
       ),
       (
@@ -2862,7 +2863,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 265,
         height: 25,
         fullSize: undefined,
-        position: 'bottom',
+        position: ChartPosition.bottom,
         weight: 9,
       ),
       (
@@ -2874,7 +2875,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 400,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: true,
       ),
       (
@@ -2886,7 +2887,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 400,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 1,
       ),
       (
@@ -2898,7 +2899,7 @@ const List<LayoutsReferenceScene> layoutsReference = [
         width: 400,
         height: 32,
         fullSize: true,
-        position: 'top',
+        position: ChartPosition.top,
         weight: 'a',
       ),
     ],

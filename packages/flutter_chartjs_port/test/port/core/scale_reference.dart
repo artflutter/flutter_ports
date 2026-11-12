@@ -7,6 +7,7 @@
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = 'v24.22.1';
@@ -68,7 +69,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'beforeUpdate': 'fn:hook:beforeUpdate',
       'beforeSetDimensions': 'fn:hook:beforeSetDimensions',
       'afterSetDimensions': 'fn:hook:afterSetDimensions',
@@ -400,7 +401,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'top',
+      'position': ChartPosition.top,
       'ticks': <String, Object?>{'callback': 'fn:longLabel'},
     },
     expected: <String, Object?>{
@@ -723,7 +724,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'offset': true,
       'ticks': <String, Object?>{
         'callback': 'fn:longLabel',
@@ -1010,7 +1011,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'minRotation': 90.0},
     },
     expected: <String, Object?>{
@@ -1316,7 +1317,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{
         'align': TickAlign.start,
         'crossAlign': TickCrossAlign.far,
@@ -1585,7 +1586,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'reverse': true,
       'ticks': <String, Object?>{
         'align': TickAlign.end,
@@ -1803,7 +1804,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'top',
+      'position': ChartPosition.top,
       'ticks': <String, Object?>{
         'align': TickAlign.inner,
         'crossAlign': TickCrossAlign.center,
@@ -2087,7 +2088,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'top',
+      'position': ChartPosition.top,
       'reverse': true,
       'ticks': <String, Object?>{
         'align': TickAlign.inner,
@@ -2267,7 +2268,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{
         'mirror': true,
         'textStrokeWidth': 2.0,
@@ -2550,7 +2551,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'callback': 'fn:nullOdd'},
     },
     expected: <String, Object?>{
@@ -2815,7 +2816,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'afterBuildTicks': 'fn:dropFirst',
       'ticks': <String, Object?>{'callback': 'fn:undefinedLast'},
     },
@@ -3045,7 +3046,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'callback': 'fn:numberLabel'},
     },
     expected: <String, Object?>{
@@ -3279,7 +3280,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'callback': 'fn:thisType'},
     },
     expected: <String, Object?>{
@@ -3482,7 +3483,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'sampleSize': 3.0, 'callback': 'fn:longLabel'},
     },
     expected: <String, Object?>{
@@ -4006,7 +4007,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{
         'major': <String, Object?>{'enabled': true},
         'color': 'fn:colorByMajor',
@@ -4484,7 +4485,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'autoSkip': false},
     },
     expected: <String, Object?>{
@@ -5975,7 +5976,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'autoSkip': false, 'source': TickSource.auto},
     },
     expected: <String, Object?>{
@@ -6628,7 +6629,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'maxTicksLimit': 4.0, 'autoSkip': false},
     },
     expected: <String, Object?>{
@@ -7052,7 +7053,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'offset': true,
       'grid': <String, Object?>{'offset': true},
     },
@@ -7333,7 +7334,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'grid': <String, Object?>{'offset': true},
     },
     expected: <String, Object?>{
@@ -7481,7 +7482,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
         'text': 'Time',
@@ -7760,7 +7761,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'top',
+      'position': ChartPosition.top,
       'reverse': true,
       'title': <String, Object?>{
         'display': true,
@@ -8039,7 +8040,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'center',
+      'position': ChartPosition.center,
       'title': <String, Object?>{'display': true, 'text': 'Center'},
     },
     expected: <String, Object?>{
@@ -8308,7 +8309,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': <String, Object?>{'y': 40.0},
+      'position': ScaleValuePosition('y', 40.0),
       'title': <String, Object?>{'display': true, 'text': 'At y'},
     },
     expected: <String, Object?>{
@@ -8572,7 +8573,10 @@ const List<ScaleReferenceCase> scaleReference = [
       'maxHeight': 200.0,
       'box': <Object?>[40.0, 100.0],
     },
-    options: <String, Object?>{'axis': 'x', 'position': 'chartArea'},
+    options: <String, Object?>{
+      'axis': 'x',
+      'position': ChartPosition.chartArea,
+    },
     expected: <String, Object?>{
       'hooks': <Object?>[
         'notify:beforeDataLimits:scale',
@@ -8767,7 +8771,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'beforeUpdate': 'fn:hook:beforeUpdate',
       'beforeSetDimensions': 'fn:hook:beforeSetDimensions',
       'afterSetDimensions': 'fn:hook:afterSetDimensions',
@@ -9058,7 +9062,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.center,
@@ -9318,7 +9322,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.far,
@@ -9510,7 +9514,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.near,
@@ -9702,7 +9706,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.center,
@@ -9894,7 +9898,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.far,
@@ -10086,7 +10090,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{'crossAlign': TickCrossAlign.center},
     },
     expected: <String, Object?>{
@@ -10281,7 +10285,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{
         'align': TickAlign.start,
         'showLabelBackdrop': true,
@@ -10532,7 +10536,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'align': TickAlign.end,
         'showLabelBackdrop': true,
@@ -10783,7 +10787,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'crossAlign': TickCrossAlign.far,
         'align': TickAlign.start,
@@ -11021,7 +11025,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'crossAlign': TickCrossAlign.center,
         'align': TickAlign.end,
@@ -11272,7 +11276,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{
         'crossAlign': TickCrossAlign.far,
         'align': TickAlign.end,
@@ -11528,7 +11532,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{'mirror': true},
       'title': <String, Object?>{
         'display': true,
@@ -11772,7 +11776,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'title': <String, Object?>{
         'display': true,
         'text': <Object?>['Two', 'lines'],
@@ -12021,7 +12025,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'center',
+      'position': ChartPosition.center,
       'title': <String, Object?>{'display': true, 'text': 'Center'},
     },
     expected: <String, Object?>{
@@ -12261,7 +12265,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': <String, Object?>{'x': 100.0},
+      'position': ScaleValuePosition('x', 100.0),
       'title': <String, Object?>{'display': true, 'text': 'At x'},
     },
     expected: <String, Object?>{
@@ -12501,7 +12505,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
         'text': 'title-x',
@@ -12782,7 +12786,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'title': <String, Object?>{
         'display': true,
         'text': <Object?>['title', 'y'],
@@ -13040,7 +13044,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
         'text': 'Time',
@@ -13319,7 +13323,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
         'text': 'Time',
@@ -13596,7 +13600,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'title': <String, Object?>{
         'display': true,
         'text': 'Value',
@@ -13845,7 +13849,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'display': false,
     },
     expected: <String, Object?>{
@@ -13955,7 +13959,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'display': 'auto',
     },
     expected: <String, Object?>{
@@ -14072,7 +14076,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'display': 'auto',
     },
     expected: <String, Object?>{
@@ -14316,7 +14320,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'min': 3.0,
       'suggestedMax': 20.0,
       'suggestedMin': -9.0,
@@ -14557,7 +14561,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'min': -4.0,
       'max': 8.0,
     },
@@ -14795,7 +14799,11 @@ const List<ScaleReferenceCase> scaleReference = [
       'maxHeight': 200.0,
       'box': <Object?>[40.0, 350.0],
     },
-    options: <String, Object?>{'axis': 'x', 'position': 'bottom', 'max': 3.0},
+    options: <String, Object?>{
+      'axis': 'x',
+      'position': ChartPosition.bottom,
+      'max': 3.0,
+    },
     expected: <String, Object?>{
       'hooks': <Object?>[
         'notify:beforeDataLimits:scale',
@@ -15023,7 +15031,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'maxHeight': 200.0,
       'box': <Object?>[40.0, 350.0],
     },
-    options: <String, Object?>{'axis': 'x', 'position': 'bottom'},
+    options: <String, Object?>{'axis': 'x', 'position': ChartPosition.bottom},
     expected: <String, Object?>{
       'hooks': <Object?>[
         'notify:beforeDataLimits:scale',
@@ -15182,7 +15190,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'maxHeight': 320.0,
       'box': <Object?>[0.0, 30.0],
     },
-    options: <String, Object?>{'axis': 'y', 'position': 'left'},
+    options: <String, Object?>{'axis': 'y', 'position': ChartPosition.left},
     expected: <String, Object?>{
       'hooks': <Object?>[
         'notify:beforeDataLimits:scale',
@@ -15342,7 +15350,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'labels': <Object?>['o1', 'o2', 'o3'],
     },
     expected: <String, Object?>{
@@ -15504,7 +15512,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'backgroundColor': 'rgba(1, 2, 3, 0.5)',
       'grid': <String, Object?>{
         'color': 'fn:colorByIndex',
@@ -15784,7 +15792,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'grid': <String, Object?>{
         'lineWidth': 'fn:undefinedOddWidth',
         'tickWidth': 1.0,
@@ -16002,7 +16010,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'grid': <String, Object?>{
         'color': <Object?>['red', 'green', 'blue'],
         'tickLength': 4.0,
@@ -16244,7 +16252,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'alignToPixels': true,
     },
     expected: <String, Object?>{
@@ -16574,7 +16582,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'border': <String, Object?>{'display': false},
     },
     expected: <String, Object?>{
@@ -16760,7 +16768,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'grid': <String, Object?>{'display': false},
     },
     expected: <String, Object?>{
@@ -16894,7 +16902,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'grid': <String, Object?>{'drawOnChartArea': false, 'drawTicks': false},
     },
     expected: <String, Object?>{
@@ -17028,7 +17036,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'display': false},
     },
     expected: <String, Object?>{
@@ -17182,7 +17190,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'padding': '3', 'labelOffset': '5'},
       'grid': <String, Object?>{'tickLength': '8'},
     },
@@ -17454,7 +17462,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'top',
+      'position': ChartPosition.top,
       'ticks': <String, Object?>{
         'callback': 'fn:longLabel',
         'padding': '3',
@@ -17776,7 +17784,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'top',
+      'position': ChartPosition.top,
       'ticks': <String, Object?>{'mirror': true, 'padding': '3'},
     },
     expected: <String, Object?>{
@@ -18035,7 +18043,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'center',
+      'position': ChartPosition.center,
       'ticks': <String, Object?>{'padding': '3'},
       'grid': <String, Object?>{'tickLength': '8'},
     },
@@ -18296,7 +18304,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': <String, Object?>{'y': 40.0},
+      'position': ScaleValuePosition('y', 40.0),
       'ticks': <String, Object?>{'padding': '3'},
     },
     expected: <String, Object?>{
@@ -18553,7 +18561,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'display': false},
       'grid': <String, Object?>{'tickLength': '8'},
     },
@@ -18743,7 +18751,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'autoSkipPadding': '3'},
     },
     expected: <String, Object?>{
@@ -19579,7 +19587,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
         'text': 'Time',
@@ -19856,7 +19864,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{'padding': '3'},
       'grid': <String, Object?>{'tickLength': '8'},
     },
@@ -20119,7 +20127,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.center,
@@ -20312,7 +20320,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.far,
@@ -20505,7 +20513,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{
         'crossAlign': TickCrossAlign.center,
         'padding': '3',
@@ -20702,7 +20710,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.center,
@@ -20895,7 +20903,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'mirror': true,
         'crossAlign': TickCrossAlign.far,
@@ -21088,7 +21096,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'right',
+      'position': ChartPosition.right,
       'ticks': <String, Object?>{
         'crossAlign': TickCrossAlign.center,
         'padding': '3',
@@ -21287,7 +21295,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'center',
+      'position': ChartPosition.center,
       'ticks': <String, Object?>{'padding': '3'},
       'grid': <String, Object?>{'tickLength': '8'},
     },
@@ -21519,7 +21527,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': <String, Object?>{'x': 100.0},
+      'position': ScaleValuePosition('x', 100.0),
       'ticks': <String, Object?>{'padding': '3'},
       'grid': <String, Object?>{'tickLength': '8'},
     },
@@ -21749,7 +21757,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{'display': false},
       'grid': <String, Object?>{'tickLength': '8'},
     },
@@ -21904,7 +21912,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'grid': <String, Object?>{'tickLength': '0'},
     },
     expected: <String, Object?>{
@@ -22168,7 +22176,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'grid': <String, Object?>{'tickLength': ''},
     },
     expected: <String, Object?>{
@@ -22467,7 +22475,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'autoSkipPadding': '3', 'maxRotation': 0.0},
     },
     expected: <String, Object?>{
@@ -22703,7 +22711,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'y',
-      'position': 'left',
+      'position': ChartPosition.left,
       'ticks': <String, Object?>{'padding': 'x'},
     },
     expected: <String, Object?>{
@@ -22899,7 +22907,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'minRotation': '0'},
     },
     expected: <String, Object?>{
@@ -23168,7 +23176,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{
         'callback': 'fn:longLabel',
         'minRotation': '0',
@@ -23622,7 +23630,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{
         'callback': 'fn:longLabel',
         'minRotation': '5',
@@ -23777,7 +23785,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{
         'callback': 'fn:longLabel',
         'minRotation': 5.0,
@@ -24060,7 +24068,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'z': 5.0},
       'grid': <String, Object?>{'z': 2.0},
       'border': <String, Object?>{'z': 1.0},
@@ -24252,7 +24260,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'grid': <String, Object?>{'offset': true},
     },
     expected: <String, Object?>{
@@ -24342,7 +24350,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'font': 'fn:fontByIndex'},
     },
     expected: <String, Object?>{
@@ -24585,7 +24593,7 @@ const List<ScaleReferenceCase> scaleReference = [
     },
     options: <String, Object?>{
       'axis': 'x',
-      'position': 'bottom',
+      'position': ChartPosition.bottom,
       'beforeUpdate': 'fn:hook:beforeUpdate',
       'beforeSetDimensions': 'fn:hook:beforeSetDimensions',
       'afterSetDimensions': 'fn:hook:afterSetDimensions',

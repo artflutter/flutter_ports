@@ -163,8 +163,8 @@ void main() {
     expect(chart.height, 360);
     expect(_scale(chart, 'x'), isA<LinearScale>());
     expect(_scale(chart, 'y'), isA<LinearScale>());
-    expect(_scale(chart, 'x').options['position'], 'bottom');
-    expect(_scale(chart, 'y').options['position'], 'left');
+    expect(_scale(chart, 'x').options['position'], ChartPosition.bottom);
+    expect(_scale(chart, 'y').options['position'], ChartPosition.left);
     for (var d = 0; d < 2; d++) {
       expect(chart.getDatasetMeta(d).data, hasLength(12));
     }
@@ -445,11 +445,11 @@ void main() {
     final left = area.left;
 
     await _tap(tester, 'axes.x.position.top');
-    expect(_scale(chart, 'x').options['position'], 'top');
+    expect(_scale(chart, 'x').options['position'], ChartPosition.top);
     expect(_scale(chart, 'x').bottom, lessThanOrEqualTo(chart.chartArea!.top));
     expect(chart.chartArea!.top, greaterThan(top));
     await _tap(tester, 'axes.y.position.right');
-    expect(_scale(chart, 'y').options['position'], 'right');
+    expect(_scale(chart, 'y').options['position'], ChartPosition.right);
     expect(chart.chartArea!.left, lessThan(left));
     expect(
       _scale(chart, 'y').left,

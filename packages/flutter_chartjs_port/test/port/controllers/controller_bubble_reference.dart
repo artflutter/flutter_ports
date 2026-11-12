@@ -9,6 +9,7 @@
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String controllerBubbleReferenceNode = 'v24.22.1';
@@ -90,7 +91,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': -15.0,
             'max': 15.0,
             'ticks': <Object?>[
@@ -167,7 +168,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -10.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -698,7 +699,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
                 'ticks': <Object?>[
@@ -775,7 +776,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -1394,7 +1395,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
                 'ticks': <Object?>[
@@ -1471,7 +1472,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -2085,7 +2086,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
                 'ticks': <Object?>[
@@ -2162,7 +2163,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -2780,7 +2781,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 15.0,
                 'ticks': <Object?>[
@@ -2857,7 +2858,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -3518,7 +3519,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -3593,7 +3594,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -4281,7 +4282,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -4356,7 +4357,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -5014,7 +5015,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -15.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -5089,7 +5090,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -6459,7 +6460,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -6490,7 +6491,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -7657,7 +7658,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -7692,7 +7693,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -8088,7 +8089,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -8123,7 +8124,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -8602,7 +8603,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -8637,7 +8638,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -9116,7 +9117,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -9151,7 +9152,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -10319,7 +10320,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -10358,7 +10359,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -11439,7 +11440,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -11474,7 +11475,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -11952,7 +11953,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -11987,7 +11988,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -12553,7 +12554,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -12584,7 +12585,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
                 'ticks': <Object?>[
@@ -13246,7 +13247,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -13277,7 +13278,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
                 'ticks': <Object?>[
@@ -14016,7 +14017,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -14047,7 +14048,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
                 'ticks': <Object?>[
@@ -14865,7 +14866,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -14896,7 +14897,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
                 'ticks': <Object?>[
@@ -15652,7 +15653,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -15683,7 +15684,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 6.0,
                 'ticks': <Object?>[
@@ -17219,7 +17220,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -17258,7 +17259,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -18452,7 +18453,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -18487,7 +18488,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 9.0,
             'ticks': <Object?>[
@@ -19621,7 +19622,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -19664,7 +19665,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -20692,7 +20693,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 8.0,
             'ticks': <Object?>[
@@ -20729,7 +20730,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 8.0,
             'ticks': <Object?>[
@@ -21796,7 +21797,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -21839,7 +21840,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -22132,7 +22133,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -22175,7 +22176,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -23295,7 +23296,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -23338,7 +23339,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -24328,7 +24329,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -24367,7 +24368,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -25187,7 +25188,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -25230,7 +25231,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -25788,7 +25789,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 9.0,
                 'ticks': <Object?>[
@@ -25823,7 +25824,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 9.0,
                 'ticks': <Object?>[
@@ -26511,7 +26512,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 9.0,
                 'ticks': <Object?>[
@@ -26546,7 +26547,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 9.0,
                 'ticks': <Object?>[
@@ -27264,7 +27265,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 9.0,
                 'ticks': <Object?>[
@@ -27299,7 +27300,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 9.0,
                 'ticks': <Object?>[
@@ -28804,7 +28805,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -28839,7 +28840,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -29691,7 +29692,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -29734,7 +29735,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -30939,7 +30940,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -30982,7 +30983,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[

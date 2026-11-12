@@ -58,7 +58,6 @@ const List<String> _typedNames = [
   'ArcElementStyle',
   // Values.
   'ChartValue', 'ChartConstant', 'ChartIndexed', 'ChartResolver',
-  'ChartPosition',
   'ChartPointStyle', 'ChartFill', 'ChartLength',
   // Property animations.
   'PropertyAnimation',
@@ -146,8 +145,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 78 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(78));
+  test('the list has 77 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(77));
   });
 
   test(

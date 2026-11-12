@@ -89,6 +89,7 @@ import 'package:flutter_chartjs_port/src/options/static_font.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
@@ -1924,13 +1925,15 @@ final class OptionView implements ContextProxy {
   /// Label-source options already read by the first category callback. Never
   /// execute a scriptable option merely to qualify a bulk-label fast path.
   @internal
-  ({Object? labels, String? position})? cachedCategoryLabelSource() {
+  ({Object? labels, ChartPosition? position})? cachedCategoryLabelSource() {
     // DIVERGES(chartjs): adapt-category-label-dispatch, cached source inputs.
     final labels = _cache.get(OptionKey.labels);
     if (identical(labels, _absent)) return null;
     if (jsTruthy(labels)) return (labels: labels, position: null);
     final position = _cache.get(OptionKey.position);
-    return position is String ? (labels: labels, position: position) : null;
+    return position is ChartPosition
+        ? (labels: labels, position: position)
+        : null;
   }
 
   /// A fixed numeric range must come from numeric inputs, not a callback that

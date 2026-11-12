@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../controllers/controller_chart_harness.dart'
@@ -145,7 +146,7 @@ AnyObject _line(Object? subtitleOptions) => <String, Object?>{
 AnyObject _startOptions(String text) => <String, Object?>{
   'display': true,
   'text': text,
-  'position': 'top',
+  'position': ChartPosition.top,
   'weight': 1500,
   'fullSize': true,
 };
@@ -258,7 +259,7 @@ void main() {
       expect(_plain(defaults['font']), <String, Object?>{'weight': 'normal'});
       expect(defaults['fullSize'], isTrue);
       expect(defaults['padding'], 0);
-      expect(defaults['position'], 'top');
+      expect(defaults['position'], ChartPosition.top);
       expect(defaults['text'], '');
       expect(defaults['weight'], 1500);
       expect(_plain(subTitle['defaultRoutes']), <String, Object?>{
@@ -381,7 +382,7 @@ void main() {
         _line(<String, Object?>{'display': true, 'text': 'A'}),
       );
       final subtitle = _subtitles(chart).single;
-      expect(subtitle.position, 'top');
+      expect(subtitle.position, ChartPosition.top);
       expect(subtitle.weight, 1500);
       expect(subtitle.fullSize, isTrue);
       expect(subtitle.ctx, same(chart.ctx));

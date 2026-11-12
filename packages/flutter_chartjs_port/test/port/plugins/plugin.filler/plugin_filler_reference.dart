@@ -18,6 +18,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String pluginFillerReferenceNode = 'v24.22.1';
@@ -91,7 +92,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -125,7 +126,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -444,7 +445,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -456,7 +457,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -1026,7 +1027,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -1060,7 +1061,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -1384,7 +1385,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -1396,7 +1397,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -2082,7 +2083,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -2116,7 +2117,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -2440,7 +2441,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -2452,7 +2453,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -3138,7 +3139,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -3172,7 +3173,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -3496,7 +3497,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -3508,7 +3509,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -4194,7 +4195,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -4228,7 +4229,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -4547,7 +4548,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -4559,7 +4560,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -5129,7 +5130,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -5163,7 +5164,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -5487,7 +5488,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -5499,7 +5500,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -6163,7 +6164,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -6197,7 +6198,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -6790,7 +6791,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -6802,7 +6803,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -7464,7 +7465,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -7498,7 +7499,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -8091,7 +8092,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -8103,7 +8104,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -8770,7 +8771,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -8804,7 +8805,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -9703,7 +9704,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -9715,7 +9716,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -10582,7 +10583,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 16.0,
             'ticks': <Object?>[
@@ -10621,7 +10622,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -11619,7 +11620,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -11631,7 +11632,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -12499,7 +12500,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -12533,7 +12534,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -12852,7 +12853,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -12864,7 +12865,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -13416,7 +13417,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -13450,7 +13451,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 3.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -13771,7 +13772,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -13783,7 +13784,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -14419,7 +14420,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -14453,7 +14454,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 3.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -14773,7 +14774,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -14785,7 +14786,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -15396,7 +15397,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -15430,7 +15431,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -15749,7 +15750,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -15761,7 +15762,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -16342,7 +16343,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -16376,7 +16377,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -16969,7 +16970,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -16981,7 +16982,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -17638,7 +17639,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -17672,7 +17673,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -17991,7 +17992,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -18003,7 +18004,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -18578,7 +18579,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'category',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -18611,7 +18612,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -18938,7 +18939,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -18950,7 +18951,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -19533,7 +19534,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'category',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -19566,7 +19567,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -20179,7 +20180,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -20191,7 +20192,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -20852,7 +20853,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -20886,7 +20887,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -21209,7 +21210,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -21221,7 +21222,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -21839,7 +21840,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'category',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -21872,7 +21873,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -22203,7 +22204,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -22215,7 +22216,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -22840,7 +22841,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -22874,7 +22875,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -23491,7 +23492,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -23503,7 +23504,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -24240,7 +24241,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -24274,7 +24275,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -24593,7 +24594,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -24605,7 +24606,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -25177,7 +25178,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -25211,7 +25212,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -25804,7 +25805,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -25816,7 +25817,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -26478,7 +26479,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -26512,7 +26513,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -27105,7 +27106,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -27117,7 +27118,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -27815,7 +27816,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -27849,7 +27850,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -28745,7 +28746,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -28757,7 +28758,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -28806,7 +28807,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -28840,7 +28841,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -3.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -29748,7 +29749,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 24.669921875,
@@ -29760,7 +29761,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -30689,7 +30690,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -30723,7 +30724,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -31619,7 +31620,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             24.669921875,
@@ -31631,7 +31632,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -31680,7 +31681,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -31714,7 +31715,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -3.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -32622,7 +32623,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 24.669921875,
@@ -32634,7 +32635,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -33556,7 +33557,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -33590,7 +33591,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -34117,7 +34118,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -34129,7 +34130,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -34846,7 +34847,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -34886,7 +34887,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -35312,7 +35313,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -35324,7 +35325,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -36009,7 +36010,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -36043,7 +36044,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -36568,7 +36569,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -36580,7 +36581,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -37287,7 +37288,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -37331,7 +37332,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -37549,7 +37550,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -37561,7 +37562,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -38318,7 +38319,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -38352,7 +38353,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -38698,7 +38699,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -38710,7 +38711,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -39403,7 +39404,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'category',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -39436,7 +39437,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -39793,7 +39794,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -39805,7 +39806,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             20.673828125,
@@ -40486,7 +40487,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -40520,7 +40521,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -40855,7 +40856,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -40867,7 +40868,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -41551,7 +41552,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 120.0,
             'ticks': <Object?>[
@@ -41591,7 +41592,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -46225,7 +46226,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -46237,7 +46238,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -46876,7 +46877,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': -1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -47206,7 +47207,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -47700,7 +47701,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -48031,7 +48032,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -48537,7 +48538,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -48868,7 +48869,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -49390,7 +49391,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -49721,7 +49722,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -50245,7 +50246,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -50582,7 +50583,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -51084,7 +51085,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -51697,7 +51698,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -52323,7 +52324,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -52654,7 +52655,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -53169,7 +53170,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': -3.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -53497,7 +53498,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -53973,7 +53974,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': -5.0,
             'max': -1.0,
             'ticks': <Object?>[
@@ -54303,7 +54304,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -54803,7 +54804,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -55123,7 +55124,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -55538,7 +55539,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -55864,7 +55865,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -56235,7 +56236,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -56572,7 +56573,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -57069,7 +57070,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -57610,7 +57611,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -57622,7 +57623,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'subtitle',
-            'top',
+            ChartPosition.top,
             1500.0,
             true,
             0.0,
@@ -57634,7 +57635,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -57646,7 +57647,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -58324,7 +58325,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
             'ticks': <Object?>[
@@ -58355,7 +58356,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -10.0,
             'max': 15.0,
             'ticks': <Object?>[
@@ -58902,7 +58903,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -58914,7 +58915,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'subtitle',
-            'top',
+            ChartPosition.top,
             1500.0,
             true,
             0.0,
@@ -58926,7 +58927,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -58938,7 +58939,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             31.34375,
@@ -58950,7 +58951,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -59647,7 +59648,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 200.0,
             'ticks': <Object?>[
@@ -59669,7 +59670,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -100.0,
             'max': 100.0,
             'ticks': <Object?>[
@@ -63938,7 +63939,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -63950,7 +63951,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'subtitle',
-            'top',
+            ChartPosition.top,
             1500.0,
             true,
             0.0,
@@ -63962,7 +63963,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -63974,7 +63975,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             38.017578125,
@@ -63986,7 +63987,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,

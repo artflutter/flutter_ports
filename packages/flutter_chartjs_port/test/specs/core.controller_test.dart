@@ -26,6 +26,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -378,7 +379,7 @@ void main() {
             'spanGaps': false,
             'hover': <String, Object?>{'mode': const DatasetInteractionMode()},
             'plugins': <String, Object?>{
-              'title': <String, Object?>{'position': 'bottom'},
+              'title': <String, Object?>{'position': ChartPosition.bottom},
             },
           },
         });
@@ -388,7 +389,7 @@ void main() {
         expect(jsGet(options['hover'], 'mode'), const DatasetInteractionMode());
         expect(
           jsGet(jsGet(options['plugins'], 'title'), 'position'),
-          'bottom',
+          ChartPosition.bottom,
         );
 
         defaults['onHover'] = null;
@@ -414,15 +415,18 @@ void main() {
           'type': 'line',
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'position': 'left'},
-              'y': <String, Object?>{'position': 'bottom'},
+              'x': <String, Object?>{'position': ChartPosition.left},
+              'y': <String, Object?>{'position': ChartPosition.bottom},
             },
           },
         });
 
         final scaleOptions = chart.options['scales'];
-        expect(jsGet(jsGet(scaleOptions, 'x'), 'position'), 'bottom');
-        expect(jsGet(jsGet(scaleOptions, 'y'), 'position'), 'left');
+        expect(
+          jsGet(jsGet(scaleOptions, 'x'), 'position'),
+          ChartPosition.bottom,
+        );
+        expect(jsGet(jsGet(scaleOptions, 'y'), 'position'), ChartPosition.left);
       });
 
       // update() builds the scales before the controllers. Thus the case
@@ -445,10 +449,13 @@ void main() {
             },
             'options': <String, Object?>{
               'scales': <String, Object?>{
-                'x': <String, Object?>{'type': 'linear', 'position': 'left'},
+                'x': <String, Object?>{
+                  'type': 'linear',
+                  'position': ChartPosition.left,
+                },
                 'y': <String, Object?>{
                   'type': 'category',
-                  'position': 'bottom',
+                  'position': ChartPosition.bottom,
                 },
               },
             },
@@ -931,7 +938,10 @@ void main() {
         chart
           ..options['scales'] = <String, Object?>{
             'x': jsGet(chart.options['scales'], 'x'),
-            'y': <String, Object?>{'type': 'linear', 'position': 'right'},
+            'y': <String, Object?>{
+              'type': 'linear',
+              'position': ChartPosition.right,
+            },
           }
           ..update();
         expect(failure, false);

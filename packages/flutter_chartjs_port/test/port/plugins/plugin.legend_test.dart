@@ -29,6 +29,7 @@ import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -497,7 +498,7 @@ void main() {
       // The probe updateNoMargins: the read _margins.left of undefined.
       final box = Legend((
         chart: _FakeChart(),
-        options: <String, Object?>{'position': 'top'},
+        options: <String, Object?>{'position': ChartPosition.top},
         ctx: null,
       ));
       expect(() => box.update(100, 100), throwsA(isA<TypeError>()));
@@ -508,7 +509,10 @@ void main() {
       // and `fit` with `display: false` gives the height 0 (:131).
       final box = Legend((
         chart: _FakeChart(),
-        options: <String, Object?>{'position': 'left', 'display': false},
+        options: <String, Object?>{
+          'position': ChartPosition.left,
+          'display': false,
+        },
         ctx: null,
       ))..update(100, 200, _Margins(5, 7, 9, 11));
       expect([box.top, box.bottom, box.width, box.height], [7, 200, 0, 0]);
@@ -616,7 +620,7 @@ void main() {
       // probe review-empty-array-text.mjs (review-empty-array-text.out):
       // emptyArrayLeft throws `TypeError: Reduce of empty array with no
       // initial value`.
-      final config = _line(<String, Object?>{'position': 'left'});
+      final config = _line(<String, Object?>{'position': ChartPosition.left});
       (((config['data']! as AnyObject)['datasets']! as List<Object?>)[0]!
               as AnyObject)['label'] =
           <Object?>[];
@@ -1108,7 +1112,7 @@ void main() {
     /// probe `leftBox` and `leftHitBoxes`).
     Chart leftChart(List<String> log) => acquireChart(
       _line(<String, Object?>{
-        'position': 'left',
+        'position': ChartPosition.left,
         'align': ChartAlign.start,
         'labels': <String, Object?>{'padding': 0},
         'onClick': (Object? e, Object? item, Object? l) => log.add(

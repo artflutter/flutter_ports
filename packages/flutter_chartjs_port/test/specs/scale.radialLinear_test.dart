@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -116,7 +117,7 @@ void main() {
         jasmineEquals(<String, Object?>{
           'display': true,
           'animate': true,
-          'position': 'chartArea',
+          'position': ChartPosition.chartArea,
 
           'angleLines': <String, Object?>{
             'display': true,

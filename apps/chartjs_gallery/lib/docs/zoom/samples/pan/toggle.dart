@@ -7,7 +7,7 @@ import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, ZoomChart;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, JsObjectFace;
+    show Chart, ChartPosition, JsObjectFace;
 
 /// The sample `Pan Toggle` of `docs/samples/pan/toggle.md:5-105`: a scatter
 /// chart that zooms with a pinch, in the limits of `:53-56`. The pan is off
@@ -37,8 +37,8 @@ ZoomDocsSample zoomPanToggleSample(ZoomDocsLog log) {
     'title': <String, Object?>{'display': true, 'text': zoomAxisTitle},
   };
   final scales = <String, Object?>{
-    'x': <String, Object?>{'position': 'top'},
-    'y': <String, Object?>{'position': 'right'},
+    'x': <String, Object?>{'position': ChartPosition.top},
+    'y': <String, Object?>{'position': ChartPosition.right},
   };
   for (final scale in scales.values) {
     (scale! as Map<String, Object?>).addAll(scaleOpts);

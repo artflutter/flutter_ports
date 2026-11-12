@@ -18,6 +18,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ScaleValuePosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'scale_category_reference.dart';
@@ -511,7 +513,7 @@ void main() {
       final chart = _abcChart({
         'scales': <String, Object?>{
           'y': <String, Object?>{
-            'position': <String, Object?>{'x': 'B'},
+            'position': const ScaleValuePosition('x', 'B'),
           },
         },
       });
@@ -527,7 +529,7 @@ void main() {
       final chart = _abcChart({
         'scales': <String, Object?>{
           'y': <String, Object?>{
-            'position': <String, Object?>{'x': null},
+            'position': const ScaleValuePosition('x', null),
           },
         },
       });

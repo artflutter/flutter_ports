@@ -4,10 +4,10 @@
 /// sets and the lengths of the Chart.js options.
 ///
 /// Each type is an extension type with `const` constants. Thus a dot
-/// shorthand works (`position: .top`, `align: .center`), and a new
-/// constant is an addition that breaks no `switch` of an app.
+/// shorthand works (`pointStyle: .star`), and a new constant is an addition
+/// that breaks no `switch` of an app. The position of a box is the enum
+/// `ChartPosition` of the core (row `adapt-chart-position-enum`).
 ///
-/// - [ChartPosition] is over `String`. The option value is its `name`.
 /// - [ChartPointStyle], [ChartFill] and [ChartLength] are over `Object`:
 ///   they also hold `false`, numbers and records. The internal getter
 ///   `optionValue` gives the option value. A record holds
@@ -26,35 +26,6 @@ library;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
 import 'package:meta/meta.dart' show internal;
-
-/// The position of a box in the chart layout: the `position` option of the
-/// legend, the title, the subtitle and an axis (`LayoutPosition`,
-/// `layout.d.ts:3`).
-///
-/// The title and the subtitle take [top], [left], [bottom] and [right]
-/// (`index.d.ts:2594`). The legend also takes [chartArea]. An axis takes
-/// [top], [left], [bottom], [right] and [center] (`index.d.ts:3270`). The
-/// position of an axis at a value of another axis (`{x: 0}`) goes through
-/// the `extra` Map of the axis.
-extension type const ChartPosition._(String name) {
-  /// `'top'`: above the chart area.
-  static const ChartPosition top = ChartPosition._('top');
-
-  /// `'left'`: to the left of the chart area.
-  static const ChartPosition left = ChartPosition._('left');
-
-  /// `'bottom'`: below the chart area.
-  static const ChartPosition bottom = ChartPosition._('bottom');
-
-  /// `'right'`: to the right of the chart area.
-  static const ChartPosition right = ChartPosition._('right');
-
-  /// `'center'`: an axis through the center of the chart area.
-  static const ChartPosition center = ChartPosition._('center');
-
-  /// `'chartArea'`: a legend inside the chart area.
-  static const ChartPosition chartArea = ChartPosition._('chartArea');
-}
 
 /// The style of a point: the `pointStyle` option of a dataset and of the
 /// legend labels (`PointStyle`, `index.d.ts:2040-2053`).

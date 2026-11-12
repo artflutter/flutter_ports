@@ -45,6 +45,8 @@ const Map<String, int> shapeAtoms = {
   'arcSpacingMode': 4194304,
   'fillerDrawTime': 8388608,
   'timeUnit': 16777216,
+  'chartPosition': 33554432,
+  'layoutPosition': 67108864,
 };
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
@@ -132,6 +134,16 @@ const Map<String, TypedAtom> typedAtoms = {
   'timeUnit': (
     type: 'TimeUnit',
     uri: 'package:flutter_chartjs_port/src/core/core.adapters.dart',
+    field: null,
+  ),
+  'chartPosition': (
+    type: 'ChartPosition',
+    uri: 'package:flutter_chartjs_port/src/types/layout.dart',
+    field: null,
+  ),
+  'layoutPosition': (
+    type: 'LayoutPosition',
+    uri: 'package:flutter_chartjs_port/src/types/layout.dart',
     field: null,
   ),
 };

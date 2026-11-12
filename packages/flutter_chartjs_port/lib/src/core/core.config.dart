@@ -69,6 +69,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
 
 /// core.config.js:5 `getIndexAxis`.
@@ -128,10 +129,10 @@ String? _idMatchesAxis(String id) {
 /// Dart `null` stands for the `undefined` of upstream. The callers test only
 /// its truth.
 String? _axisFromPosition(Object? position) {
-  if ('top' == position || 'bottom' == position) {
+  if (position == ChartPosition.top || position == ChartPosition.bottom) {
     return 'x';
   }
-  if ('left' == position || 'right' == position) {
+  if (position == ChartPosition.left || position == ChartPosition.right) {
     return 'y';
   }
   return null;

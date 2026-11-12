@@ -9,6 +9,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String resolverTraceReferenceNode = 'v24.22.1';
@@ -16458,7 +16459,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         <String, Object?>{
           'do': <Object?>['readLegend', 'position'],
           'trace': <Object?>[],
-          'result': 'top',
+          'result': ChartPosition.top,
           'datasets': <Object?>[
             <String, Object?>{
               'dataset': <String, Object?>{
@@ -16533,7 +16534,11 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
           'observeTrace': <Object?>[],
         },
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.legend.position', 'left'],
+          'do': <Object?>[
+            'setOption',
+            'plugins.legend.position',
+            ChartPosition.left,
+          ],
           'trace': <Object?>[],
           'datasets': <Object?>[
             <String, Object?>{
@@ -16611,7 +16616,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         <String, Object?>{
           'do': <Object?>['readLegend', 'position'],
           'trace': <Object?>[],
-          'result': 'top',
+          'result': ChartPosition.top,
           'datasets': <Object?>[
             <String, Object?>{
               'dataset': <String, Object?>{
@@ -16764,7 +16769,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         <String, Object?>{
           'do': <Object?>['readLegend', 'position'],
           'trace': <Object?>[],
-          'result': 'left',
+          'result': ChartPosition.left,
           'datasets': <Object?>[
             <String, Object?>{
               'dataset': <String, Object?>{

@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -504,7 +505,7 @@ void main() {
               'y': <String, Object?>{'display': false, 'stacked': true},
               'y2': <String, Object?>{
                 'type': 'linear',
-                'position': 'right',
+                'position': ChartPosition.right,
                 'display': false,
               },
             },

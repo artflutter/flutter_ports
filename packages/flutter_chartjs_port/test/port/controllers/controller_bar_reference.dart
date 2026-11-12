@@ -24,6 +24,7 @@
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String controllerBarReferenceNode = 'v24.22.1';
@@ -96,7 +97,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -173,7 +174,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -10.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -731,7 +732,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -812,7 +813,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -1464,7 +1465,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -1545,7 +1546,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -2192,7 +2193,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -2273,7 +2274,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -2920,7 +2921,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -3001,7 +3002,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -10.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -3689,7 +3690,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -3770,7 +3771,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -5.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -4491,7 +4492,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -4572,7 +4573,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -5.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -5308,7 +5309,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -5389,7 +5390,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -5.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -6650,7 +6651,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'category',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -6681,7 +6682,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': -3.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -7695,7 +7696,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -7718,7 +7719,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -10.0,
             'max': 15.0,
             'ticks': <Object?>[
@@ -8892,7 +8893,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -8923,7 +8924,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -8.0,
             'max': 8.0,
             'ticks': <Object?>[
@@ -10139,7 +10140,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -10170,7 +10171,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -6.0,
             'max': 8.0,
             'ticks': <Object?>[
@@ -11571,7 +11572,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -11604,7 +11605,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -12820,7 +12821,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -12851,7 +12852,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -13948,7 +13949,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -13979,7 +13980,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -14622,7 +14623,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 2.0,
                 'ticks': <Object?>[
@@ -14653,7 +14654,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -1.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -15333,7 +15334,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 2.0,
                 'ticks': <Object?>[
@@ -15364,7 +15365,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -16684,7 +16685,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -16717,7 +16718,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -18104,7 +18105,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -18135,7 +18136,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -19028,7 +19029,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -19061,7 +19062,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -20417,7 +20418,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -20452,7 +20453,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -21638,7 +21639,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -21671,7 +21672,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -22801,7 +22802,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -22827,7 +22828,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -24191,7 +24192,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -24222,7 +24223,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -25604,7 +25605,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -25639,7 +25640,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -26739,7 +26740,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'timeseries',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1609718400000.0,
             'max': 1610064000000.0,
             'ticks': <Object?>[
@@ -26774,7 +26775,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -27778,7 +27779,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'logarithmic',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.1,
             'max': 2000.0,
             'ticks': <Object?>[
@@ -27841,7 +27842,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -29278,7 +29279,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -29309,7 +29310,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -2.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -30271,7 +30272,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -30310,7 +30311,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -31320,7 +31321,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -31351,7 +31352,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -32166,7 +32167,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -32197,7 +32198,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -2.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -33081,7 +33082,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -33114,7 +33115,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -6.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -34179,7 +34180,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -34205,7 +34206,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -34943,7 +34944,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -34974,7 +34975,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -35738,7 +35739,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -35769,7 +35770,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -36533,7 +36534,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -36564,7 +36565,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -37328,7 +37329,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -37359,7 +37360,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -38122,7 +38123,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -38153,7 +38154,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -38876,7 +38877,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -38907,7 +38908,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -39631,7 +39632,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -39662,7 +39663,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -40359,7 +40360,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -40390,7 +40391,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -41087,7 +41088,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -41118,7 +41119,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -41812,7 +41813,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -41843,7 +41844,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -42536,7 +42537,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -42567,7 +42568,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -43290,7 +43291,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -43321,7 +43322,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -44061,7 +44062,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -44092,7 +44093,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -44815,7 +44816,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -44846,7 +44847,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -0.01,
             'max': 0.01,
             'ticks': <Object?>[
@@ -45663,7 +45664,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -45694,7 +45695,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -46419,7 +46420,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -46450,7 +46451,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -47192,7 +47193,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -47223,7 +47224,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -47947,7 +47948,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -47978,7 +47979,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -48710,7 +48711,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'category',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -48729,7 +48730,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 2.0,
             'ticks': <Object?>[
@@ -49377,7 +49378,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -49403,7 +49404,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -50223,7 +50224,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -50260,7 +50261,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -51138,7 +51139,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -51175,7 +51176,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 6.0,
             'ticks': <Object?>[

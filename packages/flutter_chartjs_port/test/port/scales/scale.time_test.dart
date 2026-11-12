@@ -26,6 +26,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.timeseries.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'scale_chart_harness.dart';
@@ -706,7 +707,7 @@ void main() {
                 'unit': TimeUnit.day,
                 'displayFormats': <String, Object?>{'day': 'yyyy-MM-dd'},
               },
-              'position': 'bottom',
+              'position': ChartPosition.bottom,
               'ticks': <String, Object?>{
                 'source': TickSource.labels,
                 'autoSkip': false,

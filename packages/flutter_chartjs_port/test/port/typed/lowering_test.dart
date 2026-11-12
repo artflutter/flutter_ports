@@ -419,10 +419,13 @@ const List<(ChartAxis, String)> _axes = [
 final Map<String, (ChartAxis Function(ChartAxis), Map<String, Object?>)>
 _axisCommon = {
   'display': ((a) => a.copyWith(display: false), {'display': false}),
-  'position': ((a) => a.copyWith(position: .left), {'position': 'left'}),
+  'position': (
+    (a) => a.copyWith(position: .left),
+    {'position': ChartPosition.left},
+  ),
   'position, center': (
     (a) => a.copyWith(position: .center),
-    {'position': 'center'},
+    {'position': ChartPosition.center},
   ),
   'reverse': ((a) => a.copyWith(reverse: true), {'reverse': true}),
   'stacked': ((a) => a.copyWith(stacked: true), {'stacked': true}),
@@ -839,7 +842,10 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
 /// The cases of the parameters of [ChartLegend] and the twin `legend` Map.
 const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
   'display': (ChartLegend(display: false), {'display': false}),
-  'position': (ChartLegend(position: .chartArea), {'position': 'chartArea'}),
+  'position': (
+    ChartLegend(position: .chartArea),
+    {'position': ChartPosition.chartArea},
+  ),
   'align': (ChartLegend(align: .start), {'align': ChartAlign.start}),
   'reverse': (ChartLegend(reverse: true), {'reverse': true}),
   'labelColor': (
@@ -891,7 +897,10 @@ const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   'color': (ChartTitle(color: _blue), {'color': _blueValue}),
   'font': (ChartTitle(font: _font), {'font': _fontValue}),
   'align': (ChartTitle(align: .start), {'align': ChartAlign.start}),
-  'position': (ChartTitle(position: .bottom), {'position': 'bottom'}),
+  'position': (
+    ChartTitle(position: .bottom),
+    {'position': ChartPosition.bottom},
+  ),
   'padding': (
     ChartTitle(padding: EdgeInsets.only(top: 10, bottom: 30)),
     {
@@ -1898,7 +1907,7 @@ void main() {
       };
       const head = <String, Object?>{
         'display': true,
-        'position': 'right',
+        'position': ChartPosition.right,
         'reverse': true,
         'stacked': true,
       };
@@ -2267,7 +2276,7 @@ void main() {
         'plugins': {
           'legend': {
             'display': true,
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'align': ChartAlign.start,
             'reverse': true,
             'labels': {
@@ -2289,7 +2298,7 @@ void main() {
             'color': _redValue,
             'font': _fontValue,
             'align': ChartAlign.end,
-            'position': 'left',
+            'position': ChartPosition.left,
             'padding': {'top': 2, 'right': 3, 'bottom': 4, 'left': 1},
             'fullSize': false,
             'weight': 1,

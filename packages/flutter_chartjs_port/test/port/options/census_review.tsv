@@ -107,7 +107,9 @@ foreign	options.scales.*.beginAtZero	String
 foreign	options.scales.*.grid.lineWidth[]	bool
 foreign	options.scales.*.offset	String
 foreign	options.scales.*.pointLabels.padding	String
-foreign	options.scales.*.position.x	String
+foreign	options.scales.*.position	Map	the object form {id: value} of a raw census config: the port holds a ScaleValuePosition (row adapt-chart-position-enum)
+extra	options.scales.*.position.x	the scale id of the object form of a raw census config (row adapt-chart-position-enum)
+extra	options.scales.*.position.y	the scale id of the object form of a raw census config (row adapt-chart-position-enum)
 foreign	options.scales.*.startAngle	String
 foreign	options.scales.*.ticks.count	String
 foreign	options.scales.*.ticks.font.size	String

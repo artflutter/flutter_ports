@@ -497,6 +497,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       typed API has `ChartInteraction.axis` and `ChartTooltip.axis`. The scale option `axis` stays
       text. `layouts` is a record
       of `addBox`, `removeBox`, `configure` and `update`. A box is a `LayoutItem` of `lib/src/types/layout.dart`.
+      The position of a box is the interface `LayoutPosition` of the same file (row
+      `adapt-chart-position-enum`): the enum `ChartPosition` (`top`, `left`, `bottom`, `right`,
+      `center`, `chartArea`) or, for a scale and the legend, `ScaleValuePosition(scaleId, value)`
+      for the object form `{x: 0}`; also in a raw config.
       `layouts.removeBox` takes a `LayoutItem?` (Dart `null` is the JS `undefined` of a stop hook).
     - `core.animation.dart` and the port-only `animation_spec.dart` (`AnimationSpec`, the typed
       animation config) are pure layers. `core.animations.dart` and `core.animator.dart` are not:

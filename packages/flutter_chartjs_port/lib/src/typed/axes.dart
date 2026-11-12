@@ -35,9 +35,9 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show AxisTickInfo;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/index.dart' show Tick;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart' show internal;
 
 /// An axis of a chart: an entry of `options.scales` of a Chart.js config
@@ -76,8 +76,8 @@ abstract final class ChartAxis with Diagnosticable {
   /// A cartesian axis takes [ChartPosition.top], [ChartPosition.left],
   /// [ChartPosition.bottom], [ChartPosition.right] and
   /// [ChartPosition.center]. The default is the bottom for an x axis and
-  /// the left for a y axis. The position at a value of another axis
-  /// (`{x: 0}`) goes through [extra].
+  /// the left for a y axis. The position at a value of another axis goes
+  /// through [extra]: `{'position': ScaleValuePosition('x', 0)}`.
   final ChartPosition? position;
 
   /// Whether the axis runs in the other direction: `reverse`.
@@ -169,7 +169,7 @@ abstract final class ChartAxis with Diagnosticable {
 ScaleOptionsScope lowerAxis(ChartAxis axis) {
   final scope = ScaleOptionsScope()..type = axis._type;
   put(scope, OptionKey.display, axis.display);
-  put(scope, OptionKey.position, axis.position?.name);
+  put(scope, OptionKey.position, axis.position);
   put(scope, OptionKey.reverse, axis.reverse);
   put(scope, OptionKey.stacked, axis.stacked);
   axis._lowerOwn(scope);

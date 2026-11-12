@@ -15,10 +15,12 @@
 ///
 /// `LayoutPosition` (layout.d.ts:3) is the union `'left' | 'top' | 'right' |
 /// 'bottom' | 'center' | 'chartArea' | {[scaleId: string]: number}`. Its Dart
-/// form is `Object?`, as for every option value (Chart.js ADR 0043): a
-/// `String`, or a `Map<String, Object?>` for the object form. `core.layouts`
-/// tests the object form with `isObject` (core.layouts.js:121), and compares
-/// a string with `===` (core.layouts.js:11, :15, :52).
+/// form is the interface [LayoutPosition] (row `adapt-chart-position-enum`):
+/// the enum [ChartPosition] for the names, and the class
+/// [ScaleValuePosition] for the object form. `core.layouts` tests the object
+/// form with `isObject` (core.layouts.js:121): a [ScaleValuePosition]. It
+/// compares a position with `===` (core.layouts.js:11, :15, :52): the enum
+/// value. [LayoutItem.position] holds the raw option value.
 ///
 /// ## The optional members
 ///
@@ -35,6 +37,82 @@
 library;
 
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:meta/meta.dart' show immutable;
+
+/// layout.d.ts:3 `LayoutPosition`: the position of a box in the layout of a
+/// chart, the `position` option of the legend, the title, the subtitle and
+/// a scale (row `adapt-chart-position-enum`).
+///
+/// [ChartPosition] gives the names of the union, and [ScaleValuePosition]
+/// its object form. A box of a plugin takes a [ChartPosition].
+abstract interface class LayoutPosition {}
+
+/// The names of layout.d.ts:3 `LayoutPosition`: the side of a box, or the
+/// center of the chart area for an axis, or the chart area for a legend.
+///
+/// The layout closes the set: `core.layouts` places a box by its side, and
+/// the other positions are its dynamic boxes. The name of each value is
+/// the keyword of Chart.js.
+// DIVERGES(chartjs): adapt-chart-position-enum, an enum of the positions.
+enum ChartPosition implements LayoutPosition {
+  /// `'top'`: above the chart area.
+  top,
+
+  /// `'left'`: to the left of the chart area.
+  left,
+
+  /// `'bottom'`: below the chart area.
+  bottom,
+
+  /// `'right'`: to the right of the chart area.
+  right,
+
+  /// `'center'`: an axis through the center of the chart area.
+  center,
+
+  /// `'chartArea'`: a box inside the chart area, for example a legend.
+  chartArea;
+
+  /// The value of [value], a `position` option, or Dart `null` for a value
+  /// that is not a [ChartPosition]. A keyword of Chart.js is not a value: a
+  /// debug build stops on it.
+  static ChartPosition? of(Object? value) {
+    assert(
+      value is! String,
+      'A position takes a ChartPosition, not the name "$value".',
+    );
+    return value is ChartPosition ? value : null;
+  }
+}
+
+/// The object form `{[scaleId]: value}` of layout.d.ts:3 `LayoutPosition`:
+/// an axis at the [value] of the scale [scaleId], for example the y axis at
+/// the value 0 of the scale `x` (`{x: 0}`).
+// DIVERGES(chartjs): adapt-chart-position-enum, a class of the object form.
+@immutable
+final class ScaleValuePosition implements LayoutPosition {
+  /// The position at [value] of the scale [scaleId].
+  const ScaleValuePosition(this.scaleId, this.value);
+
+  /// The id of the scale that gives the place, the key of the object form.
+  final String scaleId;
+
+  /// The value on the scale [scaleId]: a number, or a value that the scale
+  /// parses, for example a label of a category scale.
+  final Object? value;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ScaleValuePosition &&
+      other.scaleId == scaleId &&
+      other.value == value;
+
+  @override
+  int get hashCode => Object.hash(scaleId, value);
+
+  @override
+  String toString() => 'ScaleValuePosition($scaleId, $value)';
+}
 
 /// layout.d.ts:5 `LayoutItem`.
 ///

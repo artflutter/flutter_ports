@@ -6,7 +6,7 @@ import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, ZoomChart, ZoomChartContext;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, ChartEvent, JsObjectFace, Scale;
+    show Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsNumberToString;
 
 /// A sample of the docs of chartjs-plugin-zoom: the `module.exports` of its
@@ -106,7 +106,7 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
         'zoom': zoomOptions,
         'title': <String, Object?>{
           'display': true,
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'text': (Object? ctx) =>
               'Zoom: ${zoomStatus(_chartOf(ctx))}, Pan: ${panStatus()}',
         },
@@ -242,8 +242,8 @@ Map<String, Object?> zoomSampleScales() {
     'title': <String, Object?>{'display': true, 'text': zoomAxisTitle},
   };
   final scales = <String, Object?>{
-    'x': <String, Object?>{'position': 'top'},
-    'y': <String, Object?>{'position': 'right'},
+    'x': <String, Object?>{'position': ChartPosition.top},
+    'y': <String, Object?>{'position': ChartPosition.right},
   };
   for (final scale in scales.values) {
     (scale! as Map<String, Object?>).addAll(scaleOpts);

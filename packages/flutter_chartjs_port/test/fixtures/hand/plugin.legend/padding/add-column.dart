@@ -7,6 +7,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -24,7 +25,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'plugins': <String, Object?>{
-        'legend': <String, Object?>{'position': 'left'},
+        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+        'legend': <String, Object?>{'position': ChartPosition.left},
       },
       'layout': <String, Object?>{
         'padding': <String, Object?>{'top': 55, 'left': 30, 'right': 30},

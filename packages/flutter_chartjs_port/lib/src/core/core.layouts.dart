@@ -41,7 +41,13 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// core.layouts.js:8 `STATIC_POSITIONS`.
-const List<String> _staticPositions = ['left', 'top', 'right', 'bottom'];
+// DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
+const List<ChartPosition> _staticPositions = [
+  ChartPosition.left,
+  ChartPosition.top,
+  ChartPosition.right,
+  ChartPosition.bottom,
+];
 
 /// `a || b` for the numbers [a] and [b]: [a] when it is truthy, else [b]
 /// (Chart.js ADR 0045, "ToBoolean").
@@ -196,23 +202,25 @@ final class _Edges implements TRBL {
   double bottom;
 
   /// `object[pos]` for the edge [pos].
-  double operator [](String pos) => switch (pos) {
-    'left' => left,
-    'top' => top,
-    'right' => right,
+  double operator [](ChartPosition pos) => switch (pos) {
+    ChartPosition.left => left,
+    ChartPosition.top => top,
+    ChartPosition.right => right,
     _ => bottom,
   };
 
   /// `object[pos] = value` for the edge [pos].
-  void operator []=(String pos, double value) {
+  void operator []=(ChartPosition pos, double value) {
     switch (pos) {
-      case 'left':
+      case ChartPosition.left:
         left = value;
-      case 'top':
+      case ChartPosition.top:
         top = value;
-      case 'right':
+      case ChartPosition.right:
         right = value;
-      default:
+      case ChartPosition.bottom ||
+          ChartPosition.center ||
+          ChartPosition.chartArea:
         bottom = value;
     }
   }
@@ -223,7 +231,7 @@ final class _Edges implements TRBL {
 ///
 /// `updateDims` writes `chartArea[pos]` for the position of each box that
 /// does not have the object form (:124, :129). For a static position, this
-/// is an edge. For another string, for example `'center'`, upstream writes
+/// is an edge. For another position, for example `center`, upstream writes
 /// a new key that no code reads. The port keeps these keys in [_other]. A
 /// read of an absent key gives NaN, the `ToNumber` of `undefined`. The
 /// copied `width` and `height` of the padding have no field: no code reads
@@ -272,30 +280,24 @@ final class _LayoutArea {
   final Map<Object?, double> _other = {};
 
   /// `chartArea[pos]`.
-  // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
-  // value that is neither null nor a String. Such a value switches as null
-  // and takes the default branch, as before.
-  double operator [](Object? pos) => switch (pos is String ? pos : null) {
-    'left' => left,
-    'top' => top,
-    'right' => right,
-    'bottom' => bottom,
+  double operator [](Object? pos) => switch (pos) {
+    ChartPosition.left => left,
+    ChartPosition.top => top,
+    ChartPosition.right => right,
+    ChartPosition.bottom => bottom,
     _ => _other[pos] ?? double.nan,
   };
 
   /// `chartArea[pos] = value`.
   void operator []=(Object? pos, double value) {
-    // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
-    // value that is neither null nor a String. Such a value switches as null
-    // and takes the default branch, as before.
-    switch (pos is String ? pos : null) {
-      case 'left':
+    switch (pos) {
+      case ChartPosition.left:
         left = value;
-      case 'top':
+      case ChartPosition.top:
         top = value;
-      case 'right':
+      case ChartPosition.right:
         right = value;
-      case 'bottom':
+      case ChartPosition.bottom:
         bottom = value;
       default:
         _other[pos] = value;
@@ -355,7 +357,10 @@ final class _BoxLayer implements LayoutLayer {
 }
 
 /// core.layouts.js:10 `filterByPosition`.
-List<_LayoutWrap> _filterByPosition(List<_LayoutWrap> array, String position) {
+List<_LayoutWrap> _filterByPosition(
+  List<_LayoutWrap> array,
+  ChartPosition position,
+) {
   return array.where((v) => v.pos == position).toList();
 }
 
@@ -408,8 +413,8 @@ bool _strictEquals(Object? a, Object? b) {
 /// throws it for Dart `null`. The default 1 replaces only `undefined`. The
 /// `stackWeight` of another value is its `ToNumber`: `null` gives 0, which
 /// the readers add and divide as upstream adds and divides `null`. The key
-/// `pos + stack` joins the two strings: the position is a `String` or an
-/// object (a `Map`), whose string is `'[object Object]'` ([jsToString]).
+/// `pos + stack` joins the two strings: the name of a [ChartPosition], or
+/// the string of another value ([jsToString]), and the stack.
 List<_LayoutWrap> _wrapBoxes(List<LayoutItem> boxes) {
   final layoutBoxes = <_LayoutWrap>[];
 
@@ -429,7 +434,11 @@ List<_LayoutWrap> _wrapBoxes(List<LayoutItem> boxes) {
         pos: pos,
         horizontal: box.isHorizontal(),
         weight: box.weight,
-        stack: jsTruthy(stack) ? jsToString(pos) + jsToString(stack) : stack,
+        // DIVERGES(chartjs): adapt-chart-position-enum, the name of the value.
+        stack: jsTruthy(stack)
+            ? (pos is ChartPosition ? pos.name : jsToString(pos)) +
+                  jsToString(stack)
+            : stack,
         stackWeight: stackWeight,
       ),
     );
@@ -518,10 +527,21 @@ _buildLayoutBoxes(List<LayoutItem> boxes) {
     layoutBoxes.where((wrap) => wrap.box.fullSize).toList(),
     true,
   );
-  final left = _sortByWeight(_filterByPosition(layoutBoxes, 'left'), true);
-  final right = _sortByWeight(_filterByPosition(layoutBoxes, 'right'));
-  final top = _sortByWeight(_filterByPosition(layoutBoxes, 'top'), true);
-  final bottom = _sortByWeight(_filterByPosition(layoutBoxes, 'bottom'));
+  // DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
+  final left = _sortByWeight(
+    _filterByPosition(layoutBoxes, ChartPosition.left),
+    true,
+  );
+  final right = _sortByWeight(
+    _filterByPosition(layoutBoxes, ChartPosition.right),
+  );
+  final top = _sortByWeight(
+    _filterByPosition(layoutBoxes, ChartPosition.top),
+    true,
+  );
+  final bottom = _sortByWeight(
+    _filterByPosition(layoutBoxes, ChartPosition.bottom),
+  );
   final centerHorizontal = _filterDynamicPositionByAxis(layoutBoxes, 'x');
   final centerVertical = _filterDynamicPositionByAxis(layoutBoxes, 'y');
 
@@ -534,7 +554,7 @@ _buildLayoutBoxes(List<LayoutItem> boxes) {
       ...bottom,
       ...centerHorizontal,
     ],
-    chartArea: _filterByPosition(layoutBoxes, 'chartArea'),
+    chartArea: _filterByPosition(layoutBoxes, ChartPosition.chartArea),
     vertical: [...left, ...right, ...centerVertical],
     horizontal: [...top, ...bottom, ...centerHorizontal],
   );
@@ -544,8 +564,8 @@ _buildLayoutBoxes(List<LayoutItem> boxes) {
 double _getCombinedMax(
   _Edges maxPadding,
   _LayoutArea chartArea,
-  String a,
-  String b,
+  ChartPosition a,
+  ChartPosition b,
 ) {
   return jsMax(maxPadding[a], chartArea[a]) +
       jsMax(maxPadding[b], chartArea[b]);
@@ -595,12 +615,23 @@ void _updateMaxPadding(_Edges maxPadding, TRBL boxPadding) {
 
   final newWidth = jsMax(
     0,
-    params.outerWidth - _getCombinedMax(maxPadding, chartArea, 'left', 'right'),
+    params.outerWidth -
+        _getCombinedMax(
+          maxPadding,
+          chartArea,
+          ChartPosition.left,
+          ChartPosition.right,
+        ),
   );
   final newHeight = jsMax(
     0,
     params.outerHeight -
-        _getCombinedMax(maxPadding, chartArea, 'top', 'bottom'),
+        _getCombinedMax(
+          maxPadding,
+          chartArea,
+          ChartPosition.top,
+          ChartPosition.bottom,
+        ),
   );
   final widthChanged = newWidth != chartArea.w;
   final heightChanged = newHeight != chartArea.h;
@@ -618,24 +649,24 @@ void _updateMaxPadding(_Edges maxPadding, TRBL boxPadding) {
 void _handleMaxPadding(_LayoutArea chartArea) {
   final maxPadding = chartArea.maxPadding;
 
-  double updatePos(String pos) {
+  double updatePos(ChartPosition pos) {
     final change = jsMax(maxPadding[pos] - chartArea[pos], 0);
     chartArea[pos] += change;
     return change;
   }
 
   chartArea
-    ..y += updatePos('top')
-    ..x += updatePos('left');
-  updatePos('right');
-  updatePos('bottom');
+    ..y += updatePos(ChartPosition.top)
+    ..x += updatePos(ChartPosition.left);
+  updatePos(ChartPosition.right);
+  updatePos(ChartPosition.bottom);
 }
 
 /// core.layouts.js:163 `getMargins`.
 TRBL _getMargins(bool horizontal, _LayoutArea chartArea) {
   final maxPadding = chartArea.maxPadding;
 
-  _Edges marginForPositions(List<String> positions) {
+  _Edges marginForPositions(List<ChartPosition> positions) {
     final margin = _Edges(left: 0, top: 0, right: 0, bottom: 0);
     for (final pos in positions) {
       margin[pos] = jsMax(chartArea[pos], maxPadding[pos]);
@@ -644,8 +675,8 @@ TRBL _getMargins(bool horizontal, _LayoutArea chartArea) {
   }
 
   return horizontal
-      ? marginForPositions(const ['left', 'right'])
-      : marginForPositions(const ['top', 'bottom']);
+      ? marginForPositions(const [ChartPosition.left, ChartPosition.right])
+      : marginForPositions(const [ChartPosition.top, ChartPosition.bottom]);
 }
 
 /// core.layouts.js:179 `fitBoxes`.
@@ -796,7 +827,8 @@ void _addBox(types.Chart chart, LayoutItem item) {
   item
     // `item.fullSize || false` (:297) is `item.fullSize` for a bool.
     ..fullSize = item.fullSize
-    ..position = jsTruthy(item.position) ? item.position : 'top'
+    // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+    ..position = jsTruthy(item.position) ? item.position : ChartPosition.top
     // `item.weight || 0` (:299) keeps a truthy value.
     ..weight = jsTruthy(item.weight) ? item.weight : 0.0
     // @ts-ignore

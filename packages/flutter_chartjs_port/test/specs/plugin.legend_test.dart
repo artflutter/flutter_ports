@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -222,7 +223,7 @@ void main() {
         actual,
         jasmineEquals(<String, Object?>{
           'display': true,
-          'position': 'top',
+          'position': ChartPosition.top,
           'align': ChartAlign.center,
           'fullSize': true,
           'reverse': false,
@@ -452,7 +453,7 @@ void main() {
           },
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'legend': <String, Object?>{'position': 'right'},
+              'legend': <String, Object?>{'position': ChartPosition.right},
             },
           },
         },
@@ -506,7 +507,7 @@ void main() {
                 'usePointStyle': true,
                 'pointStyle': 'rect',
               },
-              'position': 'right',
+              'position': ChartPosition.right,
               'align': ChartAlign.center,
               'maxWidth': 860,
             },
@@ -540,7 +541,7 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'legend': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'labels': <String, Object?>{'boxHeight': 40},
               },
             },
@@ -859,7 +860,7 @@ void main() {
             'plugins': <String, Object?>{
               'legend': <String, Object?>{
                 'fullSize': true,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 150,
               },
             },
@@ -870,17 +871,17 @@ void main() {
         // upstream does.
         Legend legend() => chart.legend! as Legend;
         expect(legend().fullSize, true);
-        expect(legend().position, 'top');
+        expect(legend().position, ChartPosition.top);
         expect(legend().weight, 150);
 
         _legendOptions(chart)
           ..['fullSize'] = false
-          ..['position'] = 'left'
+          ..['position'] = ChartPosition.left
           ..['weight'] = 42;
         chart.update();
 
         expect(legend().fullSize, false);
-        expect(legend().position, 'left');
+        expect(legend().position, ChartPosition.left);
         expect(legend().weight, 42);
       });
 

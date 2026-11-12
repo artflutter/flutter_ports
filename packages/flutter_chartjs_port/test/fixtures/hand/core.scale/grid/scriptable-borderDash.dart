@@ -5,6 +5,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ScaleValuePosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -13,7 +15,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'scales': <String, Object?>{
         'x': <String, Object?>{
-          'position': <String, Object?>{'y': 0},
+          // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+          'position': const ScaleValuePosition('y', 0),
           'min': -10,
           'max': 10,
           'border': <String, Object?>{
@@ -31,7 +34,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           },
         },
         'y': <String, Object?>{
-          'position': <String, Object?>{'x': 0},
+          // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
+          'position': const ScaleValuePosition('x', 0),
           'min': -10,
           'max': 10,
           'border': <String, Object?>{

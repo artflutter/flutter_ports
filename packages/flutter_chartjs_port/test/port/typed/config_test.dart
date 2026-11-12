@@ -286,7 +286,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'linear',
+              'position': ChartPosition.bottom,
+            },
           },
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{

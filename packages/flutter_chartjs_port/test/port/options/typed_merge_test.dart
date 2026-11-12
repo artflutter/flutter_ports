@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
 /// A function value of an option.
@@ -400,7 +401,7 @@ void main() {
             },
             'y2': <String, Object?>{
               'type': 'logarithmic',
-              'position': 'right',
+              'position': ChartPosition.right,
               'grid': <String, Object?>{'display': false},
             },
             'r': <String, Object?>{'type': 'radialLinear'},

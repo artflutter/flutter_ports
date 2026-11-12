@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -191,7 +192,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'category',
+              'position': ChartPosition.bottom,
+            },
             'y': <String, Object?>{'type': 'linear'},
           },
         },
@@ -224,7 +228,10 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'category',
+              'position': ChartPosition.bottom,
+            },
             'y': <String, Object?>{'type': 'linear'},
           },
         },
@@ -258,7 +265,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{'type': 'linear'},
             },
           },
@@ -312,7 +322,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{'type': 'linear'},
             },
           },
@@ -351,7 +364,7 @@ void main() {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 'tick2',
                 'max': 'tick4',
               },
@@ -396,10 +409,13 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{
                 'type': 'category',
-                'position': 'left',
+                'position': ChartPosition.left,
               },
             },
           },
@@ -441,10 +457,13 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{
                 'type': 'category',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': '2',
                 'max': '4',
               },
@@ -488,7 +507,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{'type': 'linear'},
             },
           },
@@ -525,8 +547,14 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
-              'y': <String, Object?>{'type': 'category', 'position': 'left'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
+              'y': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.left,
+              },
             },
           },
         });
@@ -560,7 +588,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{'type': 'linear'},
             },
           },
@@ -596,7 +627,10 @@ void main() {
           'options': <String, Object?>{
             'indexAxis': 'y',
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.bottom,
+              },
               'y': <String, Object?>{'type': 'category'},
             },
           },

@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -379,7 +380,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'time', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'time',
+                'position': ChartPosition.bottom,
+              },
             },
           },
         });
@@ -466,7 +470,7 @@ void main() {
                 'x': <String, Object?>{
                   'type': 'time',
                   'bounds': ScaleBounds.ticks,
-                  'position': 'bottom',
+                  'position': ChartPosition.bottom,
                 },
               },
             },
@@ -571,7 +575,7 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'type': 'time',
-              'position': 'bottom',
+              'position': ChartPosition.bottom,
               'ticks': <String, Object?>{
                 'source': TickSource.labels,
                 'autoSkip': false,
@@ -677,7 +681,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'time', 'position': 'bottom'},
+              'x': <String, Object?>{
+                'type': 'time',
+                'position': ChartPosition.bottom,
+              },
             },
           },
         });
@@ -731,7 +738,10 @@ void main() {
         'options': <String, Object?>{
           'parsing': <String, Object?>{'xAxisKey': 't'},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'time', 'position': 'bottom'},
+            'x': <String, Object?>{
+              'type': 'time',
+              'position': ChartPosition.bottom,
+            },
           },
         },
       });

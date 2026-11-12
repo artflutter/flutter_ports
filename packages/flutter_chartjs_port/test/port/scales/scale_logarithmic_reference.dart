@@ -8,6 +8,7 @@
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String scaleLogarithmicReferenceNode = 'v24.22.1';
@@ -79,7 +80,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -229,7 +230,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -1591,7 +1592,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -1741,7 +1742,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -3063,7 +3064,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 3.0,
           'ticks': <Object?>[
@@ -3092,7 +3093,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 5.0,
           'max': 5000.0,
           'ticks': <Object?>[
@@ -3892,7 +3893,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 3.0,
           'ticks': <Object?>[
@@ -3921,7 +3922,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -4880,7 +4881,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 15.0,
           'ticks': <Object?>[
@@ -5000,7 +5001,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -5978,7 +5979,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -5997,7 +5998,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -6915,7 +6916,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -6934,7 +6935,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 300.0,
           'ticks': <Object?>[
@@ -7635,7 +7636,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 50.0,
           'ticks': <Object?>[
@@ -7763,7 +7764,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -8741,7 +8742,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -8763,7 +8764,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -9645,7 +9646,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -9798,7 +9799,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -11193,7 +11194,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 3.0,
           'max': 400.0,
           'ticks': <Object?>[
@@ -11314,7 +11315,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 20.0,
           'max': 7000.0,
           'ticks': <Object?>[
@@ -12692,7 +12693,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 80.0,
           'ticks': <Object?>[
@@ -12825,7 +12826,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -13576,7 +13577,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -13715,7 +13716,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -14571,7 +14572,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 10.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -14724,7 +14725,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 5.0,
           'max': 500.0,
           'ticks': <Object?>[
@@ -16181,7 +16182,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 10.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -16334,7 +16335,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 500.0,
           'ticks': <Object?>[
@@ -17594,7 +17595,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.5,
           'max': 20000.0,
           'ticks': <Object?>[
@@ -17715,7 +17716,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -18802,7 +18803,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 6.0,
           'ticks': <Object?>[
@@ -18833,7 +18834,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 233.0,
           'max': 471.0,
           'ticks': <Object?>[
@@ -19412,7 +19413,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 10.0,
           'max': 30.0,
           'ticks': <Object?>[
@@ -19538,7 +19539,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 5000.0,
           'ticks': <Object?>[
@@ -20908,7 +20909,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -21058,7 +21059,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -22394,7 +22395,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -22532,7 +22533,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -23773,7 +23774,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 10.0,
           'max': 80.0,
           'ticks': <Object?>[
@@ -23914,7 +23915,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.1,
           'max': 0.8,
           'ticks': <Object?>[
@@ -25188,7 +25189,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 80.0,
           'ticks': <Object?>[
@@ -25325,7 +25326,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 80.0,
           'ticks': <Object?>[
@@ -26646,7 +26647,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 100000.0,
           'ticks': <Object?>[
@@ -26790,7 +26791,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -28066,7 +28067,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.01,
           'max': 1.0,
           'ticks': <Object?>[
@@ -28219,7 +28220,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -29607,7 +29608,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 0.0,
           'ticks': <Object?>[
@@ -29706,7 +29707,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -30555,7 +30556,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 50.0,
           'ticks': <Object?>[
@@ -30679,7 +30680,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -31302,7 +31303,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -31441,7 +31442,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -32209,7 +32210,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 3.0,
           'max': 50.0,
           'ticks': <Object?>[
@@ -32331,7 +32332,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -32898,7 +32899,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -33037,7 +33038,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -34439,7 +34440,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.1,
           'max': 10.0,
           'ticks': <Object?>[
@@ -34592,7 +34593,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -36002,7 +36003,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 5.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -36137,7 +36138,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -37426,7 +37427,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 80.0,
           'ticks': <Object?>[
@@ -37563,7 +37564,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.01,
           'max': 0.8,
           'ticks': <Object?>[
@@ -38839,7 +38840,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -38919,7 +38920,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -39783,7 +39784,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -39933,7 +39934,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -41268,7 +41269,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 3.0,
           'max': 700.0,
           'ticks': <Object?>[
@@ -41392,7 +41393,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.03,
           'max': 45.0,
           'ticks': <Object?>[
@@ -42454,7 +42455,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 6.0,
           'ticks': <Object?>[
@@ -42485,7 +42486,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 20.0,
           'ticks': <Object?>[
@@ -43099,7 +43100,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 6.0,
           'ticks': <Object?>[
@@ -43130,7 +43131,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 24.0,
           'max': 50.0,
           'ticks': <Object?>[
@@ -43684,7 +43685,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 6.0,
           'ticks': <Object?>[
@@ -43715,7 +43716,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 20.0,
           'max': 6000.0,
           'ticks': <Object?>[
@@ -44757,7 +44758,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 6.0,
           'ticks': <Object?>[
@@ -44788,7 +44789,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 5000.001,
           'max': 5000.04,
           'ticks': <Object?>[
@@ -45487,7 +45488,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 6.0,
           'ticks': <Object?>[
@@ -45518,7 +45519,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 100.0,
           'max': 9000.0,
           'ticks': <Object?>[
@@ -45854,7 +45855,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.5,
           'max': 15.0,
           'ticks': <Object?>[
@@ -45992,7 +45993,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.5,
           'max': 15.0,
           'ticks': <Object?>[
@@ -47215,7 +47216,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -47237,7 +47238,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 5000.0,
           'max': 6000.0,
           'ticks': <Object?>[
@@ -47833,7 +47834,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -47851,7 +47852,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1000.0,
           'max': 10000.0,
           'ticks': <Object?>[
@@ -48745,7 +48746,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -48883,7 +48884,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.1,
           'max': 80.0,
           'ticks': <Object?>[
@@ -49958,8 +49959,8 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'position': 'top'},
-          'y': <String, Object?>{'position': 'right'},
+          'x': <String, Object?>{'position': ChartPosition.top},
+          'y': <String, Object?>{'position': ChartPosition.right},
         },
       },
     },
@@ -49975,7 +49976,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'top',
+          'position': ChartPosition.top,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -50125,7 +50126,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'right',
+          'position': ChartPosition.right,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -51493,7 +51494,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -51625,7 +51626,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -52788,7 +52789,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -52925,7 +52926,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -54272,7 +54273,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.5,
           'max': 3000.0,
           'ticks': <Object?>[
@@ -54403,7 +54404,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.5,
           'max': 15000.0,
           'ticks': <Object?>[
@@ -55521,7 +55522,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -55658,7 +55659,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -57000,7 +57001,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 2.0,
           'max': 9000.0,
           'ticks': <Object?>[
@@ -57149,7 +57150,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 3e-7,
           'max': 0.00002,
           'ticks': <Object?>[
@@ -58536,7 +58537,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -58631,7 +58632,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -59080,7 +59081,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -59168,7 +59169,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 1000000.0,
           'ticks': <Object?>[
@@ -59770,7 +59771,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.001,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -59858,7 +59859,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.002,
           'max': 1000.0,
           'ticks': <Object?>[
@@ -60232,7 +60233,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -60251,7 +60252,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -61174,7 +61175,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'y': <String, Object?>{
           'type': 'logarithmic',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -61313,7 +61314,7 @@ const List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
         'x': <String, Object?>{
           'type': 'category',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[

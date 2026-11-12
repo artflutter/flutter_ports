@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String pluginTooltipMoreReferenceNode = 'v24.22.1';
@@ -104,7 +105,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -137,7 +138,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -704,7 +705,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -716,7 +717,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -728,7 +729,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -771,7 +772,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -804,7 +805,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -1371,7 +1372,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -1383,7 +1384,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -1395,7 +1396,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -2397,7 +2398,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -2640,7 +2641,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -2940,7 +2941,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'r': <String, Object?>{
             'type': 'radialLinear',
             'axis': 'r',
-            'position': 'chartArea',
+            'position': ChartPosition.chartArea,
             'min': 0.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -3168,7 +3169,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -3180,7 +3181,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'r',
-            'chartArea',
+            ChartPosition.chartArea,
             0.0,
             false,
             0.0,
@@ -3223,7 +3224,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': 'r',
-                'position': 'chartArea',
+                'position': ChartPosition.chartArea,
                 'min': 0.0,
                 'max': 20.0,
                 'ticks': <Object?>[
@@ -3451,7 +3452,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -3463,7 +3464,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'r',
-                'chartArea',
+                ChartPosition.chartArea,
                 0.0,
                 false,
                 0.0,
@@ -3861,7 +3862,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -3894,7 +3895,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -4185,7 +4186,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -4197,7 +4198,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             30.681640625,
@@ -4209,7 +4210,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -4252,7 +4253,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 6.0,
                 'ticks': <Object?>[
@@ -4285,7 +4286,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -4579,7 +4580,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -4591,7 +4592,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 30.681640625,
@@ -4603,7 +4604,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -5317,7 +5318,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -5346,7 +5347,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -5805,7 +5806,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -5817,7 +5818,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -5829,7 +5830,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -5872,7 +5873,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -5901,7 +5902,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -6366,7 +6367,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -6378,7 +6379,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -6390,7 +6391,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -7161,7 +7162,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -7190,7 +7191,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -7863,7 +7864,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -7875,7 +7876,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -7887,7 +7888,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -7930,7 +7931,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -7959,7 +7960,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -8638,7 +8639,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -8650,7 +8651,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -8662,7 +8663,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -9430,7 +9431,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -9459,7 +9460,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -10132,7 +10133,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -10144,7 +10145,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -10156,7 +10157,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -10199,7 +10200,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -10228,7 +10229,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -10907,7 +10908,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -10919,7 +10920,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -10931,7 +10932,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -11763,7 +11764,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -11792,7 +11793,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -12462,7 +12463,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -12474,7 +12475,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'subtitle',
-            'top',
+            ChartPosition.top,
             1500.0,
             true,
             0.0,
@@ -12486,7 +12487,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -12498,7 +12499,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -12510,7 +12511,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -12553,7 +12554,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -12582,7 +12583,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -13261,7 +13262,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -13273,7 +13274,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'subtitle',
-                'top',
+                ChartPosition.top,
                 1500.0,
                 true,
                 0.0,
@@ -13285,7 +13286,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -13297,7 +13298,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -13309,7 +13310,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -13352,7 +13353,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -13381,7 +13382,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -14060,7 +14061,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -14072,7 +14073,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'subtitle',
-                'top',
+                ChartPosition.top,
                 1500.0,
                 true,
                 0.0,
@@ -14084,7 +14085,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -14096,7 +14097,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -14108,7 +14109,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
