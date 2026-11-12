@@ -257,8 +257,8 @@ const Set<String> typedLibraries = {
 /// `lib/src/types/`, the typed option scopes
 /// of `lib/src/options/` (the lowering writes typed scopes, Chart.js ADR
 /// 0054 §7) and the typed contexts of `helpers.options.dart` (the view
-/// `ChartContext`, Chart.js ADR 0054 §11), three files of the JS runtime and
-/// the conversions of `css.dart`. `helpers.options.dart` imports
+/// `ChartContext`, Chart.js ADR 0054 §11) and three files of the JS
+/// runtime. `helpers.options.dart` imports
 /// `core.defaults`, `helpers.canvas`, `helpers.core`, the JS runtime and
 /// `lib/src/types/`, no component. The cubic interpolation modes are the
 /// pure `cubic_interpolation_mode.dart` and `helpers.curve.dart`, and the
@@ -284,7 +284,6 @@ const List<String> typedTargets = [
   'lib/src/plugins/fill_target.dart',
   'lib/src/plugins/filler_draw_time.dart',
   'lib/src/plugins/tooltip_position.dart',
-  'lib/src/theme/css.dart',
 ];
 
 /// The pure-layer root of the harness package (porting-flow.md 3).

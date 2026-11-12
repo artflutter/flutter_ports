@@ -151,34 +151,31 @@ dataset without a type also adds the chart-type overrides to the scales that it 
 
 ### 3.3 Compile step and emitted keys
 
-`compileChartTheme` takes a raw Map theme. It is pure and memoized per instance. It returns null
-when it emits no visual key. It adds the `transitions` keys only beside visual keys. It freezes
+`compileChartTheme` takes typed tokens as named parameters: six `Color?` tokens, two
+`TextStyle?` fonts, `palette` and `paletteBackgroundAlpha` (Chart.js ADR 0117). It is pure and
+has no memo. It returns null when it emits no visual key. It adds the `transitions` keys only beside visual keys. It freezes
 its result deeply. If neither the user options nor `overrides[type]` hold `plugins.<id>`, the
 theme's map is `scopes[0]` (`core.plugins.js:162, 177`, `core.config.js:306-314`), the target of
 the set trap (`helpers.config.ts:35, 101-106`). No v4.5.1 code writes there. A future write throws
-instead of a leak into other charts. `compileThemeData` of `theme_data.dart` converts a
-`ChartThemeData` to a raw Map theme (`themeDataToRaw`) and keeps the compiled map for each
-`ChartThemeData` instance (Chart.js ADR 0050).
+instead of a leak into other charts. `compileThemeData` of `theme_data.dart` gives the fields of
+a `ChartThemeData` to `compileChartTheme` (Chart.js ADR 0117). No token name is a string, and no
+Map theme exists.
 
-Colors compile directly to Flutter `Color` values with 8-bit sRGB channels and
-unchanged floating-point alpha (ADRs 0057 and 0061). There is no intermediate
-option-color representation, installer or read-time conversion. Legacy rgba
-formatting remains only for frozen reference data. Other
-color spaces convert through `ColorSpace.extendedSRGB` and clamp, because a direct Display P3 to
-sRGB `withValues` only clamps (`dart:ui` `painting.dart:3901-3914, 4053-4056` of 3.47.7,
-`:3919-3932, 4071-4074` of 3.44.9).
+The compiled theme holds each color token as the app gives it (Chart.js ADR 0117). The compile
+does not round a channel to 8 bits, and it does not clamp a color or change its color space. A
+Display P3 token thus stays a P3 color. The palette background colors are
+`color.withValues(alpha: paletteBackgroundAlpha)`. The tick backdrop is
+`surface.withValues(alpha: 0.75)`. There is no intermediate option-color representation,
+installer or read-time conversion. Legacy rgba formatting remains only for frozen reference data.
 Fonts stay `TextStyle` values: the compiled theme holds the token itself, or a new
 `ChartTextStyle` without the size or the weight where section 3.4 asks for it (Chart.js ADR 0116).
 
 Emitted:
 
 - root `color` and the token keys of section 4
-- `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`, from the `palette` field
-  `{colors, backgroundAlpha}`: the colors at their alpha, and the colors at `backgroundAlpha` (0.5
-  when absent)
-- the `raw` keys that pass the guard. Only the raw Map themes of the tests have them:
-  `ChartThemeData` has no `raw` in 0.1.0 (Chart.js ADR 0050, "No public `raw` in 0.1.0"). Thus no
-  public input reaches the guard, and the token keys of section 4 are the allowlist of 0.1.0
+- `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`, from the tokens
+  `palette` and `paletteBackgroundAlpha`: the colors at their alpha, and the colors at
+  `paletteBackgroundAlpha` (0.5 by default)
 - `transitions.theme.animation.{duration,easing}` and `transitions.themeFrame.animation.duration: 0`
 
 In phase 5, the tokens emit only the root `color`, the `scale` keys and the element keys. Phase 6
@@ -424,27 +421,21 @@ The token keys of this table are the allowlist of 0.1.0: no public input reaches
 `test/port/theme/theme_data_test.dart` compiles each token alone and compares the emitted paths
 with this table.
 
-The conversion of `themeDataToRaw` (Chart.js ADR 0050): a color goes through
-`Color.withValues(colorSpace: ColorSpace.extendedSRGB)`, and `themeColorToRgba` clamps it. A
-font reads six `TextStyle` fields, each only when it is not null: the family string
-(`fontFamily` and `fontFamilyFallback`, each name in single quotes except the CSS generic
-families), `fontSize` as `size`, `fontStyle` as `'normal'` or `'italic'`, `fontWeight.value` as
-the number `weight` and `height` as `lineHeight`. The compile ignores the other fields, with no
-assert, so an app can give `textTheme.bodySmall`. A px line height, `'oblique'` and `'lighter'`
-stay in the chart options.
+The compile gives each token to its keys with no conversion (Chart.js ADR 0117). A font token
+goes to the chart as the `TextStyle` itself (Chart.js ADR 0116). A font token with no font field
+emits nothing.
 
 `const ChartThemeData.light()` holds `borderColor: Color.from(alpha: 0.1, red: 0, green: 0,
-blue: 0)`. This keeps the alpha exact. `Color(0x1A000000)` emits
-`rgba(0, 0, 0, 0.10196078431372549)` instead.
+blue: 0)`. This keeps the alpha exact. `Color(0x1A000000)` has the alpha
+`0.10196078431372549` instead.
 
 ## 5. Public API (Chart.js ADR 0050)
 
 [Chart.js ADR 0050](adr/0050-public-theme-api.md) decides the public API. The classes are in
 `lib/src/theme/theme_data.dart` and `lib/src/theme/chart_theme.dart`. They import `dart:ui` and
 the widgets library, so they are not pure layers. `compile.dart` and `presets.dart` stay pure and
-internal. The internal `css.dart` holds the conversions of a `Color` (`rawColorOf`, `colorToRgba`)
-and of a `TextStyle` (`fontSpecOf`). `theme_data.dart` and the typed API of Chart.js ADR 0052 use
-them, so that one Flutter value gives one option value. The app library of [Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md)
+internal. No conversion of a `Color` or a `TextStyle` exists (Chart.js ADR 0117). The theme and
+the typed API of Chart.js ADR 0052 give the Flutter value itself to the chart. The app library of [Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md)
 exports two names: `ChartTheme` and `ChartThemeData`. The samples compile under Dart 3.13, the
 library floor (porting-flow.md §2.12).
 
@@ -499,17 +490,18 @@ null token means the upstream value, and `Color.lerp` of a null end fades the al
 also switch at 0.5 when one of them sets `fontSize`, `fontWeight` or `height` and the other does
 not, because `TextStyle.lerp` fills the missing field. Palettes of one length lerp pairwise, else
 they switch at 0.5. `==` and `hashCode` compare each field, the palette with `listEquals` and
-`Object.hashAll`. `compileThemeData` keeps the compiled map of each instance in an `Expando`.
-Thus the palette list must not change after the construction. A debug assert checks
+`Object.hashAll`. `compileThemeData` has no memo: the theme switch keeps the compiled scope of
+its current theme. The palette list must not change after the construction. A debug assert checks
 `paletteBackgroundAlpha` in [0, 1]. It has no effect without `palette`.
 
 Presets:
 
 - `const ChartThemeData.light()` holds every token at its v4.6.1 value. Its palette is the list of
   `plugin.colors.ts:14-22` at alpha 1 with `paletteBackgroundAlpha` 0.5 (`:25`). A chart with it
-  equals an unthemed chart. `themeDataToRaw` of it equals the internal raw Map theme
-  `ChartThemes.light`, the oracle of test 3 and of the coverage test. Without a theme,
-  `ChartTheme.of` returns it.
+  equals an unthemed chart. Its tokens are the constants of `LightThemeTokens` of
+  `presets.dart`. The pure tests compile the same constants (`compileLightTheme()` of
+  `test/support/light_theme.dart`), the oracle of test 3 and of the coverage test. Without a
+  theme, `ChartTheme.of` returns it.
 - `const ChartThemeData.dark()` follows the mirror rule: each color token is
   `(1 - r, 1 - g, 1 - b)` of the light token with its alpha kept. `color` is `#999999`,
   `borderColor` and `backgroundColor` are white at alpha 0.1, `surface` is `#000000`,
@@ -517,9 +509,8 @@ Presets:
   fonts, the Chart.js palette at 0.5 and the upstream hover colors. The text on the surface has a
   contrast of 7.37:1 and the tooltip text of 13.08:1 (light: 5.74:1 and 12.63:1). An app with
   another background sets `surface` with `copyWith`.
-- The opt-out is `const ChartThemeData()`. It compiles to null. The internal raw Map presets
-  `ChartThemes.light` and `ChartThemes.none` of `presets.dart` stay for the pure tests. The library
-  exports no `ChartThemes`.
+- The opt-out is `const ChartThemeData()`. It compiles to null, as `compileChartTheme()` with
+  no token does. The library exports no `LightThemeTokens`.
 
 0.1.0 has no public `raw` (Chart.js ADR 0050). The token emission of section 4 is the allowlist.
 No public input reaches a behavior key, a box layout key (`position`, `align`, `fullSize`,
@@ -614,8 +605,8 @@ specs such as `controller.line.tests.js:784-799` thus run unthemed. Theme tests 
 
 ## 7. Port-only code and divergences
 
-- `lib/src/theme/` holds `tokens.dart`, `theme_data.dart`, `chart_theme.dart`, `presets.dart`,
-  `compile.dart` and `css.dart`, each with the port-only header (porting-flow.md, section 1). The
+- `lib/src/theme/` holds `theme_data.dart`, `chart_theme.dart`, `presets.dart` and
+  `compile.dart`, each with the port-only header (porting-flow.md, section 1). The
   parity generator (porting-flow.md, tool 6) lists them in its port-only section. They get no
   `differences.md` rows.
 - Each hunk has one row in `packages/flutter_chartjs_port/doc/differences.md`, in the column set of porting-flow.md. A
@@ -635,7 +626,7 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
 
 1. **No theme equals upstream** (H0, H2, H3). Unthemed ported specs and fixtures are the oracle.
    Port-only tests: no extra scope without a theme, the section 3.2 position with a theme,
-   `ChartThemes.none` compiles to null, no dependence on `TargetPlatform`.
+   `compileChartTheme()` with no token compiles to null, no dependence on `TargetPlatform`.
 2. **Precedence** (H1, H2, H3, H5). A sentinel table has one row per level of section 3.2, for
    elements, scales, plugins and chart level. The palette beats the theme element colors. User
    colors disable the palette. The group `palette` of `test/port/theme/precedence_test.dart` has
@@ -652,7 +643,7 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    checks the pixels (Chart.js ADR 0050): in the 16 cases, with an active element and the
    tooltip, the light preset paints the bytes of the unthemed chart. It runs on the three OS of
    the job `test`, so `const ChartThemeData()` needs no golden file.
-4. **Coverage snapshot.** A committed JSON snapshot holds `compileChartTheme(ChartThemes.light)`.
+4. **Coverage snapshot.** A committed JSON snapshot holds `compileLightTheme()`.
    The test compares it with the defaults inventory of the upstream manifest (porting-flow.md,
    tool 4) and a `notThemed` list with a reason per key. It reports:
    - ADDED: a visual leaf that is neither emitted nor listed
@@ -788,10 +779,12 @@ theming work in each phase.
   `raw`. Phase 8 adds the field `palette`. A color token is a `RawThemeColor` record of sRGB
   components from 0 to 1. In phase 9, `themeDataToRaw` of `theme_data.dart` converts the public
   `ChartThemeData` to a raw Map theme (section 5.1). Only the tests give a raw Map theme with
-  `raw`.
+  `raw`. Chart.js ADR 0117 removed the raw Map theme, `RawThemeColor` and `raw`:
+  `compileChartTheme` takes typed tokens.
 - `lib/src/theme/presets.dart`: the internal `ChartThemes.light` and `ChartThemes.none`. The light
   preset holds `colors.color`, `colors.borderColor`, `colors.backgroundColor`, `colors.surface`
-  and `typography.font`.
+  and `typography.font`. Chart.js ADR 0117 replaced both presets with the constants of
+  `LightThemeTokens`.
 - The tests in `test/port/theme/`. `compile_test.dart` has test 1 and test 5 without a chart.
   `presets_test.dart` compares the light preset with `light_reference.dart`, the phase 5 part of
   test 3. `target_platform_test.dart` runs test 1 under each `TargetPlatform`, on the VM.
@@ -848,7 +841,7 @@ theming work in each phase.
 - Test 3 for the 8 chart types: each controller test file
   `test/port/controllers/controller.<name>_test.dart` has the group
   `theming.md §8 test 3: the light preset`. It runs the reference cases of its generator with
-  `compileChartTheme(ChartThemes.light)`. `testControllerChartCases` compares `defaults` after
+  `compileLightTheme()`. `testControllerChartCases` compares `defaults` after
   each themed case. The 6 files of charts with scales also have the test
   `the light preset leaves no stale scale key`. A doughnut or a pie chart has no scale, so that
   check has no path to examine there.

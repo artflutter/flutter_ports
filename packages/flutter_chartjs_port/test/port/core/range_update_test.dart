@@ -36,12 +36,11 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
     show LttbDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart';
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
@@ -610,8 +609,7 @@ Map<String, Object?> _decimation(_Log log, {required bool animated}) => _config(
 
 /// The line chart under the light theme.
 Map<String, Object?> _themed(_Log log, {required bool animated}) =>
-    _line(log, animated: animated)
-      ..[themeConfigKey] = compileChartTheme(ChartThemes.light);
+    _line(log, animated: animated)..[themeConfigKey] = compileLightTheme();
 
 /// The steps of a chart on the linear axes `x` and `y`.
 final List<_Write> _xySteps = [

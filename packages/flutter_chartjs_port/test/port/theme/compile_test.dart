@@ -8,7 +8,7 @@ import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show DatasetInteractionMode, IndexInteractionMode, InteractionMode;
+    show InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
@@ -20,8 +20,9 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -33,14 +34,15 @@ import '../../support/easing_json.dart';
 import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
+import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
-// the emission guard, the rgba() form, the deep freeze and no memo), §3.4
-// and §4 (the token keys, the point-label font, the title, subtitle, legend
-// and tooltip keys and the palette of Chart.js ADR 0050), §8
-// test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
+// the emission guard, the deep freeze and no memo), §3.4 and §4 (the token
+// keys, the point-label font, the title, subtitle, legend and tooltip keys
+// and the palette of Chart.js ADR 0050, from typed tokens, Chart.js ADR
+// 0117), §8 test 1 (no token equals upstream, no extra scope, the
 // scope position of a compiled theme, no dependence on the platform) and
 // the parts of §8 test 5 that need no chart. The expected scope lists follow
 // the hunks H0-H3 of core.config.dart and their tests in
@@ -53,9 +55,8 @@ import '../../support/mode_json.dart';
 
 /// The JSON form of [value]: a Map gives its keys in the `Object.keys`
 /// order, a number gives [jsNumberToString], `undefined` gives
-/// `"<undefined>"`, a function gives `"<fn>"` and a [RawThemeColor] gives
-/// its rgba() string in angle brackets. The form is the same on every
-/// platform.
+/// `"<undefined>"` and a function gives `"<fn>"`. The form is the same on
+/// every platform.
 String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
 
 String _jsonRaw(Object? value) => switch (value) {
@@ -67,7 +68,6 @@ String _jsonRaw(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   final TextStyle font => _jsonRaw(fontObjectRecordOf(font)),
   _ when jsIsFunction(value) => '"<fn>"',
-  final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
@@ -134,16 +134,22 @@ const Map<String, Object?> _transitionLeaves = {
   'transitions.themeFrame.animation.duration': 0.0,
 };
 
-/// A raw theme with the color token [token] only.
-Map<String, Object?> _colorTheme(String token, RawThemeColor color) => {
-  'colors': <String, Object?>{token: color},
-};
+/// The six color tokens, each with the compiled theme of that token alone
+/// (Chart.js ADR 0117).
+final List<(String, ChartOptionsScope? Function(ui.Color))> _colorTokens = [
+  ('color', (c) => compileChartTheme(color: c)),
+  ('borderColor', (c) => compileChartTheme(borderColor: c)),
+  ('backgroundColor', (c) => compileChartTheme(backgroundColor: c)),
+  ('surface', (c) => compileChartTheme(surface: c)),
+  ('inverseSurface', (c) => compileChartTheme(inverseSurface: c)),
+  ('onInverseSurface', (c) => compileChartTheme(onInverseSurface: c)),
+];
 
 /// The color `rgb(200, 0, 0)` of the hover test of theming.md §3.2.
-const RawThemeColor _red = (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0);
+const ui.Color _red = ui.Color.fromRGBO(200, 0, 0, 1);
 
 /// The color `rgba(0, 0, 255, 0.8)`, a second palette color.
-const RawThemeColor _blue = (alpha: 0.8, red: 0.0, green: 0.0, blue: 1.0);
+const ui.Color _blue = ui.Color.fromRGBO(0, 0, 255, 0.8);
 
 /// `BORDER_COLORS` (`plugin.colors.ts:14-22`).
 const List<ui.Color> _upstreamBorderColors = [
@@ -192,128 +198,52 @@ Object? _at(Object? root, String path) {
   return node;
 }
 
-/// Whether asserts run: `dart test` and `flutter test` enable them on each
-/// platform.
-bool get _asserts {
-  var enabled = false;
-  assert(enabled = true, 'asserts run');
-  return enabled;
-}
-
 /// The test themes of theming.md §8 test 5: each one compiles only to
 /// allowed paths.
-final Map<String, Map<String, Object?>> _testThemes = {
-  'light': ChartThemes.light,
-  for (final token in [
-    'color',
-    'borderColor',
-    'backgroundColor',
-    'surface',
-    'inverseSurface',
-    'onInverseSurface',
-  ])
-    'colors.$token': _colorTheme(token, _red),
-  'typography.font': {
-    'typography': <String, Object?>{
-      'font': const ChartTextStyle(
-        fontFamily: 'serif',
-        fontFamilyFallback: [],
-        fontSize: 14,
-      ),
-    },
-  },
-  'palette': {
-    'palette': <String, Object?>{
-      'colors': <Object?>[_red, _blue],
-      'backgroundAlpha': 0.25,
-    },
-  },
-  'typography.pointLabels': {
-    'typography': <String, Object?>{
-      'font': const ChartTextStyle(
-        fontFamily: 'serif',
-        fontFamilyFallback: [],
-        fontSize: 14,
-      ),
-      'pointLabels': const ChartTextStyle(
-        fontSize: 9,
-        fontWeight: ui.FontWeight.bold,
-      ),
-    },
-  },
-  'raw': {
-    'raw': <String, Object?>{
-      'scale': <String, Object?>{
-        'ticks': <String, Object?>{
-          'textStrokeColor': const ui.Color.fromRGBO(0, 0, 255, 1),
-        },
-      },
-      'plugins': <String, Object?>{
-        'tooltip': <String, Object?>{
-          'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-        },
-        'colors': <String, Object?>{
-          r'$borderColors': <Object?>[
-            const ui.Color.fromRGBO(255, 0, 0, 1),
-            const ui.Color.fromRGBO(0, 0, 255, 1),
-          ],
-          r'$backgroundColors': <Object?>[
-            const ui.Color.fromRGBO(255, 192, 203, 1),
-            const ui.Color.fromRGBO(0, 255, 255, 1),
-          ],
-        },
-      },
-      'scales': <String, Object?>{
-        'radialLinear': <String, Object?>{
-          'pointLabels': <String, Object?>{
-            'color': const ui.Color.fromRGBO(0, 128, 0, 1),
-          },
-        },
-        'linear': <String, Object?>{
-          'grid': <String, Object?>{'color': _red},
-        },
-      },
-      'elements': <String, Object?>{
-        'line': <String, Object?>{
-          'borderDash': <Object?>[4.0, 2.0],
-        },
-      },
-    },
-  },
+final Map<String, ChartOptionsScope? Function()> _testThemes = {
+  'light': compileLightTheme,
+  for (final (token, compile) in _colorTokens) token: () => compile(_red),
+  'font': () => compileChartTheme(
+    font: const ChartTextStyle(
+      fontFamily: 'serif',
+      fontFamilyFallback: [],
+      fontSize: 14,
+    ),
+  ),
+  'palette': () =>
+      compileChartTheme(palette: [_red, _blue], paletteBackgroundAlpha: 0.25),
+  'pointLabelsFont': () => compileChartTheme(
+    font: const ChartTextStyle(
+      fontFamily: 'serif',
+      fontFamilyFallback: [],
+      fontSize: 14,
+    ),
+    pointLabelsFont: const ChartTextStyle(
+      fontSize: 9,
+      fontWeight: ui.FontWeight.bold,
+    ),
+  ),
 };
 
 void main() {
   setUpSpecs();
 
   group('compileChartTheme', () {
-    test('a theme without keys compiles to null', () {
-      expect(compileChartTheme(null), isNull);
-      for (final theme in <Map<String, Object?>>[
-        ChartThemes.none,
-        {},
-        {'colors': <String, Object?>{}},
-        {
-          'colors': <String, Object?>{'color': null, 'surface': null},
-        },
-        {'colors': null, 'typography': null, 'raw': null},
-        {
-          'typography': <String, Object?>{'font': const ChartTextStyle()},
-        },
-        {
-          'typography': <String, Object?>{
-            'font': const ChartTextStyle(color: ui.Color(0xFFFF0000)),
-          },
-        },
-        {'raw': <String, Object?>{}},
-        {
-          'raw': <String, Object?>{
-            'elements': <String, Object?>{'bar': <String, Object?>{}},
-            'scale': <String, Object?>{},
-          },
-        },
-      ]) {
-        expect(compileChartTheme(theme), isNull, reason: _json(theme));
-      }
+    test('tokens that emit no key compile to null', () {
+      expect(compileChartTheme(), isNull);
+      expect(compileChartTheme(font: const ChartTextStyle()), isNull);
+      expect(
+        compileChartTheme(
+          font: const ChartTextStyle(color: ui.Color(0xFFFF0000)),
+        ),
+        isNull,
+      );
+      expect(
+        compileChartTheme(pointLabelsFont: const ChartTextStyle()),
+        isNull,
+      );
+      expect(compileChartTheme(palette: const []), isNull);
+      expect(compileChartTheme(paletteBackgroundAlpha: 1), isNull);
     });
 
     test('the light preset', () {
@@ -321,7 +251,7 @@ void main() {
       const gray = ui.Color.fromRGBO(102, 102, 102, 1);
       const tenth = ui.Color.fromRGBO(0, 0, 0, 0.1);
       const white = ui.Color.fromRGBO(255, 255, 255, 1);
-      final leaves = _leaves(compileChartTheme(ChartThemes.light));
+      final leaves = _leaves(compileLightTheme());
       expect(leaves, {
         'color': gray,
         'scale.ticks.color': gray,
@@ -529,10 +459,10 @@ void main() {
           'plugins.tooltip.multiKeyBackground': red,
         },
       };
-      for (final MapEntry(key: token, value: keys) in expected.entries) {
+      for (final (token, compile) in _colorTokens) {
         expect(
-          _leaves(compileChartTheme(_colorTheme(token, _red))),
-          {...keys, ..._transitionLeaves},
+          _leaves(compile(_red)),
+          {...expected[token]!, ..._transitionLeaves},
           reason: token,
         );
       }
@@ -540,14 +470,7 @@ void main() {
 
     test('the backdrop replaces the alpha of the surface with 0.75', () {
       final leaves = _leaves(
-        compileChartTheme(
-          _colorTheme('surface', (
-            alpha: 0.5,
-            red: 0.0,
-            green: 0.0,
-            blue: 1.0,
-          )),
-        ),
+        compileChartTheme(surface: const ui.Color.fromRGBO(0, 0, 255, 0.5)),
       );
       expect(
         leaves['elements.arc.borderColor'],
@@ -560,16 +483,14 @@ void main() {
     });
 
     test('a font emits its fields that are not null into each slot', () {
-      final compiled = compileChartTheme({
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(
-            fontFamily: 'serif',
-            fontFamilyFallback: [],
-            fontStyle: ui.FontStyle.italic,
-            fontWeight: ui.FontWeight.bold,
-          ),
-        },
-      });
+      final compiled = compileChartTheme(
+        font: const ChartTextStyle(
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontStyle: ui.FontStyle.italic,
+          fontWeight: ui.FontWeight.bold,
+        ),
+      );
       expect(_leaves(compiled), {
         'scale.ticks.font': const ChartTextStyle(
           fontFamily: 'serif',
@@ -650,25 +571,25 @@ void main() {
         'token', () {
       // theming.md §3.4 and §4, the last row: upstream sets the point-label
       // size 10 locally (scale.radialLinear.js:383-385).
-      Object? pointLabels(Map<String, Object?> typography) => _at(
-        compileChartTheme({'typography': typography}),
+      Object? pointLabels({TextStyle? font, TextStyle? pointLabelsFont}) => _at(
+        compileChartTheme(font: font, pointLabelsFont: pointLabelsFont),
         'scales.radialLinear.pointLabels.font',
       );
 
       // The token wins field by field. The base size never reaches it.
       expect(
-        pointLabels(<String, Object?>{
-          'font': const ChartTextStyle(
+        pointLabels(
+          font: const ChartTextStyle(
             fontFamily: 'serif',
             fontFamilyFallback: [],
             fontSize: 14,
             fontStyle: ui.FontStyle.italic,
           ),
-          'pointLabels': const ChartTextStyle(
+          pointLabelsFont: const ChartTextStyle(
             fontStyle: ui.FontStyle.normal,
             fontSize: 9,
           ),
-        }),
+        ),
         const ChartTextStyle(
           fontFamily: 'serif',
           fontFamilyFallback: [],
@@ -679,32 +600,30 @@ void main() {
       // The base font without the token: its fields without size. The size
       // 10 of defaults.scales.radialLinear then stays.
       expect(
-        pointLabels(<String, Object?>{
-          'font': const ChartTextStyle(
+        pointLabels(
+          font: const ChartTextStyle(
             fontFamily: 'serif',
             fontFamilyFallback: [],
             fontSize: 14,
           ),
-        }),
+        ),
         const ChartTextStyle(fontFamily: 'serif', fontFamilyFallback: []),
       );
       // The token without the base font.
       expect(
-        pointLabels(<String, Object?>{
-          'pointLabels': const ChartTextStyle(fontSize: 9),
-        }),
+        pointLabels(pointLabelsFont: const ChartTextStyle(fontSize: 9)),
         const ChartTextStyle(fontSize: 9),
       );
       // A null token field themes nothing, also over a base field.
       expect(
-        pointLabels(<String, Object?>{
-          'font': const ChartTextStyle(
+        pointLabels(
+          font: const ChartTextStyle(
             fontFamily: 'serif',
             fontFamilyFallback: [],
             fontWeight: ui.FontWeight.bold,
           ),
-          'pointLabels': const ChartTextStyle(height: 1.5),
-        }),
+          pointLabelsFont: const ChartTextStyle(height: 1.5),
+        ),
         const ChartTextStyle(
           fontFamily: 'serif',
           fontFamilyFallback: [],
@@ -713,20 +632,14 @@ void main() {
         ),
       );
       // A base font with a size only gives no point-label font.
-      final sizeOnly = compileChartTheme({
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(fontSize: 14),
-        },
-      });
+      final sizeOnly = compileChartTheme(
+        font: const ChartTextStyle(fontSize: 14),
+      );
       expect(_at(sizeOnly, 'scales'), same(undefined));
       expect((_at(sizeOnly, 'scale.ticks.font')! as TextStyle).fontSize, 14.0);
       // A token without fields themes nothing.
       expect(
-        compileChartTheme({
-          'typography': <String, Object?>{
-            'pointLabels': const ChartTextStyle(),
-          },
-        }),
+        compileChartTheme(pointLabelsFont: const ChartTextStyle()),
         isNull,
       );
     });
@@ -734,21 +647,19 @@ void main() {
     test('the point-label token wins over the base font', () {
       // The base fields without size, then each field of the token over
       // them (TextStyle.merge, Chart.js ADR 0116).
-      final compiled = compileChartTheme({
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(
-            height: 1.2,
-            fontSize: 14,
-            fontFamily: 'serif',
-            fontFamilyFallback: [],
-          ),
-          'pointLabels': const ChartTextStyle(
-            fontWeight: ui.FontWeight.bold,
-            fontFamily: 'mono',
-            fontFamilyFallback: [],
-          ),
-        },
-      });
+      final compiled = compileChartTheme(
+        font: const ChartTextStyle(
+          height: 1.2,
+          fontSize: 14,
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+        ),
+        pointLabelsFont: const ChartTextStyle(
+          fontWeight: ui.FontWeight.bold,
+          fontFamily: 'mono',
+          fontFamilyFallback: [],
+        ),
+      );
       expect(
         _at(compiled, 'scales.radialLinear.pointLabels.font'),
         const ChartTextStyle(
@@ -760,222 +671,13 @@ void main() {
       );
     });
 
-    test('the raw keys beat the token keys, key by key', () {
-      final compiled = compileChartTheme({
-        'colors': <String, Object?>{'color': _red},
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(
-            fontFamily: 'serif',
-            fontFamilyFallback: [],
-            fontSize: 14,
-          ),
-        },
-        'raw': <String, Object?>{
-          'color': 'raw-color',
-          'scale': <String, Object?>{
-            'ticks': <String, Object?>{
-              'color': 'raw-ticks',
-              'textStrokeColor': 'raw-stroke',
-              'font': const ChartTextStyle(fontSize: 10),
-            },
-            'title': 'raw-title',
-          },
-        },
-      });
-      expect(_leaves(compiled), {
-        'color': 'raw-color',
-        'scale.ticks.color': 'raw-ticks',
-        'scale.ticks.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 10,
-        ),
-        'scale.ticks.textStrokeColor': 'raw-stroke',
-        'scale.title': 'raw-title',
-        'scales.radialLinear.pointLabels.color': const ui.Color.fromRGBO(
-          200,
-          0,
-          0,
-          1,
-        ),
-        'scales.radialLinear.pointLabels.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-        ),
-        'plugins.title.color': const ui.Color.fromRGBO(200, 0, 0, 1),
-        'plugins.subtitle.color': const ui.Color.fromRGBO(
-          200,
-          0,
-          0,
-          1,
-        ),
-        'plugins.title.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-        ),
-        'plugins.subtitle.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-        ),
-        'plugins.legend.labels.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-        ),
-        'plugins.legend.title.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-        ),
-        'plugins.tooltip.titleFont': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-        ),
-        'plugins.tooltip.bodyFont': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-        ),
-        'plugins.tooltip.footerFont': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-        ),
-        ..._transitionLeaves,
-      });
-    });
-
-    test('the raw radial keys beat the radial token keys', () {
-      final compiled = compileChartTheme({
-        'colors': <String, Object?>{'color': _red, 'borderColor': _red},
-        'typography': <String, Object?>{
-          'pointLabels': const ChartTextStyle(
-            fontSize: 9,
-            fontStyle: ui.FontStyle.italic,
-          ),
-        },
-        'raw': <String, Object?>{
-          'scales': <String, Object?>{
-            'radialLinear': <String, Object?>{
-              'pointLabels': <String, Object?>{
-                'color': 'raw-point-labels',
-                'font': const ChartTextStyle(fontSize: 11),
-              },
-              'angleLines': <String, Object?>{'lineWidth': 2.0},
-            },
-          },
-        },
-      });
-      expect(_leaves(_at(compiled, 'scales')), {
-        'radialLinear.pointLabels.color': 'raw-point-labels',
-        'radialLinear.pointLabels.font': const ChartTextStyle(
-          fontSize: 11,
-          fontStyle: ui.FontStyle.italic,
-        ),
-        'radialLinear.angleLines.color': const ui.Color.fromRGBO(
-          200,
-          0,
-          0,
-          1,
-        ),
-        'radialLinear.angleLines.lineWidth': 2.0,
-      });
-    });
-
-    test('a raw color token is an rgba() string at any depth', () {
-      final compiled = compileChartTheme({
-        'raw': <String, Object?>{
-          'scale': <String, Object?>{
-            'ticks': <String, Object?>{'textStrokeColor': _red},
-          },
-          'plugins': <String, Object?>{
-            'colors': <String, Object?>{
-              r'$borderColors': <Object?>[
-                _red,
-                const ui.Color.fromRGBO(0, 0, 255, 1),
-              ],
-            },
-          },
-        },
-      });
-      expect(
-        _at(compiled, 'scale.ticks.textStrokeColor'),
-        const ui.Color.fromRGBO(200, 0, 0, 1),
-      );
-      expect(_at(compiled, r'plugins.colors.$borderColors'), [
-        const ui.Color.fromRGBO(200, 0, 0, 1),
-        const ui.Color.fromRGBO(0, 0, 255, 1),
-      ]);
-    });
-
-    test('the raw keys come in the Object.keys order', () {
-      final compiled = compileChartTheme({
-        'raw': <String, Object?>{
-          'elements': <String, Object?>{
-            'b': <String, Object?>{'x': 1.0},
-            '2': <String, Object?>{'x': 1.0},
-            'a': <String, Object?>{'x': 1.0},
-            '1': <String, Object?>{'x': 1.0},
-          },
-        },
-      });
-      expect(_keys(compiled!['elements']), [
-        '1',
-        '2',
-        'b',
-        'a',
-      ]);
-      expect(_keys(compiled), ['elements', 'transitions']);
-    });
-
     test('the transitions come only beside other keys', () {
       // theming.md §3.3: the transitions keys alone are no theme.
-      expect(compileChartTheme({'raw': <String, Object?>{}}), isNull);
+      expect(compileChartTheme(), isNull);
       expect(
-        compileChartTheme({
-          'raw': <String, Object?>{
-            'transitions': <String, Object?>{
-              'theme': <String, Object?>{'note': 'raw'},
-            },
-          },
-        }),
-        isNull,
+        _leaves(compileChartTheme(surface: _red)).keys,
+        containsAll(_transitionLeaves.keys),
       );
-      final compiled = compileChartTheme({
-        'raw': <String, Object?>{
-          'color': 'c',
-          'transitions': <String, Object?>{
-            'theme': <String, Object?>{'note': 'raw'},
-          },
-        },
-      });
-      expect(_leaves(compiled), {
-        'color': 'c',
-        'transitions.theme.note': 'raw',
-        ..._transitionLeaves,
-      });
-    });
-
-    test('the compiler does not change the theme', () {
-      final raw = <String, Object?>{
-        'scale': <String, Object?>{
-          'ticks': <String, Object?>{'color': 'raw'},
-        },
-        'elements': <String, Object?>{'bar': <String, Object?>{}},
-      };
-      final theme = <String, Object?>{
-        'colors': <String, Object?>{'color': _red},
-        'raw': raw,
-      };
-      final before = _json(theme);
-      final compiled = compileChartTheme(theme)!;
-      expect(_json(theme), before);
-      expect(jsObjectIsFrozen(theme), isFalse);
-      expect(jsObjectIsFrozen(raw), isFalse);
-      expect(compiled['scale'], isNot(same(raw['scale'])));
     });
 
     test('the compiler does not change defaults', () {
@@ -983,7 +685,7 @@ void main() {
       final before = _json(defaults);
       final overridesBefore = _json(overrides);
       for (final theme in _testThemes.values) {
-        final compiled = compileChartTheme(theme);
+        final compiled = theme();
         Config(<String, Object?>{
           'type': 'tthm',
           'data': <String, Object?>{
@@ -1009,17 +711,8 @@ void main() {
     const border = r'plugins.colors.$borderColors';
     const background = r'plugins.colors.$backgroundColors';
 
-    /// The theme with the palette field [palette] only.
-    Map<String, Object?> paletteTheme(Map<String, Object?> palette) => {
-      'palette': palette,
-    };
-
     test('the border colors keep their alpha, the background alpha is 0.5', () {
-      final compiled = compileChartTheme(
-        paletteTheme(<String, Object?>{
-          'colors': <Object?>[_red, _blue],
-        }),
-      );
+      final compiled = compileChartTheme(palette: [_red, _blue]);
       expect(_at(compiled, border), [
         const ui.Color.fromRGBO(200, 0, 0, 1),
         const ui.Color.fromRGBO(0, 0, 255, 0.8),
@@ -1032,19 +725,17 @@ void main() {
       ]);
     });
 
-    test('backgroundAlpha replaces the alpha of the background colors', () {
-      Object? backgroundAt(num alpha) => _at(
+    test('paletteBackgroundAlpha replaces the alpha of the background '
+        'colors', () {
+      Object? backgroundAt(double alpha) => _at(
         compileChartTheme(
-          paletteTheme(<String, Object?>{
-            'colors': <Object?>[_red, _blue],
-            'backgroundAlpha': alpha,
-          }),
+          palette: [_red, _blue],
+          paletteBackgroundAlpha: alpha,
         ),
         background,
       );
-      // The blue screen of theming.md §8 test 6 needs alpha 1 without a
-      // raw key.
-      expect(backgroundAt(1.0), [
+      // The blue screen of theming.md §8 test 6 needs alpha 1.
+      expect(backgroundAt(1), [
         const ui.Color.fromRGBO(200, 0, 0, 1),
         const ui.Color.fromRGBO(0, 0, 255, 1),
       ]);
@@ -1052,24 +743,14 @@ void main() {
         const ui.Color.fromRGBO(200, 0, 0, 0.25),
         const ui.Color.fromRGBO(0, 0, 255, 0.25),
       ]);
-      // An int is a number too, and the alpha clamps.
       expect(backgroundAt(0), [
         const ui.Color.fromRGBO(200, 0, 0, 0),
         const ui.Color.fromRGBO(0, 0, 255, 0),
       ]);
-      expect(backgroundAt(2.0), [
-        const ui.Color.fromRGBO(200, 0, 0, 1),
-        const ui.Color.fromRGBO(0, 0, 255, 1),
-      ]);
     });
 
     test('the key order and the item order', () {
-      final compiled = compileChartTheme(
-        paletteTheme(<String, Object?>{
-          'backgroundAlpha': 0.5,
-          'colors': <Object?>[_blue, _red, _blue],
-        }),
-      )!;
+      final compiled = compileChartTheme(palette: [_blue, _red, _blue])!;
       expect(_keys(compiled), ['plugins', 'transitions']);
       expect(_keys(_at(compiled, 'plugins.colors')), [
         r'$borderColors',
@@ -1082,7 +763,7 @@ void main() {
       ]);
       // With the other tokens, the palette comes after the title, subtitle,
       // legend and tooltip keys of plugins.
-      final light = compileChartTheme(ChartThemes.light)!;
+      final light = compileLightTheme()!;
       expect(_keys(light), [
         'color',
         'scale',
@@ -1101,7 +782,7 @@ void main() {
     });
 
     test('the palette Lists are frozen', () {
-      final compiled = compileChartTheme(ChartThemes.light);
+      final compiled = compileLightTheme();
       for (final path in [border, background]) {
         final list = _at(compiled, path)! as List<Object?>;
         expect(list, isA<JsFreezable>(), reason: path);
@@ -1117,37 +798,26 @@ void main() {
       );
     });
 
-    test('an empty or absent colors List emits nothing', () {
-      for (final palette in <Map<String, Object?>?>[
-        null,
-        {},
-        {'colors': null},
-        {'colors': <Object?>[]},
-        {'backgroundAlpha': 0.3},
-        {'colors': <Object?>[], 'backgroundAlpha': 1.0},
-      ]) {
-        expect(
-          compileChartTheme(<String, Object?>{'palette': palette}),
-          isNull,
-          reason: _json(palette),
-        );
-        // Beside another token, no plugins.colors key.
-        final compiled = compileChartTheme(<String, Object?>{
-          'colors': <String, Object?>{'surface': _red},
-          'palette': palette,
-        });
-        expect(_at(compiled, 'plugins'), same(undefined));
+    test('a null or empty palette emits nothing', () {
+      for (final palette in [null, <ui.Color>[]]) {
+        for (final alpha in [0.5, 0.3, 1.0]) {
+          expect(
+            compileChartTheme(palette: palette, paletteBackgroundAlpha: alpha),
+            isNull,
+          );
+          // Beside another token, no plugins.colors key.
+          final compiled = compileChartTheme(
+            surface: _red,
+            palette: palette,
+            paletteBackgroundAlpha: alpha,
+          );
+          expect(_at(compiled, 'plugins'), same(undefined));
+        }
       }
     });
 
     test('a palette alone also emits the transitions', () {
-      final leaves = _leaves(
-        compileChartTheme(
-          paletteTheme(<String, Object?>{
-            'colors': <Object?>[_red],
-          }),
-        ),
-      );
+      final leaves = _leaves(compileChartTheme(palette: [_red]));
       expect(leaves, {
         border: [const ui.Color.fromRGBO(200, 0, 0, 1)],
         background: [const ui.Color.fromRGBO(200, 0, 0, 0.5)],
@@ -1155,39 +825,10 @@ void main() {
       });
     });
 
-    test('the raw palette keys beat the token', () {
-      final compiled = compileChartTheme({
-        'palette': <String, Object?>{
-          'colors': <Object?>[_red, _blue],
-        },
-        'raw': <String, Object?>{
-          'plugins': <String, Object?>{
-            'colors': <String, Object?>{
-              r'$borderColors': <Object?>[
-                const ui.Color.fromRGBO(255, 0, 0, 1),
-              ],
-            },
-          },
-        },
-      });
-      // The raw List replaces the token List as a whole.
-      expect(_at(compiled, border), [
-        const ui.Color.fromRGBO(255, 0, 0, 1),
-      ]);
-      expect(_at(compiled, background), [
-        const ui.Color.fromRGBO(200, 0, 0, 0.5),
-        const ui.Color.fromRGBO(0, 0, 255, 0.5),
-      ]);
-      expect(_keys(_at(compiled, 'plugins.colors')), [
-        r'$borderColors',
-        r'$backgroundColors',
-      ]);
-    });
-
     test('the light palette restates BORDER_COLORS and BACKGROUND_COLORS', () {
       // plugin.colors.ts:14-25. The border strings parse to the upstream
       // strings. The background strings are equal.
-      final compiled = compileChartTheme(ChartThemes.light);
+      final compiled = compileLightTheme();
       final borders = _at(compiled, border)! as List<Object?>;
       expect(borders, hasLength(_upstreamBorderColors.length));
       for (var i = 0; i < borders.length; i++) {
@@ -1208,92 +849,20 @@ void main() {
         const ui.Color.fromRGBO(54, 162, 235, 0.5),
       );
     });
-
-    test(
-      'an unknown palette field or a bad value fails an assert',
-      () {
-        final palettes = <Object?>[
-          <String, Object?>{
-            'colors': <Object?>[_red],
-            'borders': <Object?>[_red],
-          },
-          <String, Object?>{
-            'colors': <Object?>[
-              _red,
-              const ui.Color.fromRGBO(255, 0, 0, 1),
-            ],
-          },
-          <String, Object?>{
-            'colors': <String, Object?>{'0': _red},
-          },
-          <String, Object?>{'colors': _red},
-          <String, Object?>{
-            'colors': <Object?>[_red],
-            'backgroundAlpha': '0.5',
-          },
-          <Object?>[_red],
-        ];
-        for (final palette in palettes) {
-          expect(
-            () => compileChartTheme(<String, Object?>{'palette': palette}),
-            throwsA(isA<AssertionError>()),
-            reason: _json(palette),
-          );
-        }
-      },
-      skip: _asserts ? false : 'n/a: the asserts do not run',
-    );
-
-    test(
-      'without asserts, an item that is not a RawThemeColor is left out',
-      () {
-        final compiled = compileChartTheme({
-          'palette': <String, Object?>{
-            'colors': <Object?>[
-              _red,
-              const ui.Color.fromRGBO(255, 0, 0, 1),
-              _blue,
-            ],
-            'backgroundAlpha': '1',
-          },
-        });
-        expect(_at(compiled, border), [
-          const ui.Color.fromRGBO(200, 0, 0, 1),
-          const ui.Color.fromRGBO(0, 0, 255, 0.8),
-        ]);
-        expect(_at(compiled, background), [
-          const ui.Color.fromRGBO(200, 0, 0, 0.5),
-          const ui.Color.fromRGBO(0, 0, 255, 0.5),
-        ]);
-        expect(
-          compileChartTheme({
-            'palette': <String, Object?>{
-              'colors': <Object?>[
-                const ui.Color.fromRGBO(255, 0, 0, 1),
-              ],
-            },
-          }),
-          isNull,
-        );
-      },
-      skip: _asserts ? 'n/a: the asserts run' : false,
-    );
   });
 
   group('the title keys', () {
     test('the title font has no weight', () {
       // theming.md §3.4: the title keeps its local weight 'bold'
       // (plugin.title.js:148-150).
-      final compiled = compileChartTheme({
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(
-            fontWeight: ui.FontWeight.bold,
-            fontFamily: 'serif',
-            fontFamilyFallback: [],
-            fontSize: 14,
-          ),
-        },
-      });
+      final compiled = compileChartTheme(
+        font: const ChartTextStyle(
+          fontWeight: ui.FontWeight.bold,
+          fontFamily: 'serif',
+          fontFamilyFallback: [],
+          fontSize: 14,
+        ),
+      );
       expect(
         (_at(compiled, 'scale.ticks.font')! as TextStyle).fontWeight,
         ui.FontWeight.bold,
@@ -1310,11 +879,9 @@ void main() {
       // A font with a weight only gives no title font. The legend fonts and
       // the tooltip body font keep the weight (the groups `the subtitle and
       // legend keys` and `the tooltip keys`).
-      final weightOnly = compileChartTheme({
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
-        },
-      });
+      final weightOnly = compileChartTheme(
+        font: const ChartTextStyle(fontWeight: ui.FontWeight.bold),
+      );
       expect(
         (_at(weightOnly, 'scale.ticks.font')! as TextStyle).fontWeight,
         ui.FontWeight.bold,
@@ -1328,7 +895,7 @@ void main() {
 
     test('the title color is the color token', () {
       // The route of the title color (plugin.title.js:158-160).
-      final compiled = compileChartTheme(_colorTheme('color', _blue));
+      final compiled = compileChartTheme(color: _blue);
       expect(
         _at(compiled, 'plugins.title.color'),
         const ui.Color.fromRGBO(0, 0, 255, 0.8),
@@ -1345,35 +912,18 @@ void main() {
       ]);
     });
 
-    test('a raw title text fails the guard, a raw title color passes', () {
-      final theme = <String, Object?>{
-        'raw': <String, Object?>{
-          'plugins': <String, Object?>{
-            'title': <String, Object?>{'text': 'Title'},
-          },
-        },
-      };
-      if (_asserts) {
-        expect(() => compileChartTheme(theme), throwsA(isA<AssertionError>()));
-      } else {
-        expect(compileChartTheme(theme), isNull);
-      }
-      final compiled = compileChartTheme({
-        'colors': <String, Object?>{'color': _red},
-        'raw': <String, Object?>{
-          'plugins': <String, Object?>{
-            'title': <String, Object?>{
-              'color': const ui.Color.fromRGBO(0, 0, 255, 1),
-              'position': ChartPosition.bottom,
-            },
-          },
-        },
-      });
+    test('a title text fails the guard, a title color and position pass', () {
+      // Rule 2b (plugin.title.js:43, 97).
       expect(
-        _at(compiled, 'plugins.title.color'),
-        const ui.Color.fromRGBO(0, 0, 255, 1),
+        themeNeverEmittedReason(_path('plugins.title.text'), 'Title'),
+        'plugins.title.text is a behavior key',
       );
-      expect(_at(compiled, 'plugins.title.position'), ChartPosition.bottom);
+      for (final (path, value) in [
+        ('plugins.title.color', const ui.Color.fromRGBO(0, 0, 255, 1)),
+        ('plugins.title.position', ChartPosition.bottom),
+      ]) {
+        expect(themeNeverEmittedReason(_path(path), value), isNull);
+      }
     });
   });
 
@@ -1381,21 +931,17 @@ void main() {
     // theming.md §4 (Chart.js ADR 0050): the subtitle takes the color token
     // and the font token without weight, as the title. The legend takes the
     // whole font token into its two fonts and no color key.
-    final serifBold = <String, Object?>{
-      'typography': <String, Object?>{
-        'font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontWeight: ui.FontWeight.bold,
-          fontSize: 14,
-          height: 1.5,
-        ),
-      },
-    };
+    const serifBold = ChartTextStyle(
+      fontFamily: 'serif',
+      fontFamilyFallback: [],
+      fontWeight: ui.FontWeight.bold,
+      fontSize: 14,
+      height: 1.5,
+    );
 
     test('the subtitle color is the color token', () {
       // The route of the subtitle color (plugin.subtitle.js:45-47).
-      final compiled = compileChartTheme(_colorTheme('color', _blue));
+      final compiled = compileChartTheme(color: _blue);
       expect(
         _at(compiled, 'plugins.subtitle.color'),
         const ui.Color.fromRGBO(0, 0, 255, 0.8),
@@ -1405,19 +951,18 @@ void main() {
         ['color'],
       );
       // The other color tokens give no subtitle key.
-      for (final token in ['borderColor', 'backgroundColor', 'surface']) {
-        expect(
-          _at(compileChartTheme(_colorTheme(token, _blue)), 'plugins'),
-          same(undefined),
-          reason: token,
-        );
+      for (final (token, compile) in _colorTokens) {
+        if (!['borderColor', 'backgroundColor', 'surface'].contains(token)) {
+          continue;
+        }
+        expect(_at(compile(_blue), 'plugins'), same(undefined), reason: token);
       }
     });
 
     test('the subtitle font has no weight', () {
       // theming.md §3.4: the subtitle keeps its local weight 'normal'
       // (plugin.subtitle.js:35-37).
-      final compiled = compileChartTheme(serifBold);
+      final compiled = compileChartTheme(font: serifBold);
       final font = _at(compiled, 'plugins.subtitle.font')!;
       expect(
         font,
@@ -1429,11 +974,9 @@ void main() {
         ),
       );
       // A font with a weight only gives no subtitle font.
-      final weightOnly = compileChartTheme({
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
-        },
-      });
+      final weightOnly = compileChartTheme(
+        font: const ChartTextStyle(fontWeight: ui.FontWeight.bold),
+      );
       expect(_at(weightOnly, 'plugins.subtitle'), same(undefined));
     });
 
@@ -1442,7 +985,7 @@ void main() {
       // fills an absent field from defaults.font (helpers.options.ts:115-117)
       // for the label font (plugin.legend.js:136, 288) and the title font
       // (:446, 495).
-      final compiled = compileChartTheme(serifBold);
+      final compiled = compileChartTheme(font: serifBold);
       final labels = _at(compiled, 'plugins.legend.labels.font')!;
       final title = _at(compiled, 'plugins.legend.title.font')!;
       expect(
@@ -1468,7 +1011,7 @@ void main() {
 
     test('the plugins keys come after scales, in one order', () {
       // A font-only theme also puts the root key plugins after scales.
-      final font = compileChartTheme(serifBold)!;
+      final font = compileChartTheme(font: serifBold)!;
       expect(_keys(font), ['scale', 'scales', 'plugins', 'transitions']);
       expect(_keys(jsGet(font, 'plugins')), [
         'title',
@@ -1476,10 +1019,7 @@ void main() {
         'legend',
         'tooltip',
       ]);
-      final both = compileChartTheme({
-        'colors': <String, Object?>{'color': _red},
-        ...serifBold,
-      })!;
+      final both = compileChartTheme(color: _red, font: serifBold)!;
       expect(_keys(both), [
         'color',
         'scale',
@@ -1497,56 +1037,6 @@ void main() {
         'color',
         'font',
       ]);
-    });
-
-    test('the raw keys beat the subtitle and legend token keys', () {
-      final compiled = compileChartTheme({
-        'colors': <String, Object?>{'color': _red},
-        ...serifBold,
-        'raw': <String, Object?>{
-          'plugins': <String, Object?>{
-            'subtitle': <String, Object?>{
-              'color': 'raw-subtitle',
-              'font': const ChartTextStyle(fontWeight: ui.FontWeight.w300),
-            },
-            'legend': <String, Object?>{
-              'labels': <String, Object?>{
-                'font': const ChartTextStyle(fontSize: 10),
-                'color': 'raw-labels',
-              },
-              'title': <String, Object?>{'color': 'raw-legend-title'},
-            },
-          },
-        },
-      });
-      expect(_leaves(_at(compiled, 'plugins.subtitle')), {
-        'color': 'raw-subtitle',
-        'font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-          height: 1.5,
-          fontWeight: ui.FontWeight.w300,
-        ),
-      });
-      expect(_leaves(_at(compiled, 'plugins.legend')), {
-        'labels.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontWeight: ui.FontWeight.bold,
-          fontSize: 10,
-          height: 1.5,
-        ),
-        'labels.color': 'raw-labels',
-        'title.font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontWeight: ui.FontWeight.bold,
-          fontSize: 14,
-          height: 1.5,
-        ),
-        'title.color': 'raw-legend-title',
-      });
     });
 
     test('a raw subtitle text fails the guard, the token keys pass', () {
@@ -1568,7 +1058,7 @@ void main() {
         );
       }
       // Each emitted key of the light preset passes the guard.
-      final light = compileChartTheme(ChartThemes.light);
+      final light = compileLightTheme();
       for (final MapEntry(key: path, :value) in _leaves(
         _at(light, 'plugins'),
       ).entries) {
@@ -1593,21 +1083,17 @@ void main() {
       'footerColor',
       'multiKeyBackground',
     ];
-    final serifBold = <String, Object?>{
-      'typography': <String, Object?>{
-        'font': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontWeight: ui.FontWeight.bold,
-          fontSize: 14,
-          height: 1.5,
-        ),
-      },
-    };
+    const serifBold = ChartTextStyle(
+      fontFamily: 'serif',
+      fontFamilyFallback: [],
+      fontWeight: ui.FontWeight.bold,
+      fontSize: 14,
+      height: 1.5,
+    );
 
     test('inverseSurface is the tooltip background', () {
       // plugin.tooltip.js:1279.
-      final compiled = compileChartTheme(_colorTheme('inverseSurface', _blue));
+      final compiled = compileChartTheme(inverseSurface: _blue);
       expect(_leaves(compiled), {
         'plugins.tooltip.backgroundColor': const ui.Color.fromRGBO(
           0,
@@ -1622,9 +1108,7 @@ void main() {
 
     test('onInverseSurface is the tooltip text and key color', () {
       // plugin.tooltip.js:1280, 1287, 1292, 1305.
-      final compiled = compileChartTheme(
-        _colorTheme('onInverseSurface', _blue),
-      );
+      final compiled = compileChartTheme(onInverseSurface: _blue);
       expect(_leaves(compiled), {
         'plugins.tooltip.titleColor': const ui.Color.fromRGBO(
           0,
@@ -1654,15 +1138,10 @@ void main() {
       });
       // The other color tokens give no tooltip key. The tooltip border
       // color 'rgba(0,0,0,0)' (plugin.tooltip.js:1308) has no token.
-      for (final token in [
-        'color',
-        'borderColor',
-        'backgroundColor',
-        'surface',
-      ]) {
+      for (final (token, compile) in _colorTokens.take(4)) {
         expect(
           _leaves(
-            compileChartTheme(_colorTheme(token, _blue)),
+            compile(_blue),
           ).keys.where((path) => path.startsWith('plugins.tooltip.')),
           isEmpty,
           reason: token,
@@ -1673,7 +1152,7 @@ void main() {
     test('the light preset gives the upstream tooltip colors', () {
       // 'rgba(0,0,0,0.8)' and '#fff' (plugin.tooltip.js:1279, 1280, 1287,
       // 1292, 1305) after the parse of the ported @kurkle/color.
-      final compiled = compileChartTheme(ChartThemes.light);
+      final compiled = compileLightTheme();
       expect(
         _at(compiled, 'plugins.tooltip.backgroundColor'),
         const ui.Color.fromRGBO(0, 0, 0, 0.8),
@@ -1696,7 +1175,7 @@ void main() {
 
     test('the body font is the whole font token', () {
       // plugin.tooltip.js:1289-1290: no local field.
-      final compiled = compileChartTheme(serifBold);
+      final compiled = compileChartTheme(font: serifBold);
       final font = _at(compiled, 'plugins.tooltip.bodyFont')!;
       expect(
         font,
@@ -1714,7 +1193,7 @@ void main() {
     test('the title and footer fonts have no weight', () {
       // theming.md §3.4: the tooltip title and footer keep their local
       // weight 'bold' (plugin.tooltip.js:1281-1283, 1295-1297).
-      final compiled = compileChartTheme(serifBold);
+      final compiled = compileChartTheme(font: serifBold);
       for (final key in ['titleFont', 'footerFont']) {
         final font = _at(compiled, 'plugins.tooltip.$key')!;
         expect(
@@ -1729,11 +1208,9 @@ void main() {
         );
       }
       // A font with a weight only gives the body font only.
-      final weightOnly = compileChartTheme({
-        'typography': <String, Object?>{
-          'font': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
-        },
-      });
+      final weightOnly = compileChartTheme(
+        font: const ChartTextStyle(fontWeight: ui.FontWeight.bold),
+      );
       expect(_leaves(_at(weightOnly, 'plugins.tooltip')), {
         'bodyFont': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
       });
@@ -1741,17 +1218,13 @@ void main() {
 
     test('the tooltip keys come after the legend keys, in one order', () {
       // The colors and then the fonts, in each theme.
-      final compiled = compileChartTheme({
-        'colors': <String, Object?>{
-          'onInverseSurface': _red,
-          'color': _red,
-          'inverseSurface': _blue,
-        },
-        ...serifBold,
-        'palette': <String, Object?>{
-          'colors': <Object?>[_red],
-        },
-      })!;
+      final compiled = compileChartTheme(
+        onInverseSurface: _red,
+        color: _red,
+        inverseSurface: _blue,
+        font: serifBold,
+        palette: [_red],
+      )!;
       expect(_keys(compiled['plugins']), [
         'title',
         'subtitle',
@@ -1766,10 +1239,10 @@ void main() {
         'footerFont',
       ]);
       // The same order without the other tokens.
-      final tooltipOnly = compileChartTheme({
-        'colors': <String, Object?>{'onInverseSurface': _red},
-        ...serifBold,
-      })!;
+      final tooltipOnly = compileChartTheme(
+        onInverseSurface: _red,
+        font: serifBold,
+      )!;
       expect(_keys(tooltipOnly['plugins']), [
         'title',
         'subtitle',
@@ -1780,56 +1253,6 @@ void main() {
         _keys(_at(tooltipOnly, 'plugins.tooltip')),
         [...tooltipColors.skip(1), 'titleFont', 'bodyFont', 'footerFont'],
       );
-    });
-
-    test('the raw keys beat the tooltip token keys', () {
-      final compiled = compileChartTheme({
-        'colors': <String, Object?>{
-          'inverseSurface': _blue,
-          'onInverseSurface': _red,
-        },
-        ...serifBold,
-        'raw': <String, Object?>{
-          'plugins': <String, Object?>{
-            'tooltip': <String, Object?>{
-              'backgroundColor': 'raw-background',
-              'titleFont': const ChartTextStyle(
-                fontWeight: ui.FontWeight.w300,
-              ),
-              'bodyFont': const ChartTextStyle(fontSize: 10),
-              'borderColor': 'raw-border',
-            },
-          },
-        },
-      });
-      expect(_leaves(_at(compiled, 'plugins.tooltip')), {
-        'backgroundColor': 'raw-background',
-        'titleColor': const ui.Color.fromRGBO(200, 0, 0, 1),
-        'bodyColor': const ui.Color.fromRGBO(200, 0, 0, 1),
-        'footerColor': const ui.Color.fromRGBO(200, 0, 0, 1),
-        'multiKeyBackground': const ui.Color.fromRGBO(200, 0, 0, 1),
-        'titleFont': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-          height: 1.5,
-          fontWeight: ui.FontWeight.w300,
-        ),
-        'bodyFont': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontWeight: ui.FontWeight.bold,
-          fontSize: 10,
-          height: 1.5,
-        ),
-        'footerFont': const ChartTextStyle(
-          fontFamily: 'serif',
-          fontFamilyFallback: [],
-          fontSize: 14,
-          height: 1.5,
-        ),
-        'borderColor': 'raw-border',
-      });
     });
 
     test('the tooltip token keys pass the guard, the position fails', () {
@@ -1852,57 +1275,6 @@ void main() {
       expect(
         themeNeverEmittedReason(_path('plugins.tooltip.mode'), 'index'),
         'plugins.tooltip.mode is a behavior key',
-      );
-    });
-  });
-
-  group('themeColorToRgba', () {
-    test('8-bit channels and the alpha of jsNumberToString', () {
-      expect(
-        themeColorToRgba((alpha: 0.1, red: 0.0, green: 0.0, blue: 0.0)),
-        'rgba(0, 0, 0, 0.1)',
-      );
-      // The alpha of referenceParsedColor(0x1A000000) (theming.md §4).
-      expect(
-        themeColorToRgba((alpha: 26 / 255, red: 0.0, green: 0.0, blue: 0.0)),
-        'rgba(0, 0, 0, 0.10196078431372549)',
-      );
-      expect(
-        themeColorToRgba((
-          alpha: 1.0,
-          red: 102 / 255,
-          green: 102 / 255,
-          blue: 102 / 255,
-        )),
-        'rgba(102, 102, 102, 1)',
-      );
-      expect(
-        themeColorToRgba((alpha: 0.0, red: 1.0, green: 1.0, blue: 1.0)),
-        'rgba(255, 255, 255, 0)',
-      );
-    });
-
-    test('a channel rounds half up, as Color._floatToInt8', () {
-      // (x * 255.0).round(): 0.5 / 255 * 255 rounds to 1.
-      expect(
-        themeColorToRgba((
-          alpha: 1.0,
-          red: 0.5 / 255,
-          green: 1.49 / 255,
-          blue: 254.5 / 255,
-        )),
-        'rgba(1, 1, 255, 1)',
-      );
-    });
-
-    test('extended sRGB components clamp', () {
-      expect(
-        themeColorToRgba((alpha: 1.5, red: -0.2, green: 1.2, blue: 0.5)),
-        'rgba(0, 255, 128, 1)',
-      );
-      expect(
-        themeColorToRgba((alpha: -0.5, red: 0.0, green: 0.0, blue: 0.0)),
-        'rgba(0, 0, 0, 0)',
       );
     });
   });
@@ -2106,94 +1478,6 @@ void main() {
       });
     });
 
-    test('a raw key that breaks the guard fails an assert', () {
-      final themes = <Map<String, Object?>>[
-        {
-          'raw': <String, Object?>{
-            'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-          },
-        },
-        {
-          'raw': <String, Object?>{
-            'elements': <String, Object?>{
-              'bar': <String, Object?>{
-                'hoverBackgroundColor': const ui.Color.fromRGBO(
-                  255,
-                  0,
-                  0,
-                  1,
-                ),
-              },
-            },
-          },
-        },
-        {
-          'raw': <String, Object?>{
-            'interaction': <String, Object?>{
-              'mode': const IndexInteractionMode(),
-            },
-          },
-        },
-        {
-          'raw': <String, Object?>{
-            'hover': <String, Object?>{
-              'mode': const DatasetInteractionMode(),
-              'intersect': false,
-            },
-          },
-        },
-        {
-          'raw': <String, Object?>{
-            'plugins': <String, Object?>{
-              'tooltip': <String, Object?>{
-                'mode': const DatasetInteractionMode(),
-              },
-            },
-          },
-        },
-        {
-          'raw': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false},
-          },
-        },
-        {
-          'raw': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'grid': <String, Object?>{
-                  'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-                },
-              },
-            },
-          },
-        },
-        {
-          'raw': <String, Object?>{
-            'elements': <String, Object?>{
-              'line': <String, Object?>{
-                'borderDash': <Object?>[4.0, null],
-              },
-            },
-          },
-        },
-        {
-          'raw': <String, Object?>{'color': null},
-        },
-      ];
-      for (final theme in themes) {
-        if (_asserts) {
-          expect(
-            () => compileChartTheme(theme),
-            throwsA(isA<AssertionError>()),
-            reason: _json(theme),
-          );
-        } else {
-          // Without asserts, the key is left out and nothing remains.
-          expect(compileChartTheme(theme), isNull, reason: _json(theme));
-        }
-      }
-    });
-
     test('the plugin behavior paths of Chart.js ADR 0050', () {
       expect(themePluginBehaviorPaths, {
         'plugins.decimation.algorithm',
@@ -2216,175 +1500,11 @@ void main() {
         'scale.ticks.maxTicksLimit',
       });
     });
-
-    test('a raw plugin behavior path fails an assert', () {
-      // Rule 2b. Each path, also inside its plugin Map. A sibling key of
-      // the same plugin stays.
-      for (final path in themePluginBehaviorPaths) {
-        final parts = path.split('.');
-        Object? value = 1.0;
-        for (final key in parts.reversed) {
-          value = <String, Object?>{key: value};
-        }
-        final theme = <String, Object?>{'raw': value};
-        if (_asserts) {
-          expect(
-            () => compileChartTheme(theme),
-            throwsA(isA<AssertionError>()),
-            reason: path,
-          );
-        } else {
-          expect(compileChartTheme(theme), isNull, reason: path);
-        }
-      }
-      // A scale path also fails under a scale type.
-      final scaleTitle = <String, Object?>{
-        'raw': <String, Object?>{
-          'scales': <String, Object?>{
-            'linear': <String, Object?>{
-              'title': <String, Object?>{'text': 'x'},
-            },
-          },
-        },
-      };
-      if (_asserts) {
-        expect(
-          () => compileChartTheme(scaleTitle),
-          throwsA(isA<AssertionError>()),
-          reason: 'scales.linear.title.text',
-        );
-      } else {
-        expect(
-          compileChartTheme(scaleTitle),
-          isNull,
-          reason: 'scales.linear.title.text',
-        );
-      }
-      // The layout keys and the colors of the boxes pass. They move only the
-      // layout, and no public input reaches the layout keys (Chart.js ADR
-      // 0050, "No public `raw` in 0.1.0").
-      final compiled = compileChartTheme({
-        'raw': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'position': ChartPosition.left,
-              'title': <String, Object?>{
-                'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-              },
-            },
-            'tooltip': <String, Object?>{
-              'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-            },
-          },
-        },
-      });
-      expect(_at(compiled, 'plugins.legend.position'), ChartPosition.left);
-      expect(
-        _at(compiled, 'plugins.legend.title.color'),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
-      );
-      expect(
-        _at(compiled, 'plugins.tooltip.borderColor'),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
-      );
-    });
-
-    test('a raw palette that is not a List with items fails an assert', () {
-      // Rule 9: an empty List would give i % 0 in hunk H4b, a throw in
-      // Dart, and a string one character for each dataset in JavaScript.
-      for (final value in <Object?>[
-        <Object?>[],
-        'red',
-        <String, Object?>{'0': 'red'},
-        1.0,
-      ]) {
-        for (final key in [r'$borderColors', r'$backgroundColors']) {
-          final theme = <String, Object?>{
-            'raw': <String, Object?>{
-              'plugins': <String, Object?>{
-                'colors': <String, Object?>{key: value},
-              },
-            },
-          };
-          if (_asserts) {
-            expect(
-              () => compileChartTheme(theme),
-              throwsA(isA<AssertionError>()),
-              reason: '$key ${_json(value)}',
-            );
-          } else {
-            expect(compileChartTheme(theme), isNull, reason: _json(value));
-          }
-        }
-      }
-      // A List with a rejected item is left out as a whole.
-      final theme = <String, Object?>{
-        'raw': <String, Object?>{
-          'plugins': <String, Object?>{
-            'colors': <String, Object?>{
-              r'$borderColors': <Object?>[
-                const ui.Color.fromRGBO(255, 0, 0, 1),
-                null,
-              ],
-            },
-          },
-        },
-      };
-      if (_asserts) {
-        expect(() => compileChartTheme(theme), throwsA(isA<AssertionError>()));
-      } else {
-        expect(compileChartTheme(theme), isNull);
-      }
-    });
-
-    test(
-      'an unknown field or token fails an assert',
-      () {
-        final themes = <Map<String, Object?>>[
-          {'palette2': <String, Object?>{}},
-          {
-            'colors': <String, Object?>{'outline': _red},
-          },
-          {
-            'colors': <String, Object?>{
-              'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-            },
-          },
-          {
-            'typography': <String, Object?>{'title': <String, Object?>{}},
-          },
-          {
-            'typography': <String, Object?>{
-              'pointLabels': <String, Object?>{'variant': 'small-caps'},
-            },
-          },
-          {
-            'typography': <String, Object?>{'pointLabels': 10.0},
-          },
-          {
-            'typography': <String, Object?>{
-              'font': <String, Object?>{'variant': 'small-caps'},
-            },
-          },
-          {'raw': 'not a map'},
-        ];
-        for (final theme in themes) {
-          if (_asserts) {
-            expect(
-              () => compileChartTheme(theme),
-              throwsA(isA<AssertionError>()),
-              reason: _json(theme),
-            );
-          }
-        }
-      },
-      skip: _asserts ? false : 'n/a: the asserts do not run',
-    );
   });
 
   group('the deep freeze', () {
-    test('each Map and List of the result is frozen', () {
-      final compiled = compileChartTheme(_testThemes['raw'])!;
+    test('each scope and List of the result is frozen', () {
+      final compiled = compileLightTheme()!;
       final nodes = _nodes(compiled).toList();
       expect(nodes.length, greaterThan(10));
       for (final (path, node) in nodes) {
@@ -2394,7 +1514,7 @@ void main() {
     });
 
     test('a write throws a TypeError', () {
-      final compiled = compileChartTheme(ChartThemes.light)!;
+      final compiled = compileLightTheme()!;
       final ticks = _at(compiled, 'scale.ticks')! as JsObjectFace;
       expect(() => compiled['color'] = 'x', throwsA(isA<TypeError>()));
       expect(() => compiled['other'] = 'x', throwsA(isA<TypeError>()));
@@ -2406,22 +1526,18 @@ void main() {
         const ui.Color.fromRGBO(102, 102, 102, 1),
       );
 
-      final dash =
-          _at(
-                compileChartTheme(_testThemes['raw']),
-                'elements.line.borderDash',
-              )!
-              as List<Object?>;
-      expect(() => dash[0] = 1.0, throwsA(isA<TypeError>()));
-      expect(() => dash.add(1.0), throwsA(isA<TypeError>()));
-      expect(() => dash.length = 0, throwsA(isA<TypeError>()));
-      expect(dash, [4.0, 2.0]);
+      final palette =
+          _at(compiled, r'plugins.colors.$borderColors')! as List<Object?>;
+      expect(() => palette[0] = _red, throwsA(isA<TypeError>()));
+      expect(() => palette.add(_red), throwsA(isA<TypeError>()));
+      expect(() => palette.length = 0, throwsA(isA<TypeError>()));
+      expect(palette, _upstreamBorderColors);
     });
 
     test('a resolver write into a theme scope throws', () {
       // theming.md §3.3: without plugins.<id> in the options and the
       // overrides, the theme map is scopes[0], the target of the set trap.
-      final compiled = compileChartTheme(_testThemes['raw']);
+      final compiled = compileLightTheme();
       final config = Config(<String, Object?>{
         'type': 'tthm',
         'options': <String, Object?>{},
@@ -2434,42 +1550,31 @@ void main() {
       expect(scopes.first, same(_at(compiled, 'plugins.tooltip')));
       final resolver = config.createResolver(scopes, <String, Object?>{});
       expect(
-        resolver['borderColor'],
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        resolver['backgroundColor'],
+        const ui.Color.fromRGBO(0, 0, 0, 0.8),
       );
-      expect(() => resolver['borderColor'] = 'x', throwsA(isA<TypeError>()));
+      expect(
+        () => resolver['backgroundColor'] = 'x',
+        throwsA(isA<TypeError>()),
+      );
     });
   });
 
   group('no memo (Chart.js ADR 0054 §4)', () {
-    test('the same theme compiles again to an equal result', () {
-      final theme = <String, Object?>{
-        'colors': <String, Object?>{'color': _red},
-      };
-      final first = compileChartTheme(theme);
-      final second = compileChartTheme(theme);
+    test('the same tokens compile again to an equal result', () {
+      final first = compileChartTheme(color: _red);
+      final second = compileChartTheme(color: _red);
       expect(second, isNot(same(first)));
       expect(_json(second), _json(first));
       expect(
-        _json(compileChartTheme(ChartThemes.light)),
-        _json(compileChartTheme(ChartThemes.light)),
+        _json(compileLightTheme()),
+        _json(compileLightTheme()),
       );
     });
 
-    test('an equal theme compiles again', () {
-      Map<String, Object?> theme() => {
-        'colors': <String, Object?>{'color': _red},
-      };
-      final a = compileChartTheme(theme());
-      final b = compileChartTheme(theme());
-      expect(b, isNot(same(a)));
-      expect(_json(b), _json(a));
-    });
-
-    test('a theme that compiles to null stays null', () {
-      final theme = <String, Object?>{'colors': <String, Object?>{}};
-      expect(compileChartTheme(theme), isNull);
-      expect(compileChartTheme(theme), isNull);
+    test('tokens that compile to null stay null', () {
+      expect(compileChartTheme(), isNull);
+      expect(compileChartTheme(), isNull);
     });
   });
 
@@ -2512,12 +1617,12 @@ void main() {
       (descriptors, 'descriptors'),
     ]);
 
-    test('ChartThemes.none compiles to null', () {
-      expect(compileChartTheme(ChartThemes.none), isNull);
+    test('no token compiles to null', () {
+      expect(compileChartTheme(), isNull);
     });
 
-    test('ChartThemes.none adds no scope', () {
-      final c = config(compileChartTheme(ChartThemes.none));
+    test('no token adds no scope', () {
+      final c = config(compileChartTheme());
       final label = labels(c, null);
       expect(
         c
@@ -2546,7 +1651,7 @@ void main() {
     });
 
     test('a compiled theme comes between the overrides and the defaults', () {
-      final theme = compileChartTheme(ChartThemes.light);
+      final theme = compileLightTheme();
       final c = config(theme);
       final label = labels(c, theme);
       expect(
@@ -2607,7 +1712,7 @@ void main() {
         return _at(c.createResolver(scopes, <String, Object?>{}), key);
       }
 
-      final theme = compileChartTheme(ChartThemes.light);
+      final theme = compileLightTheme();
       expect(animation(theme, 'theme', 'animation.duration'), 200.0);
       expect(animation(theme, 'theme', 'animation.easing'), Curves.linear);
       expect(animation(theme, 'themeFrame', 'animation.duration'), 0.0);
@@ -2630,7 +1735,7 @@ void main() {
   group('theming.md §8 test 5, without a chart', () {
     test('the presets and the test themes compile only to allowed paths', () {
       for (final name in _testThemes.keys) {
-        final compiled = compileChartTheme(_testThemes[name])!;
+        final compiled = _testThemes[name]!()!;
         final leaves = _leaves(compiled);
         for (final MapEntry(key: path, :value) in leaves.entries) {
           if (_transitionLeaves.containsKey(path)) {
@@ -2664,22 +1769,6 @@ void main() {
         themeNeverEmittedReason(['scales', 'x'], <String, Object?>{}),
         'scales.x is not a scale type',
       );
-      final theme = <String, Object?>{
-        'raw': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'ticks': <String, Object?>{
-                'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-              },
-            },
-          },
-        },
-      };
-      if (_asserts) {
-        expect(() => compileChartTheme(theme), throwsA(isA<AssertionError>()));
-      } else {
-        expect(compileChartTheme(theme), isNull);
-      }
     });
 
     test('a themed scales.radialLinear creates no axis', () {
@@ -2693,17 +1782,9 @@ void main() {
           },
         })
         ..override('tdough', <String, Object?>{});
-      final theme = compileChartTheme({
-        'raw': <String, Object?>{
-          'scales': <String, Object?>{
-            'radialLinear': <String, Object?>{
-              'pointLabels': <String, Object?>{
-                'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-              },
-            },
-          },
-        },
-      });
+      // The light preset themes scales.radialLinear.
+      final theme = compileLightTheme();
+      expect(_at(theme, 'scales.radialLinear'), isNotNull);
       Object? scales(String type) => Config(<String, Object?>{
         'type': type,
         'data': <String, Object?>{

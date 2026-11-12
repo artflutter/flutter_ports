@@ -31,8 +31,6 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show optionKeyOf;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -43,6 +41,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/jasmine.dart' show jasmineEquals;
+import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
 import '../core/animation_reference.dart';
@@ -694,7 +693,7 @@ void main() {
       },
       functions: _functions,
       extras: _extras,
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
@@ -704,7 +703,7 @@ void main() {
       final config =
           copyReference(pluginTooltipReference.first.config, _functions)!
               as AnyObject;
-      config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });

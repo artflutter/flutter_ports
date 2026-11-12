@@ -25,12 +25,12 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary;
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
+
+import '../../support/light_theme.dart';
 
 /// A function value of an option.
 Object? _fn(Object? ctx) => ctx;
@@ -389,7 +389,7 @@ void main() {
 
     test('the scale configs of a chart, also with a theme', () {
       // One compiled theme for both runs: its values print their identity.
-      final light = compileChartTheme(ChartThemes.light);
+      final light = compileLightTheme();
       Map<String, Object?> config({bool theme = false}) => {
         'type': 'line',
         'data': <String, Object?>{

@@ -14,11 +14,10 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/light_theme.dart';
 import '../scales/scale_chart_harness.dart';
 import 'plugin_chart_harness.dart';
 import 'plugin_colors_reference.dart';
@@ -203,7 +202,7 @@ void main() {
     testPluginChartCases(
       _reference,
       observers: {'colors': _observeColors},
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
   });
 

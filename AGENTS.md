@@ -1109,14 +1109,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `style.touchAction`, `style.userSelect` and `removeProperty`. See
     `test/port/platform/chart_host_test.dart` (groups `canvas event target`, `document target`,
     `getBoundingClientRect`, `touch sequence`) and `native_event_test.dart`.
-  - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` over
-    raw Map themes, the emission guard and the deep freeze: `compileChartTheme` gives a deep-frozen
-    typed `ChartOptionsScope` tree (Chart.js ADR 0054 §3). `presets.dart` has the internal
-    `ChartThemes.light` and `ChartThemes.none`. Both files are pure layers. `theme_data.dart` has
-    the public `ChartThemeData` (Chart.js ADR 0050): 6 `Color?` tokens, 2 `TextStyle?` fonts,
-    `palette` and `paletteBackgroundAlpha`, the presets `.light()` and `.dark()` (the mirror rule),
-    `copyWith`, `lerp` and deep `==`, and the internal `themeDataToRaw` and `compileThemeData`
-    (no memo: the theme switch keeps the compiled scope of its current theme). `chart_theme.dart`
+  - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme`, the
+    emission guard and the deep freeze. `compileChartTheme` takes the typed tokens as named
+    parameters (Chart.js ADR 0117): 6 `Color?` tokens, 2 `TextStyle?` fonts, `palette` and
+    `paletteBackgroundAlpha`. It gives a deep-frozen typed `ChartOptionsScope` tree (Chart.js ADR
+    0054 §3) that holds each color token as the app gives it: no 8-bit rounding, no clamp, no
+    change of the color space. No token name is a string, and no Map theme exists. `presets.dart`
+    has `LightThemeTokens`, the internal constants of the light tokens. Both files are pure
+    layers. The pure tests compile the light tokens through `compileLightTheme()` of
+    `test/support/light_theme.dart`. `theme_data.dart` has the public `ChartThemeData` (Chart.js
+    ADR 0050): the same tokens, the presets `.light()` and `.dark()` (the mirror rule, from
+    `LightThemeTokens`), `copyWith`, `lerp` and deep `==`, and the internal `compileThemeData`,
+    which gives the fields to `compileChartTheme` (no memo: the theme switch keeps the compiled
+    scope of its current theme). `chart_theme.dart`
     has `ChartTheme`, an
     `InheritedTheme` with a non-null `data` (`maybeOf` for charts, `of` with the light fallback).
     Both import Flutter: they are not pure layers. Ported files never import a file of
@@ -1165,9 +1170,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     config class is `@immutable` and `final`, with a `const` constructor, `copyWith`, and `==`
     from its `_props` list (`props.dart`). Each class has `extra`, the Chart.js options with no
     parameter. `lower.dart` (internal) gives the typed option scopes of the chart for a config
-    (`ChartConfigLowering`: a `ChartConfigurationScope` root, `put`, the typed `mergeExtra`), with
-    `colorToRgba` of `lib/src/theme/css.dart`; a font goes to the chart as the `TextStyle`
-    itself (Chart.js ADR 0116). Ported files never import
+    (`ChartConfigLowering`: a `ChartConfigurationScope` root, `put`, the typed `mergeExtra`). A
+    color and a font go to the chart as the `Color` and the `TextStyle` themselves (Chart.js ADRs
+    0116 and 0117). Ported files never import
     `lib/src/typed/`, and no file of it imports
     a component (`check:lib-imports`).
   - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
@@ -1293,7 +1298,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0116. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0117. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1364,8 +1369,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       value) is accepted (2026-11-12): its code passes the tests. It supersedes Chart.js ADR 0029
       §4 item 1, the last sentence of §4 item 2 and the last sentence of §5 item 7. Chart.js ADR
       0116 (the font is a Flutter `TextStyle`) is accepted (2026-11-12): its code passes the
-      tests. It supersedes parts of Chart.js ADRs 0061, 0015, 0050 and 0052. The other
-      ADRs are accepted. Docs
+      tests. It supersedes parts of Chart.js ADRs 0061, 0015, 0050 and 0052. Chart.js ADR 0117
+      (the theme compiles from typed tokens) is accepted (2026-11-12): its code passes the tests.
+      It supersedes parts of Chart.js ADR 0050 (the raw Map theme, its presets and its color
+      conversion). The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

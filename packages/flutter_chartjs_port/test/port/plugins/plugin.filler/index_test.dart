@@ -13,11 +13,10 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../support/light_theme.dart';
 import '../../controllers/controller_chart_harness.dart' show plainValue;
 import '../../scales/scale_chart_harness.dart';
 import '../plugin_chart_harness.dart';
@@ -219,7 +218,7 @@ void main() {
       observers: {'filler': _observeFiller},
       functions: _functions,
       extras: {'targets': _targets},
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
   });
 

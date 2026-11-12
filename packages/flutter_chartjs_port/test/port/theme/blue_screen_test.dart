@@ -17,7 +17,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show getHoverColor;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -77,42 +77,35 @@ const int _blue = 0xFF2050C0;
 /// The RGBA bytes of [_blue], in the order of `rawStraightRgba`.
 const int _blueRgba = 0x2050C0FF;
 
-/// The blue as a raw theme color.
-const RawThemeColor _blueColor = (
-  alpha: 1.0,
-  red: 32 / 255,
-  green: 80 / 255,
-  blue: 192 / 255,
-);
+/// The blue as a theme color.
+const native_ui.Color _blueColor = native_ui.Color(_blue);
 
-/// The color tokens of compile.dart, each set to [_blue]: `color`,
+/// A theme that sets each color token and the palette to [_blue]: `color`,
 /// `borderColor`, `backgroundColor`, `surface`, `inverseSurface` and
-/// `onInverseSurface` (theming.md §4).
-const AnyObject _blueColors = <String, Object?>{
-  'color': _blueColor,
-  'borderColor': _blueColor,
-  'backgroundColor': _blueColor,
-  'surface': _blueColor,
-  'inverseSurface': _blueColor,
-  'onInverseSurface': _blueColor,
-};
-
-/// A raw Map theme that sets each color token and the palette to [_blue].
-/// The palette has `backgroundAlpha: 1.0`, so the background colors of the
-/// colors plugin are opaque (Chart.js ADR 0050, `plugin.colors.ts:25`).
-const AnyObject _blueTheme = <String, Object?>{
-  'colors': _blueColors,
-  'palette': <String, Object?>{
-    'colors': <RawThemeColor>[_blueColor],
-    'backgroundAlpha': 1.0,
-  },
-};
+/// `onInverseSurface` (theming.md §4). The palette has
+/// `paletteBackgroundAlpha: 1`, so the background colors of the colors
+/// plugin are opaque (Chart.js ADR 0050, `plugin.colors.ts:25`).
+const ChartThemeData _blueTheme = ChartThemeData(
+  color: _blueColor,
+  borderColor: _blueColor,
+  backgroundColor: _blueColor,
+  surface: _blueColor,
+  inverseSurface: _blueColor,
+  onInverseSurface: _blueColor,
+  palette: [_blueColor],
+  paletteBackgroundAlpha: 1,
+);
 
 /// [_blueTheme] without the palette: the colors plugin then uses the
 /// upstream palette (rows `theme-H4b` and `theme-H4c`).
-const AnyObject _blueThemeWithoutPalette = <String, Object?>{
-  'colors': _blueColors,
-};
+const ChartThemeData _blueThemeWithoutPalette = ChartThemeData(
+  color: _blueColor,
+  borderColor: _blueColor,
+  backgroundColor: _blueColor,
+  surface: _blueColor,
+  inverseSurface: _blueColor,
+  onInverseSurface: _blueColor,
+);
 
 /// The key that the token `surface` emits at alpha 0.75 (compile.dart,
 /// `_backdropKey`): the scale tick backdrop.
@@ -190,10 +183,10 @@ const List<String> _pluginTexts = [
 /// on with a text, a tooltip `footer` callback, and
 /// `plugins.colors.enabled` from [colors]. [legendLabels] replaces the
 /// legend `labels` options. With [theme], the configuration has
-/// `themeConfigKey: compileChartTheme(theme)`.
+/// `themeConfigKey: compileThemeData(theme)`.
 AnyObject _config(
   String type, {
-  AnyObject? theme,
+  ChartThemeData? theme,
   bool colors = false,
   AnyObject? legendLabels,
 }) {
@@ -254,7 +247,7 @@ AnyObject _config(
           },
         },
     },
-    if (theme != null) themeConfigKey: compileChartTheme(theme),
+    if (theme != null) themeConfigKey: compileThemeData(theme),
   };
 }
 
@@ -510,7 +503,7 @@ Future<int> _expectBlue(
 
 void main() {
   test('the compiled blue theme emits each color as the blue', () {
-    final colors = _themeColors(compileChartTheme(_blueTheme)).toList();
+    final colors = _themeColors(compileThemeData(_blueTheme)).toList();
     expect(colors, isNotEmpty);
     for (final (path, value) in colors) {
       expect(value, isNot(isA<String>()), reason: path);

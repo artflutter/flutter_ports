@@ -11,12 +11,11 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/light_theme.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_bubble_reference.dart';
 import 'controller_chart_harness.dart';
@@ -113,7 +112,7 @@ void main() {
     testControllerChartCases(
       controllerBubbleReference,
       functions: _functions,
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
@@ -124,7 +123,7 @@ void main() {
       ) as Map<String, Object?>;
       final config =
           copyReference(controllerBubbleReference.first.config)! as AnyObject;
-      config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });

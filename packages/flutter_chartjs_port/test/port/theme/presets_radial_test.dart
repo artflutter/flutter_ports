@@ -13,13 +13,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
+import '../../support/light_theme.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the radial linear scale case of phase 6: the light
@@ -96,7 +95,7 @@ void main() {
 
   group('theming.md §8 test 3, the radial linear scale', () {
     test('the radial options equal upstream with the light preset', () {
-      final themed = _resolveRadial(compileChartTheme(ChartThemes.light));
+      final themed = _resolveRadial(compileLightTheme());
       for (final MapEntry(:key, value: upstream) in themeLightRadial.entries) {
         if (upstream is Map<String, Object?>) {
           // A font: the same fields, the size 10 of
@@ -130,7 +129,7 @@ void main() {
       // The preset values come from the theme scope, not from the routes of
       // scale.radialLinear.js:400-404: the strings are the rgba() form of
       // the compiler (theming.md §3.3).
-      final themed = _resolveRadial(compileChartTheme(ChartThemes.light));
+      final themed = _resolveRadial(compileLightTheme());
       expect(
         themed['pointLabels.color'],
         const native_ui.Color.fromRGBO(102, 102, 102, 1),

@@ -12,12 +12,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
+import '../../support/light_theme.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the plugin keys (Chart.js ADR 0050): the options of
@@ -144,7 +144,7 @@ void main() {
     testWidgets('with the light preset, the plugin options equal upstream', (
       tester,
     ) async {
-      final options = _resolve(_chart(compileChartTheme(ChartThemes.light)));
+      final options = _resolve(_chart(compileLightTheme()));
       for (final MapEntry(key: path, value: upstream)
           in themeLightPlugins.entries) {
         if (_isColor(path)) {
@@ -174,7 +174,7 @@ void main() {
     testWidgets('the light preset reaches the plugin options', (tester) async {
       // The theme strings, not the upstream strings: the theme scope gives
       // the values (hunk H2).
-      final options = _resolve(_chart(compileChartTheme(ChartThemes.light)));
+      final options = _resolve(_chart(compileLightTheme()));
       const gray = native_ui.Color.fromRGBO(102, 102, 102, 1);
       const white = native_ui.Color.fromRGBO(255, 255, 255, 1);
       expect(options['title.color'], gray);
@@ -210,25 +210,16 @@ void main() {
       // in `$theme`, gives the same colors, fonts and box sizes.
       final options = _resolve(
         _chart(
-          compileChartTheme({
-            'colors': <String, Object?>{
-              'inverseSurface': (alpha: 1.0, red: 0.0, green: 0.0, blue: 1.0),
-              'onInverseSurface': (
-                alpha: 1.0,
-                red: 1.0,
-                green: 1.0,
-                blue: 0.0,
-              ),
-            },
-            'typography': <String, Object?>{
-              'font': const ChartTextStyle(
-                fontFamily: 'serif',
-                fontFamilyFallback: [],
-                fontSize: 14,
-                fontWeight: native_ui.FontWeight.w300,
-              ),
-            },
-          }),
+          compileChartTheme(
+            inverseSurface: const native_ui.Color.fromRGBO(0, 0, 255, 1),
+            onInverseSurface: const native_ui.Color.fromRGBO(255, 255, 0, 1),
+            font: const ChartTextStyle(
+              fontFamily: 'serif',
+              fontFamilyFallback: [],
+              fontSize: 14,
+              fontWeight: native_ui.FontWeight.w300,
+            ),
+          ),
         ),
       );
       expect(

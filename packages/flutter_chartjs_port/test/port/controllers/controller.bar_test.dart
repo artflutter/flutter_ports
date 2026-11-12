@@ -15,13 +15,12 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/light_theme.dart';
 import '../scales/scale_chart_harness.dart';
 import '../scales/scale_time_harness.dart';
 import 'controller_bar_reference.dart';
@@ -153,7 +152,7 @@ void main() {
     testControllerChartCases(
       controllerBarReference,
       extras: _extras,
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
       now: controllerBarReferenceNow,
     );
 
@@ -165,7 +164,7 @@ void main() {
       ) as Map<String, Object?>;
       final config =
           copyReference(controllerBarReference.first.config)! as AnyObject;
-      config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });

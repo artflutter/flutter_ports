@@ -19,7 +19,6 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -27,12 +26,13 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
+import '../../support/light_theme.dart';
 
 // theming.md §8 test 7 (Chart.js ADR 0050, "The public classes"): the value
 // equality, `copyWith`, `lerp` and the diagnostics of `ChartThemeData`, the
-// conversion to the raw Map theme of compile.dart, the oracle of test 3 and
-// of coverage_test.dart (the light preset compiles to the compiled
-// `ChartThemes.light`), the presets (the mirror rule of the dark preset and
+// compile of its tokens (Chart.js ADR 0117), the oracle of test 3 and of
+// coverage_test.dart (the light preset compiles to the theme of the tokens
+// of `LightThemeTokens`), the presets (the mirror rule of the dark preset and
 // the contrast of the text pairs), the token allowlist of Chart.js ADR 0050
 // ("No public `raw` in 0.1.0", B3 of the design panel) and the hit element
 // of a theme ("No touch sizes", B11). The inherited `ChartTheme` is in
@@ -181,20 +181,6 @@ Object? _at(Object? root, String path) {
     node = jsGet(node, key);
   }
   return node;
-}
-
-/// The 8-bit channels and the alpha of an `rgba()` string of
-/// `themeColorToRgba`.
-(int, int, int, double) _rgba(Object? value) {
-  final match = RegExp(
-    r'^rgba\((\d+), (\d+), (\d+), ([0-9.e-]+)\)$',
-  ).firstMatch(value! as String)!;
-  return (
-    int.parse(match[1]!),
-    int.parse(match[2]!),
-    int.parse(match[3]!),
-    double.parse(match[4]!),
-  );
 }
 
 /// The WCAG 2 contrast ratio of [a] and [b].
@@ -512,15 +498,14 @@ void main() {
     });
   });
 
-  group('the conversion to the raw Map theme', () {
+  group('the tokens reach the compiled theme as they are', () {
+    // Chart.js ADR 0117: compileThemeData gives the fields to
+    // compileChartTheme, with no conversion.
     Color? colorOf(Color color) =>
         compileThemeData(ChartThemeData(color: color))!['color'] as Color?;
 
     test('an sRGB color', () {
-      expect(
-        colorOf(const Color(0xFF36A2EB)),
-        const native_ui.Color.fromRGBO(54, 162, 235, 1),
-      );
+      expect(colorOf(const Color(0xFF36A2EB)), const Color(0xFF36A2EB));
     });
 
     test('Color.from keeps the alpha 0.1', () {
@@ -529,49 +514,36 @@ void main() {
         const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
       );
       // The 8-bit alpha of Color(0x1A000000) is not 0.1 (theming.md §4).
-      expect(
-        colorOf(const Color(0x1A000000)),
-        const Color(0x1A000000),
-      );
+      expect(colorOf(const Color(0x1A000000)), const Color(0x1A000000));
     });
 
-    test('a Display P3 color converts through extended sRGB', () {
-      // A direct conversion to sRGB only clamps: rgba(204, 77, 51, 1)
-      // (probe F-P3 of Chart.js ADR 0050).
-      expect(
-        colorOf(
-          const Color.from(
-            alpha: 1,
-            red: 0.8,
-            green: 0.3,
-            blue: 0.2,
-            colorSpace: ColorSpace.displayP3,
-          ),
-        ),
-        const native_ui.Color.fromRGBO(221, 64, 37, 1),
+    test('a Display P3 color stays a Display P3 color', () {
+      const p3 = Color.from(
+        alpha: 1,
+        red: 0.8,
+        green: 0.3,
+        blue: 0.2,
+        colorSpace: ColorSpace.displayP3,
       );
+      expect(colorOf(p3), p3);
     });
-
-    Object? fontOf(TextStyle font) =>
-        _at(themeDataToRaw(ChartThemeData(font: font)), 'typography.font');
 
     test('the font token is the TextStyle itself', () {
       // A font is a TextStyle from the option to the canvas (Chart.js ADR
       // 0116): no conversion.
-      expect(fontOf(_font), same(_font));
-      const empty = TextStyle();
-      expect(fontOf(empty), same(empty));
+      final compiled = compileThemeData(const ChartThemeData(font: _font));
+      expect(_at(compiled, 'scale.ticks.font'), same(_font));
     });
 
-    test('null fields are left out', () {
-      expect(themeDataToRaw(const ChartThemeData()), isEmpty);
+    test('null tokens theme nothing', () {
+      expect(compileThemeData(const ChartThemeData()), isNull);
       expect(
-        themeDataToRaw(const ChartThemeData(surface: _red)).keys,
-        ['colors'],
+        compileThemeData(const ChartThemeData(paletteBackgroundAlpha: 1)),
+        isNull,
       );
       expect(
-        themeDataToRaw(const ChartThemeData(paletteBackgroundAlpha: 1)),
-        isEmpty,
+        compileThemeData(const ChartThemeData(font: TextStyle())),
+        isNull,
       );
     });
 
@@ -584,44 +556,31 @@ void main() {
     });
 
     test('the palette', () {
-      expect(
-        _at(
-          themeDataToRaw(
-            const ChartThemeData(
-              palette: [_red, _green],
-              paletteBackgroundAlpha: 1,
-            ),
-          ),
-          'palette',
-        ),
-        {
-          'colors': [
-            (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0),
-            (alpha: 0.5, red: 0.0, green: 128 / 255, blue: 0.0),
-          ],
-          'backgroundAlpha': 1.0,
-        },
-      );
       final compiled = compileThemeData(
-        const ChartThemeData(palette: [_green]),
+        const ChartThemeData(
+          palette: [_red, _green],
+          paletteBackgroundAlpha: 1,
+        ),
       );
-      expect(_at(compiled, r'plugins.colors.$borderColors'), [
+      expect(_at(compiled, r'plugins.colors.$borderColors'), [_red, _green]);
+      expect(_at(compiled, r'plugins.colors.$backgroundColors'), [
+        const native_ui.Color.fromRGBO(200, 0, 0, 1),
+        const native_ui.Color.fromRGBO(0, 128, 0, 1),
+      ]);
+      final half = compileThemeData(const ChartThemeData(palette: [_green]));
+      expect(_at(half, r'plugins.colors.$borderColors'), [
         const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
       ]);
-      expect(_at(compiled, r'plugins.colors.$backgroundColors'), [
+      expect(_at(half, r'plugins.colors.$backgroundColors'), [
         const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
       ]);
     });
   });
 
   group('the oracle of test 3', () {
-    test('the light preset gives the raw Map theme ChartThemes.light', () {
-      expect(themeDataToRaw(const ChartThemeData.light()), ChartThemes.light);
-    });
-
-    test('the light preset compiles to the compiled ChartThemes.light', () {
+    test('the light preset compiles to the light tokens', () {
       final compiled = compileThemeData(const ChartThemeData.light());
-      final oracle = compileChartTheme(ChartThemes.light);
+      final oracle = compileLightTheme();
       expect(_plain(compiled), _plain(oracle));
       // The key order too: the compiled objects keep the insertion order.
       // A font is its record (font_record.dart).
@@ -676,26 +635,20 @@ void main() {
     const dark = ChartThemeData.dark();
 
     test('each dark color token is the mirror of the light token', () {
-      const tokens = [
-        'color',
-        'borderColor',
-        'backgroundColor',
-        'surface',
-        'inverseSurface',
-        'onInverseSurface',
+      final pairs = [
+        ('color', light.color, dark.color),
+        ('borderColor', light.borderColor, dark.borderColor),
+        ('backgroundColor', light.backgroundColor, dark.backgroundColor),
+        ('surface', light.surface, dark.surface),
+        ('inverseSurface', light.inverseSurface, dark.inverseSurface),
+        ('onInverseSurface', light.onInverseSurface, dark.onInverseSurface),
       ];
-      final lightColors = themeDataToRaw(light)['colors']! as AnyObject;
-      final darkColors = themeDataToRaw(dark)['colors']! as AnyObject;
-      expect(lightColors.keys, tokens);
-      expect(darkColors.keys, tokens);
-      for (final token in tokens) {
-        final (r, g, b, a) = _rgba(
-          themeColorToRgba(lightColors[token]! as RawThemeColor),
-        );
+      int channel(double x) => (x * 255).round();
+      for (final (name, l, d) in pairs) {
         expect(
-          _rgba(themeColorToRgba(darkColors[token]! as RawThemeColor)),
-          (255 - r, 255 - g, 255 - b, a),
-          reason: token,
+          (channel(d!.r), channel(d.g), channel(d.b), d.a),
+          (255 - channel(l!.r), 255 - channel(l.g), 255 - channel(l.b), l.a),
+          reason: name,
         );
       }
       expect(
@@ -753,7 +706,6 @@ void main() {
         const ChartThemeData(color: _red, palette: []),
       )!;
       expect((compiled['plugins']! as JsObjectFace).jsHas('colors'), false);
-      expect(themeDataToRaw(const ChartThemeData(palette: [])), isEmpty);
     });
 
     test('a paletteBackgroundAlpha outside 0 to 1 fails a debug assert', () {
@@ -821,7 +773,7 @@ void main() {
   group('B11: no touch sizes', () {
     // Chart.js ADR 0050, "No touch sizes": the probe F-P1b. The theme never
     // carries `hitRadius` or `hoverRadius`, so a theme leaves the hit
-    // element unchanged. The control: a raw Map theme with the raw key
+    // element unchanged. The control: a theme scope with the key
     // `elements.point.hitRadius: 8` changes the hit element (the guard
     // passes it, F-P1), so the event position is 6 px from a hit.
     testWidgets('the unthemed chart has no hit', (tester) async {
@@ -849,13 +801,12 @@ void main() {
     ) async {
       final chart = acquireChart(
         _scatter(
-          compileChartTheme(<String, Object?>{
-            'raw': <String, Object?>{
-              'elements': <String, Object?>{
-                'point': <String, Object?>{'hitRadius': 8.0},
-              },
+          // No token gives hitRadius: the theme scope of the raw config.
+          <String, Object?>{
+            'elements': <String, Object?>{
+              'point': <String, Object?>{'hitRadius': 8.0},
             },
-          }),
+          },
         ),
       );
       await tester.pump();
