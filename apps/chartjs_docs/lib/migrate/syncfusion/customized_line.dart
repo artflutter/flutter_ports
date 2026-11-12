@@ -46,7 +46,7 @@ final Map<String, Object?> _highLow = {
       ..lineTo(right, low)
       ..stroke()
       ..font = '12px sans-serif'
-      ..textAlign = 'left'
+      ..textAlign = TextAlign.left
       ..textBaseline = CanvasTextBaseline.bottom
       ..fillStyle = Colors.green.shade800
       ..fillText('High point', left + 5, high - 10)

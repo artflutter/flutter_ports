@@ -6,6 +6,8 @@ library;
 import 'dart:collection';
 import 'dart:ui' as native_ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
@@ -362,7 +364,7 @@ void main() {
         expect(
           options,
           toEqualOptions(<String, Object?>{
-            'bodyAlign': 'left',
+            'bodyAlign': TextAlign.left,
             'bodySpacing': 2,
           }),
         );
@@ -383,7 +385,7 @@ void main() {
         expect(
           options,
           toEqualOptions(<String, Object?>{
-            'titleAlign': 'left',
+            'titleAlign': TextAlign.left,
             'titleSpacing': 2,
             'titleMarginBottom': 6,
           }),
@@ -405,7 +407,7 @@ void main() {
         expect(
           options,
           toEqualOptions(<String, Object?>{
-            'footerAlign': 'left',
+            'footerAlign': TextAlign.left,
             'footerSpacing': 2,
             'footerMarginTop': 6,
           }),
@@ -515,7 +517,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'bodyAlign': 'left',
+          'bodyAlign': TextAlign.left,
           'bodySpacing': 2,
         }),
       );
@@ -532,7 +534,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'titleAlign': 'left',
+          'titleAlign': TextAlign.left,
           'titleSpacing': 2,
           'titleMarginBottom': 6,
         }),
@@ -550,7 +552,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'footerAlign': 'left',
+          'footerAlign': TextAlign.left,
           'footerSpacing': 2,
           'footerMarginTop': 6,
         }),
@@ -654,7 +656,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'bodyAlign': 'left',
+          'bodyAlign': TextAlign.left,
           'bodySpacing': 2,
         }),
       );
@@ -688,7 +690,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'footerAlign': 'left',
+          'footerAlign': TextAlign.left,
           'footerSpacing': 2,
           'footerMarginTop': 6,
         }),
@@ -1451,7 +1453,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'bodyAlign': 'left',
+          'bodyAlign': TextAlign.left,
           'bodySpacing': 2,
         }),
       );
@@ -1468,7 +1470,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'titleAlign': 'left',
+          'titleAlign': TextAlign.left,
           'titleSpacing': 2,
           'titleMarginBottom': 6,
         }),
@@ -1486,7 +1488,7 @@ void main() {
       expect(
         options,
         toEqualOptions(<String, Object?>{
-          'footerAlign': 'left',
+          'footerAlign': TextAlign.left,
           'footerSpacing': 2,
           'footerMarginTop': 6,
         }),
@@ -1553,7 +1555,7 @@ void main() {
     });
 
     group('text align', () {
-      AnyObject makeView(String title, String body, String footer) {
+      AnyObject makeView(TextAlign title, TextAlign body, TextAlign footer) {
         final model = <String, Object?>{};
         return model..addAll(<String, Object?>{
           // Positioning
@@ -1811,7 +1813,10 @@ void main() {
 
       test('Should go left', () {
         mockContext.resetCalls();
-        merge(tooltip, makeView('left', 'left', 'left'));
+        merge(
+          tooltip,
+          makeView(TextAlign.left, TextAlign.left, TextAlign.left),
+        );
         tooltip.draw(mockContext);
 
         expect(
@@ -1825,7 +1830,10 @@ void main() {
 
       test('Should go right', () {
         mockContext.resetCalls();
-        merge(tooltip, makeView('right', 'right', 'right'));
+        merge(
+          tooltip,
+          makeView(TextAlign.right, TextAlign.right, TextAlign.right),
+        );
         tooltip.draw(mockContext);
 
         expect(
@@ -1839,7 +1847,10 @@ void main() {
 
       test('Should center', () {
         mockContext.resetCalls();
-        merge(tooltip, makeView('center', 'center', 'center'));
+        merge(
+          tooltip,
+          makeView(TextAlign.center, TextAlign.center, TextAlign.center),
+        );
         tooltip.draw(mockContext);
 
         expect(
@@ -1853,7 +1864,10 @@ void main() {
 
       test('Should allow mixed', () {
         mockContext.resetCalls();
-        merge(tooltip, makeView('right', 'center', 'left'));
+        merge(
+          tooltip,
+          makeView(TextAlign.right, TextAlign.center, TextAlign.left),
+        );
         tooltip.draw(mockContext);
 
         expect(

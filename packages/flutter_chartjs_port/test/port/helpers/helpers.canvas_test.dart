@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: helpers.canvas cases with no spec.
 import 'dart:ui' as ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
@@ -362,7 +364,7 @@ final class _Opts implements RenderTextOpts {
   final double? strokeWidth;
 
   @override
-  String? get textAlign => null;
+  TextAlign? get textAlign => null;
 
   @override
   CanvasTextBaseline? get textBaseline => null;

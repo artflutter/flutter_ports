@@ -41,6 +41,7 @@ import {fileURLToPath} from 'node:url';
 
 import {
   RadialTestController,
+  textAlignValue,
   loadChartJs,
   named,
   registerBuiltins,
@@ -104,7 +105,8 @@ function radialObservations(s) {
       it.visible,
       it.x,
       it.y,
-      it.textAlign,
+      // The Flutter enum value (row adapt-flutter-text-align).
+      textAlignValue(it.textAlign),
       it.left,
       it.top,
       it.right,

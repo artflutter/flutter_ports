@@ -1186,6 +1186,11 @@ const STROKE_ENUMS = {
   lineCap: 'StrokeCap',
   borderJoinStyle: 'StrokeJoin',
   lineJoin: 'StrokeJoin',
+  // The text aligns (row adapt-flutter-text-align): the Flutter TextAlign.
+  textAlign: 'TextAlign',
+  titleAlign: 'TextAlign',
+  bodyAlign: 'TextAlign',
+  footerAlign: 'TextAlign',
 };
 
 /**
@@ -1222,6 +1227,15 @@ export function positionValue(value) {
   return keyedValue('position', value, 'box');
 }
 
+/**
+ * The Dart value of the text align [value] outside an object key (row
+ * adapt-flutter-text-align): the Flutter enum value for a keyword, else the
+ * value itself.
+ */
+export function textAlignValue(value) {
+  return keyedValue('textAlign', value, 'item');
+}
+
 /** The object form `{id: value}` of a position: a `ScaleValuePosition`. */
 export class DartScalePosition {
   constructor(scaleId, value) {
@@ -1234,6 +1248,7 @@ export class DartScalePosition {
 const STROKE_VALUES = {
   StrokeCap: new Set(['butt', 'round', 'square']),
   StrokeJoin: new Set(['miter', 'round', 'bevel']),
+  TextAlign: new Set(['left', 'right', 'center', 'start', 'end']),
 };
 
 /** A value of a Flutter enum as a value of the Dart data. */

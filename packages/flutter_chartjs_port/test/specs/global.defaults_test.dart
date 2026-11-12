@@ -5,6 +5,8 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
@@ -144,7 +146,7 @@ void main() {
                   'labels': <String, Object?>{
                     'useBorderRadius': true,
                     'borderRadius': 5,
-                    'textAlign': 'left',
+                    'textAlign': TextAlign.left,
                   },
                 },
               },
@@ -159,7 +161,7 @@ void main() {
               'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
               'hidden': false,
               'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
               'lineWidth': 2,
               'pointStyle': undefined,
               'lineDash': <Object?>[1, 2, 3],

@@ -7,7 +7,7 @@
 /// `flutter_chartjs_port` (`lib/src/canvas/canvas.dart`), which has no `dart:ui`.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 // The harness implements the canvas interface. flutter_chartjs_port does not
 // export lib/src.
@@ -94,7 +94,7 @@ class MockContext implements CanvasRenderingContext2D {
   StrokeJoin? _lineJoin;
   double? _lineWidth;
   Object? _strokeStyle;
-  String? _textAlign;
+  TextAlign? _textAlign;
   CanvasTextBaseline? _textBaseline;
 
   /// context.js:156 `record`.
@@ -180,12 +180,14 @@ class MockContext implements CanvasRenderingContext2D {
   }
 
   @override
-  String? get textAlign => _textAlign;
+  TextAlign? get textAlign => _textAlign;
 
+  // The port holds the Flutter enum where upstream holds the keyword. The
+  // record keeps the keyword of upstream: the name of the enum value.
   @override
-  set textAlign(String? align) {
+  set textAlign(TextAlign? align) {
     _textAlign = align;
-    record('setTextAlign', [align]);
+    record('setTextAlign', [align?.name]);
   }
 
   @override

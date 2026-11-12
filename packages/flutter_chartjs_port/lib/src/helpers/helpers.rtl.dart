@@ -9,6 +9,8 @@
 /// This file stays a pure layer.
 library;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -27,8 +29,10 @@ abstract interface class RTLAdapter {
   /// helpers.rtl.ts:3 `setWidth`.
   void setWidth(double w);
 
-  /// helpers.rtl.ts:4 `textAlign`.
-  Object? textAlign(Object? align);
+  /// helpers.rtl.ts:4 `textAlign`: the Flutter [TextAlign] (row
+  /// `adapt-flutter-text-align`). Dart `null` stands for the `undefined` of
+  /// a legend item without an align.
+  TextAlign? textAlign(TextAlign? align);
 
   /// helpers.rtl.ts:5 `xPlus`.
   double xPlus(double x, double value);
@@ -62,12 +66,13 @@ final class _RightToLeftAdapter implements RTLAdapter {
   }
 
   /// helpers.rtl.ts:17 `textAlign`.
+  // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
   @override
-  Object? textAlign(Object? align) {
-    if (align == 'center') {
+  TextAlign? textAlign(TextAlign? align) {
+    if (align == TextAlign.center) {
       return align;
     }
-    return align == 'right' ? 'left' : 'right';
+    return align == TextAlign.right ? TextAlign.left : TextAlign.right;
   }
 
   /// helpers.rtl.ts:23 `xPlus`.
@@ -104,7 +109,7 @@ final class _LeftToRightAdapter implements RTLAdapter {
 
   /// helpers.rtl.ts:39 `textAlign`.
   @override
-  Object? textAlign(Object? align) {
+  TextAlign? textAlign(TextAlign? align) {
     return align;
   }
 

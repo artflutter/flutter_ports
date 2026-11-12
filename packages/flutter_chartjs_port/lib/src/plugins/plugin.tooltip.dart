@@ -42,6 +42,8 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
@@ -74,7 +76,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsIsObjectLike, jsObjectFreeze, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
-    show canvasKeyword, canvasLineDash, canvasNumber, canvasStyle;
+    show canvasLineDash, canvasNumber, canvasStyle, canvasTextAlign;
 import 'package:flutter_chartjs_port/src/options/opt.dart'
     show OptFunction, optNull;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -650,12 +652,17 @@ double _alignY(
 }
 
 /// plugin.tooltip.js:331 `getAlignedX(tooltip, align, options)`.
-double _getAlignedX(Tooltip tooltip, Object? align, TooltipOptions options) {
+// DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+double _getAlignedX(
+  Tooltip tooltip,
+  TextAlign? align,
+  TooltipOptions options,
+) {
   final padding = toPadding(options.padding);
 
-  return align == 'center'
+  return align == TextAlign.center
       ? tooltip.x + tooltip.width / 2
-      : align == 'right'
+      : align == TextAlign.right
       ? tooltip.x + tooltip.width - padding.right
       : tooltip.x + padding.left;
 }
@@ -1701,10 +1708,12 @@ class Tooltip extends Element implements types.TooltipModel {
     if (length != 0) {
       final rtlHelper = getRtlAdapter(options.rtl, x, width);
 
-      pt.x = _getAlignedX(this, options.titleAlign, options);
+      // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+      final titleAlign = canvasTextAlign(options.titleAlign);
+      pt.x = _getAlignedX(this, titleAlign, options);
 
       ctx
-        ..textAlign = canvasKeyword(rtlHelper.textAlign(options.titleAlign))
+        ..textAlign = rtlHelper.textAlign(titleAlign)
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         ..textBaseline = CanvasTextBaseline.middle;
 
@@ -1748,7 +1757,7 @@ class Tooltip extends Element implements types.TooltipModel {
     final boxHeight = jsToNumber(options.boxHeight);
     final boxWidth = jsToNumber(options.boxWidth);
     final bodyFont = toFont(options.bodyFont);
-    final colorX = _getAlignedX(this, 'left', options);
+    final colorX = _getAlignedX(this, TextAlign.left, options);
     final rtlColorX = rtlHelper.x(colorX);
     final yOffSet = boxHeight < bodyFont.lineHeight
         ? (bodyFont.lineHeight - boxHeight) / 2
@@ -1880,7 +1889,8 @@ class Tooltip extends Element implements types.TooltipModel {
   ) {
     final body = this.body;
     final bodySpacing = jsToNumber(options.bodySpacing);
-    final bodyAlign = options.bodyAlign;
+    // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+    final bodyAlign = canvasTextAlign(options.bodyAlign);
     final displayColors = options.displayColors;
     final boxHeight = jsToNumber(options.boxHeight);
     final boxWidth = jsToNumber(options.boxWidth);
@@ -1906,7 +1916,7 @@ class Tooltip extends Element implements types.TooltipModel {
     List<Object?> lines;
 
     ctx
-      ..textAlign = canvasKeyword(bodyAlign)
+      ..textAlign = bodyAlign
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle
       ..font = bodyFont.string;
@@ -1917,8 +1927,9 @@ class Tooltip extends Element implements types.TooltipModel {
     ctx.fillStyle = canvasStyle(options.bodyColor);
     each(beforeBody, fillLineOfText);
 
-    xLinePadding = jsTruthy(displayColors) && bodyAlignForCalculation != 'right'
-        ? bodyAlign == 'center'
+    xLinePadding =
+        jsTruthy(displayColors) && bodyAlignForCalculation != TextAlign.right
+        ? bodyAlign == TextAlign.center
               ? (boxWidth / 2 + boxPadding)
               : (boxWidth + 2 + boxPadding)
         : 0;
@@ -1969,12 +1980,14 @@ class Tooltip extends Element implements types.TooltipModel {
     if (length != 0) {
       final rtlHelper = getRtlAdapter(options.rtl, x, width);
 
+      // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+      final footerAlign = canvasTextAlign(options.footerAlign);
       pt
-        ..x = _getAlignedX(this, options.footerAlign, options)
+        ..x = _getAlignedX(this, footerAlign, options)
         ..y += jsToNumber(options.footerMarginTop);
 
       ctx
-        ..textAlign = canvasKeyword(rtlHelper.textAlign(options.footerAlign))
+        ..textAlign = rtlHelper.textAlign(footerAlign)
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         ..textBaseline = CanvasTextBaseline.middle;
 
@@ -2583,16 +2596,19 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
     ..titleFont = (FontSpecScope()..weight = 'bold')
     ..titleSpacing = 2.0
     ..titleMarginBottom = 6.0
-    ..titleAlign = 'left'
+    // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+    ..titleAlign = TextAlign.left
     ..bodyColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..bodySpacing = 2.0
     ..bodyFont = FontSpecScope()
-    ..bodyAlign = 'left'
+    // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+    ..bodyAlign = TextAlign.left
     ..footerColor = const ui.Color.fromRGBO(255, 255, 255, 1)
     ..footerSpacing = 2.0
     ..footerMarginTop = 6.0
     ..footerFont = (FontSpecScope()..weight = 'bold')
-    ..footerAlign = 'left'
+    // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+    ..footerAlign = TextAlign.left
     ..padding = 6.0
     ..caretPadding = 2.0
     ..caretSize = 5.0

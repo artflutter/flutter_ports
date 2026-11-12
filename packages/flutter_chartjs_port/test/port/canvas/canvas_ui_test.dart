@@ -7,6 +7,8 @@ import 'dart:typed_data';
 import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -529,7 +531,7 @@ void main() {
         ..globalAlpha = double.nan
         ..globalCompositeOperation = null
         ..font = 'not a font'
-        ..textAlign = 'bogus'
+        ..textAlign = null
         ..textBaseline = null
         ..direction = 'bogus';
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(255, 0, 0, 1));
@@ -541,7 +543,7 @@ void main() {
       expect(ctx.globalAlpha, 1);
       expect(ctx.globalCompositeOperation, CanvasCompositeOperation.sourceOver);
       expect(ctx.font, '10px sans-serif');
-      expect(ctx.textAlign, 'start');
+      expect(ctx.textAlign, TextAlign.start);
       expect(ctx.textBaseline, CanvasTextBaseline.alphabetic);
       expect(ctx.direction, 'inherit');
     });
@@ -553,7 +555,7 @@ void main() {
         ..lineJoin = native_ui.StrokeJoin.bevel
         ..globalCompositeOperation = CanvasCompositeOperation.destinationOver
         ..globalCompositeOperation = null
-        ..textAlign = 'center'
+        ..textAlign = TextAlign.center
         ..textBaseline = CanvasTextBaseline.middle
         ..direction = 'rtl';
       expect(ctx.fillStyle, const native_ui.Color.fromRGBO(170, 187, 204, 1));
@@ -563,7 +565,7 @@ void main() {
         ctx.globalCompositeOperation,
         CanvasCompositeOperation.destinationOver,
       );
-      expect(ctx.textAlign, 'center');
+      expect(ctx.textAlign, TextAlign.center);
       expect(ctx.textBaseline, CanvasTextBaseline.middle);
       expect(ctx.direction, 'rtl');
     });
@@ -1182,17 +1184,17 @@ void main() {
     test('textAlign places the text around the anchor', () async {
       final left = await inkOf(
         (ctx) => ctx
-          ..textAlign = 'left'
+          ..textAlign = TextAlign.left
           ..fillText('HHH', 100, 50),
       );
       final right = await inkOf(
         (ctx) => ctx
-          ..textAlign = 'right'
+          ..textAlign = TextAlign.right
           ..fillText('HHH', 100, 50),
       );
       final center = await inkOf(
         (ctx) => ctx
-          ..textAlign = 'center'
+          ..textAlign = TextAlign.center
           ..fillText('HHH', 100, 50),
       );
       expect(left.left, greaterThanOrEqualTo(99));
@@ -1201,7 +1203,7 @@ void main() {
       expect(center.right, greaterThan(100));
       final end = await inkOf(
         (ctx) => ctx
-          ..textAlign = 'end'
+          ..textAlign = TextAlign.end
           ..fillText('HHH', 100, 50),
       );
       expect(end.right, closeTo(right.right, 1));
@@ -1239,7 +1241,7 @@ void main() {
       expect(metrics.actualBoundingBoxAscent, greaterThan(0));
       expect(metrics.actualBoundingBoxDescent, greaterThan(0));
 
-      ctx.textAlign = 'center';
+      ctx.textAlign = TextAlign.center;
       final centered = ctx.measureText('Hello');
       expect(centered.actualBoundingBoxLeft, closeTo(metrics.width / 2, 1e-9));
       expect(centered.actualBoundingBoxRight, closeTo(metrics.width / 2, 1e-9));

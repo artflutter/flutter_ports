@@ -24,7 +24,7 @@
 library;
 
 import 'dart:typed_data';
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:meta/meta.dart';
@@ -746,9 +746,13 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
   /// default is `'10px sans-serif'`.
   abstract String? font;
 
-  /// `textAlign`: `'start'`, `'end'`, `'left'`, `'right'` or `'center'`.
+  /// `textAlign`: the Flutter [TextAlign] of the DOM keyword (`start`,
+  /// `end`, `left`, `right` or `center`; row `adapt-flutter-text-align`).
+  /// [TextAlign.justify] has no canvas meaning: it draws as
+  /// [TextAlign.start].
   /// The DOM default is `'start'`.
-  abstract String? textAlign;
+  // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+  abstract TextAlign? textAlign;
 
   /// `textBaseline`: the [CanvasTextBaseline] of the DOM keyword. The DOM
   /// default is [CanvasTextBaseline.alphabetic]. A write of Dart `null` does

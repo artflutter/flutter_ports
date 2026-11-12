@@ -62,7 +62,7 @@ final Map<String, Object?> _zoneKey = {
       ..save()
       ..font = '14px sans-serif'
       ..textBaseline = CanvasTextBaseline.middle
-      ..textAlign = 'left';
+      ..textAlign = TextAlign.left;
     for (final (color, text) in [
       (_high, 'High'),
       (_medium, 'Medium'),

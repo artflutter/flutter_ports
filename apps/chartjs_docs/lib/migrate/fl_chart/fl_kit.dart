@@ -232,7 +232,7 @@ Map<String, Object?> annotations(List<Annotation> items) => {
             ctx
               ..fillStyle = Colors.white
               ..font = 'bold 9px sans-serif'
-              ..textAlign = 'right'
+              ..textAlign = TextAlign.right
               ..textBaseline = CanvasTextBaseline.bottom
               ..fillText(text, area.right - 5, pixel - 5);
           }
@@ -253,7 +253,7 @@ Map<String, Object?> annotations(List<Annotation> items) => {
               ..rotate(-math.pi / 2)
               ..fillStyle = Colors.white
               ..font = 'bold 9px sans-serif'
-              ..textAlign = 'left'
+              ..textAlign = TextAlign.left
               ..textBaseline = CanvasTextBaseline.top
               ..fillText(text, 0, 0)
               ..restore();

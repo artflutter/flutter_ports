@@ -37,6 +37,8 @@
 /// Thus this library is not a pure layer.
 library;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
@@ -207,7 +209,7 @@ final class _RenderTextOpts implements types.RenderTextOpts {
   final double? strokeWidth;
 
   @override
-  final String? textAlign;
+  final TextAlign? textAlign;
 
   @override
   final CanvasTextBaseline? textBaseline;
@@ -629,23 +631,25 @@ List<PointLabelItem> _buildPointLabelItems(
 }
 
 /// scale.radialLinear.js:203 `getTextAlignForAngle(angle)`.
-String _getTextAlignForAngle(double angle) {
+// DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+TextAlign _getTextAlignForAngle(double angle) {
   if (angle == 0 || angle == 180) {
-    return 'center';
+    return TextAlign.center;
   } else if (angle < 180) {
-    return 'left';
+    return TextAlign.left;
   }
 
-  return 'right';
+  return TextAlign.right;
 }
 
 /// scale.radialLinear.js:213 `leftForTextAlign(x, w, align)`.
-double _leftForTextAlign(double x, double w, String align) {
-  if (align == 'right') {
+// DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+double _leftForTextAlign(double x, double w, TextAlign align) {
+  if (align == TextAlign.right) {
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     x -= w;
-  } else if (align == 'center') {
+  } else if (align == TextAlign.center) {
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     x -= w / 2;
@@ -945,7 +949,7 @@ final class PointLabelItem implements types.TRBL {
 
   /// scale.radialLinear.js:156 `textAlign`: `'left'`, `'right'` or
   /// `'center'`.
-  final String textAlign;
+  final TextAlign textAlign;
 
   /// scale.radialLinear.js:159 `left`, the bounding box.
   @override
@@ -1603,7 +1607,7 @@ class RadialLinearScale extends LinearScaleBase
       ..save()
       ..translate(xCenter ?? double.nan, yCenter ?? double.nan)
       ..rotate(startAngle)
-      ..textAlign = 'center'
+      ..textAlign = TextAlign.center
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle;
 

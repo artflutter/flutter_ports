@@ -36,6 +36,8 @@ library;
 // The canvas interface and the native event stand in for lib.dom.d.ts, which
 // index.d.ts names without an import. Both are pure, port-only interface
 // libraries (Chart.js ADR 0013, Chart.js ADR 0037).
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show
         CanvasPath,
@@ -864,7 +866,7 @@ abstract interface class RenderTextOpts {
   double? get strokeWidth;
 
   /// index.d.ts:1479 `textAlign?: CanvasTextAlign`.
-  String? get textAlign;
+  TextAlign? get textAlign;
 
   /// index.d.ts:1485 `textBaseline?: CanvasTextBaseline`.
   CanvasTextBaseline? get textBaseline;

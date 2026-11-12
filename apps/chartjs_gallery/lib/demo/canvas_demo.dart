@@ -55,7 +55,7 @@ void drawCaption(
     toFont(<String, Object?>{'size': 12}),
     const TextOpts(
       color: labelColor,
-      textAlign: 'center',
+      textAlign: TextAlign.center,
       textBaseline: CanvasTextBaseline.bottom,
     ),
   );
@@ -364,7 +364,7 @@ class _RenderTextCardState extends State<_RenderTextCard> {
         translation: (x, y),
         rotation: rotation,
         color: const ui.Color(0xFF36A2EB),
-        textAlign: 'center',
+        textAlign: TextAlign.center,
         textBaseline: CanvasTextBaseline.middle,
         underline: _underline,
         strikethrough: _strikethrough,

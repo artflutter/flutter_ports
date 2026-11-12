@@ -5,6 +5,8 @@ library;
 // flutter_test, dart:io and dart:ui: the web legs cannot compile this file.
 import 'dart:io';
 
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasTextBaseline;
@@ -43,7 +45,7 @@ _Measured _measure(
 }) {
   final ctx = UiCanvasElement().getContext2d()
     ..font = font
-    ..textAlign = 'start'
+    ..textAlign = TextAlign.start
     ..textBaseline = baseline
     ..direction = 'ltr';
   final m = ctx.measureText(text);

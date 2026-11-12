@@ -39,7 +39,7 @@ final Map<String, Object?> _radialAxis = {
       ..stroke()
       ..fillStyle = Gx.text
       ..font = "10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
-      ..textAlign = 'right'
+      ..textAlign = TextAlign.right
       ..textBaseline = CanvasTextBaseline.middle;
     for (final tick in scale.ticks ?? const <Tick>[]) {
       if (tick.value % 100 != 0) continue;

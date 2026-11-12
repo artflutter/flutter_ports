@@ -1877,7 +1877,7 @@ class StressDemoState extends State<StressDemo> {
                 ? math.sin(_t + j * 0.3) * math.pi / 3
                 : -math.pi / 4,
             color: labelColor,
-            textAlign: 'center',
+            textAlign: TextAlign.center,
             textBaseline: CanvasTextBaseline.middle,
           ),
         );

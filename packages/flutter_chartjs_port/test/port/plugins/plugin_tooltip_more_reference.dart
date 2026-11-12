@@ -6,7 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 8 cases, 75 widths.
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -9415,7 +9415,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'tooltip': <String, Object?>{
             'mode': IndexInteractionMode(),
             'intersect': false,
-            'bodyAlign': 'center',
+            'bodyAlign': TextAlign.center,
             'boxPadding': 3.0,
           },
         },

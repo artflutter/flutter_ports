@@ -24,6 +24,8 @@
 /// Not a pure layer: it imports `helpers.extras`.
 library;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
@@ -291,7 +293,7 @@ final class _TitleTextOpts implements types.RenderTextOpts {
   final double? rotation;
 
   @override
-  final String? textAlign;
+  final TextAlign? textAlign;
 
   @override
   final CanvasTextBaseline? textBaseline;

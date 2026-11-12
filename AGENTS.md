@@ -829,12 +829,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       the legend title, hold the enum `ChartAlign` (`start`, `center`, `end`) of the pure
       `lib/src/types/align.dart` (row `adapt-chart-align-enum`), also in a raw config. The
       helpers `alignStartEnd` and `toLeftRightCenter` take a `ChartAlign?`. The typed API takes
-      the same enum; `values.dart` has no `ChartAlign`. The text align of the legend labels stays
-      text.
+      the same enum; `values.dart` has no `ChartAlign`. The text align of the legend labels is
+      the Flutter `TextAlign`, as each text align (below).
     - The `xAlign` and `yAlign` of the tooltip (the options, the model and `TooltipPosition`) hold
       the enums `TooltipXAlign` and `TooltipYAlign` of `lib/src/types/align.dart` (row
-      `adapt-tooltip-align-enums`); the typed API has `ChartTooltip.xAlign` and `yAlign`. The
-      text aligns of the tooltip (`titleAlign`, `bodyAlign`, `footerAlign`) stay text.
+      `adapt-tooltip-align-enums`); the typed API has `ChartTooltip.xAlign` and `yAlign`.
+    - The text aligns hold the Flutter `TextAlign` (row `adapt-flutter-text-align`), also in a
+      raw config: the canvas `textAlign`, `labels.textAlign` of the legend and a legend item,
+      `titleAlign`, `bodyAlign` and `footerAlign` of the tooltip, a label item of a scale and the
+      options of `renderText`. `canvasTextAlign` of `js_webidl.dart` reads an option value; a
+      keyword stops a debug build. `TextAlign.justify` draws as `start`. The `'inner'` of the x
+      labels of a scale is `TickAlign.inner`.
     - The arc options `borderAlign` and `spacingMode` hold the enums `ArcBorderAlign` and
       `ArcSpacingMode` of the pure `lib/src/types/arc_option_enums.dart` (row
       `adapt-arc-option-enums`), also in a raw config; the typed API has

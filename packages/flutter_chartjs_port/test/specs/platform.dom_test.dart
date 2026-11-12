@@ -4,6 +4,8 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port and reads the UMD entry of
@@ -391,7 +393,7 @@ void main() {
         expect(context.shadowOffsetX, 0);
         expect(context.shadowOffsetY, 0);
         expect(context.strokeStyle, const ui.Color.fromRGBO(0, 0, 0, 1));
-        expect(context.textAlign, 'start');
+        expect(context.textAlign, TextAlign.start);
         expect(context.textBaseline, CanvasTextBaseline.alphabetic);
 
         wrapper.parentNode!.removeChild(wrapper);

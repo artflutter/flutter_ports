@@ -34,6 +34,8 @@
 //     }
 //   }
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -44846,7 +44848,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'legend': <String, Object?>{
             'labels': <String, Object?>{
               'pointStyle': 'circle',
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
             },
@@ -45532,7 +45534,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 0.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
             <String, Object?>{
               'text': <Object?>['b1', 'b2'],
@@ -45543,7 +45545,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 1.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
             <String, Object?>{
               'text': 'c',
@@ -45554,7 +45556,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 2.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
           ],
           'keys': <Object?>[
@@ -45642,7 +45644,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'legend': <String, Object?>{
             'labels': <String, Object?>{
               'pointStyle': 'circle',
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
             },
@@ -47025,7 +47027,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 0.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
             <String, Object?>{
               'text': <Object?>['b1', 'b2'],
@@ -47036,7 +47038,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': true,
               'index': 1.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
             <String, Object?>{
               'text': 'c',
@@ -47047,7 +47049,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 2.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
           ],
           'keys': <Object?>[
@@ -47135,7 +47137,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'legend': <String, Object?>{
             'labels': <String, Object?>{
               'pointStyle': 'circle',
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
             },
@@ -48992,7 +48994,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 0.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
             <String, Object?>{
               'text': <Object?>['b1', 'b2'],
@@ -49003,7 +49005,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 1.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
             <String, Object?>{
               'text': 'c',
@@ -49014,7 +49016,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'pointStyle': 'circle',
               'hidden': false,
               'index': 2.0,
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
             },
           ],
           'keys': <Object?>[
@@ -49098,7 +49100,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
           'legend': <String, Object?>{
             'labels': <String, Object?>{
               'pointStyle': 'circle',
-              'textAlign': 'left',
+              'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
             },

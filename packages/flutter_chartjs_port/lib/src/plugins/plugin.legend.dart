@@ -44,6 +44,8 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
     show nativeArcClass, nativeArcElement;
@@ -103,7 +105,8 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
         canvasLineDash,
         canvasLineJoin,
         canvasNumber,
-        canvasStyle;
+        canvasStyle,
+        canvasTextAlign;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optNull;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -190,20 +193,6 @@ bool _strictEquals(Object? a, Object? b) {
   if (a is String && b is String) return a == b;
   return identical(a, b);
 }
-
-/// The `textAlign` of the labels as the `String` of `_textX` of
-/// helpers.extras.ts, which compares it with `===`. A value that is not a
-/// `String` equals no keyword, so it passes as `''`. The `align` option and
-/// the title `position` are a [ChartAlign] (row `adapt-chart-align-enum`).
-String _alignName(Object? align) => align is String ? align : '';
-
-/// The `textAlign` of the text options of `renderText` (:370), the result
-/// of `rtlHelper.textAlign`. `renderText` sets it only when it is truthy
-/// (helpers.canvas.ts:395), and the setter of the DOM applies `ToString`.
-String? _textAlignOf(Object? align) => switch (align) {
-  final String value => value,
-  _ => jsTruthy(align) ? jsToString(align) : null,
-};
 
 /// plugin.legend.js:41 `class Legend extends Element`.
 ///
@@ -734,7 +723,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     var totalHeight = titleHeight;
 
     ctx
-      ..textAlign = 'left'
+      ..textAlign = TextAlign.left
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle;
 
@@ -978,7 +967,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
     // Canvas setup
     ctx
-      ..textAlign = _textAlignOf(rtlHelper.textAlign('left'))
+      // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+      ..textAlign = rtlHelper.textAlign(TextAlign.left)
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle
       ..lineWidth = 0.5
@@ -1090,7 +1080,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         labelFont,
         _LegendTextOpts(
           strikethrough: jsTruthy(legendItem.hidden),
-          textAlign: _textAlignOf(rtlHelper.textAlign(legendItem.textAlign)),
+          // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+          textAlign: rtlHelper.textAlign(canvasTextAlign(legendItem.textAlign)),
         ),
       );
     }
@@ -1138,7 +1129,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         itemAlign = labelOpts.textAlign;
         legendItem.textAlign = itemAlign;
       }
-      final textAlign = rtlHelper.textAlign(itemAlign);
+      // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+      final textAlign = rtlHelper.textAlign(canvasTextAlign(itemAlign));
       final width = boxWidth + halfFontSize + textWidth;
       var x = cursor.x;
       var y = cursor.y;
@@ -1172,7 +1164,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       drawLegendBox(realX, y, legendItem);
 
       x = textX(
-        _alignName(textAlign),
+        textAlign,
         x + boxWidth + halfFontSize,
         isHorizontal ? x + width : right,
         jsTruthy(opts.rtl),
@@ -1262,9 +1254,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     // Canvas setup
     final color = canvasStyle(titleOpts.color);
     ctx
-      ..textAlign = _textAlignOf(
-        rtlHelper.textAlign(toLeftRightCenter(position)),
-      )
+      ..textAlign = rtlHelper.textAlign(toLeftRightCenter(position))
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle
       ..strokeStyle = color
@@ -1690,7 +1680,7 @@ final class _LegendTextOpts implements types.RenderTextOpts {
   final bool? strikethrough;
 
   @override
-  final String? textAlign;
+  final TextAlign? textAlign;
 
   @override
   Object? get color => null;

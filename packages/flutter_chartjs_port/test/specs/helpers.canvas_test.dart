@@ -5,6 +5,8 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'dart:ui' show TextAlign;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -171,7 +173,7 @@ final class _Opts implements RenderTextOpts {
   final double? strokeWidth;
 
   @override
-  final String? textAlign;
+  final TextAlign? textAlign;
 
   @override
   final CanvasTextBaseline? textBaseline;
@@ -577,7 +579,7 @@ void main() {
           0,
           font,
           const _Opts(
-            textAlign: 'left',
+            textAlign: TextAlign.left,
             textBaseline: CanvasTextBaseline.middle,
           ),
         );

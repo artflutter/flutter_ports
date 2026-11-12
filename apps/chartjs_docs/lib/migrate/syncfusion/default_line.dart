@@ -75,7 +75,7 @@ final ChartConfig _config = ChartConfig(
     labelText: _tooltipLabel,
     yAlign: .bottom,
     extra: {
-      'titleAlign': 'center',
+      'titleAlign': TextAlign.center,
       'usePointStyle': true,
       'boxPadding': 4,
       'callbacks': {'labelColor': _tooltipMarker},
