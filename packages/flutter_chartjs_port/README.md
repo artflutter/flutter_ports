@@ -188,9 +188,11 @@ The values of the options are Dart and Flutter values:
   `ChartValue.constant(color)` for one color, `ChartValue.indexed(colors)` for a
   repeating list, or `ChartValue.resolver(callback)` for a color calculated from
   each item's context. Other single-color parameters continue to take `Color`.
-- Fonts are `TextStyle` values: the chart reads the family, the size, the style, the weight and
-  the height. It does not read the color of a `TextStyle`: each font parameter has a color
-  parameter next to it, for example `labelFont` and `labelColor`.
+- Fonts are `TextStyle` values, also in a raw config: the chart lays out each text with the
+  whole style, and the line height is `fontSize * height`. A raw config and a font function can
+  give a `ChartTextStyle`, a `TextStyle` with the field `lineHeight`. The chart does not read the
+  color of a `TextStyle`: each font parameter has a color parameter next to it, for example
+  `labelFont` and `labelColor`.
 - Durations are `Duration` values, and paddings are `EdgeInsets` values.
 - A pie or doughnut `cutout` or `radius` is a `RadiusLength`: `const PercentRadius(50)` or
   `const PixelRadius(80)`. A scale `grace` is a `GraceLength`: `const PercentGrace(5)` or

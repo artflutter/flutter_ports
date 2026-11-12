@@ -22,11 +22,14 @@
 /// `helpers.extras`.
 library;
 
+import 'dart:ui' show FontWeight;
+
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DescriptorsScope, FontSpecScope, TitleOptionsScope;
+    show DescriptorsScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
@@ -82,7 +85,8 @@ final Plugin subTitle = Plugin(supportsDataUpdates: true)
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     ..align = ChartAlign.center
     ..display = false
-    ..font = (FontSpecScope()..weight = 'normal')
+    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+    ..font = const ChartTextStyle(fontWeight: FontWeight.normal)
     ..fullSize = true
     ..padding = 0.0
     ..position = ChartPosition.top

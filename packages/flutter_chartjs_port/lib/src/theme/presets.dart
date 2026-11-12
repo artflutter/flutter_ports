@@ -11,7 +11,10 @@
 /// file (Chart.js ADR 0050, invariant 4).
 library;
 
+import 'dart:ui' show FontStyle;
+
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// The theme presets (theming.md §5.1).
 abstract final class ChartThemes {
@@ -59,13 +62,15 @@ abstract final class ChartThemes {
       'onInverseSurface': (alpha: 1.0, red: 1.0, green: 1.0, blue: 1.0),
     },
     'typography': <String, Object?>{
-      'font': <String, Object?>{
-        'family': "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-        'size': 12.0,
-        'style': 'normal',
-        'lineHeight': 1.2,
-      },
-      'pointLabels': <String, Object?>{'size': 10.0},
+      // The fonts are TextStyles (Chart.js ADR 0116).
+      'font': ChartTextStyle(
+        fontFamily: 'Helvetica Neue',
+        fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+        fontSize: 12,
+        fontStyle: FontStyle.normal,
+        height: 1.2,
+      ),
+      'pointLabels': ChartTextStyle(fontSize: 10),
     },
     'palette': <String, Object?>{
       'colors': <Object?>[

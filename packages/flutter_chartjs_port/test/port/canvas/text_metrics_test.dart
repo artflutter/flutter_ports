@@ -5,9 +5,10 @@ library;
 // flutter_test, dart:io and dart:ui: the web legs cannot compile this file.
 import 'dart:io';
 
-import 'dart:ui' show TextAlign;
+import 'dart:ui' show FontWeight, TextAlign;
 
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasTextBaseline;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -39,7 +40,7 @@ typedef _Measured = ({
 
 /// The canvas layer metrics of [text] in [font] with [baseline].
 _Measured _measure(
-  String font,
+  TextStyle font,
   String text, {
   CanvasTextBaseline baseline = CanvasTextBaseline.alphabetic,
 }) {
@@ -70,9 +71,11 @@ double _shift(
 bool _closeToPixel(double actual, double expected) =>
     toBeCloseToPixel(expected).matches(actual, {});
 
-/// The short name of a probe font in the tables.
-String _fontName(String font) =>
-    font.replaceFirst(textMetricsFamily, '').replaceFirst('normal ', '').trim();
+/// The short name of a probe font in the tables: the weight and the size.
+String _fontName(TextStyle font) => [
+  if (font.fontWeight == FontWeight.bold) 'bold',
+  '${font.fontSize!.toInt()}px',
+].join(' ');
 
 /// [text] as a table cell.
 String _textCell(String text) {

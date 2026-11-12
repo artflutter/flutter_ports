@@ -8,6 +8,10 @@
 // class of each cell (its kind and type), the values, the kinds of the
 // nested scopes, the calls of the foreign audit (oracle O2) and the throws.
 
+import 'dart:ui' show FontWeight;
+
+import 'package:flutter/painting.dart' show TextStyle;
+
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
@@ -24,6 +28,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
@@ -51,6 +56,8 @@ String _describe(Object? value) => switch (value) {
   final double number => number == 0 && number.isNegative ? '-0.0' : '$number',
   final String string => '"$string"',
   final Function function => 'function#${identityHashCode(function)}',
+  // A font is an immutable value (Chart.js ADR 0116): its fields.
+  final TextStyle font => '$font',
   _ => '${value.runtimeType}#${identityHashCode(value)}',
 };
 
@@ -128,9 +135,7 @@ ScaleOptionsScope _source() => ScaleOptionsScope()
       ..jsWrite('color', 'red')
       ..jsWrite(
         'font',
-        FontSpecScope()
-          ..size = 12.0
-          ..jsWrite('weight', 'bold'),
+        const ChartTextStyle(fontSize: 12, fontWeight: FontWeight.bold),
       )
       ..jsWrite('major', <String, Object?>{'enabled': true})
       ..jsWrite('padding', '3')
@@ -139,7 +144,7 @@ ScaleOptionsScope _source() => ScaleOptionsScope()
       }),
   )
   ..jsWrite('grid', <String, Object?>{'color': 'blue', 'lineWidth': 2})
-  ..jsWrite('extraScope', FontSpecScope()..size = 5.0)
+  ..jsWrite('extraScope', MajorTickOptionsScope()..jsWrite('enabled', true))
   ..jsWrite('extraMap', <String, Object?>{'k': 'v'})
   ..jsWrite('__proto__', <String, Object?>{'polluted': true})
   ..jsWrite('prototype', 1.0)
@@ -220,9 +225,9 @@ void main() {
       _expectTwins(
         () => mergeIf(_target(), <String, Object?>{
           'ticks': <String, Object?>{
-            'font': <String, Object?>{'size': 3.0},
+            'font': const ChartTextStyle(fontSize: 3),
           },
-          'title': FontSpecScope()..size = 1.0,
+          'title': MajorTickOptionsScope()..jsWrite('enabled', true),
         }),
       );
     });
@@ -357,8 +362,8 @@ void main() {
       final target = mergeIf(ScaleOptionsScope(), source)! as OptionScope;
       final ticks = target.jsRead('ticks')! as TickOptionsScope;
       expect(ticks, isNot(same(source.jsRead('ticks'))));
-      expect(ticks.jsRead('font'), isNot(same(jsGet(source['ticks'], 'font'))));
-      expect(ticks.jsRead('font'), isA<FontSpecScope>());
+      // A font is an immutable TextStyle (Chart.js ADR 0116): a leaf.
+      expect(ticks.jsRead('font'), same(jsGet(source['ticks'], 'font')));
       expect(ticks.jsRead('major'), isA<MajorTickOptionsScope>());
       expect(target.jsRead('grid'), isA<GridLineOptionsScope>());
       expect(target.jsRead('labels'), isNot(same(source.jsRead('labels'))));
@@ -366,7 +371,7 @@ void main() {
         (target.jsRead('labels')! as List<Object?>)[1],
         isNot(same((source.jsRead('labels')! as List<Object?>)[1])),
       );
-      expect(target.jsRead('extraScope'), isA<FontSpecScope>());
+      expect(target.jsRead('extraScope'), isA<MajorTickOptionsScope>());
       expect(
         target.jsRead('extraScope'),
         isNot(same(source.jsRead('extraScope'))),

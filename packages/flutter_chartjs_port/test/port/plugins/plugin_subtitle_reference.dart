@@ -6,13 +6,14 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 7 cases, 14 widths.
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -47,10 +48,11 @@ typedef PluginSubtitleReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
 typedef PluginSubtitleReferenceWidth = ({
-  String font,
+  ChartTextStyle font,
   String text,
   double width,
 });
@@ -658,7 +660,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'display': true,
             'text': 'Chart subtitle',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'normal'},
+            'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
             'padding': 0.0,
             'position': ChartPosition.top,
@@ -671,7 +673,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'options': <String, Object?>{
             'align': ChartAlign.center,
             'display': false,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -928,7 +930,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":400,"style":"normal"}}]
 ["translate",256,7.199999999999999]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -949,7 +951,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -958,7 +960,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -967,7 +969,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -976,7 +978,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -998,7 +1000,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1007,7 +1009,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,416.57142857142856]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1016,7 +1018,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,349.54285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1025,7 +1027,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,282.5142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1034,7 +1036,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,215.4857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1043,7 +1045,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,148.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1052,7 +1054,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,81.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1061,7 +1063,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,14.399999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -1736,7 +1738,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'display': true,
             'text': 'Chart subtitle',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'normal'},
+            'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
             'padding': 0.0,
             'position': ChartPosition.top,
@@ -1750,7 +1752,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'display': true,
             'text': 'Chart title',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -2316,7 +2318,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'text': 'Chart subtitle',
                 'weight': 2500.0,
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'normal'},
+                'font': ChartTextStyle(fontWeight: FontWeight.normal),
                 'fullSize': true,
                 'padding': 0.0,
                 'position': ChartPosition.top,
@@ -2329,7 +2331,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'display': true,
                 'text': 'Chart title',
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -2586,7 +2588,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":400,"style":"normal"}}]
 ["translate",256,7.199999999999999]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -2595,7 +2597,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","Chart subtitle",0,0,512]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,31.599999999999998]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -2616,7 +2618,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2625,7 +2627,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2634,7 +2636,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2643,7 +2645,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2665,7 +2667,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2674,7 +2676,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,421.4857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2683,7 +2685,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,359.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2692,7 +2694,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,297.25714285714287]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2701,7 +2703,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,235.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2710,7 +2712,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,173.0285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2719,7 +2721,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,110.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2728,7 +2730,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,48.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3436,7 +3438,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'text': 'Left subtitle',
             'position': ChartPosition.left,
             'align': ChartAlign.start,
-            'font': <String, Object?>{'weight': 'normal'},
+            'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
             'padding': 0.0,
             'weight': 1500.0,
@@ -3448,7 +3450,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'options': <String, Object?>{
             'align': ChartAlign.center,
             'display': false,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -3705,7 +3707,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":400,"style":"normal"}}]
 ["translate",7.199999999999999,512]
 ["rotate",-1.5707963267948966]
 ["setFillStyle","#666"]
@@ -3726,7 +3728,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",41.74765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3735,7 +3737,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",193.4974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3744,7 +3746,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",345.24726562499995,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3753,7 +3755,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3775,7 +3777,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",14.399999999999999,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3784,7 +3786,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,415.9714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3793,7 +3795,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,348.3428571428571]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3802,7 +3804,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,280.71428571428567]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3811,7 +3813,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,213.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3820,7 +3822,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,145.45714285714283]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3829,7 +3831,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,77.82857142857145]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -3838,7 +3840,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",30.74765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4527,7 +4529,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'options': <String, Object?>{
             'align': ChartAlign.center,
             'display': false,
-            'font': <String, Object?>{'weight': 'normal'},
+            'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
             'padding': 0.0,
             'position': ChartPosition.top,
@@ -4541,7 +4543,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'options': <String, Object?>{
             'align': ChartAlign.center,
             'display': false,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -5124,7 +5126,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'text': 'Later',
                 'align': ChartAlign.center,
                 'display': false,
-                'font': <String, Object?>{'weight': 'normal'},
+                'font': ChartTextStyle(fontWeight: FontWeight.normal),
                 'fullSize': true,
                 'padding': 0.0,
                 'position': ChartPosition.top,
@@ -5137,7 +5139,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 'align': ChartAlign.center,
                 'display': false,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -5728,7 +5730,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'text': 'Later',
                 'display': true,
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'normal'},
+                'font': ChartTextStyle(fontWeight: FontWeight.normal),
                 'fullSize': true,
                 'padding': 0.0,
                 'position': ChartPosition.top,
@@ -5741,7 +5743,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 'align': ChartAlign.center,
                 'display': false,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -6312,7 +6314,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 'align': ChartAlign.center,
                 'display': false,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -6907,7 +6909,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'display': true,
                 'text': 'Back',
                 'align': ChartAlign.center,
-                'font': <String, Object?>{'weight': 'normal'},
+                'font': ChartTextStyle(fontWeight: FontWeight.normal),
                 'fullSize': true,
                 'padding': 0.0,
                 'position': ChartPosition.top,
@@ -6920,7 +6922,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 'align': ChartAlign.center,
                 'display': false,
-                'font': <String, Object?>{'weight': 'bold'},
+                'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
                 'padding': 10.0,
                 'position': ChartPosition.top,
@@ -7190,7 +7192,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7199,7 +7201,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7208,7 +7210,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7217,7 +7219,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7239,7 +7241,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7248,7 +7250,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,416.57142857142856]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7257,7 +7259,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,349.54285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7266,7 +7268,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,282.5142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7275,7 +7277,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,215.4857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7284,7 +7286,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,148.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7293,7 +7295,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,81.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7302,7 +7304,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,14.399999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -7312,7 +7314,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["restore"]
 ["restore"]
 ["save"]
-["setFont","normal normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":400,"style":"normal"}}]
 ["translate",256,7.199999999999999]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -7998,7 +8000,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'position': ChartPosition.bottom,
             'padding': <String, Object?>{'top': 6.0, 'bottom': 12.0},
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'normal'},
+            'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
             'weight': 1500.0,
             'color': '#666',
@@ -8012,7 +8014,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'position': ChartPosition.bottom,
             'padding': 4.0,
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'weight': 2000.0,
             'color': '#666',
@@ -8266,7 +8268,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":400,"style":"normal"}}]
 ["translate",256,470.4]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -8275,7 +8277,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","Padded",0,0,512]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,500.79999999999995]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -8296,7 +8298,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,428.8,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,439.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8305,7 +8307,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,439.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8314,7 +8316,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,439.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8323,7 +8325,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,439.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8345,7 +8347,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,428.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8354,7 +8356,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,369.00000000000006]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8363,7 +8365,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,309.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8372,7 +8374,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,249.39999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8381,7 +8383,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,189.60000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8390,7 +8392,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,129.79999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8399,7 +8401,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,70.00000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8408,7 +8410,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8542,12 +8544,13 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'text': <Object?>['Line one', 'Line two'],
             'align': ChartAlign.end,
             'color': 'rgb(0, 128, 0)',
-            'font': <String, Object?>{
-              'size': 14.0,
-              'family': 'Arial',
-              'style': 'italic',
-              'lineHeight': 1.5,
-            },
+            'font': ChartTextStyle(
+              fontFamily: 'Arial',
+              fontFamilyFallback: [],
+              fontSize: 14,
+              fontStyle: FontStyle.italic,
+              height: 1.5,
+            ),
           },
           'title': <String, Object?>{
             'display': true,
@@ -9102,13 +9105,14 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'text': <Object?>['Line one', 'Line two'],
             'align': ChartAlign.end,
             'color': 'rgb(0, 128, 0)',
-            'font': <String, Object?>{
-              'size': 14.0,
-              'family': 'Arial',
-              'style': 'italic',
-              'lineHeight': 1.5,
-              'weight': 'normal',
-            },
+            'font': ChartTextStyle(
+              fontFamily: 'Arial',
+              fontFamilyFallback: [],
+              fontSize: 14,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.normal,
+              height: 1.5,
+            ),
             'fullSize': true,
             'padding': 0.0,
             'position': ChartPosition.top,
@@ -9121,7 +9125,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'display': true,
             'text': 'Title',
             'align': ChartAlign.start,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -9377,7 +9381,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","italic normal 14px Arial"]
+["setFont",{"font":{"family":"Arial","fallback":[],"size":14,"weight":400,"style":"italic"}}]
 ["translate",512,44.9]
 ["rotate",0]
 ["setFillStyle","rgb(0, 128, 0)"]
@@ -9387,7 +9391,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","Line two",0,21,512]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",0,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -9408,7 +9412,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9417,7 +9421,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9426,7 +9430,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9435,7 +9439,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9457,7 +9461,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9466,7 +9470,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,425.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9475,7 +9479,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,367.25714285714287]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9484,7 +9488,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,309.0857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9493,7 +9497,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,250.91428571428574]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9502,7 +9506,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,192.74285714285716]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9511,7 +9515,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9520,7 +9524,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,76.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10227,7 +10231,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'display': true,
             'text': 'Chart subtitle',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'normal'},
+            'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
             'padding': 0.0,
             'position': ChartPosition.top,
@@ -10241,7 +10245,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'display': true,
             'text': 'Chart title',
             'align': ChartAlign.center,
-            'font': <String, Object?>{'weight': 'bold'},
+            'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
             'padding': 10.0,
             'position': ChartPosition.top,
@@ -10503,7 +10507,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","one"]
@@ -10521,7 +10525,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","one",231.65234375,64.8,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -10541,12 +10545,12 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","two",307.673828125,64.8,null]
 ["restore"]
 ["restore"]
 ["save"]
-["setFont","normal normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":400,"style":"normal"}}]
 ["translate",256,41.599999999999994]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -10555,7 +10559,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","Chart subtitle",0,0,512]
 ["restore"]
 ["save"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["translate",256,17.2]
 ["rotate",0]
 ["setFillStyle","#666"]
@@ -10576,7 +10580,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,483.59999999999997,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10585,7 +10589,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","January",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",183.8974609375,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10594,7 +10598,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","February",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",340.447265625,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10603,7 +10607,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","March",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",496.9970703125,494.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10625,7 +10629,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["rect",0,0,27.34765625,512]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,483.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10634,7 +10638,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,426.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10643,7 +10647,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,368.5142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10652,7 +10656,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,310.97142857142853]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10661,7 +10665,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,253.42857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10670,7 +10674,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,195.88571428571427]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10679,7 +10683,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,138.34285714285716]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10688,7 +10692,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,80.80000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -10797,72 +10801,142 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
 /// Each text that the cases measured, with its font and width.
 const List<PluginSubtitleReferenceWidth> pluginSubtitleReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '15',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '25',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '30',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '35',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '40',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'January',
     width: 42.69140625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'February',
     width: 48.017578125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'March',
     width: 33.33984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'April',
     width: 24.005859375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'one',
     width: 20.021484375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'two',
     width: 18.673828125,
   ),

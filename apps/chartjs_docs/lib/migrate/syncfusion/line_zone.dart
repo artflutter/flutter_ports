@@ -60,7 +60,7 @@ final Map<String, Object?> _zoneKey = {
     var y = area.top + area.height * 0.19 - 30;
     final ctx = chart.ctx!
       ..save()
-      ..font = '14px sans-serif'
+      ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 14)
       ..textBaseline = CanvasTextBaseline.middle
       ..textAlign = TextAlign.left;
     for (final (color, text) in [

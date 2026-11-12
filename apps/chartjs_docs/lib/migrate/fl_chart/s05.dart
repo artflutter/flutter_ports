@@ -42,7 +42,11 @@ class _Sample5State extends State<Sample5> {
           ..fill()
           ..stroke();
         final text = _values[index].toString();
-        ctx.font = 'bold 14px sans-serif';
+        ctx.font = const TextStyle(
+          fontFamily: 'sans-serif',
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        );
         final width = ctx.measureText(text).width + 32;
         ctx
           ..fillStyle = Colors.pink

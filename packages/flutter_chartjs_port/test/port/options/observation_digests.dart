@@ -6,49 +6,49 @@
 /// O1, by test name, on the macOS VM.
 const Map<String, String> observationDigests = {
   'bench chart.a/b line (plain)':
-      '7ebc963d10f6fd73fb100559b92eb32aae98e3109886012b79901f9e35be0274',
+      '8d2a87078c7b98160a4d01ffa066f8052b4bbc99140e251ee38c5631e1166cf7',
   'bench chart.a/b line (trace)':
-      'fd921b8e557244820dbb29510299a929fe442380762deb5fcd3ae13d479f4535',
+      '22acfca1c357fb00636603d0fedc735f8daa02c2948ccacec7caa30579b235b1',
   'bench chart.b scatter (plain)':
-      '10d7a6dd7b6940413b7c2e81bf2fcc03c61bfaaeb432e65a636da63df038b848',
+      '92c41afc3d0c8ecf77c07ef0cc58684dc86688346684c37f5e9b2d8a7583782d',
   'bench chart.b scatter (trace)':
-      'd34cfef761309a9315dbbc5cce4b3442a2a1cd203043dbc5c3c46e63654060ab',
+      '318f32f22fa8ed29fa95278887bb221891149dc09f4620453da72102c70e05e7',
   'bench chart.bar (plain)':
       '53dad2afc3f988e19e050647d4f2f852786916c05b3ec790a7a74b82640dcc28',
   'bench chart.bar (trace)':
       'a511e0dea85502d1bb28664809c652e49ff54eeff53ca8060ac9ed1e21ab0331',
   'bench chart.bubble (plain)':
-      'c6146bbb251f9eaefae6c9bc01f27bace2ac32ea9730c967a556c132748afa46',
+      '175488ca515be4cacb221f603cf428e67bdad6aaa99a73a52243594d5063960b',
   'bench chart.bubble (trace)':
-      '7bd1606967da6cde10cd0b01dff41b3f19a8965899aa77123e5575fe5268357a',
+      '95d0f1b3120d423921210666d73b42b6fb2bb5fe333cc657e92d76aa8810843a',
   'bench chart.c (plain)':
-      'db8f725a7c2805b9c62a307b3a9e174191b943b0935a27419061aba7b34fc3bd',
+      '27fbdd507ff6227e52c822024720d4c5becc1d4febbdbab86510bc925d743d2e',
   'bench chart.c (trace)':
-      '3e186802e45bef77eabcbfa790c7830827ebaf40d786c286c082ae635ba6059e',
+      '8b1fcf66385bbd76c333d49b0dac956107ba4685128508250163e785fabe1834',
   'bench chart.c.indexable (plain)':
-      '6e2a70080deccdd95074208ab0fea6115d480b5ee3bc92e4b86f954de61ac18b',
+      '8c27390f2613ede43a900092bad531ac1cb99f2821e2d80db36b4aedd310806e',
   'bench chart.c.indexable (trace)':
-      'e4490852319b8b82954b3393abdc2ab83a0b3d0ca09a0dbe4c0118e0e63157e8',
+      '23f380a680fe87c95c3ce19b729274ae961060a2119abf4f0ab479c76bab9738',
   'bench chart.doughnut (plain)':
-      '31156f6eab30b6f58b991aa66c1b69889ae7522fa16041a08dcd7da59d9ff8fb',
+      'f1d942b2a01337989a0abedc046da47c2486ddf0a5387a1944bdf26f9fdb50ac',
   'bench chart.doughnut (trace)':
-      'a958a7bdf455ade659e5c3700051a26589e85f8406682def290881bfe4733bfb',
+      '632929b547e978ce89d59d9613c46a768d27b5a3d9c14961f8a2b269e7f33bc1',
   'bench chart.line.primitive (plain)':
-      '1e53f3954d0847062fb14ca4f2007c0b734dab5a9ce4dcffad53007b83f0fbcd',
+      '8872d9e3159ec8e6614282003e0fb64592bdeef8bf35dbdf01a8614f97ade899',
   'bench chart.line.primitive (trace)':
-      '2fd7cb1ace560918a3e29943bb703c333c28013ebb3e84ecf349c7c90e4639bb',
+      'aea373fd15db72607c5e4e115418fcc1eb65f82f067b8554eb0984580719209a',
   'bench chart.pie (plain)':
-      'd9a4527507b3dc36f2badf8f415ea594f6f5f0a0d946d8e5a7fbf72ec704df9d',
+      '6fad928d8a20cb0c023f94cc3d24192f7259fb8996889de6135febf8c9b57695',
   'bench chart.pie (trace)':
-      'fb28ce55118c7ec6aa768c8594d1ded6ac9717d1ffca9346172c568173502f65',
+      'bd5f1be7dd80097d2c87c69b4467334fbf08a86bf8932163540c78e26c3eaf76',
   'bench chart.polarArea (plain)':
-      '656fd07e87ca94f61b5238e7b03245815cb579e9d7bcbf446eddcbe564ac7a46',
+      '8c23ea77703ebb63f17caf1b9a9c798d6e15209b54923faa8bc7f6a92e0e4248',
   'bench chart.polarArea (trace)':
-      '9f8c61e225b12a15e5450cee3c9a4bc2573075fc19e9e31f99b71a2a5ecd1dcb',
+      '38fdc14c47bcefe5cdb4c249fd359956fe346e1afdd937f0cfbd6117380f08fb',
   'bench chart.radar (plain)':
-      'afc4bb08942c7bb13ccf67ff2f84d2a2ca3638969c3f1d5de6565da7f396ffa3',
+      '65eb5ec77df7ba8e48afe38dab813afb1b54394e538e5f20f6ce93c3421b8a4d',
   'bench chart.radar (trace)':
-      '2cab399c61384887a0a55810889fc99f470ac5c74727ce93f0d3f6ee0e28eab5',
+      '969167f9091521bea4861eea4f9f064cbdbbf8022d82ea9428fefa9c89047710',
   'bench motion.bar (plain)':
       '9ed17de0e133d65b5c30962d8f78e7030ccd882d190c60f06981e15bb75e281f',
   'bench motion.bar (trace)':
@@ -278,9 +278,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/chart-area-clip.js (trace)':
       '0ab26665a5a1f9760f932b2f1c768e71c1b6947b3a84d3024c532e9e8363572f',
   'fixture controller.bar/data/object-index-axis-y.js (plain)':
-      '0a08a9d56ed570b06850c7e3143c7b1dbdff5e7c616d0497b1968e808692c3b7',
+      '1f91447a39e633edd83f0a6aea93c395439ce13d347796eb612f067790154481',
   'fixture controller.bar/data/object-index-axis-y.js (trace)':
-      '35684d7b67997587a6cd5c022be514ad498398faf04c733c916002820c63d628',
+      '5ca82f1b677c634a5a85d47f98cf591fc92e52e14a808cd9ecacf0674339f371',
   'fixture controller.bar/data/object.js (plain)':
       '8a8812b520ad5157fc229186c0c9dd7e5bf3946137884882f645a5d46b312fc3',
   'fixture controller.bar/data/object.js (trace)':
@@ -362,9 +362,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/not-grouped/mixed.js (trace)':
       'c67cb92cca3acf80b098b0a8913ca59e76116057f1310773e6b5bdc7bcccff9e',
   'fixture controller.bar/not-grouped/on-time.js (plain)':
-      '92dd374152db07a2007e05d57b3e76d47b5e26789719757270d31582ab43d913',
+      '8329ed76b7dab77463cce4129e63f62893289eabbc097a8ed9fb2a128552a9ee',
   'fixture controller.bar/not-grouped/on-time.js (trace)':
-      '0fceabb85b526dc96052910d3f1b150412cbeedfbfe1a28040f5c9100f47f486',
+      '324dc263b7b8514b4ea5ed371495a47058291c6638bd5f43d5ff923d9bf6b2b5',
   'fixture controller.bar/skipNull/bar-skip-null-object-data.js (plain)':
       '0a000a5c4e2990dc66987eb3d0d16f777c33f63601718a6918fc9a81e700c512',
   'fixture controller.bar/skipNull/bar-skip-null-object-data.js (trace)':
@@ -410,9 +410,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/stacking/stacked-and-multiple-axis.js (trace)':
       '6f7c5be82f968df6553356af3337ef50cedda83ad8d446952acfc8ea28d8a1c2',
   'fixture controller.bubble/autoPadding-disabled.js (plain)':
-      '189f38f684d198f1dade7f5f669d1c1a08fc9512a7afce53c28a382bc3b146d0',
+      '5b1d57bd243ddc3a7dc9474a9f612fcabed406095f74868e351862e92971a2ee',
   'fixture controller.bubble/autoPadding-disabled.js (trace)':
-      '575cb45c255b0961ca853c4018d68832ae1686a6f01bfe36a72f329a18e3a30c',
+      'cf4fb5638990027de3bc23a9a8ce5358ce7066bc3066307ea54082b6c2b29a4a',
   'fixture controller.bubble/clip.js (plain)':
       'f5188bb263d922c0d51bddfe7b2fbac260c66f51535f7f05b57c59b96eca045b',
   'fixture controller.bubble/clip.js (trace)':
@@ -422,13 +422,13 @@ const Map<String, String> observationDigests = {
   'fixture controller.bubble/hover-radius-zero.js (trace)':
       '542879db821230b0c5e4b5fc73e51e797ad46573507e116ab2f9c2fc8178ea5e',
   'fixture controller.bubble/padding-update.js (plain)':
-      '6adcf5a6f7f81f76c6377328284ac21eb2d602fe78bc51c660ff04c0e4d07878',
+      '43022609b42c4d27188a180cd1d97cf6df7bf138be095bbdfa5a685b967ed4d2',
   'fixture controller.bubble/padding-update.js (trace)':
-      '8283c68986bb3f3fc08cb3fe41aa68a40c7f606ee3ad85c463f7c53fef70d53f',
+      '735cddf3edf870bcc0db5f97745dc19e46793469b397a45105765c4d7755124c',
   'fixture controller.bubble/padding.js (plain)':
-      '6adcf5a6f7f81f76c6377328284ac21eb2d602fe78bc51c660ff04c0e4d07878',
+      '43022609b42c4d27188a180cd1d97cf6df7bf138be095bbdfa5a685b967ed4d2',
   'fixture controller.bubble/padding.js (trace)':
-      '8283c68986bb3f3fc08cb3fe41aa68a40c7f606ee3ad85c463f7c53fef70d53f',
+      '735cddf3edf870bcc0db5f97745dc19e46793469b397a45105765c4d7755124c',
   'fixture controller.bubble/point-style.json (plain)':
       '01e3d8a8667437179fb9796515a50adfa7f1a2c9984e0c4258f92b17ca2a21fa',
   'fixture controller.bubble/point-style.json (trace)':
@@ -754,9 +754,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.line/clip/default-y.json (trace)':
       '591763041851592759389e84450506e0521ea5550a715c7c19464b140fb91cab',
   'fixture controller.line/clip/false.js (plain)':
-      'd80cd4b14411e37c6dcaa83c647c29e1156bd4b82a793e10e8f26cb4556d0817',
+      'fb72e4cb4ac44d64e4f7d08d8df610a40ed20034c77dd658b4268b48a4464321',
   'fixture controller.line/clip/false.js (trace)':
-      '43295eb67499f7ac811279fb8bfbb159ca24f17bd9af6c0b6294c031efbaf0cc',
+      '136dd3ce6a601b267f26e71388bfed3faf19d2a9f8343da0209376e872a2ac68',
   'fixture controller.line/clip/specified.json (plain)':
       'c708090b5e8ff0520c2921b75c08b67ecacc5fb14628eb5ca6d6cccd16fe5e8f',
   'fixture controller.line/clip/specified.json (trace)':
@@ -790,9 +790,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.line/fill/value.js (trace)':
       'a12af531d87eadc940961a2e151e274f53d34cd2687c5e0c62326e7103712cca',
   'fixture controller.line/issue-8902.js (plain)':
-      '8f6a377b6d7aea2cd56cf5c043da4a16f99fdd7f8e665bd539e8baff189d9e31',
+      '76c2504bae29c510ef028a760b1f0f6db7453ab50926c2b475757f3fd32bb972',
   'fixture controller.line/issue-8902.js (trace)':
-      'b42bfd354d790a929fc6b1b7bee679f1375d4de13cda2b3c17e8fda762fa70e4',
+      '624286ca7d311535bc39bdc03cb6fa5afe1410eba8314f85548fee45907d8fa7',
   'fixture controller.line/non-numeric-y.json (plain)':
       '97d59766e1d2d150ac09a0e83b868ab1c0c9b707cd6a1d93344e2a792b2474e3',
   'fixture controller.line/non-numeric-y.json (trace)':
@@ -914,9 +914,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.line/showLine/false.js (trace)':
       '1ac725021992005d3e2912d1a121b2dfa7852864735fb96e53c7164499d2d2ed',
   'fixture controller.line/stacking/bounds-data.js (plain)':
-      'ad0b2f9057e4bee69961df5880638f24b4c52781c233d49553bfe7022de5a584',
+      '99eb2efd9850b184f931b72cbe5d7bc720f45bc847c7927279f5e52fdb7e2861',
   'fixture controller.line/stacking/bounds-data.js (trace)':
-      '36aea79eabf408b2204b001dc9c6eb7114f982dbc36ea2b914d4b36c601cc0e6',
+      '2b0772e1e8699ec88b0ca4e0577b809c70e0387f7f9b191ba1b9877a396877f6',
   'fixture controller.line/stacking/order-default.js (plain)':
       '5911cdb2f239c40c2c0755e9cfd3484261193ee68382829ea895b4e4342f261a',
   'fixture controller.line/stacking/order-default.js (trace)':
@@ -938,9 +938,9 @@ const Map<String, String> observationDigests = {
   'fixture controller.line/stacking/stacked-scatter.js (trace)':
       '06192dd698067d8a46ec50e3d8c0f86c42046ee07b63a59bf32f0e1066c0aa34',
   'fixture controller.line/stacking/updates.js (plain)':
-      '6dd93dbf39a6bf2cd718b85ad2328cc6cf1276a577fa0ae0ca2f4de34c6393e7',
+      '186ee951178a0c85559c922c66a99ddcdaba1ea47befda701f9cedbad895a16c',
   'fixture controller.line/stacking/updates.js (trace)':
-      '285a0ed3014611f0aeea91927131a48f804f11f222d561a99b5e5c53663c0544',
+      '118f8631001602e00746fa3a6864d0eeac42f43125e832a84e0042ec4100042f',
   'fixture controller.polarArea/angle-array.json (plain)':
       'a1690913629b97badc6749c0788f6d35ff60b8ff4fdcda1f3e8263258892a742',
   'fixture controller.polarArea/angle-array.json (trace)':
@@ -1070,85 +1070,85 @@ const Map<String, String> observationDigests = {
   'fixture controller.polarArea/last-slice-animate.js (trace)':
       'b04ec77cff7fab0d3b5d46256a675475151f39ffb28503e4276d601d86e734fa',
   'fixture controller.polarArea/parse-object-data.json (plain)':
-      'd3162b2cc74db30d9f55a812d9127e4690b8d306222f5cb2a00c53ba9d613de5',
+      'f818f4d42b1a0873a31ae9f4ee1873a17e5bb66d408aa06de7c0e440e5166879',
   'fixture controller.polarArea/parse-object-data.json (trace)':
-      '2ff493d067d32dd73277670634ad3b58ae161f56e1c9455c896fddbfd173f031',
+      '2aea7649ef7d19cc9582f425b478e63428b20552b8b22163ccc4266e49f2220d',
   'fixture controller.polarArea/pointLabels/centered-180.js (plain)':
-      '30f2e41deb4651e21ae10cf260ee1e87f1b2066476a7f30def5b1552fda7c6b0',
+      '5ec9c7ab9b0c1b47b0d7c6ee18402f13574e1a53383126909b781d33a964af97',
   'fixture controller.polarArea/pointLabels/centered-180.js (trace)':
-      'd818de51d831b98135b71dbae945857919e217b072ca823d9a83568b20dace27',
+      '42343c378cb45b477fbee4d8728f594fad1048bf257111909e45491ecaf58c3b',
   'fixture controller.polarArea/pointLabels/centered-45.js (plain)':
-      '08967074eb5978cda3d95171be633fe50afc08c39d628b28ea6d2f3f242172b7',
+      '43b33c65bcb9a978e8a161e7ae9db6df879a8def1dfd06e42c5f497b9b6786ff',
   'fixture controller.polarArea/pointLabels/centered-45.js (trace)':
-      'cfdf2fb6d5519472a3b2b3110782c8b2f078375699a81be9a05b3e918bf85459',
+      '59256cc0083efe7dda3b611bad5d455950eb951d7e6c047d91fea80f5f8fcd8e',
   'fixture controller.polarArea/pointLabels/centered.js (plain)':
-      '9b68d8834dd898a00ee648d2439778983191ddf3c1fd166a863a730f882b9901',
+      '29e4d929245f15dd090b4560f3605fc1e3ea6d1683c172693cc0c356d8782eda',
   'fixture controller.polarArea/pointLabels/centered.js (trace)':
-      '88bd9f64b4c4d20493e781052401c95ecae1777252b0c45fda02d71f51e28d5f',
+      'f2a27c663be4f992b81d082e7712f62ef947b48039aa734977ce0a131f881789',
   'fixture controller.polarArea/pointLabels/default-180.js (plain)':
-      'c1a3edb2c13ce89c82a3bcf9b11bfc77dc54041d1df6c1e1b7262c081a64f186',
+      'bc7dc7e476f77b1b488dadd2bb2a4cd54ee45339f8968a42c7fb7ad632c1bdbd',
   'fixture controller.polarArea/pointLabels/default-180.js (trace)':
-      '0da5e5a85a280ccc6564d44f311a3c4980a8171a9efe2e30816402a061f1fb6e',
+      '7e1db5f50c5591909d3fd9c9fb2e237d10362502b676bfb677d7da154bd556d8',
   'fixture controller.polarArea/pointLabels/default-45.js (plain)':
-      '18476c44e858f07de74e3866395f9bfdbe9289baaf780df2405f589606816d2f',
+      'd611ab1965eec3f35f1427ca9a37572fbc80cf16a57fd2fdf0c51cb3b8c7e6ab',
   'fixture controller.polarArea/pointLabels/default-45.js (trace)':
-      '3e41a36ba34f01db40a2282836aaf8798fc78ce4b9ac3cd84b6dc61c2e56a7a6',
+      'b9f66b3168034b4c30733f3cf58eb814afae4e611c9c92ec1ab0b0385cd091e4',
   'fixture controller.polarArea/pointLabels/default.js (plain)':
-      '7067dda865fb072201e7132839606924c9791943fb393739555c81e228236daf',
+      'ae921f1a294314c712fd43d2bc277b3d8b27ab6b2b87aea864b803c5e3e73843',
   'fixture controller.polarArea/pointLabels/default.js (trace)':
-      '8f9a5d4faa255cfb3e0377666d9e1c9e7e09fdabd92c294968ed74b969fcb4e0',
+      '230d90dbbabc597f4811d6608bf645684a6143f076f1c5e4934390258af46185',
   'fixture controller.polarArea/pointLabels/displayAuto-180.js (plain)':
-      'a7cccb1df8bef3ff0601b9766fa03284404a80e732d3bfb2697c7132aaab7778',
+      'c323be58ddbe20f8129e9e17a5c6e1f9905fed009fce43fae1cce7d68eaacd7c',
   'fixture controller.polarArea/pointLabels/displayAuto-180.js (trace)':
-      '739ed0e593d8a6522251219ce0f6884c85bc4a343ebc6cc6d9203227106ade82',
+      '2283b6b287ae26c2766f60775bedb710c7571ceebbdf63046bbd62a7b89b616a',
   'fixture controller.polarArea/pointLabels/displayAuto.js (plain)':
-      '8ed77e06585febae8ec2c921ede9cf4ff4a4e94e78c4a07fa3fa52b71fa723cc',
+      '8a7bc08a0abaf302e4680b9ba48d2a59d122a7d084557677d69dc1e11ce66f46',
   'fixture controller.polarArea/pointLabels/displayAuto.js (trace)':
-      '6548b783112b828c43d8f1a01cc76ebabaf19c16114cd75de23a370da645b36d',
+      '6ab3e7b6d66866a6000145ba1b4587ef8ec55c0fd4d065216cbdc9fea44a5e7b',
   'fixture controller.polarArea/pointLabels/overlapping.js (plain)':
-      '57ef333eb042937e605a5450f0252e9622ce94ce2e16f699e8544dc4df73db3f',
+      'a29941ab19809976869e1180306d4831f914c83622387785b92eb2e0df73485a',
   'fixture controller.polarArea/pointLabels/overlapping.js (trace)':
-      '3a55661216fb7173fa21ea1fae1296874ee2fe4cff804e0c08453d87b6b00d37',
+      '5bd785c0b482b65b3799e23eba705c89b0bd234a301b4c46d1b842d55127ff77',
   'fixture controller.polarArea/pointLabels/withTitle/bottom-centered-45.js (plain)':
-      '7f2fc536d415c0d727a11d74955c1db7fc790ea4b3bc73471e98a2c3f0fe8d5f',
+      '6b9a40585745ca850092f3703a87c686081b101b4fc29033fab37e9c39e43e7d',
   'fixture controller.polarArea/pointLabels/withTitle/bottom-centered-45.js (trace)':
-      '081a4cf083e515f88f63709900628ea753714599632e4e206aa409f47480469e',
+      '0fe89b97f39cc458835240dfc148646d5ac114b545b06463b937b78f0069d307',
   'fixture controller.polarArea/pointLabels/withTitle/bottom-centered.js (plain)':
-      '980cdb3e139802c0fc7f8c68de89acfef9ac1820c73867d6b67f3537f8793a75',
+      'b41bad0b5ed759fcf34b9050b2573be7d75e66b51fba9118f788026a46c35c22',
   'fixture controller.polarArea/pointLabels/withTitle/bottom-centered.js (trace)':
-      'abe19f2514b20d4d3ff003585f01db86d8213b81a7a008eefb44b7ee9440c059',
+      '4ebf2728173c577b975dc07dce05687953182bfaddcb2913a9e8be27ce850419',
   'fixture controller.polarArea/pointLabels/withTitle/left-centered-45.js (plain)':
-      '53db35981cab25974f1fc22fe4c5848c4f8608b8ae379e1c127907a2ed3dba3e',
+      'fee4ed92b07c2a243d65e094f93914b8ec29c9ff6eb6b0dec7d46171be936ac2',
   'fixture controller.polarArea/pointLabels/withTitle/left-centered-45.js (trace)':
-      '40f66308c0690270cd06e2973ffd26b0437225e711faa0b1a06ebde876a7ed6f',
+      '11bb7d752fce9d3ef45e548dcd7733e21718b90eebd137b73fa949c227d66c11',
   'fixture controller.polarArea/pointLabels/withTitle/left-centered.js (plain)':
-      'a6f9419df7a9a27649e94ce86c97f7bf63ca7d095b94aab54dcd11ace93eab73',
+      '4ccec9140e4e655456b0c8a7ae2fef6cc9f586f79312411dd850b80734087942',
   'fixture controller.polarArea/pointLabels/withTitle/left-centered.js (trace)':
-      '6baaac940289dd79d3ce9d3849e18581b89f6f4cc5e73296a2b35824d9430318',
+      '2d12972b0b744d4b32b46b7b2229caf5bbf495a3f3342b166422f51edeb70589',
   'fixture controller.polarArea/pointLabels/withTitle/right-centered-45.js (plain)':
-      'dab86813486a5d5743d7224ff5c77438986374d682b318d1526973785d9024f5',
+      '87a85f676468a43bd7129b39865b730322d00f523a226e56cd07cbb0b3d47677',
   'fixture controller.polarArea/pointLabels/withTitle/right-centered-45.js (trace)':
-      '4b9a01a5db8ccd39366b8a564dc1d94af81cd3505037873e0a421fa77c936b7a',
+      '4a9ba4f789dad676a516a78677fb5ff3eb382ebc4e2444ecdaab85c9521af1ad',
   'fixture controller.polarArea/pointLabels/withTitle/right-centered.js (plain)':
-      'ac8134a91cdc239579ed496cbb2e559d991f15a69caa1cdb2388b54d53a1bf24',
+      'e9337ca7200449a17d9088cfff3f1675c43ec49098371328a91275a3210666e2',
   'fixture controller.polarArea/pointLabels/withTitle/right-centered.js (trace)':
-      '1158be091ca1d5e75501454702950bf3f0148eed7bd417d5a8be2b2e7eea4caf',
+      '6a9b4d295718a85494a78cafadb19802f95d16df4e6dfa7c4f445d12331e27ba',
   'fixture controller.polarArea/pointLabels/withTitle/top-centered-45.js (plain)':
-      '3acaa9766ec47a422602fb20e01352543df1f158f8b2eafc7235ade90d20c543',
+      '51be815a83f8ffc9ed006d09e6fd1a7cbd4620822bbb88dcb9f6a9925913ab7b',
   'fixture controller.polarArea/pointLabels/withTitle/top-centered-45.js (trace)':
-      '5d5be5d1bab8f70348680800cb3a790b31b3781a2bf9416ac6705fd5baa3b955',
+      'd141ef0da19e5f275c1c3e59daf5558abffcc834e276190e23b73ef5c5fcbe4d',
   'fixture controller.polarArea/pointLabels/withTitle/top-centered.js (plain)':
-      '84d55979e7a3f12a7b540034583f38d3dcd2308613769849e9935b816e11a5f8',
+      'e13e2f2c27aff1d5891a6c2f900830b6490e28c8e817f5adf7fe05635eb1fd97',
   'fixture controller.polarArea/pointLabels/withTitle/top-centered.js (trace)':
-      'cb7dc84402426bebb0995d531be9ea8f783702ec2e32af7fdecb239db2619fdf',
+      '5bb966b1550bbe3d003cb0f45d384783c85a50ce3f36aff71836f0e01c9883fc',
   'fixture controller.polarArea/pointLabels/withTitle/top-default-45.js (plain)':
-      '342390e631624d4b97f424eb353ee795f2a413b8dc8632c35476daeeef01d2fa',
+      '22e9793ad2d076e8f319002b1322b604ff3ba6721e91410777e55a63976414c6',
   'fixture controller.polarArea/pointLabels/withTitle/top-default-45.js (trace)':
-      '888e0f60eaa6bd096cddf30d949abdc8694ed7a7d51c9c56b2fdbc9792d883b1',
+      '6999ab216a7d942f45d0fb4fb5607218d3abd2a67ee19076e059ec69ed1fb864',
   'fixture controller.polarArea/pointLabels/withTitle/top-default.js (plain)':
-      '0bdfc7bc2976d206dd484790765a584d981c4e1e99226d5197529546e8e612b4',
+      '14f727acfbc3ef3bb46c46285ddcb74c349d6ce7de59c86d291f325f74f753f3',
   'fixture controller.polarArea/pointLabels/withTitle/top-default.js (trace)':
-      'd19e16a378e4f6ce78144dbccacd6a2a05b04d833afb226595f0405925572278',
+      '52a9b435e5cb0bcbf21f93031abb62729b31316448b8fcb3a30f8171385f11c1',
   'fixture controller.polarArea/polar-area-animation-rotate.js (plain)':
       '68077957dd5ada654aaf2a8ccf439604468d01b8a5673b7580dbd2b1a40a2f4c',
   'fixture controller.polarArea/polar-area-animation-rotate.js (trace)':
@@ -1306,37 +1306,37 @@ const Map<String, String> observationDigests = {
   'fixture controller.radar/showLine/value.js (trace)':
       'ed723a25eea7e552326a2918ee6e0f5c3662c4a7f174554783175e0d63e73279',
   'fixture controller.radar/startAngle/135.js (plain)':
-      '68c236bfd299880d40cb7455ec75d627866b65916a3e9a30687f5b6b71816eb8',
+      '2d779b05ae1fe454052f421c23147ebef95636a1433b53332211ff4985876b48',
   'fixture controller.radar/startAngle/135.js (trace)':
-      '9346f9f3c35216e61b904bccd3be16e485d7c345264fe73ca4d01911c1580db2',
+      'a25cc33b24ad4a09fc682a49a0b3d200017e48f2315b9aabe0a57b82779cb23f',
   'fixture controller.radar/startAngle/180.js (plain)':
-      '3fe1f22f44f1ee4f760d651218ed402c30b09990109bf4330a15fca4c2a016e2',
+      '3c34fc955698b380a52f700b683cb8bae6b30abc0bfa249b231e364eb09ded7b',
   'fixture controller.radar/startAngle/180.js (trace)':
-      '1574fa990f217969b6fcadae4a65d8229123a9a8ee2388cf2ed1bb2b45684b54',
+      '20e57543a8c348929fe4f560d7255ea5326e1714660e8017159a45f675185165',
   'fixture controller.radar/startAngle/225.js (plain)':
-      'd806cb5eb6507233fd610584e3876a66e59f7e3e1d2f2590f26341e3e016079c',
+      '82feba4058c609aa351cbc529caac13ab260654a794f08730d138b703a0e26de',
   'fixture controller.radar/startAngle/225.js (trace)':
-      '686807ddc412246bff22b2014c238f856c8dbaf145c55a9407d6356dfde4d338',
+      'b5ac4a7d62e32754ecf8dc5d97370ae1f531960e15aeae73be6aff78e1a19cd0',
   'fixture controller.radar/startAngle/270.js (plain)':
-      'f1fe6ca3184e79e92599df071843a80b189548f24260c03622237226f2e7654e',
+      'aeba42d0ed6eb304b2ebbd3ac96ce9648373dfa5450fad19811b9c8e21cbe615',
   'fixture controller.radar/startAngle/270.js (trace)':
-      '783c8ce53b15c8895fe2aa39df0f3a4b0438d8ff49f1f23b13f4e9f4530decf3',
+      '4c2817ffc8d3f6d4435cd0f7fef98db185f39345bb839c03bef5a955d56b36cd',
   'fixture controller.radar/startAngle/315.js (plain)':
-      '4da473e6d9be34f0f12c8b53a15929fff3b170862d4b7f3fc2feca1afb507c68',
+      'ef0bdc6dc09fc214cb355946f13988d688b7ba4999293202e28c0d34113580db',
   'fixture controller.radar/startAngle/315.js (trace)':
-      'b8f46de40a9b37b9c1a9b71ccbc972f8a34d3860848df771c6632c464b18374a',
+      '226fc96aa39d94c5de9d6f928dccea3d462b6aca00aa4c0b4b0176938a5a14f4',
   'fixture controller.radar/startAngle/45.js (plain)':
-      '1daea7fd5d80588183619efa143f2e746c6a1dbeec1fa73464dec58b14d60cef',
+      '507b323e85df598af8095c348778c6d0786ef1dc1fa8057d45056e03e5c8f2db',
   'fixture controller.radar/startAngle/45.js (trace)':
-      '1a04119356926c85c10edb8072843c878dc9a7a452624b58d8f5a69c51453ff8',
+      '4d8a8578eb4ee56315931d14b3c7e1ecba2ec9258f5494a4af83b709eadf8a21',
   'fixture controller.radar/startAngle/90.js (plain)':
-      '30f2d8aee3fb65c4c316251dfc349ecf1b31b8c846ae3356ab3ba20559b618ad',
+      'b2714a8d400893ee35c753486853d91124eac1495146f6bae31a35ecbd3cc2fd',
   'fixture controller.radar/startAngle/90.js (trace)':
-      'f2f2294aa69f7124f54b8c2f27bcc0cf52e18cce775068e25dd2e16ca16973fc',
+      'cf8b32dd71aa14d4e2003b1db742eaa98a98dcc51916e4ee8d1718d9aebd6192',
   'fixture controller.radar/startAngle/default.js (plain)':
-      'b61a79942a9fdddb20669093e9fc660929e498b97e524e810c43c80846c15f36',
+      '5f27078097f6cfd92e38b74bbd893a9afb9d1e39ce5b126be56e6b2af1f8667f',
   'fixture controller.radar/startAngle/default.js (trace)':
-      '04a8e1a75070da3cf5e3096be797df298cb7c59df31ec474f9cd9de7d31c2871',
+      '6a15a3e2bfaaf1455356374841118287ad6385e9e806ad4b7c10cc81f99850b9',
   'fixture controller.scatter/showLine/changed.js (plain)':
       'de06f2f9607f83ff33d8d5890120d195f377556496752a032d009793e68578a6',
   'fixture controller.scatter/showLine/changed.js (trace)':
@@ -1358,161 +1358,161 @@ const Map<String, String> observationDigests = {
   'fixture core.interaction/drawActiveElementsOnTop-false.js (trace)':
       '329c6f4481a1d392a8c6b51f1397a0193f00851d5d4121963b8ddd10f7c4faa6',
   'fixture core.interaction/nearest-partial-bar.js (plain)':
-      'bc7264920d30ee0237b31b0873e0f343abad075889bd194a87b9c4f555159e65',
+      'b945d9684d58da6407f061937d19a99ca43d1b08018872f0dfe94dfdd3ad7142',
   'fixture core.interaction/nearest-partial-bar.js (trace)':
-      '76369bd561a6c93192c989a93b9791b7c3cc0f4b351a971d808bbe0de951ac9b',
+      '6346b6df7ad7d8e17c52fa3d905b430ab9f6e80fd1791d04dfdb56ff626d82a3',
   'fixture core.interaction/nearest-point-behind-scale.js (plain)':
-      '7d470eabf313b721b5c6f417bbcee16530693d890e699da19bec8027642704fd',
+      '13929c36788a6e6b0d5793849fd24f764af5de7e8a65b673c723b7c524f8d0e2',
   'fixture core.interaction/nearest-point-behind-scale.js (trace)':
-      '262dc7c570384560e83d78e028ad9410c1abbf883f2624ec514f635a4ba8c9e5',
+      '96ced01777ecee8cdc0be86a7fabd553c08410a2ea1339f8fb9449ccfc06f584',
   'fixture core.layouts/hidden-vertical-boxes.js (plain)':
-      '6df239ca0f77d4102b6b03f62de5bf44daefdae7ce9d19de8783c30397e3e212',
+      'e62d8e7ce71561bb237406c8345d631c65c0840a9648cc68746d73cc9b48abe6',
   'fixture core.layouts/hidden-vertical-boxes.js (trace)':
-      '010da4b175633359742374cda9773e35b794c1cf2e90ce246a5c0995059eacb0',
+      '8f4a06e3312cd5946e1f790d6af0edb634c4f19552a19ad580ca59dd6644dd19',
   'fixture core.layouts/long-labels.js (plain)':
-      '71516834bbac0c69c35723fe6bf3c10421d14c8b29c077e8dbae00aae698468a',
+      '4fd6ef2be6af8d0f9cb920ed6a44cff78d16777c4a8502e687dd2f5dad4103f7',
   'fixture core.layouts/long-labels.js (trace)':
-      'fd1b12a2523e17b391322bc7f59ccbef6aa86b9e64140479cca82f688cba74dd',
+      'cdf729a1eee81f89777f83ae087c21557e61a667f711b4e506eb234853a41543',
   'fixture core.layouts/no-boxes-all-padding.js (plain)':
       '19d6a1237109f79fec94d16f60048e293f4841020a67b9560e33ba93571f47df',
   'fixture core.layouts/no-boxes-all-padding.js (trace)':
       '2eb4fbea14656aed6017c5f565f5e4d14e6d94dc51c32e094b4d655626f6505e',
   'fixture core.layouts/refit-vertical-boxes.js (plain)':
-      '05014d73d637965bb7428f8a953d2c2774db57b49808ed9149330db91d09be26',
+      '280199004e7098d288918fc54dc4862bcc0d00d171545aa5e352c38ce362b6c3',
   'fixture core.layouts/refit-vertical-boxes.js (trace)':
-      '6bdbe8ae6250a56313dd35352ab61f72377bda5453e072f47949e92fcf5254f7',
+      'b062ba8d570b0a18337969140095b6913cf87b40a6f1bca5e33861a3b0ae281c',
   'fixture core.layouts/scriptable.js (plain)':
-      'dc3855bb39a526d9757beadddf5dd0d8198f62db0ffbaba6c5f8737f22ea4b3f',
+      '985512956c64b405fee7a42232787f376478ccb638fdc7e3495ff9a7762eaf00',
   'fixture core.layouts/scriptable.js (trace)':
-      'c006dc88403bdd763b1c7eb12b3debbb1f7a1119b15eaa203b30bd464e2273d9',
+      '23476fb66746c7fb5214e5de88e73d1f68b3c1c6f90f0644b6fd494e9e16e929',
   'fixture core.layouts/stacked-boxes-max-index-without-clip.js (plain)':
-      '79584732e624b9babedf5f1fb7ed6e3526fc137737c994b5ab0f1afb69e5820e',
+      'e8f06cf11b88cbc7a872404f6f16ef419c20ed2df13767d7e4cccb1ada03ed23',
   'fixture core.layouts/stacked-boxes-max-index-without-clip.js (trace)':
-      '02a5022571577745ca7d681fa7fbd99aa1fe91723ff958bbbdb15e2e37ee19f7',
+      '4b8a65dc4921f49c7045cabf8e271e693248c869ee933b1dfc9a7af207e96e87',
   'fixture core.layouts/stacked-boxes-max-index.js (plain)':
-      '7fa6039b1a2e39ab2ad273aca2447b1ea90d13968d4e4d1e40cf276411dae866',
+      '63110e747b8e2ae8f346b5a2ff034006337d2a7012c035d2200f2329561de93e',
   'fixture core.layouts/stacked-boxes-max-index.js (trace)':
-      '42003e282cb28e00ce631ae0a2253c7f66800eb61d5c5e341f52932579d57e13',
+      '24e495e007aae55b00ca3aa0daab21a2283c796cbb17f0c776e9824b3e8003a7',
   'fixture core.layouts/stacked-boxes-max-without-clip.js (plain)':
-      '901b3cde1e015ffaf533d3055223baa80b98af31c71c75b192cf19a09d9e77d5',
+      'db23be6c688edd483642a321028f9ea040e15402951b6ecadac01a2271abfe40',
   'fixture core.layouts/stacked-boxes-max-without-clip.js (trace)':
-      'f9c3e1a4d66689bae4e10323ce26fed03844c59d7dc0ce5c35a5e4d048746515',
+      '8d245afa347ab92312d9be76d78a93a5c308392e7019b2591747e5f604c46451',
   'fixture core.layouts/stacked-boxes-max.js (plain)':
-      'cae8dfe8b35e57bf019d531e73f9fff000f2c3e8ca23a402da21584f765e3082',
+      '351bd8c1ccd7181d2c3f90a0b4b93b412f0bb77927d6a2982c8813cf4e7e1d78',
   'fixture core.layouts/stacked-boxes-max.js (trace)':
-      '149c1f33e1118f37d8497c6405a97c1f8a7c2429c52211edfa511eb884596c6c',
+      'c57d08199a18debcbc8246d82f4d63575b19b66cb28b8641b2e106946a704f59',
   'fixture core.layouts/stacked-boxes-with-weight.js (plain)':
-      'c84ef541f417bb4494d7d97d3e31a7d0e1fc1f98ee56ea13c95dd5f9eed5a6d3',
+      '5bc33372831c80ef4f6d897e29f30afc3b8fed0553d53b777bac49cec8507d24',
   'fixture core.layouts/stacked-boxes-with-weight.js (trace)':
-      '06c9fe9802a50bab1ea61f24cae4e9a8f787bf957cbed352f2b4c58fff74a3af',
+      '96e8ae5fb7c5d0ebaf28e807905b9827db0c486d23988624c5fcdf0757dc1908',
   'fixture core.layouts/stacked-boxes.js (plain)':
-      '1f42c69756064c62cfa34ceed875fb80ff3f72f05f6c9a06bac69ff50b483ff6',
+      '1764478d7254a7eaf8c1ae58857dc606ef2b78e057eff1af2f118e8ad12a196d',
   'fixture core.layouts/stacked-boxes.js (trace)':
-      '65c0394b27b77615ed2915b4b2e142035400bc2fb4959735b909e384ffef6a3b',
+      '0932889743a86b4c285dfed684345de776a2be429b51c4ba4d4d08fb96687d0a',
   'fixture core.scale/autoSkip/fit-after.js (plain)':
-      '7f1d230d6ed8ad6831fb233c6253ea65c20ab99ca35f7d6ca71063b53f08f070',
+      '928b4120a07a00dbc300bd0dee9334e79eb24a09f77358a9d453e7e496b07579',
   'fixture core.scale/autoSkip/fit-after.js (trace)':
-      '6dcaf3820bcc7a260460789847c251a685b084ee96e6c564475d812726d256f1',
+      '2880e13c4457bc8d48e12ce1644bf3fef9f243ac700447492de9c86cfa72a6c4',
   'fixture core.scale/autoSkip/no-offset.js (plain)':
-      'a9b3870c3a68e9c41edaff5dc2f7ef707432904c93588ea9b0a3f107c4e02fe3',
+      '2b2efcc45e0b929c2952399961b3a7d7b57bab9643de542e08763b282250011f',
   'fixture core.scale/autoSkip/no-offset.js (trace)':
-      'eef5a860c7b2f7987e7fe34c68a002882e1f3d34817196f7b9eceabec8a8ee0f',
+      '0dc0e05341e81a463eb58ee4689faf6c232654dca9d0bb1495bd9ea00a57e6a9',
   'fixture core.scale/autoSkip/offset.js (plain)':
-      'a50e4e7625ac21434296f80904b660fcac4cdf887c4d849fbff98e2a00b52ff9',
+      'a556ee7b0925dbd8c11eca1af8da2f053c93f2762f84030b0b51221d15a530d1',
   'fixture core.scale/autoSkip/offset.js (trace)':
-      'e278bd68ab685313fcfd33f9ac2e997d12b7f3b3fbef6d8c62c30b54410187bc',
+      '458b22afce112979d1ff4d6b80c3c07138399c32d79ead3b82f417eaa4b03543',
   'fixture core.scale/backgroundColor.js (plain)':
-      '09463de9ffffea40abb5f9e5d9c6faf9a94cb017c6fd3ac7874b341b2d891647',
+      'b5bcc4271bcc1a2afb25c930b1069f5341fef9ac506a1f3db7af3ddf54d52741',
   'fixture core.scale/backgroundColor.js (trace)':
-      'c4146c372bf99ae685e30715a7e197445c05fcdd10249ef75980935e0616903b',
+      '497bf812948994867ca3350a012f3b17ba2db4e62597149f1db452a7542b7e8c',
   'fixture core.scale/border-behind-elements.js (plain)':
-      '1d41341cf3deccc5a804b54c6e003522efc0e776657c8a23e61ed2c51cb791d7',
+      'ee2fc9f0e859b36d917bd031572508811ce55c1e7ae09ecf72c2537d7ee309ed',
   'fixture core.scale/border-behind-elements.js (trace)':
-      '59444968c037b68f53d19ed39046941c02592da4d80146e5eb2084c6ab9113cd',
+      '0787abe10edd6ca5bd64da351d57b4ab709847bd1e43fdb1f15e5ed5a2860850',
   'fixture core.scale/cartesian-axis-border-settings.json (plain)':
       '5155f9646a0c13e30d69da9fe9478ed056faddfef3b131ae1cae995ea9320f62',
   'fixture core.scale/cartesian-axis-border-settings.json (trace)':
       'e3cf629e20a594a9302421704fc3fbbd0eb5a5f0b7e663898fcf6aad4497a068',
   'fixture core.scale/crossAlignment/cross-align-bottom-center.js (plain)':
-      'dbbc2123439e3f5af7d82a24e5ada373df445a2331abd56d4a1ebc7436af9219',
+      '206563395f74180e9ac6fe67ec99ee9029f4984db9562cd4c0259f414d042efe',
   'fixture core.scale/crossAlignment/cross-align-bottom-center.js (trace)':
-      '756cb336873367512f0eb822aff14b9ff446e15a385f1e2d56a181a3a79d1c94',
+      'cf71bcbd11f2a9587abd93206aa2cf1d4b6e07cd926bf043b195c3eb6fed0cc5',
   'fixture core.scale/crossAlignment/cross-align-bottom-far.js (plain)':
-      '35a12793baf5c06ff0b85b61afa71b8b8e1f5bb627da9404fa14200730796800',
+      '49fff37bb419a1a0e647c37149e8738a79d631bf5b097e799f48e700960d7086',
   'fixture core.scale/crossAlignment/cross-align-bottom-far.js (trace)':
-      '47f477e39abd674defea4a32289d944c03e32f6e7a004985d30c4d86623d7bb7',
+      '57d2b6648eab847e911e4a1fb64fa802ba980e94435e6e17bb006570ca6d7925',
   'fixture core.scale/crossAlignment/cross-align-bottom-near.js (plain)':
-      '69e82ef7b545818fbfe3699ef56fab369eceed650010b972003d20ec258b181f',
+      'b5724922527ab618146576efba5f70cdd7b62bde72dea1d6fdf40434af2dff01',
   'fixture core.scale/crossAlignment/cross-align-bottom-near.js (trace)':
-      '50d1c2a5b010299b0c2af5370cb2ee7302ff3c940cadfa07d5c5534b92e693df',
+      '1b3a2bdddb61f79a6175bd3daf21ad611287bc10b7de585dd967eb63dddaedef',
   'fixture core.scale/crossAlignment/cross-align-left-center.js (plain)':
-      'c1461ed09f939dc38e6f66d92a318d5fdc493857d51f5e2252d15e6927bf6323',
+      'e6c08c8560d3058859a392451248a9a13ce59515c26d3b9490ba92d5e8cabbd8',
   'fixture core.scale/crossAlignment/cross-align-left-center.js (trace)':
-      '6d58f1557f213f856cb30cc405b9d3373f7f7da53e1ac02c31413e55598679b2',
+      '27979ca8383e6a76afbaeda69029694f43985c61b5497e2f0b2adaa075db7f72',
   'fixture core.scale/crossAlignment/cross-align-left-far-clipped.js (plain)':
-      'e754facab9d2ab19c4a86220a36388a9ede81862155b1f0605e5be56ab4e3bde',
+      'e0fc965bc3a00958d8aebd5f0bb3f6aacaa7f83c76055afb519f6442f0d47509',
   'fixture core.scale/crossAlignment/cross-align-left-far-clipped.js (trace)':
-      '2cd6aaba8cb702f46801080d1abc99bb59378a9b026389b31b10c95f56fc9491',
+      '6fa1dda9be9c8f750f6562ca4100fd94386493d43f6a13cc40f86ded2d638bb4',
   'fixture core.scale/crossAlignment/cross-align-left-far.js (plain)':
-      'a69cea76e5fc2fbd76c8e23f4f9e65bbc5613bfc32913fa1f8e5527d20949d3e',
+      '9b2d954c950cc67dcadf501be452a4c3ab1b8744a8a2783cf499658fc2a50fb2',
   'fixture core.scale/crossAlignment/cross-align-left-far.js (trace)':
-      'dae852c72159487f0f3066694cb60382b1ea0de76cc5745cdc811df9d92c668e',
+      'b4a2fae3045ee897375de20d7c5ec6b1fcefed483807e2632990dbd14b4ac565',
   'fixture core.scale/crossAlignment/cross-align-left-near.js (plain)':
-      '169d4d9329d9d87b14adef26484f0fd5acabaf3e0988e6d1bb39ef0b0fe3992a',
+      'a748353c0fb1835cfac59e43471e1593d987afc9c3d7aedd30120c7e14bf2b52',
   'fixture core.scale/crossAlignment/cross-align-left-near.js (trace)':
-      '64f380ba4324168e71702c77d6c4ae799c98dd99b490f7d087b23014ac362719',
+      '9211d434bedb765ac154ba0456d05cd88269a29640825d4c1821e53b9c126246',
   'fixture core.scale/crossAlignment/cross-align-right-center.js (plain)':
-      'd540feeb4890145515760e8b4781a1a22866e7280ba29d452495729a28b4b884',
+      '795af86a669475bced14284c040f30aba2d3ae02ab0fa8c78bc88bfbb91ea680',
   'fixture core.scale/crossAlignment/cross-align-right-center.js (trace)':
-      '47e882792a8fdc13a1447d7d89013226941fa012538fcac956458e9b6c18a1bb',
+      '089da6ddc325ea46e1b63432d06339a8a7244dd22cdbffae6938c62f5f196bdc',
   'fixture core.scale/crossAlignment/cross-align-right-far-clipped.js (plain)':
-      '5f8d3b70f5a391b8ebec094eb8dfeef6f2756cf0b7bb210098a1b23c31593bad',
+      'eec3edff983730b665511ee5d15c3b795394b59f44855b4979c37e68d2be396d',
   'fixture core.scale/crossAlignment/cross-align-right-far-clipped.js (trace)':
-      'bd53d7b176e3519508c858a6eb51f66593173703a358ef1c849823c5554f6ba8',
+      '4611722a9c353fc47cc507e0c59b82970b8035881dcf713f98d683d996b1ec05',
   'fixture core.scale/crossAlignment/cross-align-right-far.js (plain)':
-      'df290c0d19617718bd92abd97ead6b2974b7fb2fabfe6199572bf4775b4233cb',
+      '7cab0d200b0d37af10967d1231132a2ef4413fe890b14e0540dbb1d3b8f56964',
   'fixture core.scale/crossAlignment/cross-align-right-far.js (trace)':
-      'd8e6bea5287c962c85a8af67426cf783dc68b6454a44ed83d9dada2b290f1c86',
+      '52cabe818c6fc16a7f9c4b1c5e4d203e0124844ea2951b7e2be741a17f804312',
   'fixture core.scale/crossAlignment/cross-align-right-near.js (plain)':
-      'acf39a904672bc5e486a3875a171287cfd3cc3e8f8aed5a143f186ec94506179',
+      'e2abce59982953e34eb041de1d1542b6eef8c88e112e12d5b027d89349398394',
   'fixture core.scale/crossAlignment/cross-align-right-near.js (trace)':
-      '5f054556117dcd3273edad34e7a75ea96f2109d0ce2bc138693d3273b41f457b',
+      '30c2a00ae2ee97e76ec62cac4184b92fafb2213375d515829df37a123546bf5c',
   'fixture core.scale/crossAlignment/cross-align-top-center.js (plain)':
-      'c8f6e039818e20bcf53a199e5f458a50be31465dcf7db6c6d06e29dd04cd03ba',
+      'd7debeda64fe08b2d02a8d423f2fddba21f4abc7c5fd194afca946da78866059',
   'fixture core.scale/crossAlignment/cross-align-top-center.js (trace)':
-      'f2fe3d1c2f5e7f0e4a99dd78502b031720ec1827f92f077f93bd571b07196f7b',
+      'cc2ec5d9e81c86b5dd9cc828d81cb5a84d079bcf941b7acbb610cb623b886488',
   'fixture core.scale/crossAlignment/cross-align-top-far.js (plain)':
-      'f19727605d8eec87a318b931662fc9f393d5ce3fab7fccd6f7a687d074e91457',
+      '080560ab6e1ea1446b451361425a5e87a9cbf658ad357c36fb3696ea4ae9f529',
   'fixture core.scale/crossAlignment/cross-align-top-far.js (trace)':
-      'eef24c1e37bc7aaa606e80410d79f5737977e722d119024e6a6a5f20b8fc7068',
+      '6f9e603e93e0a13e414be546ec45903229afb56f5c9e4bd1f32476fe25d8da10',
   'fixture core.scale/crossAlignment/cross-align-top-near.js (plain)':
-      'd06fca99958aff845ec3766d4abad66a276fba7d9c25a82dcb76be145a880ffb',
+      '290d078b6262d8af7224b35c6067246e66d9cee2ed9f88136d3c9863e8c8fd2f',
   'fixture core.scale/crossAlignment/cross-align-top-near.js (trace)':
-      '61c73d87affd5a41f03c44208eb9fcac861509347bb024d245d1fd2f38c56e59',
+      '7a3b3b2e849d284ba51dfde39f5077eef1ae882d7f2b2392a65e84477754f0b1',
   'fixture core.scale/crossAlignment/mirror-cross-align-left-center.js (plain)':
-      '374d2696b03c4b730dc84ca57b23d0769d5522a78dfc2c67f484459356199ab0',
+      '3d51178a676a7001d3cd19a8143c1825411360541df4416357c29ef8330efbb6',
   'fixture core.scale/crossAlignment/mirror-cross-align-left-center.js (trace)':
-      '4abb7ee8a1f8d4d1c3ef7d3a55e443a4efca4273deab55b60ae796253133b753',
+      '55a63eb639a078719c02733e62c37f2f47a9fcb3874ba2f1761b8f323bccccc8',
   'fixture core.scale/crossAlignment/mirror-cross-align-left-far.js (plain)':
-      'bec2a262160af01a6aaf084275185b19c7302850c5bbb6d838ad7352d5df761a',
+      'f3d4b66e065ed856cd76ddfa4e8f5ba88c65d2fa1be068b3a5134e8ec8d03394',
   'fixture core.scale/crossAlignment/mirror-cross-align-left-far.js (trace)':
-      '1632b41517e8e8877464974c43363372bbf27815e06ba3ba0dd5d973bb890bdc',
+      '90e0a2ffa79ee198c69ec6ccef755e565f66e8e4a2c14cdf18c99358953318d1',
   'fixture core.scale/crossAlignment/mirror-cross-align-left-near.js (plain)':
-      'd1068d54e2795aa8b02554c33f648d8ed42fbb70ff2fa0941dd7d136a031af2d',
+      '834a44b947a89d983526c7e6cd2f1c46324c9a7ce9446e732876b0f08963e2da',
   'fixture core.scale/crossAlignment/mirror-cross-align-left-near.js (trace)':
-      'cd57cd623610f0afa19d34311249c396eea9d16cea3ed0b1e4408b333d77c5e9',
+      '612b33d8e052039ec49227945537aa845b8a724e7d1a423a33c0fd58564ef769',
   'fixture core.scale/crossAlignment/mirror-cross-align-right-center.js (plain)':
-      '7506a2bc5dcfaf053a8b5450b1ca6a37b69e3ab4f029a9f1706e5d3525d11d19',
+      '36d0a8f993848de2651714d6f053f93683ec9fc1e36f75bcaa934428e1b35aee',
   'fixture core.scale/crossAlignment/mirror-cross-align-right-center.js (trace)':
-      '3be0ee0adbac10bc2290b02b29bc52fba98360a73e3bad68f9211c85ea3d07b9',
+      '84deeb738e9aa706df9c6e8c3024b59c99d134614f39aefd1e51ed7dd1bdf31d',
   'fixture core.scale/crossAlignment/mirror-cross-align-right-far.js (plain)':
-      'ff12af343a219d7bdc6bded104fd92b21b536c5574ef3c7930b36ec384f5f80e',
+      'b1a1f6b85bd8fed414a0f397aafdf798e8465cb71fa549caf3f58c8743c253b0',
   'fixture core.scale/crossAlignment/mirror-cross-align-right-far.js (trace)':
-      '94bda4ea81cb1f2873c07cb6ccd7e047edb1d0441a751953d71022a59681de06',
+      'bb30c51287da09b3884842cf553c18d87b7c598cfd15c1ffa6ab135817b0f682',
   'fixture core.scale/crossAlignment/mirror-cross-align-right-near.js (plain)':
-      'bd46eeb79bd6b085b4bd1590ebdb1c065c68036255080c16ae46501a612976e7',
+      '0f61857aca93cfb29ab055747c70d73580d2372468193111cb52bf4c5524dbf3',
   'fixture core.scale/crossAlignment/mirror-cross-align-right-near.js (trace)':
-      '82944c94cceb36bf2a5c6e990f5ca9d2fd752e08ec433e534fe9aaf32b298c10',
+      'ba62ac9e686eebf1da148a186096b9e09ba09d0f23522f66a7caf35df0890fab',
   'fixture core.scale/grid/border-over-grid.js (plain)':
       'c8739a0906e5b53d400758e2d0b19a3a13a8a37a46f24992b7c61e534f3504e0',
   'fixture core.scale/grid/border-over-grid.js (trace)':
@@ -1526,49 +1526,49 @@ const Map<String, String> observationDigests = {
   'fixture core.scale/grid/scriptable-borderDash.js (trace)':
       'e8a027a98ea72574a68dbf212060620c1910071954b49c66cef7e37c182a7ed7',
   'fixture core.scale/label-align-center.js (plain)':
-      '5e5dd90ba52412e46c0e9167a2da63d936157e47134f214d6b1ae3e9f97007b0',
+      '8c1625411c977d648703cded9789afa8c7c06f77a0b0ca59cf789bb5359a39f0',
   'fixture core.scale/label-align-center.js (trace)':
-      'b615667a9fa37782508ce0dd4227dfe799666bb0299461a56fdb4b174d01b795',
+      '18622cc058d0fd61f24903a1a2674cd24e7ca42949666ddce2763655b97b5a41',
   'fixture core.scale/label-align-end.js (plain)':
-      '7d0aba1cac782d57efad8e3ce22ae075a74c7167f98fbf1aed14ddb8d367076f',
+      '921769faee1de6e483dbe1c51d1a09d2cfa6336c136804f86717b578e9c6f8d8',
   'fixture core.scale/label-align-end.js (trace)':
-      '8ca56977b089fdd30d4fd5aaa123da9d78c0f8fc90fa5996150d4812c26de2d4',
+      '82223ad16166a559f356f950b353b1a966372e08eb62cbfe54c71de79b330233',
   'fixture core.scale/label-align-inner-onlyX.js (plain)':
-      'c70ce6a5b98051a76c7fa29f81bb25dd7921b41779f36174a5a6ac238cf8ffea',
+      'e2806d11d602279997e13de8effea828753a939a257bf651ebd757242f090b81',
   'fixture core.scale/label-align-inner-onlyX.js (trace)':
-      '98d17d8ba23fb44b96d9d4deda48a61f157ff66e224f5278ccc077f2d457df09',
+      'aa5420a765179e49248b65dfcf9bcadcd8f05871daca6d99b25a1b9a7ef754fe',
   'fixture core.scale/label-align-inner-reverse.js (plain)':
-      'a454e7921b8fda6b857ec6ab5e1d8ff3dc1bc2b98902be0fe95eec0705479588',
+      '359e8497fc4abf3a03cb04b43a755e6c89bb74cffd3707905eb71178e569db7a',
   'fixture core.scale/label-align-inner-reverse.js (trace)':
-      '034792b45f5dc33cd2acf56407bf60b4f91a82f085980e8c5e09af1ee69c6ef9',
+      'bde3015e7eb7c94f0d31cc0edd6861420741690ea6413af33567b1d91b4e3da7',
   'fixture core.scale/label-align-inner-rotate.js (plain)':
-      '7a996c6142ce69ee4c6e00dd83ba10d053b58cf75ef157da3ae4889aee449dde',
+      '4d9f202cb4821fa92bfca3c27c60a79be2f206ca340f2eb118367ec86e9208d0',
   'fixture core.scale/label-align-inner-rotate.js (trace)':
-      '528bec34d8a7692704f484fd9ed3c98357a04748de952475e5c0d299cb37a3ff',
+      '281063b001fe8a2a4dc92f9ba6bd50317a50002eaf9d2de9f4e8119abe7828e7',
   'fixture core.scale/label-align-inner.js (plain)':
-      '9fb3788cc393616b8d16d557fcdde2814e9780748776dd6cee8991a3798745ff',
+      '6a472ca90e9511051eab462d2fdca742d6459f650dbb47322c8fd9e09938055c',
   'fixture core.scale/label-align-inner.js (trace)':
-      '64a2f2a16f24cadadd3754167e4a1355f8cad086953902b83c226dbef7c2d38a',
+      'e97fd9893dd2c34e6ab144ad9db221b6948682cc8514261853e0661980216585',
   'fixture core.scale/label-align-start.js (plain)':
-      'dc5270162644a03864ac8516e80f51913f6030790a101c265a82a7aa2c8ad063',
+      'aa5bb4f0eb49a7fd82ee4d293e7b9fca189d17cb381ac045e6ea5751a2ae39f1',
   'fixture core.scale/label-align-start.js (trace)':
-      'fcf7dc5b70ca6c8da905f4dc0161fd85c17234635d21a509df4d6002aa4e4262',
+      '188209b5c6836c3ce9e7179dfdd65870f88a21c4f7e43a2a85a7fe532045103d',
   'fixture core.scale/label-offset-vertical-axes.json (plain)':
-      'b342994be489e0c7a9b3bb5eb1f3b05763c580d9e44e7cff79c0eaade860a0d3',
+      '779054068938fa1eb0744fb843622fc378ad50a5c564c02b3b34d545235d5179',
   'fixture core.scale/label-offset-vertical-axes.json (trace)':
-      '61bd2ac58645aaa537aa0cddea56836a2f4b155781eeb93f3fcf0875915c06ec',
+      'c907ec2c2053c57bbf804307d22356c4195087a390b215fa87f8ebde9b893f7c',
   'fixture core.scale/tick-backdrop-alignment-inner.js (plain)':
-      'b09160b9537537daeedced8419915819a2fe9c6cdbe8f61a70a3fab769cb508e',
+      '58bfcc480a4e9df4a0d96bd94b50f7c4de59d181cffc3a30c436d6ed17793b79',
   'fixture core.scale/tick-backdrop-alignment-inner.js (trace)':
-      'ab92fa53ee667c5d99dfcbbb2ae4582fc4a8f4311c089b8017da4556b4e90140',
+      '5d0b9b7f32b63ae96fc45dcbc1ba9e2c723e7d3ac4208f05eabbca2e8dc161d2',
   'fixture core.scale/tick-backdrop-rotation.js (plain)':
-      'ab79792f7efdce7250666bfe71bf0062694fd0cb67477727360c4f146f89ce74',
+      '9c60c52d683e6548af53000df3679b2f3befd2e8e81e3ebdc4e9ac5382391cff',
   'fixture core.scale/tick-backdrop-rotation.js (trace)':
-      'b9eb301d9aa690e9f54f4bd0f456e8ab906969b881b75b008d327bfae4570787',
+      'e1e9574c08c9513a0d33fa9bad239f7cd0cf65ee293648615ede9634eb658ee6',
   'fixture core.scale/tick-backdrop.js (plain)':
-      '984c11c2b740970925ee0967079aed973427ab494e10336d8ed87206688faf46',
+      '3cb874db80b451c9bf887ed7ba707a41da4a27b234a5708d335bee1bad219527',
   'fixture core.scale/tick-backdrop.js (trace)':
-      'f6a8ec2a139ad90ea3ba3984a431044cfac559382ecac4265434565d3b6dcd51',
+      '815b4feff64323d490438d85936e453341a226315724c1c0c477e6719400e844',
   'fixture core.scale/tick-drawing.json (plain)':
       'f2eade558f112b877f1e2378ac1f5c5a4bbd44c30e3750eeb3a2216b961a8a41',
   'fixture core.scale/tick-drawing.json (trace)':
@@ -1578,85 +1578,85 @@ const Map<String, String> observationDigests = {
   'fixture core.scale/tick-override-styles.json (trace)':
       '50922072b4712215370fcc271be6eb22dbc6184b314597c1596c650d4d9c14c9',
   'fixture core.scale/ticks-mirror-x.js (plain)':
-      'e471396bde692b8fb79c2236900688cdfa3c24f7381b1e142908605136b79984',
+      '964b91ce9aa49b5a8d4aac9e83e7ce91f7831714c8a76a685d268a3c2f29e224',
   'fixture core.scale/ticks-mirror-x.js (trace)':
-      '11d72e31f73d295d8e4b5b4884349e992d641289f77bab1a88deb9dec44f276c',
+      '864fd462e7985752f678ee2d4366f2a38decf96d67ca38136d0853be47f3c0c7',
   'fixture core.scale/ticks-mirror.js (plain)':
-      'cfdb1b3a025f148f5ba294ffd56375ba11a43dbcb474b765c13cb085890588d9',
+      '9d41a3c82cc009d6ff9fb5b75fef82b82f9b6840c7afc6cfe941d28038f9fa7b',
   'fixture core.scale/ticks-mirror.js (trace)':
-      '946172b3c998607ff371e1688ce3b73516e4bcd95f024d0a6ca8df8da3dbf9cc',
+      '1c4e0858c814ca7812f91d047d6fda72f564deae19d95810f9b29bfad2429269',
   'fixture core.scale/ticks/rotated-long.js (plain)':
-      'c24aab1c8173dc0b1bca551a306038b08b1bb62c15c3f1d8da97d0d746330410',
+      '25a1f94ae510c73ef25179e46da7af1fb7e7f2db2e08748bd4b3986fd9653f26',
   'fixture core.scale/ticks/rotated-long.js (trace)':
-      '8439fb90f5cb0abedcb1d92905011fc57d9cae7b5c1c99e220c14110f3dcf6d4',
+      'be5652a2fc4496ccb8f54d5007011ce21466e5d12885096ae6b7626c23f69ffa',
   'fixture core.scale/ticks/rotated-multi-line.js (plain)':
-      '6982a6752fe14a0fc8c882e004b587a0df8bf8e044d1488c2d873b18926cff38',
+      'b999384f4f11f4a06f01364763e7c02cfc3f6084607261c7c6e46b45f0f3ea5b',
   'fixture core.scale/ticks/rotated-multi-line.js (trace)':
-      '79668c13247ad123cc5655cb8dd39a522dbcb13438719e9e678c270c6dfe8843',
+      '234b0cfaf0dcc261e9eb4aa6854818df96eeec4cff5fe5e838dc46fd863fd045',
   'fixture core.scale/ticks/skip-by-callback.js (plain)':
-      'e1c1637a91c4208468066c9cdc31d1a7745b77dbb0c6be55d20f0a8b11fc583a',
+      '116583df6f6334f1010cd95cdb90edd289446f37b4aff14059d8a47082495888',
   'fixture core.scale/ticks/skip-by-callback.js (trace)':
-      'df5eb018178c0cabb8006c937373d8d23c65d5665e4778a396aa62cf7837340b',
+      'ee8d79eadac31231520011555fc13d5a06ce2b9f19045fd1a57883ad471c23c4',
   'fixture core.scale/title/align-end.js (plain)':
-      '6ac4d96c5f2d7527d2b053b07a6c4f8ca116ee4fd538418969e7bdd4ff6637a9',
+      '29c5464ebdb134c2c6442ba772b3b5d604e103858693e1921daee063ddadd62e',
   'fixture core.scale/title/align-end.js (trace)':
-      '91d13258f72b2bcac0c6e4b10fbabd28f382e8429729462b48325326d85acbee',
+      'a764d5c23391b2aeac7be8d566c4db78bcc1c754686a0c6a25cc560cf315e295',
   'fixture core.scale/title/align-start.js (plain)':
-      '218d5a2528aa6b9029368eec19149ebee1125d71c9a62fba8b75ea6ff2cedb79',
+      '002aff6b920dd52ef1fd790beeae68e5f9c16b5d1d88b7fc4df9ae6abdcc9803',
   'fixture core.scale/title/align-start.js (trace)':
-      '0faf55b0a8b94f5f4baffb259e49295ab2d8efdc630957a0af36b2ebfe8a11c6',
+      '0cf1b13d311200d75bab5f480caab58b5cdf2b62dcc07049b830505b71d5f084',
   'fixture core.scale/title/default.js (plain)':
-      'b8b66b186d1d5cb69782d7c65c5b5aaec7130988dd706771304202bae0ca6620',
+      '0bd9e74cc7ae60645786e7361f7337972d746e3ea4c93a4f141f099de9391f62',
   'fixture core.scale/title/default.js (trace)':
-      '841844d8e7799f7c5769462e6373e1b2b85f37567aeffd2b37fdaaa21e526349',
+      'e590e28a3862fc20ab15f1613219408626ea8156ceec969df6984a6759f61f6b',
   'fixture core.scale/title/horizontal-center.js (plain)':
-      'e8fdc1303c6c1e963bfdf63292695bebae22e15d83e96b7642d3cb57955bb459',
+      'bbe6e85c178165095e179306a8a24c83e6cc0ffc71c4a657eb8ff9525d2b85b4',
   'fixture core.scale/title/horizontal-center.js (trace)':
-      '94b73560c67dd1811caf932a6cfeb6a520a1d2f873bd3e597114117ba17792da',
+      '42efa855bb4c5a6968d04ab90be895f12d36c298042e5334bd1889b7eacdc480',
   'fixture core.scale/title/horizontal-value.js (plain)':
-      'de8826af3bea2c6a9392995c4bfe6809c6ead4e2fbff46924f232da210d69dcc',
+      '76539952abc23c4d9dc41312d9219fcf546e0cf2c61e4eb762753ae234c23267',
   'fixture core.scale/title/horizontal-value.js (trace)':
-      'e4f98ea408fce10e3f96b4ae7c6faf60e3810a5fc203bbb47098d10de53a3440',
+      '3c6dd4fbfefec9b3b398479d08b743adda03a2547cdaa2360559efe756eaf044',
   'fixture core.scale/title/multi-line/align-end.js (plain)':
-      '4ef26a913b4aa212eeadd4c822a96531f517bb1bf35f1eaeec4d7cae1dedca43',
+      'a7ddf6e37d91370bf20da3bfde4ea6304701e6dcc2a7c8195d47654003601f3c',
   'fixture core.scale/title/multi-line/align-end.js (trace)':
-      'd422c9d3d19a39f49ee882c26e838e3614102cd320b7e5ed0277f128a5b51eeb',
+      '197f4f3f9d2ba745bdd386b5f9e24574f5472d2ba13f5cd5916a0a460f9dbc88',
   'fixture core.scale/title/multi-line/align-start.js (plain)':
-      '6886906c18887d667f05957732056bf3114312ba012e561a84aeaba48bbb1f89',
+      '92158dcc69192ba93e0f1bc8579e309ca7eada12a4b7bda9549496d20f2b15b2',
   'fixture core.scale/title/multi-line/align-start.js (trace)':
-      'b6bbe0acb4fb75c3e717299c55b3e8c6dd8e191535ef3c45de8896688d17bb24',
+      '43eb833dfbd3cc8ed67cb47817fc92933eb7c89835becf0b8a5081e9905e5b60',
   'fixture core.scale/title/multi-line/default.js (plain)':
-      '0ee7ba1818448b4cfa4830e5919351ec7a0020e5a80e740aef26c0c1c6654b21',
+      'a86c13c4379e0dbe16bc157beb1b6898d674b5aa7e07af8647a77df35777ccb0',
   'fixture core.scale/title/multi-line/default.js (trace)':
-      '326405495316675a03d9f97384e0b2a7a84518046ee3b713e10c5140753c6653',
+      '41b6fd71a32cdd98f5be652bb74d64a68d640ec62a435cb42e5a3e34e29c3b8f',
   'fixture core.scale/title/vertical-center.js (plain)':
-      '035d0503c2d26132b5bcbeb4a3eebeef18e086aa81bfe0cb7e088679746b4bbe',
+      '7256cf790be1bf8fc474294cd7999c360ccb7817641b9732ad67542afd25909f',
   'fixture core.scale/title/vertical-center.js (trace)':
-      '6e7375a76dd0bff361c47be6ca437133c0d5fbbb360151258140b9e26fb36cf9',
+      '979ce7806dae38c7d18cd258459a3b1d41ecde1fbab37cf2ab32bed4fde00ddd',
   'fixture core.scale/title/vertical-value.js (plain)':
-      '104b916b1d6e97ea202ec25958cd9d5d3485c337eb67f899d9e609cdad73f0f8',
+      '860114fc6dba9d86f6b0f8613f32de2dd77dfee558a60785ca7e4febc7ae3310',
   'fixture core.scale/title/vertical-value.js (trace)':
-      '8d39e60edc7c2e29322442eb5733d59e0b134232f1947c28436527eb01dd4a11',
+      '515f65da16cd4c5963318a6de416914e31308473a2d42dfb33de803285afb860',
   'fixture core.scale/x-axis-position-center.json (plain)':
-      'd08804add5301cc51aa64d4a1ec16718919d4cdad786bdaa4218b75fb7b01bd3',
+      'e54103d4c70ef6df413ebdb2ed7744a0f8644438d8a586a84814eb621ef424bf',
   'fixture core.scale/x-axis-position-center.json (trace)':
-      'cdf6379d3d4cb400f9772e29109c9202a19d15aa572fb791fcd87d2348164b59',
+      '57c5cdee8b376252e50861620382a5c95c6a9552d7d5d72432b4941b24118da3',
   'fixture core.scale/x-axis-position-dynamic-margin.js (plain)':
-      '26503b47627585d5e2c975f804eea2a9f88e8ee59e88d1eb411b0c8027ee7483',
+      '58151cce23246895eb66170492b853825ece371fe6afe51324c2940c930fdb9b',
   'fixture core.scale/x-axis-position-dynamic-margin.js (trace)':
-      'bc842241da9eac6c2b3e15cb3846ccbf9adaea904887b23f556beadb7d9b6483',
+      '012be3eda1c9ef0032ffd4f290e7f7dd96024ddf775306e47d4db2b7805e7f6c',
   'fixture core.scale/x-axis-position-dynamic.json (plain)':
-      '3a8a47ebdc208ffe1542bf5875e6af6bc49febc6b1bc6e49224b497c262aa2be',
+      '848127996e28810cf70fda83328f49908727d960241d9b9ff5dd2419f4e435bc',
   'fixture core.scale/x-axis-position-dynamic.json (trace)':
-      '1dc720def1996bdeef09e1fe7991681ace012e9b776a97c411989b7162ffd0b5',
+      '191d042d23f7b4f84e2fffe9caecd794d89e2068bab62b4b67cce2e0c7556bbd',
   'fixture core.scale/y-axis-position-center.json (plain)':
-      'e625c75bd32d5dc7721c930feaed2140c315e3d22a3bce584c85701410cbabc8',
+      '02f4c2a21b3f00fc26ef8abf0250220802c967d5a9b81d585235fd8e88579796',
   'fixture core.scale/y-axis-position-center.json (trace)':
-      'f674b0a296b17cd4a8eb86bf3f9d5c8ef2b771eddf1afeba9e475eab748101c1',
+      '3d9aa45b197649a1c9d16a6296f88272c2b9e366070f6b1de2a711484ad3f9a5',
   'fixture core.scale/y-axis-position-dynamic.json (plain)':
-      '24850dc75907bf344c07373b59190f35d144142b0b6ffbbf271664e82cd2bcf3',
+      '57234fe11ec74287bb82ff3006d218a344d5fa8d02b4b7fa5cae402296e57a8e',
   'fixture core.scale/y-axis-position-dynamic.json (trace)':
-      '95c745afda506067c0993c3020b0c2e94b94ddb32493a218267f5f06134f01de',
+      '84e2b2c4140346bfd9db9e6b0735aed03265b03481b6257b070b194a68c00157',
   'fixture element.line/cubicInterpolationMode/monotone-horizontal.js (plain)':
       '79338d63f4bf6df463a1953c5ea51e7305f3cca32ec9f23ddcc4859e867b8f38',
   'fixture element.line/cubicInterpolationMode/monotone-horizontal.js (trace)':
@@ -1774,73 +1774,73 @@ const Map<String, String> observationDigests = {
   'fixture element.point/rotation.js (trace)':
       'e9ae6e987a63bedac7f82bdc1c442304f5c1beb51d5af99e835b86fab3b0072a',
   'fixture mixed/bar+line-stacked.js (plain)':
-      'a2cd5278c3b7ed6fb1d21df730ff17bc7f0a35954504d38e86ee7d5f4eb2ef18',
+      '5b6890c323ac3b0ab451dff2c86d7187787c338817de055620f5824d84632014',
   'fixture mixed/bar+line-stacked.js (trace)':
-      'dfe2145fafb28e1fd45ea8be0bc0634dd17e80be1851c1de267fa601bd8af1ed',
+      '97c4e8d9a03ee014114ea0ee2876067fc7a83fe4e72eac6082b9115ba7968b6f',
   'fixture mixed/bar+line.js (plain)':
-      'e530bc8168a9b05bee8fe76a090169daeacd450ec49684e9c4b97f67083f1d1a',
+      'a64e193d229bf721ead79b2870de47c93ae80081816ead1e706015e9bca84f13',
   'fixture mixed/bar+line.js (trace)':
-      '3ee5e61db09322192f08eb7c1ae987d510c074215bc0448786655126f2975773',
+      'f08224d39d2b5fe6128c420be17c447e2d94aaf1b5f04b0503cbcf24f3e0ddc9',
   'fixture plugin.colors/bar.js (plain)':
-      '06e9e8a38f90c6a24cc8686386bc225dd50561b1bbde342e334447be6bee6cf8',
+      'fc766d66e3141be338651177ce8e4684491aeef2ef701e3e13538963f8e385d5',
   'fixture plugin.colors/bar.js (trace)':
-      '448cecb7209327d32f84b377e31140c217ab10968228803fa5a67d3c56bc06dc',
+      'd561a57e1fbf73dd6d2e5a8a281291d51d92e10942fce8786223cccf9448c6ae',
   'fixture plugin.colors/bubble.js (plain)':
-      'dfb33fa135426060d0ac2c39aeed6a45bd532277d6f9245ce48ba1b0de15b18a',
+      'ad8723c4737fe261cbb54ecef3e97e47511443783fcce8516c4b3c0b48f07fbd',
   'fixture plugin.colors/bubble.js (trace)':
-      '627922cdbc5d01361ffee13b6234598daa23bbfc043121f0a3355f9936fd129e',
+      '5a3f7d56c47fdb59f3af77e9f4b211a9c53234a3795338db151f0cbcedf2f990',
   'fixture plugin.colors/chart-options-colors.js (plain)':
-      '2fddcfb528330386aca63131caaa2a5134a4634cc5709378e8f6f7a185138d1c',
+      '3200687244c72f192195f74153e226d38d5d3d3e01350d3d969d037084b92b68',
   'fixture plugin.colors/chart-options-colors.js (trace)':
-      'd9491ce4390e5726134a03759259193aff452d09819289b8ca63b00ce6e3251b',
+      'c025b60a5f4e86907795004798615f23cc64d565786b69d4bd0c5376822e865a',
   'fixture plugin.colors/doughnut.js (plain)':
-      'b15f7c84bfea0c7358c9471438984af38cc7b93303068278999700802959cb09',
+      'c490fc4e2d7d58057f1496a99eb19d840adfc1ae1dc6048ba3ca22da36465013',
   'fixture plugin.colors/doughnut.js (trace)':
-      '90fb3d607fbee6f942c4118b013e01b9146a9674ef63ec280bc994af1df31341',
+      'a80dafdcfb15ca7277effb55ce385972dee780831441b330155aebce6c715b80',
   'fixture plugin.colors/dynamic-datasets-default.js (plain)':
-      '841096fb75e0f766ca4fa86b6229c57c133efb1d185966f7b4816c09abb831da',
+      '3014c8bd01ff4401ee628d2de9051a7cd7b4550c032771308939fe5b8d7dd517',
   'fixture plugin.colors/dynamic-datasets-default.js (trace)':
-      '959e96af33bb176fcf4d11ebb2014edf3f9510b8ff725deef1eae75374a11ff3',
+      '576fef52920021c4ee49f0086b1a377e2306f11ea648b00abf4bbbad83ab7b8f',
   'fixture plugin.colors/dynamic-datasets-force-override.js (plain)':
-      '841096fb75e0f766ca4fa86b6229c57c133efb1d185966f7b4816c09abb831da',
+      '3014c8bd01ff4401ee628d2de9051a7cd7b4550c032771308939fe5b8d7dd517',
   'fixture plugin.colors/dynamic-datasets-force-override.js (trace)':
-      '959e96af33bb176fcf4d11ebb2014edf3f9510b8ff725deef1eae75374a11ff3',
+      '576fef52920021c4ee49f0086b1a377e2306f11ea648b00abf4bbbad83ab7b8f',
   'fixture plugin.colors/line.js (plain)':
-      '7c187055d59ee3be5b9013627f45f7345d09f0ae7e088c1b45625aa86a7a5454',
+      'e9ccd26707dc82657168450d04c4488613994bacfb7510a92bb091f3e7d69da0',
   'fixture plugin.colors/line.js (trace)':
-      '87cf98ebaa20581c8cf28f4ad63d8d948073e147f5dc2846a7edc5479b5da3cb',
+      '24c92d8389f23fa07f475e5d2fd206673d8367ac510516e0cb002179857e30e3',
   'fixture plugin.colors/mixed.js (plain)':
-      '2219d95db9582e8d1729651724c237ee3a595945f41d5f80cb0b7288d380fc7a',
+      'a140d451e42624b10301996dff2b2d4e949aec5ff5bf931bb30bc72209663ed6',
   'fixture plugin.colors/mixed.js (trace)':
-      '1cfd225ee7480e5846ee54c52b1a0fa709e31b6c8c60435dff1e65cee1872330',
+      '7b9c8b4705dd25ee015e6bd25bf08b893a39f9a401275fd0af0e6f926b8fc46d',
   'fixture plugin.colors/pie.js (plain)':
-      '1d7d4a1e1f21ce95c0edcbcfd480599d1dffdbf2769377bb85b0747c2e33fdbb',
+      'ffc75b108e1327e02b9f4fac309f5f0003570befbabc70f7960b0dec8d7d26a5',
   'fixture plugin.colors/pie.js (trace)':
-      '6374d93df734fcc7f4ebcd72d56a5c404ef62e28130f2edd73580aa91880b80d',
+      'ae99c03c682b0f0e618683150bed0d01d6f515b0d851aba2b5e399091ddb9cab',
   'fixture plugin.colors/polarArea.js (plain)':
       '196f3d708ad3a6f76ecbdcdc9894db48d0c7243a4e3cf28ae55f2877d2d8738d',
   'fixture plugin.colors/polarArea.js (trace)':
       'de726db92bd93f8fd2a6beb54a474faf39f59fea5a8a685943b85d3e2359f02f',
   'fixture plugin.colors/radar.js (plain)':
-      '555a58ee74c1515149efc43c1190201c516d3d89a45230343fd12832291036ef',
+      '2be20e1b968db4e05e60ed97dc90e4ae65a820579f038ed2ece898b9c0407e9f',
   'fixture plugin.colors/radar.js (trace)':
-      '8469a9a9f306deb5ac1b6b17f0c93f8816434fb92926d4a96a37437e96250d69',
+      'c0d41104ca727b5d450f7483bee898e3533b870aa11bdcc6afca14ec9b10c8f3',
   'fixture plugin.colors/scatter.js (plain)':
-      '65bd4a73ea3fdc63b911d4b986e479dc757f468e8a14a34bb6503c0453fe18fa',
+      'bef0ef29de44bad40cb2aab94064006be24a27a52f1b95858bd7fa4e93295c76',
   'fixture plugin.colors/scatter.js (trace)':
-      '055196b8999b5e0d019731ef15649de684e13911d51e0062c3aaadcc2a497013',
+      'bee85536d83ac24661cde1532e2761403b27b943bbda4550a05497b95415cf83',
   'fixture plugin.filler/line/above-below-vertical-linechart.js (plain)':
-      'e701ad3eb1636244b7e141f415ce171ebd2607bc4937b8210cd49552d1cde661',
+      '11abc625bc5b1bb4e2d1180217bab2fccc5d1547550ce6e1286546599e837ce8',
   'fixture plugin.filler/line/above-below-vertical-linechart.js (trace)':
-      '4f98ba8fb888f2ee06f56b1de714f39b4e67334b7416ed7dff9b04c5e3e73de1',
+      '2a493a428f3fbeb5e73ec5d118bc1c357f60fcabe3efa11e244ec1dd7ea20f4c',
   'fixture plugin.filler/line/before-dataset-draw.js (plain)':
-      'd4fde6048066d4ae3cb791364a36a9eb81e2181307caecd72746b038195f807e',
+      'eb84c482255e88d9913c3d25819ce670a87badb2d2d5410e63a7fe27e511853b',
   'fixture plugin.filler/line/before-dataset-draw.js (trace)':
-      'a45db83b3de0835ef54ff54063df74cf324f96ae1d4b986339d8951aaf6ad90d',
+      '939fb133af7643d6c400ae026f7dc69099e21f3b9b3498f3a4ed3ea304ab4cdc',
   'fixture plugin.filler/line/before-datasets-draw.js (plain)':
-      'a85f8b74f5e6b77faabc91d94b883ff016b5da8d422d0b25c3f5370639d793f6',
+      '9420b7dde144e3ed23e3201951f7cf53828824a80d00c0749f9f4c91ed4b3db1',
   'fixture plugin.filler/line/before-datasets-draw.js (trace)':
-      '23face507f973735e3b3c207d082857415586240824c879a157549986ba82f55',
+      '1b773e55e401f696ca981e53036821aa4a7428f57863f75bb2112d2b6681d7b6',
   'fixture plugin.filler/line/boundary/above-below-line-null-start.json (plain)':
       '4e60f845a5ca512448a9067a6924a63ba2201d52421e272b46b29b77577e9b5f',
   'fixture plugin.filler/line/boundary/above-below-line-null-start.json (trace)':
@@ -1958,17 +1958,17 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/line/dataset/stepped.json (trace)':
       'd246fb59afb2ff0b72963185df7c9dc7b758234489b7e694db5415eefee63384',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.js (plain)':
-      '67884eedf2d64d6c18c2a32d7265a6a7f99ca534ed0f9d762d5321456ced6853',
+      'c34045d154dc3025435fdf968b6a88cdcd515d79309ed5220bee358c7dea85e6',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.js (trace)':
-      '9fcffa901678837740aee897654114f0c250b3a638f552710299d8a3866f8ac4',
+      '7cd507150b130895809917bc0342c5765c72ce58e1a6667854e15861a4dc821d',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDatasetsDraw.js (plain)':
-      '67884eedf2d64d6c18c2a32d7265a6a7f99ca534ed0f9d762d5321456ced6853',
+      'c34045d154dc3025435fdf968b6a88cdcd515d79309ed5220bee358c7dea85e6',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDatasetsDraw.js (trace)':
-      '9fcffa901678837740aee897654114f0c250b3a638f552710299d8a3866f8ac4',
+      '7cd507150b130895809917bc0342c5765c72ce58e1a6667854e15861a4dc821d',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDraw.js (plain)':
-      '67884eedf2d64d6c18c2a32d7265a6a7f99ca534ed0f9d762d5321456ced6853',
+      'c34045d154dc3025435fdf968b6a88cdcd515d79309ed5220bee358c7dea85e6',
   'fixture plugin.filler/line/drawTimeFillFalse/beforeDraw.js (trace)':
-      '9fcffa901678837740aee897654114f0c250b3a638f552710299d8a3866f8ac4',
+      '7cd507150b130895809917bc0342c5765c72ce58e1a6667854e15861a4dc821d',
   'fixture plugin.filler/line/offset-scale-minmax.js (plain)':
       'dbf0db18282e2611c8ee8fd0aacf0700850df015c4cbfbd1d2ef3c8927e661d9',
   'fixture plugin.filler/line/offset-scale-minmax.js (trace)':
@@ -1978,29 +1978,29 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/line/points-outside-canvas-initial.js (trace)':
       'a45befe2fc0114fc502216e24dc21cf07928ed5401e431432596ed4212ae4104',
   'fixture plugin.filler/line/points-outside-canvas-update.js (plain)':
-      'c34f0b2ed64aae46d4bfea3b237539db0d9a65bb688310f7d0f66334998f7296',
+      '8a7f609c65120486aca41f7ca2d27d384593a2f33a9db6567e7ae04741e046d7',
   'fixture plugin.filler/line/points-outside-canvas-update.js (trace)':
-      '219e609244296002c472366af6a1d343226af48aa9f58f6fd32856eca4255dd8',
+      'b9c8b0dd198607314a32f05f299931a11dbe8f34a18d162299552f12b3beb60a',
   'fixture plugin.filler/line/segments/alignToPixels.js (plain)':
-      '5cc12446ff2a695eb2ab3715e8e965e608ebf5821f0c6612228e6f5cf5a30255',
+      '4c9d961c2bb588b7f252386b232f0d75b7bee8dec7ea4259188dc588aa744b42',
   'fixture plugin.filler/line/segments/alignToPixels.js (trace)':
-      '132c0fcf7f11a9d569c51ecf9dc801b22fe86cac08a70b97938f4656fe867f7d',
+      '5b7f711c2608b4ffc6d6870584a884899d1952468c8b292f7d3e860dce7b3c54',
   'fixture plugin.filler/line/segments/gap.js (plain)':
-      '497e2b116e8f9b7fb7fe760f38467c4448b42939749e81a92c74663d9c51cb45',
+      '307b544f52a4780148cb9d4a46344c64e81bf1b04c9483d098953199a0a339a7',
   'fixture plugin.filler/line/segments/gap.js (trace)':
-      '700310a5306c5e309957199489cb4baaa35a0e51f8213d950c22c2cfed0cf3d9',
+      '271e296168c8f8cb22c204f918bda1397ff81d738e6ca42af708a1fd3727d1a2',
   'fixture plugin.filler/line/segments/slope.js (plain)':
-      'a6f679ec7f2e669016f979b1b26e1ea9af5ce44dce1b990eaebe48eac3a51672',
+      '78a73ee762c1146b25a486fffba5d077806f6d36dd69188d1e8b18a1cbcd9e70',
   'fixture plugin.filler/line/segments/slope.js (trace)':
-      '9d69fad5db0cf76189ec9ef6a6f8f2eec54d02248e931b7a00ca08fa68a431a8',
+      'ea3f1ea82008ca6f484ff299bac47bb98c0c5e7a172b5928cc31b659d0fabd4a',
   'fixture plugin.filler/line/shape.js (plain)':
-      '32a24e5bb03b566b577d84f82d8cb752bfdaf558a43492cdf48fda879177f8ed',
+      '7859ef6286ec8e9d1e8a297eb9e1cc4f2a78bf06b4b1ff890ce699c2fee55968',
   'fixture plugin.filler/line/shape.js (trace)':
-      '0fc6d971a5380771dc25104b4918e387e691216fe662b76a89919a935eac43dc',
+      '0fbdeb2ee51fd9e07a26430932ee52d739f0e63619d7acd49e0214ef9464d73f',
   'fixture plugin.filler/line/stack-multiple-scales.js (plain)':
-      '5b54626c63c26e96ab42b631140eb1f50d94dc79e8fdc2e09a67b47ee1a9fe7c',
+      '37b2d2cca9e739ac920acf5da2ebcd8d411c57b80d4d95b1a4978d1fe0537c7d',
   'fixture plugin.filler/line/stack-multiple-scales.js (trace)':
-      'b648047c66f71f2ebd1bf9e7336879795d53a9c149070ad0752087e7eff4239e',
+      'adef83cf31b4e6c1e3a06e54b67af958dd8a5d04120c4f70be477dac2a88585f',
   'fixture plugin.filler/line/stack.json (plain)':
       'eb7add3917d73beae7ac4929a5fc55f560c398f01ff51549d8e9788681c02a0f',
   'fixture plugin.filler/line/stack.json (trace)':
@@ -2010,13 +2010,13 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/line/value.json (trace)':
       '99c7d77a672e9a3c62a880681cf97fac584e18cce6145cf53f59d393256561a1',
   'fixture plugin.filler/line/vertical.js (plain)':
-      '131cbb837253342a1b4b2eea5aeee03ade41823a83f0f08c0317151f637728a4',
+      '58da19bb3688ee774273fd375d1ec4df090f2febc903fcb66c929760fa2fdef0',
   'fixture plugin.filler/line/vertical.js (trace)':
-      '728cf96fe82d01cf4cb67dafa29f9bc5e1330cfdbbfa4f17e70de202bb6ea672',
+      'ccf88720139a9c03bdf311825c2cebb221a755e718cbf5fc0a76c24981bddd95',
   'fixture plugin.filler/radar/beforeDraw.js (plain)':
-      '82227261b0ad6c28cd4e4d6c5d13e69bcadcbefed454d6cf3459d6669470a23e',
+      '60b811fa9cd6d1e4acbe5becaaca03e7e823136e8ea2cd473522808c77485cb2',
   'fixture plugin.filler/radar/beforeDraw.js (trace)':
-      '7d3afcce1698bc09cde850abec7d200b0af98fc40efb97a89fedb60ebee9cf8a',
+      '44753e26561e0882f88dc81530a9a7ccf9027e3c8ed4fe1c25d2205fb734b6dc',
   'fixture plugin.filler/radar/boundary/end-circular.json (plain)':
       'a6e085f71fb010d77f6f42261bbdff9b1e989b13c1b9a3d8a9b89c265d48f20c',
   'fixture plugin.filler/radar/boundary/end-circular.json (trace)':
@@ -2058,9 +2058,9 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/radar/boundary/start-span.json (trace)':
       '2c36eb4c31660f25482d9ab314e53726f0c5715a7547860f5e3c0b24bfb8839e',
   'fixture plugin.filler/radar/boundary/start.json (plain)':
-      '2dbaeae54d7b4c23e7edc384e6c623b1cc75fb5c4fcbe0f866d69db62b24f5a2',
+      '5e28aed05fab2f1a7fbc76223160f28cc999b658bb75f7b9cb48a143f7382c82',
   'fixture plugin.filler/radar/boundary/start.json (trace)':
-      '9bdff4aa19fb41e5c911c925efa03b5cd9e14c848d5add486dce39a51a596579',
+      '83a1fe63dc6c98c2a6270c4bd34a091d53b7746ef034138c0c94e1cdd5585afe',
   'fixture plugin.filler/radar/dataset/border.json (plain)':
       '9358faa35689555481aee095123757ba09912edfc7b6811f7955cd73bc558562',
   'fixture plugin.filler/radar/dataset/border.json (trace)':
@@ -2078,265 +2078,265 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/radar/dataset/span.json (trace)':
       '63bc013e99dfeb5c4d7b9b4cfe48efdd770b22160d917b0810557458d65dd4bd',
   'fixture plugin.filler/radar/dataset/spline.json (plain)':
-      '47411494c7c9146e670d0b04f434a9122ec83da27bd713c1d24f53f024f325b7',
+      '38d193f38bccb58cc8b640f8c5a68dd9c35673b5bf98e4772a8865493d8e327a',
   'fixture plugin.filler/radar/dataset/spline.json (trace)':
-      'b2eb6cfe4430a026bc3ba48001e11d0f93b329666bc3e55efa1d3690408b49dc',
+      '8cc7c81b772d495e0cc148ce1839ba50eb8aca53b389626b6b0edaa539d688de',
   'fixture plugin.filler/radar/value.json (plain)':
       '2896450ef2a07b6f6e3391d600cd0c8d4a516bed59129ae7c7ac743423394472',
   'fixture plugin.filler/radar/value.json (trace)':
       '8ed3de6d22acb9d7115c40e6abfc913c4b376cce05d49136da40e49aec531b2e',
   'fixture plugin.legend/borderRadius/legend-border-radius.js (plain)':
-      '986145748c53bc153760ee586e93169b26bebec92efb15c77d6ebae97eb476d0',
+      'd7ce3aa4ac06d6f8b6e08114329379e80955ffc88d15d6d286b60b3793ed2d1a',
   'fixture plugin.legend/borderRadius/legend-border-radius.js (trace)':
-      '697e11250c6e2c5913071621b634eadefba9fe7e3e6bf00f1615b25073542e1e',
+      'd969898c50c8b142468042e1fb556a3688f01b4c743f6179bd85dfe7176293af',
   'fixture plugin.legend/horizontal-rtl-hitbox.js (plain)':
-      'ccc5f3528f93192338dcea185668c7453d42a026449f8c3a9c262904d6583b02',
+      '39f95d71c4a9da3cc05e5f49f2130ab69a5028534208b1486163e495592617fd',
   'fixture plugin.legend/horizontal-rtl-hitbox.js (trace)':
-      '5787a6a2abe7f7d3723a48dff324d7922f1d0dc108a3c3501ba0c9e8ab9bbe5a',
+      'bf2a2d4b0781a0bf6627539638d4b1a25b4e9966655b1f2931ea4105924ea88b',
   'fixture plugin.legend/label-textAlign/center.js (plain)':
-      'e0cadaa1891dd7d9d6bae54a41d6a15ab7e815fa4d0f926f92c560bd9ef3d140',
+      '4f8600e4c4ec6bbfea162163c4b7d8d41f4e64a1a1fadbf8304cb2650e852852',
   'fixture plugin.legend/label-textAlign/center.js (trace)':
-      '4783bb8d31f94e0024fce3a1194da7c11cff51d9db53f1ff0cf4d46b08aa28b5',
+      '6027c9538dedde5d6a8252e8507c152b52722d4d936134b5d4de2832f97de207',
   'fixture plugin.legend/label-textAlign/horizontal-left.js (plain)':
-      '3f191694fc5bb4a77f73658594f4511c4df92a373ff894e8b74c61db33421e18',
+      '79d7f8ec0118bc733282ec965d523d63984c42b615f8d4766bc18cb24cb38f5a',
   'fixture plugin.legend/label-textAlign/horizontal-left.js (trace)':
-      '04cb866c332c3a84ac3362efa7958f2f716cf239de0786d2e38db10396e792b0',
+      'd44220e177157e4b3c1c08e25c460206fe9dd36d3d1f0522b50fedba6d6b88c6',
   'fixture plugin.legend/label-textAlign/horizontal-right.js (plain)':
-      'fcd1300d037a7d1bff4a4b99597ad22cb21be95fe212563de7bd6fcb12b0a492',
+      '6f37fac9f4b192295df8e8aa4ca643c201588d773530a12ec40b2a4f67b84bf9',
   'fixture plugin.legend/label-textAlign/horizontal-right.js (trace)':
-      '58d0f594cb2baa27cce80bd4ab5b18ab612eccb3b1baccb80855170f8ba9b6fd',
+      'd35341a4c8126996f8980211815bfd62e01ca623f47f117317f53ecc56cd9b8f',
   'fixture plugin.legend/label-textAlign/horizontal-rtl-left.js (plain)':
-      'a9d2bd60850e84f142d1839b0a504b28453d531869f20ad0c2f2d9c477c69ad1',
+      '4a27e06b16a769579b5ec985ad99724c92ee55a0dd9b3f2174687de4517c1578',
   'fixture plugin.legend/label-textAlign/horizontal-rtl-left.js (trace)':
-      '742efdaee392c6af68c0194856d3aab1bc5f734c0728983b88798432672f0427',
+      '18aba5d98af743d30f662bc2e74938f4745666c5c82075c7c6dd31f4f803d408',
   'fixture plugin.legend/label-textAlign/horizontal-rtl-right.js (plain)':
-      '296a1039a041cf1b799fcfd8ed795d4eb36e7a35b0e2ce85e226eb2d01efb8b2',
+      '4d4982e9cef254d92e863cc6ef6b13df434497f461a639debbc5aa971bc3fd5b',
   'fixture plugin.legend/label-textAlign/horizontal-rtl-right.js (trace)':
-      'ac57c0153425aa3bec9d6114fb0d7c97d1aa100b946d108815246253feb35640',
+      'e03a9d0ee9a4e51082b46a3c12d1e09538901f229e4e49f27314467b4a21332e',
   'fixture plugin.legend/label-textAlign/left.js (plain)':
-      'ce694a8208ea911a2b780d5b6b3dd1b6ff3b4399abd6b9ed27894ec261d28084',
+      'e7023569c8a8fb490487dc229c61811640414a5b2c57178e0af0cbc0b428c8fe',
   'fixture plugin.legend/label-textAlign/left.js (trace)':
-      'b0227cbbfadd4f545b2c7580b343929b4db7c2f06bffbff100e1b2557a28ed13',
+      'ca8e2f68032283e3e618d2b48280ecc50cd095de498c4c7cec7a699a5f5c6759',
   'fixture plugin.legend/label-textAlign/right.js (plain)':
-      '2e880273a555c918941123d06c771d810617dd1a2cfa77acfa47434213e75ee2',
+      'f2240f11fbe117032309a2912bcf7e8ed9904180a51697625bbb8c993c24379a',
   'fixture plugin.legend/label-textAlign/right.js (trace)':
-      'c432e6cceba71794762a6854f4c8253e8fe066faf53281dbe7de67fb7e3459a3',
+      'c15176e45e1c556a302169914e3242b80e21abac640184741c2e03e425de0090',
   'fixture plugin.legend/label-textAlign/rtl-center.js (plain)':
-      '3ab92b57c7911672422d163277004670a95ab4dd5fc882a50f0515dc952e0eca',
+      '865a6b255ea5f1e81f4c75937914e23ca80f7be21d055d1bdd7bb1baf053e4c6',
   'fixture plugin.legend/label-textAlign/rtl-center.js (trace)':
-      '4859560105b8659b67f99fd3079da859b4b694da99ec0689694e130b0e63fe59',
+      '9729454fad7da616a031263e16e096fc650d6384fd53b4373cd296a468397086',
   'fixture plugin.legend/label-textAlign/rtl-left.js (plain)':
-      'd8851da93d9eb24ff358db648291bd822abd4ff08f731e2c0087d0b41b1eab13',
+      '6cc6436ffee3a167a4c6cb07327c8b0e10a5a5a3bc8b9d49889f6feb472d6f83',
   'fixture plugin.legend/label-textAlign/rtl-left.js (trace)':
-      '2605b2bb094e177e0328e09ed7a5e6e5c6e75f4d3be7971c9ec963e7b40edd93',
+      'ecf431ea83f1c5dd4cc7bf4e555773f8051dbe992d61d74511181dfd4b3d7023',
   'fixture plugin.legend/label-textAlign/rtl-right.js (plain)':
-      '57de9682d0076be596b71318a92b424f8832c53668eaf6f7d1ef8f2f205fcb47',
+      '2f16ba6160457bb46dfc1517493897afed12f9e27cd2d0632bf61f8aff60371e',
   'fixture plugin.legend/label-textAlign/rtl-right.js (trace)':
-      '56c28b0c37245426ca9f445b87db76403551840ea6687cfa7903a00e1a795622',
+      '3d6339d8770feac125f54494f4c8defc656a715664dd0cfc9f945cb6b88fa78d',
   'fixture plugin.legend/legend-doughnut-bottom-center-mulitiline.json (plain)':
-      '15849e757f307a674eeb47ed94deb13721b42779c44ce8ffe6964d8dd44cb748',
+      'ffb74e600fd56ab38a18feb39b3bc86ab82533fc4694932f7063515a48c8253b',
   'fixture plugin.legend/legend-doughnut-bottom-center-mulitiline.json (trace)':
-      '0057b74d6dcb730e2e82245ebf4eff7722d392093fa446ff74a0d0c8a927b18b',
+      'd4e44106bd4a019e9611b8f63f98b2b9bd6e0533bc09a0997b42e073a01bad01',
   'fixture plugin.legend/legend-doughnut-bottom-center-single.json (plain)':
-      '6522e726349dbe885785a3e5c3a3c94c8504eefcb2869612f54c842a7b6b50e2',
+      'f6d009a18b28dad6649205ff3e3eb98b3c72a6943caded4219b91e419ec3cc42',
   'fixture plugin.legend/legend-doughnut-bottom-center-single.json (trace)':
-      '5fde847e5d93dd7d74ee94c8a45a0588baa3c14595da2eff7c4a9fbfc6538f86',
+      '275e8faf22e8a82408da847064a5fe53fa14871820f1b282cdab5667a4768867',
   'fixture plugin.legend/legend-doughnut-bottom-end-mulitiline.json (plain)':
-      '976869a5574ff7ec88dd9a5e563ec3f404b64a22b5091b18468de8b2ef4e53bf',
+      '553b706a72b0b8502fa8dd8d502dda03fd87e61de748c67f05a628b62eeb53e1',
   'fixture plugin.legend/legend-doughnut-bottom-end-mulitiline.json (trace)':
-      'a3e3be21f17d807b12628f02110aa771418a0bac0c14b2701d6670931b3893e0',
+      '7db3be1a19457409142358bb8dddb2d9461f1506bd8d51827889949fc03fddb6',
   'fixture plugin.legend/legend-doughnut-bottom-start-mulitiline.json (plain)':
-      '748a47e6f0f7f59138a1d2619082cf1583dda20706980813b705068ac9548589',
+      '9a65e8e05ec17bc7059362fcfb4739b263f1d2a8c63fc950d6e4f69e40df42e5',
   'fixture plugin.legend/legend-doughnut-bottom-start-mulitiline.json (trace)':
-      'a8cb755b2093bd10a119d7e2072166af090170197d97f0f32725cee14f5ea9e6',
+      '9cc6246ff358b01c23c74b73e5e963509f531f72851cdb54d1a662d888a0de26',
   'fixture plugin.legend/legend-doughnut-left-center-mulitiline.json (plain)':
-      '176ab889ef64355ab8d31984c8dc43bab6277fe6f1b1ce7f067dc8d7a2472019',
+      'f64a1cfe469e08ace1fb47712c3d33bb937ed4013c9585738d173286466f5a66',
   'fixture plugin.legend/legend-doughnut-left-center-mulitiline.json (trace)':
-      '537ec6b8dd1018a61101df0ca577c672651d5099c70705b9b94a75ef02657413',
+      'd6abce42ee74b4b2a81777e3b8c57871ffb5edd1dc6d9abdda16bf7d33ae2108',
   'fixture plugin.legend/legend-doughnut-left-center-single.json (plain)':
-      'fbec67cef9a30a7d1d7987c4dd6fa3dea8626f785416fb654cf3d4a833345ebe',
+      '6524fffc2a3645a28d9c02e936146024baffd6bd9aaf018c8204ca2ab437b5fa',
   'fixture plugin.legend/legend-doughnut-left-center-single.json (trace)':
-      'f197e0989033b4f958b1cd78981853c651aca04bcc8f40fce11cf158807f1589',
+      '10ff6c24074e8947e496fe2bfe42f5f5a946d2c48a244d6b6add434f8f758675',
   'fixture plugin.legend/legend-doughnut-left-default-center.json (plain)':
-      'e448261d73646e04079ec1ff49468df965435dd8e96c83da8652c1b7468069dc',
+      'b998a0c7020f26da1db35499b80c7f4c3085f92dcdf1802efeb0eb55678ba081',
   'fixture plugin.legend/legend-doughnut-left-default-center.json (trace)':
-      '85f283f1c5275ad682367fcd174df873fd5ca51623b22dad9f3223fa106f34ea',
+      '6e6575d779ff0b29fb63195ba0fdb1ebe02f0a15f9d8c39cdcfa6539fcbd70aa',
   'fixture plugin.legend/legend-doughnut-left-end-mulitiline.json (plain)':
-      '167dbdb7bcb4a1a0b2d8a79687e7fe33ab78e1a2c7c8bed3c1160d5af43f8672',
+      '6efc2e537530944eb639b595b037460056111ea473176feb561e3d1a56afb4dd',
   'fixture plugin.legend/legend-doughnut-left-end-mulitiline.json (trace)':
-      '6aad68a3c26cfaf95cb0ebcbd17f4f33bf0fa1a68a4c5dcb8954419d18034ec1',
+      'e5bf9ddacd5740c7d93e403fc78cf36c681576c9b18397ff4c984c30db1006c0',
   'fixture plugin.legend/legend-doughnut-left-start-mulitiline.json (plain)':
-      '7a4720959017c25af11d7749bcc61ba594c4ad59468918a20c8e2d40d77e7a47',
+      '659381d933ea5749fdbaef5d9f566b317152ec3085e54aa99feccd16b45c87f8',
   'fixture plugin.legend/legend-doughnut-left-start-mulitiline.json (trace)':
-      '9d1c942f0c199a1aa0442f6d0e5804b3d4189605cb51fb6c86e9b66ccd666b49',
+      'fc357b2dc5ab67415a228328b713a8c9fdad853a089e06df5e9ca5c49a77dfb5',
   'fixture plugin.legend/legend-doughnut-point-style.json (plain)':
-      'e51998656f318309befc8f7ce62d97e42ed695ad56ac18a3921621395947ffd1',
+      '13189e5b8844587205d9381aeb206d499a04213e53ed6888da221f015117b6ef',
   'fixture plugin.legend/legend-doughnut-point-style.json (trace)':
-      '0231a2a7e5f78583374a05835fefb4a4bee7ccf76b72348e0e5b13945f7862e7',
+      '7a40d0c2d50ce5dd32c6e7cc8df6b435a04f869a021c9e0a73d8b4ff6753b648',
   'fixture plugin.legend/legend-doughnut-right-center-mulitiline-labels.json (plain)':
-      'f28c78e1d1728e41dbb7512132ecb48a6ef9071b27cba4c80fcdc425aa1db080',
+      '9b8d219936c003c4ddc8bb6d7f5d90f5920b6d19c3616ffdb89edebd9db58be2',
   'fixture plugin.legend/legend-doughnut-right-center-mulitiline-labels.json (trace)':
-      '05f7baea46e34a5511f46818a3e9ef5b7a25d3b8b4ebe89463e175b36862235f',
+      '3643063de49c94ed4d2b0f28a81b1f932000158a795896da5a155afc1ae762ac',
   'fixture plugin.legend/legend-doughnut-right-center-mulitiline.json (plain)':
-      '402e054717c0021b8ddf7547eeac3a278e1fd824976a1d7a9d097e70cdd8cb65',
+      'f8439f9a0b80502fcc2ea11a00354a69a82a6fb2d6838d7e5dc0a85dc3d4f60b',
   'fixture plugin.legend/legend-doughnut-right-center-mulitiline.json (trace)':
-      'c51bc7d6f9c6fab6f6a62e5ff04533cba9b2d9cbced308f6af36dedb80dfb0ca',
+      '47d02a22900a402987c8cfcb901f33271a0288081ea00238dd6cc4d6418ab2db',
   'fixture plugin.legend/legend-doughnut-right-center-single.json (plain)':
-      '5ec170d9eeadbee2baa8b90f5431b3122af135161354e8c0f12da51093f3c2ee',
+      '6253cd5b6f07b079b699961d5d9b4dd14d981aae7044793525dc520aa58e1161',
   'fixture plugin.legend/legend-doughnut-right-center-single.json (trace)':
-      'f8d8b0c68fbf31f0fb7cad9ec8328a51290dff2363550f51578fd3058c41ee6e',
+      'ad8af0c1581f27eedd41355d6968da3b761b022ea1d883ca52d3d1d2d895ac35',
   'fixture plugin.legend/legend-doughnut-right-default-center.json (plain)':
-      'a9998aff5b1c51447887c13101032074578ecab4bf4d8dc71746ce393f284056',
+      'd9d06ea4b21608e6965a74fb12acaaad0d8e8ddcd81931e1999cf9a27f9d0d25',
   'fixture plugin.legend/legend-doughnut-right-default-center.json (trace)':
-      'cbf0d55bd3d690622fc81630bcbfe930f03d205b1a68063af426da1519258655',
+      '6cdd068fff7d9adb9498760c46541a26fede41ce72dd4b06affd5bf1fd975afe',
   'fixture plugin.legend/legend-doughnut-right-end-mulitiline.json (plain)':
-      'cfb9f313304e6ca9535544f2cbf195be7544f3db7298300e5fb0502f3b6bad7b',
+      '62c20ffb00e4424f3d2ceb8e72471dc002541b4629d65fb1065ca1da4778e15b',
   'fixture plugin.legend/legend-doughnut-right-end-mulitiline.json (trace)':
-      'd978aae9abd411e3b02d285fba4c441ddaf4f858b30836446e3afbceb61dde1a',
+      '0c30c6d9eb63fe741bead7fa214385403a37dcc36783b19dd2b2d15ccf5d916c',
   'fixture plugin.legend/legend-doughnut-right-start-mulitiline.json (plain)':
-      '74d92260ea4878e403d6e9eee6ea47205d549bb9a209597d02953825a4402b91',
+      'e75fbdf580fc3c8237b09d57f0bec4e8b199c02afebe65ed7c74058d61345365',
   'fixture plugin.legend/legend-doughnut-right-start-mulitiline.json (trace)':
-      '73000cc2a2c87c17f225ba584caf430fcf16608771a7254f6d9d08884f6555d6',
+      '15f62db656f0c45bed4e5c5ccb57a1e68dc91d0f91357becb6c3ac5ffdeaf189',
   'fixture plugin.legend/legend-doughnut-top-center-mulitiline.json (plain)':
-      'cbf23d9497af92a05742798946cb647555c8a7425e6577095c81df53d0a3eaac',
+      '12cf83db1cb90894b27f9ef7adb01374f6299d9072c62f78bc17ba19c26c2b66',
   'fixture plugin.legend/legend-doughnut-top-center-mulitiline.json (trace)':
-      '77ccaf71401fc3a2d0528fc91dc549aa1bd4865b45b991edd74242edca91eacc',
+      'b61d26bb3a05a7811b18fe5b5a8903044abf164028327a266ab18f0ff12f6748',
   'fixture plugin.legend/legend-doughnut-top-center-single.json (plain)':
-      'c0ab0c28ae060900a70c2217b6098a85ad4b233fc0e8d01bd0a73eb06537963b',
+      'a3a024cf3adc62dd94086e82db0e612fc2149cc81336c17301195441469e92b3',
   'fixture plugin.legend/legend-doughnut-top-center-single.json (trace)':
-      '2534ef8a13c286a22209c655016c8a526fa1af9efca36f026ba033df684f2eb0',
+      'f558f263fbb3d4fec6edc5823e6a2665689980274de8f75ce831c799f76490dc',
   'fixture plugin.legend/legend-doughnut-top-end-mulitiline.json (plain)':
-      'c82ec42d600aa2d3ca7dfe971ef1f371957bb7bb33b05aeb040e577174598c35',
+      '9729be0269e53ad126e35e79952a1bc2812e301d4cdbfbd2878ba7949863795b',
   'fixture plugin.legend/legend-doughnut-top-end-mulitiline.json (trace)':
-      'a8ea1f99e5287a0e80c6e2ea32edf78a7def6eb2e2baeff0a32fb2ce89746ad6',
+      '53769093023129b9e13770c87c88d30538fe6817e3a3f3eecd221f71a4b1e17a',
   'fixture plugin.legend/legend-doughnut-top-start-mulitiline.json (plain)':
-      'f135bb573fe93ab7f4f5b6b956e52df4852fa18b1a4cba16f1d12b10fcf56ce7',
+      '1b18ed04abba68537e936358f68542531c40fbbbb3b61234919dec4a59271509',
   'fixture plugin.legend/legend-doughnut-top-start-mulitiline.json (trace)':
-      '8df2e826a0eaad25126e425d86842b2a3419a2c82f2ee294bae33915b08fecba',
+      'bc4d6387406bcbab1dbe8039121509a5c3af14b747bd45ec801c781e69a23fb8',
   'fixture plugin.legend/legend-line-chart-area.json (plain)':
-      '5bfa5d9e928408c0c3e2e577010b35c649c91179c32b2f36e0f1d8003411f20b',
+      '6e1ab5a84b4f717dee31ee56680bdcf95fd55b78735c39482930dbc68db6d353',
   'fixture plugin.legend/legend-line-chart-area.json (trace)':
-      'fe41f8be1cf12383574b499debb88d7aefd051ab1e1510bbf1e8d07941eb7091',
+      '68d300dd5164f830bc68d3ef8ca0e0fe31d5a27dbb5df96ac5d0fb09ac725d2e',
   'fixture plugin.legend/maxWidth/infinity.js (plain)':
-      '90aa7d9164970e25e3bcd01e84a3e6a176e93d07b415496500216f4e2caf7b13',
+      '445ff2b35d46ace57f27664f2336d4d6de50ac40baacca92d01236040f36cf90',
   'fixture plugin.legend/maxWidth/infinity.js (trace)':
-      '7afae8c9d000d423477212fc72c24482ee3bdc4a32d0be083968f926c346f92e',
+      '3bedc80d5f9c450b8f332fdc7e34557c98d3b43d89a7390ce0b4d374b16dc5db',
   'fixture plugin.legend/maxWidth/undefined.js (plain)':
-      '2920bfaf0c278f741fc0d41437fb2dac41f53547250809f77717dc6ac29d44bf',
+      '2f2debde8feeee3dd4b36f71b1cc8143469c8c5746be49be568443bcbc7dfd4d',
   'fixture plugin.legend/maxWidth/undefined.js (trace)':
-      'e61ea5d5d4750c373c5ba2397a00c37ffc8078aa6edeffb6b12455aa498f4b45',
+      '6ddbfa2b286234080db08f5752007595237ee2a7a23c2fa2e7c023aa8aad6436',
   'fixture plugin.legend/maxWidth/value.js (plain)':
-      '7f42e1e2a7a4246cee9d7e09702979e96c20acda632b245e39e02b4bb2ab3a54',
+      '08cb5ec1d10257e86e8e327e4784e310a00a201daafadcc9bf74c769dd441d2b',
   'fixture plugin.legend/maxWidth/value.js (trace)':
-      'c9c17d037f792cc6b61b8216ce588eb602c8f693d81a743d2975c61207ada377',
+      'ddb07eacabc349643bacbf223e814432224f64a093266f00ec052bee58ebca4e',
   'fixture plugin.legend/padding/2cols-with-padding.js (plain)':
-      '95b87b2982fff6954192353ced867e544c5b3489a428e8648f3854cef25ccc6b',
+      '16e5049f7a4baf3931784fd392912210b6416a745cf6d53653cd79458e2f63b5',
   'fixture plugin.legend/padding/2cols-with-padding.js (trace)':
-      '31c7c40d82e2aceb7412f2250b7ab5e4bf008a4e670a535a395fc7b15dd8ad25',
+      '7cd729f05de01a88aef5f9f88fe256077270337da590186c37a2977b62ee4f22',
   'fixture plugin.legend/padding/add-column.js (plain)':
-      'dde4d4372c1eab2611e460b01b1488996ca19727345c5a360f68d81f9e664c7e',
+      '3286bc7666f209698a5309c3e79301c7e15c9b24c943cc4ac56084091911ff8c',
   'fixture plugin.legend/padding/add-column.js (trace)':
-      'd9c69dcbf9395d5d31fb4afffe833f006a246782dd4cfccf549ca226b2b8a967',
+      '909fff770fdf15f2b96cd716d02f31e7c8681c21e86791aa36fde32a559a609b',
   'fixture plugin.legend/pointStyle-width/legend-pointStyle-width-default.json (plain)':
-      '681f42df3f5d91030e2f7e8b630a766e1bb97a1d5548b765aaf4bfcf27a343ca',
+      '2283c7de1f4e4698d762d6154eb30dd3b9bdaf25d57032c24fb6d671084c3ea1',
   'fixture plugin.legend/pointStyle-width/legend-pointStyle-width-default.json (trace)':
-      '45f19e78fb6cbda5c72a6042361de14603bb88633007c37f39595ddc7dcf5458',
+      'f82226d0be19a25488438df69a55852553faa9348506fd427a523f5454f490f0',
   'fixture plugin.legend/pointStyle-width/legend-pointStyle-width.json (plain)':
       'a88918f191ba60ad6219dc1fadc638587d286e27e7003a9d1b450d48e64236d4',
   'fixture plugin.legend/pointStyle-width/legend-pointStyle-width.json (trace)':
       'b3e17e9b75f0032463129dfe877fd0e0e30e8436936aa767e113c12c992edbc0',
   'fixture plugin.legend/title/bottom-center-center.js (plain)':
-      '299bf6b82285445bd87b000186a9ba8ca0cc60f2c8901a2b29c0dbb45678dbcc',
+      '358d2d5ba6f075eb33807091766c75acb59931f433b2a5c371d6c04e9c173e45',
   'fixture plugin.legend/title/bottom-center-center.js (trace)':
-      '1b1b418d9da429ed2c0e3352b9c1cb50d2041d5f7a8307bce460deadd2e14e07',
+      '03e7602fecd1300a4c3c26a88e78a91ca41f9eb9c10959d413ddb2754f76e042',
   'fixture plugin.legend/title/bottom-end-end.js (plain)':
-      '81cf31b6ba6eefff94e2482bddac5ee0a8e3d4d5a1e3566ae760f113cec6033d',
+      'e1b00a1aee5c33f2e05cdbba2b67fe3d2a2716789dba6ea2e91ae84bb3cb2afb',
   'fixture plugin.legend/title/bottom-end-end.js (trace)':
-      '2de91326fe3f1c34f8f5a1f1c8c4b853d50b6818383cdea728720c061e6151a6',
+      '88bfd0bbbfe9b3a18017ba06bfeb50afff658f1051e6675748c1786d4043ad73',
   'fixture plugin.legend/title/bottom-start-start.js (plain)':
-      'a9ab08f1e03f97bce6fd83f95d5f68a2e024637aaf318a15fd6fb47712634cc8',
+      '4aa0acd77b37d9f3ae3e9da6e297b0b99a9f2152e8598a9790b89bac855d2e1a',
   'fixture plugin.legend/title/bottom-start-start.js (trace)':
-      '289b7c22f53ec9f93e1b2bba44ba3dd039349122104a8f1f89d8314ff3205934',
+      'd2f4fe57ec0f37968cf38199844de45d0cc70916c5c9abe5c2781b1c939508c5',
   'fixture plugin.legend/title/left-center-center.js (plain)':
-      '26d65d928e1de871662371f9bbaef7d7ed8cc3122a6a085b7fbf0a8c63015728',
+      'de002c1d6e92444f2466966eaf32af45ff1df2cd4ec8edd5d8b9854b098e0634',
   'fixture plugin.legend/title/left-center-center.js (trace)':
-      'ab8ae497ae447997034c9179f3e3473b652bd18f537e6b4766ea4ef03005090f',
+      '3512a2c33a1690897bb7480e9d79ad4b0bb56c90060fd79e28edf2ecd472c102',
   'fixture plugin.legend/title/left-end-end.js (plain)':
-      '1ba8d608d0dd593d2a732789124e1d17666ffffbcd34b37a8f1f628707ce29db',
+      '7f083b2114a4cf4a3fa35b2b5c56a4453566a34bd6af9a294c6377107b515803',
   'fixture plugin.legend/title/left-end-end.js (trace)':
-      '4d41809ffcec2abd2a7e311d550edfc020c203d53dd2b7e86c5dc9a4b4da146b',
+      '3ac546d152568a161496692c95dadd0508d7051c55f62e24b9871274d4924602',
   'fixture plugin.legend/title/left-start-start.js (plain)':
-      'b4927ca112828561888112b6a347c6c93325eafa7b92b8a4624033c909b4b2d3',
+      '396fc266233366b009ad613c28e708b7a2d40040381a63e36c30c6aa61bbab0f',
   'fixture plugin.legend/title/left-start-start.js (trace)':
-      '2546b3b69d1c1b05b950ce5364695b529f3c03bb213eccb9f8c5de3a15999229',
+      '5759f54c226a9addbfec5b058baf72bf2c45b0275b0d8fd84d14503ef4d37740',
   'fixture plugin.legend/title/right-center-center.js (plain)':
-      'f9b728833d7a64d9a8a9a577d8c9f23e6255f0dae879928c5dc6327477900fc0',
+      '398e5b97d78c008792703071f61d6e23d0e01ff7b2828ed8e93b9ce5e15c53b1',
   'fixture plugin.legend/title/right-center-center.js (trace)':
-      '711e3dbb4ba1965d332bd2a236e23ee3d02b0432f0b9c5444fac57da945fd222',
+      '3e06e581e4f3c1a222c5059accaa5eff500638946e843c039d2a3424b4dd2d98',
   'fixture plugin.legend/title/right-end-end.js (plain)':
-      '8e4046043d5506cc3674bbca908616b15e903b5a2b56045dcd4cdc62fdba7a34',
+      '30b64fdb1b2b63fd480aaff0c7ccfcbe367e91ebd37e667332a474b5a855d460',
   'fixture plugin.legend/title/right-end-end.js (trace)':
-      '86a34a3438e0fa4c6e30c4c76ce75484d21a8e4d94548180fe1a10ad5b9bddc3',
+      '03a343144d9d9b07d52e1da1a38edbdacf47fcaba83d8154057cf0f1711c08fd',
   'fixture plugin.legend/title/right-start-start.js (plain)':
-      '984086f79ac1e1eae6e9cff46d9b61515f189ffa03bcc2d347444c7fe72b880a',
+      '766e5791cd585ac8691ea41dcef7f0fec83a8992198c1b61291f73fe03a2d22a',
   'fixture plugin.legend/title/right-start-start.js (trace)':
-      '7695d74d2b71d19066f0d80fcfceb419bfe57db47f3aee6cb9cad922515551fe',
+      'db3815e4bb7a36f327ca7482f0ddb329af35c5da6f2af911a39d9f7351753c16',
   'fixture plugin.legend/title/top-center-center.js (plain)':
-      '0b9a5c00e3d00c7c84c6899dc7f0c8d4d2699e503efc1d522468582d96f06afd',
+      '01986aeb21fe2a2e37ac3de582e070bf58288330684b21b6117cc7b09b62620b',
   'fixture plugin.legend/title/top-center-center.js (trace)':
-      '9662f6830cc8f486f1f9744b0bf722ad7ef17111841bfd5679fe82586b114422',
+      'af30bad421023a3d9e84a80f31193f3f82bc2faaedc0bcdb7c1b2b2fb837d62a',
   'fixture plugin.legend/title/top-end-end.js (plain)':
-      '85367d5a3ff1afd012f5aaae0bd5a013a1344731809a74a7dae8a62c484cd558',
+      '218f22f64a2afd4e01323600d6f439542799b5428fce2a119c6ed2f549105e67',
   'fixture plugin.legend/title/top-end-end.js (trace)':
-      '626b24a2f0af05d562f3ef1c5b274b622a615104228c7b06197eb681887d0be0',
+      'e1e2cbf1f99291a07494a0d820736f8b273ecadf70917319fc07ec65a41d6e9f',
   'fixture plugin.legend/title/top-start-start.js (plain)':
-      '2468787840226a9eae196adb23a6d6ec878d0f71328843d3763a559b07857720',
+      '74a28ddea8635325e8ca6572ad674847c440f724158f4633d85c69ab50bb86ff',
   'fixture plugin.legend/title/top-start-start.js (trace)':
-      '21c7b7b86ef786877fbccb8158301932c1f9ab0690a5370b5c5dcfa384f400b3',
+      'fcf71c495348e9dff98333b79982308abc5720821dbf7defe6b91436af1494d4',
   'fixture plugin.subtitle/basic.js (plain)':
-      '9152c2311ca177688bf0a14afb6e7a6582f83b8ff94e5d5a593832cc87401a4c',
+      '955898e9fa4870c9db5548359c2e1f3c8a9f4b297119da75176218fc74cd16f7',
   'fixture plugin.subtitle/basic.js (trace)':
-      '0ffb00ef0f6f4da16a1904877ccd1f87c112f8c4aa5bc20580375d85591b57c7',
+      'de8df9454af0f09dbbcce7d88f2492bf5cc2cf66b0663b1d4aa3805e039e0259',
   'fixture plugin.title/scriptable-options.js (plain)':
-      '87a1a57c56cd02b6b4aa5b89e2ef0d3819bbe5898c0d1447fa7fa03db8b4776b',
+      '43db555909a0398c7bbc1ec1a592ff4a47b9c87896fa65eede8f7ba911ef2e1c',
   'fixture plugin.title/scriptable-options.js (trace)':
-      '1a6d3a9132d195dcb4056b5eb190e65393527fc5cf45dcb517121f336935959f',
+      '762274469c61bfb0882028057a3ab1bcec7a625d6ed71405ba8236f8b0162b02',
   'fixture plugin.tooltip/box-padding.js (plain)':
-      '0d2eba57043cac19321b47e1176b7ab9067e1c643f4b79e526d8cb4ebaaa62a4',
+      '523de55f16aa6716246deb94b876138ffc9f3a5e9a42c8b88b5756a9d41e03d0',
   'fixture plugin.tooltip/box-padding.js (trace)':
-      '7bc92e971decdd24fc3de6eb3a258c42ca5ccc6b8c5d8a1b6ee3108d41eb1110',
+      'a4e020b46b078e4a7045d6f534999d15e3d0c926ac3f3bed813cc015ee415af3',
   'fixture plugin.tooltip/caret-position.js (plain)':
-      'fbf87491ed1173c046bdf945a76d049a5bbe9c41155fddbdd706fca200c26206',
+      'b823d10b7c449466b5d42b1d7d32f480de6d7bfe50075a41c4f913e5be5934c7',
   'fixture plugin.tooltip/caret-position.js (trace)':
-      '93cdf7967c135dc6279be0c1963f38915ab79e5b1eef97e1d96f87b1c3f1d921',
+      'eea77a856a9adf4a53005b4cc88254b0ed00a7d7ecbcdd2bc9cafe4cbc1feac5',
   'fixture plugin.tooltip/color-box-border-dash.js (plain)':
-      'dceaaa776ac091a320d3f0149e98b03ea9fc45f03d45b9a593a8e1c14915f6bf',
+      'ffb1239d88be1183f4cabbb92f92087b552f27546a05dcdde2fa44aaa60c7df2',
   'fixture plugin.tooltip/color-box-border-dash.js (trace)':
-      '02de6ebc90b0981e00fcf7cf221d40697347d2ea0968796823241a826fbc6cf0',
+      '58179522715cff202475dbccbafabfb5d12d39d9a189ee15c0ae9dc2efc97c12',
   'fixture plugin.tooltip/color-box-border-radius.js (plain)':
-      '03ed8ad71152226a4e45708ac5ced033b4702db4f2f95f65058ef94b3dd505e4',
+      '8ffb04b5c068c200a5c89463424ed0fd814ca79c45f3a5e7cdc3911385e64c71',
   'fixture plugin.tooltip/color-box-border-radius.js (trace)':
-      'f9450c47264c510b79d0eecb5290fb21a3cbd11a6dda5ea0869caf94e0d28a03',
+      '358df023dd6f9dc47f85ffaacab9e3a09a592a7398ee3a06c698870c9a1e3c2b',
   'fixture plugin.tooltip/corner-radius.js (plain)':
-      '43db0a0b753cc129d717eba658f2992e8e8b35d6afcc0bd64e2093995cc5a420',
+      'c04244c64cdb8969dd1a08fd3e16b20cb4b7b58604e68110c3e45ffb18c93dd9',
   'fixture plugin.tooltip/corner-radius.js (trace)':
-      '0a1e0d78ab63ddb5e9f25670c4f37e8da1eab8ff6e5da3a4533d3c7192728060',
+      'edb44f285052c96044e35410cab56f01184db08ed7390a13debdeebf98c901ca',
   'fixture plugin.tooltip/opacity.js (plain)':
-      '59a09b1e2655360be0de091c06d99f05d345e03630da139291d267a4e686412e',
+      '9617f8b5b779e9a98dc516cb4c1c670100d4cbad8831cc6383c69dac3d33863b',
   'fixture plugin.tooltip/opacity.js (trace)':
-      'a830e4011efad71bc8352264121f0e1f847b6338c730c8d54553d2e84c54d499',
+      'a7d61d40a65c0806ddc3b55d15421e4d0fe0789bc46d5ddbef4a9f04ee293726',
   'fixture plugin.tooltip/point-style.js (plain)':
-      '4e1b274f9152889b780cd99b3376f1d6fc46efec4bec0d314c2b97f23abceeed',
+      '13b909f1603639dbb857621d4013e2271ea084c6cc82c3b1035363aa7894521b',
   'fixture plugin.tooltip/point-style.js (trace)':
-      'e25b9d051b2ac81e3fe193a81efa5475f8edaa89a7225e999cf80230124ff405',
+      '0546859ed8ed52d71321a2e8a176adedf763938269d08007c7499a30e5d74a57',
   'fixture plugin.tooltip/positioning.js (plain)':
-      '3086d6eadd6beadd34f789e3872a5c2f17e9e6665f7cb3d5d413e690ddc86e80',
+      'd9c8b8b626e934cfa9ad86b9dd448e1dd293034ccb6e9497daf322a2a3e06cd3',
   'fixture plugin.tooltip/positioning.js (trace)':
-      '8920a70b4ba60760b754cd461e3e560cace42c9ace6ad27c19101368dc62a0af',
+      '524f50b6a86ed99c2ae37db43adb616185b951b611d631f79f969c4a810d7c77',
   'fixture scale.category/invalid-data.js (plain)':
-      '85e65c594cd3c4abd9176e9fc6e2d3f88015f9cb32ee22bd818bd899355507c2',
+      'eb21dc08a844d202f00f4243559b97870fc363f8014ad8877759fefb689911a6',
   'fixture scale.category/invalid-data.js (trace)':
-      '16700ddc03106caa8681110eea79470309ac056c4c9b1d5999cc871c62ce5eb0',
+      '36b7a6cf92c69249cfeaa88173ec1699252500e74a758745a7dd58950e3482ca',
   'fixture scale.category/max-ticks-limit-a.js (plain)':
       'f37fc5c1201ea7b870993892e82f8cd7409118ceb63dc9e8efd23c85d6b65fb3',
   'fixture scale.category/max-ticks-limit-a.js (trace)':
@@ -2346,149 +2346,149 @@ const Map<String, String> observationDigests = {
   'fixture scale.category/max-ticks-limit-b.js (trace)':
       '748ba537c4f8ccf89e8e14fe1091153482f4624da1cb0635133c5a9b6b9ca1af',
   'fixture scale.category/max-ticks-limit-norotation.js (plain)':
-      'f41449a3388859b5778e86ff8f5a1c784cdbb342fcb280bccc8b2ee5f94afc3a',
+      'a0c3b2578ad38881a32182b98af6a29c38aecb9f3f37e6869439627077b72076',
   'fixture scale.category/max-ticks-limit-norotation.js (trace)':
-      'ea1784da6f1844bb54c71f792f086c47984127db642f938126294714ca32f27b',
+      '4f724acb1da1cff7a992acfc6fdf861227fc95e58107a975b6b202dae4b6f6ce',
   'fixture scale.category/ticks-from-data.js (plain)':
-      '831c4fb055e32eb9c0e24fc1f482188367fa0b4c5e22180eadf3a44e00c87e1d',
+      'b9e5d8dce404b75ee5a253bb37c0ecfe84f748de6ec23e37614c0d64779eb63c',
   'fixture scale.category/ticks-from-data.js (trace)':
-      'e35ad8c6dc234d022c18ec9810e5ac69eb13086e954e5cec74a464ef9eca7d13',
+      '89e91c9909f722b36e0a26733711bd5c64db19326b495ab547c30293ee58b24e',
   'fixture scale.linear/grace/grace-10%.js (plain)':
-      '2694b32ff2177f681b70c26a5dfe85800eedc35d0ab3f64b9124ca0a26ccecde',
+      '38a3022d42c0752746f7484d4d7286c9623411e3235d58298d7f20357edfa6c6',
   'fixture scale.linear/grace/grace-10%.js (trace)':
-      '78a215b696f0d6dd6bf62ad37a29470f6f7aeeca734f4d0774bdd931b64eb337',
+      '204333980f7da478d18ec3f44ce5457024fa8ec6360e01ef33e822b0fd65c5e9',
   'fixture scale.linear/grace/grace-beginAtZero.js (plain)':
-      'a1f1f332f551764745d15608fed907d75aa2b1832298743f546775f5a2a4722c',
+      '1c5796dc0b79abedbf2e5d2bd3d5e3f67438e9d6bbc341c542f363f138aadc99',
   'fixture scale.linear/grace/grace-beginAtZero.js (trace)':
-      '1ff61c5a519891005f5dc27e9a3843a0e17daef475ff14cc7fd9167bb4d8b769',
+      '1020e96f3c64eddd4fa584e1e939ad3515481c53ff3bc11f3face5bc504f58df',
   'fixture scale.linear/grace/grace-neg.js (plain)':
-      'a8acdbeff3816ddff235f321656acdd9418885ac6b3ef08bdb2a65c70bb85bf8',
+      '6d0ae3e49800df69acceccb45f4df995bf8af422dcdfc37d68bf2c8b9750ff40',
   'fixture scale.linear/grace/grace-neg.js (trace)':
-      'df48467dd73d2d199c3a30b8485debfefd90aed473f4593e56535d6f98c75678',
+      'ac7d0eda7d8170df675b878aa4c73dc1f5f92791890c2df53c864a6e1686862e',
   'fixture scale.linear/grace/grace-pos.js (plain)':
-      'fbcf95324152976e4c14a3e4dc6c313c2372debf0c4218ab8f22df6b80fcbc97',
+      'bb9178371dec60feb877109bcbdcd7330054fe73fa409ffe3f2b692f3a3c683c',
   'fixture scale.linear/grace/grace-pos.js (trace)':
-      '50822c83591deaa359eb827cbbf8fa33ecb52244277c8f31bedfab14f482a390',
+      'f66cd484e07294b1dd55698daa23586b0539d299244b1b267e3b7c8d739af5ac',
   'fixture scale.linear/grace/grace.js (plain)':
-      '822de3b272063c74cac3d9f45afb2b227a28f692e12d3feec8cc74d3c2031c4e',
+      '513bd5bf399f123d71ffacb4dd44f9c2b008d14ef4a23b1417c7504c4ef38253',
   'fixture scale.linear/grace/grace.js (trace)':
-      'bbebc9b99d0e57352cd3de1b23e3d389a29a62d6b8572b9d0c0e6c92e24f389a',
+      '341c82933e0c6e02e9d5a7810f722ae49da4ee191545b66f1a3423569082358a',
   'fixture scale.linear/grace/issue-8912.js (plain)':
-      '61635e8aa4ec952d0731866e2ac4132d5a611417350bac9e11f487178aee4011',
+      '218a954882e6830da441bbeffc47c0928f37b9eddc40eacaa969a78d944bbe72',
   'fixture scale.linear/grace/issue-8912.js (trace)':
-      '35ec9ae847ec5b8f8ed7f18469dd662ffa621d39401b766370656d67163c98a1',
+      '30557e7991f12af8b41fd535ffb2c9d101537f4ea99f3d8f5b15ceabbee21858',
   'fixture scale.linear/issue-8806.js (plain)':
-      'f2db3ee2dea5b3a74ee1dc3dcd9a2dfe98c644990a80ded4c2a830e3ec03325e',
+      'cd22492f55d05e9734e92a5828eaebf3d30e8808d52a9b39df259036279e4b40',
   'fixture scale.linear/issue-8806.js (trace)':
-      '623b40f4472b6ec50be47d86bdd48fda77943153719ee5f2e1b6b34147e84259',
+      '583ee87c6c3436328e2c180ad033f06648a419df59669a653e8c0f943b4f351d',
   'fixture scale.linear/min-max-skip/edge-case-1.js (plain)':
-      '7ffcd8a17c341f1a837a9ef8574180770c26e85384aafaf42d6edbe7d7a9b18c',
+      'eec45bde4bdbcf86b1807cfa88525276e1ec3653c848e7e921a1d72eb7502627',
   'fixture scale.linear/min-max-skip/edge-case-1.js (trace)':
-      '8b2ed11305e03e6a29b05ce43df93d28f7d7f66845bafc285830616c09671496',
+      '29ad9354dec0cc39f392b047120b308605cb1489482e843de0aa342bc3af5a3d',
   'fixture scale.linear/min-max-skip/edge-case-2.js (plain)':
-      '19e6674d980d61c832681136dd74d53e316d5f64b875df27ad36481aebb1ec8f',
+      'f336a883824eab1700f9f9ba792a38879eaa02fb1ab6ab58bd3388443a4bc834',
   'fixture scale.linear/min-max-skip/edge-case-2.js (trace)':
-      'caa10b3cf2dd4de5916920700a09045bda431d34ff9db273f0e855232fd46f71',
+      '24131b31d46c56f59b91f4e01597fae8ef02c47b347147907f583d6b822962ba',
   'fixture scale.linear/min-max-skip/edge-case-3.js (plain)':
-      '4f39ce95b5846e8c6a62eecebc149f7e519771c10d4b0e56620c5035675b8d65',
+      '1d76007325713d8379ef17afa76fa78ee69107d1da24729afcf7c611fe68cdad',
   'fixture scale.linear/min-max-skip/edge-case-3.js (trace)':
-      '877764cb6185d074447943fc5d5c0a1fd31326b146cb94d3450e4a6352cb9238',
+      'd5f30d6e319b15471670422e08a4f1bf330a9cfb0c2eee15264cd83b9fc801b8',
   'fixture scale.linear/min-max-skip/edge-case-4.js (plain)':
-      'e12bc455f53ca3e5e24d6bc44a1b256d282c5f9503fb9b407b7bb1ed165389c1',
+      'e5f623ded0963f48039129f1e9adb142219bfef81c8c25e98d8adf1444359db5',
   'fixture scale.linear/min-max-skip/edge-case-4.js (trace)':
-      'ecb8e6eae6747a59d5ec396b6e78080bcb03d9108b42040f8041090ed016d20a',
+      '60a65aa77ebb41339d21394c11c80d9419a77b3181fe69b0dffe460addd8656a',
   'fixture scale.linear/min-max-skip/includeBounds.js (plain)':
-      '1a39c89a12178404d9fd9a5a52e8b59353b1b0a49f58c95fb8930b8b824499bc',
+      'd304b8d7d55ef3ee48acaba72eeae2a21e5fa2e1923983b043a0a96c3b432e73',
   'fixture scale.linear/min-max-skip/includeBounds.js (trace)':
-      '521cf0ffeaf96d3c1c317dc0591c7769706ba1ecc86ccb0a414740d923fe8b93',
+      '15dcdf6e65daa3b13dd7de917a13e1ca09536e1ed2035e6c3a525a3b45c1f5e3',
   'fixture scale.linear/min-max-skip/min-max-skip.js (plain)':
-      '1db30238a5dd4c2e583088b91868ceb3453baf9e149dd19021dc18d76838a217',
+      '6f130caeb5c0f7455fc3f4827084acdf8b60d78f0b32c4b022b0397197cb8a35',
   'fixture scale.linear/min-max-skip/min-max-skip.js (trace)':
-      '2a5baf69960e6632023cc3688ce26564e8cc827f51de352a76f3dcff88015e5f',
+      '730262768e98986efced0cc41f5490617546f6b18b20f93f2a887a146e880c00',
   'fixture scale.linear/min-max-skip/no-collision.js (plain)':
-      '58e3dc300cb916d4617859e0aef6b089bfb6a5f72d5f1219a5a72ecf4675313d',
+      'fdfa73c0bc1733cab4267329628e93cb3e5ffa130ee023e27fc1c104b35c7125',
   'fixture scale.linear/min-max-skip/no-collision.js (trace)':
-      '1fb5506fc663dfae2ab1a72c221aa0af186d76e1cc979f06cbf70dc07fc46a55',
+      'b07cbfc659c4c7a3418ee6faca562ace11b50085e5cd938d7920c87cfd6ba162',
   'fixture scale.linear/min-max-skip/rotated-case-1.js (plain)':
-      '59933876fc47b7d1c84d08a9c3ccfbb0996483aecc893f89659ae4c642da3563',
+      '2b2287f3e089750a19bd5d991086654442e4a46e217c5817e460c3f197566427',
   'fixture scale.linear/min-max-skip/rotated-case-1.js (trace)':
-      '87974c3a7cf3a9e4550c931c7564b2de16ed20ca2dd00ff959037d5f1723c6fc',
+      'efbffa3ce4caf66bf70d112b53d3cbace0d3efab65b3d47fc33f5dd640e38b14',
   'fixture scale.linear/min-max-skip/rotated-case-2.js (plain)':
-      'b524b634d370080eda644964dfecc59ec450f7a1069771b62a6572b939e6fc32',
+      '8d95d8d50e2f370e05d5eeaa2c540c961bb7c58c799dea59635e639db61110c9',
   'fixture scale.linear/min-max-skip/rotated-case-2.js (trace)':
-      '8f235c84aac90c60d548dd4007a2b4b2c647449ba800dd220c30d0191eddeb37',
+      'a2488e616aeeb51001549684437b9d1dad73772be37cc124574118bd7e26147b',
   'fixture scale.linear/min-max-skip/rotated-case-3.js (plain)':
-      '1c57f12196b535b8b0d6b70f701c55ee645eb2a5f525815608d5da6302a176fc',
+      '952cf4b7ca64e29140c3bddc2c871071cb4cb22b0f2cb7f8a6394f4ec0338b47',
   'fixture scale.linear/min-max-skip/rotated-case-3.js (trace)':
-      '83a7262545ab2ce6e572de9107f8b0571c927ac09475dbedc1a649b7f21ef0c8',
+      '08c3f5b025ffea300f10852b18886d2cd351d2c12dfd6ff0024e60ca9d60353d',
   'fixture scale.linear/min-max-skip/rotated-case-4.js (plain)':
-      'e27a92f8bf73d639da1a9dd2d42cca5712ad4aff8eec48a5d8c5386dadf8d7fe',
+      'c1919f839b8a7589e2e5abb7a2869554a4b76f58af34c83aebd1ae01230d1309',
   'fixture scale.linear/min-max-skip/rotated-case-4.js (trace)':
-      'b4275c128e68f3628446d33ebfa835ce7020617e72dea752f9cdb1db82312428',
+      '65f1a12ea67e7c6b9014f19306fd6490ef3f93f1564498562300009287d16a0d',
   'fixture scale.linear/rotated-45.js (plain)':
-      '86bfd7e42c9215d66f5eb659cd48165c4ef226d12bc8d2136a1b28d0c19bea21',
+      'a84c6c09d90d97fa92c05bea4b8f45c229846e49526f1924de91de36a92b5251',
   'fixture scale.linear/rotated-45.js (trace)':
-      '7af72357b65ab4fd9b821ee6d2a7d44b4d39d2b045d0d56f69ea57a9e190fafd',
+      'd5a8d35512794c81d76a12b65c68c0091548ec39b388d966cc6af17a71f21ebc',
   'fixture scale.linear/rotated-5.js (plain)':
-      'a5fe1dd4cc356812f697b362ad2938b86d971922145d32bf7028cf077bb7a0b8',
+      'f7b26c8c5f4fe4569c4749c0e40dd8304d3ae55055b38820bd8718de4fb295ac',
   'fixture scale.linear/rotated-5.js (trace)':
-      '865854aa725e86b1d2545ca0c194c76ee5bfe6be08b5c97800c31c4254218f13',
+      '885f3991b53edc6146b67f69765217ebe229a7ba5b16c9699366cc781df50195',
   'fixture scale.linear/rotated-85.js (plain)':
-      '29c9d1c20a04aba55b87d5b9893d4b852bb452a7e41e36df2711690f9fb44239',
+      'a47264fe02eb17e77f2839f0d1860d62e09698c825f4ad665494e9a7c3275c06',
   'fixture scale.linear/rotated-85.js (trace)':
-      'fcea11149f1776eebaaea2bc6d25df182d0af8d1f5689113c6d1997d9949bfc2',
+      '33122e726faf6f814edbc0dc4062193386784a0a4e99c53bd1055fbb0b1f1198',
   'fixture scale.linear/tick-count-data-limits.js (plain)':
-      '13c31fc397f4d7d8b44bf11a8534f5871de20ed0908c23789a2f62953e215c59',
+      '68defb14c1c64996bd5fc7776e6e4efa3b619975620e1808e0dc1c01762da34d',
   'fixture scale.linear/tick-count-data-limits.js (trace)':
-      'fb6414e99845c547d536aad6d45f25d76d1722a263258dcd858e1ca924de6a56',
+      '6eb3ba4deb3d28d041a1e81fe3690af9ff586891b2c0ae2032fa0ff15b29f72d',
   'fixture scale.linear/tick-count-min-max-not-aligned.js (plain)':
-      '4c52fdada2873c8111933cd480f64725dede1e692c9024a100c81cc37564b5c6',
+      'e1b5489a48fd0544f71a4b37100b446af7f000a9dcca49a3d1cf99f57bf6c22c',
   'fixture scale.linear/tick-count-min-max-not-aligned.js (trace)':
-      '693c705b68a9109378eb7c6bb31544f7e1c038cbe8da14a4a2d868eb0280b4ee',
+      '47576c4000d3544d3071a55752cd0dad7fef1dd61ca9899c34abddbf3c36a876',
   'fixture scale.linear/tick-count-min-max-not-int.js (plain)':
-      'dd0c4aae2ba979bb9aced146fef61e6fd0ab7b936ad33fee615cbffd35c46574',
+      'c200bb46a7fb9894ec339120544eb9c1f7242ba164d46337091a18496fd6ea32',
   'fixture scale.linear/tick-count-min-max-not-int.js (trace)':
-      '8a4c96e1ac753a1771c8985460d537c341d3d1ca3e42e48f7e297d69d23c5a41',
+      '77ea941479187eb02b60a0933c4101c748e08678f1a9a80961f823f07c7f352c',
   'fixture scale.linear/tick-count-min-max.js (plain)':
-      'c01a170e87d3771710782f78593b24eaaeab2f972f198765ac15a2bd35dd754c',
+      'ea7f8edb58b052dc58a52f0a6c645a3c2b760fee95ada706f51607799918ad5e',
   'fixture scale.linear/tick-count-min-max.js (trace)':
-      '2176ce3e2ab9cf93e290dfc1065d280b66d061ce489d109b543b480ae6dec673',
+      '2298e192a50944b6e856c2c32ef9dd1b6e15f5ec2524c6b92bdbccebfc1bd5de',
   'fixture scale.linear/tick-step-min-max-step-fp.js (plain)':
-      '8c58f45f991fdba37651c16b7924ce90800b255814488e32627ae09992650dca',
+      'd5b1791467db559f807c37ab73688489121cc7ff36fc02b8886cb90b3bf97076',
   'fixture scale.linear/tick-step-min-max-step-fp.js (trace)':
-      '4036088d709a4a5a5bbd6e61b5516cdcffd02f367a7aecc0a774194530955bf0',
+      '4656c808dcf2049f9a52f50f230a495a71bd147db69ca2be23e4898df271cf7e',
   'fixture scale.linear/tick-step-min-max.js (plain)':
-      '4c52fdada2873c8111933cd480f64725dede1e692c9024a100c81cc37564b5c6',
+      'e1b5489a48fd0544f71a4b37100b446af7f000a9dcca49a3d1cf99f57bf6c22c',
   'fixture scale.linear/tick-step-min-max.js (trace)':
-      '693c705b68a9109378eb7c6bb31544f7e1c038cbe8da14a4a2d868eb0280b4ee',
+      '47576c4000d3544d3071a55752cd0dad7fef1dd61ca9899c34abddbf3c36a876',
   'fixture scale.linear/tiny-numbers.js (plain)':
-      'cec55f37180fcaa333fcc981fafd5e8a9547560e61260d1b88d8a1666c3a4245',
+      'cf557ebd592886112662187bd8a1260f586302fcbd6343fed7633eaecbab1904',
   'fixture scale.linear/tiny-numbers.js (trace)':
-      '34aefc9ae2c19df656264b739e517623d1ff41a9f530e3a15bd8db9188e090b5',
+      '69b41075ac0df7650e7b2049b18f863464b40b3ed9921948a824deabcc384711',
   'fixture scale.logarithmic/large-range.js (plain)':
-      '53a0b6fb3071549c452b441e551c010a233c67c93279f89232c821eb8554aafe',
+      '09c51330b802e06933197cd132988c8b72fc4f7790ee07d37488b3a44761b24b',
   'fixture scale.logarithmic/large-range.js (trace)':
-      'cd2e95152f147b07c8119d386ac433ce33e9f3b3269bf9d5fad1268343a4fed6',
+      '46efb59633e98e593c40b2c7e5635f55f96ad59e26cb38f2159c677e6e5b5971',
   'fixture scale.logarithmic/large-values-small-range.js (plain)':
-      'c6abf2f27a56f164f49ca297c18320f71836f6bc15117d1c8e7bc51f64c2ab54',
+      '2fe581f6fc580e312b85730aeef2dd2bc8edee84c6897f24a9b36041065da8cd',
   'fixture scale.logarithmic/large-values-small-range.js (trace)':
-      '21bc9ff003dd8fe7bff33eb0d0c5cfd088e1635c73d846214019b97cc2256af3',
+      '53589203bb1c8814fcf603e9e88f0a01587976129e8e8fe81f20df70a2760382',
   'fixture scale.logarithmic/med-range.js (plain)':
-      '20bdfd1f09bf5d9cb61758036bd90109fc05d007b3e4fc981b4749e5a7edfb44',
+      'f06acca6217b885b87e079ec775112e054f14d760865bb6156aa0e119f36d34d',
   'fixture scale.logarithmic/med-range.js (trace)':
-      'd41a7c71dbae50c48b5c68a19b84a1d1d425c202d69ee67c92e8705330f6b244',
+      '8d2541680a02b1597a38686277c3886810f59d3addb0d53d906e7efbf8d2b1c9',
   'fixture scale.logarithmic/min-max.js (plain)':
-      'd0828bb1a946e5fc4b96e4f38dbd3d3aabb55a373d45ff2fdbe07de39bcd41b8',
+      '12b7b6fc384471ff5f6cd8289c31fb7ff4d37111b84fe13753e4ad5305713158',
   'fixture scale.logarithmic/min-max.js (trace)':
-      '52659e43a981a3fc9191496d8ee624496ab54f7d9096cd98bbbbcae6dc187b57',
+      '38c66cbd1fcff3c5fb9d55f3a0f519bd80565b6a1805c3f04045aa426f0dfef9',
   'fixture scale.logarithmic/null-values.js (plain)':
       'db66c932fb9688c809df2c92e54ca52f743810e409bd98b6a8287cb41c75b3d0',
   'fixture scale.logarithmic/null-values.js (trace)':
       '0056454b1e978592cf88525b2f003dbf22641d3116a005ca3baf7ebc214f0e5e',
   'fixture scale.logarithmic/small-range.js (plain)':
-      '8a8d5c4e8367a3624d16fba93009d3afc92590d0f9f5028b89cfb7fb1479b279',
+      'c443dd95bab154b8d118e36841479394cd8d433ee8ba8c1cbeed9eb2f7737a36',
   'fixture scale.logarithmic/small-range.js (trace)':
-      '53d06868616d319fbda7e98a032821334e5eefce9af079bea248f3a098dc6b9e',
+      'e25216b5c935b1d4bde31752558b31e28c6a2109a613763d54ea7d63401d863d',
   'fixture scale.radialLinear/anglelines-disable.json (plain)':
       'ac63347fb49624e184e2919d347da0b709667e866bd574ce74a6e625221a6a7c',
   'fixture scale.radialLinear/anglelines-disable.json (trace)':
@@ -2498,9 +2498,9 @@ const Map<String, String> observationDigests = {
   'fixture scale.radialLinear/anglelines-indexable.js (trace)':
       '32c46e0e7011d3239d7ef038d9bb5acd76bbb05ba156303b49e127e311f7f0bc',
   'fixture scale.radialLinear/anglelines-reverse-scale.js (plain)':
-      '9cc6d5c919593ff671875acda438138a4d4167f12f44e0852a84e9291d18acd7',
+      'e0202b87cd4ed468b4dce886c9340b773e40bf59c4c1259a0c94dda9653b451a',
   'fixture scale.radialLinear/anglelines-reverse-scale.js (trace)':
-      '8d345b5f207bc8379d52675cd1daf4e6516d139effcde1b58d4c025335174970',
+      '1bf8f381fd0171b6074a93aae46bfd5125628132d60163e505c2d0a4cea57da3',
   'fixture scale.radialLinear/anglelines-scriptable.js (plain)':
       'fd3651fbc622104690496328cd657ba011bd10314dd472d4b9a43209129b81b5',
   'fixture scale.radialLinear/anglelines-scriptable.js (trace)':
@@ -2542,277 +2542,277 @@ const Map<String, String> observationDigests = {
   'fixture scale.radialLinear/indexable-gridlines.json (trace)':
       '29e59ad7e2b0f605a6d5c6cad9e9e49b8dec32b35f115bb41883944bd2cf8b02',
   'fixture scale.radialLinear/pointLabels/background.js (plain)':
-      '97ba5506b7fdf508ca06ba12318d8b7fb944a2d80106cfb2f1060a7b6292fe4c',
+      'da655c7322e1ce40d833babbc688b18dc1ea390d0a6c142d4fb5c6b1977ad04f',
   'fixture scale.radialLinear/pointLabels/background.js (trace)':
-      'd6c860fab60d026d5b5243ab90066f34e19d8a355abd564eab4076854a58ea8b',
+      'c9b13c45f5113efb75993a8443954b832bfc93670583fac4048423e24c366eea',
   'fixture scale.radialLinear/pointLabels/border-radius.js (plain)':
-      '986011d9daef142cf9a99342fd3b542aad9e16ca45bc261ac2a5ef26a297b55c',
+      '309827008594a9774f45d256165446bce08e1606b6dfb6df9de8747225e22fe7',
   'fixture scale.radialLinear/pointLabels/border-radius.js (trace)':
-      'ce13437a8a1ddc91746f5ca79203e5696f1c1554c45f4d96eabb4228a8e69628',
+      '8e92c3e1ef8ff1f057dc087f22e3b71165515842a3a1c86f20f814583b52a499',
   'fixture scale.radialLinear/pointLabels/no-more-than-half-radius.js (plain)':
-      '6db1e3e66784f24263ce569f4f5faec583603714b1388ba49343b8ec4102432a',
+      '6b28736a7eade52040b254d08c7be85bb4cd2c9b90cb638d3bb8dea1cedf0d1e',
   'fixture scale.radialLinear/pointLabels/no-more-than-half-radius.js (trace)':
-      'addbc7107ea9e07bbe26f4b6f7f0415f2af733ff28ee7adeb5cb74436450001b',
+      '80edbf17a208bd058e4c54be0a98a84c95c5d2adb3a7e703fc991292b538787e',
   'fixture scale.radialLinear/pointLabels/padding.js (plain)':
-      '17d44a55d8dba62f18df44fb2dc9a296451822b801b70b0a54fa452a7bedad8e',
+      'ec4b2af7d04a558137bba4fdfb55906e9a0a854deb745f478efb34138a1a5677',
   'fixture scale.radialLinear/pointLabels/padding.js (trace)':
-      'a400e98837fc0e2b93643993fa06616d27045002b1f7d87918af7239a21118ad',
+      '10fe8305b7ce80f6814c9a899d02846932b706ae86e9b166cc00c7fcfe22400f',
   'fixture scale.radialLinear/pointLabels/scriptable-color-small.js (plain)':
       '655c3729d2f401e3e49a754a316b24b9b7779bf4d628fca59476b2211081dd0f',
   'fixture scale.radialLinear/pointLabels/scriptable-color-small.js (trace)':
       'c4987a37be4e08d2112ea580003830c1a7e02d39cd1ef5dd03d156373bbd5cfe',
   'fixture scale.radialLinear/ticks-below-zero.js (plain)':
-      '67d712636d634c6f7cf69db71c1b07591368ac16f4ce7c25b522d7a8fb107da8',
+      '7d8cea288714b703302feff64510ab397f457628deb31276e65f950c1930b32f',
   'fixture scale.radialLinear/ticks-below-zero.js (trace)':
-      '0f96411961397d3dea88b1ce47f348a60f71a2f13ac2f73b0ad5d4a737b7c843',
+      'cea4d40a2d3294acf07e56e0c2f97ca6137713ed2d7a752bc5e00c64a61cf84d',
   'fixture scale.time/autoskip-major.js (plain)':
-      'ae0a7ee5ee288495c1c41f8b114bc75486683157fcaf6d3c7954ece554acee19',
+      '188a01baab0ab5b314c36dc36ee4b3dfc0e62336b97d87c8e7a7665590e4ae9b',
   'fixture scale.time/autoskip-major.js (trace)':
-      '2358de0ad7d54d36aa46be2d6a911e0895f4333388d7f13bb3e09312981e1136',
+      '61b80323b41d121c17eca34b8a35ab3081a145f987397d65dafc61242dcfedbf',
   'fixture scale.time/bar-large-gap-between-data.js (plain)':
       '990a1aa69908e1cb483de3295339beaeb7ef3742f790d093bbdb9bf48fb3806d',
   'fixture scale.time/bar-large-gap-between-data.js (trace)':
       'be46c370f4c6ddfeb660082344c97ea95ea195043fb35d87d61aeb0f955550a4',
   'fixture scale.time/custom-parser.js (plain)':
-      '0739e92063cff69784b950ebab4cbb42ce64639eb1d9c72c2b5a3e8288baabfe',
+      '42563f5ab3ae1b3bb564f071e85fe098287eeac8e3274144285097a660e629d0',
   'fixture scale.time/custom-parser.js (trace)':
-      '60deaadd773b70f2c5d90fa3cdfcc67d0add873c289dd251ba063a9ad3648973',
+      'c7f4bc56b4ab252bf02c481f7e32bda530390c5c62937db93fefa731bc0ced98',
   'fixture scale.time/data-ty.js (plain)':
-      '92b884a4ff081dc4505b61a413ceac840403313555451ec10b5e5f2ac16c246e',
+      'ed8f04af7c945ce4e43bcd83a6e9b3b563a86105aeb8134f31c9719a2d880a4c',
   'fixture scale.time/data-ty.js (trace)':
-      'bbd6a2b7d7c53e435d16b05ec5d37055592ae9113478563ef4b83c2ee231c5aa',
+      'a4026f26a4617a5deaa8a971de00bd8110b95451d44256125a5da6e064eb382c',
   'fixture scale.time/data-xy.js (plain)':
-      '92b884a4ff081dc4505b61a413ceac840403313555451ec10b5e5f2ac16c246e',
+      'ed8f04af7c945ce4e43bcd83a6e9b3b563a86105aeb8134f31c9719a2d880a4c',
   'fixture scale.time/data-xy.js (trace)':
-      'bbd6a2b7d7c53e435d16b05ec5d37055592ae9113478563ef4b83c2ee231c5aa',
+      'a4026f26a4617a5deaa8a971de00bd8110b95451d44256125a5da6e064eb382c',
   'fixture scale.time/labels-date.js (plain)':
-      '7d96e6bb0f9fbd2ad459f5a7effc9c52aa8bc099664d3a900aebfac47e69e900',
+      'f889a19d51f30f5164416ff77f455510d8a874080032da435ca8b2ff070be3b6',
   'fixture scale.time/labels-date.js (trace)':
-      '8bbc943519f25be0e5e317619dc55c867b7770fbdaeafc5fc9ea0108dcbf5a39',
+      'b2eb0e0781e5d9f3367baf1f3b335c9b3c78be9385e09d737bac8d6406c58249',
   'fixture scale.time/labels-strings.js (plain)':
-      '7d96e6bb0f9fbd2ad459f5a7effc9c52aa8bc099664d3a900aebfac47e69e900',
+      'f889a19d51f30f5164416ff77f455510d8a874080032da435ca8b2ff070be3b6',
   'fixture scale.time/labels-strings.js (trace)':
-      '8bbc943519f25be0e5e317619dc55c867b7770fbdaeafc5fc9ea0108dcbf5a39',
+      'b2eb0e0781e5d9f3367baf1f3b335c9b3c78be9385e09d737bac8d6406c58249',
   'fixture scale.time/labels.js (plain)':
-      '7ca53336a558472f8d476bbee438acff7a33e534787db415410e0d0d7c95527b',
+      'b5bb8f3a73ec95aabc87539693bc56245e98130ba4a66aa960ee732bd6145ab2',
   'fixture scale.time/labels.js (trace)':
-      'abdad3e9435d725a6c00c803c507c0faee733a762ccbc9338d99a23c88c7fa4b',
+      'fb5ce6afc194399aaa07ab8ffc3b0bdbd7690aff673fd13c1dd8c3d8beb31c9c',
   'fixture scale.time/negative-times.js (plain)':
       '947d016d89c18c31bfb6ec8721313852c4e6b8dab72d9012311de4d3e801f2e1',
   'fixture scale.time/negative-times.js (trace)':
       'ae06934c9e67376f43964719fa2f0298eca53fc3e6180a5ae6cb3e3ffbb8b62a',
   'fixture scale.time/offset-auto-skip-ticks.js (plain)':
-      'd459ae8341247ce40320654b97465c1c8b8b11f059ed539f93bb61a20a417390',
+      'b3776ecec42427973afa9c819030b179a181bf8ad5ba70068645aae1d6d62d72',
   'fixture scale.time/offset-auto-skip-ticks.js (trace)':
-      '74da1c6be89614df0cbb6ee2918edf683557eeeec7c438458fba53f936bfc732',
+      'b01079a3c3fe25141a7f540f04b09e6c348fd8f2f56dd862da55aae237670eaa',
   'fixture scale.time/offset-with-1-tick.js (plain)':
-      '9f27bec73252ff4ad881018641360eb94973fb433af617d7091795b30a0984e5',
+      '7721b8dd1c3feb2b17df4ae22d79719d11d3dcee411be23e6ee191bd62b9072c',
   'fixture scale.time/offset-with-1-tick.js (trace)':
-      'ccc6364a71ccf40ef4a5635f33ce083876123eb267de84a2e181e2bce9b13adf',
+      '8db337df2fb0ca3c63b022231f6cc41e9df0011146d3ffc82bd2ca3489ac14dc',
   'fixture scale.time/offset-with-2-ticks.js (plain)':
-      'e46a78f50d812946a09447e0398d97d6d8d8679dc112a360ee74e168bef02797',
+      '3263d1147479bb35486c0ea1f44da68a98f50984f9bf5c6d3a172b20f350be36',
   'fixture scale.time/offset-with-2-ticks.js (trace)':
-      '0c78df483f47c7d74859f9f8e423854603cb460eac54e61b4c359393444ed078',
+      'd270cfb99250a2b2fce278ed12c55f726bd8f3d1c45b4727918b5f5f2c6b6d30',
   'fixture scale.time/offset-with-no-ticks.js (plain)':
       '23241f5cb6af2d6da3dcb3033fb2d27e9601871629f850f732fa73e5099cde76',
   'fixture scale.time/offset-with-no-ticks.js (trace)':
       '49799f83117ceaba8afe224cf0a2c4788fe5c6db2111c3ae917d621bcdb34859',
   'fixture scale.time/source-auto-linear.js (plain)':
-      'ffc4547bf33520227dbdd626d1b293575ac04cf95eee614b71d1c514691084eb',
+      'd67f70670ddc71031f2ced5c62af5b209c015a3dd30075be4ceef31929223c05',
   'fixture scale.time/source-auto-linear.js (trace)':
-      'dace514397fac53ccccc361844511a9f7c2f542d87cfb4f2561181e893d3744d',
+      '7957d3c671fb3c4c39589174b13985e561dfb5f87c9519318287459485b40546',
   'fixture scale.time/source-data-linear.js (plain)':
       '42d677bf5f766da0b7f9743122a76b69c8085117855480fe21b131785978a062',
   'fixture scale.time/source-data-linear.js (trace)':
       'b5f1c39117d5da21372e2f14b5b7f534f3a00968d41ca9d4c02bf794c445c790',
   'fixture scale.time/source-labels-linear-offset-min-max.js (plain)':
-      '9828b1fff8dfa57774fde0f0056e880aa94b982a4033d974bba4be90d46ea247',
+      '60df508ff1af3790994f04928ad5cacc4435aaa5044247204ce799e7f7be1b01',
   'fixture scale.time/source-labels-linear-offset-min-max.js (trace)':
-      '58ea7914433b9becbb5cdb07b2735f0b7ff772bc760cc95ac45a5f4813016fc8',
+      '0ef9a2d4505f74222812841112b99489ab0a084a2ba8504524c630e2a15bf860',
   'fixture scale.time/source-labels-linear.js (plain)':
-      'c44df31159e0d90c6e01bd26c7f9220e067b21786b79f874d0e5a144a7d9d85f',
+      '48ae6e430f8ff34f16e8946b745a3b8bfeaa9a581af92b898efad0530d8f258b',
   'fixture scale.time/source-labels-linear.js (trace)':
-      '7928957f8bfc8d0631242715d9ac58a8611a07a5f867b0a315dbcb7800763ee0',
+      '456e36e97f9eca8ce72658258c8b6bef2289909595b2de52ecd55b577510be3d',
   'fixture scale.time/ticks-capacity.js (plain)':
-      'c2ef23ccfc1abff1156c71e8e8a1dcb2245ae431d98e9334e274397cc32cb2f6',
+      '1f6f89185d20386264d4b7293a4b1e6889c844a9bf0c82e47aaed765612004e0',
   'fixture scale.time/ticks-capacity.js (trace)':
-      '49ca7508354ae8f541209270ce25dd9aa2befa902312d56cf84e9344fd84bdb7',
+      'f7f7233f4c21c94b263a0fb4387e6fedf33f2e62968abe169bc2fdc0af412436',
   'fixture scale.time/ticks-minunit.js (plain)':
-      'be6b6bb081b71fa9fd8cd4d519b921859ac90655432f1a1635057f24468f0f17',
+      '468c94e52725467a440a3d39f7a69a80dc18287e0466b12cf63e6ba5795a7ed3',
   'fixture scale.time/ticks-minunit.js (trace)':
-      '20a694b5ef6a93f1bd115d3ed4cf4f83465929960f9b1fdf63bf4eaac1249e98',
+      'b7ca1e43419e615ddfb03916a4248542ca1f867e1d8fbe7a31b1e561884ad3ca',
   'fixture scale.time/ticks-reverse-linear-min-max.js (plain)':
-      '9828b1fff8dfa57774fde0f0056e880aa94b982a4033d974bba4be90d46ea247',
+      '60df508ff1af3790994f04928ad5cacc4435aaa5044247204ce799e7f7be1b01',
   'fixture scale.time/ticks-reverse-linear-min-max.js (trace)':
-      '58ea7914433b9becbb5cdb07b2735f0b7ff772bc760cc95ac45a5f4813016fc8',
+      '0ef9a2d4505f74222812841112b99489ab0a084a2ba8504524c630e2a15bf860',
   'fixture scale.time/ticks-reverse-linear.js (plain)':
-      'c44df31159e0d90c6e01bd26c7f9220e067b21786b79f874d0e5a144a7d9d85f',
+      '48ae6e430f8ff34f16e8946b745a3b8bfeaa9a581af92b898efad0530d8f258b',
   'fixture scale.time/ticks-reverse-linear.js (trace)':
-      '7928957f8bfc8d0631242715d9ac58a8611a07a5f867b0a315dbcb7800763ee0',
+      '456e36e97f9eca8ce72658258c8b6bef2289909595b2de52ecd55b577510be3d',
   'fixture scale.time/ticks-reverse-offset.js (plain)':
-      'c44df31159e0d90c6e01bd26c7f9220e067b21786b79f874d0e5a144a7d9d85f',
+      '48ae6e430f8ff34f16e8946b745a3b8bfeaa9a581af92b898efad0530d8f258b',
   'fixture scale.time/ticks-reverse-offset.js (trace)':
-      '7928957f8bfc8d0631242715d9ac58a8611a07a5f867b0a315dbcb7800763ee0',
+      '456e36e97f9eca8ce72658258c8b6bef2289909595b2de52ecd55b577510be3d',
   'fixture scale.time/ticks-reverse.js (plain)':
-      'c44df31159e0d90c6e01bd26c7f9220e067b21786b79f874d0e5a144a7d9d85f',
+      '48ae6e430f8ff34f16e8946b745a3b8bfeaa9a581af92b898efad0530d8f258b',
   'fixture scale.time/ticks-reverse.js (trace)':
-      '7928957f8bfc8d0631242715d9ac58a8611a07a5f867b0a315dbcb7800763ee0',
+      '456e36e97f9eca8ce72658258c8b6bef2289909595b2de52ecd55b577510be3d',
   'fixture scale.time/ticks-round.js (plain)':
-      'bb183bb9c320f86752bd0fe74bb0efa3f223c84200208fe685f2563c5187f48b',
+      'bc3973e963dab55255b4c31a36cb32010966a7b619708599944190bfc0ed8f8d',
   'fixture scale.time/ticks-round.js (trace)':
-      'b218e04ceb4b16e49f441a6c7304014bce604e10916bafa41822c677267c2194',
+      'abf059d55fc3cba871517dc93528b9dc6066d5035ad2c52f9048f4d137ad8494',
   'fixture scale.time/ticks-stepsize.js (plain)':
-      'ef22a51beadc87634163bba325b1fda3b954992b5c6910cbbe0d479cb8a21e8e',
+      'd8b423ff1b7eaddc516fc3a584db9d8dcd96590d82d950c1cad7f29513354794',
   'fixture scale.time/ticks-stepsize.js (trace)':
-      'ebe3aed2eaba977e800e37922da9a130545ffff22075a5f2c2d3abf82f1a7cca',
+      '9002b383c8dbf89a0ea0fff76b4648b83929c0bfa2cecd9e381a390ab6bc8632',
   'fixture scale.time/ticks-unit.js (plain)':
-      '9fd2907845edc615e2048ae8d77175f0aaf723c07a9537f1bbdf0a2261f7ce67',
+      'a9a163990a058058fed4076184b9ac06c3b543396061cafecf86ac58b4299117',
   'fixture scale.time/ticks-unit.js (trace)':
-      '1c10feab37c53c0dbb6ce655340906a4dd387bc55911946821987b1964655c53',
+      'fdd528b49a77c4eaca11fdee766458c1c8013b4132838e936dbb3d292f03cdf3',
   'fixture scale.timeseries/data-timestamps.js (plain)':
-      '0262e05f0c764a6ef7987573a717d8ca125359a0da27df512d1ad985c1053fa8',
+      'fa75c15b6cdd47b156bc4f2fd727c870d9012fef3b79bde606889da09685b579',
   'fixture scale.timeseries/data-timestamps.js (trace)':
-      '602c204490e9b0cd0989075790d6ba1860215d05db686dec790444545c972cd0',
+      '312179f6cc61663a2f82c1e9a379af4a375183d5e0a5e9170d57b239c1149024',
   'fixture scale.timeseries/financial-daily.js (plain)':
-      '7b44b660bd346d3c264322dc12e41881ca7b7752d9ffb3949950ae822611cee3',
+      'da9837fec926c281a63ab53219717ad538cd6e0d34a079f791f672bf19b6d4bd',
   'fixture scale.timeseries/financial-daily.js (trace)':
-      'b59aa4dc9d20d19940b6b3316be39c0e749c43a0e6fb6ac5c428b77b24fc0615',
+      'c1ae4e900b7f051fef69e59441362b80e0a1a3e461ade332f891255108750280',
   'fixture scale.timeseries/normalize.js (plain)':
-      '970448d1cbb332d6de755f3c502689a2ede2eaa86c984409ab48f9d20213c1da',
+      'e8c7e21659d5b8252777eb220c7e31885deb63b24694b545a1f9d0ebd2366ce8',
   'fixture scale.timeseries/normalize.js (trace)':
-      '0b18798282e5c12f0e6852137495250ad24f68e2c6a1f85d8a4ea05d384894bc',
+      'b8007bf017d93bf907ab8b3c29baf01dd1a74774fd05a92f655e81887f73e35c',
   'fixture scale.timeseries/source-auto.js (plain)':
-      '202519e983bb06946d50f7e153c14ffba4b16d7baae0f85c2d1ac1d9dfac0d8e',
+      '8810f32d66f0f12e7acc4a1be750848d1a96244ea9c14c7ad6f294ea5ffb333b',
   'fixture scale.timeseries/source-auto.js (trace)':
-      '2bb8e9dfb5e9878ea9b8f21366632e0e9cc096fc12ca81110d8f01cf134c74d4',
+      'f7f8e57800954fcc0a6e3c37324e45c8f4c74bdc4722b2143e004bb0c4e538f5',
   'fixture scale.timeseries/source-data-offset-min-max.js (plain)':
-      '594e60fe546dbe4a5446a98fee6589a69a79b55fdcbee129f1d9d33259019dc8',
+      'b3681eeda5458972b89fd78f93bafd602f406f63f7a577d9c1270f12fc8f40a1',
   'fixture scale.timeseries/source-data-offset-min-max.js (trace)':
-      '3e3871b118a3572505ea97ad2aa1980da8ec13603d2bf3c8179efb12b7e66609',
+      '3ad342e05cb44860479ff7b7529bbddde9201967c6ef56ff46c99aa7367732f9',
   'fixture scale.timeseries/source-data.js (plain)':
-      '202519e983bb06946d50f7e153c14ffba4b16d7baae0f85c2d1ac1d9dfac0d8e',
+      '8810f32d66f0f12e7acc4a1be750848d1a96244ea9c14c7ad6f294ea5ffb333b',
   'fixture scale.timeseries/source-data.js (trace)':
-      '2bb8e9dfb5e9878ea9b8f21366632e0e9cc096fc12ca81110d8f01cf134c74d4',
+      'f7f8e57800954fcc0a6e3c37324e45c8f4c74bdc4722b2143e004bb0c4e538f5',
   'fixture scale.timeseries/source-labels-offset-min-max.js (plain)':
-      '69eed565c411e3f8d0be4e7093e70156870078f88441dfa67e4a7a88ff077e9b',
+      '9276d1d839c1c26099f879be3519d5b9dd8950684510e31c471dc2881bc94dbf',
   'fixture scale.timeseries/source-labels-offset-min-max.js (trace)':
-      '2f7a7ff0eea97a0e98acedfe39b97c39397c1a504ae2bcb68143189ce5d9b573',
+      '5c14ea233e794b96aa6523ab6dc62aa486c4300f2038c77b15f1af259c339e1c',
   'fixture scale.timeseries/source-labels.js (plain)':
-      'dab5a41bc7649a25afeba532ecbc84779cf53cfa3b73b677cbee453c23d74e80',
+      '473010518a4925f0fc8bf5d7e2ad76287607e367bc67b04dedd52a58cea90226',
   'fixture scale.timeseries/source-labels.js (trace)':
-      '1b19689b932a9cf2cd9fed3f24cdab673f0bcb3cf907ccdf4e1a54ab03732421',
+      '84c1f2f5155db5bd4d5af22fc6c7ea35cc2aa800a1780c75b7223dbf9b4ea141',
   'fixture scale.timeseries/ticks-reverse-max.js (plain)':
-      '8f23f7597d8780719b04b89170904e4509472fb88b3bc80b0516aa27479a1f76',
+      'bd63a212fb178d00d2bc454c16d38886fb49be8d23b24d6d190be29e51c36813',
   'fixture scale.timeseries/ticks-reverse-max.js (trace)':
-      '0ebb413b2fc847bf09bf3917e91ab2860cf27e58e8a1fbf940c245454b3cb8e7',
+      '78fc647fc1492aea886a36e2bc32232d49a0cf9b9f9a5fe63b8d7110f2929078',
   'fixture scale.timeseries/ticks-reverse-min-max.js (plain)':
-      '69eed565c411e3f8d0be4e7093e70156870078f88441dfa67e4a7a88ff077e9b',
+      '9276d1d839c1c26099f879be3519d5b9dd8950684510e31c471dc2881bc94dbf',
   'fixture scale.timeseries/ticks-reverse-min-max.js (trace)':
-      '2f7a7ff0eea97a0e98acedfe39b97c39397c1a504ae2bcb68143189ce5d9b573',
+      '5c14ea233e794b96aa6523ab6dc62aa486c4300f2038c77b15f1af259c339e1c',
   'fixture scale.timeseries/ticks-reverse-min.js (plain)':
-      'e088bca1f9b6ca220a5f3ad8b00d51b17adedc33bfec2c20b2a7573ce58efa05',
+      '842835dd5720f636fdc4a4208e9a86cea3fe75d1ac55c65a83ed40507b1b14f4',
   'fixture scale.timeseries/ticks-reverse-min.js (trace)':
-      '096a41ec7c198dccc18c14e58fdfb6dd10c3cbd645e1cd0ca99506d2b27b1e73',
+      'fb26dccd46e537fe8c4feb543b881ca9cc677e641659f0fbab84e9a3dad37c1d',
   'fixture scale.timeseries/ticks-reverse.js (plain)':
-      'dab5a41bc7649a25afeba532ecbc84779cf53cfa3b73b677cbee453c23d74e80',
+      '473010518a4925f0fc8bf5d7e2ad76287607e367bc67b04dedd52a58cea90226',
   'fixture scale.timeseries/ticks-reverse.js (trace)':
-      '1b19689b932a9cf2cd9fed3f24cdab673f0bcb3cf907ccdf4e1a54ab03732421',
+      '84c1f2f5155db5bd4d5af22fc6c7ea35cc2aa800a1780c75b7223dbf9b4ea141',
   'focused a scriptable option adds a key to defaults.elements.point (plain)':
-      '5babd543a629ca90f495d6b9e191889312e4ef434da518665723c64f31911fc6',
+      '8716eeb56957d2db02efddd2655754a52073cab7ff179d7a0ebc03ed78aa7836',
   'focused a scriptable option adds a key to defaults.elements.point (trace)':
-      'fc814b5e783a3280836431f3c8615444819f14072caaa519d0010fbc84cce13e',
+      'e51d1ded454bd2562efe2494c819661bacd0caa826b7cdc925588fa830992d06',
   'focused a scriptable option deletes defaults.animation.easing (plain)':
-      '6496b163c41d8befccc6c13824bcd0f82728d74b0f65afacc499cb4c9f8403fb',
+      'd1b7c1a0ef4fb041e7b81e120105d0a243db2ea671de7cdfdac6a39ff99911b5',
   'focused a scriptable option deletes defaults.animation.easing (trace)':
-      '6120138a705e230cfe012702a47fcee06704d5b7bda30eaa4d27f25567313f72',
+      '3fb28b16ea7eec0e39ed0800b8bf99f9742902b5725a4f39b35dd29f74234d6b',
   'focused a scriptable option writes ctx.parsed (plain)':
-      'cd0467174bd9220a9764629257ec946f5854f0ca70983f1c77c128c44d1cb5e4',
+      '033712fd389bbb93e290084e0c9e49118af15f3e76ec8fb256cd5f18e39908cc',
   'focused a scriptable option writes ctx.parsed (trace)':
-      '4bd081dcd35dc8b8e3ff8a907d5011963669bafa1511711a52cd4db714c4662d',
+      '734f69b82c5a870f3f039129f4a0fda6706f1341f9dcd7a7b2692a43bcb0f9fa',
   'focused a write through the sub-resolver (plain)':
-      '5e01e7890a64bd896a8879bb64ba4773c873ae15fb19e710ef6604bf0cda8120',
+      'a7d506d386e4ef3b2308c70d077d61aa99d4c6cf2299a0e616f20f22c936575c',
   'focused a write through the sub-resolver (trace)':
-      '7bc76106c8b197a83db2d3bccc5d376e68bb512c5b73227e068adad25d5456f5',
+      '04c9e69616b68f0b97b5642517ce38a10f14338e94e05ad3666558722e5372c3',
   'focused animation: an animations entry with properties (plain)':
-      'ede3bf593e688587b91b183576863f0f8c1cf4445ac30d7d81e5aa7f472888c4',
+      'a7476d8108a0e92a9810a3c0cbdf3e5b2838e49fe35a7d07da2c25418bcd113f',
   'focused animation: an animations entry with properties (trace)':
-      '31222525e148d143445cbb559ba3146d88e9c94117a1a27e8a81852f88a89d5d',
+      '57da0c1feea5204d5cb18013b95005af29b72552361f72c30ca5badacc9f0129',
   'focused animation: false on a dataset (plain)':
-      'fbb43447263036460eff64607b36bab2d1d4d6b599ec513fabbd564b160caa1f',
+      'd0ff65ad28bfa6ae486db9c339dca8b80e195e6b0de54187bdd9aca2ef097d05',
   'focused animation: false on a dataset (trace)':
-      '0e2ba698748031b78094dc9e64cdb0fbaa984aa40ec8983942ec205e2bbbb552',
+      '41187827b6ebf13c84b46bfa73be81d6c067799042492ecd82b9066eed6b4929',
   'focused animation: scriptable delay (plain)':
-      'b1d11d533158c95f1b114026cbbd9f3f0ba1c277e16b615d6e852c7369ea03ce',
+      '8ad7c7c0cafeffbf15680caa2562f01c99d031302511f5c509099283060c6307',
   'focused animation: scriptable delay (trace)':
-      '3f9b9fb7ed19480f63058f9552d0a908a5fe8ce397fd50d2d9213428f9c21690',
+      '15b77179ba88bb2899d49dc78d5dc0165e930d3872522e854a58e4e86396f878',
   'focused animation: scriptable duration (plain)':
-      '3f0f38611c6bb08c6e70256d33316c06e3a2fa8180b15db0cd835480d72bf3b0',
+      'b4bf66ac66161b0b2b887272f3dfece80d5a082dccec68c7d6d2e9def9d25a92',
   'focused animation: scriptable duration (trace)':
-      '10e3a175e5a0673bc02b1a9c27cac7064801ede442bdd38803fb87df8f8d6ad9',
+      '89a8f2ad298de58a4c0286794f3b186611db0899bcdaf6252f685e7db28fe6a3',
   'focused animation: transitions of hide and show (plain)':
-      'a7aebde0c6a5d58eb7639973377994ea1b2d5568f1c07419db5e4c6c3c046f67',
+      'f21d261a23c64dfb926ffc5e3a402bc63615bcadc1535b8b3f5685c0b24ab592',
   'focused animation: transitions of hide and show (trace)':
-      '2f01f21bb0073376629afe5ca667b0201cf62aafe586e65406dab825261c92e4',
+      '6df14ae21354f9668eadca99e0d6c6c39ad692ccc45fbc7bc907a906d6b9f8c6',
   'focused bar: skipNull with two datasets (plain)':
-      'e33fadefd7bf768fe850c0fecf83d109e9e513fc524d52f2d39f0b7c3aaf9ab6',
+      '3a0e3d41c225a463fbb7d3a03cae8744bd966ccd4e5c04cf3353eef10683c3d6',
   'focused bar: skipNull with two datasets (trace)':
-      '70adabe8374d9206f1753892a60c0e0a940c1a9aefd8e76ff7f1eb204285dae1',
+      '9c3350789a2603e7797bf6c65e2a27191dd8aa05cb4865b75ef24a10c1e9065a',
   'focused bar: stacked with stack groups (plain)':
-      '5bcabaee506431016b841af4a3f9331c71df42290f02803671d40021a48e6ee8',
+      '4ab45d8ad1257328c0ff85d024cb9e150663574c0147bc657e340ae35b4e41bd',
   'focused bar: stacked with stack groups (trace)':
-      '347e23a0e505df74eb6bf7e5ba50946571a7c05bd5d67b48db76ddefa5a0cba2',
+      '778fd150b055b93899ff316849f543bc42d888db695cf4d5541d78817f5c47ee',
   'focused fallbacks: interaction, tooltip, legend labels (plain)':
-      'd969204428416c13e1fe4f51d17219bc518a1dc3f0dd9912ea4d6c617812fd9c',
+      '21c59500d7be4c7292583020c5e050b66718223e37e4d2333272b813213d0e62',
   'focused fallbacks: interaction, tooltip, legend labels (trace)':
-      'b2e3db1c9bcf76c2cb4f5c8556c347d7261fbb08ce11592136216aef2d15758d',
+      'c96b6289e646a53e586dc3b1c47dd6d06f4bd715ef550af556d8343057c1d2bf',
   'focused hover prefixes (plain)':
-      'd77133f42e428ecef8525fde5a0ab4b6d66f78af54400542b3aab4437bb484b2',
+      '3d81b290414e169e1f43116b995da911e74d14d9819bc94ff447e835700bb18f',
   'focused hover prefixes (trace)':
-      '27a03655d38a964d11f601ec2b858808af5b6cea5d135a8c68048727afe804e0',
+      '4fb08fd67bbdf1dea90004095d36fd23f084e93927ee1af18c2ec15b8efde8b7',
   'focused indexable arrays (plain)':
-      '4663e2937acb136a5d58c48b4f4075750d19eff402001196bf634b89db1ab041',
+      '87282007a49ad4d45a940d768a32532df06ca9f605821cc58be692b8f4b11b27',
   'focused indexable arrays (trace)':
-      '4a1e8074ad222e5074bd64ac185e414669429b1c7faf9baeadfbaeec2d99ad1e',
+      'c764567cfbeb4cbb6523ad154e4dc48e8b4acdfb5e7cfcd03f54f6cba659d3c3',
   'focused mixed: bar and line (plain)':
-      'ad1cb01cab712647884d10e41dceadbeed017e0fdf6439c7bd45ab42dba19df3',
+      '38ce771d6ed299afc2bdff4167b2028ba5cbeac5e50c7311c7ff2edc74e6fec0',
   'focused mixed: bar and line (trace)':
-      'f7e6926075bc9a301886cae9c2699ae3b792db80128c3298c95402ebde0e0421',
+      'c1b8bb5667fd5024f82d26afcbaed00c6c60681135e17c1f5ae8fe846330360f',
   'focused object option: arc borderRadius (plain)':
-      '7dc11aa0780229dfac6bf2774b82b4f87e57f8b4cd147be204412248c34757a4',
+      '59a92a4c05653db860638c13ec81c27ee68dd647c800d99cd272d34df73b3027',
   'focused object option: arc borderRadius (trace)':
-      '4f7474cd2fe7d84027aefb9848711963ff8fd831429318ea4495a51ba5e12af6',
+      'eb87605f654440d9aa9ebed2915be24121e51967e23cab841538b2eaffcb4351',
   'focused object option: bar borderRadius (plain)':
-      'f0c31145f7dd41abc8c9d6bf5e7eede11fa2af3396a3385d545cf589dd326882',
+      'cbaea1d2647da15d62ab657932964a6bd7aa0308f0ee0d57604614a7219a82a2',
   'focused object option: bar borderRadius (trace)':
-      '340971b6fe0b3e136e84c929d3b0af259380f019f7d3aee1224a6b0e9746a4f7',
+      'd6c9429cad0789956a4df35ec030ccad0cdb2d01d20bb36a0bdd799487be2479',
   'focused polar area and radar with scriptable colors (plain)':
-      '28b94c34278385849e7ef648049bbaa1adb0b05856d5bef5c26f14ce198f5b59',
+      'ed005ece9a54678d583aaf62bcbf2cf8989b399a4f1c9f3d9b90e2c086397a3a',
   'focused polar area and radar with scriptable colors (trace)':
-      'd1548445cf732ef4ba377a15549288d1702781a50628851c1f159753d913155d',
+      '7b5ffb28bd2cb1711c8e0ec0e225111c8c02459b6e5d7beee8879220406dce95',
   'focused radar with scriptable point options (plain)':
-      '4213025e22eed8a6f5a27e6d07d23ecab43655eceb3324ffc1362efc429b4f8f',
+      '181c6f589d8cff0e04648eac95e6ac42adc51c3ece8d2b2d3a44ad2bf9e56d9f',
   'focused radar with scriptable point options (trace)':
-      '85d04ae18b72a3da1a2d7c8c97b0b689dcbd2af07cf6beb5ae778e63a76fc3b3',
+      '70e110958943bef4559add9a1e13dce6256abb115dd7c9c368dcdafda08a4ae8',
   'focused scatter and bubble with scriptable radius (plain)':
-      'a5368be07976ff57b316a065c3bf9065b765130cdafc99fc901c9f503d0c9b02',
+      'b07857f7109dab769ab91467715d5cd984316a6b160e9c80b7fc362c58669818',
   'focused scatter and bubble with scriptable radius (trace)':
-      'b17524d49b54abbbcd21df46f9fb591cb27c669bb0857d2a6ab010c061543dfb',
+      '57702652e4441a2ba377b98c1b70f04f05b2fd9958a97bb30548642a7cf138bd',
   'focused scriptable on options.datasets.line (plain)':
-      '9f002a46aa5d3af272a80d8eb4e3110420afaf0ccef6679b795380f7fcbe8b53',
+      'af027c45c435e84e2f3ef2b1490c935c6873bbd76977f3180cc16d634222ddff',
   'focused scriptable on options.datasets.line (trace)':
-      '3dfa8789210eadbc6b3d5154f26bf05cd3257960c194128176e169f5303f86bf',
+      'b99a1c62a0260f5ac3092b712d3fa6e1f5c6444fe170081ec66f043be63eb16c',
   'focused scriptable on options.elements.point (plain)':
-      '7663d775768f0bf07c24546303285dfa267cc003163896cf281dc1eef9df98f0',
+      '932114f8a878db247e7c839a6cb18e2f59895d0cc772cd9ea1781841a6758cea',
   'focused scriptable on options.elements.point (trace)':
-      '02a3fe953e7aef082f51822d8783067dbd63b8de33a438b49b24313eca74a06c',
+      '76b026d62cf1842093a1b7e3623e2907541b696b07eaf9be2fcd1fce5c503e25',
   'focused scriptable on the chart options (plain)':
-      '270dd9cd7a9677eb8fe7e583891851a584daf25d9714b7b5261c2b8a06631d1f',
+      '813c9ecce0a44af533fdb33980f01a0b967c229368d95f1d2c35d148526b8892',
   'focused scriptable on the chart options (trace)':
-      '31cfcced1acb2fa0616dc946a24515218b8e9b220b5a2be1f25a0d4dfeebf176',
+      '36d2acb4880aeb96aeecfee0417d16e031d86ae96160af56422320102c5486b7',
   'focused scriptable on the dataset (plain)':
-      '44350d1c2c629a39735d3512b149a9bff34ba731933f2100a511983c4ac75875',
+      'ce5f79c6d9d3f795ecc22a85c48d68a7e82750adb00c205f5e0bb8f4ecf5defe',
   'focused scriptable on the dataset (trace)':
-      '95287163cee1e6134a61089d9b9c026ed6627229b19c4dfa617b22a9e3572782',
+      'd3e2ed5241cc08aee249824b0b9f6c7a7dab87312f0a46aada817adabff5bf2d',
   'trace animation: a counted _fallback function of animation (plain)':
       '583b54a60bef3b84b2660bf5efe9e8444ca5003abd66de1c8144a66ff8f2af54',
   'trace animation: a counted _fallback function of animation (trace)':

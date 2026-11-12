@@ -979,7 +979,7 @@ class TimeScale extends Scale {
     );
     final cosRotation = jsCos(angle);
     final sinRotation = jsSin(angle);
-    final tickFontSize = resolveTickFontOptions(0).size ?? double.nan;
+    final tickFontSize = resolveTickFontOptions(0).fontSize!;
 
     return (
       w: (tickLabelWidth * cosRotation) + (tickFontSize * sinRotation),

@@ -18,8 +18,7 @@
 /// - `colors`: a Map of color tokens. Each value is a [RawThemeColor] or
 ///   Dart `null`, which themes nothing.
 /// - `typography`: a Map with the font tokens `font` and `pointLabels`. Each
-///   value is a Map of the `FontSpec` fields `family`, `size`, `style`,
-///   `weight` and `lineHeight`, or Dart `null`.
+///   value is a Flutter `TextStyle` (Chart.js ADR 0116), or Dart `null`.
 /// - `palette`: a Map with the fields `colors`, a List of [RawThemeColor]
 ///   values, and `backgroundAlpha`, a number (Chart.js ADR 0050, theming.md
 ///   §3.5). It replaces the palette of the colors plugin.
@@ -42,6 +41,7 @@ import 'dart:collection' show ListBase;
 import 'dart:ui' as ui;
 
 import 'package:flutter/animation.dart' show Curves;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
@@ -54,6 +54,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// A color token of a raw Map theme: the sRGB components of the `dart:ui`
 /// constructor `Color.from(alpha:, red:, green:, blue:)`, each from 0 to 1.
@@ -480,15 +481,6 @@ const List<(String, bool)> _tooltipFontTokenKeys = [
 /// `defaults.scales.<type>` as a scope.
 const String _pointLabelsFontKey = 'scales.radialLinear.pointLabels.font';
 
-/// The fields of a `FontSpec` (`index.d.ts:1817-1836`).
-const Set<String> _fontFields = {
-  'family',
-  'size',
-  'style',
-  'weight',
-  'lineHeight',
-};
-
 /// The fields of a raw Map theme.
 const Set<String> _themeFields = {'colors', 'typography', 'palette', 'raw'};
 
@@ -534,8 +526,9 @@ const Map<String, Object?> _transitions = {
 ///   `pointLabels` over it (theming.md §3.4).
 /// - The `palette` emits the two palette keys of `plugins.colors` as Lists
 ///   of [themeColorValue] strings (Chart.js ADR 0050, theming.md §4).
-/// - The `raw` keys beat the token keys, key by key. Maps merge, and a Map
-///   that holds no key after the guard is left out.
+/// - The `raw` keys beat the token keys, key by key. Maps merge, a raw font
+///   merges over the token font with `TextStyle.merge` (Chart.js ADR 0116),
+///   and a Map that holds no key after the guard is left out.
 /// - A key that [themeNeverEmittedReason] rejects is never emitted. In debug
 ///   mode, it fails an assert. A `raw` List with such an item is left out as
 ///   a whole.
@@ -602,33 +595,36 @@ ChartOptionsScope? _compile(AnyObject theme) {
     '${typography.keys.where((k) => !_typographyTokens.contains(k))}.',
   );
   final font = _font(typography['font']);
-  if (font.isNotEmpty) {
+  if (font != null) {
     for (final path in _fontTokenKeys) {
-      _put(keys, path, Map<String, Object?>.of(font));
+      _put(keys, path, font);
     }
   }
   // The base font without size, then the point-label font (theming.md §3.4).
-  final pointLabelsFont = <String, Object?>{
-    for (final MapEntry(:key, :value) in font.entries)
-      if (key != 'size') key: value,
-    ..._font(typography['pointLabels']),
-  };
-  if (pointLabelsFont.isNotEmpty) {
+  final pointLabelsToken = _font(typography['pointLabels']);
+  final baseWithoutSize = font == null ? null : _fontWithout(font, size: true);
+  final pointLabelsFont = baseWithoutSize == null
+      ? pointLabelsToken
+      : pointLabelsToken == null
+      ? baseWithoutSize
+      : baseWithoutSize.merge(pointLabelsToken);
+  if (pointLabelsFont != null && _hasFontField(pointLabelsFont)) {
     _put(keys, _pointLabelsFontKey, pointLabelsFont);
   }
   // The base font without weight (theming.md §3.4).
-  final fontWithoutWeight = <String, Object?>{
-    for (final MapEntry(:key, :value) in font.entries)
-      if (key != 'weight') key: value,
-  };
-  if (fontWithoutWeight.isNotEmpty) {
+  final fontWithoutWeight = font == null
+      ? null
+      : _fontWithout(font, weight: true);
+  final emitWithoutWeight =
+      fontWithoutWeight != null && _hasFontField(fontWithoutWeight);
+  if (emitWithoutWeight) {
     for (final path in _fontTokenKeysWithoutWeight) {
-      _put(keys, path, Map<String, Object?>.of(fontWithoutWeight));
+      _put(keys, path, fontWithoutWeight);
     }
   }
-  if (font.isNotEmpty) {
+  if (font != null) {
     for (final path in _pluginFontTokenKeys) {
-      _put(keys, path, Map<String, Object?>.of(font));
+      _put(keys, path, font);
     }
   }
 
@@ -643,8 +639,10 @@ ChartOptionsScope? _compile(AnyObject theme) {
     }
   }
   for (final (path, withWeight) in _tooltipFontTokenKeys) {
-    final value = withWeight ? font : fontWithoutWeight;
-    if (value.isNotEmpty) _put(keys, path, Map<String, Object?>.of(value));
+    final value = withWeight
+        ? font
+        : (emitWithoutWeight ? fontWithoutWeight : null);
+    if (value != null) _put(keys, path, value);
   }
 
   _palette(keys, _field(theme, 'palette'));
@@ -756,26 +754,54 @@ void _palette(AnyObject keys, AnyObject palette) {
   ]);
 }
 
-/// The `FontSpec` Map of the font token [value]: its fields that are not
-/// `null`, in their order (theming.md §3.3). Dart `null` gives an empty Map.
-/// In debug mode, an unknown field fails an assert.
-AnyObject _font(Object? value) {
+/// The font token [value]: a `TextStyle` that sets a field of a font, or
+/// Dart `null` (Chart.js ADR 0116). In debug mode, another value fails an
+/// assert.
+TextStyle? _font(Object? value) {
   assert(
-    value == null || value is AnyObject,
-    'The font token is not a Map: $value.',
+    value == null || value is TextStyle,
+    'The font token is not a TextStyle: $value.',
   );
-  if (value is! AnyObject) return const <String, Object?>{};
-  assert(
-    value.keys.every(_fontFields.contains),
-    'Unknown font fields: '
-    '${value.keys.where((k) => !_fontFields.contains(k)).join(', ')}.',
-  );
-  return {
-    for (final key in jsObjectKeys(value))
-      if (value[key] != null && !identical(value[key], undefined))
-        key: value[key],
-  };
+  return value is TextStyle && _hasFontField(value) ? value : null;
 }
+
+/// Whether [font] sets a field that the chart reads: the family, the
+/// fallback families, the size, the style, the weight, the height, the
+/// letter and word spacing, the locale, the font features or the font
+/// variations.
+bool _hasFontField(TextStyle font) =>
+    font.fontFamily != null ||
+    font.fontFamilyFallback != null ||
+    font.fontSize != null ||
+    font.fontStyle != null ||
+    font.fontWeight != null ||
+    font.height != null ||
+    font.letterSpacing != null ||
+    font.wordSpacing != null ||
+    font.locale != null ||
+    font.fontFeatures != null ||
+    font.fontVariations != null;
+
+/// [font] without its size ([size]) or without its weight ([weight]): a new
+/// font with the other fields that the chart reads. A `TextStyle` cannot
+/// clear a field, so the result is a new [ChartTextStyle].
+ChartTextStyle _fontWithout(
+  TextStyle font, {
+  bool size = false,
+  bool weight = false,
+}) => ChartTextStyle(
+  fontFamily: font.fontFamily,
+  fontFamilyFallback: font.fontFamilyFallback,
+  fontSize: size ? null : font.fontSize,
+  fontStyle: font.fontStyle,
+  fontWeight: weight ? null : font.fontWeight,
+  height: font.height,
+  letterSpacing: font.letterSpacing,
+  wordSpacing: font.wordSpacing,
+  locale: font.locale,
+  fontFeatures: font.fontFeatures,
+  fontVariations: font.fontVariations,
+);
 
 /// Writes [value] at the dot path [path] of [keys]. The Maps on the path are
 /// new Maps where needed. In debug mode, a path that the guard rejects fails
@@ -796,8 +822,10 @@ void _put(AnyObject keys, String path, Object? value) {
 }
 
 /// Merges the `raw` keys of [source] at [path] into [target]. A raw key
-/// beats the key in [target]. A Map merges into a Map. A key that the guard
-/// rejects is left out, and fails an assert in debug mode.
+/// beats the key in [target]. A Map merges into a Map, and a font into a
+/// font: a field of the raw font beats the field of the token font, as a
+/// key of a font object does upstream. A key that the guard rejects is left
+/// out, and fails an assert in debug mode.
 ///
 /// The keys come in the [jsObjectKeys] order, as `Object.keys` gives them
 /// for an object literal.
@@ -816,6 +844,9 @@ void _mergeRaw(AnyObject target, AnyObject source, List<String> path) {
       final node = current is AnyObject ? current : <String, Object?>{};
       _mergeRaw(node, value, keyPath);
       if (node.isNotEmpty) target[key] = node;
+    } else if (value is TextStyle) {
+      final current = target[key];
+      target[key] = current is TextStyle ? current.merge(value) : value;
     } else {
       target[key] = value;
     }

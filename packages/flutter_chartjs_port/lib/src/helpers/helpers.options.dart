@@ -11,23 +11,24 @@
 /// An option value is an `Object?`, also for the unions of the parameters
 /// (see the library documentation of `lib/src/types/geometric.dart`).
 ///
-/// The results of [toTRBL], [toTRBLCorners], [toPadding] and [toFont] are
-/// typed objects (differences.md row `adapt-options-typed-results`). The
+/// The results of [toTRBL], [toTRBLCorners] and [toPadding] are typed
+/// objects (differences.md row `adapt-options-typed-results`). [toFont]
+/// gives a [ChartTextStyle] (Chart.js ADR 0116, row
+/// `adapt-text-style-fonts`). The
 /// result of [createContext] is a [ContextObject]: an object with a prototype
 /// (differences.md row `adapt-create-context-prototype`), of the typed
 /// class of its `type` (Chart.js ADR 0054 §11, differences.md row
 /// `adapt-typed-contexts`).
 library;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show toFontString;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isNullOrUndef, isObject, valueOrDefault;
+    show isArray, isObject, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -36,60 +37,9 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' show CanvasFontSpec;
 import 'package:meta/meta.dart' show internal, protected;
-
-/// helpers.options.ts:7 `LINE_HEIGHT`.
-final RegExp _lineHeight = RegExp(r'^(normal|(\d+(?:\.\d+)?)(px|em|%)?)$');
-
-/// helpers.options.ts:8 `FONT_STYLE`.
-final RegExp _fontStyle = RegExp(
-  r'^(normal|italic|initial|inherit|unset|(oblique( -?[0-9]?[0-9]deg)?))$',
-);
-
-/// helpers.options.ts:22 `toLineHeight`.
-///
-/// Converts the given line height `value` in pixels for a specific font
-/// `size`.
-/// @param value - The lineHeight to parse (eg. 1.6, '14px', '75%', '1.6em').
-/// @param size - The font size (in pixels) used to resolve relative `value`.
-/// @returns The effective line height in pixels (size * 1.2 if value is
-/// invalid).
-/// @see https://developer.mozilla.org/en-US/docs/Web/CSS/line-height
-/// @since 2.7.0
-///
-/// [value] is a `number | string` upstream. Here it is any value, which
-/// `'' + value` converts with `ToString` ([jsToString]): `null` gives
-/// `'null'` and [undefined] gives `'undefined'`.
-double toLineHeight(Object? value, double size) {
-  // DIVERGES(chartjs): adapt-font-parsing, the decimal number path.
-  // JS prints zero (including -0) as '0', and these positive doubles
-  // without an exponent. Parsing that decimal gives the same double.
-  // Outside this range the anchored pattern rejects the sign/exponent.
-  if (value is double) {
-    if (value == 0) return size * 0.0;
-    if (value >= 1e-6 && value < 1e21) return size * value;
-    return size * 1.2;
-  }
-  final matches = _lineHeight.firstMatch(jsToString(value));
-  if (matches == null || matches[1] == 'normal') {
-    return size * 1.2;
-  }
-
-  // Upstream reassigns `value`. Its Dart type is `Object?`, so the number
-  // gets its own variable.
-  var number = jsToNumber(matches[2]);
-
-  switch (matches[3]) {
-    case 'px':
-      return number;
-    case '%':
-      number /= 100;
-  }
-
-  return size * number;
-}
 
 /// helpers.options.ts:43 `numberOrZero`: `+v || 0`.
 double _numberOrZero(Object? v) {
@@ -280,80 +230,6 @@ ChartArea toPadding([Object? value = undefined]) {
   return obj;
 }
 
-/// The font object of [toFont] (helpers.options.ts:130-137): a
-/// [CanvasFontSpec] with the line height in pixels.
-///
-/// Upstream builds a plain object and keeps each value as it is. Here the
-/// members have the types of [CanvasFontSpec]
-/// (differences.md row `adapt-options-typed-results`):
-/// - [family] and [style]: `ToString` of a value that is not a string.
-/// - [size]: `ToNumber` of a value that is not a number.
-/// - Dart `null` stands for JS `null` and for `undefined` in these three
-///   members, as in [CanvasFontSpec].
-/// - [style] is also Dart `null` for a falsy value that is not a string
-///   (`0`, `-0`, `NaN` and `false`). Upstream keeps the value. The string
-///   leaves out the style in both cases.
-/// - [weight] keeps its value: a `String`, a `num`, Dart `null` (JS `null`)
-///   or the [undefined] sentinel.
-final class ParsedFont implements CanvasFontSpec {
-  /// The font object `{family, lineHeight, size, style, weight, string}`.
-  ParsedFont({
-    required this.family,
-    required this.lineHeight,
-    required this.size,
-    required this.style,
-    required this.weight,
-    required this.string,
-  });
-
-  /// helpers.options.ts:131 `family`.
-  @override
-  final String? family;
-
-  /// helpers.options.ts:132 `lineHeight`, in pixels ([toLineHeight]).
-  @override
-  final double lineHeight;
-
-  /// helpers.options.ts:133 `size`.
-  @override
-  final double? size;
-
-  /// helpers.options.ts:134 `style`.
-  @override
-  final String? style;
-
-  /// helpers.options.ts:135 `weight`.
-  @override
-  final Object? weight;
-
-  /// helpers.options.ts:136 `string`: the CSS font string of
-  /// `toFontString` (helpers.options.ts:139), or `null` when [size] or
-  /// [family] is empty.
-  @override
-  String? string;
-}
-
-/// The global `parseInt(string, 10)` (ECMAScript `parseInt`) of a string:
-/// the optional sign and the decimal digits after leading white space, or
-/// NaN.
-///
-/// `\s` of a Dart [RegExp] is the `\s` of JavaScript: the white space and
-/// line terminators that `parseInt` skips. `double.parse` rounds the digits
-/// correctly, as V8 does. `'-0'` gives -0.
-double _parseInt(String string) {
-  final match = _decimalInteger.firstMatch(string);
-  if (match == null) return double.nan;
-  return double.parse(match[1]!);
-}
-
-/// The prefix that `parseInt(string, 10)` reads.
-final RegExp _decimalInteger = RegExp(r'^\s*([+-]?[0-9]+)');
-
-/// The [CanvasFontSpec] form of a `family` or `style` value: Dart `null` for
-/// JS `null` and `undefined`, else `ToString` of the value.
-String? _fontMemberString(Object? value) =>
-    isNullOrUndef(value) ? null : jsToString(value);
-
 /// helpers.options.ts:115 `toFont`.
 ///
 /// Parses font options and returns the font object.
@@ -362,80 +238,35 @@ String? _fontMemberString(Object? value) =>
 /// @return The font object.
 /// @private
 ///
-/// [options] and [fallback] are option objects: Maps, also resolvers. A
-/// falsy value is no object, and Dart `null` stands for a missing
-/// [fallback]. The fallback is then `defaults.font`.
-///
-/// `console.warn` is [print]: the Dart console output on every platform.
-ParsedFont toFont(Object? options, [Object? fallback]) {
-  // Upstream reassigns its parameters.
-  // ignore: parameter_assignments
-  options = jsTruthy(options) ? options : <String, Object?>{};
-  // Upstream reassigns its parameters.
-  // ignore: parameter_assignments
-  fallback = jsTruthy(fallback) ? fallback : defaults['font'];
-
-  var size = valueOrDefault(
-    readOption(options, OptionKey.size),
-    readOption(fallback, OptionKey.size),
+/// The font is a [ChartTextStyle] (Chart.js ADR 0116, row
+/// `adapt-text-style-fonts`). [options] merges over [fallback], else over
+/// `defaults.font`, with [TextStyle.merge]: a field of [options] wins, and a
+/// null field takes the field of the fallback, as `valueOrDefault` takes each
+/// key upstream. The line height in pixels is [ChartTextStyle.lineHeight] of
+/// the result. A value that is not a `TextStyle` is no font: the result is
+/// the fallback. A font object of Chart.js stops a debug build. The style
+/// check, its warning, the `parseInt` of a size text and `toLineHeight` are
+/// gone: a `TextStyle` has no text form of them.
+// DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+ChartTextStyle toFont(Object? options, [Object? fallback]) {
+  // A font object, also behind a resolver (a font function that returns a
+  // Map), is no font.
+  assert(
+    options is! Map &&
+        options is! JsObjectFace &&
+        fallback is! Map &&
+        fallback is! JsObjectFace,
+    'A font is a ChartTextStyle, not a font object.',
   );
-
-  if (size is String) {
-    size = _parseInt(size);
+  final TextStyle base;
+  if (fallback is TextStyle) {
+    base = fallback;
+  } else {
+    final font = readOption(defaults, OptionKey.font);
+    base = font is TextStyle ? font : const ChartTextStyle();
   }
-  var style = valueOrDefault(
-    readOption(options, OptionKey.style),
-    readOption(fallback, OptionKey.style),
-  );
-  // DIVERGES(chartjs): adapt-font-parsing, literal alternatives of FONT_STYLE.
-  final commonStyle =
-      style is String &&
-      (style == 'normal' ||
-          style == 'italic' ||
-          style == 'initial' ||
-          style == 'inherit' ||
-          style == 'unset' ||
-          style == 'oblique');
-  if (jsTruthy(style) &&
-      !commonStyle &&
-      !_fontStyle.hasMatch(jsToString(style))) {
-    // console.warn has no other counterpart in the pure layers.
-    // ignore: avoid_print
-    print('Invalid font style specified: "${jsToString(style)}"');
-    style = undefined;
-  }
-
-  // DIVERGES(chartjs): adapt-options-typed-results, typed font members.
-  final font = ParsedFont(
-    family: _fontMemberString(
-      valueOrDefault(
-        readOption(options, OptionKey.family),
-        readOption(fallback, OptionKey.family),
-      ),
-    ),
-    // `size * 1.2` and `size * value` convert size with ToNumber.
-    lineHeight: toLineHeight(
-      valueOrDefault(
-        readOption(options, OptionKey.lineHeight),
-        readOption(fallback, OptionKey.lineHeight),
-      ),
-      jsToNumber(size),
-    ),
-    size: isNullOrUndef(size) ? null : jsToNumber(size),
-    // A falsy style that is not a string stays falsy: `toFontString` leaves
-    // it out.
-    style: !jsTruthy(style) && style is! String
-        ? null
-        : _fontMemberString(style),
-    weight: valueOrDefault(
-      readOption(options, OptionKey.weight),
-      readOption(fallback, OptionKey.weight),
-    ),
-    string: '',
-  );
-
-  font.string = toFontString(font);
-  return font;
+  final merged = options is TextStyle ? base.merge(options) : base;
+  return merged is ChartTextStyle ? merged : ChartTextStyle.from(merged);
 }
 
 /// The element `array[index]` of a JavaScript array for a number [index]:

@@ -98,7 +98,7 @@ class _Sample13State extends State<Sample13> {
         if (i == _hovered) {
           ctx
             ..fillStyle = Colors.white
-            ..font = '12px sans-serif'
+            ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 12)
             ..textAlign = TextAlign.center
             ..textBaseline = CanvasTextBaseline.bottom
             ..fillText(days[i].max.toString(), x, high - 2)

@@ -18,11 +18,11 @@
 /// 2. A List of the app goes by reference: `data`, `points`, `labels`,
 ///    `CategoryAxis.labels` and `plugins`. A small style List
 ///    (`ChartValue.indexed` or `borderDash`) lowers to a new List.
-/// 3. A `Color` lowers through [colorValue], a `TextStyle` through
-///    `fontScopeOf` of `css.dart` (a `FontSpecScope`), a `Duration` through
+/// 3. A `Color` lowers through [colorValue], a `Duration` through
 ///    [millisecondsOf] and an `EdgeInsets` through [paddingScope] (a
 ///    `PaddingScope`). A name type lowers to its name or its `optionValue`.
-///    An axis class (`XAxis`, `YAxis`) stays itself. An object option value
+///    An axis class (`XAxis`, `YAxis`) and a font (`TextStyle`, Chart.js ADR
+///    0116) stay themselves. An object option value
 ///    of a name type (the
 ///    `{value}` of `ChartFill.value`) becomes a typed scope of the kind of
 ///    its key ([put]).

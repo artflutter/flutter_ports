@@ -4,8 +4,10 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' show FontWeight;
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
@@ -134,6 +136,8 @@ bool _fits(String kind, int shape) {
     'String' => shape & (ShapeBits.string | ShapeBits.typed) != 0,
     // Upstream data hold an image where the port has an `ImagePointStyle`.
     'obj:UiImageSource' => shape & ShapeBits.typed == ShapeBits.pointStyle,
+    // A font is a `ChartTextStyle` (Chart.js ADR 0116).
+    'obj:ChartTextStyle' => shape & ShapeBits.typed == ShapeBits.textStyle,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' => shape & ShapeBits.scope != 0,
     _ when kind.startsWith('NarrowMap') => shape & ShapeBits.scope != 0,
@@ -152,6 +156,58 @@ bool _fitsInventory(Object? value, int shape) => switch (value) {
   final Map<String, Object?> map when map.isEmpty => _fits('Map', shape),
   _ => false,
 };
+
+/// A path of a field of an upstream font object: `<font path>.<field>`
+/// (Chart.js ADR 0116). The port holds the font as one `TextStyle` at the
+/// font path.
+final RegExp _fontField = RegExp(
+  r'^(.+)\.(family|size|style|weight|lineHeight)$',
+);
+
+/// Whether the walk of the font path [fontPath] from [root] gives a font.
+bool _isFontPath(ScopeKind root, String fontPath) {
+  final walk = _walk(root, fontPath.split('.'));
+  final shape = walk.shape;
+  return walk.depth == fontPath.split('.').length &&
+      shape != null &&
+      shape & ShapeBits.typed == ShapeBits.textStyle;
+}
+
+/// The families of the upstream family list [text] of a font object,
+/// without quotes: the rule of `families` of
+/// `tool/reference/font_record.mjs`.
+List<String> _families(String text) => [
+  for (final name in text.split(','))
+    if (name.trim().isNotEmpty)
+      name.trim().replaceAllMapped(
+        RegExp(r'''^(['"])(.*)\1$'''),
+        (m) => m[2]!,
+      ),
+];
+
+/// The mismatch of the field [field] of the font [font] with the value
+/// [expected] of the upstream font object, or Dart `null`. The weight
+/// keywords `bold` and `normal` of CSS are the weights 700 and 400.
+String? _fontFieldMismatch(TextStyle font, String field, Object? expected) {
+  final actual = switch (field) {
+    'family' => [?font.fontFamily, ...?font.fontFamilyFallback],
+    'size' => font.fontSize,
+    'style' => font.fontStyle?.name,
+    'weight' => font.fontWeight?.value,
+    'lineHeight' => font.height,
+    _ => throw ArgumentError.value(field, 'field'),
+  };
+  final upstream = switch ((field, expected)) {
+    ('family', final String text) => _families(text),
+    ('weight', 'bold') => FontWeight.bold.value,
+    ('weight', 'normal') => FontWeight.normal.value,
+    _ => expected,
+  };
+  final same = actual is num && upstream is num
+      ? actual == upstream
+      : jsonEncode(actual) == jsonEncode(upstream);
+  return same ? null : '$field: $actual != $upstream';
+}
 
 /// The census rows of [file]: `(when, path, kind)`.
 List<(String, String, String)> _census(String file) => [
@@ -251,6 +307,14 @@ String? _mismatch(Object? actual, Object? expected) {
         if (item != null) return '[$i] $item';
       }
       return null;
+    // An upstream font object and the font of the port (Chart.js ADR 0116):
+    // field by field.
+    case final Map<String, Object?> map when actual is TextStyle:
+      for (final MapEntry(:key, :value) in map.entries) {
+        final item = _fontFieldMismatch(actual, key, value);
+        if (item != null) return item;
+      }
+      return null;
     case final Map<String, Object?> map:
       final keys = _keysOf(actual);
       if (keys == null) return 'not an object: $actual';
@@ -312,6 +376,9 @@ void main() {
         final paths = values[group]! as Map<String, Object?>;
         final problems = <String>[];
         for (final MapEntry(key: path, :value) in paths.entries) {
+          // A field of a font object: the font path holds a TextStyle.
+          final font = _fontField.firstMatch(path);
+          if (font != null && _isFontPath(root, font[1]!)) continue;
           final walk = _walk(root, path.split('.'));
           final shape = walk.shape;
           if (walk.depth != path.split('.').length || shape == null) {
@@ -385,6 +452,14 @@ void main() {
         final paths = values[name]! as Map<String, Object?>;
         final problems = <String>[];
         for (final MapEntry(key: path, value: expected) in paths.entries) {
+          // A field of a font object: the field of the TextStyle.
+          final font = _fontField.firstMatch(path);
+          final fontValue = font == null ? null : _read(root, font[1]!);
+          if (font != null && fontValue is TextStyle) {
+            final mismatch = _fontFieldMismatch(fontValue, font[2]!, expected);
+            if (mismatch != null) problems.add('$path: $mismatch');
+            continue;
+          }
           final Object? actual;
           try {
             actual = _read(root, path);
@@ -402,7 +477,14 @@ void main() {
         final paths = (values[name]! as Map<String, Object?>).keys.toSet();
         final leaves = <String>[];
         _leaves(root, '', leaves);
-        expect(leaves.where((leaf) => !paths.contains(leaf)), isEmpty);
+        // A font is one leaf: the inventory has its fields.
+        bool hasFields(String leaf) =>
+            _read(root, leaf) is TextStyle &&
+            paths.any((path) => path.startsWith('$leaf.'));
+        expect(
+          leaves.where((leaf) => !paths.contains(leaf) && !hasFields(leaf)),
+          isEmpty,
+        );
       });
 
       test('each object of $name is a typed scope', () {

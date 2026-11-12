@@ -26,6 +26,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/font_record.dart';
 
 // theming.md §8 test 7 (Chart.js ADR 0050, "The public classes"): the value
 // equality, `copyWith`, `lerp` and the diagnostics of `ChartThemeData`, the
@@ -551,66 +552,18 @@ void main() {
       );
     });
 
-    AnyObject? fontOf(TextStyle font) =>
-        _at(themeDataToRaw(ChartThemeData(font: font)), 'typography.font')
-            as AnyObject?;
+    Object? fontOf(TextStyle font) =>
+        _at(themeDataToRaw(ChartThemeData(font: font)), 'typography.font');
 
-    test('the family string', () {
-      expect(
-        fontOf(
-          const TextStyle(
-            fontFamily: 'Helvetica Neue',
-            fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-          ),
-        ),
-        {'family': "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"},
-      );
-      // The CSS generic families stay without quotes, in any case.
-      expect(
-        fontOf(
-          const TextStyle(
-            fontFamily: 'Serif',
-            fontFamilyFallback: ['ui-monospace', 'Noto Sans', 'emoji'],
-          ),
-        ),
-        {'family': "Serif, ui-monospace, 'Noto Sans', emoji"},
-      );
-      // Only fallbacks; a name with a single quote; an empty name.
-      expect(
-        fontOf(const TextStyle(fontFamilyFallback: ["Tom's Font", ''])),
-        {'family': '"Tom\'s Font"'},
-      );
-      expect(fontOf(const TextStyle(fontFamily: '')), isEmpty);
-    });
-
-    test('the size, the style, the weight and the line height', () {
-      expect(fontOf(_font), {
-        'family': "'Liberation Sans', serif",
-        'size': 14.0,
-        'style': 'italic',
-        'weight': 700.0,
-        'lineHeight': 1.5,
-      });
-      expect(fontOf(_font)!.keys, [
-        'family',
-        'size',
-        'style',
-        'weight',
-        'lineHeight',
-      ]);
-      expect(
-        fontOf(const TextStyle(fontStyle: FontStyle.normal)),
-        {'style': 'normal'},
-      );
-      expect(
-        fontOf(const TextStyle(fontWeight: FontWeight(350))),
-        {'weight': 350.0},
-      );
+    test('the font token is the TextStyle itself', () {
+      // A font is a TextStyle from the option to the canvas (Chart.js ADR
+      // 0116): no conversion.
+      expect(fontOf(_font), same(_font));
+      const empty = TextStyle();
+      expect(fontOf(empty), same(empty));
     });
 
     test('null fields are left out', () {
-      expect(fontOf(const TextStyle()), isEmpty);
-      expect(fontOf(const TextStyle(height: 1.25)), {'lineHeight': 1.25});
       expect(themeDataToRaw(const ChartThemeData()), isEmpty);
       expect(
         themeDataToRaw(const ChartThemeData(surface: _red)).keys,
@@ -622,17 +575,12 @@ void main() {
       );
     });
 
-    test('a TextStyle with color and letterSpacing compiles with no assert '
-        'and no such key', () {
-      final compiled = compileThemeData(
-        const ChartThemeData(
-          font: TextStyle(color: _red, letterSpacing: 2, fontSize: 13),
-        ),
-      );
-      expect(_plain(_at(compiled, 'scale.ticks.font')), {'size': 13.0});
-      expect(_plain(_at(compiled, 'plugins.legend.labels.font')), {
-        'size': 13.0,
-      });
+    test('a TextStyle with color and letterSpacing reaches each slot as it '
+        'is', () {
+      const font = TextStyle(color: _red, letterSpacing: 2, fontSize: 13);
+      final compiled = compileThemeData(const ChartThemeData(font: font));
+      expect(_at(compiled, 'scale.ticks.font'), same(font));
+      expect(_at(compiled, 'plugins.legend.labels.font'), same(font));
     });
 
     test('the palette', () {
@@ -676,9 +624,12 @@ void main() {
       final oracle = compileChartTheme(ChartThemes.light);
       expect(_plain(compiled), _plain(oracle));
       // The key order too: the compiled objects keep the insertion order.
+      // A font is its record (font_record.dart).
+      Object? font(Object? v) =>
+          v is TextStyle ? fontObjectRecordOf(v) : throw ArgumentError(v);
       expect(
-        jsonEncode(canonicalColors(_plain(compiled))),
-        jsonEncode(canonicalColors(_plain(oracle))),
+        jsonEncode(canonicalColors(_plain(compiled)), toEncodable: font),
+        jsonEncode(canonicalColors(_plain(oracle)), toEncodable: font),
       );
     });
 
@@ -930,10 +881,10 @@ ChartThemeData
      blue: 1.0000, colorSpace: ColorSpace.sRGB)
    onInverseSurface: Color(alpha: 1.0000, red: 0.0000, green:
      0.0000, blue: 0.0000, colorSpace: ColorSpace.sRGB)
-   font: TextStyle(inherit: true, family: Helvetica Neue,
+   font: ChartTextStyle(inherit: true, family: Helvetica Neue,
      familyFallback: [Helvetica, Arial, sans-serif], size: 12.0,
      style: normal, height: 1.2x)
-   pointLabelsFont: TextStyle(inherit: true, size: 10.0)
+   pointLabelsFont: ChartTextStyle(inherit: true, size: 10.0)
    palette: Color(alpha: 1.0000, red: 0.2118, green: 0.6353, blue:
      0.9216, colorSpace: ColorSpace.sRGB), Color(alpha: 1.0000, red:
      1.0000, green: 0.3882, blue: 0.5176, colorSpace:

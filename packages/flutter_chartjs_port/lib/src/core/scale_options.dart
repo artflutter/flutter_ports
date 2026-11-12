@@ -364,15 +364,6 @@ extension type const TickOptions(Object? raw) {
   TickSource? get source => TickSource.of(readOption(raw, OptionKey.source));
 }
 
-/// index.d.ts:1812 `FontSpec`: a font option object, for example the
-/// `font` of [TickOptions] or `defaults.font`. The Dart name `FontSpec` is
-/// the interface of the parsed font in `lib/src/types/`.
-extension type const FontSpecOptions(Object? raw) {
-  /// index.d.ts:1822 `size: number`. A string size stays a string (a
-  /// foreign value of the scope).
-  Object? get size => readOption(raw, OptionKey.size);
-}
-
 /// index.d.ts:3170 the `major` object of [TickOptions].
 extension type const MajorTickOptions(Object? raw) {
   /// index.d.ts:3175 `enabled: boolean`.

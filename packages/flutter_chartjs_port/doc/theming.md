@@ -167,7 +167,8 @@ formatting remains only for frozen reference data. Other
 color spaces convert through `ColorSpace.extendedSRGB` and clamp, because a direct Display P3 to
 sRGB `withValues` only clamps (`dart:ui` `painting.dart:3901-3914, 4053-4056` of 3.47.7,
 `:3919-3932, 4071-4074` of 3.44.9).
-Fonts become `FontSpec` maps of the non-null fields.
+Fonts stay `TextStyle` values: the compiled theme holds the token itself, or a new
+`ChartTextStyle` without the size or the weight where section 3.4 asks for it (Chart.js ADR 0116).
 
 Emitted:
 

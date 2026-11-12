@@ -36,6 +36,7 @@
 // The reference is V8 13.6 on arm64 (Chart.js ADR 0045). The script does not
 // stop on another architecture.
 
+import {fontRecord} from './font_record.mjs';
 import {execFileSync} from 'node:child_process';
 import {existsSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
@@ -387,6 +388,10 @@ const PAD = {clip: 2, fill: 2, stroke: 1, fillText: 4, strokeText: 4};
 function setterValue(name, v) {
   if (v === undefined) return null;
   switch (name) {
+    // The font is a ChartTextStyle (row adapt-text-style-fonts): the record
+    // of its values.
+    case 'setFont':
+      return fontRecord(v);
     case 'setLineWidth':
     case 'setLineDashOffset':
       return Number(v);
@@ -496,7 +501,9 @@ function labelItem(item) {
   const o = item.options;
   return {
     label: item.label,
-    font: item.font.string,
+    // The font is a ChartTextStyle (row adapt-text-style-fonts): the record
+    // of its values.
+    font: fontRecord(item.font.string),
     lineHeight: item.font.lineHeight,
     textOffset: item.textOffset,
     rotation: o.rotation,

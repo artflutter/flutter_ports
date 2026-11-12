@@ -83,7 +83,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isBetween;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show
-        ParsedFont,
         ScriptableChartContext,
         ScriptableContext,
         toFont,
@@ -120,6 +119,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show LegendLabelOptions, LegendOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -671,7 +671,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
     final labelOpts = options.labels;
     final labelFont = toFont(labelOpts.font);
-    final fontSize = labelFont.size ?? double.nan;
+    final fontSize = labelFont.fontSize!;
     final titleHeight = _computeTitleHeight();
     final (:boxWidth, :boxHeight, :itemHeight) = _getBoxSize(
       labelOpts,
@@ -681,7 +681,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     double width;
     double height;
 
-    ctx!.font = labelFont.string;
+    ctx!.font = labelFont;
 
     if (isHorizontal()) {
       width = maxWidth; // fill all the width
@@ -769,7 +769,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// _itemHeight)`.
   double _fitCols(
     double titleHeight,
-    ParsedFont labelFont,
+    ChartTextStyle labelFont,
     double boxWidth,
     double itemHeight0,
   ) {
@@ -960,7 +960,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final rtlHelper = getRtlAdapter(opts.rtl, left, width);
     final labelFont = toFont(labelOpts.font);
     final padding = _labelPadding(labelOpts);
-    final fontSize = labelFont.size ?? double.nan;
+    final fontSize = labelFont.fontSize!;
     final halfFontSize = fontSize / 2;
     ({double x, double y, double line}) cursor;
 
@@ -973,7 +973,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle
       ..lineWidth = 0.5
-      ..font = labelFont.string;
+      ..font = labelFont;
 
     final (:boxWidth, :boxHeight, :itemHeight) = _getBoxSize(
       labelOpts,
@@ -1181,7 +1181,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
           line: cursor.line,
         );
       } else if (legendItem.text is! String) {
-        final fontLineHeight = labelFont.lineHeight;
+        final fontLineHeight = labelFont.lineHeight!;
         cursor = (
           x: cursor.x,
           y:
@@ -1215,7 +1215,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final ctx = this.ctx!;
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     final position = titleOpts.position;
-    final halfFontSize = (titleFont.size ?? double.nan) / 2;
+    final halfFontSize = titleFont.fontSize! / 2;
     final topPaddingPlusHalfFontSize = titlePadding.top + halfFontSize;
     double y;
 
@@ -1260,7 +1260,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       ..textBaseline = CanvasTextBaseline.middle
       ..strokeStyle = color
       ..fillStyle = color
-      ..font = titleFont.string;
+      ..font = titleFont;
 
     renderText(ctx, titleOpts.text, x, y, titleFont);
   }
@@ -1271,7 +1271,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final titleFont = toFont(titleOpts.font);
     final titlePadding = toPadding(titleOpts.padding);
     return jsTruthy(titleOpts.display)
-        ? titleFont.lineHeight + titlePadding.height
+        ? titleFont.lineHeight! + titlePadding.height
         : 0;
   }
 
@@ -1540,7 +1540,7 @@ double? _rotationOf(Object? rotation) => switch (rotation) {
 /// legendItem, _itemHeight)`.
 ({double itemWidth, double itemHeight}) _calculateItemSize(
   double boxWidth,
-  ParsedFont labelFont,
+  ChartTextStyle labelFont,
   CanvasRenderingContext2D ctx,
   Object? legendItem,
   double itemHeight0,
@@ -1549,7 +1549,7 @@ double? _rotationOf(Object? rotation) => switch (rotation) {
   final itemHeight = _calculateItemHeight(
     itemHeight0,
     legendItem,
-    labelFont.lineHeight,
+    labelFont.lineHeight!,
   );
   return (itemWidth: itemWidth, itemHeight: itemHeight);
 }
@@ -1565,7 +1565,7 @@ double? _rotationOf(Object? rotation) => switch (rotation) {
 double _calculateItemWidth(
   Object? legendItem,
   double boxWidth,
-  ParsedFont labelFont,
+  ChartTextStyle labelFont,
   CanvasRenderingContext2D ctx,
 ) {
   var legendItemText = _Item(legendItem).text;
@@ -1582,7 +1582,7 @@ double _calculateItemWidth(
     );
   }
   return boxWidth +
-      ((labelFont.size ?? double.nan) / 2) +
+      (labelFont.fontSize! / 2) +
       ctx.measureText(jsToString(legendItemText)).width;
 }
 

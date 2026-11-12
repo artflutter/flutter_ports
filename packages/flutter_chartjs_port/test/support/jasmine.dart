@@ -25,6 +25,7 @@
 library;
 
 import 'package:chartjs_test_utils/pure.dart' show equalColorValues;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -154,6 +155,8 @@ final class _JasmineEquals extends Matcher {
       return a == b && (a != 0 || a.isNegative == b.isNegative);
     }
     if (identical(a, b)) return true;
+    // A font is a TextStyle (Chart.js ADR 0116): its `==`.
+    if (a is TextStyle && b is TextStyle) return a == b;
     final colorEquality = equalColorValues(a, b);
     if (colorEquality != null) return colorEquality;
     if (a is String && b is String) return a == b;

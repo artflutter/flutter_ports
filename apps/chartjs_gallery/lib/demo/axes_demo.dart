@@ -357,7 +357,7 @@ class AxesDemoState extends State<AxesDemo> {
       'minRotation': _minRotation,
       if (_maxTicksLimit > 0) 'maxTicksLimit': _maxTicksLimit,
       'align': _align,
-      'font': <String, Object?>{'size': _fontSize},
+      'font': ChartTextStyle(fontSize: _fontSize),
     },
     'grid': <String, Object?>{
       'display': _gridDisplay,

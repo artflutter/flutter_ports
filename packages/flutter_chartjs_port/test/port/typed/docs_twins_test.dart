@@ -982,7 +982,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'grid': <String, Object?>{'display': false},
         'ticks': <String, Object?>{
           'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
-          'font': <String, Object?>{'size': 13},
+          'font': const ChartTextStyle(fontSize: 13),
         },
       },
       'y': <String, Object?>{
@@ -999,7 +999,10 @@ Map<String, Object?> _barRaw() => <String, Object?>{
           'display': true,
           'text': 'Units',
           'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
-          'font': <String, Object?>{'size': 12, 'weight': 700},
+          'font': const ChartTextStyle(
+            fontSize: 12,
+            fontWeight: native_ui.FontWeight.bold,
+          ),
           'padding': <String, Object?>{
             'top': 4,
             'right': 0,
@@ -1016,7 +1019,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'align': ChartAlign.start,
         'labels': <String, Object?>{
           'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
-          'font': <String, Object?>{'size': 11},
+          'font': const ChartTextStyle(fontSize: 11),
           'boxWidth': 20,
           'boxHeight': 10,
           'padding': 12,
@@ -1026,14 +1029,17 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'display': true,
         'text': 'Sales by quarter',
         'align': ChartAlign.start,
-        'font': <String, Object?>{'size': 16, 'weight': 600},
+        'font': const ChartTextStyle(
+          fontSize: 16,
+          fontWeight: native_ui.FontWeight.w600,
+        ),
         'padding': <String, Object?>{'top': 4, 'bottom': 8},
       },
       'tooltip': <String, Object?>{
         'mode': const IndexInteractionMode(),
         'intersect': false,
         'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-        'titleFont': <String, Object?>{'size': 13},
+        'titleFont': const ChartTextStyle(fontSize: 13),
         'padding': 10,
         'cornerRadius': 4,
         'displayColors': false,
@@ -1499,12 +1505,15 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
       'legend': <String, Object?>{
         'position': ChartPosition.right,
         'labels': <String, Object?>{
-          'font': <String, Object?>{'size': 12, 'style': 'italic'},
+          'font': const ChartTextStyle(
+            fontSize: 12,
+            fontStyle: native_ui.FontStyle.italic,
+          ),
         },
       },
       'tooltip': <String, Object?>{
         'bodyColor': const native_ui.Color.fromRGBO(255, 205, 86, 1),
-        'bodyFont': <String, Object?>{'size': 14},
+        'bodyFont': const ChartTextStyle(fontSize: 14),
         'callbacks': <String, Object?>{'footer': _rawBudgetFooter},
       },
     },
@@ -1688,7 +1697,7 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
         'pointLabels': <String, Object?>{
           'display': true,
           'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
-          'font': <String, Object?>{'size': 12},
+          'font': const ChartTextStyle(fontSize: 12),
         },
       },
     },
@@ -1816,7 +1825,10 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
         },
         'pointLabels': <String, Object?>{
           'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
-          'font': <String, Object?>{'size': 13, 'weight': 700},
+          'font': const ChartTextStyle(
+            fontSize: 13,
+            fontWeight: native_ui.FontWeight.bold,
+          ),
           'padding': 8,
         },
       },

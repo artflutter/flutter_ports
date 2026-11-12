@@ -12,7 +12,7 @@
 //     chart.canvas.style.getPropertyPriority('direction'),
 //   ]
 
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -56,10 +57,11 @@ typedef PluginTooltipReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
 typedef PluginTooltipReferenceWidth = ({
-  String font,
+  ChartTextStyle font,
   String text,
   double width,
 });
@@ -1989,7 +1991,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -2007,7 +2009,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -2027,7 +2029,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -2047,7 +2049,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -2064,7 +2066,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2073,7 +2075,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2082,7 +2084,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2091,7 +2093,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2113,7 +2115,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2122,7 +2124,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2131,7 +2133,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2140,7 +2142,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2149,7 +2151,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2158,7 +2160,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2167,7 +2169,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2176,7 +2178,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -2365,11 +2367,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",160.45279947916666,165.13333333333333,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -4282,7 +4284,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -4300,7 +4302,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -4320,7 +4322,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -4340,7 +4342,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -4357,7 +4359,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4366,7 +4368,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4375,7 +4377,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4384,7 +4386,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4406,7 +4408,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4415,7 +4417,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4424,7 +4426,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4433,7 +4435,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4442,7 +4444,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4451,7 +4453,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4460,7 +4462,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4469,7 +4471,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -4658,11 +4660,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",160.45279947916666,90.25714285714285,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -6551,7 +6553,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -6569,7 +6571,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -6589,7 +6591,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -6609,7 +6611,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -6626,7 +6628,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6635,7 +6637,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6644,7 +6646,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6653,7 +6655,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6675,7 +6677,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6684,7 +6686,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6693,7 +6695,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6702,7 +6704,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6711,7 +6713,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6720,7 +6722,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6729,7 +6731,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6738,7 +6740,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -6927,11 +6929,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",169.17903645833331,56.02857142857144,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -8898,7 +8900,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -8916,7 +8918,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -8936,7 +8938,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -8956,7 +8958,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -8973,7 +8975,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8982,7 +8984,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -8991,7 +8993,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9000,7 +9002,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9022,7 +9024,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9031,7 +9033,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9040,7 +9042,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9049,7 +9051,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9058,7 +9060,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9067,7 +9069,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9076,7 +9078,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9085,7 +9087,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -9274,11 +9276,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Dataset 3",220.50537109375,168.34285714285716,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -11255,7 +11257,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -11273,7 +11275,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -11293,7 +11295,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -11313,7 +11315,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -11330,7 +11332,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11339,7 +11341,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11348,7 +11350,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11357,7 +11359,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11379,7 +11381,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11388,7 +11390,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11397,7 +11399,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11406,7 +11408,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11415,7 +11417,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11424,7 +11426,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11433,7 +11435,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11442,7 +11444,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -11631,11 +11633,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",169.17903645833331,130.90476190476193,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -13548,7 +13550,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -13566,7 +13568,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -13586,7 +13588,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -13606,7 +13608,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -13623,7 +13625,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13632,7 +13634,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13641,7 +13643,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13650,7 +13652,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13672,7 +13674,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13681,7 +13683,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13690,7 +13692,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13699,7 +13701,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13708,7 +13710,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13717,7 +13719,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13726,7 +13728,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13735,7 +13737,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -13924,11 +13926,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Jan",40.34765625,124.48571428571431,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -15870,7 +15872,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -15888,7 +15890,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -15908,7 +15910,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -15928,7 +15930,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -15945,7 +15947,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15954,7 +15956,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15963,7 +15965,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15972,7 +15974,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -15994,7 +15996,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16003,7 +16005,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16012,7 +16014,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16021,7 +16023,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16030,7 +16032,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16039,7 +16041,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16048,7 +16050,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16057,7 +16059,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -16246,11 +16248,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",169.17903645833331,39.62857142857145,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -18216,7 +18218,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -18234,7 +18236,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -18254,7 +18256,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -18274,7 +18276,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -18291,7 +18293,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18300,7 +18302,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18309,7 +18311,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18318,7 +18320,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18340,7 +18342,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18349,7 +18351,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18358,7 +18360,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18367,7 +18369,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18376,7 +18378,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18385,7 +18387,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18394,7 +18396,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18403,7 +18405,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -18592,11 +18594,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",42.34765625,189.2,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -20574,7 +20576,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -20592,7 +20594,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -20612,7 +20614,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -20632,7 +20634,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -20649,7 +20651,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20658,7 +20660,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20667,7 +20669,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20676,7 +20678,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20698,7 +20700,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20707,7 +20709,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20716,7 +20718,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20725,7 +20727,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20734,7 +20736,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20743,7 +20745,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20752,7 +20754,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20761,7 +20763,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -20950,14 +20952,14 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Title A",104.76334635416666,13.2,null]
 ["fillText","Title B",104.76334635416666,29.599999999999998,null]
 ["fillText","After 1",104.76334635416666,46,null]
 ["fillText","After 2",104.76334635416666,62.39999999999999,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["fillText","5",104.76334635416666,82.8,null]
 ["setFillStyle","red"]
@@ -21005,7 +21007,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Before footer",104.76334635416666,250.80000000000004,null]
 ["fillText","Count: 3",104.76334635416666,267.20000000000005,null]
 ["restore"]
@@ -22885,7 +22887,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -22903,7 +22905,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -22923,7 +22925,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -22943,7 +22945,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -22960,7 +22962,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22969,7 +22971,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22978,7 +22980,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -22987,7 +22989,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23009,7 +23011,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23018,7 +23020,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23027,7 +23029,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23036,7 +23038,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23045,7 +23047,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23054,7 +23056,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23063,7 +23065,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23072,7 +23074,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -23261,11 +23263,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",187.17903645833331,128.31428571428572,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -25206,7 +25208,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -25224,7 +25226,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -25244,7 +25246,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -25264,7 +25266,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -25281,7 +25283,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25290,7 +25292,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25299,7 +25301,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25308,7 +25310,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25330,7 +25332,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25339,7 +25341,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25348,7 +25350,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25357,7 +25359,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25366,7 +25368,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25375,7 +25377,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25384,7 +25386,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25393,7 +25395,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -25582,11 +25584,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Jan",40.34765625,187.95238095238096,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -27551,7 +27553,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -27569,7 +27571,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -27589,7 +27591,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -27609,7 +27611,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -27626,7 +27628,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27635,7 +27637,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27644,7 +27646,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27653,7 +27655,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27675,7 +27677,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27684,7 +27686,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27693,7 +27695,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27702,7 +27704,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27711,7 +27713,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27720,7 +27722,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27729,7 +27731,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27738,7 +27740,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -27927,11 +27929,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Apr",289.2841796875,85.26666666666668,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -29861,7 +29863,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.59999999999997,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29870,7 +29872,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29879,7 +29881,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29888,7 +29890,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29910,7 +29912,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29919,7 +29921,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,234.25714285714284]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29928,7 +29930,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,196.91428571428568]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29937,7 +29939,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,159.57142857142853]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29946,7 +29948,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,122.22857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29955,7 +29957,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,84.88571428571427]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29964,7 +29966,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,47.542857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -29973,7 +29975,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -30162,11 +30164,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Apr",307.2841796875,30.4,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -32073,7 +32075,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.59999999999997,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32082,7 +32084,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32091,7 +32093,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32100,7 +32102,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32122,7 +32124,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.59999999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32131,7 +32133,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,234.25714285714284]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32140,7 +32142,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,196.91428571428568]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32149,7 +32151,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,159.57142857142853]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32158,7 +32160,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,122.22857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32167,7 +32169,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,84.88571428571427]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32176,7 +32178,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,47.542857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32185,7 +32187,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,10.2]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -32374,11 +32376,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",108.10026041666666,210.59999999999997,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -32395,7 +32397,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Count: 1",108.10026041666666,251.39999999999998,null]
 ["restore"]
 ''',
@@ -34325,7 +34327,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -34343,7 +34345,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -34363,7 +34365,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -34383,7 +34385,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -34400,7 +34402,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34409,7 +34411,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34418,7 +34420,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34427,7 +34429,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34449,7 +34451,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34458,7 +34460,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34467,7 +34469,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34476,7 +34478,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34485,7 +34487,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34494,7 +34496,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34503,7 +34505,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34512,7 +34514,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -34701,11 +34703,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",245.83170572916666,165.13333333333333,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -36675,7 +36677,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -36693,7 +36695,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -36713,7 +36715,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -36733,7 +36735,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -36750,7 +36752,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36759,7 +36761,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36768,7 +36770,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36777,7 +36779,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36799,7 +36801,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36808,7 +36810,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36817,7 +36819,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36826,7 +36828,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36835,7 +36837,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36844,7 +36846,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36853,7 +36855,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -36862,7 +36864,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -37051,11 +37053,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",245.83170572916666,165.13333333333333,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -39024,7 +39026,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -39042,7 +39044,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -39062,7 +39064,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -39082,7 +39084,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -39099,7 +39101,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39108,7 +39110,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39117,7 +39119,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39126,7 +39128,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39148,7 +39150,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39157,7 +39159,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39166,7 +39168,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39175,7 +39177,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39184,7 +39186,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39193,7 +39195,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39202,7 +39204,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39211,7 +39213,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -39400,11 +39402,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",160.45279947916666,165.13333333333333,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["fillText","Dataset 1: 30",160.45279947916666,185.53333333333333,null]
@@ -41345,7 +41347,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -41363,7 +41365,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -41383,7 +41385,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -41403,7 +41405,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -41420,7 +41422,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41429,7 +41431,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41438,7 +41440,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41447,7 +41449,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41469,7 +41471,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41478,7 +41480,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41487,7 +41489,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41496,7 +41498,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41505,7 +41507,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41514,7 +41516,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41523,7 +41525,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41532,7 +41534,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -41721,11 +41723,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",160.45279947916666,165.13333333333333,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setStrokeStyle","#fff"]
@@ -43722,7 +43724,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -43740,7 +43742,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -43760,7 +43762,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -43780,7 +43782,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -43797,7 +43799,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43806,7 +43808,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43815,7 +43817,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43824,7 +43826,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43846,7 +43848,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43855,7 +43857,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43864,7 +43866,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43873,7 +43875,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43882,7 +43884,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43891,7 +43893,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43900,7 +43902,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -43909,7 +43911,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -44098,11 +44100,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",163.17903645833331,129.90476190476193,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -46043,7 +46045,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -46061,7 +46063,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -46081,7 +46083,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -46101,7 +46103,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -46118,7 +46120,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46127,7 +46129,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46136,7 +46138,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46145,7 +46147,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46167,7 +46169,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46176,7 +46178,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46185,7 +46187,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46194,7 +46196,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46203,7 +46205,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46212,7 +46214,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46221,7 +46223,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46230,7 +46232,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -46419,11 +46421,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",160.45279947916666,173.33333333333334,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -48377,7 +48379,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -48395,7 +48397,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -48415,7 +48417,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -48435,7 +48437,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -48452,7 +48454,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48461,7 +48463,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48470,7 +48472,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48479,7 +48481,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48501,7 +48503,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48510,7 +48512,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48519,7 +48521,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48528,7 +48530,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48537,7 +48539,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48546,7 +48548,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48555,7 +48557,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48564,7 +48566,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -48753,11 +48755,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",160.45279947916666,165.13333333333333,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -50726,7 +50728,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -50744,7 +50746,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -50764,7 +50766,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -50784,7 +50786,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -50801,7 +50803,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50810,7 +50812,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50819,7 +50821,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50828,7 +50830,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50850,7 +50852,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50859,7 +50861,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50868,7 +50870,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50877,7 +50879,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50886,7 +50888,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50895,7 +50897,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50904,7 +50906,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -50913,7 +50915,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -51102,11 +51104,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",211.86848958333331,120.70476190476192,null]
 ["setTextAlign","right"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -51147,7 +51149,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Count: 3",211.86848958333331,194.30476190476193,null]
 ["restore"]
 ''',
@@ -54755,7 +54757,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -54773,7 +54775,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -54793,7 +54795,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -54813,7 +54815,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -54830,7 +54832,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54839,7 +54841,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54848,7 +54850,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54857,7 +54859,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54879,7 +54881,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54888,7 +54890,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54897,7 +54899,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54906,7 +54908,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54915,7 +54917,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54924,7 +54926,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54933,7 +54935,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -54942,7 +54944,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -55131,11 +55133,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Mar",169.17903645833331,56.02857142857144,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -56998,7 +57000,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -57016,7 +57018,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -57036,7 +57038,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -57056,7 +57058,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -57073,7 +57075,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57082,7 +57084,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57091,7 +57093,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57100,7 +57102,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57122,7 +57124,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57131,7 +57133,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57140,7 +57142,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57149,7 +57151,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57158,7 +57160,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57167,7 +57169,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57176,7 +57178,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -57185,7 +57187,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60030,7 +60032,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -60048,7 +60050,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -60068,7 +60070,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -60088,7 +60090,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -60105,7 +60107,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60114,7 +60116,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60123,7 +60125,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60132,7 +60134,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60154,7 +60156,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60163,7 +60165,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60172,7 +60174,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60181,7 +60183,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60190,7 +60192,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60199,7 +60201,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60208,7 +60210,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -60217,7 +60219,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62118,7 +62120,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -62135,7 +62137,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -62154,7 +62156,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -62173,7 +62175,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fill",null,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -62190,7 +62192,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",73.92919921875,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62199,7 +62201,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",167.09228515625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62208,7 +62210,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",260.25537109375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62217,7 +62219,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",353.41845703125,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62239,7 +62241,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62248,7 +62250,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","0",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,241.65000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62257,7 +62259,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,211.70000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62266,7 +62268,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,181.75]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62275,7 +62277,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,151.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62284,7 +62286,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,121.85000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62293,7 +62295,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,91.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62302,7 +62304,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,61.95]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62311,7 +62313,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -62429,11 +62431,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",180.09228515625,118.425,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -65110,7 +65112,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setStrokeStyle","#666"]
 ["setFillStyle","#666"]
 ["measureText","Dataset 1"]
@@ -65128,7 +65130,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 1",89.955078125,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -65148,7 +65150,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 2",197.318359375,16,null]
 ["restore"]
 ["setStrokeStyle","#666"]
@@ -65168,7 +65170,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["fillText","Dataset 3",304.681640625,16,null]
 ["restore"]
 ["restore"]
@@ -65185,7 +65187,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,271.6,400,28.399999999999977]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",27.34765625,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65194,7 +65196,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Jan",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",147.45279947916666,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65203,7 +65205,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Feb",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",267.5579427083333,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65212,7 +65214,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Mar",0,7.199999999999999,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",387.6630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65234,7 +65236,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["rect",0,0,27.34765625,300]
 ["clip",null,null]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65243,7 +65245,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","5",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,237.3714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65252,7 +65254,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","10",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,203.14285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65261,7 +65263,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","15",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,168.9142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65270,7 +65272,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","20",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,134.6857142857143]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65279,7 +65281,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","25",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,100.45714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65288,7 +65290,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","30",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,66.22857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65297,7 +65299,7 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","35",0,0,null]
 ["restore"]
 ["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
@@ -65486,11 +65488,11 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
 ["setFillStyle","#fff"]
-["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":700,"style":"normal"}}]
 ["fillText","Feb",160.45279947916666,90.25714285714285,null]
 ["setTextAlign","left"]
 ["setTextBaseline","middle"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFont",{"font":{"family":"Helvetica Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,"weight":null,"style":"normal"}}]
 ["setFillStyle","#fff"]
 ["setFillStyle","#fff"]
 ["setLineWidth",1]
@@ -65513,377 +65515,766 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 /// Each text that the cases measured, with its font and width.
 const List<PluginTooltipReferenceWidth> pluginTooltipReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 1',
     width: 51.36328125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 2',
     width: 51.36328125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 3',
     width: 51.36328125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '10',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '15',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '20',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '25',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '30',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '35',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '40',
     width: 13.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Jan',
     width: 19.34765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Feb',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Mar',
     width: 20.666015625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Apr',
     width: 18.673828125,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Feb',
     width: 21.333984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 1: 30',
     width: 71.37890625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 2: 5',
     width: 64.705078125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 3: 15',
     width: 71.37890625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Mar',
     width: 21.33984375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 2: 35',
     width: 71.37890625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 3',
     width: 53.361328125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Jan: 5',
     width: 32.689453125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Feb: 15',
     width: 40.693359375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Mar: 10',
     width: 40.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Apr: 30',
     width: 38.689453125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 1: 20',
     width: 71.37890625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 3: 10',
     width: 71.37890625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Jan',
     width: 20.677734375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 2: 25',
     width: 71.37890625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Title A',
     width: 36.005859375,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Title B',
     width: 36.451171875,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'After 1',
     width: 38.009765625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'After 2',
     width: 38.009765625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'End 1',
     width: 31.359375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'End 2',
     width: 31.359375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Item 0.1',
     width: 43.353515625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Line 1',
     width: 32.6953125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Line 2',
     width: 32.6953125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Item 1.1',
     width: 43.353515625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Item 2.1',
     width: 43.353515625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Before footer',
     width: 75.33984375,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Count: 3',
     width: 48.65625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 1: 10',
     width: 71.37890625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 3: 5',
     width: 64.705078125,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Apr',
     width: 20.666015625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 1: 40',
     width: 71.37890625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 2: 15',
     width: 71.37890625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Dataset 3: 30',
     width: 71.37890625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Count: 1',
     width: 48.65625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '0',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Red',
     width: 22.013671875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Green',
     width: 33.3515625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Blue',
     width: 24.017578125,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Green',
     width: 34.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Votes: 19',
     width: 50.0390625,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Red',
     width: 22.669921875,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'Votes: 12',
     width: 50.0390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'A',
     width: 8.00390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'B',
     width: 8.00390625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '5.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '6',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'A: (3, 5)',
     width: 42.6796875,
   ),

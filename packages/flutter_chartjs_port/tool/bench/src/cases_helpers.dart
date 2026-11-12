@@ -2,15 +2,14 @@
 
 /// The cases of `helpers.core` (`merge`, `mergeIf`, `clone`),
 /// `helpers.options` (`createContext`, `toFont`, `toPadding`, `toTRBL`),
-/// `helpers.canvas` (`toFontString`), `@kurkle/color`, `core.ticks` and
-/// `helpers.intl`, `helpers.easing` and `helpers.math`.
+/// `@kurkle/color`, `core.ticks` and `helpers.intl`, `helpers.easing` and
+/// `helpers.math`.
 library;
 
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
@@ -24,6 +23,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 import 'fixtures.dart';
@@ -195,16 +195,19 @@ List<BenchCase> helperCases() => [
     items: 4,
     per: '4 reads of a data context: own, parent, root, miss',
   ),
-  BenchCase('options', 'toFont/map', () {
-    final options = <String, Object?>{'size': 14.0, 'weight': 'bold'};
+  BenchCase('options', 'toFont/style', () {
+    const options = ChartTextStyle(
+      fontSize: 14,
+      fontWeight: ui.FontWeight.bold,
+    );
     return (n) {
-      var acc = 0;
+      var acc = 0.0;
       for (var i = 0; i < n; i++) {
-        acc += toFont(options).string?.length ?? 0;
+        acc += toFont(options).lineHeight!;
       }
-      return acc;
+      return acc.toInt();
     };
-  }, per: 'toFont({size, weight}) over defaults.font'),
+  }, per: 'toFont(ChartTextStyle(fontSize, fontWeight)) over defaults.font'),
   BenchCase(
     'options',
     'toPadding/number_and_object',
@@ -241,16 +244,6 @@ List<BenchCase> helperCases() => [
       return acc.toInt();
     };
   }, per: 'toTRBL({top, left, right, bottom})'),
-  BenchCase('options', 'toFontString/parsed', () {
-    final font = toFont(<String, Object?>{'size': 14.0, 'weight': 'bold'});
-    return (n) {
-      var acc = 0;
-      for (var i = 0; i < n; i++) {
-        acc += toFontString(font)?.length ?? 0;
-      }
-      return acc;
-    };
-  }, per: 'toFontString of a parsed font'),
   // @kurkle/color, using the native inputs accepted by the chart API.
   for (final (name, value) in const [
     ('opaque', ui.Color(0xffff6384)),

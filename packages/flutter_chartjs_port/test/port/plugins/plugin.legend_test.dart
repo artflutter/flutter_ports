@@ -8,11 +8,14 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
@@ -27,6 +30,7 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -295,6 +299,13 @@ AnyObject _line(Object? legendOptions, {List<Object?>? plugins}) =>
       },
       'plugins': ?plugins,
     };
+
+/// The label font of the case 'fit leaves the label font in the context'.
+const _arial17 = ChartTextStyle(
+  fontSize: 17,
+  fontFamily: 'Arial',
+  fontFamilyFallback: [],
+);
 
 void main() {
   testReferenceOrigin(
@@ -603,13 +614,14 @@ void main() {
       final chart = acquireChart(
         _line(<String, Object?>{
           'labels': <String, Object?>{
-            'font': <String, Object?>{'size': 17, 'family': 'Arial'},
+            'font': _arial17,
           },
         }),
       );
-      final ctx = chart.ctx!..font = '10px sans-serif';
+      final ctx = chart.ctx!
+        ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 10);
       (chart.legend! as Legend).fit();
-      expect(ctx.font, 'normal 17px Arial');
+      expect(ctx.font, toFont(_arial17));
     });
   });
 

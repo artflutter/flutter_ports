@@ -39,6 +39,7 @@ library;
 import 'dart:convert';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -60,6 +61,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -486,6 +488,17 @@ Object? _expectedKeysOnly(Object? observed, Object? expected) =>
       (final List<Object?> o, final List<Object?> e)
           when o.length == e.length =>
         [for (var i = 0; i < o.length; i++) _expectedKeysOnly(o[i], e[i])],
+      // A font: the fields that the expected font sets (Chart.js ADR 0116).
+      (final TextStyle o, final TextStyle e) => ChartTextStyle(
+        fontFamily: e.fontFamily == null ? null : o.fontFamily,
+        fontFamilyFallback: e.fontFamilyFallback == null
+            ? null
+            : o.fontFamilyFallback,
+        fontSize: e.fontSize == null ? null : o.fontSize,
+        fontStyle: e.fontStyle == null ? null : o.fontStyle,
+        fontWeight: e.fontWeight == null ? null : o.fontWeight,
+        height: e.height == null ? null : o.height,
+      ),
       _ => observed,
     };
 
@@ -1103,8 +1116,11 @@ void expectNoStaleScaleKeys(Chart chart, Map<String, Object?> lightSnapshot) {
       }
       Object? node = options;
       for (final key in path.substring(prefix.length).split('.')) {
+        // A font holds its fields (Chart.js ADR 0116).
         node = node is Map<String, Object?> && node.containsKey(key)
             ? node[key]
+            : node is TextStyle
+            ? node
             : undefined;
       }
       expect(

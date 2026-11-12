@@ -3,11 +3,14 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'dart:ui' show FontWeight;
+
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
@@ -642,10 +645,11 @@ Map<String, Object?> fixture() {
               'major': <String, Object?>{
                 'enabled': true,
               },
+              // DIVERGES(chartjs): adapt-text-style-fonts, a style.
               'font': (Object? context) {
                 return jsTruthy(jsGet(context, 'tick')) &&
                         jsTruthy((jsGet(context, 'tick')! as Tick).major)
-                    ? <String, Object?>{'weight': 'bold'}
+                    ? const ChartTextStyle(fontWeight: FontWeight.bold)
                     : undefined;
               },
               // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.

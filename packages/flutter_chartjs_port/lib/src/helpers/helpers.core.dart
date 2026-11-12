@@ -24,6 +24,7 @@ library;
 
 import 'dart:typed_data';
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -376,6 +377,11 @@ void merger(String key, Object target, Object source, MergeOptions options) {
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     merge(tval, sval, options);
+  } else if (sval is TextStyle && tval is TextStyle) {
+    // Two fonts merge as two font objects: a field of the source wins (row
+    // adapt-text-style-fonts).
+    // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
+    _setProp(target, key, tval.merge(sval));
   } else if (_isMapObject(sval) && tval is PropertyAccess) {
     // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
     merge(tval, sval, options);
@@ -598,6 +604,15 @@ void _mergeScope(
       } else {
         merge(tval, sval, options);
       }
+    } else if (tval is TextStyle && sval is TextStyle) {
+      // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
+      target.storeNormalized(
+        tk,
+        target.classifyNormalized(
+          tk,
+          ifAbsent ? sval.merge(tval) : tval.merge(sval),
+        ),
+      );
     } else if (ifAbsent) {
       // `hasOwnProperty`: the target has no route.
       if (tcell == null) {
@@ -668,6 +683,11 @@ void mergerIf(
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     mergeIf(tval, sval);
+  } else if (tval is TextStyle && sval is TextStyle) {
+    // Two fonts merge as two font objects: a field of the target stays, and
+    // the source fills its absent fields (row adapt-text-style-fonts).
+    // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
+    _setProp(target, key, sval.merge(tval));
   } else if (!_hasOwn(target, key)) {
     _setProp(target, key, _cloneFor(target, key, sval));
   }

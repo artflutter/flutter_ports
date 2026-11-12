@@ -144,6 +144,10 @@
 //   2: touchmove
 //   3: touchend
 
+import 'dart:ui' show FontStyle, FontWeight;
+
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+
 /// The Node.js version that generated the data.
 const String chartHostInputReferenceNode = 'v24.22.1';
 
@@ -176,10 +180,11 @@ typedef ChartHostInputReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of `text` in the CSS font `font` that the generator
-/// measured in Liberation Sans 2.1.5.
+/// The width of `text` in the font `font` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
 typedef ChartHostInputReferenceWidth = ({
-  String font,
+  ChartTextStyle font,
   String text,
   double width,
 });
@@ -3236,77 +3241,153 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
 /// Each text that the cases measured, with its font and width.
 const List<ChartHostInputReferenceWidth> chartHostInputReferenceWidths = [
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'one',
     width: 20.021484375,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'two',
     width: 18.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '1.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '2.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '3.5',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: '4.0',
     width: 16.681640625,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'a',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'b',
     width: 6.673828125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'c',
     width: 6.0,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'd',
     width: 6.673828125,
   ),
   (
-    font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'b',
     width: 7.330078125,
   ),
   (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    font: ChartTextStyle(
+      fontFamily: 'Helvetica Neue',
+      fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
+      fontSize: 12,
+      fontStyle: FontStyle.normal,
+    ),
     text: 'one: 3',
     width: 33.36328125,
   ),

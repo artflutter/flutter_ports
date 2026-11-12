@@ -9,6 +9,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -17,8 +18,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -44,7 +45,7 @@ class _Context extends MockContext {
   double factor = 1;
 
   @override
-  set font(String? value) {
+  set font(TextStyle? value) {
     fontWrites++;
     super.font = value;
   }
@@ -52,8 +53,7 @@ class _Context extends MockContext {
   @override
   TextMetrics measureText(String text) {
     measures++;
-    final match = RegExp('([0-9.]+)px').firstMatch(font ?? '12px');
-    final size = double.parse(match![1]!);
+    final size = font?.fontSize ?? 12;
     return _Metrics(text.length * size * 0.6 * factor);
   }
 }
@@ -342,9 +342,18 @@ void main() {
     final pair = _Pair()
       ..update()
       ..update();
-    (defaults.fontCell!.raw! as FontSpecScope).size = 18.0;
+    defaults.font = (defaults.fontCell!.raw! as TextStyle).merge(
+      const ChartTextStyle(fontSize: 18),
+    );
     pair.update();
-    pair.tickOption('font', {'size': 24.0, 'family': 'serif'});
+    pair.tickOption(
+      'font',
+      const ChartTextStyle(
+        fontSize: 24,
+        fontFamily: 'serif',
+        fontFamilyFallback: [],
+      ),
+    );
     pair.update();
   });
 
@@ -371,7 +380,7 @@ void main() {
     Object font(Object? context) {
       calls++;
       final index = (context! as ContextObject)['index']! as num;
-      return {'size': index.toInt().isEven ? 12.0 : 18.0};
+      return ChartTextStyle(fontSize: index.toInt().isEven ? 12 : 18);
     }
 
     pair.tickOption('font', font);

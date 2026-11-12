@@ -5,6 +5,7 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -207,7 +208,7 @@ void main() {
       Future<Render> draw({required bool shadow}) => renderContext((ctx) {
         if (shadow) _red20(ctx, y: 60);
         ctx
-          ..font = '24px Arial'
+          ..font = const TextStyle(fontFamily: 'Arial', fontSize: 24)
           ..fillStyle = _black
           ..fillText('HHHH', 20, 40);
       });

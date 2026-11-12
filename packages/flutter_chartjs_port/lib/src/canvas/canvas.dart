@@ -26,6 +26,7 @@ library;
 import 'dart:typed_data';
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:meta/meta.dart';
 
@@ -742,9 +743,14 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
 
   // Text.
 
-  /// `font`: a CSS font shorthand, as `toFontString` gives it. The DOM
-  /// default is `'10px sans-serif'`.
-  abstract String? font;
+  /// `font`: a Flutter [TextStyle] (Chart.js ADR 0116, row
+  /// `adapt-text-style-fonts`), not a CSS font shorthand. The canvas lays out
+  /// the text with it; the paint of the text is the fill or the stroke of the
+  /// canvas. The default is `TextStyle(fontFamily: 'sans-serif', fontSize:
+  /// 10)`, the `'10px sans-serif'` of the DOM. A write of Dart `null` does
+  /// nothing.
+  // DIVERGES(chartjs): adapt-text-style-fonts, the font is a TextStyle.
+  abstract TextStyle? font;
 
   /// `textAlign`: the Flutter [TextAlign] of the DOM keyword (`start`,
   /// `end`, `left`, `right` or `center`; row `adapt-flutter-text-align`).

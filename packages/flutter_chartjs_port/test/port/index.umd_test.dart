@@ -140,10 +140,17 @@ void main() {
     test('Chart.helpers has the helpers keys in order', () {
       final helpers = jsGet(chartUmd, 'helpers')! as AnyObject;
       // toDimension and toPercentage are the methods of the lengths in the
-      // port (row adapt-length-objects).
+      // port (row adapt-length-objects). toFontString and toLineHeight are
+      // gone: a font is a TextStyle (row adapt-text-style-fonts).
+      const gone = {
+        'toDimension',
+        'toPercentage',
+        'toFontString',
+        'toLineHeight',
+      };
       final keys = [
         for (final key in indexUmdReferenceHelpersKeys)
-          if (key != 'toDimension' && key != 'toPercentage') key,
+          if (!gone.contains(key)) key,
       ];
       expect(jsObjectKeys(helpers), keys);
       for (final key in keys) {

@@ -1074,8 +1074,7 @@ update	options.scales.*.pointLabels.centerPointLabels	bool
 update	options.scales.*.pointLabels.color	String
 update	options.scales.*.pointLabels.display	bool
 update	options.scales.*.pointLabels.display	String
-update	options.scales.*.pointLabels.font	Map
-update	options.scales.*.pointLabels.font.size	double
+update	options.scales.*.pointLabels.font	obj:ChartTextStyle
 update	options.scales.*.pointLabels.padding	double
 update	options.scales.*.pointLabels.padding	int
 update	options.scales.*.position	Map

@@ -535,7 +535,7 @@ void main() {
     expect(x.ticks!.length, greaterThan(30));
 
     await _tap(tester, 'axes.ticks.font.size.24');
-    expect(jsGet(_tickOption(chart, 'y', 'font'), 'size'), 24);
+    expect((_tickOption(chart, 'y', 'font')! as TextStyle).fontSize, 24);
 
     await _tap(tester, 'axes.ticks.align.start');
     expect(_selected(tester, 'axes.ticks.align.start'), isTrue);

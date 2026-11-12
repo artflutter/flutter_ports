@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -80,9 +81,9 @@ final Map<String, Object?> _functions = {
       ..toggleDataVisibility(3);
   },
   'tickLines': (Object? value) => <Object?>[value, 'x'],
-  'pointLabelFontByIndex': (Object? ctx) => <String, Object?>{
-    'size': 8 + jsToNumber(jsGet(ctx, 'index')) * 2,
-  },
+  // A font is a ChartTextStyle (row adapt-text-style-fonts).
+  'pointLabelFontByIndex': (Object? ctx) =>
+      ChartTextStyle(fontSize: 8 + jsToNumber(jsGet(ctx, 'index')) * 2),
   // JS `ctx.index % 2 === 0`: the context of the scale has no index, and
   // NaN % 2 is NaN in both languages.
   'circularEven': (Object? ctx) => jsToNumber(jsGet(ctx, 'index')) % 2 == 0,

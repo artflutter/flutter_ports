@@ -51,6 +51,7 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -826,8 +827,9 @@ abstract interface class LabelItem {
   /// lines or another value of the tick callback.
   Object? get label;
 
-  /// index.d.ts:1532 `font: CanvasFontSpec`.
-  CanvasFontSpec get font;
+  /// index.d.ts:1532 `font: CanvasFontSpec`: a [ChartTextStyle] (row
+  /// `adapt-text-style-fonts`).
+  ChartTextStyle get font;
 
   /// index.d.ts:1533 `textOffset: number`.
   double get textOffset;
@@ -936,45 +938,8 @@ abstract interface class ChartEvent implements Point {
   Chart? get chart;
 }
 
-/// index.d.ts:1812 `FontSpec`.
-///
-/// The members are nullable, unlike upstream. `toFontString` tests
-/// `isNullOrUndef(font.size)` and `isNullOrUndef(font.family)`
-/// (helpers.canvas.ts:26), and the font object of `toFont` can lack them
-/// (helpers.options.ts:119, :131). Dart `null` stands for both empty JS
-/// values, because the readers treat them alike.
-abstract interface class FontSpec {
-  /// index.d.ts:1817 `family: string`.
-  String? get family;
-
-  /// index.d.ts:1822 `size: number`.
-  double? get size;
-
-  /// index.d.ts:1827 `style`, a CSS `font-style` keyword.
-  String? get style;
-
-  /// index.d.ts:1831 `weight`: a CSS `font-weight` keyword `String`, a
-  /// `num` or `null`.
-  Object? get weight;
-
-  /// index.d.ts:1836 `lineHeight: number | string`: a `num` or a `String`.
-  ///
-  /// `renderText` reads it as `Number(font.lineHeight)`
-  /// (helpers.canvas.ts:487), so a String gives its `ToNumber`. The font
-  /// object of `toFont` has a number in pixels (helpers.options.ts:132).
-  Object? get lineHeight;
-}
-
-/// index.d.ts:1839 `CanvasFontSpec`.
-///
-/// `toFont` returns it (helpers.options.ts:115). Its `lineHeight` is a
-/// number in pixels.
-abstract interface class CanvasFontSpec implements FontSpec {
-  /// index.d.ts:1840 `string: string`. Dart `null` is JS `null`:
-  /// `toFontString` gives `null` when the size or the family is empty
-  /// (helpers.canvas.ts:26).
-  String? get string;
-}
+// DIVERGES(chartjs): adapt-text-style-fonts, index.d.ts:1812 `FontSpec` and
+// :1839 `CanvasFontSpec` are a ChartTextStyle of chart_text_style.dart.
 
 /// index.d.ts:1846 `VisualElement`, the drawing and hit-test members of an
 /// element class (Chart.js ADR 0017, section 1).

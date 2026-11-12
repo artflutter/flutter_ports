@@ -5,36 +5,21 @@ library;
 import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart' show rgbParse;
 import 'package:flutter_chartjs_port/src/theme/css.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The pin of judge-t.md §3.11 (Chart.js ADR 0052): css.dart holds the one
-// conversion of a `Color` and of a `TextStyle`. The theme of Chart.js ADR
+// conversion of a `Color`. A `TextStyle` has no conversion: the theme gives
+// it to the chart (Chart.js ADR 0116). The theme of Chart.js ADR
 // 0050 and the typed API give the same option value for the same Flutter
 // value. Each case compares the function of css.dart with the value that
 // the compiled theme holds for the same token, and pins the strings of
 // theme_data_test.dart, so that the move changed no value.
 //
 // VM only: css.dart imports dart:ui and the painting library.
-
-/// Whether [value] is an object of a compiled theme: a Map, or a typed scope
-/// with its face (Chart.js ADR 0054 §5).
-bool _isObject(Object? value) =>
-    value is Map<String, Object?> || value is JsObjectFace;
-
-/// [value] as plain Dart values for a compare with a Map literal: an object
-/// gives a new Map of its own keys in the `Object.keys` order, each value
-/// read through its face; another value is itself.
-Object? _plain(Object? value) => _isObject(value)
-    ? <String, Object?>{
-        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
-      }
-    : value;
 
 /// The value at the dotted [path] of the Maps under [root].
 Object? _at(Object? root, String path) {
@@ -69,40 +54,25 @@ final Map<String, (Color, String)> _colors = {
   'transparent white': (const Color(0x00FFFFFF), 'rgba(255, 255, 255, 0)'),
 };
 
-/// The fonts of the cases, each with its `FontSpec` Map.
-final Map<String, (TextStyle, Map<String, Object?>)> _fonts = {
-  'each field that the theme reads': (
-    const TextStyle(
-      fontFamily: 'Liberation Sans',
-      fontFamilyFallback: ['serif'],
-      fontSize: 14,
-      fontStyle: FontStyle.italic,
-      fontWeight: FontWeight.w700,
-      height: 1.5,
-    ),
-    {
-      'family': "'Liberation Sans', serif",
-      'size': 14.0,
-      'style': 'italic',
-      'weight': 700.0,
-      'lineHeight': 1.5,
-    },
+/// The fonts of the cases (Chart.js ADR 0116).
+const Map<String, TextStyle> _fonts = {
+  'each field that the theme reads': TextStyle(
+    fontFamily: 'Liberation Sans',
+    fontFamilyFallback: ['serif'],
+    fontSize: 14,
+    fontStyle: FontStyle.italic,
+    fontWeight: FontWeight.w700,
+    height: 1.5,
   ),
-  'generic families, a quote and an empty name': (
-    const TextStyle(
-      fontFamily: 'Serif',
-      fontFamilyFallback: ["Tom's Font", '', 'ui-monospace'],
-    ),
-    {'family': 'Serif, "Tom\'s Font", ui-monospace'},
+  'the normal style and a weight of 350': TextStyle(
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight(350),
   ),
-  'the normal style and a weight of 350': (
-    const TextStyle(fontStyle: FontStyle.normal, fontWeight: FontWeight(350)),
-    {'style': 'normal', 'weight': 350.0},
-  ),
-  'a size alone': (const TextStyle(fontSize: 13), {'size': 13.0}),
-  'a color and a letter spacing are left out': (
-    const TextStyle(color: Color(0xFFFF0000), letterSpacing: 2, height: 1.25),
-    {'lineHeight': 1.25},
+  'a size alone': TextStyle(fontSize: 13),
+  'a color and a letter spacing': TextStyle(
+    color: Color(0xFFFF0000),
+    letterSpacing: 2,
+    height: 1.25,
   ),
 };
 
@@ -133,26 +103,24 @@ void main() {
     });
   });
 
-  group('fontSpecOf', () {
-    for (final MapEntry(key: name, value: (font, spec)) in _fonts.entries) {
-      test('$name: the Map of the raw and the compiled theme', () {
-        final actual = fontSpecOf(font)!;
-        expect(actual, spec);
-        expect(actual.keys, spec.keys);
+  group('the theme font', () {
+    for (final MapEntry(key: name, value: font) in _fonts.entries) {
+      test('$name: the raw and the compiled theme hold the TextStyle', () {
         final raw = themeDataToRaw(ChartThemeData(font: font));
-        final rawFont = _at(raw, 'typography.font')! as AnyObject;
-        expect(rawFont, actual);
-        expect(rawFont.keys, actual.keys);
+        expect(_at(raw, 'typography.font'), same(font));
         final compiled = compileThemeData(ChartThemeData(font: font));
-        expect(_plain(_at(compiled, 'scale.ticks.font')), actual);
+        expect(_at(compiled, 'scale.ticks.font'), same(font));
+        expect(_at(compiled, 'plugins.tooltip.bodyFont'), same(font));
       });
     }
 
-    test('null gives null, and each call gives a new Map', () {
-      expect(fontSpecOf(null), isNull);
-      const font = TextStyle(fontSize: 12);
-      expect(fontSpecOf(font), isNot(same(fontSpecOf(font))));
-      expect(fontSpecOf(const TextStyle()), isEmpty);
+    test('a font with no field that the chart reads is left out', () {
+      expect(
+        compileThemeData(
+          const ChartThemeData(font: TextStyle(color: Color(0xFFFF0000))),
+        ),
+        isNull,
+      );
     });
   });
 }

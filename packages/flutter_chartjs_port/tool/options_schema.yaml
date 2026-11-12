@@ -51,7 +51,8 @@
 # `GraceLength`, the scale `grace`; a number or a percent text is a foreign value), `scaleAxis`,
 # `cartesianAxis` and `radialAxis` (a `ScaleAxis` for the `axis` of a scale, a `CartesianAxis` for
 # the `indexAxis` of a chart and of a cartesian dataset, an `RAxis` for the `indexAxis` of a radial
-# dataset; an axis letter is a foreign value), `any` (any
+# dataset; an axis letter is a foreign value), `textStyle` (a Flutter `TextStyle`, the value of `font`,
+# `titleFont`, `bodyFont` and `footerFont`; a font object is a foreign value), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -95,7 +96,7 @@ kinds:
       hoverBackgroundColor: any
       borderColor: any
       hoverBorderColor: any
-      font: scope FontSpec
+      font: textStyle
       responsive: bool
       maintainAspectRatio: bool
       resizeDelay: number
@@ -274,14 +275,6 @@ kinds:
       onComplete: fn
       animateRotate: bool
       animateScale: bool
-  FontSpec:
-    doc: index.d.ts:1812 FontSpec, a font object (read by toFont, helpers.options.ts).
-    keys:
-      family: string
-      size: number
-      style: string
-      weight: number | string
-      lineHeight: number | string
   Padding:
     doc: Port-only kind for geometric.d.ts Padding (TRBL and Point), the padding object of toPadding and toTRBL (helpers.options.ts).
     keys:
@@ -904,7 +897,7 @@ kinds:
       callback: fn | bool
       display: bool
       color: any
-      font: scope FontSpec
+      font: textStyle
       padding: number
       showLabelBackdrop: bool
       textStrokeColor: any
@@ -969,7 +962,7 @@ kinds:
       color: any
       strokeColor: any
       strokeWidth: number
-      font: scope FontSpec
+      font: textStyle
       padding: number | scope Padding
   TimeScaleTimeOptions:
     doc: index.d.ts:3429 TimeScaleTimeOptions, the scope `time` of a time scale.
@@ -1011,7 +1004,7 @@ kinds:
       borderRadius: number | scope BorderRadius
       display: bool | string
       color: any
-      font: scope FontSpec
+      font: textStyle
       callback: fn
       padding: number
       centerPointLabels: bool
@@ -1043,7 +1036,7 @@ kinds:
       boxWidth: number
       boxHeight: number
       color: any
-      font: scope FontSpec
+      font: textStyle
       padding: number
       pointStyleWidth: number
       generateLabels: fn
@@ -1059,7 +1052,7 @@ kinds:
     keys:
       display: bool
       color: any
-      font: scope FontSpec
+      font: textStyle
       position: chartAlign
       padding: number | scope Padding
       text: string
@@ -1070,7 +1063,7 @@ kinds:
       display: bool
       position: chartPosition
       color: any
-      font: scope FontSpec
+      font: textStyle
       fullSize: bool
       padding: number | scope Padding
       text: string | list
@@ -1093,18 +1086,18 @@ kinds:
       backgroundColor: any
       boxPadding: number
       titleColor: any
-      titleFont: scope FontSpec
+      titleFont: textStyle
       titleSpacing: number
       titleMarginBottom: number
       titleAlign: textAlign
       bodySpacing: number
       bodyColor: any
-      bodyFont: scope FontSpec
+      bodyFont: textStyle
       bodyAlign: textAlign
       footerSpacing: number
       footerMarginTop: number
       footerColor: any
-      footerFont: scope FontSpec
+      footerFont: textStyle
       footerAlign: textAlign
       padding: number | scope Padding
       caretPadding: number

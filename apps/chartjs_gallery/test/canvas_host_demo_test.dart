@@ -277,7 +277,7 @@ void main() {
     await tester.runAsync(() async {
       final canvas = UiCanvasElement(width: 40, height: 40);
       final ctx = canvas.getContext2d()
-        ..font = '32px sans-serif'
+        ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 32)
         ..textBaseline = CanvasTextBaseline.top
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillText('X', 4, 4);

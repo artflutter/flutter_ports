@@ -26,7 +26,7 @@ import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
-    show ParsedFont, drawPoint, renderText, requestAnimFrame, toFont;
+    show drawPoint, renderText, requestAnimFrame, toFont;
 // Not public: the typed options of Chart.js ADR 0018. The prefix keeps them
 // apart from the PointOptions of demo_chart.dart (the primitives mode).
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -833,11 +833,10 @@ class StressDemoState extends State<StressDemo> {
   double _tooltipDrawMs = 0;
   final List<FrameTiming> _timings = [];
 
-  final ParsedFont _labelFont = toFont(<String, Object?>{'size': 12});
-  final ParsedFont _titleFont = toFont(<String, Object?>{
-    'size': 13,
-    'weight': 'bold',
-  });
+  final ChartTextStyle _labelFont = toFont(const ChartTextStyle(fontSize: 12));
+  final ChartTextStyle _titleFont = toFont(
+    const ChartTextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+  );
 
   /// The count of the element builds: one for each start, change of the
   /// mode or change of N in an element mode. The frames do not make
@@ -1888,7 +1887,7 @@ class StressDemoState extends State<StressDemo> {
   /// The title with the counts and the frame number.
   void _drawTitle(CanvasRenderingContext2D ctx) {
     final title = '$_n ${_mode.items} · $_m labels · frame $_frames';
-    ctx.font = _titleFont.string;
+    ctx.font = _titleFont;
     final titleWidth = ctx.measureText(title).width;
     renderText(
       ctx,
@@ -1903,7 +1902,7 @@ class StressDemoState extends State<StressDemo> {
           4,
           4,
           titleWidth + 8,
-          _titleFont.lineHeight + 4,
+          _titleFont.lineHeight! + 4,
           const ui.Color.fromRGBO(255, 255, 255, 0.85),
         ),
       ),

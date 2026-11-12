@@ -13,7 +13,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
     show
         LongestTextCache,
-        ParsedFont,
         clipArea,
         drawPoint,
         getRtlAdapter,
@@ -82,7 +81,7 @@ class _TextDemoState extends State<TextDemo> {
     super.dispose();
   }
 
-  ParsedFont get _font => toFont(<String, Object?>{'size': _size});
+  ChartTextStyle get _font => toFont(ChartTextStyle(fontSize: _size));
 
   String get _text => _sample.text;
 
@@ -108,7 +107,7 @@ class _TextDemoState extends State<TextDemo> {
     final labelWidth = _labelWidth(chart.width);
     final cellWidth = (chart.width - labelWidth) / textAligns.length;
     final cellHeight = _cellHeight;
-    final small = toFont(<String, Object?>{'size': 12});
+    final small = toFont(const ChartTextStyle(fontSize: 12));
     final font = _font;
     for (var c = 0; c < textAligns.length; c++) {
       renderText(
@@ -159,7 +158,7 @@ class _TextDemoState extends State<TextDemo> {
             ..moveTo(x + 0.5, top)
             ..lineTo(x + 0.5, top + cellHeight)
             ..stroke()
-            ..font = font.string
+            ..font = font
             ..textAlign = textAligns[c]
             ..textBaseline = textBaselines[r]
             ..fillStyle = const ui.Color(0xFF333333)
@@ -221,12 +220,12 @@ class _TextDemoState extends State<TextDemo> {
   static const List<int> _legendColors = [1, 0, 5, 2];
 
   void _drawLegend(DemoChart chart, CanvasRenderingContext2D ctx) {
-    final font = toFont(<String, Object?>{'size': 14});
+    final font = toFont(const ChartTextStyle(fontSize: 14));
     // plugin.legend.js:388 `getRtlAdapter(opts.rtl, this.left, this.width)`.
     final rtlHelper = getRtlAdapter(_rtl, 0, chart.width);
     _withDirection(ctx, () {
       ctx
-        ..font = font.string
+        ..font = font
         ..textBaseline = CanvasTextBaseline.middle;
       const boxWidth = 30.0;
       const boxHeight = 12.0;
@@ -293,8 +292,8 @@ class _TextDemoState extends State<TextDemo> {
     final font = _font;
     final rows = _rows(_labels);
     final rowHeight = _size * 1.5;
-    final longest = longestText(ctx, font.string, _labels, _cache);
-    ctx.font = font.string;
+    final longest = longestText(ctx, font, _labels, _cache);
+    ctx.font = font;
     var longestX = 8.0;
     for (var i = 0; i < rows.length; i++) {
       final (text, nested) = rows[i];
@@ -309,7 +308,7 @@ class _TextDemoState extends State<TextDemo> {
             ? const ui.Color.fromRGBO(255, 99, 132, 0.35)
             : const ui.Color.fromRGBO(54, 162, 235, 0.18)
         ..fillRect(x, y, width, rowHeight - 4)
-        ..font = font.string
+        ..font = font
         ..textAlign = TextAlign.left
         ..textBaseline = CanvasTextBaseline.middle
         ..fillStyle = skipped
@@ -332,11 +331,11 @@ class _TextDemoState extends State<TextDemo> {
   Widget build(BuildContext context) {
     final font = _font;
     final ctx = _measureCanvas.getContext2d()
-      ..font = font.string
+      ..font = font
       ..textAlign = TextAlign.left
       ..textBaseline = CanvasTextBaseline.alphabetic;
     final metrics = ctx.measureText(_text);
-    final longest = longestText(ctx, font.string, _labels, _cache);
+    final longest = longestText(ctx, font, _labels, _cache);
     // + 0 turns -0 into 0.
     String px(double v) => (v + 0).toStringAsFixed(2);
     final rows = _rows(_labels);
@@ -345,7 +344,7 @@ class _TextDemoState extends State<TextDemo> {
       children: [
         DemoCard(
           title: 'Sample text and direction',
-          source: 'ctx.font = toFont({size}).string',
+          source: 'ctx.font = toFont(ChartTextStyle(fontSize: size))',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -387,7 +386,8 @@ class _TextDemoState extends State<TextDemo> {
               ),
               const SizedBox(height: 8),
               Mono(
-                font.string ?? 'null',
+                '${font.fontFamily} · ${font.fontSize}px · lineHeight '
+                '${font.lineHeight}px',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

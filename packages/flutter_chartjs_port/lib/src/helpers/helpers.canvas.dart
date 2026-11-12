@@ -19,6 +19,7 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' show TextAlign;
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isNullOrUndef;
@@ -27,31 +28,14 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
 
-/// helpers.canvas.ts:25 `toFontString`.
-///
-/// Converts the given font object into a CSS font string.
-/// @param font - A font object.
-/// @return The CSS font string. See https://developer.mozilla.org/en-US/docs/Web/CSS/font
-/// @private
-///
-/// A null [font] stands for a falsy JavaScript value: `null` or `undefined`.
-/// `font.weight` and `font.size` become strings through `ToString`
-/// ([jsToString], [jsNumberToString]), so `12` gives `'12px'`, not `'12.0px'`.
-String? toFontString(FontSpec? font) {
-  if (font == null || isNullOrUndef(font.size) || isNullOrUndef(font.family)) {
-    return null;
-  }
-
-  return '${jsTruthy(font.style) ? '${font.style} ' : ''}'
-      '${jsTruthy(font.weight) ? '${jsToString(font.weight)} ' : ''}'
-      '${jsNumberToString(font.size!)}px '
-      '${font.family}';
-}
+// DIVERGES(chartjs): adapt-text-style-fonts, helpers.canvas.ts:25
+// `toFontString` is gone: the canvas takes the ChartTextStyle itself.
 
 /// helpers.canvas.ts:39 `_measureText`.
 ///
@@ -101,8 +85,9 @@ final class LongestTextCache {
   /// `garbageCollect?: string[]`: the measured texts, in order.
   List<String>? garbageCollect;
 
-  /// `font?: string`: the font of [data].
-  String? font;
+  /// `font?: string`: the font of [data], a `TextStyle` (row
+  /// `adapt-text-style-fonts`).
+  TextStyle? font;
 }
 
 /// helpers.canvas.ts:64 `_longestText`.
@@ -121,10 +106,11 @@ final class LongestTextCache {
 /// Upstream compares `cache.font !== font`. On a new cache, `cache.font` is
 /// `undefined`, and a JS `null` [font] differs from it. Here a null [font]
 /// equals the null of a new cache. The result is the same: a new cache has
-/// no data to drop.
+/// no data to drop. [font] is a `TextStyle`, compared with `==` (row
+/// `adapt-text-style-fonts`).
 double longestText(
   CanvasRenderingContext2D ctx,
-  String? font,
+  TextStyle? font,
   List<Object?> arrayOfThings, [
   LongestTextCache? cache,
 ]) {
@@ -925,14 +911,15 @@ final class _EmptyRenderTextOpts implements RenderTextOpts {
 /// with `ToString`. Here [jsToString] converts each line, so a number line
 /// draws as JS draws it.
 ///
-/// `Number(font.lineHeight)` is [jsToNumber]: a `String` line height gives
-/// its `ToNumber`, NaN for `'1.2em'`.
+/// [font] is a [ChartTextStyle] (row `adapt-text-style-fonts`): the canvas
+/// takes it as its font, and each line advances by its
+/// [ChartTextStyle.lineHeight].
 void renderText(
   CanvasRenderingContext2D ctx,
   Object? text,
   double x,
   double y,
-  CanvasFontSpec font, [
+  ChartTextStyle font, [
   RenderTextOpts opts = const _EmptyRenderTextOpts(),
 ]) {
   final lines = isArray(text) ? text! as List<Object?> : [text];
@@ -945,7 +932,8 @@ void renderText(
 
   ctx
     ..save()
-    ..font = font.string;
+    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+    ..font = font;
   _setRenderOpts(ctx, opts);
 
   for (i = 0; i < lines.length; ++i) {
@@ -973,7 +961,7 @@ void renderText(
 
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
-    y += jsToNumber(font.lineHeight);
+    y += font.lineHeight!;
   }
 
   ctx.restore();

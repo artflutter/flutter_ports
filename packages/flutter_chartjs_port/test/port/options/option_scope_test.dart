@@ -4,9 +4,11 @@
 // order of JS, the extras, the three states of a key, the foreign values,
 // the typed setters, the generated kinds and the deep clone.
 
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
 Object? _fn(Object? ctx) => ctx;
@@ -98,16 +100,17 @@ void main() {
 
     test('a function, an array and an object keep their objects', () {
       final list = <Object?>[1.0, 2.0];
-      final map = <String, Object?>{'size': 12.0};
+      const font = ChartTextStyle(fontSize: 12);
       final scope = ChartOptionsScope()
         ..jsWrite('backgroundColor', _fn)
         ..jsWrite('events', list)
-        ..jsWrite('font', map);
+        ..jsWrite('font', font);
       expect(scope.backgroundColorCell, isA<OptFunction<Object>>());
       expect(scope.jsRead('backgroundColor'), same(_fn));
       expect(scope.jsRead('events'), same(list));
-      expect(scope.fontCell, isA<OptScope<FontSpecScope>>());
-      expect(scope.jsRead('font'), same(map));
+      // A font is a TextStyle (Chart.js ADR 0116): a typed value.
+      expect(scope.fontCell, isA<OptValue<TextStyle>>());
+      expect(scope.jsRead('font'), same(font));
     });
 
     test('a number is a double', () {
@@ -165,8 +168,8 @@ void main() {
 
     test('a nested kind and the optionKeyOf switch', () {
       expect(
-        ScopeKind.chartOptions.childKind(OptionKey.font),
-        ScopeKind.fontSpec,
+        ScopeKind.chartOptions.childKind(OptionKey.interaction),
+        ScopeKind.interactionOptions,
       );
       expect(ScopeKind.elementOptionsByType.othersKind, isNotNull);
       expect(optionKeyOf('pointRadius'), OptionKey.pointRadius);
@@ -199,7 +202,8 @@ void main() {
 
   group('the clone', () {
     test('a deep copy in the same order', () {
-      final font = FontSpecScope()..size = 12.0;
+      final interaction = InteractionOptionsScope()..intersect = false;
+      const font = ChartTextStyle(fontSize: 12);
       final raw = <String, Object?>{
         'a': <Object?>[1.0],
       };
@@ -207,15 +211,19 @@ void main() {
         <String, Object?>{'b': 2.0},
       ];
       final scope = ChartOptionsScope()
+        ..interaction = interaction
         ..font = font
         ..jsWrite('extra', raw)
         ..jsWrite('events', list)
         ..jsWrite('onClick', _fn);
       final copy = scope.cloneScope() as ChartOptionsScope;
       expect(copy.jsKeys(), scope.jsKeys());
-      final copyFont = copy.fontCell!.raw! as FontSpecScope;
-      expect(copyFont, isNot(same(font)));
-      expect(copyFont.jsRead('size'), 12.0);
+      final copyInteraction =
+          copy.interactionCell!.raw! as InteractionOptionsScope;
+      expect(copyInteraction, isNot(same(interaction)));
+      expect(copyInteraction.jsRead('intersect'), false);
+      // A font is an immutable TextStyle: the copy holds the same object.
+      expect(copy.fontCell!.raw, same(font));
       final copyRaw = copy.jsRead('extra')! as Map<String, Object?>;
       expect(copyRaw, isNot(same(raw)));
       expect(copyRaw['a'], isNot(same(raw['a'])));

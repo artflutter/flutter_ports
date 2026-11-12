@@ -45,7 +45,7 @@ final Map<String, Object?> _highLow = {
       ..moveTo(left, low)
       ..lineTo(right, low)
       ..stroke()
-      ..font = '12px sans-serif'
+      ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 12)
       ..textAlign = TextAlign.left
       ..textBaseline = CanvasTextBaseline.bottom
       ..fillStyle = Colors.green.shade800

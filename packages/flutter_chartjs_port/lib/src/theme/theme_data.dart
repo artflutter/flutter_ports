@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/css.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// The tokens of a chart theme (Chart.js ADR 0050, theming.md §4).
 ///
@@ -136,15 +137,14 @@ class ChartThemeData with Diagnosticable {
 
   /// Replaces `Defaults.font` (`core.defaults.js:54-60`).
   ///
-  /// The theme reads `fontFamily`, `fontFamilyFallback`, `fontSize`,
-  /// `fontStyle`, `fontWeight` and `height`, and no other field. Thus an app
-  /// can give a `TextStyle` of its text theme. A px line height, `'oblique'`
-  /// and `'lighter'` stay in the chart options.
+  /// The chart takes the `TextStyle` itself (Chart.js ADR 0116): it lays out
+  /// the texts with it, and its line height in pixels is `fontSize *
+  /// height`. Thus an app can give a `TextStyle` of its text theme. The
+  /// color of the texts is [color], not the color of the `TextStyle`.
   final TextStyle? font;
 
   /// The point-label font of the radial linear scale, over [font] without
-  /// its size (`scale.radialLinear.js:383-385`, theming.md §3.4). It reads
-  /// the fields of [font].
+  /// its size (`scale.radialLinear.js:383-385`, theming.md §3.4).
   final TextStyle? pointLabelsFont;
 
   /// The palette of the colors plugin (`plugin.colors.ts:14-22`).
@@ -311,8 +311,9 @@ const Color _white80 = Color.from(alpha: 0.8, red: 1, green: 1, blue: 1);
 /// `"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"`, the size 12, the
 /// style `'normal'` and the line height 1.2. Its weight is null, which
 /// themes nothing: the title, subtitle, tooltip title and tooltip footer
-/// fonts keep their local weights (theming.md §3.4).
-const TextStyle _lightFont = TextStyle(
+/// fonts keep their local weights (theming.md §3.4). A `ChartTextStyle`, as
+/// the raw light preset holds it (Chart.js ADR 0116).
+const TextStyle _lightFont = ChartTextStyle(
   fontFamily: 'Helvetica Neue',
   fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
   fontSize: 12,
@@ -321,7 +322,7 @@ const TextStyle _lightFont = TextStyle(
 );
 
 /// The point-label size 10 (`scale.radialLinear.js:383-385`).
-const TextStyle _pointLabelsFont = TextStyle(fontSize: 10);
+const TextStyle _pointLabelsFont = ChartTextStyle(fontSize: 10);
 
 /// `BORDER_COLORS` (`plugin.colors.ts:14-22`) at alpha 1.
 const List<Color> _chartJsPalette = [
@@ -387,8 +388,8 @@ ChartOptionsScope? compileThemeData(ChartThemeData? data) {
 ///   `Color.withValues(colorSpace: ColorSpace.extendedSRGB)`.
 ///   `themeColorToRgba` then clamps the components. A direct conversion to
 ///   sRGB would only clamp a Display P3 color (theming.md §3.3).
-/// - `typography`: `font` and `pointLabels`, the `FontSpec` Maps of the
-///   fonts that are not null ([fontSpecOf] of `css.dart`).
+/// - `typography`: `font` and `pointLabels`, the `TextStyle`s of the
+///   fonts that are not null (Chart.js ADR 0116).
 /// - `palette`: `{colors, backgroundAlpha}` for a non-empty palette.
 ///
 /// A part without a value is left out.
@@ -403,8 +404,8 @@ AnyObject themeDataToRaw(ChartThemeData data) {
     'onInverseSurface': ?rawColorOf(data.onInverseSurface),
   };
   final typography = <String, Object?>{
-    'font': ?fontSpecOf(data.font),
-    'pointLabels': ?fontSpecOf(data.pointLabelsFont),
+    'font': ?data.font,
+    'pointLabels': ?data.pointLabelsFont,
   };
   final palette = data.palette;
   return <String, Object?>{

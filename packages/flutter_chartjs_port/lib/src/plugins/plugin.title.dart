@@ -24,7 +24,7 @@
 /// Not a pure layer: it imports `helpers.extras`.
 library;
 
-import 'dart:ui' show TextAlign;
+import 'dart:ui' show FontWeight, TextAlign;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -44,11 +44,12 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DescriptorsScope, FontSpecScope, TitleOptionsScope;
+    show DescriptorsScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show TitleOptions;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -175,7 +176,7 @@ class Title extends Element implements LayoutItem {
     final text = opts.text;
     final lineCount = isArray(text) ? (text! as List<Object?>).length : 1;
     final padding = _padding = toPadding(opts.padding);
-    final textSize = lineCount * toFont(opts.font).lineHeight + padding.height;
+    final textSize = lineCount * toFont(opts.font).lineHeight! + padding.height;
 
     if (isHorizontal()) {
       height = textSize;
@@ -252,7 +253,7 @@ class Title extends Element implements LayoutItem {
     }
 
     final fontOpts = toFont(opts.font);
-    final lineHeight = fontOpts.lineHeight;
+    final lineHeight = fontOpts.lineHeight!;
     final offset = lineHeight / 2 + _padding!.top;
     final (:titleX, :titleY, :maxWidth, :rotation) = _drawArgs(offset);
 
@@ -402,7 +403,8 @@ final Plugin title = Plugin(supportsDataUpdates: true)
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     ..align = ChartAlign.center
     ..display = false
-    ..font = (FontSpecScope()..weight = 'bold')
+    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
+    ..font = const ChartTextStyle(fontWeight: FontWeight.bold)
     ..fullSize = true
     ..padding = 10.0
     ..position = ChartPosition.top

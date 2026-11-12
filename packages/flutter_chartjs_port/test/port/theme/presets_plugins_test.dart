@@ -9,13 +9,15 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ParsedFont, toFont;
+    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/font_record.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the plugin keys (Chart.js ADR 0050): the options of
@@ -55,15 +57,10 @@ Object? _at(Object? root, String path) {
   return node;
 }
 
-/// The fields of the `toFont` result [font], as the generator writes them.
-Map<String, Object?> _fontFields(ParsedFont font) => {
-  'family': font.family,
-  'lineHeight': font.lineHeight,
-  'size': font.size,
-  'style': font.style,
-  'weight': font.weight,
-  'string': font.string,
-};
+/// The fields of the `toFont` result [font], as the generator writes them
+/// (`font_record.dart`).
+Map<String, Object?> _fontFields(ChartTextStyle font) =>
+    resolvedFontRecordOf(font);
 
 /// The parsed form of the CSS color [value].
 String? _parsed(Object? value) => referenceParsedColor(value).rgbString();
@@ -161,13 +158,14 @@ void main() {
           );
         }
       }
-      // The local weights stay (theming.md §3.4).
+      // The local weights stay (theming.md §3.4). A weight is the value of
+      // a FontWeight (font_record.dart).
       Object? weight(String path) =>
           (options[path]! as Map<String, Object?>)['weight'];
-      expect(weight('title.font'), 'bold');
-      expect(weight('tooltip.titleFont'), 'bold');
-      expect(weight('tooltip.footerFont'), 'bold');
-      expect(weight('subtitle.font'), 'normal');
+      expect(weight('title.font'), 700);
+      expect(weight('tooltip.titleFont'), 700);
+      expect(weight('tooltip.footerFont'), 700);
+      expect(weight('subtitle.font'), 400);
       expect(weight('tooltip.bodyFont'), isNull);
       expect(weight('legend.labels.font'), isNull);
       expect(weight('legend.title.font'), isNull);
@@ -223,11 +221,12 @@ void main() {
               ),
             },
             'typography': <String, Object?>{
-              'font': <String, Object?>{
-                'family': 'serif',
-                'size': 14.0,
-                'weight': 'lighter',
-              },
+              'font': const ChartTextStyle(
+                fontFamily: 'serif',
+                fontFamilyFallback: [],
+                fontSize: 14,
+                fontWeight: native_ui.FontWeight.w300,
+              ),
             },
           }),
         ),
@@ -240,14 +239,15 @@ void main() {
         options['tooltip.bodyColor'],
         const native_ui.Color.fromRGBO(255, 255, 0, 1),
       );
+      // A weight is the value of a FontWeight (font_record.dart).
       for (final (path, weight) in [
-        ('title.font', 'bold'),
-        ('subtitle.font', 'normal'),
-        ('legend.labels.font', 'lighter'),
-        ('legend.title.font', 'lighter'),
-        ('tooltip.titleFont', 'bold'),
-        ('tooltip.bodyFont', 'lighter'),
-        ('tooltip.footerFont', 'bold'),
+        ('title.font', 700),
+        ('subtitle.font', 400),
+        ('legend.labels.font', 300),
+        ('legend.title.font', 300),
+        ('tooltip.titleFont', 700),
+        ('tooltip.bodyFont', 300),
+        ('tooltip.footerFont', 700),
       ]) {
         final font = options[path]! as Map<String, Object?>;
         expect(font['family'], 'serif', reason: path);

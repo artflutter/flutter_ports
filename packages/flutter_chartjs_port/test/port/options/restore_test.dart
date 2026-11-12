@@ -15,6 +15,7 @@ import 'dart:ui' as native_ui;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
 /// `defaults.elements.point`.
@@ -57,7 +58,7 @@ void main() {
       ..jsWrite('extraKey', 5.0);
     expect(point.jsKeys().last, 'extraKey');
     defaults
-      ..font = (FontSpecScope()..size = 30.0)
+      ..font = const ChartTextStyle(fontSize: 30)
       ..backgroundColor = const native_ui.Color.fromRGBO(255, 0, 0, 1);
     expect(
       point.jsRead('backgroundColor'),

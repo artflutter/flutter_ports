@@ -1,11 +1,13 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.options.tests.js (MIT, Chart.js Contributors).
+import 'dart:ui' show FontStyle;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as chart
     show defaults;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:test/test.dart';
 
@@ -20,6 +22,11 @@ import '../support/jasmine.dart';
 // (differences.md row `adapt-options-typed-results`). The spec compares
 // their members with the keys of the upstream object, through [_corners],
 // [_padding] and [_font].
+//
+// A font is a `ChartTextStyle` (Chart.js ADR 0116, differences.md row
+// `adapt-text-style-fonts`): `toLineHeight` and the font text `string` are
+// gone, the line height is the field `ChartTextStyle.lineHeight`, and the
+// style `'oblique'` is `FontStyle.italic`. The cases of a text form skip.
 
 /// The members of a TRBL corners object, as the keys of the upstream object.
 Map<String, Object?> _corners(TRBLCorners o) => {
@@ -39,51 +46,51 @@ Map<String, Object?> _padding(ChartArea o) => {
   'height': o.height,
 };
 
-/// The members of a font object, as the keys of the upstream object.
-Map<String, Object?> _font(ParsedFont o) => {
-  'family': o.family,
+/// The fields of a font, as the keys of the upstream object without
+/// `string`. A family list is `fontFamily` and `fontFamilyFallback`.
+Map<String, Object?> _font(ChartTextStyle o) => {
+  'family': o.fontFamily,
+  'fallback': o.fontFamilyFallback,
   'lineHeight': o.lineHeight,
-  'size': o.size,
-  'string': o.string,
-  'style': o.style,
-  'weight': o.weight,
+  'size': o.fontSize,
+  'style': o.fontStyle,
+  'weight': o.fontWeight,
 };
 
 /// The JavaScript property read `context.v` of a scriptable option.
 double _v(Object? context) =>
     (context! as Map<String, Object?>)['v']! as double;
 
-/// `Object.assign(target, source)` into the typed scope [target], through
-/// its face (Chart.js ADR 0054 §5).
-void _assign(JsObjectFace target, Map<String, Object?> source) {
-  for (final MapEntry(:key, :value) in source.entries) {
-    target[key] = value;
-  }
-}
-
 void main() {
   setUpSpecs();
   group('Chart.helpers.options', () {
     group('toLineHeight', () {
-      test('should support keyword values', () {
-        expect(toLineHeight('normal', 16), 16 * 1.2);
-      });
+      test(
+        'should support keyword values',
+        () {},
+        skip: 'diverges: adapt-text-style-fonts',
+      );
       test('should support unitless values', () {
-        expect(toLineHeight(1.4, 16), 16 * 1.4);
-        expect(toLineHeight('1.4', 16), 16 * 1.4);
+        expect(
+          const ChartTextStyle(fontSize: 16, height: 1.4).lineHeight,
+          16 * 1.4,
+        );
       });
-      test('should support length values', () {
-        expect(toLineHeight('42px', 16), 42);
-        expect(toLineHeight('1.4em', 16), 16 * 1.4);
-      });
-      test('should support percentage values', () {
-        expect(toLineHeight('140%', 16), 16 * 1.4);
-      });
-      test('should fallback to default (1.2) for invalid values', () {
-        expect(toLineHeight(null, 16), 16 * 1.2);
-        expect(toLineHeight(undefined, 16), 16 * 1.2);
-        expect(toLineHeight('foobar', 16), 16 * 1.2);
-      });
+      test(
+        'should support length values',
+        () {},
+        skip: 'diverges: adapt-text-style-fonts',
+      );
+      test(
+        'should support percentage values',
+        () {},
+        skip: 'diverges: adapt-text-style-fonts',
+      );
+      test(
+        'should fallback to default (1.2) for invalid values',
+        () {},
+        skip: 'diverges: adapt-text-style-fonts',
+      );
     });
 
     group('toTRBLCorners', () {
@@ -398,110 +405,68 @@ void main() {
 
     group('toFont', () {
       test('should return a font with default values', () {
-        final font = chart.defaults['font']! as JsObjectFace;
-        // Object.assign({}, Chart.defaults.font)
-        final defaultFont = {for (final key in font.jsKeys()) key: font[key]};
+        final defaultFont = chart.defaults['font'];
 
-        // Object.assign(Chart.defaults.font, {...})
-        _assign(font, {
-          'family': 'foobar',
-          'size': 42.0,
-          'style': 'oblique 9deg',
-          'lineHeight': 1.5,
-        });
+        chart.defaults['font'] = const ChartTextStyle(
+          fontFamily: 'foobar',
+          fontFamilyFallback: [],
+          fontSize: 42,
+          fontStyle: FontStyle.italic,
+          height: 1.5,
+        );
 
         expect(
-          _font(toFont(<String, Object?>{})),
+          _font(toFont(const ChartTextStyle())),
           jasmineEquals({
             'family': 'foobar',
+            'fallback': <String>[],
             'lineHeight': 63,
             'size': 42,
-            'string': 'oblique 9deg 42px foobar',
-            'style': 'oblique 9deg',
+            'style': FontStyle.italic,
             'weight': null,
           }),
         );
 
-        _assign(font, defaultFont);
+        chart.defaults['font'] = defaultFont;
       });
       test('should return a font with given values', () {
         expect(
           _font(
-            toFont(<String, Object?>{
-              'family': 'bla',
-              'lineHeight': 8.0,
-              'size': 21.0,
-              'style': 'oblique -90deg',
-            }),
+            toFont(
+              const ChartTextStyle(
+                fontFamily: 'bla',
+                fontFamilyFallback: [],
+                height: 8,
+                fontSize: 21,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
           ),
           jasmineEquals({
             'family': 'bla',
+            'fallback': <String>[],
             'lineHeight': 8 * 21,
             'size': 21,
-            'string': 'oblique -90deg 21px bla',
-            'style': 'oblique -90deg',
-            'weight': null,
-          }),
-        );
-      });
-      test('should handle a string font size', () {
-        expect(
-          _font(
-            toFont(<String, Object?>{
-              'family': 'bla',
-              'lineHeight': 8.0,
-              'size': '21',
-              'style': 'italic',
-            }),
-          ),
-          jasmineEquals({
-            'family': 'bla',
-            'lineHeight': 8 * 21,
-            'size': 21,
-            'string': 'italic 21px bla',
-            'style': 'italic',
+            'style': FontStyle.italic,
             'weight': null,
           }),
         );
       });
       test(
-        'should return null as a font string if size or family are missing',
-        () {
-          final font = chart.defaults['font']! as JsObjectFace;
-          final fontFamily = font['family'];
-          final fontSize = font['size'];
-          font
-            ..jsDelete('family')
-            ..jsDelete('size');
-
-          expect(
-            toFont(<String, Object?>{'style': 'italic', 'size': 12.0}).string,
-            isNull,
-          );
-          expect(
-            toFont(<String, Object?>{
-              'style': 'italic',
-              'family': 'serif',
-            }).string,
-            isNull,
-          );
-
-          font['family'] = fontFamily;
-          font['size'] = fontSize;
-        },
+        'should handle a string font size',
+        () {},
+        skip: 'diverges: adapt-text-style-fonts',
       );
-      test('font.style should be optional for font strings', () {
-        final font = chart.defaults['font']! as JsObjectFace;
-        final fontStyle = font['style'];
-        font.jsDelete('style');
-
-        expect(
-          toFont(<String, Object?>{'size': 12.0, 'family': 'serif'}).string,
-          '12px serif',
-        );
-
-        font['style'] = fontStyle;
-      });
+      test(
+        'should return null as a font string if size or family are missing',
+        () {},
+        skip: 'diverges: adapt-text-style-fonts',
+      );
+      test(
+        'font.style should be optional for font strings',
+        () {},
+        skip: 'diverges: adapt-text-style-fonts',
+      );
     });
 
     group('resolve', () {

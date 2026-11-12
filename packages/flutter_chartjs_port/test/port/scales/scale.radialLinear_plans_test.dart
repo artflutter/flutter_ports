@@ -36,6 +36,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The twins of Chart.js ADR 0095. Two forms of one chart go through the same
@@ -147,10 +148,10 @@ class _Recorder extends MockContext {
   HTMLCanvasElement get canvas => target.canvas;
 
   @override
-  String? get font => target.font;
+  TextStyle? get font => target.font;
 
   @override
-  set font(String? font) {
+  set font(TextStyle? font) {
     super.font = font;
     target.font = font;
   }
@@ -500,40 +501,34 @@ final List<_Case> _cases = [
     'a scriptable font',
     expected: const _Expect(fit: false, labels: false),
     pointLabels: () => {
-      'font': (Object? ctx) => _record('font', ctx, <String, Object?>{
-        'size': 10.0 + (jsGet(ctx, 'index')! as double) % 3,
-      }),
+      'font': (Object? ctx) => _record(
+        'font',
+        ctx,
+        ChartTextStyle(fontSize: 10.0 + (jsGet(ctx, 'index')! as double) % 3),
+      ),
     },
   ),
   _Case(
-    'a scriptable font size',
+    'an indexed font',
     expected: const _Expect(fit: false, labels: false),
     pointLabels: () => {
-      'font': <String, Object?>{
-        'size': (Object? ctx) =>
-            _record('size', ctx, 10.0 + (jsGet(ctx, 'index')! as double) % 3),
-      },
-    },
-  ),
-  _Case(
-    'an indexed font size',
-    expected: const _Expect(fit: false, labels: false),
-    pointLabels: () => {
-      'font': <String, Object?>{
-        'size': <Object?>[10.0, 12.0],
-      },
+      'font': const <Object?>[
+        ChartTextStyle(fontSize: 10),
+        ChartTextStyle(fontSize: 12),
+      ],
     },
   ),
   _Case(
     'a static font',
     pointLabels: () => {
-      'font': <String, Object?>{
-        'size': 13.0,
-        'style': 'italic',
-        'weight': 'bold',
-        'lineHeight': 1.5,
-        'family': 'Arial',
-      },
+      'font': const ChartTextStyle(
+        fontSize: 13,
+        fontStyle: ui.FontStyle.italic,
+        fontWeight: ui.FontWeight.bold,
+        height: 1.5,
+        fontFamily: 'Arial',
+        fontFamilyFallback: [],
+      ),
     },
   ),
   _Case(

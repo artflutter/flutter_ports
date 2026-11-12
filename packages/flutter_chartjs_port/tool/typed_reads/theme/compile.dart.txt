@@ -4,8 +4,9 @@
 # - stringIndex 4: typography['font'], typography['pointLabels'],
 #   palette['colors'] and palette['backgroundAlpha'] of the raw Map theme.
 # - stringIndex 2: keys['transitions'] of the build Map of the emitted keys.
-# - jsObjectKeys 4: the Object.keys order of a raw Map theme (_font,
-#   _mergeRaw, _listItem) and of a Map under a key that no scope kind
-#   declares (_freeze, a JsFrozenMap of the JS runtime).
+# - jsObjectKeys 3: the Object.keys order of a raw Map theme (_mergeRaw,
+#   _listItem) and of a Map under a key that no scope kind declares
+#   (_freeze, a JsFrozenMap of the JS runtime). A font token is a TextStyle
+#   (Chart.js ADR 0116).
 stringIndex 6
-jsObjectKeys 4
+jsObjectKeys 3

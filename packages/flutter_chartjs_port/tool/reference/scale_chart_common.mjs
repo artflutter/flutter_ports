@@ -123,6 +123,7 @@
 // It calls loadChartJs(), registerBuiltins() with its own classes, runCase()
 // for each chart, and writeReference().
 
+import {dartCanvasFont, dartFont, fontRecord} from './font_record.mjs';
 import {execFileSync} from 'node:child_process';
 import {existsSync, readFileSync, realpathSync, writeFileSync} from 'node:fs';
 import {relative} from 'node:path';
@@ -936,6 +937,10 @@ const PAD = {clip: 2, fill: 2, stroke: 1, fillText: 4, strokeText: 4, arc: 6};
 function setterValue(name, v) {
   if (v === undefined) return null;
   switch (name) {
+    // The font is a ChartTextStyle (row adapt-text-style-fonts): the record
+    // of its values.
+    case 'setFont':
+      return fontRecord(v);
     case 'setLineWidth':
     case 'setLineDashOffset':
       return Number(v);
@@ -1163,6 +1168,15 @@ export class DartAxis {
  * of the Dart data: the axis class of the port, `XAxis()`, `YAxis()` or
  * `RAxis()` (row adapt-axis-objects).
  */
+export class DartFont {
+  constructor(font) {
+    this.font = font;
+  }
+}
+
+/** The option keys whose object is a font (row adapt-text-style-fonts). */
+const FONT_KEYS = new Set(['font', 'titleFont', 'bodyFont', 'footerFont']);
+
 export class DartScaleAxis {
   constructor(name) {
     this.name = name;
@@ -1406,6 +1420,16 @@ function keyedValue(k, value, owner) {
     const style = (v) => (typeof v === 'string' && v in POINT_STYLES ? new DartPointStyle(v) : v);
     return Array.isArray(value) ? value.map(style) : style(value);
   }
+  // A font object is a ChartTextStyle (row adapt-text-style-fonts).
+  if (
+    FONT_KEYS.has(k) &&
+    value !== null &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    Object.getPrototypeOf(value) === Object.prototype
+  ) {
+    return new DartFont(value);
+  }
   if (typeof value !== 'string') return value;
   // A fill keyword is a FillBoundary, a relative index a RelativeFill (row
   // adapt-fill-target-objects).
@@ -1574,6 +1598,13 @@ function dart(v, state, owner) {
     state.modes = true;
     return `InteractionAxis.${v.name}`;
   }
+  if (v instanceof DartFont) {
+    const literal = dartFont(v.font);
+    state.textStyles = true;
+    if (literal.includes('FontStyle.')) (state.strokes ??= new Set()).add('FontStyle');
+    if (literal.includes('FontWeight')) (state.strokes ??= new Set()).add('FontWeight');
+    return literal;
+  }
   if (v instanceof DartScaleAxis) {
     state.scaleAxes = true;
     return `${v.name.toUpperCase()}Axis()`;
@@ -1632,6 +1663,18 @@ function dart(v, state, owner) {
 }
 
 /**
+ * The Dart literal of the CSS font text [css] of a width, a ChartTextStyle,
+ * with the imports that it needs in [state].
+ */
+function canvasFont(css, state) {
+  const literal = dartCanvasFont(css);
+  state.textStyles = true;
+  if (literal.includes('FontStyle.')) (state.strokes ??= new Set()).add('FontStyle');
+  if (literal.includes('FontWeight')) (state.strokes ??= new Set()).add('FontWeight');
+  return literal;
+}
+
+/**
  * Writes the Dart file [outPath] with the [cases] of runCase() and the
  * widths of every text that a LiberationContext measured, and formats it
  * with `dart format`.
@@ -1669,7 +1712,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
     )
     .join('');
   const widths = [...measured.values()]
-    .map((m) => `  (font: ${dart(m.font, state)}, text: ${dart(m.text, state)}, width: ${num(m.width)}),\n`)
+    .map((m) => `  (font: ${canvasFont(m.font, state)}, text: ${dart(m.text, state)}, width: ${num(m.width)}),\n`)
     .join('');
   const generator = relative(PACKAGE_ROOT, fileURLToPath(pathToFileURL(process.argv[1])));
   const out = `// Original code, not ported from Chart.js: ${title} reference data.
@@ -1679,7 +1722,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 
@@ -1711,9 +1754,14 @@ typedef ${type}ReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The width of \`text\` in the CSS font \`font\` that the generator
-/// measured in Liberation Sans 2.1.5.
-typedef ${type}ReferenceWidth = ({String font, String text, double width});
+/// The width of \`text\` in the font \`font\` that the generator
+/// measured in Liberation Sans 2.1.5: the fields of the CSS font text of
+/// the mock context (row adapt-text-style-fonts).
+typedef ${type}ReferenceWidth = ({
+  ChartTextStyle font,
+  String text,
+  double width,
+});
 
 /// The cases.
 const List<${type}ReferenceCase> ${name}Reference = [

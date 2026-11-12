@@ -15,6 +15,7 @@ library;
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
@@ -643,13 +644,13 @@ base class ChartOptionsScope extends OptionScope {
     classify(OptionKey.hoverBorderColor, value),
   );
 
-  Opt<FontSpecScope>? _font;
+  Opt<TextStyle>? _font;
 
   /// The cell of `font`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get fontCell => _font;
+  Opt<TextStyle>? get fontCell => _font;
 
   /// Stores the cell of `font`. Dart `null` deletes the key.
-  set fontCell(Opt<FontSpecScope>? cell) {
+  set fontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.font);
     } else {
@@ -658,8 +659,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `font`.
-  set font(FontSpecScope value) =>
-      store(OptionKey.font, OptScope<FontSpecScope>(value));
+  set font(TextStyle value) =>
+      store(OptionKey.font, OptValue<TextStyle>(value));
 
   Opt<bool>? _responsive;
 
@@ -2511,7 +2512,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.hoverBorderColor:
         _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.font:
-        _font = fitCell(cell, classifyScope<FontSpecScope>);
+        _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.responsive:
         _responsive = fitCell(cell, classifyBool);
       case OptionKey.maintainAspectRatio:
@@ -2843,7 +2844,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.hoverBorderColor:
         return classifyUnion(raw, 64);
       case OptionKey.font:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.responsive:
         return classifyBool(raw);
       case OptionKey.maintainAspectRatio:
@@ -4704,171 +4705,6 @@ base class AnimationOptionsScope extends OptionScope {
         return classifyBool(raw);
       case OptionKey.animateScale:
         return classifyBool(raw);
-      default:
-        return kind.classifyOther(raw);
-    }
-  }
-}
-
-/// index.d.ts:1812 FontSpec, a font object (read by toFont,
-/// helpers.options.ts).
-base class FontSpecScope extends OptionScope {
-  /// An empty scope.
-  FontSpecScope();
-
-  @override
-  ScopeKind get kind => ScopeKind.fontSpec;
-
-  Opt<String>? _family;
-
-  /// The cell of `family`, or Dart `null` when absent.
-  Opt<String>? get familyCell => _family;
-
-  /// Stores the cell of `family`. Dart `null` deletes the key.
-  set familyCell(Opt<String>? cell) {
-    if (cell == null) {
-      delete(OptionKey.family);
-    } else {
-      store(OptionKey.family, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `family`.
-  set family(String value) => store(OptionKey.family, OptValue<String>(value));
-
-  Opt<double>? _size;
-
-  /// The cell of `size`, or Dart `null` when absent.
-  Opt<double>? get sizeCell => _size;
-
-  /// Stores the cell of `size`. Dart `null` deletes the key.
-  set sizeCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.size);
-    } else {
-      store(OptionKey.size, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `size`.
-  set size(double value) => store(OptionKey.size, OptValue<double>(value));
-
-  Opt<String>? _style;
-
-  /// The cell of `style`, or Dart `null` when absent.
-  Opt<String>? get styleCell => _style;
-
-  /// Stores the cell of `style`. Dart `null` deletes the key.
-  set styleCell(Opt<String>? cell) {
-    if (cell == null) {
-      delete(OptionKey.style);
-    } else {
-      store(OptionKey.style, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `style`.
-  set style(String value) => store(OptionKey.style, OptValue<String>(value));
-
-  Opt<Object>? _weight;
-
-  /// The cell of `weight`, or Dart `null` when absent.
-  Opt<Object>? get weightCell => _weight;
-
-  /// Stores the cell of `weight`. Dart `null` deletes the key.
-  set weightCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.weight);
-    } else {
-      store(OptionKey.weight, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `weight`.
-  set weight(Object value) =>
-      store(OptionKey.weight, classify(OptionKey.weight, value));
-
-  Opt<Object>? _lineHeight;
-
-  /// The cell of `lineHeight`, or Dart `null` when absent.
-  Opt<Object>? get lineHeightCell => _lineHeight;
-
-  /// Stores the cell of `lineHeight`. Dart `null` deletes the key.
-  set lineHeightCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.lineHeight);
-    } else {
-      store(OptionKey.lineHeight, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `lineHeight`.
-  set lineHeight(Object value) =>
-      store(OptionKey.lineHeight, classify(OptionKey.lineHeight, value));
-
-  @override
-  Opt<Object?>? cellOf(OptionKey key) {
-    switch (key) {
-      case OptionKey.family:
-        return _family;
-      case OptionKey.size:
-        return _size;
-      case OptionKey.style:
-        return _style;
-      case OptionKey.weight:
-        return _weight;
-      case OptionKey.lineHeight:
-        return _lineHeight;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  void setCell(OptionKey key, Opt<Object?>? cell) {
-    switch (key) {
-      case OptionKey.family:
-        _family = fitCell(cell, classifyString);
-      case OptionKey.size:
-        _size = fitCell(cell, classifyNumber);
-      case OptionKey.style:
-        _style = fitCell(cell, classifyString);
-      case OptionKey.weight:
-        _weight = fitCell(cell, (raw) => classifyUnion(raw, 5));
-      case OptionKey.lineHeight:
-        _lineHeight = fitCell(cell, (raw) => classifyUnion(raw, 5));
-      default:
-        throw ArgumentError.value(key, 'key', 'Not a key of FontSpec');
-    }
-  }
-
-  @override
-  bool hasField(OptionKey key) {
-    switch (key) {
-      case OptionKey.family:
-      case OptionKey.size:
-      case OptionKey.style:
-      case OptionKey.weight:
-      case OptionKey.lineHeight:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @override
-  Opt<Object?> classify(OptionKey key, Object? raw) {
-    switch (key) {
-      case OptionKey.family:
-        return classifyString(raw);
-      case OptionKey.size:
-        return classifyNumber(raw);
-      case OptionKey.style:
-        return classifyString(raw);
-      case OptionKey.weight:
-        return classifyUnion(raw, 5);
-      case OptionKey.lineHeight:
-        return classifyUnion(raw, 5);
       default:
         return kind.classifyOther(raw);
     }
@@ -17875,13 +17711,13 @@ base class TickOptionsScope extends OptionScope {
   set color(Object value) =>
       store(OptionKey.color, classify(OptionKey.color, value));
 
-  Opt<FontSpecScope>? _font;
+  Opt<TextStyle>? _font;
 
   /// The cell of `font`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get fontCell => _font;
+  Opt<TextStyle>? get fontCell => _font;
 
   /// Stores the cell of `font`. Dart `null` deletes the key.
-  set fontCell(Opt<FontSpecScope>? cell) {
+  set fontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.font);
     } else {
@@ -17890,8 +17726,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `font`.
-  set font(FontSpecScope value) =>
-      store(OptionKey.font, OptScope<FontSpecScope>(value));
+  set font(TextStyle value) =>
+      store(OptionKey.font, OptValue<TextStyle>(value));
 
   Opt<double>? _padding;
 
@@ -18385,7 +18221,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.color:
         _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.font:
-        _font = fitCell(cell, classifyScope<FontSpecScope>);
+        _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.padding:
         _padding = fitCell(cell, classifyNumber);
       case OptionKey.showLabelBackdrop:
@@ -18489,7 +18325,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.color:
         return classifyUnion(raw, 64);
       case OptionKey.font:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.padding:
         return classifyNumber(raw);
       case OptionKey.showLabelBackdrop:
@@ -19303,13 +19139,13 @@ base class ScaleTitleOptionsScope extends OptionScope {
   set strokeWidth(double value) =>
       store(OptionKey.strokeWidth, OptValue<double>(value));
 
-  Opt<FontSpecScope>? _font;
+  Opt<TextStyle>? _font;
 
   /// The cell of `font`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get fontCell => _font;
+  Opt<TextStyle>? get fontCell => _font;
 
   /// Stores the cell of `font`. Dart `null` deletes the key.
-  set fontCell(Opt<FontSpecScope>? cell) {
+  set fontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.font);
     } else {
@@ -19318,8 +19154,8 @@ base class ScaleTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `font`.
-  set font(FontSpecScope value) =>
-      store(OptionKey.font, OptScope<FontSpecScope>(value));
+  set font(TextStyle value) =>
+      store(OptionKey.font, OptValue<TextStyle>(value));
 
   Opt<Object>? _padding;
 
@@ -19379,7 +19215,7 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.strokeWidth:
         _strokeWidth = fitCell(cell, classifyNumber);
       case OptionKey.font:
-        _font = fitCell(cell, classifyScope<FontSpecScope>);
+        _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.padding:
         _padding = fitCell(cell, (raw) => classifyUnion(raw, 33));
       default:
@@ -19420,7 +19256,7 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.strokeWidth:
         return classifyNumber(raw);
       case OptionKey.font:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.padding:
         return classifyUnion(raw, 33);
       default:
@@ -20204,13 +20040,13 @@ base class PointLabelOptionsScope extends OptionScope {
   set color(Object value) =>
       store(OptionKey.color, classify(OptionKey.color, value));
 
-  Opt<FontSpecScope>? _font;
+  Opt<TextStyle>? _font;
 
   /// The cell of `font`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get fontCell => _font;
+  Opt<TextStyle>? get fontCell => _font;
 
   /// Stores the cell of `font`. Dart `null` deletes the key.
-  set fontCell(Opt<FontSpecScope>? cell) {
+  set fontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.font);
     } else {
@@ -20219,8 +20055,8 @@ base class PointLabelOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `font`.
-  set font(FontSpecScope value) =>
-      store(OptionKey.font, OptScope<FontSpecScope>(value));
+  set font(TextStyle value) =>
+      store(OptionKey.font, OptValue<TextStyle>(value));
 
   Opt<Object>? _callback;
 
@@ -20316,7 +20152,7 @@ base class PointLabelOptionsScope extends OptionScope {
       case OptionKey.color:
         _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.font:
-        _font = fitCell(cell, classifyScope<FontSpecScope>);
+        _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.callback:
         _callback = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.padding:
@@ -20360,7 +20196,7 @@ base class PointLabelOptionsScope extends OptionScope {
       case OptionKey.color:
         return classifyUnion(raw, 64);
       case OptionKey.font:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.callback:
         return classifyUnion(raw, 8);
       case OptionKey.padding:
@@ -20873,13 +20709,13 @@ base class LegendLabelOptionsScope extends OptionScope {
   set color(Object value) =>
       store(OptionKey.color, classify(OptionKey.color, value));
 
-  Opt<FontSpecScope>? _font;
+  Opt<TextStyle>? _font;
 
   /// The cell of `font`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get fontCell => _font;
+  Opt<TextStyle>? get fontCell => _font;
 
   /// Stores the cell of `font`. Dart `null` deletes the key.
-  set fontCell(Opt<FontSpecScope>? cell) {
+  set fontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.font);
     } else {
@@ -20888,8 +20724,8 @@ base class LegendLabelOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `font`.
-  set font(FontSpecScope value) =>
-      store(OptionKey.font, OptScope<FontSpecScope>(value));
+  set font(TextStyle value) =>
+      store(OptionKey.font, OptValue<TextStyle>(value));
 
   Opt<double>? _padding;
 
@@ -21119,7 +20955,7 @@ base class LegendLabelOptionsScope extends OptionScope {
       case OptionKey.color:
         _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.font:
-        _font = fitCell(cell, classifyScope<FontSpecScope>);
+        _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.padding:
         _padding = fitCell(cell, classifyNumber);
       case OptionKey.pointStyleWidth:
@@ -21182,7 +21018,7 @@ base class LegendLabelOptionsScope extends OptionScope {
       case OptionKey.color:
         return classifyUnion(raw, 64);
       case OptionKey.font:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.padding:
         return classifyNumber(raw);
       case OptionKey.pointStyleWidth:
@@ -21253,13 +21089,13 @@ base class LegendTitleOptionsScope extends OptionScope {
   set color(Object value) =>
       store(OptionKey.color, classify(OptionKey.color, value));
 
-  Opt<FontSpecScope>? _font;
+  Opt<TextStyle>? _font;
 
   /// The cell of `font`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get fontCell => _font;
+  Opt<TextStyle>? get fontCell => _font;
 
   /// Stores the cell of `font`. Dart `null` deletes the key.
-  set fontCell(Opt<FontSpecScope>? cell) {
+  set fontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.font);
     } else {
@@ -21268,8 +21104,8 @@ base class LegendTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `font`.
-  set font(FontSpecScope value) =>
-      store(OptionKey.font, OptScope<FontSpecScope>(value));
+  set font(TextStyle value) =>
+      store(OptionKey.font, OptValue<TextStyle>(value));
 
   Opt<ChartAlign>? _position;
 
@@ -21352,7 +21188,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.color:
         _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.font:
-        _font = fitCell(cell, classifyScope<FontSpecScope>);
+        _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.position:
         _position = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.padding:
@@ -21391,7 +21227,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.color:
         return classifyUnion(raw, 64);
       case OptionKey.font:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.position:
         return classifyTyped<ChartAlign>(raw);
       case OptionKey.padding:
@@ -21484,13 +21320,13 @@ base class TitleOptionsScope extends OptionScope {
   set color(Object value) =>
       store(OptionKey.color, classify(OptionKey.color, value));
 
-  Opt<FontSpecScope>? _font;
+  Opt<TextStyle>? _font;
 
   /// The cell of `font`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get fontCell => _font;
+  Opt<TextStyle>? get fontCell => _font;
 
   /// Stores the cell of `font`. Dart `null` deletes the key.
-  set fontCell(Opt<FontSpecScope>? cell) {
+  set fontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.font);
     } else {
@@ -21499,8 +21335,8 @@ base class TitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `font`.
-  set font(FontSpecScope value) =>
-      store(OptionKey.font, OptScope<FontSpecScope>(value));
+  set font(TextStyle value) =>
+      store(OptionKey.font, OptValue<TextStyle>(value));
 
   Opt<bool>? _fullSize;
 
@@ -21630,7 +21466,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.color:
         _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.font:
-        _font = fitCell(cell, classifyScope<FontSpecScope>);
+        _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.fullSize:
         _fullSize = fitCell(cell, classifyBool);
       case OptionKey.padding:
@@ -21677,7 +21513,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.color:
         return classifyUnion(raw, 64);
       case OptionKey.font:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.fullSize:
         return classifyBool(raw);
       case OptionKey.padding:
@@ -21956,13 +21792,13 @@ base class TooltipOptionsScope extends OptionScope {
   set titleColor(Object value) =>
       store(OptionKey.titleColor, classify(OptionKey.titleColor, value));
 
-  Opt<FontSpecScope>? _titleFont;
+  Opt<TextStyle>? _titleFont;
 
   /// The cell of `titleFont`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get titleFontCell => _titleFont;
+  Opt<TextStyle>? get titleFontCell => _titleFont;
 
   /// Stores the cell of `titleFont`. Dart `null` deletes the key.
-  set titleFontCell(Opt<FontSpecScope>? cell) {
+  set titleFontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.titleFont);
     } else {
@@ -21971,8 +21807,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `titleFont`.
-  set titleFont(FontSpecScope value) =>
-      store(OptionKey.titleFont, OptScope<FontSpecScope>(value));
+  set titleFont(TextStyle value) =>
+      store(OptionKey.titleFont, OptValue<TextStyle>(value));
 
   Opt<double>? _titleSpacing;
 
@@ -22064,13 +21900,13 @@ base class TooltipOptionsScope extends OptionScope {
   set bodyColor(Object value) =>
       store(OptionKey.bodyColor, classify(OptionKey.bodyColor, value));
 
-  Opt<FontSpecScope>? _bodyFont;
+  Opt<TextStyle>? _bodyFont;
 
   /// The cell of `bodyFont`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get bodyFontCell => _bodyFont;
+  Opt<TextStyle>? get bodyFontCell => _bodyFont;
 
   /// Stores the cell of `bodyFont`. Dart `null` deletes the key.
-  set bodyFontCell(Opt<FontSpecScope>? cell) {
+  set bodyFontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.bodyFont);
     } else {
@@ -22079,8 +21915,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `bodyFont`.
-  set bodyFont(FontSpecScope value) =>
-      store(OptionKey.bodyFont, OptScope<FontSpecScope>(value));
+  set bodyFont(TextStyle value) =>
+      store(OptionKey.bodyFont, OptValue<TextStyle>(value));
 
   Opt<TextAlign>? _bodyAlign;
 
@@ -22154,13 +21990,13 @@ base class TooltipOptionsScope extends OptionScope {
   set footerColor(Object value) =>
       store(OptionKey.footerColor, classify(OptionKey.footerColor, value));
 
-  Opt<FontSpecScope>? _footerFont;
+  Opt<TextStyle>? _footerFont;
 
   /// The cell of `footerFont`, or Dart `null` when absent.
-  Opt<FontSpecScope>? get footerFontCell => _footerFont;
+  Opt<TextStyle>? get footerFontCell => _footerFont;
 
   /// Stores the cell of `footerFont`. Dart `null` deletes the key.
-  set footerFontCell(Opt<FontSpecScope>? cell) {
+  set footerFontCell(Opt<TextStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.footerFont);
     } else {
@@ -22169,8 +22005,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `footerFont`.
-  set footerFont(FontSpecScope value) =>
-      store(OptionKey.footerFont, OptScope<FontSpecScope>(value));
+  set footerFont(TextStyle value) =>
+      store(OptionKey.footerFont, OptValue<TextStyle>(value));
 
   Opt<TextAlign>? _footerAlign;
 
@@ -22644,7 +22480,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.titleColor:
         _titleColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.titleFont:
-        _titleFont = fitCell(cell, classifyScope<FontSpecScope>);
+        _titleFont = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.titleSpacing:
         _titleSpacing = fitCell(cell, classifyNumber);
       case OptionKey.titleMarginBottom:
@@ -22656,7 +22492,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.bodyColor:
         _bodyColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.bodyFont:
-        _bodyFont = fitCell(cell, classifyScope<FontSpecScope>);
+        _bodyFont = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.bodyAlign:
         _bodyAlign = fitCell(cell, classifyTyped<TextAlign>);
       case OptionKey.footerSpacing:
@@ -22666,7 +22502,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerColor:
         _footerColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
       case OptionKey.footerFont:
-        _footerFont = fitCell(cell, classifyScope<FontSpecScope>);
+        _footerFont = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.footerAlign:
         _footerAlign = fitCell(cell, classifyTyped<TextAlign>);
       case OptionKey.padding:
@@ -22796,7 +22632,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.titleColor:
         return classifyUnion(raw, 64);
       case OptionKey.titleFont:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.titleSpacing:
         return classifyNumber(raw);
       case OptionKey.titleMarginBottom:
@@ -22808,7 +22644,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.bodyColor:
         return classifyUnion(raw, 64);
       case OptionKey.bodyFont:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.bodyAlign:
         return classifyTyped<TextAlign>(raw);
       case OptionKey.footerSpacing:
@@ -22818,7 +22654,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerColor:
         return classifyUnion(raw, 64);
       case OptionKey.footerFont:
-        return classifyScope<FontSpecScope>(raw);
+        return classifyTyped<TextStyle>(raw);
       case OptionKey.footerAlign:
         return classifyTyped<TextAlign>(raw);
       case OptionKey.padding:

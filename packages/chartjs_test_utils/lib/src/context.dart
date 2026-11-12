@@ -9,6 +9,8 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
+import 'package:flutter/painting.dart' show TextStyle;
+
 // The harness implements the canvas interface. flutter_chartjs_port does not
 // export lib/src.
 // ignore: implementation_imports
@@ -88,7 +90,7 @@ class MockContext implements CanvasRenderingContext2D {
 
   // context.js:7-15 the recorded properties, `null` at the start.
   Object? _fillStyle;
-  String? _font;
+  TextStyle? _font;
   StrokeCap? _lineCap;
   double? _lineDashOffset;
   StrokeJoin? _lineJoin;
@@ -123,11 +125,12 @@ class MockContext implements CanvasRenderingContext2D {
     record('setFillStyle', [style]);
   }
 
+  /// The font is a `TextStyle` (Chart.js ADR 0116): the record holds it.
   @override
-  String? get font => _font;
+  TextStyle? get font => _font;
 
   @override
-  set font(String? font) {
+  set font(TextStyle? font) {
     _font = font;
     record('setFont', [font]);
   }

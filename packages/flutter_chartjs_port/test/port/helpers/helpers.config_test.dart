@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show ScopeRoute;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope, InteractionOptionsScope;
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
 
@@ -888,6 +889,60 @@ void main() {
     });
   });
 
+  group('adapt-text-style-fonts', () {
+    // A font is a ChartTextStyle (Chart.js ADR 0116). The resolver merges
+    // the fonts of the scopes that upstream gathers for a font object with
+    // TextStyle.merge: a field of a scope with a higher priority wins.
+    test('merges the fonts of the scopes of the key', () {
+      final resolver = createResolver([
+        <String, Object?>{'font': const ChartTextStyle(fontSize: 20)},
+        <String, Object?>{
+          'font': const ChartTextStyle(
+            fontFamily: 'serif',
+            fontSize: 10,
+            height: 1.5,
+          ),
+        },
+      ]);
+      final font = resolver['font']! as ChartTextStyle;
+      expect(
+        font,
+        const ChartTextStyle(fontFamily: 'serif', fontSize: 20, height: 1.5),
+      );
+      expect(font.lineHeight, 30);
+    });
+
+    test('merges the fonts of the _fallback key', () {
+      final resolver = createResolver(
+        [
+          <String, Object?>{
+            'titleFont': const ChartTextStyle(fontWeight: ui.FontWeight.bold),
+            'font': const ChartTextStyle(fontFamily: 'serif', fontSize: 10),
+          },
+        ],
+        [''],
+        null,
+        'font',
+      );
+      expect(
+        resolver['titleFont'],
+        const ChartTextStyle(
+          fontFamily: 'serif',
+          fontSize: 10,
+          fontWeight: ui.FontWeight.bold,
+        ),
+      );
+    });
+
+    test('one font is the font itself', () {
+      const font = ChartTextStyle(fontSize: 12);
+      final resolver = createResolver([
+        <String, Object?>{'font': font},
+      ]);
+      expect(resolver['font'], same(font));
+    });
+  });
+
   group('parseObjectDataRadialScale', () {
     List<Object?> parse(
       Object? parsing,
@@ -1094,20 +1149,20 @@ void main() {
       // each read (core.defaults.js:144-153).
       List<Object?> scopes() => [
         ChartOptionsScope()
-          ..jsWrite('font', <String, Object?>{'size': 12})
+          ..jsWrite('layout', <String, Object?>{'padding': 12})
           ..addRoute(
-            'font',
+            'layout',
             ScopeRoute(
               (local) => <String, Object?>{...local! as Map<String, Object?>},
               targetScope: null,
-              targetName: 'font',
+              targetName: 'layout',
             ),
           ),
       ];
 
       final (single, full) = twins(scopes());
-      final a = subScopes(single, 'font');
-      final b = subScopes(full, 'font');
+      final a = subScopes(single, 'layout');
+      final b = subScopes(full, 'layout');
       expect(a.length, b.length);
       expect(a.length, 3);
       expect(a.toSet().length, 3);

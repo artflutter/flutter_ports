@@ -538,9 +538,11 @@ const cases = [
     data: {labels: letters(3), datasets: [{data: [0, 500, 1000]}]},
     options: {scales: {y: {ticks: {maxTicksLimit: 1000, font: {size: 40}}}}},
   }),
-  chartCase('a vertical tick limit with a lineHeight in px', {
+  // The line height 20 px as a multiple of the size: a line height in px
+  // has no form (row adapt-text-style-fonts).
+  chartCase('a vertical tick limit with a lineHeight of 20 px', {
     data: {labels: letters(3), datasets: [{data: [0, 500, 1000]}]},
-    options: {scales: {y: {ticks: {maxTicksLimit: 1000, font: {size: 12, lineHeight: '20px'}}}}},
+    options: {scales: {y: {ticks: {maxTicksLimit: 1000, font: {size: 12, lineHeight: 20 / 12}}}}},
   }),
   chartCase('a vertical tick limit with minRotation 60', {
     data: {labels: letters(3), datasets: [{data: [0, 500, 1000]}]},

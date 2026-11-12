@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
@@ -21,12 +22,14 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
@@ -53,6 +56,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final double d => jsNumberToString(d),
   num() => throw ArgumentError.value(value, 'value', 'is an int'),
   final String s => jsonEncode(s),
+  final TextStyle font => _jsonRaw(fontObjectRecordOf(font)),
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
@@ -173,9 +177,10 @@ void main() {
           '"borderColor":"rgba(0,0,0,0.1)","color":"#666","datasets":{},'
           '"devicePixelRatio":"<fn>","elements":{},'
           '"events":["mousemove","mouseout","click","touchstart","touchmove"],'
-          '"font":{"family":"\'Helvetica Neue\', \'Helvetica\', \'Arial\', '
-          'sans-serif","size":12,"style":"normal","lineHeight":1.2,'
-          '"weight":null},"hover":{},"hoverBackgroundColor":"<fn>",'
+          '"font":{"family":"Helvetica '
+          'Neue","fallback":["Helvetica","Arial","sans-serif"],"size":12,'
+          '"weight":null,"style":"normal","height":1.2},"hover":{},'
+          '"hoverBackgroundColor":"<fn>",'
           '"hoverBorderColor":"<fn>","hoverColor":"<fn>","indexAxis":$axisJson,'
           '"interaction":{"mode":"<mode>","intersect":true,'
           '"includeInvisible":false},"maintainAspectRatio":true,'
@@ -784,6 +789,38 @@ void main() {
     });
   });
 
+  group('adapt-text-style-fonts', () {
+    // A font is a ChartTextStyle (Chart.js ADR 0116): a route merges its
+    // local font over the font of its target with TextStyle.merge, as
+    // core.defaults.js:144-153 merges a local font object.
+    test('a route merges a local font over the target font', () {
+      final d = _defaults()
+        ..set('a', <String, Object?>{
+          'font': const ChartTextStyle(fontSize: 10),
+        })
+        ..set('b', <String, Object?>{
+          'font': const ChartTextStyle(
+            fontSize: 20,
+            fontStyle: ui.FontStyle.italic,
+          ),
+        })
+        ..route('a', 'font', 'b', 'font');
+      expect(
+        _get(d['a'], 'font'),
+        const ChartTextStyle(fontSize: 10, fontStyle: ui.FontStyle.italic),
+      );
+    });
+
+    test('a route without a local font gives the target font', () {
+      const target = ChartTextStyle(fontSize: 20);
+      final d = _defaults()
+        ..set('a', <String, Object?>{})
+        ..set('b', <String, Object?>{'font': target})
+        ..route('a', 'font', 'b', 'font');
+      expect(_get(d['a'], 'font'), same(target));
+    });
+  });
+
   group('adapt-defaults-route', () {
     // Pins the difference of the port: a route on a raw Map scope puts a
     // typed scope with the same keys, values and order in the place of the
@@ -897,8 +934,9 @@ void main() {
       expect(_get(defaults, 'onHover'), isNull);
       expect(defaults.jsHas('onHover'), true);
       expect(_get(scale['ticks'], 'mirror'), false);
-      expect(_keys(defaults['font']), isNot(contains('fallbackFamily')));
-      expect(defaults['font'], isA<OptionScope>());
+      // A font is a ChartTextStyle (Chart.js ADR 0116).
+      expect(defaults['font'], isA<ChartTextStyle>());
+      expect((defaults['font']! as TextStyle).fontSize, 12);
       // The routes of the snapshot still read the root.
       defaults['color'] = const ui.Color.fromRGBO(0, 0, 255, 1);
       expect(
@@ -911,18 +949,17 @@ void main() {
       final scale = defaults['scale']! as JsObjectFace;
       defaults
         ..set('leak', <String, Object?>{'a': 1.0})
-        ..set('font', <String, Object?>{'size': 99.0})
-        ..route('font', 'fallbackFamily', '', 'color')
         ..route('scale.ticks', 'mirror', '', 'color')
         ..describe('leak', <String, Object?>{'_fallback': 'x'})
         ..override('leak', <String, Object?>{'b': 2.0});
       defaults['color'] = 'red';
+      defaults['font'] = const ChartTextStyle(fontSize: 99);
       defaults['animation'] = null;
       defaults.jsDelete('onHover');
       (scale['ticks']! as JsObjectFace)['mirror'] = undefined;
       (defaults['events']! as List<Object?>).add('wheel');
       scale['grid'] = <String, Object?>{};
-      expect(_get(defaults['font'], 'fallbackFamily'), 'red');
+      expect((defaults['font']! as TextStyle).fontSize, 99);
       expect(_get(scale['ticks'], 'mirror'), 'red');
     }
 

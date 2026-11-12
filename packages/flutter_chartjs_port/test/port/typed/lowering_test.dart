@@ -375,17 +375,13 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   ),
 };
 
-/// A font and its `FontSpec` Map.
+/// A font and its lowered value: the same `TextStyle` (Chart.js ADR 0116).
 const TextStyle _font = TextStyle(
   fontFamily: 'Arial',
   fontSize: 14,
   fontWeight: FontWeight.w700,
 );
-const Map<String, Object?> _fontValue = {
-  'family': "'Arial'",
-  'size': 14,
-  'weight': 700,
-};
+const TextStyle _fontValue = _font;
 
 /// The times of the time axes.
 final DateTime _start = DateTime.utc(2020);

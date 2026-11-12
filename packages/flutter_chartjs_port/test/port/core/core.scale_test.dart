@@ -4,6 +4,7 @@ library;
 
 import 'dart:convert';
 import 'dart:ui' as native_ui;
+import 'dart:ui' show FontStyle;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
@@ -22,12 +23,14 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, ScaleValuePosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/font_record.dart';
 import 'scale_reference.dart';
 
 // The chart cases of core.scale.tests.js need a chart controller (phase 7).
@@ -305,11 +308,11 @@ final Map<String, Object> _functions = {
       jsGet(ctx, 'type') == 'tick' ? jsToNumber(jsGet(ctx, 'index')) + 1 : 5.0,
   'undefinedOddWidth': (Object? ctx) =>
       jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2)) ? undefined : 2.0,
-  'fontByIndex': (Object? ctx) => <String, Object?>{
-    'size': jsGet(ctx, 'type') == 'tick'
+  'fontByIndex': (Object? ctx) => ChartTextStyle(
+    fontSize: jsGet(ctx, 'type') == 'tick'
         ? 10 + 2 * jsToNumber(jsGet(ctx, 'index'))
         : 12.0,
-  },
+  ),
   'colorByMajor': (Object? ctx) {
     final tick = jsGet(ctx, 'tick');
     return tick is Tick && (tick.major ?? false)
@@ -346,6 +349,9 @@ Object? _matcher(Object? expected) => switch (expected) {
     _ => equals(double.parse(s)),
   },
   final List<Object?> list => [for (final item in list) _matcher(item)],
+  // The record of a font (row adapt-text-style-fonts, font_record.dart).
+  {'font': final Map<String, Object?> _} when expected.length == 1 =>
+    fontRecordMatcher(expected),
   final Map<String, Object?> map => {
     for (final MapEntry(:key, :value) in map.entries) key: _matcher(value),
   },
@@ -377,8 +383,9 @@ Map<String, Object?> _labelItem(types.LabelItem item) {
   final backdrop = o.backdrop;
   return {
     'label': item.label,
-    'font': item.font.string,
-    'lineHeight': jsToNumber(item.font.lineHeight),
+    // The font compares by its record (font_record.dart).
+    'font': item.font,
+    'lineHeight': item.font.lineHeight,
     'textOffset': item.textOffset,
     'rotation': o.rotation,
     'color': o.color,
@@ -605,13 +612,13 @@ void main() {
           'axis': const XAxis(),
           'position': ChartPosition.bottom,
           'ticks': {
-            'font': {
-              'size': 12.0,
-              'family': 'Arial',
-              'style': 'normal',
-              'lineHeight': 1.2,
-              'weight': null,
-            },
+            'font': const ChartTextStyle(
+              fontSize: 12,
+              fontFamily: 'Arial',
+              fontFamilyFallback: [],
+              fontStyle: FontStyle.normal,
+              height: 1.2,
+            ),
           },
         }, chart),
       )
@@ -619,14 +626,14 @@ void main() {
     final first = scale.resolveTickFontOptions(0);
     expect(scale.ticks![1].$context, isNull);
     final second = scale.resolveTickFontOptions(1);
-    expect(second.string, first.string);
-    expect(second, isNot(same(first)));
+    // A font is immutable (Chart.js ADR 0116): the reuse gives the same
+    // object.
+    expect(second, same(first));
     expect(scale.ticks![1].$context!.index, 1.0);
     expect(scale.ticks![1].$context!.tick, same(scale.ticks![1]));
     final tickOptions = scale.options.ticks.raw! as ContextResolver;
-    final font = tickOptions['font']! as ContextResolver;
-    font['size'] = 22.0;
-    expect(scale.resolveTickFontOptions(1).size, 22);
+    tickOptions['font'] = const ChartTextStyle(fontSize: 22);
+    expect(scale.resolveTickFontOptions(1).fontSize, 22);
   });
 
   test('direct tick contexts preserve identity, parent and own-key order', () {

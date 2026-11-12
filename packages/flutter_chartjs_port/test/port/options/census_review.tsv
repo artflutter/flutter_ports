@@ -112,7 +112,6 @@ extra	options.scales.*.position.x	the scale id of the object form of a raw censu
 extra	options.scales.*.position.y	the scale id of the object form of a raw census config (row adapt-chart-position-enum)
 foreign	options.scales.*.startAngle	String
 foreign	options.scales.*.ticks.count	String
-foreign	options.scales.*.ticks.font.size	String
 foreign	options.scales.*.ticks.includeBounds	double
 foreign	options.scales.*.ticks.maxTicksLimit	String
 foreign	options.scales.*.ticks.minRotation	String
