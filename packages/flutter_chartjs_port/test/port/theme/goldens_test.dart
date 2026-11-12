@@ -126,20 +126,6 @@ Future<Chart> _pumpChart(WidgetTester tester, ChartThemeData theme) async {
   return chart;
 }
 
-/// The first family of the CSS font string [font]: the text after the
-/// size, up to the first comma, without its quotes.
-String _firstFamily(String font) {
-  final match = RegExp(r'\dpx\s+(.*)$').firstMatch(font);
-  final families = match == null ? font : match.group(1)!;
-  var first = families.split(',').first.trim();
-  if (first.length >= 2 &&
-      (first.startsWith("'") || first.startsWith('"')) &&
-      first.endsWith(first[0])) {
-    first = first.substring(1, first.length - 1);
-  }
-  return first;
-}
-
 void main() {
   group('theme goldens', () {
     for (final (name, theme) in const [
@@ -159,15 +145,17 @@ void main() {
       tester,
     ) async {
       final chart = await _pumpChart(tester, const ChartThemeData.light());
-      final fonts = <String>[
+      // A font of the canvas is a TextStyle (Chart.js ADR 0116).
+      final fonts = <TextStyle>[
         for (final call in drawCalls(chart))
-          if (call case {'name': 'setFont', 'args': [final String font]}) font,
+          if (call case {'name': 'setFont', 'args': [final TextStyle font]})
+            font,
       ];
       // The title, the subtitle, the legend title and labels, the ticks,
       // the scale titles and the tooltip.
       expect(fonts, isNotEmpty);
       for (final font in fonts) {
-        expect(testFontFamilies, contains(_firstFamily(font)), reason: font);
+        expect(testFontFamilies, contains(font.fontFamily), reason: '$font');
       }
     });
   }, skip: _goldens ? false : _skipReason);
