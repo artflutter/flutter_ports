@@ -54,6 +54,7 @@ export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
         CanvasPath,
         CanvasPattern,
         CanvasRenderingContext2D,
+        CanvasTextBaseline,
         CssStyleProperties,
         HTMLCanvasElement,
         Path2D,

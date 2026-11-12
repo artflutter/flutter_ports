@@ -78,7 +78,7 @@ void main() {
         ..lineWidth = 3
         ..strokeStyle = 'b'
         ..textAlign = 'center'
-        ..textBaseline = 'middle';
+        ..textBaseline = CanvasTextBaseline.middle;
       expect(
         [for (final call in ctx.getCalls()) call['name']],
         [
@@ -101,7 +101,7 @@ void main() {
       expect(ctx.lineWidth, 3);
       expect(ctx.strokeStyle, 'b');
       expect(ctx.textAlign, 'center');
-      expect(ctx.textBaseline, 'middle');
+      expect(ctx.textBaseline, CanvasTextBaseline.middle);
     });
 
     test('the recorded properties start as null', () {

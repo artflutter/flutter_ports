@@ -23,6 +23,7 @@ CanvasImageSource
 CanvasPath
 CanvasPattern
 CanvasRenderingContext2D
+CanvasTextBaseline
 CategoryScale
 Chart
 ChartAlign
@@ -165,6 +166,7 @@ CanvasImageSource
 CanvasPath
 CanvasPattern
 CanvasRenderingContext2D
+CanvasTextBaseline
 CategoryAxis
 CategoryScale
 Chart

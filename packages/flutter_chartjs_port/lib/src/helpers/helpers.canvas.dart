@@ -716,7 +716,7 @@ final class _EmptyRenderTextOpts implements RenderTextOpts {
   String? get textAlign => null;
 
   @override
-  String? get textBaseline => null;
+  CanvasTextBaseline? get textBaseline => null;
 
   @override
   (double, double)? get translation => null;

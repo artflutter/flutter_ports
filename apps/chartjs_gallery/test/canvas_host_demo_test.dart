@@ -7,6 +7,8 @@ import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 // Not public: UiCanvasElement and UiImageSource of the canvas layer.
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show CanvasTextBaseline;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
     show UiCanvasElement, UiImageSource;
 // Not public: ChartHost, the internal host of ChartView (a white-box test).
@@ -276,7 +278,7 @@ void main() {
       final canvas = UiCanvasElement(width: 40, height: 40);
       final ctx = canvas.getContext2d()
         ..font = '32px sans-serif'
-        ..textBaseline = 'top'
+        ..textBaseline = CanvasTextBaseline.top
         ..fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1)
         ..fillText('X', 4, 4);
       final source = canvas.toImageSource();

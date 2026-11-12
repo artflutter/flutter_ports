@@ -899,7 +899,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart` and
     `canvas_ui_batch.dart`, the circle batch) are the `dart:ui` implementation. No helper imports
     them. `canvas_ui.dart` reflects the `style` attribute of the canvas. Other attributes keep their
-    values as strings (Chart.js ADR 0022).
+    values as strings (Chart.js ADR 0022). The canvas `textBaseline` holds the enum
+    `CanvasTextBaseline` of `canvas.dart` (row `adapt-canvas-text-baseline-enum`), also in a label
+    item and in the options of `renderText`.
     Chart.js ADR 0070 offers ordinary bar rectangles to an optional native
     context operation. It preserves the final path, state and fill accounting,
     and declines callbacks, unsupported colors/transforms and complex geometry.

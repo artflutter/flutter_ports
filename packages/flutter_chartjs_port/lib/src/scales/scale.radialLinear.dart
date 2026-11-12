@@ -209,7 +209,7 @@ final class _RenderTextOpts implements types.RenderTextOpts {
   final String? textAlign;
 
   @override
-  final String? textBaseline;
+  final CanvasTextBaseline? textBaseline;
 
   @override
   types.BackdropOptions? get backdrop => null;
@@ -736,7 +736,8 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
       _RenderTextOpts(
         color: optsAtIndex.color,
         textAlign: textAlign,
-        textBaseline: 'middle',
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+        textBaseline: CanvasTextBaseline.middle,
       ),
     );
 
@@ -793,7 +794,8 @@ int _drawStaticPointLabels(
       _RenderTextOpts(
         color: color,
         textAlign: item.textAlign,
-        textBaseline: 'middle',
+        // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+        textBaseline: CanvasTextBaseline.middle,
       ),
     );
   }
@@ -1601,7 +1603,8 @@ class RadialLinearScale extends LinearScaleBase
       ..translate(xCenter ?? double.nan, yCenter ?? double.nan)
       ..rotate(startAngle)
       ..textAlign = 'center'
-      ..textBaseline = 'middle';
+      // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
+      ..textBaseline = CanvasTextBaseline.middle;
 
     final ticks = this.ticks!;
     for (var index = 0; index < ticks.length; index++) {

@@ -100,9 +100,9 @@ class _Sample13State extends State<Sample13> {
             ..fillStyle = Colors.white
             ..font = '12px sans-serif'
             ..textAlign = 'center'
-            ..textBaseline = 'bottom'
+            ..textBaseline = CanvasTextBaseline.bottom
             ..fillText(days[i].max.toString(), x, high - 2)
-            ..textBaseline = 'top'
+            ..textBaseline = CanvasTextBaseline.top
             ..fillText(days[i].min.toString(), x, low + 2);
         }
       }

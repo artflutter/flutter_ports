@@ -37,7 +37,11 @@ library;
 // index.d.ts names without an import. Both are pure, port-only interface
 // libraries (Chart.js ADR 0013, Chart.js ADR 0037).
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasPath, CanvasRenderingContext2D, HTMLCanvasElement;
+    show
+        CanvasPath,
+        CanvasRenderingContext2D,
+        CanvasTextBaseline,
+        HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -863,7 +867,7 @@ abstract interface class RenderTextOpts {
   String? get textAlign;
 
   /// index.d.ts:1485 `textBaseline?: CanvasTextBaseline`.
-  String? get textBaseline;
+  CanvasTextBaseline? get textBaseline;
 
   /// index.d.ts:1490 `translation?: [number, number]`. The tuple is a
   /// record.

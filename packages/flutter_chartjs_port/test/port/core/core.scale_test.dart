@@ -382,7 +382,8 @@ Map<String, Object?> _labelItem(types.LabelItem item) {
     'strokeColor': o.strokeColor,
     'strokeWidth': o.strokeWidth,
     'textAlign': o.textAlign,
-    'textBaseline': o.textBaseline,
+    // The upstream keyword: the name of the enum value.
+    'textBaseline': o.textBaseline?.name,
     'translation': [o.translation!.$1, o.translation!.$2],
     'backdrop': backdrop == null
         ? null

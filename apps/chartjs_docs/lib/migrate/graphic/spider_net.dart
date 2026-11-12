@@ -40,7 +40,7 @@ final Map<String, Object?> _radialAxis = {
       ..fillStyle = Gx.text
       ..font = "10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
       ..textAlign = 'right'
-      ..textBaseline = 'middle';
+      ..textBaseline = CanvasTextBaseline.middle;
     for (final tick in scale.ticks ?? const <Tick>[]) {
       if (tick.value % 100 != 0) continue;
       final radius = scale.getDistanceFromCenterForValue(tick.value);

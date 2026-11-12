@@ -51,7 +51,7 @@ class _Sample5State extends State<Sample5> {
           ..fill()
           ..fillStyle = Colors.white
           ..textAlign = 'center'
-          ..textBaseline = 'middle'
+          ..textBaseline = CanvasTextBaseline.middle
           ..fillText(text, e.x, e.y - 29);
       }
       ctx.restore();

@@ -174,7 +174,7 @@ final class _Opts implements RenderTextOpts {
   final String? textAlign;
 
   @override
-  final String? textBaseline;
+  final CanvasTextBaseline? textBaseline;
 
   @override
   final (double, double)? translation;
@@ -576,7 +576,10 @@ void main() {
           0,
           0,
           font,
-          const _Opts(textAlign: 'left', textBaseline: 'middle'),
+          const _Opts(
+            textAlign: 'left',
+            textBaseline: CanvasTextBaseline.middle,
+          ),
         );
 
         expect(context.getCalls(), [
