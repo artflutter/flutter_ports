@@ -473,7 +473,6 @@ notifyArrayListeners
 overrideTextDirection
 pi
 piTau
-prevTextDirectionOf
 quarterPi
 radPerDeg
 readUsedSize

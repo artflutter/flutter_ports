@@ -26,7 +26,7 @@
 /// This library is a pure layer.
 library;
 
-import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
@@ -335,6 +335,9 @@ abstract final class ShapeBits {
   /// `edgeInsets`: a Flutter [EdgeInsets], the value of a padding option.
   static const int edgeInsets = 4480;
 
+  /// `textDirection`: the native direction of legend and tooltip text.
+  static const int textDirection = 4608;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -442,6 +445,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.timeUnit => classifyTyped<TimeUnit>(raw),
   ShapeBits.chartPosition => classifyTyped<ChartPosition>(raw),
   ShapeBits.layoutPosition => classifyTyped<LayoutPosition>(raw),
+  ShapeBits.textDirection => classifyTyped<TextDirection>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

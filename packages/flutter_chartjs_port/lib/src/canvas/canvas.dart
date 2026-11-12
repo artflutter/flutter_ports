@@ -24,7 +24,7 @@
 library;
 
 import 'dart:typed_data';
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/types/color.dart';
@@ -440,9 +440,7 @@ abstract interface class CSSStyleDeclaration {
   ///
   /// As in the DOM, a [priority] other than `''`, `null` and `'important'`
   /// (ASCII case-insensitive) does nothing, and so does a [value] that does
-  /// not parse for [property]. `restoreTextDirection` relies on it: its
-  /// callers pass the direction String, so the call reads `'r'` and `'t'`
-  /// (helpers.rtl.ts:72, `plugin.legend.js:437`).
+  /// not parse for [property].
   void setProperty(String property, String? value, [String? priority]);
 }
 
@@ -766,9 +764,11 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
   // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
   abstract CanvasTextBaseline? textBaseline;
 
-  /// `direction`: `'ltr'`, `'rtl'` or `'inherit'`. The DOM default is
-  /// `'inherit'`: the direction of [HTMLCanvasElement.style].
-  abstract String? direction;
+  /// The native text direction. Null selects inheritance from
+  /// [HTMLCanvasElement.style], the default canvas state. Writing null
+  /// resets an explicit direction to inheritance (Chart.js ADR 0124).
+  // DIVERGES(chartjs): adapt-text-direction, null represents inheritance.
+  abstract TextDirection? direction;
 
   /// `fillText(text, x, y, maxWidth)`. A `null` [maxWidth] is the JS
   /// `undefined` of an absent argument.

@@ -1028,7 +1028,7 @@ kinds:
       onLeave: fn
       labels: scope LegendLabelOptions
       rtl: bool
-      textDirection: string
+      textDirection: textDirection
       title: scope LegendTitleOptions
       weight: number  # plugin.legend.js:642 defaults, read at core.layouts.js:334
       events: list  # read at core.controller.js:1170
@@ -1113,7 +1113,7 @@ kinds:
       borderColor: any
       borderWidth: number
       rtl: bool
-      textDirection: string
+      textDirection: textDirection
       animation: bool | scope AnimationOptions
       animations: bool | scope AnimationsSpec
       callbacks: scope TooltipCallbacks

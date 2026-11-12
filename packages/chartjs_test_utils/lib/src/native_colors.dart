@@ -173,6 +173,8 @@ void nativeFixtureColors(Object? config) {
           owner == 'time') {
         // A time unit takes its enum (row adapt-time-unit-enum).
         value[key] = _enumValue(TimeUnit.values, value[key]);
+      } else if (key == 'textDirection') {
+        value[key] = _enumValue(ui.TextDirection.values, value[key]);
       } else if (key == 'textAlign' ||
           key == 'titleAlign' ||
           key == 'bodyAlign' ||

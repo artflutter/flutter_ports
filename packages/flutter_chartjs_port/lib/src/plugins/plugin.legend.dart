@@ -1112,90 +1112,94 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       );
     }
 
-    overrideTextDirection(ctx, opts.textDirection);
+    final originalTextDirection = overrideTextDirection(
+      ctx,
+      opts.textDirection,
+    );
+    try {
+      final lineHeight = itemHeight + padding;
+      final legendItems = this.legendItems!;
+      for (var i = 0; i < legendItems.length; i++) {
+        final legendItem = _Item(legendItems[i]);
+        final fontColor = canvasStyle(legendItem.fontColor);
+        ctx
+          ..strokeStyle =
+              fontColor // for strikethrough effect
+          ..fillStyle = fontColor; // render in correct colour
 
-    final lineHeight = itemHeight + padding;
-    final legendItems = this.legendItems!;
-    for (var i = 0; i < legendItems.length; i++) {
-      final legendItem = _Item(legendItems[i]);
-      final fontColor = canvasStyle(legendItem.fontColor);
-      ctx
-        ..strokeStyle =
-            fontColor // for strikethrough effect
-        ..fillStyle = fontColor; // render in correct colour
+        final textWidth = ctx.measureText(jsToString(legendItem.text)).width;
+        var itemAlign = legendItem.textAlign;
+        if (!jsTruthy(itemAlign)) {
+          itemAlign = labelOpts.textAlign;
+          legendItem.textAlign = itemAlign;
+        }
+        // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+        final textAlign = rtlHelper.textAlign(canvasTextAlign(itemAlign));
+        final width = boxWidth + halfFontSize + textWidth;
+        var x = cursor.x;
+        var y = cursor.y;
 
-      final textWidth = ctx.measureText(jsToString(legendItem.text)).width;
-      var itemAlign = legendItem.textAlign;
-      if (!jsTruthy(itemAlign)) {
-        itemAlign = labelOpts.textAlign;
-        legendItem.textAlign = itemAlign;
-      }
-      // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-      final textAlign = rtlHelper.textAlign(canvasTextAlign(itemAlign));
-      final width = boxWidth + halfFontSize + textWidth;
-      var x = cursor.x;
-      var y = cursor.y;
+        rtlHelper.setWidth(this.width);
 
-      rtlHelper.setWidth(this.width);
-
-      if (isHorizontal) {
-        if (i > 0 && x + width + padding > right) {
+        if (isHorizontal) {
+          if (i > 0 && x + width + padding > right) {
+            final line = cursor.line + 1;
+            y = cursor.y + lineHeight;
+            x = alignStartEnd(
+              align,
+              left + padding,
+              right - jsToNumber(jsGetIndex(lineWidths ?? undefined, line)),
+            );
+            cursor = (x: x, y: y, line: line);
+          }
+        } else if (i > 0 && y + lineHeight > bottom) {
+          x = x + _columnAt(cursor.line).width + padding;
           final line = cursor.line + 1;
-          y = cursor.y + lineHeight;
-          x = alignStartEnd(
+          y = alignStartEnd(
             align,
-            left + padding,
-            right - jsToNumber(jsGetIndex(lineWidths ?? undefined, line)),
+            top + titleHeight + padding,
+            bottom - _columnAt(line).height,
           );
           cursor = (x: x, y: y, line: line);
         }
-      } else if (i > 0 && y + lineHeight > bottom) {
-        x = x + _columnAt(cursor.line).width + padding;
-        final line = cursor.line + 1;
-        y = alignStartEnd(
-          align,
-          top + titleHeight + padding,
-          bottom - _columnAt(line).height,
+
+        final realX = rtlHelper.x(x);
+
+        drawLegendBox(realX, y, legendItem);
+
+        x = textX(
+          textAlign,
+          x + boxWidth + halfFontSize,
+          isHorizontal ? x + width : right,
+          opts.rtl,
         );
-        cursor = (x: x, y: y, line: line);
+
+        // Fill the actual label
+        fillText(rtlHelper.x(x), y, legendItem);
+
+        if (isHorizontal) {
+          cursor = (
+            x: cursor.x + (width + padding),
+            y: cursor.y,
+            line: cursor.line,
+          );
+        } else if (legendItem.text is! String) {
+          final fontLineHeight = labelFont.lineHeight!;
+          cursor = (
+            x: cursor.x,
+            y:
+                cursor.y +
+                (_calculateLegendItemHeight(legendItem.item, fontLineHeight) +
+                    padding),
+            line: cursor.line,
+          );
+        } else {
+          cursor = (x: cursor.x, y: cursor.y + lineHeight, line: cursor.line);
+        }
       }
-
-      final realX = rtlHelper.x(x);
-
-      drawLegendBox(realX, y, legendItem);
-
-      x = textX(
-        textAlign,
-        x + boxWidth + halfFontSize,
-        isHorizontal ? x + width : right,
-        opts.rtl,
-      );
-
-      // Fill the actual label
-      fillText(rtlHelper.x(x), y, legendItem);
-
-      if (isHorizontal) {
-        cursor = (
-          x: cursor.x + (width + padding),
-          y: cursor.y,
-          line: cursor.line,
-        );
-      } else if (legendItem.text is! String) {
-        final fontLineHeight = labelFont.lineHeight!;
-        cursor = (
-          x: cursor.x,
-          y:
-              cursor.y +
-              (_calculateLegendItemHeight(legendItem.item, fontLineHeight) +
-                  padding),
-          line: cursor.line,
-        );
-      } else {
-        cursor = (x: cursor.x, y: cursor.y + lineHeight, line: cursor.line);
-      }
+    } finally {
+      restoreTextDirection(ctx, originalTextDirection);
     }
-
-    restoreTextDirection(ctx, opts.textDirection);
   }
 
   /// plugin.legend.js:443 `drawTitle()`.

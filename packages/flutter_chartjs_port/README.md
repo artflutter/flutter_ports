@@ -193,6 +193,8 @@ The values of the options are Dart and Flutter values:
   give a `ChartTextStyle`, a `TextStyle` with the field `lineHeight`. The chart does not read the
   color of a `TextStyle`: each font parameter has a color parameter next to it, for example
   `labelFont` and `labelColor`.
+- The legend and tooltip `textDirection` options take `TextDirection` values, also in raw
+  configs. Each override is restored after drawing; omitting it keeps the current canvas direction.
 - Durations are `Duration` values, and paddings are `EdgeInsets` values.
 - A pie or doughnut `cutout` or `radius` is a `RadiusLength`: `const PercentRadius(50)` or
   `const PixelRadius(80)`. A scale `grace` is a `GraceLength`: `const PercentGrace(5)` or

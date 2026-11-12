@@ -64,6 +64,7 @@ const Map<String, int> shapeAtoms = {
   'locale': 4224,
   'numberFormat': 4352,
   'edgeInsets': 4480,
+  'textDirection': 4608,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -166,6 +167,7 @@ const Map<String, TypedAtom> typedAtoms = {
     uri: 'package:flutter_chartjs_port/src/types/layout.dart',
     field: null,
   ),
+  'textDirection': (type: 'TextDirection', uri: 'dart:ui', field: null),
   'textAlign': (type: 'TextAlign', uri: 'dart:ui', field: null),
   'steppedLine': (
     type: 'SteppedLine',

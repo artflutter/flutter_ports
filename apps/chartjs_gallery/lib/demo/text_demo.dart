@@ -17,7 +17,6 @@ import 'package:flutter_chartjs_port/helpers.dart'
         drawPoint,
         getRtlAdapter,
         overrideTextDirection,
-        prevTextDirectionOf,
         renderText,
         restoreTextDirection,
         toFont,
@@ -85,14 +84,17 @@ class _TextDemoState extends State<TextDemo> {
 
   String get _text => _sample.text;
 
-  /// `overrideTextDirection(ctx, 'rtl')` around [body], as the legend and
-  /// the tooltip do (plugin.legend.js:391, :437). The restore passes the
-  /// saved `[value, priority]`, so that the switch can turn RTL off again.
+  /// Scopes the native direction to this drawing operation.
   void _withDirection(CanvasRenderingContext2D ctx, void Function() body) {
-    if (_rtl) overrideTextDirection(ctx, 'rtl');
-    body();
-    final original = prevTextDirectionOf(ctx);
-    if (original != null) restoreTextDirection(ctx, original);
+    final original = overrideTextDirection(
+      ctx,
+      _rtl ? TextDirection.rtl : null,
+    );
+    try {
+      body();
+    } finally {
+      restoreTextDirection(ctx, original);
+    }
   }
 
   // The textAlign x textBaseline grid.
@@ -250,13 +252,13 @@ class _TextDemoState extends State<TextDemo> {
           ..fillText(text, rtlHelper.x(x + boxWidth + 8), y);
         x += boxWidth + 8 + textWidth + 18;
       }
-      // textAlign 'start' follows the direction of the canvas style.
+      // textAlign 'start' follows the native canvas direction.
       ctx
         ..textAlign = TextAlign.start
         ..fillStyle = const ui.Color(0xFF333333)
         ..fillText(
-          "textAlign 'start', canvas style direction: "
-          '${_styleDirection(ctx)}',
+          "textAlign 'start', canvas direction: "
+          '${_canvasDirection(ctx)}',
           rtlHelper.x(12),
           y + 32,
         );
@@ -269,10 +271,8 @@ class _TextDemoState extends State<TextDemo> {
     );
   }
 
-  static String _styleDirection(CanvasRenderingContext2D ctx) {
-    final value = ctx.canvas.style.getPropertyValue('direction');
-    return value.isEmpty ? '(none)' : value;
-  }
+  static String _canvasDirection(CanvasRenderingContext2D ctx) =>
+      ctx.direction?.name ?? 'inherit';
 
   // _longestText.
 
@@ -372,7 +372,7 @@ class _TextDemoState extends State<TextDemo> {
                 toggles: [
                   (
                     key: 'text.rtl',
-                    label: "overrideTextDirection(ctx, 'rtl')",
+                    label: 'overrideTextDirection(ctx, TextDirection.rtl)',
                     value: _rtl,
                     onChanged: (v) => setState(() => _rtl = v),
                   ),
@@ -446,7 +446,8 @@ class _TextDemoState extends State<TextDemo> {
           title: 'RTL adapter',
           source:
               'helpers.rtl: getRtlAdapter(rtl, left, width) · x · '
-              "leftForLtr · textAlign · overrideTextDirection(ctx, 'rtl') · "
+              'leftForLtr · textAlign · '
+              'overrideTextDirection(ctx, TextDirection.rtl) · '
               'restoreTextDirection',
           child: DemoCanvas(
             key: const ValueKey('text.rtlLegend'),
