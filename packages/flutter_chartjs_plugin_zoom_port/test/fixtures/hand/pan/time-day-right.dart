@@ -5,7 +5,7 @@ library;
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show PanAmount, ZoomChart;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
+import 'package:flutter_chartjs_port/chartjs.dart' show Chart, TimeUnit;
 import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
 
 import '../../observe.dart';
@@ -42,7 +42,11 @@ Map<String, Object?> fixture() {
             // DIVERGES(zoom): harness-date-zone, a local Date in the zone UTC.
             'min': DateTime.utc(2020),
             'max': DateTime.utc(2020, 1, 3),
-            'time': <String, Object?>{'unit': 'day', 'round': 'day'},
+            'time': <String, Object?>{
+              // DIVERGES(zoom): adapt-host-time-unit, the enum value.
+              'unit': TimeUnit.day,
+              'round': TimeUnit.day,
+            },
           },
         },
         'plugins': <String, Object?>{

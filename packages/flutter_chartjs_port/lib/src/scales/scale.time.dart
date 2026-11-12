@@ -80,47 +80,39 @@ import 'package:meta/meta.dart';
 /// number}`. Dart `null` for `steps` stands for the absent key.
 typedef _Interval = ({bool common, double size, double? steps});
 
-/// scale.time.js:16 `INTERVALS`.
-const Map<String, _Interval> _intervals = {
-  'millisecond': (common: true, size: 1, steps: 1000),
-  'second': (common: true, size: 1000, steps: 60),
-  'minute': (common: true, size: 60000, steps: 60),
-  'hour': (common: true, size: 3600000, steps: 24),
-  'day': (common: true, size: 86400000, steps: 30),
-  'week': (common: false, size: 604800000, steps: 4),
-  'month': (common: true, size: 2.628e9, steps: 12),
-  'quarter': (common: false, size: 7.884e9, steps: 4),
-  'year': (common: true, size: 3.154e10, steps: null),
+/// scale.time.js:16 `INTERVALS`, keyed by the [TimeUnit] (row
+/// `adapt-time-unit-enum`).
+// DIVERGES(chartjs): adapt-time-unit-enum, the enum values.
+const Map<TimeUnit, _Interval> _intervals = {
+  TimeUnit.millisecond: (common: true, size: 1, steps: 1000),
+  TimeUnit.second: (common: true, size: 1000, steps: 60),
+  TimeUnit.minute: (common: true, size: 60000, steps: 60),
+  TimeUnit.hour: (common: true, size: 3600000, steps: 24),
+  TimeUnit.day: (common: true, size: 86400000, steps: 30),
+  TimeUnit.week: (common: false, size: 604800000, steps: 4),
+  TimeUnit.month: (common: true, size: 2.628e9, steps: 12),
+  TimeUnit.quarter: (common: false, size: 7.884e9, steps: 4),
+  TimeUnit.year: (common: true, size: 3.154e10, steps: null),
 };
 
-/// scale.time.js:31 `UNITS`: the keys of [_intervals], in their order.
-const List<String> _units = [
-  'millisecond',
-  'second',
-  'minute',
-  'hour',
-  'day',
-  'week',
-  'month',
-  'quarter',
-  'year',
-];
+/// scale.time.js:31 `UNITS`: the keys of [_intervals], in their order, the
+/// order of the enum.
+const List<TimeUnit> _units = TimeUnit.values;
 
 /// `Number.MAX_SAFE_INTEGER` (ECMAScript 21.1.2.6).
 const double _maxSafeInteger = 9007199254740991;
 
-/// `UNITS[i]`: the unit at the index [i], or [undefined] for an index
-/// outside [_units], as JavaScript reads it.
-Object? _unitAt(int i) => i >= 0 && i < _units.length ? _units[i] : undefined;
+/// `UNITS[i]`: the unit at the index [i], or Dart `null` (the `undefined`
+/// of JavaScript) for an index outside [_units].
+TimeUnit? _unitAt(int i) => i >= 0 && i < _units.length ? _units[i] : null;
 
-/// `UNITS.indexOf(unit)`: -1 for a value that is not a unit name. The
-/// strict compare of `indexOf` matches no value that is not a string.
-int _indexOfUnit(Object? unit) => unit is String ? _units.indexOf(unit) : -1;
+/// `UNITS.indexOf(unit)`: -1 for Dart `null`, a value that is not a unit.
+int _indexOfUnit(TimeUnit? unit) => unit?.index ?? -1;
 
-/// `INTERVALS[unit]` for a member read. A [unit] that is not a key of
-/// [_intervals] reads `undefined`, and a member read of `undefined` throws
-/// a [TypeError], as JavaScript throws.
-_Interval _intervalOf(Object? unit) => _intervals[unit] ?? (throw TypeError());
+/// `INTERVALS[unit]` for a member read. Dart `null` reads `undefined`, and
+/// a member read of `undefined` throws a [TypeError], as JavaScript throws.
+_Interval _intervalOf(TimeUnit? unit) =>
+    unit == null ? throw TypeError() : _intervals[unit]!;
 
 /// scale.time.js:37 `sorter(a, b)`.
 ///
@@ -163,9 +155,11 @@ double? _parse(TimeScale scale, Object? input) {
     return null;
   }
 
-  if (jsTruthy(round)) {
-    value = round == 'week' && (isNumber(isoWeekday) || isoWeekday == true)
-        ? adapter.startOf(value, 'isoWeek', isoWeekday)
+  if (round != null) {
+    // DIVERGES(chartjs): adapt-time-unit-enum, the ISO week is its own member.
+    value =
+        round == TimeUnit.week && (isNumber(isoWeekday) || isoWeekday == true)
+        ? adapter.startOfIsoWeek(value, isoWeekday)
         : adapter.startOf(value, round);
   }
 
@@ -180,8 +174,8 @@ double? _parse(TimeScale scale, Object? input) {
 ///
 /// A [minUnit] that is not a unit gives the index -1. Upstream then reads
 /// `INTERVALS[undefined].steps`, which throws a [TypeError].
-Object? _determineUnitForAutoTicks(
-  Object? minUnit,
+TimeUnit _determineUnitForAutoTicks(
+  TimeUnit? minUnit,
   double min,
   double max,
   double capacity,
@@ -210,29 +204,29 @@ Object? _determineUnitForAutoTicks(
 /// `>=` applies `ToNumber` to the result of `diff`. A [minUnit] that is not
 /// a unit runs the loop down to the index -1, where `INTERVALS[undefined]`
 /// throws a [TypeError], as upstream.
-Object? _determineUnitForFormatting(
+TimeUnit _determineUnitForFormatting(
   TimeScale scale,
   int numTicks,
-  Object? minUnit,
+  TimeUnit? minUnit,
   double min,
   double max,
 ) {
   for (var i = _units.length - 1; i >= _indexOfUnit(minUnit); i--) {
     final unit = _unitAt(i);
     if (_intervalOf(unit).common &&
-        jsToNumber(scale.adapter.diff(max, min, unit)) >= numTicks - 1) {
+        jsToNumber(scale.adapter.diff(max, min, unit!)) >= numTicks - 1) {
       return unit;
     }
   }
 
-  return _unitAt(jsTruthy(minUnit) ? _indexOfUnit(minUnit) : 0);
+  return _unitAt(minUnit != null ? _indexOfUnit(minUnit) : 0)!;
 }
 
 /// scale.time.js:126 `determineMajorUnit(unit)`.
 ///
 /// Dart `null` stands for the `undefined` of a unit without a larger common
 /// unit.
-String? _determineMajorUnit(Object? unit) {
+TimeUnit? _determineMajorUnit(TimeUnit unit) {
   for (var i = _indexOfUnit(unit) + 1, ilen = _units.length; i < ilen; ++i) {
     if (_intervals[_units[i]]!.common) {
       return _units[i];
@@ -284,7 +278,7 @@ List<Tick> _setMajorTicks(
   TimeScale scale,
   List<Tick> ticks,
   Map<double?, int> map,
-  String majorUnit,
+  TimeUnit majorUnit,
 ) {
   final adapter = scale.adapter;
   final first = jsToNumber(adapter.startOf(_tickValue(ticks[0]), majorUnit));
@@ -319,7 +313,7 @@ List<Tick> _setMajorTicks(
 List<Tick> _ticksFromTimestamps(
   TimeScale scale,
   List<double?> values,
-  String? majorUnit,
+  TimeUnit? majorUnit,
 ) {
   final ticks = <Tick>[];
   final map = <double?, int>{};
@@ -338,9 +332,9 @@ List<Tick> _ticksFromTimestamps(
   // We set the major ticks separately from the above loop because calling
   // startOf for every tick is expensive when there is a large number of
   // ticks
-  return (ilen == 0 || !jsTruthy(majorUnit))
+  return (ilen == 0 || majorUnit == null)
       ? ticks
-      : _setMajorTicks(scale, ticks, map, majorUnit!);
+      : _setMajorTicks(scale, ticks, map, majorUnit);
 }
 
 /// helpers.collection.ts:84 `_filterBetween(values, min, max)` for the
@@ -425,7 +419,8 @@ class TimeScale extends Scale {
       ..round = false
       // override week start day
       ..isoWeekday = false
-      ..minUnit = 'millisecond'
+      // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
+      ..minUnit = TimeUnit.millisecond
       ..displayFormats = DisplayFormatsScope())
     ..ticks = (TickOptionsScope()
       // Ticks generation input values:
@@ -463,13 +458,13 @@ class TimeScale extends Scale {
 
   /// scale.time.js:258 `_unit`. The spec reads it (scale.time.tests.js:115).
   ///
-  /// The unit of the labels: a unit name, or the raw value of a truthy
-  /// `time.unit` option (scale.time.js:387).
+  /// The unit of the labels (scale.time.js:387).
+  // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
   @internal
-  Object? unit = 'day';
+  TimeUnit unit = TimeUnit.day;
 
   /// scale.time.js:260 `_majorUnit`. Dart `null` stands for JS `undefined`.
-  String? _majorUnit;
+  TimeUnit? _majorUnit;
 
   /// scale.time.js:261 `_offsets`. scale.timeseries.js:171 reads it.
   ///
@@ -488,7 +483,7 @@ class TimeScale extends Scale {
   /// scale.time.js:263 `_parseOpts`: the `parser`, `round` and `isoWeekday`
   /// options. [init] sets it. A read before [init] throws, as the
   /// destructuring of `undefined` throws upstream.
-  late ({Object? parser, Object? round, Object? isoWeekday}) _parseOpts;
+  late ({Object? parser, TimeUnit? round, Object? isoWeekday}) _parseOpts;
 
   /// scale.time.js:269 `_adapter`. The spec reads it (scale.time.tests.js:448,
   /// :453). Chart.js ADR 0024 decides its type. [init] sets it.
@@ -529,7 +524,8 @@ class TimeScale extends Scale {
 
     _parseOpts = (
       parser: time.parser,
-      round: time.round,
+      // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
+      round: TimeUnit.of(time.round),
       isoWeekday: time.isoWeekday,
     );
 
@@ -566,8 +562,8 @@ class TimeScale extends Scale {
   void determineDataLimits() {
     final options = this.options;
     final adapter = this.adapter;
-    final timeUnit = options.time.unit;
-    final unit = jsTruthy(timeUnit) ? timeUnit : 'day';
+    // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
+    final unit = TimeUnit.of(options.time.unit) ?? TimeUnit.day;
     // eslint-disable-next-line prefer-const
     var (:min, :max, :minDefined, :maxDefined) = getUserBounds();
 
@@ -660,24 +656,25 @@ class TimeScale extends Scale {
     // determineUnitForFormatting relies on the number of ticks so we don't
     // use it when autoSkip is enabled because we don't yet know what the
     // final number of ticks will be
-    final timeUnit = timeOpts.unit;
-    unit = jsTruthy(timeUnit)
-        ? timeUnit
-        : (jsTruthy(tickOpts.autoSkip)
-              ? _determineUnitForAutoTicks(
-                  timeOpts.minUnit,
-                  this.min,
-                  this.max,
-                  _getLabelCapacity(min),
-                )
-              : _determineUnitForFormatting(
-                  this,
-                  ticks.length,
-                  timeOpts.minUnit,
-                  this.min,
-                  this.max,
-                ));
-    _majorUnit = !jsTruthy(tickOpts.major.enabled) || unit == 'year'
+    // DIVERGES(chartjs): adapt-time-unit-enum, the enum values.
+    final minUnit = TimeUnit.of(timeOpts.minUnit);
+    unit =
+        TimeUnit.of(timeOpts.unit) ??
+        (jsTruthy(tickOpts.autoSkip)
+            ? _determineUnitForAutoTicks(
+                minUnit,
+                this.min,
+                this.max,
+                _getLabelCapacity(min),
+              )
+            : _determineUnitForFormatting(
+                this,
+                ticks.length,
+                minUnit,
+                this.min,
+                this.max,
+              ));
+    _majorUnit = !jsTruthy(tickOpts.major.enabled) || unit == TimeUnit.year
         ? null
         : _determineMajorUnit(unit);
     initOffsets(timestamps);
@@ -768,18 +765,18 @@ class TimeScale extends Scale {
     final max = this.max;
     final options = this.options;
     final timeOpts = options.time;
-    final timeUnit = timeOpts.unit;
     // @ts-ignore
-    final minor = jsTruthy(timeUnit)
-        ? timeUnit
-        : _determineUnitForAutoTicks(
-            timeOpts.minUnit,
-            min,
-            max,
-            _getLabelCapacity(min),
-          );
+    // DIVERGES(chartjs): adapt-time-unit-enum, the enum values.
+    final minor =
+        TimeUnit.of(timeOpts.unit) ??
+        _determineUnitForAutoTicks(
+          TimeUnit.of(timeOpts.minUnit),
+          min,
+          max,
+          _getLabelCapacity(min),
+        );
     final stepSize = valueOrDefault<Object?>(options.ticks.stepSize, 1.0);
-    final weekday = minor == 'week' ? timeOpts.isoWeekday : false;
+    final weekday = minor == TimeUnit.week ? timeOpts.isoWeekday : false;
     final hasWeekday = isNumber(weekday) || weekday == true;
     final ticks = <double, bool>{};
     var first = min;
@@ -788,11 +785,15 @@ class TimeScale extends Scale {
 
     // For 'week' unit, handle the first day of week option
     if (hasWeekday) {
-      first = jsToNumber(adapter.startOf(first, 'isoWeek', weekday));
+      // DIVERGES(chartjs): adapt-time-unit-enum, the ISO week is its own
+      // member.
+      first = jsToNumber(adapter.startOfIsoWeek(first, weekday));
     }
 
     // Align first ticks on unit
-    first = jsToNumber(adapter.startOf(first, hasWeekday ? 'day' : minor));
+    first = jsToNumber(
+      adapter.startOf(first, hasWeekday ? TimeUnit.day : minor),
+    );
 
     // Prevent browser from freezing in case user options request millions
     // of milliseconds
@@ -800,7 +801,7 @@ class TimeScale extends Scale {
         100000 * jsToNumber(stepSize)) {
       throw StateError(
         '${jsNumberToString(min)} and ${jsNumberToString(max)} are too far '
-        'apart with stepSize of ${jsToString(stepSize)} ${jsToString(minor)}',
+        'apart with stepSize of ${jsToString(stepSize)} ${minor.name}',
       );
     }
 
@@ -815,7 +816,7 @@ class TimeScale extends Scale {
       if (next <= time) {
         throw StateError(
           '${jsNumberToString(min)} and ${jsNumberToString(max)}: the step '
-          'of ${jsToString(stepSize)} ${jsToString(minor)} does not advance',
+          'of ${jsToString(stepSize)} ${minor.name} does not advance',
         );
       }
       time = next;
@@ -884,13 +885,11 @@ class TimeScale extends Scale {
     final formats = options.time.displayFormats;
     final unit = this.unit;
     final majorUnit = _majorUnit;
-    final minorFormat = jsTruthy(unit) ? formats.formatOf(unit) : unit;
-    final majorFormat = jsTruthy(majorUnit)
-        ? formats.formatOf(majorUnit)
-        : majorUnit;
+    final minorFormat = formats.formatOf(unit);
+    final majorFormat = majorUnit != null ? formats.formatOf(majorUnit) : null;
     final tick = index >= 0 && index < ticks.length ? ticks[index] : null;
     final major =
-        jsTruthy(majorUnit) &&
+        majorUnit != null &&
         jsTruthy(majorFormat) &&
         tick != null &&
         jsTruthy(tick.major);
@@ -997,7 +996,11 @@ class TimeScale extends Scale {
     final displayFormats = timeOpts.displayFormats;
 
     // pick the longest format (milliseconds) for guesstimation
-    final unitFormat = displayFormats.formatOf(timeOpts.unit);
+    // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
+    final timeUnit = TimeUnit.of(timeOpts.unit);
+    final unitFormat = timeUnit != null
+        ? displayFormats.formatOf(timeUnit)
+        : undefined;
     final format = jsTruthy(unitFormat)
         ? unitFormat
         : displayFormats.millisecond;

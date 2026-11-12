@@ -108,10 +108,11 @@ void main() {
       expect(adapter.formats, _throwsAbstract);
       expect(() => adapter.parse(1.0, 2.0), _throwsAbstract);
       expect(() => adapter.format(1.0, 2.0), _throwsAbstract);
-      expect(() => adapter.add(1.0, 2.0, 3.0), _throwsAbstract);
-      expect(() => adapter.diff(1.0, 2.0, 3.0), _throwsAbstract);
-      expect(() => adapter.startOf(1.0, 2.0, 3.0), _throwsAbstract);
-      expect(() => adapter.endOf(1.0, 2.0), _throwsAbstract);
+      expect(() => adapter.add(1.0, 2.0, TimeUnit.day), _throwsAbstract);
+      expect(() => adapter.diff(1.0, 2.0, TimeUnit.day), _throwsAbstract);
+      expect(() => adapter.startOf(1.0, TimeUnit.day), _throwsAbstract);
+      expect(() => adapter.startOfIsoWeek(1.0, 3.0), _throwsAbstract);
+      expect(() => adapter.endOf(1.0, TimeUnit.day), _throwsAbstract);
     });
   });
 
@@ -183,24 +184,30 @@ void main() {
         ),
       });
       final adapter = DateAdapterBase(<String, Object?>{'tag': 'after'});
-      expect(adapter.add(1.0, 2.0, 'day'), ['after', 1.0, 2.0, 'day']);
+      expect(adapter.add(1.0, 2.0, TimeUnit.day), [
+        'after',
+        1.0,
+        2.0,
+        TimeUnit.day,
+      ]);
       expect(adapter.parse('z'), 42.0);
       expect(adapter.formats(), {'day': 'D'});
     });
 
     test('passes the arguments of each method', () {
       DateAdapterBase.override({
-        'startOf': (Object? t, Object? u, Object? w) => [t, u, w],
+        'startOf': (Object? t, Object? u) => [t, u],
+        'startOfIsoWeek': (Object? t, Object? w) => [t, w],
         'endOf': (Object? t, Object? u) => [t, u],
         'diff': (Object? x, Object? y, Object? u) =>
             (x! as double) - (y! as double),
         'format': (Object? t, Object? f) => '$f:$t',
       });
       final adapter = DateAdapterBase();
-      expect(adapter.startOf(1.0, 'day'), [1.0, 'day', undefined]);
-      expect(adapter.startOf(1.0, 'isoWeek', 3.0), [1.0, 'isoWeek', 3.0]);
-      expect(adapter.endOf(5.0, 'day'), [5.0, 'day']);
-      expect(adapter.diff(9.0, 2.0, 'day'), 7.0);
+      expect(adapter.startOf(1.0, TimeUnit.day), [1.0, TimeUnit.day]);
+      expect(adapter.startOfIsoWeek(1.0, 3.0), [1.0, 3.0]);
+      expect(adapter.endOf(5.0, TimeUnit.day), [5.0, TimeUnit.day]);
+      expect(adapter.diff(9.0, 2.0, TimeUnit.day), 7.0);
       expect(adapter.format('t', 'f'), 'f:t');
     });
 
@@ -236,12 +243,12 @@ void main() {
         });
         final adapter = DateAdapterBase();
         expect(adapter.parse('x'), 1.0);
-        expect(adapter.add(1.0, 2.0, 'day'), 2.0);
+        expect(adapter.add(1.0, 2.0, TimeUnit.day), 2.0);
         expect(adapter.formats(), {'day': 'D'});
         adapter.init('options');
         expect(calls, [
           ['x', undefined],
-          [1.0, 2.0, 'day'],
+          [1.0, 2.0, TimeUnit.day],
           ['options'],
         ]);
       });
@@ -258,7 +265,12 @@ void main() {
             ],
           ),
         });
-        expect(adapter.diff(3.0, 1.0, 'day'), [true, 3.0, 1.0, 'day']);
+        expect(adapter.diff(3.0, 1.0, TimeUnit.day), [
+          true,
+          3.0,
+          1.0,
+          TimeUnit.day,
+        ]);
       });
 
       test('a closure with fewer arguments gets the first arguments', () {
@@ -268,8 +280,8 @@ void main() {
           'format': () => 'text',
         });
         final adapter = DateAdapterBase();
-        expect(adapter.startOf(1.0, 'isoWeek', 2.0), [1.0]);
-        expect(adapter.endOf(5.0, 'day'), [5.0]);
+        expect(adapter.startOf(1.0, TimeUnit.week), [1.0]);
+        expect(adapter.endOf(5.0, TimeUnit.day), [5.0]);
         expect(adapter.format(1.0, 'f'), 'text');
       });
 
@@ -280,7 +292,11 @@ void main() {
         });
         final adapter = DateAdapterBase();
         expect(adapter.formats(), [undefined, undefined]);
-        expect(adapter.endOf(5.0, 'day'), [5.0, 'day', undefined]);
+        expect(adapter.endOf(5.0, TimeUnit.day), [
+          5.0,
+          TimeUnit.day,
+          undefined,
+        ]);
       });
 
       test('a stored null throws the ArgumentError of jsCall', () {

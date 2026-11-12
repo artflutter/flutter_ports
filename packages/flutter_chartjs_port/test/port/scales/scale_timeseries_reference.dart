@@ -6,6 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 36 cases, 118 widths.
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 
 /// The Node.js version that generated the data.
@@ -115,7 +116,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -984,7 +985,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -1872,7 +1873,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1610496000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -2851,7 +2852,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618975542857.1428,
           ],
           'basePixel': 51.3817138671875,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.07142857142857142, 0.07142857142857145, 0.875],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -3724,7 +3725,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1609718400000.0,
           ],
           'basePixel': 494.322265625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1618358400000.0,
@@ -4599,7 +4600,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -5457,7 +5458,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -6190,7 +6191,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618376400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609736400000.0,
@@ -7057,7 +7058,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1613260800000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -7790,7 +7791,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1620086400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1606780800000.0,
@@ -8697,7 +8698,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1609743600001.0,
           ],
           'basePixel': 44.6982421875,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609743599999.0,
@@ -9339,7 +9340,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1623801600000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[1623715200000.0, 1623801600000.0],
           'labelTimestamps': <Object?>[],
@@ -9977,7 +9978,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -10966,7 +10967,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -11824,7 +11825,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'day'},
+            'time': <String, Object?>{'unit': TimeUnit.day},
           },
         },
       },
@@ -11873,7 +11874,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -12810,7 +12811,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1625529600000.0,
           ],
           'basePixel': 34.73889367282305,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -14162,7 +14163,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           'valuePixels': <Object?>[435.4734727490724, 212.12208604869303, 32.0],
           'valueForPixel': <Object?>[9.0, 4.0, 0.0],
           'basePixel': 435.4734727490724,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[0.0, 1.0, 2.0, 4.0, 5.0, 6.0, 8.0, 9.0],
           'labelTimestamps': <Object?>[],
@@ -15153,7 +15154,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1625529600000.0,
           ],
           'basePixel': 34.73889367282305,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -17039,7 +17040,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1625678762264.151,
           ],
           'basePixel': 34.9921127121749,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[
             0.009433962264150943,
             0.009433962264150941,
@@ -18851,7 +18852,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1635638400000.0,
           ],
           'basePixel': 27.6884765625,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -19792,7 +19793,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -20647,7 +20648,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1612310400000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -21282,7 +21283,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1609718400000.0,
           ],
           'basePixel': 494.322265625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[],
           'labelTimestamps': <Object?>[
@@ -21680,7 +21681,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'valueForPixel': <Object?>[0.0, 804859200000.0001, 1611100800000.0],
           'basePixel': 30.681640625,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[0.0, 1609718400000.0, 1611100800000.0],
           'labelTimestamps': <Object?>[null, 1609718400000.0, 1611100800000.0],
@@ -22349,7 +22350,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'valueForPixel': <Object?>[0.0, 1609718400000.0, 1611100800000.0],
           'basePixel': 33.6884765625,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[1609718400000.0, 1611100800000.0],
           'labelTimestamps': <Object?>[null, 1609718400000.0, 1611100800000.0],
@@ -23025,7 +23026,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'valueForPixel': <Object?>[0.0, 1609848000000.0, 1611100800000.0],
           'basePixel': 33.6884765625,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -23665,7 +23666,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618376400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609736400000.0,
@@ -24472,7 +24473,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1609718400000.0,
           ],
           'basePixel': 494.322265625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1618358400000.0,
@@ -25349,7 +25350,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618838400000.0,
           ],
           'basePixel': 45.240136718749994,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[
             0.05555555555555555,
             0.05555555555555558,
@@ -26221,7 +26222,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1614556800000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1611100800000.0,
@@ -27006,7 +27007,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           'valuePixels': <Object?>[32.0, 236.0450607339162, 440.0901214678324],
           'valueForPixel': <Object?>[0.0, 5.0, 10.0],
           'basePixel': 32.0,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             10.0,
@@ -28456,7 +28457,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618358400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -29340,7 +29341,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1620950400000.0,
           ],
           'basePixel': 22.0107421875,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1608422400000.0,
@@ -30261,7 +30262,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1610236800000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -30922,7 +30923,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1618401600000.0,
           ],
           'basePixel': 23.0134765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[
             0.005263157894736841,
             0.09999999999999998,
@@ -31671,7 +31672,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             1612137600000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,

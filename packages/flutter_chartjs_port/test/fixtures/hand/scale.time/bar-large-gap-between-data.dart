@@ -3,6 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -56,7 +57,8 @@ Map<String, Object?> fixture() {
               'source': TickSource.auto,
             },
             'time': <String, Object?>{
-              'unit': 'day',
+              // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
+              'unit': TimeUnit.day,
             },
           },
           'y': <String, Object?>{

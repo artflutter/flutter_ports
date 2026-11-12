@@ -15,6 +15,7 @@ library;
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -19525,13 +19526,13 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
   set unit(Object value) =>
       store(OptionKey.unit, classify(OptionKey.unit, value));
 
-  Opt<String>? _minUnit;
+  Opt<TimeUnit>? _minUnit;
 
   /// The cell of `minUnit`, or Dart `null` when absent.
-  Opt<String>? get minUnitCell => _minUnit;
+  Opt<TimeUnit>? get minUnitCell => _minUnit;
 
   /// Stores the cell of `minUnit`. Dart `null` deletes the key.
-  set minUnitCell(Opt<String>? cell) {
+  set minUnitCell(Opt<TimeUnit>? cell) {
     if (cell == null) {
       delete(OptionKey.minUnit);
     } else {
@@ -19540,8 +19541,8 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `minUnit`.
-  set minUnit(String value) =>
-      store(OptionKey.minUnit, OptValue<String>(value));
+  set minUnit(TimeUnit value) =>
+      store(OptionKey.minUnit, OptValue<TimeUnit>(value));
 
   @override
   Opt<Object?>? cellOf(OptionKey key) {
@@ -19571,7 +19572,7 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
       case OptionKey.parser:
         _parser = fitCell(cell, (raw) => classifyUnion(raw, 14));
       case OptionKey.round:
-        _round = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _round = fitCell(cell, (raw) => classifyUnion(raw, 16777218));
       case OptionKey.isoWeekday:
         _isoWeekday = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.displayFormats:
@@ -19579,9 +19580,9 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
       case OptionKey.tooltipFormat:
         _tooltipFormat = fitCell(cell, classifyString);
       case OptionKey.unit:
-        _unit = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _unit = fitCell(cell, (raw) => classifyUnion(raw, 16777218));
       case OptionKey.minUnit:
-        _minUnit = fitCell(cell, classifyString);
+        _minUnit = fitCell(cell, classifyTyped<TimeUnit>);
       default:
         throw ArgumentError.value(
           key,
@@ -19613,7 +19614,7 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
       case OptionKey.parser:
         return classifyUnion(raw, 14);
       case OptionKey.round:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 16777218);
       case OptionKey.isoWeekday:
         return classifyUnion(raw, 3);
       case OptionKey.displayFormats:
@@ -19621,9 +19622,9 @@ base class TimeScaleTimeOptionsScope extends OptionScope {
       case OptionKey.tooltipFormat:
         return classifyString(raw);
       case OptionKey.unit:
-        return classifyUnion(raw, 6);
+        return classifyUnion(raw, 16777218);
       case OptionKey.minUnit:
-        return classifyString(raw);
+        return classifyTyped<TimeUnit>(raw);
       default:
         return kind.classifyOther(raw);
     }

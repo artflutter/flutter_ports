@@ -460,7 +460,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
       `core.adapters.dart` has `DateAdapter` and `DateAdapterBase`. `DateAdapterBase.jsClass` is the
-      `_date` of `adapters`. Both files are pure layers.
+      `_date` of `adapters`. Both files are pure layers. A time unit is the enum `TimeUnit` of
+      `core.adapters.dart` (row `adapt-time-unit-enum`): the options `time.unit`, `time.minUnit`
+      and `time.round`, `TimeScale.unit` and the unit of `add`, `diff`, `startOf` and `endOf`.
+      The ISO week of upstream `startOf(time, 'isoWeek', weekday)` is the member
+      `startOfIsoWeek(time, weekday)`. The default adapter reads no unit name.
     - `date_adapter.dart`, `date_calendar.dart`, `date_zone.dart`, `date_parse.dart` and
       `date_format.dart` are the port-only default date adapter (Chart.js ADR 0024), pure layers.
       `DateAdapterBase.prototype` starts with `dateAdapterMembers`, the rules of

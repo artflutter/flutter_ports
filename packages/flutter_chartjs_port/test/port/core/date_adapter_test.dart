@@ -5,7 +5,6 @@ import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
 import 'package:flutter_chartjs_port/src/core/date_format.dart';
 import 'package:flutter_chartjs_port/src/core/date_parse.dart';
 import 'package:flutter_chartjs_port/src/core/date_zone.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
@@ -130,32 +129,6 @@ void main() {
       mismatches.check();
     });
 
-    test('startOf and endOf of the unit aliases', () {
-      final mismatches = _Mismatches();
-      const aliases = dateReferenceAliases;
-      for (var i = 0; i < dateReferenceAliasTimes.length; i++) {
-        final t = dateReferenceAliasTimes[i];
-        for (var j = 0; j < aliases.length; j++) {
-          final u = aliases[j];
-          _time(
-            mismatches,
-            'startOf($t, $u)',
-            t,
-            dateReferenceAliasStartOf[i * aliases.length + j],
-            () => adapter.startOf(t, u),
-          );
-          _time(
-            mismatches,
-            'endOf($t, $u)',
-            t,
-            dateReferenceAliasEndOf[i * aliases.length + j],
-            () => adapter.endOf(t, u),
-          );
-        }
-      }
-      mismatches.check();
-    });
-
     test("startOf(time, 'isoWeek', weekday)", () {
       final mismatches = _Mismatches();
       const weekdays = dateReferenceWeekdays;
@@ -165,10 +138,10 @@ void main() {
           final w = weekdays[j];
           _time(
             mismatches,
-            "startOf($t, 'isoWeek', $w)",
+            'startOfIsoWeek($t, $w)',
             t,
             dateReferenceIsoWeek[i * weekdays.length + j],
-            () => adapter.startOf(t, 'isoWeek', w),
+            () => adapter.startOfIsoWeek(t, w),
           );
         }
       }
@@ -185,10 +158,8 @@ void main() {
           for (final u in units) {
             final expected = dateReferenceAdd[index++];
             // moment reads 'P1D' as a duration (row
-            // adapt-date-parse-fallback), unless it exchanges the amount
-            // and the unit.
-            final swaps = u != null && !jsToNumber(u).isNaN;
-            if (n == 'P1D' && !swaps) continue;
+            // adapt-date-parse-fallback).
+            if (n == 'P1D') continue;
             _time(
               mismatches,
               'add($t, $n, $u)',
@@ -349,6 +320,7 @@ void main() {
         'add',
         'diff',
         'startOf',
+        'startOfIsoWeek',
         'endOf',
       ]);
       expect(DateAdapterBase.prototype.keys, dateAdapterMembers.keys);
@@ -370,10 +342,10 @@ void main() {
       final adapter = DateAdapterBase();
       final t = DateTime.utc(2015, 1, 1, 20).millisecondsSinceEpoch.toDouble();
       expect(adapter.parse('2015-01-01T20:00:00Z'), t);
-      expect(adapter.startOf(t, 'day'), t - 20 * 3600000);
-      expect(adapter.endOf(t, 'day'), t + 4 * 3600000 - 1);
-      expect(adapter.add(t, 1, 'day'), t + 86400000);
-      expect(adapter.diff(t + 86400000, t, 'day'), 1);
+      expect(adapter.startOf(t, TimeUnit.day), t - 20 * 3600000);
+      expect(adapter.endOf(t, TimeUnit.day), t + 4 * 3600000 - 1);
+      expect(adapter.add(t, 1, TimeUnit.day), t + 86400000);
+      expect(adapter.diff(t + 86400000, t, TimeUnit.day), 1);
       expect(adapter.format(t, 'yyyy-MM-dd'), '2015-01-01');
       expect(adapter.formats(), same(dateFormats));
       adapter.init(<String, Object?>{});
@@ -383,7 +355,7 @@ void main() {
       final adapter = DateAdapterBase();
       const t = 1420142400000;
       expect(adapter.parse(t), t.toDouble());
-      expect(adapter.startOf(t, 'day'), t - 20 * 3600000);
+      expect(adapter.startOf(t, TimeUnit.day), t - 20 * 3600000);
       expect(adapter.format(t, 'yyyy-MM-dd HH'), '2015-01-01 20');
     });
 
@@ -391,7 +363,7 @@ void main() {
       DateAdapterBase.override({'parse': (Object? value) => 42.0});
       final adapter = DateAdapterBase();
       expect(adapter.parse('2015'), 42.0);
-      expect(adapter.add(0.0, 1, 'second'), 1000);
+      expect(adapter.add(0.0, 1, TimeUnit.second), 1000);
       expect(adapter.formats(), same(dateFormats));
     });
 
@@ -405,7 +377,7 @@ void main() {
       final options = <String, Object?>{'locale': 'es'};
       DateAdapterBase().init(options);
       expect(received, same(options));
-      expect(DateAdapterBase().startOf(1.5, 'second'), 0);
+      expect(DateAdapterBase().startOf(1.5, TimeUnit.second), 0);
     });
 
     test('a cleared prototype gives the abstract error', () {
@@ -567,17 +539,17 @@ void main() {
         false,
       ]) {
         expect(adapter.parse(value), isNull, reason: '$value');
-        expect(adapter.startOf(value, 'day'), isNaN, reason: '$value');
+        expect(adapter.startOf(value, TimeUnit.day), isNaN, reason: '$value');
       }
     });
 
     test('a duration string or object adds nothing', () {
       const t = 1420142400000.0;
-      expect(adapter.add(t, 'P1D', 'day'), t);
-      expect(adapter.add(t, '1.02:03:04', 'day'), t);
-      expect(adapter.add(t, <String, Object?>{'days': 2.0}, undefined), t);
+      expect(adapter.add(t, 'P1D', TimeUnit.day), t);
+      expect(adapter.add(t, '1.02:03:04', TimeUnit.day), t);
+      expect(adapter.add(t, <String, Object?>{'days': 2.0}, TimeUnit.day), t);
       // A numeric string is an amount.
-      expect(adapter.add(t, '2', 'day'), t + 2 * 86400000);
+      expect(adapter.add(t, '2', TimeUnit.day), t + 2 * 86400000);
     });
   });
 
@@ -643,7 +615,7 @@ void main() {
         final t = (thursday + i * day).toDouble();
         for (final weekday in [undefined, double.nan, 'abc']) {
           expect(
-            () => adapter.startOf(t, 'isoWeek', weekday),
+            () => adapter.startOfIsoWeek(t, weekday),
             throwsA(isA<TypeError>()),
             reason: '$t $weekday',
           );
@@ -653,31 +625,20 @@ void main() {
 
     test('a NaN weekday on a Sunday gives the Sunday one week before', () {
       final start = sunday - 13 * 3600000;
-      expect(adapter.startOf(sunday.toDouble(), 'isoWeek'), start - 7 * day);
+      expect(
+        adapter.startOfIsoWeek(sunday.toDouble(), undefined),
+        start - 7 * day,
+      );
     });
 
     test('the weekday stays in the ISO week of the time', () {
       final monday = thursday - 20 * 3600000 - 3 * day;
-      expect(adapter.startOf(thursday.toDouble(), 'isoWeek', 1.0), monday);
-      expect(
-        adapter.startOf(thursday.toDouble(), 'isoWeek', 6.0),
-        monday + 5 * day,
-      );
-      expect(
-        adapter.startOf(thursday.toDouble(), 'isoWeek', 0.0),
-        monday - day,
-      );
-      expect(adapter.startOf(thursday.toDouble(), 'isoWeek', true), monday);
-      expect(
-        adapter.startOf(thursday.toDouble(), 'isoWeek', 9.0),
-        monday + 5 * day,
-      );
-    });
-
-    test("only the exact string 'isoWeek' takes the weekday", () {
-      final monday = thursday - 20 * 3600000 - 3 * day;
-      expect(adapter.startOf(thursday.toDouble(), 'isoweek', 6.0), monday);
-      expect(adapter.startOf(thursday.toDouble(), 'W'), monday);
+      final time = thursday.toDouble();
+      expect(adapter.startOfIsoWeek(time, 1.0), monday);
+      expect(adapter.startOfIsoWeek(time, 6.0), monday + 5 * day);
+      expect(adapter.startOfIsoWeek(time, 0.0), monday - day);
+      expect(adapter.startOfIsoWeek(time, true), monday);
+      expect(adapter.startOfIsoWeek(time, 9.0), monday + 5 * day);
     });
   });
 
@@ -742,7 +703,7 @@ void _referenceLocal(
       for (var i = 0; i < times.length; i++) {
         final t = times[i];
         for (var j = 0; j < units.length; j++) {
-          final unit = normalizeDateUnit(units[j]);
+          final unit = units[j];
           _time(
             mismatches,
             'startOf($t, ${units[j]})',
@@ -792,7 +753,7 @@ void _referenceLocal(
             'add($t, $amount, $unit)',
             t,
             reference.add[i * adds.length + j],
-            () => addUnit(t, amount, normalizeDateUnit(unit), zone),
+            () => addUnit(t, amount, unit, zone),
           );
         }
       }
@@ -810,7 +771,7 @@ void _referenceLocal(
           final b = reference.diffOthers[i * others + k];
           for (final unit in units) {
             final expected = reference.diff[index++];
-            final got = diffUnit(a, b, normalizeDateUnit(unit), zone);
+            final got = diffUnit(a, b, unit, zone);
             if (!_same(got, expected)) {
               mismatches.add(
                 'diff($a, $b, $unit): $got, expected $expected',

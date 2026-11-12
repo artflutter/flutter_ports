@@ -130,15 +130,15 @@ double _moment(Object? value, [String? format]) =>
     jsToNumber(_adapter.parse(value, format ?? undefined));
 
 /// `moment(time).startOf(unit)` of the default adapter, as a number.
-double _startOf(Object? time, String unit) =>
+double _startOf(Object? time, TimeUnit unit) =>
     jsToNumber(_adapter.startOf(time, unit));
 
 /// `moment(time).endOf(unit)` of the default adapter, as a number.
-double _endOf(Object? time, String unit) =>
+double _endOf(Object? time, TimeUnit unit) =>
     jsToNumber(_adapter.endOf(time, unit));
 
 /// `moment(time).add(amount, unit)` of the default adapter, as a number.
-double _add(Object? time, num amount, String unit) =>
+double _add(Object? time, num amount, TimeUnit unit) =>
     jsToNumber(_adapter.add(time, amount, unit));
 
 /// `+new Date(value)`: the time value of the JS Date of [value].
@@ -164,15 +164,19 @@ JsObjectFace _scaleOptionsX(Chart chart) =>
 /// `day` is the difference in ms over 86400000, because the default zone of
 /// the tests is UTC: no zone offset changes between the two times. The
 /// cases use only these two units.
-Matcher _toBeCloseToTime(double value, String unit, [double threshold = 0.01]) {
+Matcher _toBeCloseToTime(
+  double value,
+  TimeUnit unit, [
+  double threshold = 0.01,
+]) {
   final msPerUnit = switch (unit) {
-    'hour' => 3600000,
-    'day' => 86400000,
+    TimeUnit.hour => 3600000,
+    TimeUnit.day => 86400000,
     _ => throw ArgumentError.value(unit, 'unit'),
   };
   return predicate<Object?>(
     (time) => ((jsToNumber(time) - value) / msPerUnit).abs() < threshold,
-    'a time close to ${jsToString(value)} (unit $unit, threshold '
+    'a time close to ${jsToString(value)} (unit ${unit.name}, threshold '
     '${jsToString(threshold)})',
   );
 }
@@ -219,7 +223,7 @@ void main() {
             'round': false,
             // override week start day
             'isoWeekday': false,
-            'minUnit': 'millisecond',
+            'minUnit': TimeUnit.millisecond,
             'displayFormats': <String, Object?>{},
           },
           'ticks': <String, Object?>{
@@ -236,7 +240,7 @@ void main() {
       final data = <Object?>[];
       for (var i = 0; i < 60; i++) {
         data.add(<String, Object?>{'x': date, 'y': _random.nextDouble()});
-        date = _add(date, 1, 'month');
+        date = _add(date, 1, TimeUnit.month);
       }
 
       final chart = acquireChart(<String, Object?>{
@@ -261,7 +265,7 @@ void main() {
 
       final scale = chart.scales['x']! as TimeScale;
 
-      expect(scale.unit, jasmineEquals('month'));
+      expect(scale.unit, jasmineEquals(TimeUnit.month));
     });
 
     group('when specifying limits', () {
@@ -277,7 +281,7 @@ void main() {
       setUp(() {
         config = _cloneTimeDefaults();
         (config['ticks']! as JsObjectFace)['source'] = TickSource.labels;
-        (config['time']! as JsObjectFace)['unit'] = 'day';
+        (config['time']! as JsObjectFace)['unit'] = TimeUnit.day;
       });
 
       testWidgets(
@@ -338,7 +342,7 @@ void main() {
           mergeIf(<String, Object?>{
                 'bounds': ScaleBounds.ticks,
                 'time': <String, Object?>{
-                  'unit': 'week',
+                  'unit': TimeUnit.week,
                   'isoWeekday': 3, // Wednesday
                 },
               }, jsGet(jsGet(Chart.defaults, 'scales'), 'time'))!
@@ -390,14 +394,14 @@ void main() {
         final labels = _labels(chart);
         expect(
           scale.getValueForPixel(scale.left),
-          greaterThan(_startOf(_moment(labels[0]), 'week')),
+          greaterThan(_startOf(_moment(labels[0]), TimeUnit.week)),
         );
         expect(
           scale.getValueForPixel(scale.right),
           lessThan(
             _endOf(
-              _add(_moment(labels[labels.length - 1]), 1, 'week'),
-              'week',
+              _add(_moment(labels[labels.length - 1]), 1, TimeUnit.week),
+              TimeUnit.week,
             ),
           ),
         );
@@ -428,7 +432,7 @@ void main() {
         );
         expect(
           scale.getValueForPixel(firstPointPixel),
-          _toBeCloseToTime(_moment(labels[0]), 'hour'),
+          _toBeCloseToTime(_moment(labels[0]), TimeUnit.hour),
         );
 
         expect(
@@ -437,7 +441,7 @@ void main() {
         );
         expect(
           scale.getValueForPixel(lastPointPixel),
-          _toBeCloseToTime(_moment(labels[6]), 'hour'),
+          _toBeCloseToTime(_moment(labels[6]), TimeUnit.hour),
         );
       });
     });
@@ -485,13 +489,13 @@ void main() {
 
         expect(
           scale.getValueForPixel(scale.left),
-          _toBeCloseToTime(_startOf(scale.min, 'year'), 'hour'),
+          _toBeCloseToTime(_startOf(scale.min, TimeUnit.year), TimeUnit.hour),
         );
         expect(
           scale.getValueForPixel(scale.right),
           _toBeCloseToTime(
-            _endOf(scale.min + step * stepsAmount, 'year'),
-            'hour',
+            _endOf(scale.min + step * stepsAmount, TimeUnit.year),
+            TimeUnit.hour,
           ),
         );
       });
@@ -533,7 +537,7 @@ void main() {
             scale.getValueForPixel(scale.left + offset),
             _toBeCloseToTime(
               _moment(jsAdd(ticks[i].label, '-01-01')),
-              'day',
+              TimeUnit.day,
               1,
             ),
           );
@@ -787,7 +791,8 @@ void main() {
               'x': <String, Object?>{
                 'type': 'time',
                 'ticks': <String, Object?>{
-                  'min': _add(jsDateNow(), -1, 'months'),
+                  // moment `subtract(1, 'months')`: the unit month.
+                  'min': _add(jsDateNow(), -1, TimeUnit.month),
                   'max': jsDateNow(),
                 },
               },
@@ -867,11 +872,11 @@ void main() {
 
             expect(
               scale.min,
-              jasmineEquals(_startOf(jsDateNow(), 'day')),
+              jasmineEquals(_startOf(jsDateNow(), TimeUnit.day)),
             );
             expect(
               scale.max,
-              jasmineEquals(_endOf(jsDateNow(), 'day') + 1),
+              jasmineEquals(_endOf(jsDateNow(), TimeUnit.day) + 1),
             );
             expect(_getLabels(scale), jasmineEquals(<Object?>[]));
           },
@@ -884,17 +889,17 @@ void main() {
             final scale = chart.scales['x']!;
             final options = _scaleOptionsX(chart);
 
-            (jsGet(options, 'time')! as JsObjectFace)['unit'] = 'year';
+            (jsGet(options, 'time')! as JsObjectFace)['unit'] = TimeUnit.year;
             (chart.data as AnyObject)['labels'] = <Object?>[];
             chart.update();
 
             expect(
               scale.min,
-              jasmineEquals(_startOf(jsDateNow(), 'year')),
+              jasmineEquals(_startOf(jsDateNow(), TimeUnit.year)),
             );
             expect(
               scale.max,
-              jasmineEquals(_endOf(jsDateNow(), 'year') + 1),
+              jasmineEquals(_endOf(jsDateNow(), TimeUnit.year) + 1),
             );
             expect(_getLabels(scale), jasmineEquals(<Object?>[]));
           },
@@ -970,18 +975,18 @@ void main() {
             final scale = chart.scales['x']!;
             final options = _scaleOptionsX(chart);
 
-            (jsGet(options, 'time')! as JsObjectFace)['unit'] = 'year';
+            (jsGet(options, 'time')! as JsObjectFace)['unit'] = TimeUnit.year;
             (chart.data as AnyObject)['labels'] = <Object?>[];
             chart.getDatasetMeta(1).hidden = true;
             chart.update();
 
             expect(
               scale.min,
-              jasmineEquals(_startOf(jsDateNow(), 'year')),
+              jasmineEquals(_startOf(jsDateNow(), TimeUnit.year)),
             );
             expect(
               scale.max,
-              jasmineEquals(_endOf(jsDateNow(), 'year') + 1),
+              jasmineEquals(_endOf(jsDateNow(), TimeUnit.year) + 1),
             );
             expect(_getLabels(scale), jasmineEquals(<Object?>[]));
           },

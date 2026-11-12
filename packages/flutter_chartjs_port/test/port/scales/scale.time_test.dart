@@ -20,6 +20,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
+    show foreignAudit;
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.timeseries.dart';
@@ -235,7 +237,7 @@ void main() {
         'unit': false,
         'round': false,
         'isoWeekday': false,
-        'minUnit': 'millisecond',
+        'minUnit': TimeUnit.millisecond,
         'displayFormats': <String, Object?>{},
       });
       expect(plainObject(time['ticks']), {
@@ -346,20 +348,20 @@ void main() {
   group('adapt-time-generate-no-advance', () {
     /// The chart of the times [times] with the unit [unit] and the step
     /// [stepSize].
-    Chart stepChart(List<double> times, String unit, Object? stepSize) =>
+    Chart stepChart(List<double> times, TimeUnit unit, Object? stepSize) =>
         _chart(_xy(times), {
           'time': <String, Object?>{'unit': unit},
           'ticks': <String, Object?>{'stepSize': stepSize},
         });
 
     for (final (unit, stepSize, times) in [
-      ('day', 0.4, [_t0, _t0 + 5 * _day]),
-      ('month', 0.4, [_t0, _t0 + 90 * _day]),
-      ('millisecond', 0.5, [_t0 + 0.5, _t0 + 20]),
-      ('hour', 0.0, [_t0 + 60000, _t0 + 120000]),
-      ('day', double.nan, [_t0, _t0 + 5 * _day]),
+      (TimeUnit.day, 0.4, [_t0, _t0 + 5 * _day]),
+      (TimeUnit.month, 0.4, [_t0, _t0 + 90 * _day]),
+      (TimeUnit.millisecond, 0.5, [_t0 + 0.5, _t0 + 20]),
+      (TimeUnit.hour, 0.0, [_t0 + 60000, _t0 + 120000]),
+      (TimeUnit.day, double.nan, [_t0, _t0 + 5 * _day]),
     ]) {
-      testWidgets('the step $stepSize $unit throws a StateError', (
+      testWidgets('the step $stepSize ${unit.name} throws a StateError', (
         tester,
       ) async {
         expect(
@@ -369,7 +371,8 @@ void main() {
               (e) => e.message,
               'message',
               endsWith(
-                'the step of ${jsToString(stepSize)} $unit does not advance',
+                'the step of ${jsToString(stepSize)} ${unit.name} does not '
+                'advance',
               ),
             ),
           ),
@@ -380,7 +383,7 @@ void main() {
     testWidgets('a step that advances gives the ticks of the unit', (
       tester,
     ) async {
-      final x = _x(stepChart([_t0, _t0 + 4 * _day], 'day', 1.5));
+      final x = _x(stepChart([_t0, _t0 + 4 * _day], TimeUnit.day, 1.5));
       expect(
         [for (final tick in x.ticks!) tick.value],
         [_t0, _t0 + 2 * _day, _t0 + 4 * _day],
@@ -390,7 +393,7 @@ void main() {
     testWidgets('a range of more than 100000 steps throws the upstream '
         'error', (tester) async {
       expect(
-        () => stepChart([_t0, _t0 + 200001], 'millisecond', 2.0),
+        () => stepChart([_t0, _t0 + 200001], TimeUnit.millisecond, 2.0),
         throwsA(
           isA<StateError>().having(
             (e) => e.message,
@@ -413,10 +416,16 @@ void main() {
       tester,
     ) async {
       // INTERVALS[UNITS[-1]].steps (scale.time.js:90-92): "Cannot read
-      // properties of undefined (reading 'steps')".
+      // properties of undefined (reading 'steps')". The probe gave a name
+      // that is not a unit (`'days'`). The port holds the unit as the enum
+      // TimeUnit (row adapt-time-unit-enum): a name stops a debug build, so
+      // the test gives another value that is not a unit.
+      final saved = foreignAudit;
+      foreignAudit = (owner, key, raw) {};
+      addTearDown(() => foreignAudit = saved);
       expect(
         () => _chart(_xy(times), {
-          'time': <String, Object?>{'minUnit': 'days'},
+          'time': <String, Object?>{'minUnit': 7.0},
         }),
         throwsA(isA<TypeError>()),
       );
@@ -441,7 +450,7 @@ void main() {
         // 100000 * stepSize is 0 or negative (scale.time.js:474-476).
         expect(
           () => _chart(_xy(times), {
-            'time': <String, Object?>{'unit': 'day'},
+            'time': <String, Object?>{'unit': TimeUnit.day},
             'ticks': <String, Object?>{'stepSize': stepSize},
           }),
           throwsA(
@@ -694,7 +703,7 @@ void main() {
             'x': <String, Object?>{
               'type': 'time',
               'time': <String, Object?>{
-                'unit': 'day',
+                'unit': TimeUnit.day,
                 'displayFormats': <String, Object?>{'day': 'yyyy-MM-dd'},
               },
               'position': 'bottom',
@@ -744,8 +753,8 @@ void main() {
               'type': 'time',
               'ticks': <String, Object?>{'source': TickSource.data},
               'time': <String, Object?>{
-                'unit': 'week',
-                'round': 'week',
+                'unit': TimeUnit.week,
+                'round': TimeUnit.week,
                 'isoWeekday': 1,
               },
             },
@@ -1203,7 +1212,7 @@ void main() {
                   'bounds': ScaleBounds.data,
                   'time': <String, Object?>{
                     'parser': 'MM/dd HH:mm',
-                    'unit': 'day',
+                    'unit': TimeUnit.day,
                   },
                 },
                 'y': <String, Object?>{'display': false},
@@ -1251,7 +1260,7 @@ void main() {
                   'bounds': ScaleBounds.ticks,
                   'time': <String, Object?>{
                     'parser': 'MM/dd HH:mm',
-                    'unit': 'day',
+                    'unit': TimeUnit.day,
                   },
                 },
                 'y': <String, Object?>{'display': false},
@@ -1312,7 +1321,7 @@ void main() {
                       'bounds': bounds,
                       'time': <String, Object?>{
                         'parser': 'MM/dd HH:mm',
-                        'unit': 'day',
+                        'unit': TimeUnit.day,
                       },
                       'ticks': <String, Object?>{'source': source},
                     },
@@ -1406,7 +1415,7 @@ void main() {
                     'type': type,
                     'time': <String, Object?>{
                       'parser': 'yyyy',
-                      'unit': 'year',
+                      'unit': TimeUnit.year,
                     },
                     'ticks': <String, Object?>{'source': source},
                   },

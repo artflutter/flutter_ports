@@ -44,12 +44,11 @@
 /// `lib/src/options/`: a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextProxy, OptionView, readOption;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 
@@ -509,19 +508,20 @@ extension type const TimeScaleTimeOptions(Object? raw) {
 /// index.d.ts:3447 the `displayFormats` object of [TimeScaleTimeOptions]:
 /// a format string for each time unit and for `datetime`.
 extension type const DisplayFormats(Object? raw) {
-  /// `displayFormats[unit]` for a unit that the program computes ([unit]
-  /// is any JS value, a property key after `ToPropertyKey`): the typed read
-  /// for a name of the schema, else the JS property read by name.
-  ///
-  /// The time scale reads it with the unit of the scale
-  /// (`scale.time.js:417-418`), a name that the user can choose.
-  Object? formatOf(Object? unit) {
-    final key = optionKeyOf(unit is String ? unit : jsToString(unit));
-    if (key != null) return readOption(raw, key);
-    // A name outside the schema, for example a unit of a custom date
-    // adapter: the JS property read by name.
-    return jsGet(raw, unit);
-  }
+  /// `displayFormats[unit]` (`scale.time.js:417-418`): the format of the
+  /// time unit [unit], the key of the scope with the name of the unit.
+  // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
+  Object? formatOf(TimeUnit unit) => readOption(raw, switch (unit) {
+    TimeUnit.millisecond => OptionKey.millisecond,
+    TimeUnit.second => OptionKey.second,
+    TimeUnit.minute => OptionKey.minute,
+    TimeUnit.hour => OptionKey.hour,
+    TimeUnit.day => OptionKey.day,
+    TimeUnit.week => OptionKey.week,
+    TimeUnit.month => OptionKey.month,
+    TimeUnit.quarter => OptionKey.quarter,
+    TimeUnit.year => OptionKey.year,
+  });
 
   /// `displayFormats.datetime`.
   Object? get datetime => readOption(raw, OptionKey.datetime);

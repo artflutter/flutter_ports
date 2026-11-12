@@ -51,7 +51,7 @@ void main() {
     Intl.defaultLocale = 'de';
     adapter.formats();
     expect(adapter.format(t, 'MMMM'), 'January');
-    expect(adapter.startOf(t, 'week'), _at(2014, 12, 28));
+    expect(adapter.startOf(t, TimeUnit.week), _at(2014, 12, 28));
   });
 
   test('an alias of en_US before initializeDateFormatting', () {
@@ -63,7 +63,7 @@ void main() {
       expect(adapter.format(t, 'MMM d'), 'Jan 1', reason: alias);
       expect(adapter.format(t, 'h:mm a'), '8:00 pm', reason: alias);
       expect(adapter.parse('Mar 4 2015', 'MMM d yyyy'), _at(2015, 3, 4));
-      expect(adapter.startOf(t, 'week'), _at(2014, 12, 28));
+      expect(adapter.startOf(t, TimeUnit.week), _at(2014, 12, 28));
     }
   });
 
@@ -76,7 +76,7 @@ void main() {
     expect(adapter.format(t, 'MMMM'), 'January');
     adapter.formats();
     expect(adapter.format(t, 'MMMM'), 'Januar');
-    expect(adapter.startOf(t, 'week'), _at(2014, 12, 29));
+    expect(adapter.startOf(t, TimeUnit.week), _at(2014, 12, 29));
     expect(adapter.parse('4. März 2015', 'd. MMMM yyyy'), _at(2015, 3, 4));
   });
 
@@ -91,7 +91,7 @@ void main() {
       expect(adapter.format(t, 'MMM d'), 'Jan 1', reason: alias);
       expect(adapter.format(t, 'h:mm a'), '8:00 pm', reason: alias);
       expect(adapter.parse('Mar 4 2015', 'MMM d yyyy'), _at(2015, 3, 4));
-      expect(adapter.startOf(t, 'week'), _at(2014, 12, 28));
+      expect(adapter.startOf(t, TimeUnit.week), _at(2014, 12, 28));
     }
   });
 
@@ -104,7 +104,7 @@ void main() {
     Intl.defaultLocale = 'xx';
     adapter.formats();
     expect(adapter.format(t, 'MMMM'), 'January');
-    expect(adapter.startOf(t, 'week'), _at(2014, 12, 28));
+    expect(adapter.startOf(t, TimeUnit.week), _at(2014, 12, 28));
   });
 
   test(
@@ -114,7 +114,7 @@ void main() {
       Intl.defaultLocale = 'de_XX';
       adapter.formats();
       expect(adapter.format(t, 'MMMM'), 'Januar');
-      expect(adapter.startOf(t, 'week'), _at(2014, 12, 29));
+      expect(adapter.startOf(t, TimeUnit.week), _at(2014, 12, 29));
     },
   );
 }

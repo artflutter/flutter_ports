@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: the date calendar tests.
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
 import 'package:test/test.dart';
 
@@ -19,10 +20,11 @@ DateTime _utc(double t) =>
     DateTime.fromMillisecondsSinceEpoch(t.toInt(), isUtc: true);
 
 /// `startOf(unit)` in UTC with the `DateTime` constructor.
-double _startOf(double t, String unit) {
+double _startOf(double t, TimeUnit unit) {
   final d = _utc(t);
   return _ms(switch (unit) {
-    'second' => DateTime.utc(
+    TimeUnit.millisecond => d,
+    TimeUnit.second => DateTime.utc(
       d.year,
       d.month,
       d.day,
@@ -30,16 +32,20 @@ double _startOf(double t, String unit) {
       d.minute,
       d.second,
     ),
-    'minute' => DateTime.utc(d.year, d.month, d.day, d.hour, d.minute),
-    'hour' => DateTime.utc(d.year, d.month, d.day, d.hour),
-    'day' || 'date' => DateTime.utc(d.year, d.month, d.day),
-    'week' => DateTime.utc(d.year, d.month, d.day - d.weekday % 7),
-    'isoWeek' => DateTime.utc(d.year, d.month, d.day - (d.weekday - 1)),
-    'month' => DateTime.utc(d.year, d.month),
-    'quarter' => DateTime.utc(d.year, d.month - (d.month - 1) % 3),
-    'year' => DateTime.utc(d.year),
-    _ => throw ArgumentError(unit),
+    TimeUnit.minute => DateTime.utc(d.year, d.month, d.day, d.hour, d.minute),
+    TimeUnit.hour => DateTime.utc(d.year, d.month, d.day, d.hour),
+    TimeUnit.day => DateTime.utc(d.year, d.month, d.day),
+    TimeUnit.week => DateTime.utc(d.year, d.month, d.day - d.weekday % 7),
+    TimeUnit.month => DateTime.utc(d.year, d.month),
+    TimeUnit.quarter => DateTime.utc(d.year, d.month - (d.month - 1) % 3),
+    TimeUnit.year => DateTime.utc(d.year),
   });
+}
+
+/// The start of the ISO week (Monday) of [t] in UTC.
+double _startOfIsoWeek(double t) {
+  final d = _utc(t);
+  return _ms(DateTime.utc(d.year, d.month, d.day - (d.weekday - 1)));
 }
 
 /// [t] plus [months] months with the month-end clamp, with the `DateTime`
@@ -65,14 +71,14 @@ double _addMonths(double t, int months) {
 
 /// `add(amount, unit)` in UTC with the `DateTime` constructor, for a whole
 /// amount.
-double _add(double t, int amount, String unit) {
+double _add(double t, int amount, TimeUnit unit) {
   final d = _utc(t);
   return switch (unit) {
-    'millisecond' => t + amount,
-    'second' => t + amount * 1000,
-    'minute' => t + amount * 60000,
-    'hour' => t + amount * 3600000,
-    'day' => _ms(
+    TimeUnit.millisecond => t + amount,
+    TimeUnit.second => t + amount * 1000,
+    TimeUnit.minute => t + amount * 60000,
+    TimeUnit.hour => t + amount * 3600000,
+    TimeUnit.day => _ms(
       DateTime.utc(
         d.year,
         d.month,
@@ -83,11 +89,10 @@ double _add(double t, int amount, String unit) {
         d.millisecond,
       ),
     ),
-    'week' => _add(t, amount * 7, 'day'),
-    'month' => _addMonths(t, amount),
-    'quarter' => _addMonths(t, amount * 3),
-    'year' => _addMonths(t, amount * 12),
-    _ => throw ArgumentError(unit),
+    TimeUnit.week => _add(t, amount * 7, TimeUnit.day),
+    TimeUnit.month => _addMonths(t, amount),
+    TimeUnit.quarter => _addMonths(t, amount * 3),
+    TimeUnit.year => _addMonths(t, amount * 12),
   };
 }
 
@@ -173,37 +178,19 @@ void main() {
       for (var i = 0; i < 4096; i++)
         (from + (random.nextDouble() * (to - from)).floor()).toDouble(),
     ];
-    const startUnits = [
-      'second',
-      'minute',
-      'hour',
-      'day',
-      'date',
-      'week',
-      'isoWeek',
-      'month',
-      'quarter',
-      'year',
-    ];
-    const addUnits = [
-      'millisecond',
-      'second',
-      'minute',
-      'hour',
-      'day',
-      'week',
-      'month',
-      'quarter',
-      'year',
-    ];
+    const units = TimeUnit.values;
     const amounts = [-13, -1, 1, 2, 13, 400];
 
     test('startOfUnit', () {
       final mismatches = <String>[];
       for (final t in times) {
-        for (final unit in startUnits) {
+        for (final unit in units) {
           final got = startOfUnit(t, unit, null, 0);
           if (got != _startOf(t, unit)) mismatches.add('$t $unit');
+        }
+        // Weekday 1 of the ISO week is its Monday.
+        if (startOfIsoWeekday(t, 1.0, null) != _startOfIsoWeek(t)) {
+          mismatches.add('$t isoWeek');
         }
       }
       expect(mismatches, isEmpty);
@@ -212,7 +199,7 @@ void main() {
     test('addUnit with whole amounts', () {
       final mismatches = <String>[];
       for (final t in times) {
-        for (final unit in addUnits) {
+        for (final unit in units) {
           for (final amount in amounts) {
             final got = addUnit(t, amount.toDouble(), unit, null);
             if (got != _add(t, amount, unit)) {
@@ -227,101 +214,27 @@ void main() {
     test('the week starts on the day of the locale', () {
       // 2015-01-01 is a Thursday.
       final t = _ms(DateTime.utc(2015, 1, 1, 20));
-      expect(startOfUnit(t, 'week', null, 0), _ms(DateTime.utc(2014, 12, 28)));
-      expect(startOfUnit(t, 'week', null, 1), _ms(DateTime.utc(2014, 12, 29)));
-      expect(startOfUnit(t, 'week', null, 4), _ms(DateTime.utc(2015)));
-      expect(startOfUnit(t, 'week', null, 6), _ms(DateTime.utc(2014, 12, 27)));
+      const week = TimeUnit.week;
+      expect(startOfUnit(t, week, null, 0), _ms(DateTime.utc(2014, 12, 28)));
+      expect(startOfUnit(t, week, null, 1), _ms(DateTime.utc(2014, 12, 29)));
+      expect(startOfUnit(t, week, null, 4), _ms(DateTime.utc(2015)));
+      expect(startOfUnit(t, week, null, 6), _ms(DateTime.utc(2014, 12, 27)));
       expect(
-        endOfUnit(t, 'week', null, 6),
+        endOfUnit(t, week, null, 6),
         _ms(DateTime.utc(2015, 1, 3)) - 1,
       );
     });
   });
 
-  group('normalizeDateUnit', () {
-    test('gives each unit for its name, plural and short name', () {
-      const table = {
-        'millisecond': 'ms',
-        'second': 's',
-        'minute': 'm',
-        'hour': 'h',
-        'day': 'd',
-        'date': 'D',
-        'week': 'w',
-        'isoWeek': 'W',
-        'month': 'M',
-        'quarter': 'Q',
-        'year': 'y',
-        'weekday': 'e',
-        'isoWeekday': 'E',
-        'dayOfYear': 'DDD',
-        'weekYear': 'gg',
-        'isoWeekYear': 'GG',
-      };
-      for (final MapEntry(key: unit, value: short) in table.entries) {
-        final lower = unit.toLowerCase();
-        expect(normalizeDateUnit(lower), unit);
-        expect(normalizeDateUnit('${lower}s'), unit);
-        expect(normalizeDateUnit(short), unit);
-        expect(normalizeDateUnit(unit), unit);
-        expect(normalizeDateUnit(unit.toUpperCase()), unit);
-      }
-    });
-
-    test('tries the string, then its lower case', () {
-      expect(normalizeDateUnit('MS'), 'millisecond');
-      expect(normalizeDateUnit('Days'), 'day');
-      expect(normalizeDateUnit('M'), 'month');
-      expect(normalizeDateUnit('m'), 'minute');
-      expect(normalizeDateUnit('Y'), 'year');
-      expect(normalizeDateUnit('q'), isNull);
-      expect(normalizeDateUnit('ddd'), isNull);
-      expect(normalizeDateUnit('foo'), isNull);
-      expect(normalizeDateUnit(''), isNull);
-    });
-
-    test('lowers the case as JS does', () {
-      // JS toLowerCase gives 'i' and U+0307 for U+0130. The Dart VM gives
-      // 'i' alone.
-      expect(normalizeDateUnit('M\u0130NUTE'), isNull);
-      expect(normalizeDateUnit('\u0130SOWEEK'), isNull);
-      expect(normalizeDateUnit('MILLISECOND'), 'millisecond');
-      // The Kelvin sign U+212A gives 'k' in JS and on the VM.
-      expect(normalizeDateUnit('WEE\u212A'), 'week');
-    });
-
-    test('a value that is not a String is unknown', () {
-      for (final value in [
-        null,
-        1.0,
-        true,
-        <Object?>['day'],
-      ]) {
-        expect(normalizeDateUnit(value), isNull, reason: '$value');
-      }
-    });
-
-    test('a name of an Object.prototype member is a unit no case knows', () {
-      const names = [
-        'constructor',
-        'CONSTRUCTOR',
-        '__proto__',
-        'toString',
-        'valueOf',
-        'hasOwnProperty',
-        '__lookupSetter__',
-      ];
+  group('a value that is not a unit', () {
+    // The member gives Dart `null` for a value that is not a TimeUnit (row
+    // adapt-time-unit-enum): moment gives the time for an unknown unit in
+    // startOf and endOf, and the difference in ms in diff.
+    test('gives the time, and the difference in ms', () {
       const t = 1420142400000.0;
-      for (final name in names) {
-        final unit = normalizeDateUnit(name);
-        expect(unit, isNotNull, reason: name);
-        expect(startOfUnit(t, unit, null, 0), isNaN, reason: name);
-        expect(endOfUnit(t, unit, null, 0), isNaN, reason: name);
-        expect(addUnit(t, 2, unit, null), t, reason: name);
-        expect(diffUnit(t, 0, unit, null), t, reason: name);
-      }
-      expect(normalizeDateUnit('ToString'), isNull);
-      expect(normalizeDateUnit('tostring'), isNull);
+      expect(startOfUnit(t, null, null, 0), t);
+      expect(endOfUnit(t, null, null, 0), t);
+      expect(diffUnit(t, 0, null, null), t);
     });
   });
 }

@@ -518,16 +518,7 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
           (TimeSeriesAxis(unit: .day), 'timeseries'),
         ],
         {
-          'time': {'unit': 'day'},
-        },
-      ),
-      'unit, a custom name': (
-        const [
-          (TimeAxis(unit: TimeUnit('fortnight')), 'time'),
-          (TimeSeriesAxis(unit: TimeUnit('fortnight')), 'timeseries'),
-        ],
-        {
-          'time': {'unit': 'fortnight'},
+          'time': {'unit': TimeUnit.day},
         },
       ),
       'tooltipFormat': (
@@ -2031,7 +2022,7 @@ void main() {
               ...head,
               'min': _start,
               'max': _end,
-              'time': {'unit': 'month', 'tooltipFormat': 'yyyy-MM'},
+              'time': {'unit': TimeUnit.month, 'tooltipFormat': 'yyyy-MM'},
               ...tail,
             },
           ),

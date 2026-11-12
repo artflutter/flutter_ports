@@ -4,8 +4,9 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // a build of Chart.js v4.6.1 at the commit
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 84 cases, 1108 widths.
+// context of tool/reference/scale_chart_common.mjs. 82 cases, 1102 widths.
 
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 
 /// The Node.js version that generated the data.
@@ -140,7 +141,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612742400000.0,
           ],
           'basePixel': 21.869331589040403,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -1245,7 +1246,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610186400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609740000000.0,
@@ -2389,7 +2390,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609891200000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609729200000.0,
@@ -3547,7 +3548,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718497000.0,
           ],
           'basePixel': 45.88347494467346,
-          'unit': 'second',
+          'unit': TimeUnit.second,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718407000.0,
@@ -4785,7 +4786,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718400503.0,
           ],
           'basePixel': 60.89608087559463,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400003.0,
@@ -6133,7 +6134,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609725900000.0,
           ],
           'basePixel': 35.160723041679844,
-          'unit': 'minute',
+          'unit': TimeUnit.minute,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718700000.0,
@@ -7415,7 +7416,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1640822400000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -8420,7 +8421,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1924905600000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             959817600000.0,
@@ -9340,7 +9341,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'millisecond'},
+            'time': <String, Object?>{'unit': TimeUnit.millisecond},
           },
         },
       },
@@ -9423,7 +9424,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718400082.0,
           ],
           'basePixel': 60.89608087559463,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400005.0,
@@ -10641,7 +10642,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'second'},
+            'time': <String, Object?>{'unit': TimeUnit.second},
           },
         },
       },
@@ -10718,7 +10719,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718433900.0,
           ],
           'basePixel': 44.54983096654177,
-          'unit': 'second',
+          'unit': TimeUnit.second,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400900.0,
@@ -11853,7 +11854,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'minute'},
+            'time': <String, Object?>{'unit': TimeUnit.minute},
           },
         },
       },
@@ -11930,7 +11931,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609720400000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'minute',
+          'unit': TimeUnit.minute,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718420000.0,
@@ -13056,7 +13057,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'hour'},
+            'time': <String, Object?>{'unit': TimeUnit.hour},
           },
         },
       },
@@ -13148,7 +13149,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609798200000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609719000000.0,
@@ -14423,7 +14424,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'day'},
+            'time': <String, Object?>{'unit': TimeUnit.day},
           },
         },
       },
@@ -14484,7 +14485,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611147600000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609722000000.0,
@@ -15585,7 +15586,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'week'},
+            'time': <String, Object?>{'unit': TimeUnit.week},
           },
         },
       },
@@ -15630,7 +15631,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1614643200000.0,
           ],
           'basePixel': 36.03174408458386,
-          'unit': 'week',
+          'unit': TimeUnit.week,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609891200000.0,
@@ -16500,7 +16501,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'month'},
+            'time': <String, Object?>{'unit': TimeUnit.month},
           },
         },
       },
@@ -16547,7 +16548,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1633737600000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609977600000.0,
@@ -17445,7 +17446,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'quarter'},
+            'time': <String, Object?>{'unit': TimeUnit.quarter},
           },
         },
       },
@@ -17490,7 +17491,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1677110400000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'quarter',
+          'unit': TimeUnit.quarter,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1610582400000.0,
@@ -18355,7 +18356,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'year'},
+            'time': <String, Object?>{'unit': TimeUnit.year},
           },
         },
       },
@@ -18406,7 +18407,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1898294400000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1613174400000.0,
@@ -19300,7 +19301,10 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'week', 'isoWeekday': true},
+            'time': <String, Object?>{
+              'unit': TimeUnit.week,
+              'isoWeekday': true,
+            },
           },
         },
       },
@@ -19345,7 +19349,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1614643200000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'week',
+          'unit': TimeUnit.week,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609891200000.0,
@@ -20210,7 +20214,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'week', 'isoWeekday': 3.0},
+            'time': <String, Object?>{'unit': TimeUnit.week, 'isoWeekday': 3.0},
           },
         },
       },
@@ -20259,7 +20263,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1614643200000.0,
           ],
           'basePixel': 62.34397453463214,
-          'unit': 'week',
+          'unit': TimeUnit.week,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609891200000.0,
@@ -21129,7 +21133,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'minUnit': 'day'},
+            'time': <String, Object?>{'minUnit': TimeUnit.day},
           },
         },
       },
@@ -21158,7 +21162,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609840800000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609722000000.0,
@@ -21818,7 +21822,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'round': 'day'},
+            'time': <String, Object?>{'round': TimeUnit.day},
           },
         },
       },
@@ -21908,7 +21912,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610236800000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -23129,7 +23133,10 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'round': 'week', 'isoWeekday': 1.0},
+            'time': <String, Object?>{
+              'round': TimeUnit.week,
+              'isoWeekday': 1.0,
+            },
           },
         },
       },
@@ -23213,7 +23220,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612742400000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -24397,7 +24404,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611705600000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609736400000.0,
@@ -25453,7 +25460,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611705600000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609736400000.0,
@@ -26680,7 +26687,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610668800000.0,
           ],
           'basePixel': 0.0,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[],
           'labelTimestamps': <Object?>[1609718400000.0, 1610668800000.0],
@@ -26834,7 +26841,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611446400000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -27514,7 +27521,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612137600000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -28099,7 +28106,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612224000000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -28771,7 +28778,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718400000.0,
           ],
           'basePixel': 494.322265625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -29323,7 +29330,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'day'},
+            'time': <String, Object?>{'unit': TimeUnit.day},
             'ticks': <String, Object?>{
               'major': <String, Object?>{'enabled': true},
             },
@@ -29412,7 +29419,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1617321600000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1610582400000.0,
@@ -30702,7 +30709,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1683590400000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -31876,7 +31883,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1924905600000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[959817600000.0, 1924905600000.0],
           'labelTimestamps': <Object?>[],
@@ -32826,7 +32833,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610280000000.0,
           ],
           'basePixel': 55.7685546875,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[
             0.08333333333333333,
             0.08333333333333331,
@@ -33608,7 +33615,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609740000002.0,
           ],
           'basePixel': 154.00830078125,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.5, 0.5, 0.5],
           'dataTimestamps': <Object?>[1609740000000.0],
           'labelTimestamps': <Object?>[],
@@ -34181,7 +34188,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610366400000.0,
           ],
           'basePixel': 156.0166015625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.5, 0.5, 0.5],
           'dataTimestamps': <Object?>[1609718400000.0, 1610150400000.0],
           'labelTimestamps': <Object?>[1609718400000.0, 1610150400000.0],
@@ -34892,7 +34899,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1614945600000.0,
           ],
           'basePixel': 39.07311617943549,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[
             0.025423728813559324,
             0.02542372881355931,
@@ -36707,7 +36714,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718400000.0,
           ],
           'basePixel': 510.3537311709048,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -38305,7 +38312,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612180800000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -39522,7 +39529,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611446400000.0,
           ],
           'basePixel': 27.439739058140354,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -40748,7 +40755,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610928000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1610150400000.0,
@@ -41940,7 +41947,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609758000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -42967,7 +42974,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1623798600000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1623747600000.0,
@@ -43819,7 +43826,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'day'},
+            'time': <String, Object?>{'unit': TimeUnit.day},
             'ticks': <String, Object?>{'stepSize': 2.0},
           },
         },
@@ -43869,7 +43876,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610928000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -44767,7 +44774,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'day', 'stepSize': 5.0},
+            'time': <String, Object?>{'unit': TimeUnit.day, 'stepSize': 5.0},
           },
         },
       },
@@ -44845,7 +44852,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610928000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -46032,7 +46039,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612656000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -47269,7 +47276,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611100800000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1611100800000.0,
@@ -47873,7 +47880,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610496000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -48862,7 +48869,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1623801600000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[],
           'labelTimestamps': <Object?>[],
@@ -49733,7 +49740,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'month'},
+            'time': <String, Object?>{'unit': TimeUnit.month},
           },
         },
       },
@@ -49767,7 +49774,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1625097600000.0,
           ],
           'basePixel': 27.6884765625,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[],
           'labelTimestamps': <Object?>[],
@@ -49957,7 +49964,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1623744000001.0,
           ],
           'basePixel': 44.6982421875,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[],
           'labelTimestamps': <Object?>[],
@@ -50605,7 +50612,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -51543,7 +51550,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -53679,7 +53686,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           'valuePixels': <Object?>[440.0901214678324, 236.0450607339162, 32.0],
           'valueForPixel': <Object?>[10.0, 5.0, 0.0],
           'basePixel': 440.0901214678324,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             0.0,
@@ -54798,7 +54805,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -56407,7 +56414,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -57975,7 +57982,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609804800000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -59067,7 +59074,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611619200000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -60046,7 +60053,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'minUnit': 'day'},
+            'time': <String, Object?>{'minUnit': TimeUnit.day},
             'ticks': <String, Object?>{
               'autoSkip': false,
               'source': TickSource.labels,
@@ -60089,7 +60096,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609822800000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609722000000.0,
@@ -60749,7 +60756,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'day'},
+            'time': <String, Object?>{'unit': TimeUnit.day},
             'ticks': <String, Object?>{'autoSkip': false},
           },
         },
@@ -60801,7 +60808,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1611360000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -61873,7 +61880,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -62977,7 +62984,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610150400000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[1609718400000.0, 1610150400000.0],
           'labelTimestamps': <Object?>[],
@@ -64065,7 +64072,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           ],
           'valueForPixel': <Object?>[0.0, 805550400000.0001, 1611100800000.0],
           'basePixel': 30.681640625,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[1609718400000.0, 1611100800000.0],
           'labelTimestamps': <Object?>[null, 1609718400000.0, 1611100800000.0],
@@ -65156,7 +65163,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           ],
           'valueForPixel': <Object?>[0.0, 805550400000.0, 1611100800000.0],
           'basePixel': 30.681640625,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[1609718400000.0, 1611100800000.0],
           'labelTimestamps': <Object?>[null, 1609718400000.0, 1611100800000.0],
@@ -65811,7 +65818,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             2013876000000.0,
           ],
           'basePixel': 123.67578124999999,
-          'unit': 'year',
+          'unit': TimeUnit.year,
           'offsets': <Object?>[
             0.25,
             0.00042902343540518473,
@@ -66555,7 +66562,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -68163,7 +68170,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -69779,7 +69786,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1613088000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -71270,7 +71277,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'round': 'week'},
+            'time': <String, Object?>{'round': TimeUnit.week},
           },
         },
       },
@@ -71354,7 +71361,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612656000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609632000000.0,
@@ -72487,7 +72494,10 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'round': 'week', 'isoWeekday': true},
+            'time': <String, Object?>{
+              'round': TimeUnit.week,
+              'isoWeekday': true,
+            },
           },
         },
       },
@@ -72571,7 +72581,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1612742400000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -73706,7 +73716,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'week', 'isoWeekday': '3'},
+            'time': <String, Object?>{'unit': TimeUnit.week, 'isoWeekday': '3'},
           },
         },
       },
@@ -73755,7 +73765,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1614643200000.0,
           ],
           'basePixel': 62.34397453463214,
-          'unit': 'week',
+          'unit': TimeUnit.week,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609891200000.0,
@@ -74628,7 +74638,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'day'},
+            'time': <String, Object?>{'unit': TimeUnit.day},
             'ticks': <String, Object?>{'stepSize': '3'},
           },
         },
@@ -74668,7 +74678,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610928000000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -75552,7 +75562,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610236800000.0,
           ],
           'basePixel': 30.681640625,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[1609718400000.0, 1610236800000.0],
           'labelTimestamps': <Object?>[],
@@ -76699,7 +76709,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           'valuePixels': <Object?>[440.0901214678324, 236.0450607339162, 32.0],
           'valueForPixel': <Object?>[10.0, 5.0, 0.0],
           'basePixel': 440.0901214678324,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             0.0,
@@ -77767,7 +77777,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
           ],
           'valueForPixel': <Object?>[-0.4999999999999999, 5.0, 10.5],
           'basePixel': 50.54955097581056,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.05, 0.04999999999999999, 0.9090909090909091],
           'dataTimestamps': <Object?>[
             0.0,
@@ -78805,7 +78815,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718400000.0,
           ],
           'basePixel': 494.322265625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -79428,7 +79438,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718400000.0,
           ],
           'basePixel': 512.0,
-          'unit': 'month',
+          'unit': TimeUnit.month,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609718400000.0,
@@ -80559,7 +80569,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'time': <String, Object?>{
-              'unit': 'day',
+              'unit': TimeUnit.day,
               'displayFormats': <String, Object?>{'month': ''},
             },
             'ticks': <String, Object?>{
@@ -80650,7 +80660,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1617321600000.0,
           ],
           'basePixel': 27.34765625,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1610582400000.0,
@@ -81889,7 +81899,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610521200000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609736400000.0,
@@ -82470,7 +82480,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609718400008.0,
           ],
           'basePixel': 48.03515625,
-          'unit': 'millisecond',
+          'unit': TimeUnit.millisecond,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[1609718400007.0],
           'labelTimestamps': <Object?>[],
@@ -83140,7 +83150,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1610798400000.0,
           ],
           'basePixel': 38.87109375,
-          'unit': 'day',
+          'unit': TimeUnit.day,
           'offsets': <Object?>[
             0.041666666666666664,
             0.08333333333333331,
@@ -83725,1399 +83735,6 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
     },
   ),
   (
-    name: 'the unit days, an alias that is not a unit',
-    config: <String, Object?>{
-      'type': 'timeTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1609977600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610064000000.0, 'y': 5.0},
-              <String, Object?>{'x': 1610150400000.0, 'y': 9.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'time': <String, Object?>{'unit': 'days'},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
-      'chartArea': <Object?>[
-        121.46435081564191,
-        32.0,
-        505.2265517275984,
-        451.93614895114894,
-      ],
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'time',
-          'axis': 'x',
-          'position': 'bottom',
-          'min': 1609718400000.0,
-          'max': 1610150400000.0,
-          'ticks': <Object?>[
-            <Object?>[1609718400000.0, '2021-01-04T00:00:00Z', false],
-            <Object?>[1609804800000.0, '2021-01-05T00:00:00Z', false],
-            <Object?>[1609891200000.0, '2021-01-06T00:00:00Z', false],
-            <Object?>[1609977600000.0, '2021-01-07T00:00:00Z', false],
-            <Object?>[1610064000000.0, '2021-01-08T00:00:00Z', false],
-            <Object?>[1610150400000.0, '2021-01-09T00:00:00Z', false],
-          ],
-          'box': <Object?>[
-            121.46435081564191,
-            451.93614895114894,
-            505.2265517275984,
-            512.0,
-          ],
-          'labelRotation': 15.191440999992345,
-          'paddings': <Object?>[
-            121.46435081564191,
-            0.0,
-            6.773448272401577,
-            0.0,
-          ],
-          'tickPixels': <Object?>[
-            121.46435081564191,
-            198.21679099803322,
-            274.9692311804245,
-            351.7216713628158,
-            428.4741115452071,
-            505.2265517275984,
-          ],
-          'valuePixels': <Object?>[
-            121.46435081564191,
-            313.34545127162016,
-            505.2265517275984,
-          ],
-          'valueForPixel': <Object?>[
-            1609718400000.0,
-            1609934400000.0,
-            1610150400000.0,
-          ],
-          'basePixel': 121.46435081564191,
-          'unit': 'days',
-          'offsets': <Object?>[0.0, 0.0, 1.0],
-          'dataTimestamps': <Object?>[
-            1609718400000.0,
-            1609804800000.0,
-            1609891200000.0,
-            1609977600000.0,
-            1610064000000.0,
-            1610150400000.0,
-          ],
-          'labelTimestamps': <Object?>[],
-          'decimalForValue': <Object?>[
-            0.0,
-            1.0,
-            0.5,
-            -0.2,
-            1.2,
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            -3726.2,
-            -3726.2,
-            0.5,
-            -3726.199999997685,
-          ],
-          'pixelForValue': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            313.34545127162016,
-            -32768.0,
-          ],
-          'valuesForPixels': <Object?>[
-            1609695886057.8257,
-            1609848000000.0,
-            1610172913942.1743,
-          ],
-          'labelForValue': <Object?>[
-            'Jan 4, 2021, 12:00:00 am',
-            'Jan 9, 2021, 12:00:00 am',
-            'Jan 6, 2021, 12:00:00 pm',
-            'Invalid date',
-          ],
-          'format': <Object?>[
-            '2021-01-04T00:00:00Z',
-            '2021-01-09T00:00:00Z',
-            '00:00',
-          ],
-          'parse': <Object?>[
-            1614816000000.0,
-            1614834367000.0,
-            1614834367890.0,
-            1614827167000.0,
-            1615334400000.0,
-            1614816000000.0,
-            1614834367000.0,
-            1614834367000.0,
-            null,
-            null,
-            1614834367000.0,
-            0.0,
-            -1.0,
-            null,
-            null,
-            null,
-            null,
-            null,
-            1614834367008.0,
-          ],
-        },
-        'y': <String, Object?>{
-          'type': 'linear',
-          'axis': 'y',
-          'position': 'left',
-          'min': 0.0,
-          'max': 9.0,
-          'ticks': <Object?>[
-            <Object?>[0.0, '0', false],
-            <Object?>[1.0, '1', false],
-            <Object?>[2.0, '2', false],
-            <Object?>[3.0, '3', false],
-            <Object?>[4.0, '4', false],
-            <Object?>[5.0, '5', false],
-            <Object?>[6.0, '6', false],
-            <Object?>[7.0, '7', false],
-            <Object?>[8.0, '8', false],
-            <Object?>[9.0, '9', false],
-          ],
-          'box': <Object?>[
-            100.79052269064191,
-            32.0,
-            121.46435081564191,
-            451.93614895114894,
-          ],
-          'labelRotation': 0.0,
-          'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[
-            451.93614895114894,
-            405.2765768454657,
-            358.6170047397825,
-            311.95743263409935,
-            265.2978605284161,
-            218.63828842273284,
-            171.97871631704967,
-            125.31914421136642,
-            78.65957210568324,
-            32.0,
-          ],
-          'valuePixels': <Object?>[
-            451.93614895114894,
-            241.96807447557447,
-            32.0,
-          ],
-          'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 451.93614895114894,
-        },
-      },
-      'points': <Object?>[
-        <Object?>[
-          <Object?>[121.46435081564191, 451.93614895114894],
-          <Object?>[198.21679099803322, 265.2978605284161],
-          <Object?>[274.9692311804245, 78.65957210568324],
-          <Object?>[351.7216713628158, 405.2765768454657],
-          <Object?>[428.4741115452071, 218.63828842273284],
-          <Object?>[505.2265517275984, 32.0],
-        ],
-      ],
-      'drawCalls': '''
-["save"]
-["resetTransform"]
-["clearRect",0,0,512,512]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",121.5,32]
-["lineTo",121.5,451]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",121.5,452]
-["lineTo",121.5,459.93614895114894]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",198.5,32]
-["lineTo",198.5,451]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",198.5,452]
-["lineTo",198.5,459.93614895114894]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",274.5,32]
-["lineTo",274.5,451]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",274.5,452]
-["lineTo",274.5,459.93614895114894]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",351.5,32]
-["lineTo",351.5,451]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",351.5,452]
-["lineTo",351.5,459.93614895114894]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",428.5,32]
-["lineTo",428.5,451]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",428.5,452]
-["lineTo",428.5,459.93614895114894]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",505.5,32]
-["lineTo",505.5,451]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",505.5,452]
-["lineTo",505.5,459.93614895114894]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,451.5]
-["lineTo",505.2265517275984,451.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,451.5]
-["lineTo",121,451.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,405.5]
-["lineTo",505.2265517275984,405.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,405.5]
-["lineTo",121,405.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,358.5]
-["lineTo",505.2265517275984,358.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,358.5]
-["lineTo",121,358.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,311.5]
-["lineTo",505.2265517275984,311.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,311.5]
-["lineTo",121,311.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,265.5]
-["lineTo",505.2265517275984,265.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,265.5]
-["lineTo",121,265.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,218.5]
-["lineTo",505.2265517275984,218.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,218.5]
-["lineTo",121,218.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,171.5]
-["lineTo",505.2265517275984,171.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,171.5]
-["lineTo",121,171.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,125.5]
-["lineTo",505.2265517275984,125.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,125.5]
-["lineTo",121,125.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,78.5]
-["lineTo",505.2265517275984,78.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,78.5]
-["lineTo",121,78.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",122,32.5]
-["lineTo",505.2265517275984,32.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",113.46435081564191,32.5]
-["lineTo",121,32.5]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",0,0,512,32]
-["clip",null,null]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setStrokeStyle","#666"]
-["setFillStyle","#666"]
-["measureText","undefined"]
-["save"]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["setLineCap","butt"]
-["setLineDashOffset",0]
-["setLineJoin","miter"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["beginPath"]
-["rect",206.6416015625,10,40,12]
-["fill",null,null]
-["stroke",null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["fillText","undefined",252.6416015625,16,null]
-["restore"]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["moveTo",121,451.5]
-["lineTo",506,451.5]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",0,451.93614895114894,512,60.06385104885106]
-["clip",null,null]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",119.57762667944112,462.93614895114894]
-["rotate",-0.2651406635723263]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2021-01-04T00:00:00Z",0,7.199999999999999,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",196.33006686183242,462.93614895114894]
-["rotate",-0.2651406635723263]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2021-01-05T00:00:00Z",0,7.199999999999999,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",273.08250704422375,462.93614895114894]
-["rotate",-0.2651406635723263]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2021-01-06T00:00:00Z",0,7.199999999999999,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",349.83494722661504,462.93614895114894]
-["rotate",-0.2651406635723263]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2021-01-07T00:00:00Z",0,7.199999999999999,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",426.58738740900634,462.93614895114894]
-["rotate",-0.2651406635723263]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2021-01-08T00:00:00Z",0,7.199999999999999,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",503.33982759139764,462.93614895114894]
-["rotate",-0.2651406635723263]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2021-01-09T00:00:00Z",0,7.199999999999999,null]
-["restore"]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["moveTo",121.5,32]
-["lineTo",121.5,452]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",100.79052269064191,0,20.673828125,512]
-["clip",null,null]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,451.93614895114894]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","0",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,405.2765768454657]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,358.6170047397825]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,311.95743263409935]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","3",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,265.2978605284161]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","4",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,218.63828842273284]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","5",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,171.97871631704967]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","6",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,125.31914421136642]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","7",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,78.65957210568324]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","8",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",110.46435081564191,32]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","9",0,0,null]
-["restore"]
-["restore"]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",121.46435081564191,451.93614895114894,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",198.21679099803322,265.2978605284161,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",274.9692311804245,78.65957210568324,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",351.7216713628158,405.2765768454657,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",428.4741115452071,218.63828842273284,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",505.2265517275984,32,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-''',
-    },
-  ),
-  (
-    name: 'minUnit days with ticks source labels and autoSkip false',
-    config: <String, Object?>{
-      'type': 'timeTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-04', '2021-01-09'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'time': <String, Object?>{'minUnit': 'days'},
-            'ticks': <String, Object?>{
-              'source': TickSource.labels,
-              'autoSkip': false,
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
-      'chartArea': <Object?>[37.35546875, 32.0, 494.322265625, 483.6],
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'time',
-          'axis': 'x',
-          'position': 'bottom',
-          'min': 1609718400000.0,
-          'max': 1610150400000.0,
-          'ticks': <Object?>[
-            <Object?>[1609718400000.0, 'Jan 4', false],
-            <Object?>[1610150400000.0, 'Jan 9', false],
-          ],
-          'box': <Object?>[37.35546875, 483.6, 494.322265625, 512.0],
-          'labelRotation': 0.0,
-          'paddings': <Object?>[17.677734375, 0.0, 17.677734375, 0.0],
-          'tickPixels': <Object?>[37.35546875, 494.322265625],
-          'valuePixels': <Object?>[37.35546875, 265.8388671875, 494.322265625],
-          'valueForPixel': <Object?>[
-            1609718400000.0,
-            1609934400000.0,
-            1610150400000.0,
-          ],
-          'basePixel': 37.35546875,
-          'unit': 'day',
-          'offsets': <Object?>[0.0, 0.0, 1.0],
-          'dataTimestamps': <Object?>[1609718400000.0, 1610150400000.0],
-          'labelTimestamps': <Object?>[1609718400000.0, 1610150400000.0],
-          'decimalForValue': <Object?>[
-            0.0,
-            1.0,
-            0.5,
-            -0.2,
-            1.2,
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            -3726.2,
-            -3726.2,
-            0.5,
-            -3726.199999997685,
-          ],
-          'pixelForValue': <Object?>[
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            <String, Object?>{'num': 'NaN'},
-            265.8388671875,
-            -32768.0,
-          ],
-          'valuesForPixels': <Object?>[
-            1609699492718.2039,
-            1609848000000.0,
-            1610169307281.7961,
-          ],
-          'labelForValue': <Object?>[
-            'Jan 4, 2021, 12:00:00 am',
-            'Jan 9, 2021, 12:00:00 am',
-            'Jan 6, 2021, 12:00:00 pm',
-            'Invalid date',
-          ],
-          'format': <Object?>['Jan 4', 'Jan 9', '00:00'],
-          'parse': <Object?>[
-            1614816000000.0,
-            1614834367000.0,
-            1614834367890.0,
-            1614827167000.0,
-            1615334400000.0,
-            1614816000000.0,
-            1614834367000.0,
-            1614834367000.0,
-            null,
-            null,
-            1614834367000.0,
-            0.0,
-            -1.0,
-            null,
-            null,
-            null,
-            null,
-            null,
-            1614834367008.0,
-          ],
-        },
-        'y': <String, Object?>{
-          'type': 'linear',
-          'axis': 'y',
-          'position': 'left',
-          'min': 1.0,
-          'max': 2.0,
-          'ticks': <Object?>[
-            <Object?>[1.0, '1.00', false],
-            <Object?>[1.1, '1.10', false],
-            <Object?>[1.2, '1.20', false],
-            <Object?>[1.3, '1.30', false],
-            <Object?>[1.4, '1.40', false],
-            <Object?>[1.5, '1.50', false],
-            <Object?>[1.6, '1.60', false],
-            <Object?>[1.7, '1.70', false],
-            <Object?>[1.8, '1.80', false],
-            <Object?>[1.9, '1.90', false],
-            <Object?>[2.0, '2.00', false],
-          ],
-          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
-          'labelRotation': 0.0,
-          'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[
-            483.6,
-            438.44,
-            393.28000000000003,
-            348.12,
-            302.96000000000004,
-            257.8,
-            212.63999999999996,
-            167.48000000000002,
-            122.31999999999998,
-            77.16000000000004,
-            32.0,
-          ],
-          'valuePixels': <Object?>[483.6, 257.8, 32.0],
-          'valueForPixel': <Object?>[2.0, 1.5, 1.0],
-          'basePixel': 483.6,
-        },
-      },
-      'points': <Object?>[
-        <Object?>[
-          <Object?>[37.35546875, 483.6],
-          <Object?>[494.322265625, 32.0],
-        ],
-      ],
-      'drawCalls': '''
-["save"]
-["resetTransform"]
-["clearRect",0,0,512,512]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",37.5,32]
-["lineTo",37.5,483]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",37.5,484]
-["lineTo",37.5,491.6]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",494.5,32]
-["lineTo",494.5,483]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",494.5,484]
-["lineTo",494.5,491.6]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,483.5]
-["lineTo",494.322265625,483.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,483.5]
-["lineTo",37,483.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,438.5]
-["lineTo",494.322265625,438.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,438.5]
-["lineTo",37,438.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,393.5]
-["lineTo",494.322265625,393.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,393.5]
-["lineTo",37,393.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,348.5]
-["lineTo",494.322265625,348.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,348.5]
-["lineTo",37,348.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,302.5]
-["lineTo",494.322265625,302.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,302.5]
-["lineTo",37,302.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,257.5]
-["lineTo",494.322265625,257.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,257.5]
-["lineTo",37,257.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,212.5]
-["lineTo",494.322265625,212.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,212.5]
-["lineTo",37,212.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,167.5]
-["lineTo",494.322265625,167.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,167.5]
-["lineTo",37,167.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,122.5]
-["lineTo",494.322265625,122.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,122.5]
-["lineTo",37,122.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,77.5]
-["lineTo",494.322265625,77.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,77.5]
-["lineTo",37,77.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",0]
-["beginPath"]
-["moveTo",38,32.5]
-["lineTo",494.322265625,32.5]
-["stroke",null]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["setLineDashOffset",null]
-["beginPath"]
-["moveTo",29.35546875,32.5]
-["lineTo",37,32.5]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",0,0,512,32]
-["clip",null,null]
-["setTextAlign","left"]
-["setTextBaseline","middle"]
-["setLineWidth",0.5]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["setStrokeStyle","#666"]
-["setFillStyle","#666"]
-["measureText","undefined"]
-["save"]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["setLineCap","butt"]
-["setLineDashOffset",0]
-["setLineJoin","miter"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineDash",[]]
-["beginPath"]
-["rect",206.6416015625,10,40,12]
-["fill",null,null]
-["stroke",null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["fillText","undefined",252.6416015625,16,null]
-["restore"]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["moveTo",37,483.5]
-["lineTo",495,483.5]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",0,483.6,512,28.399999999999977]
-["clip",null,null]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.6]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","center"]
-["setTextBaseline","middle"]
-["fillText","Jan 4",0,7.199999999999999,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",494.322265625,494.6]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","center"]
-["setTextBaseline","middle"]
-["fillText","Jan 9",0,7.199999999999999,null]
-["restore"]
-["restore"]
-["save"]
-["setLineWidth",1]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["moveTo",37.5,32]
-["lineTo",37.5,484]
-["stroke",null]
-["restore"]
-["save"]
-["beginPath"]
-["rect",0,0,37.35546875,512]
-["clip",null,null]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.6]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.00",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,438.44]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.10",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,393.28000000000003]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.20",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,348.12]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.30",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,302.96000000000004]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.40",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,257.8]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.50",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,212.63999999999996]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.60",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,167.48000000000002]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.70",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,122.31999999999998]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.80",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,77.16000000000004]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","1.90",0,0,null]
-["restore"]
-["save"]
-["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,32]
-["rotate",{"num":"-0"}]
-["setFillStyle","#666"]
-["setTextAlign","right"]
-["setTextBaseline","middle"]
-["fillText","2.00",0,0,null]
-["restore"]
-["restore"]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",37.35546875,483.6,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",494.322265625,32,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-''',
-    },
-  ),
-  (
     name: 'an adapter add that gives NaN',
     config: <String, Object?>{
       'type': 'timeTest',
@@ -85172,7 +83789,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
             1609822800000.0,
           ],
           'basePixel': 20.673828125,
-          'unit': 'hour',
+          'unit': TimeUnit.hour,
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
             1609722000000.0,
@@ -91217,36 +89834,6 @@ const List<ScaleTimeReferenceWidth> scaleTimeReferenceWidths = [
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: 'Apr 1',
     width: 28.681640625,
-  ),
-  (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: '2021-01-04T00:00:00Z',
-    width: 122.75390625,
-  ),
-  (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: '2021-01-05T00:00:00Z',
-    width: 122.75390625,
-  ),
-  (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: '2021-01-06T00:00:00Z',
-    width: 122.75390625,
-  ),
-  (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: '2021-01-07T00:00:00Z',
-    width: 122.75390625,
-  ),
-  (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: '2021-01-08T00:00:00Z',
-    width: 122.75390625,
-  ),
-  (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: '2021-01-09T00:00:00Z',
-    width: 122.75390625,
   ),
 ];
 
