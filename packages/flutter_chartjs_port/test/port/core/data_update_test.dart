@@ -1995,7 +1995,10 @@ void main() {
         expectTwin(
           () {
             final cfg = indexed('scatter');
-            dataset(cfg)['pointStyle'] = <Object?>['circle', red];
+            dataset(cfg)['pointStyle'] = <Object?>[
+              const CirclePointStyle(),
+              red,
+            ];
             return cfg;
           },
           path: false,

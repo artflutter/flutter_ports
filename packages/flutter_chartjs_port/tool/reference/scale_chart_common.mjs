@@ -1278,6 +1278,30 @@ const CUBIC_MODES = {
   monotone: 'MonotoneCubicInterpolationMode()',
 };
 
+/**
+ * The style classes of the port by the style names of the option
+ * `pointStyle` (row adapt-point-style-objects).
+ */
+const POINT_STYLES = {
+  circle: 'CirclePointStyle()',
+  cross: 'CrossPointStyle()',
+  crossRot: 'CrossRotPointStyle()',
+  dash: 'DashPointStyle()',
+  line: 'LinePointStyle()',
+  rect: 'RectPointStyle()',
+  rectRounded: 'RectRoundedPointStyle()',
+  rectRot: 'RectRotPointStyle()',
+  star: 'StarPointStyle()',
+  triangle: 'TrianglePointStyle()',
+};
+
+/** A point style name of upstream as a value of the Dart data. */
+export class DartPointStyle {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
 /** A cubic interpolation mode of upstream as a value of the Dart data. */
 export class DartCubicMode {
   constructor(name) {
@@ -1323,6 +1347,12 @@ function keyedValue(k, value, owner) {
   ) {
     const [id] = Object.keys(value);
     return new DartScalePosition(id, value[id]);
+  }
+  // A point style name, also in an indexable list (row
+  // adapt-point-style-objects). `false` stays.
+  if (k === 'pointStyle') {
+    const style = (v) => (typeof v === 'string' && v in POINT_STYLES ? new DartPointStyle(v) : v);
+    return Array.isArray(value) ? value.map(style) : style(value);
   }
   if (typeof value !== 'string') return value;
   if (k === 'mode' && INTERACTION_SCOPES.has(owner)) return new DartMode(value);
@@ -1462,6 +1492,10 @@ function dart(v, state, owner) {
     state.cubicModes = true;
     return CUBIC_MODES[v.name];
   }
+  if (v instanceof DartPointStyle) {
+    state.pointStyles = true;
+    return POINT_STYLES[v.name];
+  }
   if (v instanceof DartAxis) {
     state.modes = true;
     return `InteractionAxis.${v.name}`;
@@ -1565,7 +1599,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

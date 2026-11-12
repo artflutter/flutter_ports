@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show resolveObjectKey;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -41,6 +43,7 @@ import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/point_style_json.dart';
 import 'precedence_reference.dart'
     as frozen
     show themePrecedencePrototype, themePrecedenceUpstream;
@@ -297,6 +300,7 @@ String _json(Object? value) => switch (value) {
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   InteractionMode() => modeJson,
+  PointStyle() => pointStyleJson,
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -2531,7 +2535,7 @@ int _markerRgb(String label) {
 }
 
 String _referenceLines(String text) => [
-  for (final line in withCurveMarkers(text).split('\n'))
+  for (final line in withPointStyleMarkers(withCurveMarkers(text)).split('\n'))
     if (line.contains(': '))
       line.substring(0, line.indexOf(': ') + 2) +
           referenceColorText(line.substring(line.indexOf(': ') + 2))

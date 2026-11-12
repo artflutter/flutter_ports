@@ -845,6 +845,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `adapt-arc-option-enums`), also in a raw config; the typed API has
       `ArcElementStyle.borderAlign` and `spacingMode`. The native option plans count an enum
       value as a scalar (`_indexedScalar` of `helpers.config.dart`).
+    - The option `pointStyle` holds a `PointStyle` or `false` (row `adapt-point-style-objects`),
+      also in a raw config: an object with the method `draw(ctx, x:, y:, radius:, rad:,
+      rotated:, width:, borderWidth:)`. The base classes `PointStyle` and `PathPointStyle` (the
+      radius test, the path, the fill and the stroke around `addPath`) are in the pure
+      `lib/src/helpers/point_style.dart`. The ten styles of upstream (`CirclePointStyle`, the
+      default, to `TrianglePointStyle`) and `ImagePointStyle` (an image) are in
+      `helpers.canvas.dart`. An app or a plugin gives its own style as a subclass, with no
+      registration. `false` stays a boolean: the legend falls back to the dataset style on a
+      falsy `labels.pointStyle`. A style name stops a debug build. The circle batch tests
+      `CirclePointStyle`. The typed API takes a `PointStyle` (`ChartPointStyle` is gone);
+      `pointStyle: false` goes through `extra`. A compare with upstream JSON text puts a marker
+      on both sides (`withPointStyleMarkers` of `test/support/point_style_json.dart`).
     - The line option `cubicInterpolationMode` holds a `CubicInterpolationMode` (row
       `adapt-cubic-interpolation-mode-objects`), also in a raw config: an object with the methods
       `drawsCurves(tension)` and `updateControlPoints(points, tension:, loop:, indexAxis:)`. The
@@ -854,8 +866,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       own mode as a subclass, with no registration. A keyword stops a debug build. The typed API
       has `cubicInterpolationMode` on the line, scatter and radar datasets and on
       `LineElementStyle`. A compare with upstream JSON text puts a marker on both sides
-      (`withCubicModeMarkers` of `test/support/cubic_mode_json.dart`). `ShapeBits` of `opt.dart`
-      has no free bit below the sign bit after it: dart2js computes the bit operations in 32 bits.
+      (`withCubicModeMarkers` of `test/support/cubic_mode_json.dart`). In the mask of `ShapeBits`
+      of `opt.dart`, the seven plain atoms are bits 0 to 6, and a typed atom is its index from 1
+      shifted left by 7: a shape holds at most one typed atom (`typedAtomBits` of
+      `tool/src/options_gen.dart`).
     - The line option `stepped` holds a boolean or the enum `SteppedLine` (`before`, `after`,
       `middle`) of the pure `lib/src/types/line_option_enums.dart` (row
       `adapt-stepped-line-enum`), and the bar option `borderSkipped` holds a boolean or the enum
@@ -1206,11 +1220,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (169 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (194 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
-    `cubicInterpolationMode`) also has a hand port, of `<path>.js` or `<path>.json`, with the
+    `cubicInterpolationMode` and the 25 with `pointStyle`) also has a hand port, of `<path>.js` or `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.
     `test/port/fixtures/index_test.dart` checks the registry against the manifest, the files of

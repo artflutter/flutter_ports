@@ -154,7 +154,7 @@ ChartConfig(
       backgroundColor: ChartValue.constant(Colors.blue.withValues(alpha: 0.2)),
       fill: .origin,
       tension: 0.3,
-      pointStyle: .rectRot,
+      pointStyle: const RectRotPointStyle(),
     ),
   ],
 )
@@ -194,7 +194,10 @@ The values of the options are Dart and Flutter values:
 - Durations are `Duration` values, and paddings are `EdgeInsets` values.
 - A pie or doughnut `cutout` or `radius` is a `ChartLength`: `ChartLength.percent(50)` or
   `ChartLength.pixels(80)`.
-- Names are dot shorthands: `position: .bottom`, `pointStyle: .star`, `fill: .origin`.
+- Names are dot shorthands: `position: .bottom`, `fill: .origin`.
+- A point style is a class: `pointStyle: const StarPointStyle()`. An app or a plugin can add its
+  own style as a subclass of `PathPointStyle`. The cubic interpolation mode of a line is a class
+  too: `cubicInterpolationMode: const MonotoneCubicInterpolationMode()`.
   `ChartFill.dataset(0)`, `ChartFill.relative(-1)` and `ChartFill.value(10)` give the other fill
   targets.
 - The `easing` of an animation is a Flutter `Curve`: a constant of `Curves`, or a curve class of

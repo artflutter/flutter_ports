@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: drawPointLegend of the circle style.
+// Original code, not ported from Chart.js: drawPointLegend of the circle class.
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:test/test.dart';
@@ -46,27 +46,34 @@ List<Object?> _calls(Object? style, {double? w, double borderWidth = 1}) {
 void main() {
   setUpSpecs();
 
-  group('the constant circle and each other way to it', () {
-    // On the VM, a string with the same text is not the constant, so it takes
-    // the switch. A JS string is identical to the constant: it takes the same
-    // default the short way.
-    final built = String.fromCharCodes('circle'.codeUnits);
-
+  group('the circle class and the default branch', () {
+    // A value that is no style (Dart `null`, a number, an object) takes the
+    // default branch of upstream, which draws the circle: the calls of
+    // CirclePointStyle (row adapt-point-style-objects).
     for (final w in const [null, 12.0]) {
       for (final borderWidth in const [0.0, 2.0]) {
         test('w $w, border $borderWidth', () {
-          final expected = _calls(built, w: w, borderWidth: borderWidth);
-          expect(_calls('circle', w: w, borderWidth: borderWidth), expected);
-          // Another string, and each other value, goes to the same default.
-          expect(_calls('other', w: w, borderWidth: borderWidth), expected);
+          final expected = _calls(
+            const CirclePointStyle(),
+            w: w,
+            borderWidth: borderWidth,
+          );
           expect(_calls(null, w: w, borderWidth: borderWidth), expected);
+          expect(_calls(7, w: w, borderWidth: borderWidth), expected);
+          expect(
+            _calls(<String, Object?>{}, w: w, borderWidth: borderWidth),
+            expected,
+          );
         });
       }
     }
 
     test('other styles keep their case', () {
-      expect(_calls('rect'), isNot(_calls('circle')));
-      expect(_calls(false), isNot(_calls('circle')));
+      expect(
+        _calls(const RectPointStyle()),
+        isNot(_calls(const CirclePointStyle())),
+      );
+      expect(_calls(false), isNot(_calls(const CirclePointStyle())));
     });
   });
 }

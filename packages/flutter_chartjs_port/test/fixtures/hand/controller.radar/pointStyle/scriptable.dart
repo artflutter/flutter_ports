@@ -2,6 +2,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CrossPointStyle, RectPointStyle, StarPointStyle, TrianglePointStyle;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
@@ -17,6 +19,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'data': <Object?>[0, 5, 10, null, -10, -5],
           'pointBackgroundColor': '#ff0000',
           'pointBorderColor': '#ff0000',
+          // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
           'pointStyle': (Object? ctx) {
             final value = jsOrZero(
               jsGet(
@@ -25,12 +28,12 @@ Map<String, Object?> fixture() => <String, Object?>{
               ),
             );
             return value > 8
-                ? 'rect'
+                ? const RectPointStyle()
                 : value > 0
-                ? 'star'
+                ? const StarPointStyle()
                 : value > -8
-                ? 'cross'
-                : 'triangle';
+                ? const CrossPointStyle()
+                : const TrianglePointStyle();
           },
         },
         <String, Object?>{
@@ -47,6 +50,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'point': <String, Object?>{
           'backgroundColor': '#0000ff',
           'borderColor': '#0000ff',
+          // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
           'pointStyle': (Object? ctx) {
             final value = jsOrZero(
               jsGet(
@@ -55,12 +59,12 @@ Map<String, Object?> fixture() => <String, Object?>{
               ),
             );
             return value > 8
-                ? 'triangle'
+                ? const TrianglePointStyle()
                 : value > 0
-                ? 'cross'
+                ? const CrossPointStyle()
                 : value > -8
-                ? 'star'
-                : 'rect';
+                ? const StarPointStyle()
+                : const RectPointStyle();
           },
           'radius': 10,
         },

@@ -120,6 +120,23 @@ function num(v) {
   return String(v);
 }
 
+/**
+ * The style classes of the port by the upstream style names (row
+ * adapt-point-style-objects).
+ */
+const POINT_STYLES = {
+  circle: 'CirclePointStyle()',
+  cross: 'CrossPointStyle()',
+  crossRot: 'CrossRotPointStyle()',
+  dash: 'DashPointStyle()',
+  line: 'LinePointStyle()',
+  rect: 'RectPointStyle()',
+  rectRounded: 'RectRoundedPointStyle()',
+  rectRot: 'RectRotPointStyle()',
+  star: 'StarPointStyle()',
+  triangle: 'TrianglePointStyle()',
+};
+
 /** The Dart literal of a JS value. */
 function dart(v) {
   if (v === IMAGE) return 'pointImage';
@@ -135,7 +152,11 @@ function dart(v) {
     return `${quote}${escaped}${quote}`;
   }
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map((k) => `${dart(k)}: ${dart(v[k])}`);
+    const entries = Object.keys(v).map((k) =>
+      k === 'pointStyle' && typeof v[k] === 'string' && v[k] in POINT_STYLES
+        ? `${dart(k)}: ${POINT_STYLES[v[k]]}`
+        : `${dart(k)}: ${dart(v[k])}`,
+    );
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);
@@ -492,7 +513,9 @@ function opts(extra) {
 
 const STYLES = [
   'circle', 'triangle', 'rectRounded', 'rect', 'rectRot', 'cross',
-  'crossRot', 'star', 'line', 'dash', false, 'unknown', ABSENT,
+  // A value that is no style (the number 7) takes the default branch, as an
+  // unknown name does upstream: the port has no names.
+  'crossRot', 'star', 'line', 'dash', false, 7, ABSENT,
 ];
 for (const style of STYLES) {
   for (const rotation of [ABSENT, 30]) {
@@ -659,6 +682,7 @@ const out = `// Original code, not ported from Chart.js: PointElement reference 
 // src/elements/element.point.ts at the pinned Chart.js, with the mock context
 // of chartjs-test-utils. ${total} cases.
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The Node.js version that generated this file.

@@ -42,23 +42,28 @@ const double _maxValue = 25;
 /// The chart width from which the doughnut goes to the right of the bars.
 const double _wideWidth = 560;
 
-/// The point styles of the selector. Each style except `circle` shows the
-/// rotation.
-const List<String> _pointStyles = [
-  'circle',
-  'cross',
-  'crossRot',
-  'dash',
-  'line',
-  'rect',
-  'rectRounded',
-  'rectRot',
-  'star',
-  'triangle',
+/// The point styles of the selector with their labels. Each style except
+/// `circle` shows the rotation.
+const List<(String, PointStyle)> _pointStyles = [
+  ('circle', CirclePointStyle()),
+  ('cross', CrossPointStyle()),
+  ('crossRot', CrossRotPointStyle()),
+  ('dash', DashPointStyle()),
+  ('line', LinePointStyle()),
+  ('rect', RectPointStyle()),
+  ('rectRounded', RectRoundedPointStyle()),
+  ('rectRot', RectRotPointStyle()),
+  ('star', StarPointStyle()),
+  ('triangle', TrianglePointStyle()),
 ];
 
 /// The values of the `stepped` option of the line.
-const List<Object> _steppedValues = [false, 'before', 'after', 'middle'];
+const List<Object> _steppedValues = [
+  false,
+  SteppedLine.before,
+  SteppedLine.after,
+  SteppedLine.middle,
+];
 
 /// The values of the `borderAlign` option of the arcs.
 const List<Object> _borderAlignValues = [
@@ -172,7 +177,7 @@ class ElementsDemoState extends State<ElementsDemo> {
   double _radius = 6;
   double _hoverRadius = 9;
   double _rotation = 0;
-  String _pointStyle = 'triangle';
+  PointStyle _pointStyle = const TrianglePointStyle();
   double _tension = 0.4;
   Object _stepped = false;
   double _borderRadius = 6;
@@ -757,11 +762,13 @@ class ElementsDemoState extends State<ElementsDemo> {
     String name,
     List<Object> values,
     Object value,
-    ValueChanged<Object> onSelected,
-  ) => _Choices(
+    ValueChanged<Object> onSelected, {
+    List<String>? labels,
+  }) => _Choices(
     name: name,
     values: values,
     value: value,
+    labels: labels,
     onSelected: (v) => _change(() => onSelected(v)),
   );
 
@@ -853,9 +860,10 @@ class ElementsDemoState extends State<ElementsDemo> {
               ),
               _choices(
                 'pointStyle',
-                _pointStyles,
+                [for (final (_, style) in _pointStyles) style],
                 _pointStyle,
-                (v) => _pointStyle = v as String,
+                (v) => _pointStyle = v as PointStyle,
+                labels: [for (final (label, _) in _pointStyles) label],
               ),
               const _GroupTitle('LineElement'),
               DemoControlGrid(
@@ -943,12 +951,17 @@ class _Choices extends StatelessWidget {
     required this.values,
     required this.value,
     required this.onSelected,
+    this.labels,
   });
 
   final String name;
   final List<Object> values;
   final Object value;
   final ValueChanged<Object> onSelected;
+
+  /// The label of each value of [values], or Dart `null` for the text of
+  /// the value ([_text]).
+  final List<String>? labels;
 
   /// The text of [value]: `undefined` for the sentinel.
   static String _text(Object value) => switch (value) {
@@ -976,10 +989,10 @@ class _Choices extends StatelessWidget {
             spacing: 6,
             runSpacing: 4,
             children: [
-              for (final v in values)
+              for (final (i, v) in values.indexed)
                 ChoiceChip(
-                  key: ValueKey('elements.$name.${_text(v)}'),
-                  label: Text(_text(v)),
+                  key: ValueKey('elements.$name.${labels?[i] ?? _text(v)}'),
+                  label: Text(labels?[i] ?? _text(v)),
                   selected: v == value,
                   onSelected: (_) => onSelected(v),
                 ),

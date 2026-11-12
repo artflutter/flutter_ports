@@ -26,6 +26,8 @@ import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show DefaultCubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
@@ -45,7 +47,7 @@ import 'package:flutter_chartjs_port/src/typed/config.dart'
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart'
-    show ChartFill, ChartLength, ChartPointStyle;
+    show ChartFill, ChartLength;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -571,7 +573,7 @@ base mixin _LineStyle on Dataset {
   CubicInterpolationMode? get cubicInterpolationMode;
   double? get pointRadius;
   double? get pointHoverRadius;
-  ChartPointStyle? get pointStyle;
+  PointStyle? get pointStyle;
   Color? get pointBackgroundColor;
   Color? get pointBorderColor;
   double? get pointBorderWidth;
@@ -591,7 +593,7 @@ base mixin _LineStyle on Dataset {
     put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
     put(scope, OptionKey.pointRadius, pointRadius);
     put(scope, OptionKey.pointHoverRadius, pointHoverRadius);
-    put(scope, OptionKey.pointStyle, pointStyle?.optionValue);
+    put(scope, OptionKey.pointStyle, pointStyle);
     put(
       scope,
       OptionKey.pointBackgroundColor,
@@ -776,10 +778,11 @@ final class LineDataset extends Dataset with _LineStyle {
   final double? pointHoverRadius;
 
   /// {@template flutter_chartjs_port.typed.pointStyle}
-  /// The style of the points: `pointStyle`.
+  /// The style of the points: `pointStyle`, a [PointStyle] (row
+  /// `adapt-point-style-objects`). `false`, no point, goes through `extra`.
   /// {@endtemplate}
   @override
-  final ChartPointStyle? pointStyle;
+  final PointStyle? pointStyle;
 
   /// {@template flutter_chartjs_port.typed.pointBackgroundColor}
   /// The fill color of the points: `pointBackgroundColor`.
@@ -842,7 +845,7 @@ final class LineDataset extends Dataset with _LineStyle {
     CubicInterpolationMode? cubicInterpolationMode,
     double? pointRadius,
     double? pointHoverRadius,
-    ChartPointStyle? pointStyle,
+    PointStyle? pointStyle,
     Color? pointBackgroundColor,
     Color? pointBorderColor,
     double? pointBorderWidth,
@@ -1027,7 +1030,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.pointStyle}
   @override
-  final ChartPointStyle? pointStyle;
+  final PointStyle? pointStyle;
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
   @override
@@ -1078,7 +1081,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     CubicInterpolationMode? cubicInterpolationMode,
     double? pointRadius,
     double? pointHoverRadius,
-    ChartPointStyle? pointStyle,
+    PointStyle? pointStyle,
     Color? pointBackgroundColor,
     Color? pointBorderColor,
     double? pointBorderWidth,
@@ -1199,8 +1202,9 @@ final class BubbleDataset extends Dataset {
   /// `hoverRadius`.
   final double? hoverRadius;
 
-  /// The style of the bubbles: `pointStyle`.
-  final ChartPointStyle? pointStyle;
+  /// The style of the bubbles: `pointStyle`, a [PointStyle] (row
+  /// `adapt-point-style-objects`).
+  final PointStyle? pointStyle;
 
   @override
   BubbleDataset copyWith({
@@ -1220,7 +1224,7 @@ final class BubbleDataset extends Dataset {
     String? yAxisID,
     double? radius,
     double? hoverRadius,
-    ChartPointStyle? pointStyle,
+    PointStyle? pointStyle,
     Map<String, Object?>? extra,
   }) => BubbleDataset(
     key: key ?? this.key,
@@ -1255,7 +1259,7 @@ final class BubbleDataset extends Dataset {
     put(scope, OptionKey.yAxisID, yAxisID);
     put(scope, OptionKey.radius, radius);
     put(scope, OptionKey.hoverRadius, hoverRadius);
-    put(scope, OptionKey.pointStyle, pointStyle?.optionValue);
+    put(scope, OptionKey.pointStyle, pointStyle);
   }
 
   @override
@@ -1799,7 +1803,7 @@ final class RadarDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.pointStyle}
   @override
-  final ChartPointStyle? pointStyle;
+  final PointStyle? pointStyle;
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
   @override
@@ -1846,7 +1850,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     CubicInterpolationMode? cubicInterpolationMode,
     double? pointRadius,
     double? pointHoverRadius,
-    ChartPointStyle? pointStyle,
+    PointStyle? pointStyle,
     Color? pointBackgroundColor,
     Color? pointBorderColor,
     double? pointBorderWidth,

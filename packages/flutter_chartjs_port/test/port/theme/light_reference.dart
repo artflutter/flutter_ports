@@ -9,6 +9,7 @@
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
@@ -177,7 +178,7 @@ const List<ThemeLightElementCase> themeLightElements = [
       'hitRadius': 1.0,
       'hoverBorderWidth': 1.0,
       'hoverRadius': 4.0,
-      'pointStyle': 'circle',
+      'pointStyle': CirclePointStyle(),
       'radius': 3.0,
       'rotation': 0.0,
       'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -205,7 +206,7 @@ const List<ThemeLightElementCase> themeLightElements = [
       'hitRadius': 1.0,
       'hoverBorderWidth': 1.0,
       'hoverRadius': 4.0,
-      'pointStyle': 'circle',
+      'pointStyle': CirclePointStyle(),
       'radius': 4.0,
       'rotation': 0.0,
       'backgroundColor': '#00000019',

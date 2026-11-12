@@ -18,7 +18,9 @@ library;
 import 'mini_yaml.dart';
 
 /// The atoms of a shape, with their bits (`ShapeBits` of
-/// `lib/src/options/opt.dart`).
+/// `lib/src/options/opt.dart`). The seven plain atoms are bits 0 to 6. A
+/// typed atom is its index from 1 shifted left by 7: a shape holds at most
+/// one typed atom.
 const Map<String, int> shapeAtoms = {
   'number': 1,
   'bool': 2,
@@ -29,29 +31,33 @@ const Map<String, int> shapeAtoms = {
   'any': 64,
   'curve': 128,
   'interactionMode': 256,
-  'tooltipPositioner': 512,
-  'strokeCap': 1024,
-  'strokeJoin': 2048,
-  'interactionAxis': 4096,
-  'decimationAlgorithm': 8192,
-  'scaleBounds': 16384,
-  'tickSource': 32768,
-  'tickAlign': 65536,
-  'tickCrossAlign': 131072,
-  'chartAlign': 262144,
-  'tooltipXAlign': 524288,
-  'tooltipYAlign': 1048576,
-  'arcBorderAlign': 2097152,
-  'arcSpacingMode': 4194304,
-  'fillerDrawTime': 8388608,
-  'timeUnit': 16777216,
-  'chartPosition': 33554432,
-  'layoutPosition': 67108864,
-  'textAlign': 134217728,
-  'steppedLine': 268435456,
-  'borderSkippedEdge': 536870912,
-  'cubicInterpolationMode': 1073741824,
+  'tooltipPositioner': 384,
+  'strokeCap': 512,
+  'strokeJoin': 640,
+  'interactionAxis': 768,
+  'decimationAlgorithm': 896,
+  'scaleBounds': 1024,
+  'tickSource': 1152,
+  'tickAlign': 1280,
+  'tickCrossAlign': 1408,
+  'chartAlign': 1536,
+  'tooltipXAlign': 1664,
+  'tooltipYAlign': 1792,
+  'arcBorderAlign': 1920,
+  'arcSpacingMode': 2048,
+  'fillerDrawTime': 2176,
+  'timeUnit': 2304,
+  'chartPosition': 2432,
+  'layoutPosition': 2560,
+  'textAlign': 2688,
+  'steppedLine': 2816,
+  'borderSkippedEdge': 2944,
+  'cubicInterpolationMode': 3072,
+  'pointStyle': 3200,
 };
+
+/// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
+const int typedAtomBits = 0x7FFFFF80;
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
 /// `type` of the library `uri`. Its cell is `classifyTyped<type>` of
@@ -166,6 +172,11 @@ const Map<String, TypedAtom> typedAtoms = {
     uri: 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart',
     field: 'CubicInterpolationMode?',
   ),
+  'pointStyle': (
+    type: 'PointStyle',
+    uri: 'package:flutter_chartjs_port/src/helpers/point_style.dart',
+    field: null,
+  ),
 };
 
 /// The import lines of the typed atoms whose types [types] lists, and of
@@ -237,6 +248,9 @@ final class Shape {
         final bit = shapeAtoms[atom];
         if (bit == null || atom == 'scope') {
           throw FormatException('$where: unknown shape atom "$atom"');
+        }
+        if (bit & typedAtomBits != 0 && mask & typedAtomBits != 0) {
+          throw FormatException('$where: two typed atoms in "$text"');
         }
         mask |= bit;
       }

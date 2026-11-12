@@ -36,6 +36,8 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -173,8 +175,13 @@ const Opt<Never> optUndefined = OptUndefined._();
 /// The cell of an own key with the value JS `null`.
 const Opt<Never> optNull = OptNull._();
 
-/// The atoms of a shape of the schema (`tool/options_schema.yaml`), as bits
-/// of an `int` mask for [classifyUnion].
+/// The atoms of a shape of the schema (`tool/options_schema.yaml`), as an
+/// `int` mask for [classifyUnion].
+///
+/// The seven plain atoms (`number` to `any`) are bits 0 to 6. A typed atom
+/// is its index from 1 shifted left by 7, in the bits of [typed]: a shape
+/// holds at most one typed atom, and the index leaves room for 2^24 of them
+/// below the sign bit (dart2js computes the bit operations in 32 bits).
 abstract final class ShapeBits {
   /// `number`: a JS number.
   static const int number = 1;
@@ -206,109 +213,87 @@ abstract final class ShapeBits {
 
   /// `tooltipPositioner`: a [TooltipPositioner], the value of `position` of
   /// the tooltip options.
-  static const int tooltipPositioner = 512;
+  static const int tooltipPositioner = 384;
 
   /// `strokeCap`: a Flutter [StrokeCap], the value of `borderCapStyle`.
-  static const int strokeCap = 1024;
+  static const int strokeCap = 512;
 
   /// `strokeJoin`: a Flutter [StrokeJoin], the value of `borderJoinStyle`.
-  static const int strokeJoin = 2048;
+  static const int strokeJoin = 640;
 
   /// `interactionAxis`: an [InteractionAxis], the value of `axis` of the
   /// interaction options.
-  static const int interactionAxis = 4096;
+  static const int interactionAxis = 768;
 
   /// `decimationAlgorithm`: a [DecimationAlgorithm], the value of
   /// `algorithm` of the decimation plugin.
-  static const int decimationAlgorithm = 8192;
+  static const int decimationAlgorithm = 896;
 
   /// `scaleBounds`: a [ScaleBounds], the value of `bounds` of a scale.
-  static const int scaleBounds = 16384;
+  static const int scaleBounds = 1024;
 
   /// `tickSource`: a [TickSource], the value of `ticks.source`.
-  static const int tickSource = 32768;
+  static const int tickSource = 1152;
 
   /// `tickAlign`: a [TickAlign], the value of `ticks.align`.
-  static const int tickAlign = 65536;
+  static const int tickAlign = 1280;
 
   /// `tickCrossAlign`: a [TickCrossAlign], the value of `ticks.crossAlign`.
-  static const int tickCrossAlign = 131072;
+  static const int tickCrossAlign = 1408;
 
   /// `chartAlign`: a [ChartAlign], the value of `align` of a box.
-  static const int chartAlign = 262144;
+  static const int chartAlign = 1536;
 
   /// `tooltipXAlign`: a [TooltipXAlign], the value of `xAlign` of the
   /// tooltip.
-  static const int tooltipXAlign = 524288;
+  static const int tooltipXAlign = 1664;
 
   /// `tooltipYAlign`: a [TooltipYAlign], the value of `yAlign` of the
   /// tooltip.
-  static const int tooltipYAlign = 1048576;
+  static const int tooltipYAlign = 1792;
 
   /// `arcBorderAlign`: an [ArcBorderAlign], the value of `borderAlign`.
-  static const int arcBorderAlign = 2097152;
+  static const int arcBorderAlign = 1920;
 
   /// `arcSpacingMode`: an [ArcSpacingMode], the value of `spacingMode`.
-  static const int arcSpacingMode = 4194304;
+  static const int arcSpacingMode = 2048;
 
   /// `fillerDrawTime`: a [FillerDrawTime], the value of `drawTime` of the
   /// filler.
-  static const int fillerDrawTime = 8388608;
+  static const int fillerDrawTime = 2176;
 
   /// `timeUnit`: a [TimeUnit], the value of `time.unit`, `time.minUnit` and
   /// `time.round`.
-  static const int timeUnit = 16777216;
+  static const int timeUnit = 2304;
 
   /// `chartPosition`: a [ChartPosition], the `position` of the legend, the
   /// title and the subtitle.
-  static const int chartPosition = 33554432;
+  static const int chartPosition = 2432;
 
   /// `layoutPosition`: a [LayoutPosition], the `position` of a scale.
-  static const int layoutPosition = 67108864;
+  static const int layoutPosition = 2560;
 
   /// `textAlign`: a Flutter [TextAlign], the `textAlign` of the legend labels
   /// and the `titleAlign`, `bodyAlign` and `footerAlign` of the tooltip.
-  static const int textAlign = 134217728;
+  static const int textAlign = 2688;
 
   /// `steppedLine`: a [SteppedLine], the keyword form of `stepped`.
-  static const int steppedLine = 268435456;
+  static const int steppedLine = 2816;
 
   /// `borderSkippedEdge`: a [BorderSkippedEdge], the keyword form of
   /// `borderSkipped`.
-  static const int borderSkippedEdge = 536870912;
+  static const int borderSkippedEdge = 2944;
 
   /// `cubicInterpolationMode`: a `CubicInterpolationMode`, the value of the
-  /// line `cubicInterpolationMode`. It is the last bit below the sign bit of
-  /// a 32-bit mask: dart2js computes the bit operations in 32 bits.
-  static const int cubicInterpolationMode = 1073741824;
+  /// line `cubicInterpolationMode`.
+  static const int cubicInterpolationMode = 3072;
 
-  /// The bits of the typed atoms: the native types of options that were
-  /// names in Chart.js ([classifyTyped]).
-  static const int typed =
-      curve |
-      interactionMode |
-      tooltipPositioner |
-      strokeCap |
-      strokeJoin |
-      interactionAxis |
-      decimationAlgorithm |
-      scaleBounds |
-      tickSource |
-      tickAlign |
-      tickCrossAlign |
-      chartAlign |
-      tooltipXAlign |
-      tooltipYAlign |
-      arcBorderAlign |
-      arcSpacingMode |
-      fillerDrawTime |
-      timeUnit |
-      chartPosition |
-      layoutPosition |
-      textAlign |
-      steppedLine |
-      borderSkippedEdge |
-      cubicInterpolationMode;
+  /// `pointStyle`: a `PointStyle`, the value of `pointStyle`.
+  static const int pointStyle = 3200;
+
+  /// The bits of the index of a typed atom: the native types of options
+  /// that were names in Chart.js ([classifyTyped]).
+  static const int typed = 0x7FFFFF80;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -380,15 +365,10 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
   };
 }
 
-/// Whether [value] is of the type of one typed atom of [typedMask].
-bool _typedFits(Object value, int typedMask) {
-  for (var bit = 1; bit <= typedMask && bit > 0; bit <<= 1) {
-    if (typedMask & bit != 0 && classifyMask(value, bit) is OptValue) {
-      return true;
-    }
-  }
-  return false;
-}
+/// Whether [value] is of the type of the typed atom [typedMask], the bits of
+/// [ShapeBits.typed] of a shape (0 for no typed atom).
+bool _typedFits(Object value, int typedMask) =>
+    typedMask != 0 && classifyMask(value, typedMask) is OptValue;
 
 /// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
 /// classification of [classifyNumber], [classifyBool], [classifyString],
@@ -424,6 +404,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.cubicInterpolationMode => classifyTyped<CubicInterpolationMode>(
     raw,
   ),
+  ShapeBits.pointStyle => classifyTyped<PointStyle>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

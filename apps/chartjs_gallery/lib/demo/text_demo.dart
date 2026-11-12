@@ -177,7 +177,7 @@ class _TextDemoState extends State<TextDemo> {
           drawPoint(
             ctx,
             const PointOptions(
-              pointStyle: 'circle',
+              pointStyle: CirclePointStyle(),
               radius: 2.5,
               borderWidth: 0,
             ),

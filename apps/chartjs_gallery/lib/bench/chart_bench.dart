@@ -1211,7 +1211,7 @@ ChartBenchCase _primitiveCase() => ChartBenchCase(
             'backgroundColor': stressChartBackground,
             'borderColor': const ui.Color(0xFF36A2EB),
             'borderWidth': 1.0,
-            'pointStyle': 'circle',
+            'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
             'showLine': false,
             'clip': false,

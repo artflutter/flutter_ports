@@ -128,7 +128,7 @@ List<Dataset> _lineStyle({
   SteppedLine? stepped,
   double? pointRadius,
   double? pointHoverRadius,
-  ChartPointStyle? pointStyle,
+  PointStyle? pointStyle,
   Color? pointBackgroundColor,
   Color? pointBorderColor,
   double? pointBorderWidth,
@@ -323,15 +323,12 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   ),
   'pointStyle': (
     [
-      ..._lineStyle(pointStyle: .rectRot),
-      const BubbleDataset(pointStyle: .rectRot),
+      ..._lineStyle(pointStyle: const RectRotPointStyle()),
+      const BubbleDataset(pointStyle: RectRotPointStyle()),
     ],
-    {'pointStyle': 'rectRot'},
+    {'pointStyle': const RectRotPointStyle()},
   ),
-  'pointStyle, none': (
-    [..._lineStyle(pointStyle: .none), const BubbleDataset(pointStyle: .none)],
-    {'pointStyle': false},
-  ),
+
   'pointBackgroundColor': (
     _lineStyle(pointBackgroundColor: _red),
     {'pointBackgroundColor': _redValue},
@@ -655,9 +652,9 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'point.pointStyle': (
-    ChartElements(point: PointElementStyle(pointStyle: .rect)),
+    ChartElements(point: PointElementStyle(pointStyle: RectPointStyle())),
     {
-      'point': {'pointStyle': 'rect'},
+      'point': {'pointStyle': RectPointStyle()},
     },
   ),
   'point.backgroundColor': (
@@ -1498,7 +1495,7 @@ void main() {
         'stepped': SteppedLine.before,
         'pointRadius': 3,
         'pointHoverRadius': 6,
-        'pointStyle': 'star',
+        'pointStyle': StarPointStyle(),
         'pointBackgroundColor': _redValue,
         'pointBorderColor': _blueValue,
         'pointBorderWidth': 1,
@@ -1531,7 +1528,7 @@ void main() {
             stepped: SteppedLine.before,
             pointRadius: 3,
             pointHoverRadius: 6,
-            pointStyle: .star,
+            pointStyle: const StarPointStyle(),
             pointBackgroundColor: _red,
             pointBorderColor: _blue,
             pointBorderWidth: 1,
@@ -1584,7 +1581,7 @@ void main() {
             stepped: SteppedLine.before,
             pointRadius: 3,
             pointHoverRadius: 6,
-            pointStyle: .star,
+            pointStyle: const StarPointStyle(),
             pointBackgroundColor: _red,
             pointBorderColor: _blue,
             pointBorderWidth: 1,
@@ -1630,7 +1627,7 @@ void main() {
             yAxisID: 'y2',
             radius: 7,
             hoverRadius: 2,
-            pointStyle: .triangle,
+            pointStyle: const TrianglePointStyle(),
             extra: const {'clip': 5},
           ),
         );
@@ -1649,7 +1646,7 @@ void main() {
           'yAxisID': 'y2',
           'radius': 7,
           'hoverRadius': 2,
-          'pointStyle': 'triangle',
+          'pointStyle': const TrianglePointStyle(),
           'clip': 5,
         });
       });
@@ -1788,7 +1785,7 @@ void main() {
             stepped: SteppedLine.before,
             pointRadius: 3,
             pointHoverRadius: 6,
-            pointStyle: .star,
+            pointStyle: const StarPointStyle(),
             pointBackgroundColor: _red,
             pointBorderColor: _blue,
             pointBorderWidth: 1,

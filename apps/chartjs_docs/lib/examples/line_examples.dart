@@ -115,7 +115,7 @@ Color pointFill(ChartContext context) {
 
 /// The point style example, with the style of the selected variant.
 // #docregion point-styling
-ChartConfig pointStyling(ChartPointStyle style) => ChartConfig(
+ChartConfig pointStyling(PointStyle style) => ChartConfig(
   type: .line,
   labels: months,
   datasets: [

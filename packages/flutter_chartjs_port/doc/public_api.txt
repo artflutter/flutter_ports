@@ -34,9 +34,13 @@ ChartEvent
 ChartMeta
 ChartMetaClip
 ChartPosition
+CirclePointStyle
+CrossPointStyle
+CrossRotPointStyle
 CssStyleProperties
 CubicInterpolationMode
 DOMRect
+DashPointStyle
 DatasetController
 DatasetDrawHookArgs
 DatasetInteractionMode
@@ -52,6 +56,7 @@ FillerDrawTime
 FlutterPlatform
 FontSpec
 HTMLCanvasElement
+ImagePointStyle
 IndexInteractionMode
 Interaction
 InteractionAxis
@@ -64,6 +69,7 @@ LayoutPosition
 LegendElement
 LineController
 LineElement
+LinePointStyle
 LinearScale
 LogarithmicScale
 LttbDecimationAlgorithm
@@ -76,6 +82,7 @@ NativeTouch
 NearestInteractionMode
 NearestTooltipPositioner
 Path2D
+PathPointStyle
 PieController
 Plugin
 PluginHookArgs
@@ -83,9 +90,13 @@ PluginHookFunction
 Point
 PointElement
 PointInteractionMode
+PointStyle
 PolarAreaController
 RadarController
 RadialLinearScale
+RectPointStyle
+RectRotPointStyle
+RectRoundedPointStyle
 RenderTextOpts
 ResizeHookArgs
 Scale
@@ -94,6 +105,7 @@ ScaleValuePosition
 ScatterController
 Segment
 SplinePoint
+StarPointStyle
 SteppedLine
 TRBL
 TextMetrics
@@ -110,6 +122,7 @@ TooltipPosition
 TooltipPositioner
 TooltipXAlign
 TooltipYAlign
+TrianglePointStyle
 Undefined
 UpdateHookArgs
 VisualElement
@@ -204,7 +217,6 @@ ChartLegendItem
 ChartLength
 ChartMeta
 ChartMetaClip
-ChartPointStyle
 ChartPosition
 ChartResolver
 ChartScript
@@ -217,11 +229,15 @@ ChartTooltipItem
 ChartTransition
 ChartValue
 ChartView
+CirclePointStyle
 CircumferenceAnimation
 ColorAnimation
+CrossPointStyle
+CrossRotPointStyle
 CssStyleProperties
 CubicInterpolationMode
 DOMRect
+DashPointStyle
 DataPoint
 Dataset
 DatasetController
@@ -243,6 +259,7 @@ HTMLCanvasElement
 HeightAnimation
 HideTransition
 HoverTransition
+ImagePointStyle
 IndexAxis
 IndexInteractionMode
 InnerRadiusAnimation
@@ -259,6 +276,7 @@ LineController
 LineDataset
 LineElement
 LineElementStyle
+LinePointStyle
 LinearAxis
 LinearScale
 LogarithmicAxis
@@ -275,6 +293,7 @@ NearestTooltipPositioner
 OffsetAnimation
 OuterRadiusAnimation
 Path2D
+PathPointStyle
 PieController
 PieDataset
 Plugin
@@ -284,6 +303,7 @@ Point
 PointElement
 PointElementStyle
 PointInteractionMode
+PointStyle
 PolarAreaController
 PolarAreaDataset
 PropertyAnimation
@@ -292,6 +312,9 @@ RadarDataset
 RadialLinearAxis
 RadialLinearScale
 RadiusAnimation
+RectPointStyle
+RectRotPointStyle
+RectRoundedPointStyle
 RenderTextOpts
 ResetTransition
 ResizeHookArgs
@@ -305,6 +328,7 @@ Segment
 ShowTransition
 SpacingAnimation
 SplinePoint
+StarPointStyle
 StartAngleAnimation
 SteppedLine
 TRBL
@@ -325,6 +349,7 @@ TooltipPosition
 TooltipPositioner
 TooltipXAlign
 TooltipYAlign
+TrianglePointStyle
 Undefined
 UpdateHookArgs
 VisibleAnimation

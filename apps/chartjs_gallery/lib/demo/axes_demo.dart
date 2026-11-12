@@ -81,19 +81,21 @@ String _unitText(TimeUnit? unit) =>
     unit == TimeUnit.month ? 'mon' : AxesDemoState._keyText(unit);
 
 /// The datasets of the chart: the label, the colors and the point style.
-const List<({String label, ui.Color background, ui.Color border, String style})>
+const List<
+  ({String label, ui.Color background, ui.Color border, PointStyle style})
+>
 _datasetStyles = [
   (
     label: 'A',
     background: ui.Color.fromRGBO(54, 162, 235, 0.5),
     border: ui.Color(0xFF36A2EB),
-    style: 'circle',
+    style: CirclePointStyle(),
   ),
   (
     label: 'B',
     background: ui.Color.fromRGBO(255, 99, 132, 0.5),
     border: ui.Color(0xFFFF6384),
-    style: 'rectRot',
+    style: RectRotPointStyle(),
   ),
 ];
 

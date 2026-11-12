@@ -22,6 +22,7 @@
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 
@@ -12897,7 +12898,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'plugins': <String, Object?>{
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
@@ -13418,7 +13419,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 0.0,
             },
@@ -13433,7 +13434,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 1.0,
             },
@@ -13448,7 +13449,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 2.0,
             },
@@ -13549,7 +13550,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'plugins': <String, Object?>{
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
@@ -14601,7 +14602,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 0.0,
             },
@@ -14616,7 +14617,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 1.0,
             },
@@ -14631,7 +14632,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 2.0,
             },
@@ -14732,7 +14733,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
         'plugins': <String, Object?>{
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
@@ -16186,7 +16187,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 0.0,
             },
@@ -16201,7 +16202,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 1.0,
             },
@@ -16216,7 +16217,7 @@ const List<ControllerPieReferenceCase> controllerPieReference = [
               'lineWidth': 2.0,
               'strokeStyle': '#fff',
               'textAlign': TextAlign.left,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'borderRadius': 3.0,
               'index': 2.0,
             },

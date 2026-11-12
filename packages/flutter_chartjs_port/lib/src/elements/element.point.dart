@@ -34,7 +34,7 @@ import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions, numberOption, plainOption, rawOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show DrawPointOptions, drawPoint, isPointInArea;
+    show CirclePointStyle, DrawPointOptions, drawPoint, isPointInArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show tau;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
@@ -176,7 +176,8 @@ class PointElement extends Element
     ..hitRadius = 1.0
     ..hoverBorderWidth = 1.0
     ..hoverRadius = 4.0
-    ..pointStyle = 'circle'
+    // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+    ..pointStyle = const CirclePointStyle()
     ..radius = 3.0
     ..rotation = 0.0;
 
@@ -708,7 +709,7 @@ class PointElement extends Element
               !plainOption(current, OptionKey.radius) ||
               !plainOption(current, OptionKey.hoverRadius) ||
               !plainOption(current, OptionKey.borderWidth) ||
-              !identical(current.pointStyle, 'circle')) {
+              current.pointStyle is! CirclePointStyle) {
             break;
           }
           options = current;

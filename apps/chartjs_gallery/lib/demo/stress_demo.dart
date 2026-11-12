@@ -1034,7 +1034,7 @@ class StressDemoState extends State<StressDemo> {
         'backgroundColor': const ui.Color.fromRGBO(54, 162, 235, 0.45),
         'borderColor': const ui.Color(0xFF36A2EB),
         'borderWidth': 1.0,
-        'pointStyle': 'circle',
+        'pointStyle': const CirclePointStyle(),
         'radius': 3.0,
       });
 
@@ -1667,7 +1667,7 @@ class StressDemoState extends State<StressDemo> {
       chart?.getDatasetMeta(0).controller?.enableOptionSharing ?? _type.sharing;
 
   static const PointOptions _pointOptions = PointOptions(
-    pointStyle: 'circle',
+    pointStyle: CirclePointStyle(),
     radius: 3,
   );
 

@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show StarPointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionResolver, createResolver, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -600,7 +602,7 @@ void main() {
         tester,
       ) async {
         final labels = <String, Object?>{
-          'pointStyle': 'star',
+          'pointStyle': const StarPointStyle(),
           'textAlign': TextAlign.right,
           'color': _green,
           'useBorderRadius': true,
@@ -1382,7 +1384,7 @@ void main() {
             type: type,
             hook: hook,
             change: (chart, count) =>
-                _labelOptionsOf(chart)['pointStyle'] = 'star',
+                _labelOptionsOf(chart)['pointStyle'] = const StarPointStyle(),
             read: (chart) => jsGet(chart.legend!.legendItems![0], 'pointStyle'),
           );
         });
@@ -1536,7 +1538,7 @@ void main() {
         });
         Map<String, Object?> writer() => _hook('beforeLayout', (chart) {
           if (armed) {
-            _labelOptionsOf(chart)['pointStyle'] = 'star';
+            _labelOptionsOf(chart)['pointStyle'] = const StarPointStyle();
             (chart.config.options as Map<String, Object?>)['color'] = _green;
           }
           return null;
@@ -1548,7 +1550,10 @@ void main() {
         armed = true;
         for (final each in [chart, twin]) {
           each.update();
-          expect(jsGet(each.legend!.legendItems![0], 'pointStyle'), 'star');
+          expect(
+            jsGet(each.legend!.legendItems![0], 'pointStyle'),
+            const StarPointStyle(),
+          );
           expect(jsGet(each.legend!.legendItems![0], 'fontColor'), _green);
           expect(readOption(each.options, OptionKey.color), _green);
         }
@@ -1559,7 +1564,7 @@ void main() {
 
   group('the guard reads only what the ordinary build reads', () {
     const written = <String, Object?>{
-      'pointStyle': 'star',
+      'pointStyle': StarPointStyle(),
       'textAlign': TextAlign.right,
       'color': _green,
       'useBorderRadius': true,

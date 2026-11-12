@@ -6,6 +6,18 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show
+        CirclePointStyle,
+        CrossPointStyle,
+        CrossRotPointStyle,
+        DashPointStyle,
+        LinePointStyle,
+        RectPointStyle,
+        RectRotPointStyle,
+        RectRoundedPointStyle,
+        StarPointStyle,
+        TrianglePointStyle;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -20,17 +32,18 @@ import '../../fixture_events.dart';
 /// host: `canvas.getBoundingClientRect()` gives the left and the top 0 (row
 /// `harness-fixture-sources`).
 Map<String, Object?> fixture() {
+  // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
   const pointStyles = <Object?>[
-    'circle',
-    'cross',
-    'crossRot',
-    'dash',
-    'line',
-    'rect',
-    'rectRounded',
-    'rectRot',
-    'star',
-    'triangle',
+    CirclePointStyle(),
+    CrossPointStyle(),
+    CrossRotPointStyle(),
+    DashPointStyle(),
+    LinePointStyle(),
+    RectPointStyle(),
+    RectRoundedPointStyle(),
+    RectRotPointStyle(),
+    StarPointStyle(),
+    TrianglePointStyle(),
     false,
   ];
 

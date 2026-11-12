@@ -4,12 +4,12 @@
 /// sets and the lengths of the Chart.js options.
 ///
 /// Each type is an extension type with `const` constants. Thus a dot
-/// shorthand works (`pointStyle: .star`), and a new constant is an addition
+/// shorthand works (`fill: .origin`), and a new constant is an addition
 /// that breaks no `switch` of an app. The position of a box is the enum
 /// `ChartPosition` of the core (row `adapt-chart-position-enum`).
 ///
-/// - [ChartPointStyle], [ChartFill] and [ChartLength] are over `Object`:
-///   they also hold `false`, numbers and records. The internal getter
+/// - [ChartFill] and [ChartLength] are over `Object`: they also hold
+///   `false`, numbers and records. The internal getter
 ///   `optionValue` gives the option value. A record holds
 ///   [ChartFill.value] and [ChartLength.percent], so these constructors are
 ///   `const`, and two equal values are `==`.
@@ -20,55 +20,13 @@
 /// The `easing` option of an animation has no type here: it is a Flutter
 /// `Curve`. The `mode` option of the interaction has none either: it is an
 /// `InteractionMode` of the core. The `align` option of a box is the enum
-/// `ChartAlign` of the core.
+/// `ChartAlign` of the core. The `pointStyle` option is a `PointStyle` of
+/// the core.
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
 import 'package:meta/meta.dart' show internal;
-
-/// The style of a point: the `pointStyle` option of a dataset and of the
-/// legend labels (`PointStyle`, `index.d.ts:2040-2053`).
-///
-/// [none] is `false`: no point. An image goes through the `extra` Map.
-extension type const ChartPointStyle._(Object _value) {
-  /// `'circle'`.
-  static const ChartPointStyle circle = ChartPointStyle._('circle');
-
-  /// `'cross'`.
-  static const ChartPointStyle cross = ChartPointStyle._('cross');
-
-  /// `'crossRot'`: a cross turned by 45 degrees.
-  static const ChartPointStyle crossRot = ChartPointStyle._('crossRot');
-
-  /// `'dash'`.
-  static const ChartPointStyle dash = ChartPointStyle._('dash');
-
-  /// `'line'`.
-  static const ChartPointStyle line = ChartPointStyle._('line');
-
-  /// `'rect'`.
-  static const ChartPointStyle rect = ChartPointStyle._('rect');
-
-  /// `'rectRounded'`.
-  static const ChartPointStyle rectRounded = ChartPointStyle._('rectRounded');
-
-  /// `'rectRot'`: a square turned by 45 degrees.
-  static const ChartPointStyle rectRot = ChartPointStyle._('rectRot');
-
-  /// `'star'`.
-  static const ChartPointStyle star = ChartPointStyle._('star');
-
-  /// `'triangle'`.
-  static const ChartPointStyle triangle = ChartPointStyle._('triangle');
-
-  /// `false`: no point.
-  static const ChartPointStyle none = ChartPointStyle._(false);
-
-  /// The option value: the name, or `false` for [none].
-  @internal
-  Object get optionValue => _value;
-}
 
 /// The fill of a line or a radar dataset: the `fill` option
 /// (`FillTarget`, `index.d.ts:2300`; `filler.options.js:120-137`).

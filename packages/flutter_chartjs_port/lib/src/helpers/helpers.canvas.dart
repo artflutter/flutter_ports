@@ -17,7 +17,6 @@
 library;
 
 import 'dart:math' as math;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -25,6 +24,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, pi, quarterPi, radPerDeg, tau, twoThirdsPi;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -239,17 +239,14 @@ void clearCanvas([HTMLCanvasElement? canvas, CanvasRenderingContext2D? ctx]) {
 abstract interface class DrawPointOptions {
   /// helpers.canvas.ts:150 `pointStyle: PointStyle`.
   ///
-  /// `PointStyle` (index.d.ts:2040) is the union of the style names
-  /// `'circle'`, `'cross'`, `'crossRot'`, `'dash'`, `'line'`, `'rect'`,
-  /// `'rectRounded'`, `'rectRot'`, `'star'` and `'triangle'`, of `false`, and
-  /// of `HTMLImageElement` and `HTMLCanvasElement`. Dart cannot declare the
-  /// union, so the Dart form is `Object?`, as for every option value
-  /// (Chart.js ADR 0043): a `String`, a `bool`, or a [CanvasImageSource].
-  /// A [CanvasImageSource] draws as an image. An [HTMLCanvasElement] is not
-  /// a [CanvasImageSource]: pass its `toImageSource()` snapshot to draw it
-  /// as an image. A canvas element itself draws the default circle
-  /// (`platform-canvas-point-style`, differences.md). Another value draws a
-  /// circle, as upstream.
+  /// `PointStyle` (index.d.ts:2040) is the union of ten style names, of
+  /// `false`, and of `HTMLImageElement` and `HTMLCanvasElement`. In the
+  /// port, the value is a [PointStyle] or `false` (row
+  /// `adapt-point-style-objects`): the ten classes below, [ImagePointStyle]
+  /// for an image, or a style of an app or a plugin. Another value draws a
+  /// circle, as upstream does for a value that is not a style. A canvas
+  /// element is no image: pass its `toImageSource()` snapshot to
+  /// [ImagePointStyle] (`platform-canvas-point-style`, differences.md).
   Object? get pointStyle;
 
   /// helpers.canvas.ts:151 `rotation?: number`, in degrees. Dart `null` is
@@ -282,22 +279,13 @@ void drawPoint(
 /// Dart `null` stands for JS `null` and `undefined`. A falsy [w] (null, 0 or
 /// NaN) draws the style with [DrawPointOptions.radius] alone.
 ///
-/// The image branch: upstream tests `style && typeof style === 'object'`
-/// and then `style.toString()` for `'[object HTMLImageElement]'` and
-/// `'[object HTMLCanvasElement]'`. In the canvas layer, an image is a
-/// [CanvasImageSource], so one type test replaces both tests. An
-/// [HTMLCanvasElement] is not a [CanvasImageSource] (Chart.js ADR 0013), so
-/// a canvas element draws the default circle. A caller passes its
-/// `toImageSource()` snapshot to get the image draw
-/// (`platform-canvas-point-style`, differences.md). Any other object goes
-/// on to the radius test and the `default` branch, as upstream.
-///
-/// The `switch` compares with `===` upstream. A Dart constant pattern
-/// compares with `==`, which gives the same result for a `String` and a
-/// `bool`. Upstream places `default` first. A JS `switch` takes `default`
-/// only when no case matches, whatever its place, so here it is last. The
-/// two upstream fall-throughs (`rect` with a rotation into `rectRot`,
-/// `crossRot` into `cross`) are `continue` to the labelled case.
+/// Upstream switches on the style name, and draws an image for an image
+/// value. In the port, a [PointStyle] draws itself ([PointStyle.draw]): the
+/// code of each `case` is the `addPath` of its class below, and the image
+/// branch is [ImagePointStyle]. `false` and a value that is not a style
+/// keep the upstream lines: the radius test, then the `case false` or the
+/// default circle.
+// DIVERGES(chartjs): adapt-point-style-objects, the style draws itself.
 void drawPointLegend(
   CanvasRenderingContext2D ctx,
   DrawPointOptions options,
@@ -305,33 +293,23 @@ void drawPointLegend(
   double y,
   double? w,
 ) {
-  double xOffset;
-  double yOffset;
-  double size;
-  double cornerRadius;
-  double width;
-  double xOffsetW;
-  double yOffsetW;
   final style = options.pointStyle;
   final rotation = options.rotation;
   final radius = options.radius;
-  var rad = (jsTruthy(rotation) ? rotation! : 0) * radPerDeg;
-  final hasW = jsTruthy(w);
+  final rad = (jsTruthy(rotation) ? rotation! : 0) * radPerDeg;
+  final width = jsTruthy(w) ? w : null;
 
-  // DIVERGES(chartjs): platform-canvas-point-style, a canvas is not an image.
-  if (style is CanvasImageSource) {
-    ctx
-      ..save()
-      ..translate(x, y)
-      ..rotate(rad)
-      ..drawImage(
-        style,
-        -style.width / 2,
-        -style.height / 2,
-        style.width,
-        style.height,
-      )
-      ..restore();
+  if (PointStyle.of(style) case final pointStyle?) {
+    pointStyle.draw(
+      ctx,
+      x: x,
+      y: y,
+      radius: radius,
+      rad: rad,
+      rotated: jsTruthy(rotation),
+      width: width,
+      borderWidth: options.borderWidth,
+    );
     return;
   }
 
@@ -342,166 +320,371 @@ void drawPointLegend(
 
   ctx.beginPath();
 
-  // DIVERGES(chartjs): adapt-point-style-circle, no compares for the default.
-  if (identical(style, 'circle')) {
-    if (hasW) {
-      ctx.ellipse(x, y, w! / 2, radius, 0, 0, tau);
-    } else {
-      ctx.arc(x, y, radius, 0, tau);
-    }
-    ctx
-      ..closePath()
-      ..fill();
-    if (options.borderWidth > 0) {
-      ctx.stroke();
-    }
-    return;
-  }
-
-  switch (style) {
-    case 'triangle':
-      width = hasW ? w! / 2 : radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      ctx.moveTo(x + math.sin(rad) * width, y - math.cos(rad) * radius);
-      rad += twoThirdsPi;
-      // js-ok: display only (Chart.js ADR 0045)
-      ctx.lineTo(x + math.sin(rad) * width, y - math.cos(rad) * radius);
-      rad += twoThirdsPi;
-      ctx
-        // js-ok: display only (Chart.js ADR 0045)
-        ..lineTo(x + math.sin(rad) * width, y - math.cos(rad) * radius)
-        ..closePath();
-    case 'rectRounded':
-      // NOTE: the rounded rect implementation changed to use `arc` instead
-      // of `quadraticCurveTo` since it generates better results when rect
-      // is almost a circle. 0.516 (instead of 0.5) produces results with
-      // visually closer proportion to the previous impl and it is inscribed
-      // in the circle with `radius`. For more details, see the following
-      // PRs:
-      // https://github.com/chartjs/Chart.js/issues/5597
-      // https://github.com/chartjs/Chart.js/issues/5858
-      cornerRadius = radius * 0.516;
-      size = radius - cornerRadius;
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffset = math.cos(rad + quarterPi) * size;
-      xOffsetW =
-          // js-ok: display only (Chart.js ADR 0045)
-          math.cos(rad + quarterPi) * (hasW ? w! / 2 - cornerRadius : size);
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffset = math.sin(rad + quarterPi) * size;
-      yOffsetW =
-          // js-ok: display only (Chart.js ADR 0045)
-          math.sin(rad + quarterPi) * (hasW ? w! / 2 - cornerRadius : size);
-      ctx
-        ..arc(x - xOffsetW, y - yOffset, cornerRadius, rad - pi, rad - halfPi)
-        ..arc(x + yOffsetW, y - xOffset, cornerRadius, rad - halfPi, rad)
-        ..arc(x + xOffsetW, y + yOffset, cornerRadius, rad, rad + halfPi)
-        ..arc(x - yOffsetW, y + xOffset, cornerRadius, rad + halfPi, rad + pi)
-        ..closePath();
-    case 'rect':
-      if (!jsTruthy(rotation)) {
-        size = math.sqrt1_2 * radius;
-        width = hasW ? w! / 2 : size;
-        ctx.rect(x - width, y - size, 2 * width, 2 * size);
-        break;
-      }
-      rad += quarterPi;
-      /* falls through */
-      continue rectRot;
-    rectRot:
-    case 'rectRot':
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffset = math.cos(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffset = math.sin(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
-      ctx
-        ..moveTo(x - xOffsetW, y - yOffset)
-        ..lineTo(x + yOffsetW, y - xOffset)
-        ..lineTo(x + xOffsetW, y + yOffset)
-        ..lineTo(x - yOffsetW, y + xOffset)
-        ..closePath();
-    case 'crossRot':
-      rad += quarterPi;
-      /* falls through */
-      continue cross;
-    cross:
-    case 'cross':
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffset = math.cos(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffset = math.sin(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
-      ctx
-        ..moveTo(x - xOffsetW, y - yOffset)
-        ..lineTo(x + xOffsetW, y + yOffset)
-        ..moveTo(x + yOffsetW, y - xOffset)
-        ..lineTo(x - yOffsetW, y + xOffset);
-    case 'star':
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffset = math.cos(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffset = math.sin(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
-      ctx
-        ..moveTo(x - xOffsetW, y - yOffset)
-        ..lineTo(x + xOffsetW, y + yOffset)
-        ..moveTo(x + yOffsetW, y - xOffset)
-        ..lineTo(x - yOffsetW, y + xOffset);
-      rad += quarterPi;
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffset = math.cos(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffset = math.sin(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
-      ctx
-        ..moveTo(x - xOffsetW, y - yOffset)
-        ..lineTo(x + xOffsetW, y + yOffset)
-        ..moveTo(x + yOffsetW, y - xOffset)
-        ..lineTo(x - yOffsetW, y + xOffset);
-    case 'line':
-      // js-ok: display only (Chart.js ADR 0045)
-      xOffset = hasW ? w! / 2 : math.cos(rad) * radius;
-      // js-ok: display only (Chart.js ADR 0045)
-      yOffset = math.sin(rad) * radius;
-      ctx
-        ..moveTo(x - xOffset, y - yOffset)
-        ..lineTo(x + xOffset, y + yOffset);
-    case 'dash':
-      ctx
-        ..moveTo(x, y)
-        ..lineTo(
-          // js-ok: display only (Chart.js ADR 0045)
-          x + math.cos(rad) * (hasW ? w! / 2 : radius),
-          y + math.sin(rad) * radius, // js-ok: display only (Chart.js ADR 0045)
-        );
-    case false:
-      ctx.closePath();
+  if (style == false) {
+    ctx.closePath();
+  } else {
     // Default includes circle
-    default:
-      if (hasW) {
-        ctx.ellipse(x, y, w! / 2, radius, 0, 0, tau);
-      } else {
-        ctx.arc(x, y, radius, 0, tau);
-      }
-      ctx.closePath();
+    // DIVERGES(chartjs): platform-canvas-point-style, a canvas is no style.
+    _circlePath(ctx, x, y, radius, width);
   }
 
   ctx.fill();
   if (options.borderWidth > 0) {
     ctx.stroke();
+  }
+}
+
+/// The `default` branch of helpers.canvas.ts:196-203: the circle, or an
+/// ellipse of the legend width [w].
+void _circlePath(
+  CanvasRenderingContext2D ctx,
+  double x,
+  double y,
+  double radius,
+  double? w,
+) {
+  if (w != null) {
+    ctx.ellipse(x, y, w / 2, radius, 0, 0, tau);
+  } else {
+    ctx.arc(x, y, radius, 0, tau);
+  }
+  ctx.closePath();
+}
+
+/// The `case 'rectRot'` of helpers.canvas.ts:238-247, also the end of a
+/// rotated `rect`.
+void _rectRotPath(
+  CanvasRenderingContext2D ctx,
+  double x,
+  double y,
+  double radius,
+  double rad,
+  double? w,
+) {
+  // js-ok: display only (Chart.js ADR 0045)
+  final xOffsetW = math.cos(rad) * (w != null ? w / 2 : radius);
+  // js-ok: display only (Chart.js ADR 0045)
+  final xOffset = math.cos(rad) * radius;
+  // js-ok: display only (Chart.js ADR 0045)
+  final yOffset = math.sin(rad) * radius;
+  // js-ok: display only (Chart.js ADR 0045)
+  final yOffsetW = math.sin(rad) * (w != null ? w / 2 : radius);
+  ctx
+    ..moveTo(x - xOffsetW, y - yOffset)
+    ..lineTo(x + yOffsetW, y - xOffset)
+    ..lineTo(x + xOffsetW, y + yOffset)
+    ..lineTo(x - yOffsetW, y + xOffset)
+    ..closePath();
+}
+
+/// The `case 'cross'` of helpers.canvas.ts:252-261, also the end of
+/// `crossRot` and each half of `star`.
+void _crossPath(
+  CanvasRenderingContext2D ctx,
+  double x,
+  double y,
+  double radius,
+  double rad,
+  double? w,
+) {
+  // js-ok: display only (Chart.js ADR 0045)
+  final xOffsetW = math.cos(rad) * (w != null ? w / 2 : radius);
+  // js-ok: display only (Chart.js ADR 0045)
+  final xOffset = math.cos(rad) * radius;
+  // js-ok: display only (Chart.js ADR 0045)
+  final yOffset = math.sin(rad) * radius;
+  // js-ok: display only (Chart.js ADR 0045)
+  final yOffsetW = math.sin(rad) * (w != null ? w / 2 : radius);
+  ctx
+    ..moveTo(x - xOffsetW, y - yOffset)
+    ..lineTo(x + xOffsetW, y + yOffset)
+    ..moveTo(x + yOffsetW, y - xOffset)
+    ..lineTo(x - yOffsetW, y + xOffset);
+}
+
+/// `pointStyle: 'circle'` (index.d.ts:2040), the default of a point: a
+/// circle, or an ellipse of the legend width.
+final class CirclePointStyle extends PathPointStyle {
+  /// The circle.
+  const CirclePointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) => _circlePath(ctx, x, y, radius, width);
+}
+
+/// `pointStyle: 'triangle'` (helpers.canvas.ts:204-212).
+final class TrianglePointStyle extends PathPointStyle {
+  /// The triangle.
+  const TrianglePointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) {
+    final w = width != null ? width / 2 : radius;
+    var r = rad;
+    // js-ok: display only (Chart.js ADR 0045)
+    ctx.moveTo(x + math.sin(r) * w, y - math.cos(r) * radius);
+    r += twoThirdsPi;
+    // js-ok: display only (Chart.js ADR 0045)
+    ctx.lineTo(x + math.sin(r) * w, y - math.cos(r) * radius);
+    r += twoThirdsPi;
+    ctx
+      // js-ok: display only (Chart.js ADR 0045)
+      ..lineTo(x + math.sin(r) * w, y - math.cos(r) * radius)
+      ..closePath();
+  }
+}
+
+/// `pointStyle: 'rectRounded'` (helpers.canvas.ts:213-230).
+final class RectRoundedPointStyle extends PathPointStyle {
+  /// The square with round corners.
+  const RectRoundedPointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) {
+    // NOTE: the rounded rect implementation changed to use `arc` instead
+    // of `quadraticCurveTo` since it generates better results when rect
+    // is almost a circle. 0.516 (instead of 0.5) produces results with
+    // visually closer proportion to the previous impl and it is inscribed
+    // in the circle with `radius`. For more details, see the following
+    // PRs:
+    // https://github.com/chartjs/Chart.js/issues/5597
+    // https://github.com/chartjs/Chart.js/issues/5858
+    final cornerRadius = radius * 0.516;
+    final size = radius - cornerRadius;
+    // js-ok: display only (Chart.js ADR 0045)
+    final xOffset = math.cos(rad + quarterPi) * size;
+    final xOffsetW =
+        // js-ok: display only (Chart.js ADR 0045)
+        math.cos(rad + quarterPi) *
+        (width != null ? width / 2 - cornerRadius : size);
+    // js-ok: display only (Chart.js ADR 0045)
+    final yOffset = math.sin(rad + quarterPi) * size;
+    final yOffsetW =
+        // js-ok: display only (Chart.js ADR 0045)
+        math.sin(rad + quarterPi) *
+        (width != null ? width / 2 - cornerRadius : size);
+    ctx
+      ..arc(x - xOffsetW, y - yOffset, cornerRadius, rad - pi, rad - halfPi)
+      ..arc(x + yOffsetW, y - xOffset, cornerRadius, rad - halfPi, rad)
+      ..arc(x + xOffsetW, y + yOffset, cornerRadius, rad, rad + halfPi)
+      ..arc(x - yOffsetW, y + xOffset, cornerRadius, rad + halfPi, rad + pi)
+      ..closePath();
+  }
+}
+
+/// `pointStyle: 'rect'` (helpers.canvas.ts:231-237): a square, or the
+/// `rectRot` path turned by a quarter of pi when the rotation is truthy
+/// (the fall-through of upstream).
+final class RectPointStyle extends PathPointStyle {
+  /// The square.
+  const RectPointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) {
+    if (!rotated) {
+      final size = math.sqrt1_2 * radius;
+      final w = width != null ? width / 2 : size;
+      ctx.rect(x - w, y - size, 2 * w, 2 * size);
+      return;
+    }
+    /* falls through */
+    _rectRotPath(ctx, x, y, radius, rad + quarterPi, width);
+  }
+}
+
+/// `pointStyle: 'rectRot'` (helpers.canvas.ts:238-247): a square turned by
+/// a quarter of pi.
+final class RectRotPointStyle extends PathPointStyle {
+  /// The turned square.
+  const RectRotPointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) => _rectRotPath(ctx, x, y, radius, rad, width);
+}
+
+/// `pointStyle: 'crossRot'` (helpers.canvas.ts:248-251): the cross turned
+/// by a quarter of pi (the fall-through of upstream).
+final class CrossRotPointStyle extends PathPointStyle {
+  /// The turned cross.
+  const CrossRotPointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) {
+    /* falls through */
+    _crossPath(ctx, x, y, radius, rad + quarterPi, width);
+  }
+}
+
+/// `pointStyle: 'cross'` (helpers.canvas.ts:252-261).
+final class CrossPointStyle extends PathPointStyle {
+  /// The cross.
+  const CrossPointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) => _crossPath(ctx, x, y, radius, rad, width);
+}
+
+/// `pointStyle: 'star'` (helpers.canvas.ts:262-281): a cross and the cross
+/// turned by a quarter of pi.
+final class StarPointStyle extends PathPointStyle {
+  /// The star.
+  const StarPointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) {
+    _crossPath(ctx, x, y, radius, rad, width);
+    _crossPath(ctx, x, y, radius, rad + quarterPi, width);
+  }
+}
+
+/// `pointStyle: 'line'` (helpers.canvas.ts:282-287).
+final class LinePointStyle extends PathPointStyle {
+  /// The line.
+  const LinePointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) {
+    // js-ok: display only (Chart.js ADR 0045)
+    final xOffset = width != null ? width / 2 : math.cos(rad) * radius;
+    // js-ok: display only (Chart.js ADR 0045)
+    final yOffset = math.sin(rad) * radius;
+    ctx
+      ..moveTo(x - xOffset, y - yOffset)
+      ..lineTo(x + xOffset, y + yOffset);
+  }
+}
+
+/// `pointStyle: 'dash'` (helpers.canvas.ts:288-291).
+final class DashPointStyle extends PathPointStyle {
+  /// The dash.
+  const DashPointStyle();
+
+  @override
+  void addPath(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+  }) {
+    ctx
+      ..moveTo(x, y)
+      ..lineTo(
+        // js-ok: display only (Chart.js ADR 0045)
+        x + math.cos(rad) * (width != null ? width / 2 : radius),
+        y + math.sin(rad) * radius, // js-ok: display only (Chart.js ADR 0045)
+      );
+  }
+}
+
+/// An image as the point style (helpers.canvas.ts:179-187): `pointStyle`
+/// with an `HTMLImageElement` or an `HTMLCanvasElement` upstream. The image
+/// draws at its own size, centered and turned by the rotation, with no fill
+/// and no stroke, also for a radius of 0.
+final class ImagePointStyle extends PointStyle {
+  /// The style that draws [image].
+  const ImagePointStyle(this.image);
+
+  /// The image.
+  final CanvasImageSource image;
+
+  @override
+  void draw(
+    CanvasRenderingContext2D ctx, {
+    required double x,
+    required double y,
+    required double radius,
+    required double rad,
+    required bool rotated,
+    required double? width,
+    required double borderWidth,
+  }) {
+    ctx
+      ..save()
+      ..translate(x, y)
+      ..rotate(rad)
+      ..drawImage(
+        image,
+        -image.width / 2,
+        -image.height / 2,
+        image.width,
+        image.height,
+      )
+      ..restore();
   }
 }
 

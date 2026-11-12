@@ -5,6 +5,10 @@ import 'dart:typed_data';
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
@@ -139,6 +143,8 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         node is bool ||
         node is String ||
         node is Enum ||
+        node is PointStyle ||
+        node is CubicInterpolationMode ||
         node.runtimeType == Color) {
       return true;
     }

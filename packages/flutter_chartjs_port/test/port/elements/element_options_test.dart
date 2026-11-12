@@ -9,7 +9,18 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show DrawPointOptions;
+    show
+        CirclePointStyle,
+        CrossPointStyle,
+        CrossRotPointStyle,
+        DashPointStyle,
+        DrawPointOptions,
+        LinePointStyle,
+        RectPointStyle,
+        RectRotPointStyle,
+        RectRoundedPointStyle,
+        StarPointStyle,
+        TrianglePointStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart' show jsAssign;
@@ -467,16 +478,16 @@ void main() {
 
     test('draws the calls of the adapter for each point style', () {
       for (final style in [
-        'circle',
-        'cross',
-        'crossRot',
-        'dash',
-        'line',
-        'rect',
-        'rectRounded',
-        'rectRot',
-        'star',
-        'triangle',
+        const CirclePointStyle(),
+        const CrossPointStyle(),
+        const CrossRotPointStyle(),
+        const DashPointStyle(),
+        const LinePointStyle(),
+        const RectPointStyle(),
+        const RectRoundedPointStyle(),
+        const RectRotPointStyle(),
+        const StarPointStyle(),
+        const TrianglePointStyle(),
         false,
         null,
         undefined,
@@ -503,7 +514,7 @@ void main() {
       final options = PointOptions({
         'radius': 5,
         'borderWidth': 1,
-        'pointStyle': 'circle',
+        'pointStyle': const CirclePointStyle(),
       });
       final point = PointElement({'options': options, 'x': 50, 'y': 40});
       options['radius'] = 7;

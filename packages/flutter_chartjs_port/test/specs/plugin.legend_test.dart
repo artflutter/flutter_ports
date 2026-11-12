@@ -10,6 +10,10 @@ import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CrossRotPointStyle, RectPointStyle, StarPointStyle;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -83,7 +87,8 @@ List<Object?> _barDatasets() => <Object?>[
     'label': 'dataset3',
     'borderWidth': 10,
     'borderColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
-    'pointStyle': 'crossRot',
+    // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+    'pointStyle': const CrossRotPointStyle(),
     'data': <Object?>[],
   },
 ];
@@ -108,7 +113,8 @@ List<Object?> _lineDatasets() => <Object?>[
     'label': 'dataset3',
     'borderWidth': 10,
     'borderColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
-    'pointStyle': 'crossRot',
+    // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+    'pointStyle': const CrossRotPointStyle(),
     'fill': false,
     'data': <Object?>[],
   },
@@ -285,7 +291,8 @@ void main() {
             hidden: false,
             lineWidth: 10,
             strokeStyle: const native_ui.Color.fromRGBO(0, 128, 0, 1),
-            pointStyle: 'crossRot',
+            // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+            pointStyle: const CrossRotPointStyle(),
             datasetIndex: 2,
           ),
         ]),
@@ -368,7 +375,8 @@ void main() {
             hidden: false,
             lineWidth: 10,
             strokeStyle: const native_ui.Color.fromRGBO(0, 128, 0, 1),
-            pointStyle: 'crossRot',
+            // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+            pointStyle: const CrossRotPointStyle(),
             datasetIndex: 2,
           ),
         ]),
@@ -505,7 +513,9 @@ void main() {
             'legend': <String, Object?>{
               'labels': <String, Object?>{
                 'usePointStyle': true,
-                'pointStyle': 'rect',
+                // DIVERGES(chartjs): adapt-point-style-objects, the style
+                // class.
+                'pointStyle': const RectPointStyle(),
               },
               'position': ChartPosition.right,
               'align': ChartAlign.center,
@@ -719,7 +729,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(_pointStyleItems('crossRot')),
+        jasmineEquals(_pointStyleItems(const CrossRotPointStyle())),
       );
     });
 
@@ -738,7 +748,9 @@ void main() {
               'legend': <String, Object?>{
                 'labels': <String, Object?>{
                   'usePointStyle': true,
-                  'pointStyle': 'star',
+                  // DIVERGES(chartjs): adapt-point-style-objects, the style
+                  // class.
+                  'pointStyle': const StarPointStyle(),
                 },
               },
             },
@@ -747,7 +759,7 @@ void main() {
 
         expect(
           chart.legend!.legendItems,
-          jasmineEquals(_pointStyleItems('star')),
+          jasmineEquals(_pointStyleItems(const StarPointStyle())),
         );
       },
     );
@@ -1052,7 +1064,8 @@ List<Object?> _pointStyleDatasets() => <Object?>[
     'borderDashOffset': 5.5,
     'borderWidth': 0,
     'borderColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
-    'pointStyle': 'crossRot',
+    // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+    'pointStyle': const CrossRotPointStyle(),
     'pointBackgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
     'pointBorderWidth': 5,
     'pointBorderColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
@@ -1064,7 +1077,8 @@ List<Object?> _pointStyleDatasets() => <Object?>[
     'borderJoinStyle': native_ui.StrokeJoin.miter,
     'borderWidth': 2,
     'borderColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
-    'pointStyle': 'crossRot',
+    // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+    'pointStyle': const CrossRotPointStyle(),
     'pointRotation': 15,
     'data': <Object?>[],
   },
@@ -1072,7 +1086,7 @@ List<Object?> _pointStyleDatasets() => <Object?>[
 
 /// The items of the usePointStyle cases with the point style [pointStyle]
 /// (:769-801, :845-877).
-List<Object?> _pointStyleItems(String pointStyle) => <Object?>[
+List<Object?> _pointStyleItems(PointStyle pointStyle) => <Object?>[
   _item(
     text: 'dataset1',
     fillStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),

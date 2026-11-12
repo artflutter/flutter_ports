@@ -177,7 +177,11 @@ class _EventsDemoState extends State<EventsDemo> {
       ctx.fillStyle = ui.Color.fromRGBO(54, 162, 235, alpha);
       drawPoint(
         ctx,
-        const PointOptions(pointStyle: 'circle', radius: 3, borderWidth: 0),
+        const PointOptions(
+          pointStyle: CirclePointStyle(),
+          radius: 3,
+          borderWidth: 0,
+        ),
         _trail[i].dx,
         _trail[i].dy,
       );
@@ -203,13 +207,21 @@ class _EventsDemoState extends State<EventsDemo> {
       ..lineWidth = 2;
     drawPoint(
       ctx,
-      const PointOptions(pointStyle: 'circle', radius: 8, borderWidth: 2),
+      const PointOptions(
+        pointStyle: CirclePointStyle(),
+        radius: 8,
+        borderWidth: 2,
+      ),
       hit.dx,
       hit.dy,
     );
     drawPoint(
       ctx,
-      const PointOptions(pointStyle: 'crossRot', radius: 14, borderWidth: 2),
+      const PointOptions(
+        pointStyle: CrossRotPointStyle(),
+        radius: 14,
+        borderWidth: 2,
+      ),
       hit.dx,
       hit.dy,
     );

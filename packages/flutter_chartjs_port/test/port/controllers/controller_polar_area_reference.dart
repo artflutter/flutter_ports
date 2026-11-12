@@ -38,6 +38,7 @@ import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -44847,7 +44848,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'plugins': <String, Object?>{
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
@@ -45531,7 +45532,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 0.0,
               'textAlign': TextAlign.left,
@@ -45542,7 +45543,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 1.0,
               'textAlign': TextAlign.left,
@@ -45553,7 +45554,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 2.0,
               'textAlign': TextAlign.left,
@@ -45643,7 +45644,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'plugins': <String, Object?>{
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
@@ -47024,7 +47025,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 0.0,
               'textAlign': TextAlign.left,
@@ -47035,7 +47036,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': true,
               'index': 1.0,
               'textAlign': TextAlign.left,
@@ -47046,7 +47047,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 2.0,
               'textAlign': TextAlign.left,
@@ -47136,7 +47137,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'plugins': <String, Object?>{
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,
@@ -48991,7 +48992,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 0.0,
               'textAlign': TextAlign.left,
@@ -49002,7 +49003,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 1.0,
               'textAlign': TextAlign.left,
@@ -49013,7 +49014,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               'strokeStyle': '#fff',
               'fontColor': '#666',
               'lineWidth': 2.0,
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'hidden': false,
               'index': 2.0,
               'textAlign': TextAlign.left,
@@ -49099,7 +49100,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'plugins': <String, Object?>{
           'legend': <String, Object?>{
             'labels': <String, Object?>{
-              'pointStyle': 'circle',
+              'pointStyle': CirclePointStyle(),
               'textAlign': TextAlign.left,
               'useBorderRadius': true,
               'borderRadius': 0.0,

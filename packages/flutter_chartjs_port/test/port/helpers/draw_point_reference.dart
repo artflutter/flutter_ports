@@ -4,6 +4,8 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // src/helpers/helpers.canvas.ts at the pinned Chart.js. 64 cases.
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+
 /// The Node.js version that generated [drawPointReference].
 const String drawPointReferenceNode = 'v24.22.1';
 
@@ -35,7 +37,7 @@ typedef DrawPointReferenceCase = ({
 /// (harness-mock-optional-args).
 const List<DrawPointReferenceCase> drawPointReference = [
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -49,7 +51,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -63,7 +65,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -77,7 +79,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -91,7 +93,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'triangle',
+    style: TrianglePointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -107,7 +109,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'triangle',
+    style: TrianglePointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -123,7 +125,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'triangle',
+    style: TrianglePointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -139,7 +141,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'triangle',
+    style: TrianglePointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -155,7 +157,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRounded',
+    style: RectRoundedPointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -212,7 +214,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRounded',
+    style: RectRoundedPointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -269,7 +271,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRounded',
+    style: RectRoundedPointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -326,7 +328,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRounded',
+    style: RectRoundedPointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -383,7 +385,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rect',
+    style: RectPointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -404,7 +406,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rect',
+    style: RectPointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -417,7 +419,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rect',
+    style: RectPointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -434,7 +436,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rect',
+    style: RectPointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -451,7 +453,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRot',
+    style: RectRotPointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -468,7 +470,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRot',
+    style: RectRotPointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -485,7 +487,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRot',
+    style: RectRotPointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -502,7 +504,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'rectRot',
+    style: RectRotPointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -519,7 +521,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'cross',
+    style: CrossPointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -535,7 +537,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'cross',
+    style: CrossPointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -551,7 +553,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'cross',
+    style: CrossPointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -567,7 +569,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'cross',
+    style: CrossPointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -583,7 +585,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'crossRot',
+    style: CrossRotPointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -599,7 +601,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'crossRot',
+    style: CrossRotPointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -615,7 +617,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'crossRot',
+    style: CrossRotPointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -631,7 +633,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'crossRot',
+    style: CrossRotPointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -647,29 +649,9 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'star',
+    style: StarPointStyle(),
     rotation: null,
     w: null,
-    radius: 10,
-    borderWidth: 1,
-    calls: [
-      ('beginPath', []),
-      ('moveTo', [40, 40]),
-      ('lineTo', [60, 40]),
-      ('moveTo', [50, 30]),
-      ('lineTo', [50, 50]),
-      ('moveTo', [42.928932188134524, 32.928932188134524]),
-      ('lineTo', [57.071067811865476, 47.071067811865476]),
-      ('moveTo', [57.071067811865476, 32.928932188134524]),
-      ('lineTo', [42.928932188134524, 47.071067811865476]),
-      ('fill', [null, null]),
-      ('stroke', [null]),
-    ],
-  ),
-  (
-    style: 'star',
-    rotation: null,
-    w: 20,
     radius: 10,
     borderWidth: 1,
     calls: [
@@ -687,7 +669,27 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'star',
+    style: StarPointStyle(),
+    rotation: null,
+    w: 20,
+    radius: 10,
+    borderWidth: 1,
+    calls: [
+      ('beginPath', []),
+      ('moveTo', [40, 40]),
+      ('lineTo', [60, 40]),
+      ('moveTo', [50, 30]),
+      ('lineTo', [50, 50]),
+      ('moveTo', [42.928932188134524, 32.928932188134524]),
+      ('lineTo', [57.071067811865476, 47.071067811865476]),
+      ('moveTo', [57.071067811865476, 32.928932188134524]),
+      ('lineTo', [42.928932188134524, 47.071067811865476]),
+      ('fill', [null, null]),
+      ('stroke', [null]),
+    ],
+  ),
+  (
+    style: StarPointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -707,7 +709,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'star',
+    style: StarPointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -727,7 +729,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'line',
+    style: LinePointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -741,7 +743,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'line',
+    style: LinePointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -755,7 +757,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'line',
+    style: LinePointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -769,7 +771,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'line',
+    style: LinePointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -783,7 +785,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'dash',
+    style: DashPointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -797,7 +799,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'dash',
+    style: DashPointStyle(),
     rotation: null,
     w: 20,
     radius: 10,
@@ -811,7 +813,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'dash',
+    style: DashPointStyle(),
     rotation: 30,
     w: null,
     radius: 10,
@@ -825,7 +827,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'dash',
+    style: DashPointStyle(),
     rotation: 30,
     w: 20,
     radius: 10,
@@ -947,7 +949,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'unknown',
+    style: 7,
     rotation: null,
     w: null,
     radius: 10,
@@ -961,7 +963,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'unknown',
+    style: 7,
     rotation: null,
     w: 20,
     radius: 10,
@@ -975,7 +977,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'unknown',
+    style: 7,
     rotation: 30,
     w: null,
     radius: 10,
@@ -989,7 +991,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'unknown',
+    style: 7,
     rotation: 30,
     w: 20,
     radius: 10,
@@ -1087,7 +1089,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: null,
     radius: double.nan,
@@ -1095,7 +1097,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     calls: [],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: null,
     radius: 0,
@@ -1103,7 +1105,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     calls: [],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: null,
     radius: -1,
@@ -1111,7 +1113,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     calls: [],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -1124,7 +1126,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: null,
     radius: 10,
@@ -1137,7 +1139,7 @@ const List<DrawPointReferenceCase> drawPointReference = [
     ],
   ),
   (
-    style: 'circle',
+    style: CirclePointStyle(),
     rotation: null,
     w: null,
     radius: 10,

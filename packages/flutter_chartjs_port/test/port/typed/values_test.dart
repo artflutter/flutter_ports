@@ -63,40 +63,6 @@ void main() {
     });
   });
 
-  group('ChartPointStyle', () {
-    test('the 10 names of PointStyle and none', () {
-      const styles = <ChartPointStyle>[
-        .circle,
-        .cross,
-        .crossRot,
-        .dash,
-        .line,
-        .rect,
-        .rectRounded,
-        .rectRot,
-        .star,
-        .triangle,
-        .none,
-      ];
-      expect(
-        [for (final s in styles) s.optionValue],
-        [
-          'circle',
-          'cross',
-          'crossRot',
-          'dash',
-          'line',
-          'rect',
-          'rectRounded',
-          'rectRot',
-          'star',
-          'triangle',
-          false,
-        ],
-      );
-    });
-  });
-
   group('ChartFill', () {
     test('the names and none', () {
       const fills = <ChartFill>[.origin, .start, .end, .stack, .shape, .none];

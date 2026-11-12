@@ -75,6 +75,8 @@ bool _sameDefault(Object? actual, String text) => switch (actual) {
   final Enum value => '$value' == text,
   // The default mode of `cubicInterpolationMode`.
   DefaultCubicInterpolationMode() => text == 'DefaultCubicInterpolationMode()',
+  // The default point style.
+  CirclePointStyle() => text == 'CirclePointStyle()',
   final bool value => '$value' == text,
   final List<Object?> value => listEquals(value, const []) && text == '[]',
   _ => false,
@@ -203,7 +205,7 @@ void main() {
       pointHoverBorderColor: teal,
       pointHoverRadius: 1,
       pointRadius: 1,
-      pointStyle: .circle,
+      pointStyle: CirclePointStyle(),
       shadow: ChartShadow(color: teal),
       showLine: true,
       spanGaps: true,

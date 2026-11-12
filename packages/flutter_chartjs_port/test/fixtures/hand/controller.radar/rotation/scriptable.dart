@@ -2,6 +2,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show LinePointStyle;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
@@ -56,7 +58,8 @@ Map<String, Object?> fixture() => <String, Object?>{
                 ? 60
                 : 120;
           },
-          'pointStyle': 'line',
+          // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+          'pointStyle': const LinePointStyle(),
           'radius': 10,
         },
       },
