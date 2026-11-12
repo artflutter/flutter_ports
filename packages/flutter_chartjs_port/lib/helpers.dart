@@ -56,6 +56,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         attachContext,
         bezierCurveTo,
         bezierInterpolation,
+        boolOption,
         boundSegment,
         boundSegments,
         capitalize,

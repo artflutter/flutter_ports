@@ -394,7 +394,7 @@ class LinearScaleBase extends Scale {
     void setMin(double v) => min = minDefined ? min : v;
     void setMax(double v) => max = maxDefined ? max : v;
 
-    if (jsTruthy(beginAtZero)) {
+    if (beginAtZero) {
       final minSign = sign(min);
       final maxSign = sign(max);
 
@@ -410,7 +410,7 @@ class LinearScaleBase extends Scale {
 
       setMax(max + offset);
 
-      if (!jsTruthy(beginAtZero)) {
+      if (!beginAtZero) {
         setMin(min - offset);
       }
     }
@@ -487,7 +487,7 @@ class LinearScaleBase extends Scale {
       maxDigits: maxDigits(),
       horizontal: isHorizontal(),
       minRotation: jsOrZero(tickOpts.minRotation),
-      includeBounds: tickOpts.includeBounds != false,
+      includeBounds: tickOpts.includeBounds,
     );
     final dataRange = range ?? (min: min, max: max);
     final ticks = _generateTicks(numericGeneratorOptions, dataRange);
@@ -499,7 +499,7 @@ class LinearScaleBase extends Scale {
       setMinAndMaxByKey(ticks, this, 'value');
     }
 
-    if (jsTruthy(opts.reverse)) {
+    if (opts.reverse) {
       // `Array.prototype.reverse` reverses the list in place.
       ticks.setAll(0, ticks.reversed.toList());
 
@@ -529,7 +529,7 @@ class LinearScaleBase extends Scale {
 
     super.configure();
 
-    if (jsTruthy(options.offset) && ticks!.isNotEmpty) {
+    if (options.offset && ticks!.isNotEmpty) {
       final offset = (end - start) / jsMax(ticks.length - 1.0, 1) / 2;
       start -= offset;
       end += offset;

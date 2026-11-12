@@ -283,7 +283,7 @@ class LogarithmicScale extends Scale {
     this.min = isFinite(min) ? jsMax(0, min) : double.nan;
     this.max = isFinite(max) ? jsMax(0, max) : double.nan;
 
-    if (jsTruthy(options.beginAtZero)) {
+    if (options.beginAtZero) {
       _zero = true;
     }
 
@@ -350,7 +350,7 @@ class LogarithmicScale extends Scale {
       setMinAndMaxByKey(ticks, this, 'value');
     }
 
-    if (jsTruthy(opts.reverse)) {
+    if (opts.reverse) {
       // `Array.prototype.reverse` reverses the list in place.
       ticks.setAll(0, ticks.reversed.toList());
 

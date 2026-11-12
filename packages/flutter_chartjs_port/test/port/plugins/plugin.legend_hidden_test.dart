@@ -941,11 +941,9 @@ void main() {
         expect(chart.legend!.legendHitBoxes, hasLength(3));
       });
 
-      for (final (name, value) in [
-        ('null', null),
-        ('0', 0),
-        ('an empty string', ''),
-      ]) {
+      // The legend display holds a bool (row adapt-bool-options): null is
+      // the one falsy value that is not false.
+      for (final (name, value) in [('null', null)]) {
         testWidgets('$type: a falsy display that is not false: $name', (
           tester,
         ) async {
@@ -3749,43 +3747,6 @@ void main() {
         expect((exact.first! as List<Object?>).first, 'default/false/raw=9.0');
         expect(exact, run(exact: false));
       });
-
-      for (final key in const ['reverse', 'display']) {
-        testWidgets('$type: an object at the legend key $key', (tester) async {
-          // Its read makes a sub resolver, which calls the function _fallback.
-          List<Object?> run({required bool exact}) {
-            var armed = false;
-            final log = <Object?>[];
-            late final Chart chart;
-            chart = _chartOf(
-              _config(
-                type,
-                dataset: _indexedColors,
-                legend: {
-                  key: <String, Object?>{},
-                  '_fallback': (Object? prop, Object? value) {
-                    if (armed && prop == key) log.add(_firstArcState(chart));
-                    return undefined;
-                  },
-                },
-              ),
-              exact: exact,
-            );
-            _changeFirstArc(chart);
-            armed = true;
-            chart.update('none');
-            armed = false;
-            return [log, _state(chart)];
-          }
-
-          final exact = run(exact: true);
-          expect(
-            (exact.first! as List<Object?>).first,
-            'default/false/raw=9.0',
-          );
-          expect(exact, run(exact: false));
-        });
-      }
 
       testWidgets('$type: a user arc at index 0 changes an option', (
         tester,

@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: the truthiness of `alignToPixels`.
+// Original code, not ported from Chart.js: the bool option `alignToPixels`.
 @TestOn('vm')
 library;
 
@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show alignPixel;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show int16Range;
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A line chart at the pixel ratio 2 with two linear scales, `alignToPixels`
@@ -46,29 +45,16 @@ Map<String, Object?> _config(Object? value) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // core.scale.js:497 stores the raw option, and :926 tests its truthiness.
-  // The port stores the `ToBoolean` at :497 (row
-  // adapt-loop-invariant-truthiness): each value gives the pixels of its
-  // truthiness.
+  // core.scale.js:497 stores the option, and :926 tests it. The option holds
+  // a bool (row adapt-bool-options): absent and null are false.
   final cases = <(String, Object?, bool)>[
     ('absent', undefined, false),
     ('true', true, true),
     ('false', false, false),
-    ('1', 1, true),
-    ('0', 0, false),
-    ('NaN', double.nan, false),
-    ("'a'", 'a', true),
-    ("''", '', false),
     ('null', null, false),
-    ('an object', <String, Object?>{}, true),
   ];
   for (final (name, value, truthy) in cases) {
-    test('alignToPixels $name gives the pixels of its truthiness', () {
-      // A value outside the type `boolean` of the key is a foreign value
-      // (oracle O2): this test writes them on purpose.
-      final saved = foreignAudit;
-      foreignAudit = (owner, key, raw) {};
-      addTearDown(() => foreignAudit = saved);
+    test('alignToPixels $name gives its pixels', () {
       final canvas = UiCanvasElement(width: 641, height: 401);
       final chart = Chart(canvas, _config(value));
       addTearDown(chart.destroy);

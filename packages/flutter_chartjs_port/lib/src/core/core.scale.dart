@@ -336,14 +336,14 @@ void _garbageCollect(Map<TextStyle, _TextCache> caches, int length) {
 /// applies [jsAdd]: a string `tickLength` joins the other operand, for
 /// example `'8' + 0` gives `'80'` (core.scale.js:649).
 Object? _getTickMarkLength(GridLineOptions options) {
-  return jsTruthy(options.drawTicks) ? options.tickLength : 0.0;
+  return options.drawTicks ? options.tickLength : 0.0;
 }
 
 /// core.scale.js:95 `getTitleHeight`.
 ///
 /// @param {object} options
 double _getTitleHeight(ScaleTitleOptions options, Object? fallback) {
-  if (!jsTruthy(options.display)) {
+  if (!options.display) {
     return 0;
   }
 
@@ -1324,7 +1324,7 @@ class Scale extends _ScalePrototype
             (grace == null
                 ? const ValueGrace(0)
                 : const ValueGrace(double.nan)),
-        jsTruthy(beginAtZero),
+        beginAtZero,
       );
       _dataLimitsCached = true;
     }
@@ -1360,8 +1360,8 @@ class Scale extends _ScalePrototype
     afterCalculateLabelRotation();
 
     // Auto-skip
-    if (jsTruthy(tickOpts.display) &&
-        (jsTruthy(tickOpts.autoSkip) || tickOpts.source == TickSource.auto)) {
+    if (tickOpts.display &&
+        (tickOpts.autoSkip || tickOpts.source == TickSource.auto)) {
       ticks = autoSkip(this, ticks!);
       _labelSizes = null;
       afterAutoSkip();
@@ -1393,7 +1393,7 @@ class Scale extends _ScalePrototype
   @override
   @protected
   void configure() {
-    var reversePixels = jsTruthy(options.reverse);
+    var reversePixels = options.reverse;
     double startPixel;
     double endPixel;
 
@@ -1567,7 +1567,7 @@ class Scale extends _ScalePrototype
     double maxLabelDiagonal;
 
     if (!_isVisible() ||
-        !jsTruthy(tickOpts.display) ||
+        !tickOpts.display ||
         _jsGreaterOrEqual(minRotation, maxRotation) ||
         numTicks <= 1 ||
         !isHorizontal()) {
@@ -1586,13 +1586,13 @@ class Scale extends _ScalePrototype
       0,
       this.maxWidth,
     );
-    tickWidth = jsTruthy(options.offset)
+    tickWidth = options.offset
         ? this.maxWidth / numTicks
         : maxWidth / (numTicks - 1);
 
     // Allow 3 pixels x2 padding either side for label readability
     if (maxLabelWidth + 6 > tickWidth) {
-      tickWidth = maxWidth / (numTicks - (jsTruthy(options.offset) ? 0.5 : 1));
+      tickWidth = maxWidth / (numTicks - (options.offset ? 0.5 : 1));
       maxHeight =
           this.maxHeight -
           jsToNumber(_getTickMarkLength(options.grid)) -
@@ -1690,7 +1690,7 @@ class Scale extends _ScalePrototype
       }
 
       // Don't bother fitting the ticks if we are not showing the labels
-      if (jsTruthy(tickOpts.display) && ticks!.isNotEmpty) {
+      if (tickOpts.display && ticks!.isNotEmpty) {
         final _LabelSizes(:first, :last, :widest, :highest) = _getLabelSizes();
         final tickPadding = jsToNumber(tickOpts.padding) * 2;
         final angleRadians = _rotationRadians;
@@ -1699,7 +1699,7 @@ class Scale extends _ScalePrototype
 
         if (isHorizontal) {
           // A horizontal axis is more constrained by the height.
-          final labelHeight = jsTruthy(tickOpts.mirror)
+          final labelHeight = tickOpts.mirror
               ? 0.0
               : sin * widest.width + cos * highest.height;
           minSizeHeight = jsMin(
@@ -1710,7 +1710,7 @@ class Scale extends _ScalePrototype
           // A vertical axis is more constrained by the width. Labels are the
           // dominant factor here, so get that length first and account for
           // padding
-          final labelWidth = jsTruthy(tickOpts.mirror)
+          final labelWidth = tickOpts.mirror
               ? 0.0
               : cos * widest.width + sin * highest.height;
 
@@ -2269,12 +2269,12 @@ class Scale extends _ScalePrototype
     final offset = grid.offset;
     final isHorizontal = this.isHorizontal();
     final ticks = this.ticks!;
-    final ticksLength = ticks.length + (jsTruthy(offset) ? 1 : 0);
+    final ticksLength = ticks.length + (offset ? 1 : 0);
     final tl = _getTickMarkLength(grid);
     final items = <_GridLineItem>[];
 
     final borderOpts = border.setContext(getContext());
-    final axisWidth = jsTruthy(borderOpts.display) ? borderOpts.width : 0.0;
+    final axisWidth = borderOpts.display ? borderOpts.width : 0.0;
     final axisHalfWidth = jsToNumber(axisWidth) / 2;
     // `_alignPixel` tests `width !== 0` and divides the width
     // (helpers.canvas.ts:127). For a number and for `undefined`, the ToNumber
@@ -2454,7 +2454,7 @@ class Scale extends _ScalePrototype
     final align = optionTicks.align;
     final crossAlign = optionTicks.crossAlign;
     final padding = optionTicks.padding;
-    final mirror = jsTruthy(optionTicks.mirror);
+    final mirror = optionTicks.mirror;
     final tl = _getTickMarkLength(options.grid);
     final tickAndPadding = jsAdd(tl, padding);
     final hTickAndPadding = mirror ? -jsToNumber(padding) : tickAndPadding;
@@ -2545,11 +2545,11 @@ class Scale extends _ScalePrototype
 
         if (textAlign == TickAlign.inner) {
           if (i == ilen - 1) {
-            tickTextAlign = !jsTruthy(this.options.reverse)
+            tickTextAlign = !this.options.reverse
                 ? TextAlign.right
                 : TextAlign.left;
           } else if (i == 0) {
-            tickTextAlign = !jsTruthy(this.options.reverse)
+            tickTextAlign = !this.options.reverse
                 ? TextAlign.left
                 : TextAlign.right;
           } else {
@@ -2581,7 +2581,7 @@ class Scale extends _ScalePrototype
         if (mirror) {
           textOffset *= -1;
         }
-        if (rotation != 0 && !jsTruthy(optsAtIndex.showLabelBackdrop)) {
+        if (rotation != 0 && !optsAtIndex.showLabelBackdrop) {
           // js-ok: a label pixel of getLabelItems (Chart.js ADR 0045)
           x = jsAdd(x, (lineHeight / 2) * math.sin(rotation));
         }
@@ -2592,7 +2592,7 @@ class Scale extends _ScalePrototype
 
       _LabelBackdrop? backdrop;
 
-      if (jsTruthy(optsAtIndex.showLabelBackdrop)) {
+      if (optsAtIndex.showLabelBackdrop) {
         final labelPadding = toPadding(optsAtIndex.backdropPadding);
         final height = _at(labelSizes.heights, i) ?? double.nan;
         final width = _at(labelSizes.widths, i) ?? double.nan;
@@ -2714,7 +2714,7 @@ class Scale extends _ScalePrototype
     Object x = double.nan;
 
     if (position == ChartPosition.left) {
-      if (jsTruthy(mirror)) {
+      if (mirror) {
         x = jsAdd(right, padding);
 
         if (crossAlign == TickCrossAlign.near) {
@@ -2740,7 +2740,7 @@ class Scale extends _ScalePrototype
         }
       }
     } else if (position == ChartPosition.right) {
-      if (jsTruthy(mirror)) {
+      if (mirror) {
         x = jsAdd(left, padding);
 
         if (crossAlign == TickCrossAlign.near) {
@@ -2778,7 +2778,7 @@ class Scale extends _ScalePrototype
   ///
   /// Dart `null` stands for JS `undefined`.
   _LabelArea? _computeLabelArea() {
-    if (jsTruthy(options.ticks.mirror)) {
+    if (options.ticks.mirror) {
       return null;
     }
 
@@ -2820,7 +2820,7 @@ class Scale extends _ScalePrototype
   @override
   double getLineWidthForValue(Object? value) {
     final grid = options.grid;
-    if (!_isVisible() || !jsTruthy(grid.display)) {
+    if (!_isVisible() || !grid.display) {
       return 0;
     }
     final ticks = this.ticks!;
@@ -2866,15 +2866,15 @@ class Scale extends _ScalePrototype
         ..restore();
     }
 
-    if (jsTruthy(grid.display)) {
+    if (grid.display) {
       for (var i = 0, ilen = items.length; i < ilen; ++i) {
         final item = items[i];
 
-        if (jsTruthy(grid.drawOnChartArea)) {
+        if (grid.drawOnChartArea) {
           drawLine((x: item.x1, y: item.y1), (x: item.x2, y: item.y2), item);
         }
 
-        if (jsTruthy(grid.drawTicks)) {
+        if (grid.drawTicks) {
           drawLine(
             (x: item.tx1, y: item.ty1),
             (x: item.tx2, y: item.ty2),
@@ -2901,7 +2901,7 @@ class Scale extends _ScalePrototype
     final border = options.border;
     final grid = options.grid;
     final borderOpts = border.setContext(getContext());
-    final axisWidth = jsTruthy(border.display) ? borderOpts.width : 0.0;
+    final axisWidth = border.display ? borderOpts.width : 0.0;
     if (!jsTruthy(axisWidth)) {
       return;
     }
@@ -2940,7 +2940,7 @@ class Scale extends _ScalePrototype
   void drawLabels([types.ChartArea? chartArea]) {
     final optionTicks = options.ticks;
 
-    if (!jsTruthy(optionTicks.display)) {
+    if (!optionTicks.display) {
       return;
     }
 
@@ -2979,7 +2979,7 @@ class Scale extends _ScalePrototype
     final title = options.title;
     final reverse = options.reverse;
 
-    if (!jsTruthy(title.display)) {
+    if (!title.display) {
       return;
     }
 

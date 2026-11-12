@@ -64,7 +64,7 @@ final Map<String, Object? Function(OptionView view)> _scaleGetters = {
 /// declared ones for some of them.
 Map<String, Object?> _scaleValues() => {
   'display': 'auto',
-  'alignToPixels': 1,
+  'alignToPixels': true,
   'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
   'reverse': true,
   'clip': false,
@@ -80,7 +80,7 @@ Map<String, Object?> _scaleValues() => {
   'offset': true,
   'bounds': ScaleBounds.ticks,
   'labels': <Object?>['a', 'b'],
-  'beginAtZero': 0,
+  'beginAtZero': false,
   'grace': const PercentGrace(5),
   'fullSize': false,
   'stack': 'group',
@@ -106,9 +106,11 @@ void main() {
       });
     }
 
-    test('an absent key reads undefined', () {
+    test('an absent key reads undefined, and false for an on/off key', () {
       final view = _view([<String, Object?>{}]);
-      expect(CoreScaleOptions(view).offset, same(undefined));
+      // Row adapt-bool-options: an absent on/off option is false.
+      expect(CoreScaleOptions(view).offset, isFalse);
+      expect(CoreScaleOptions(view).min, same(undefined));
       expect(CoreScaleOptions(view).ticks.raw, same(undefined));
     });
 
@@ -127,15 +129,15 @@ void main() {
           <String, Object?>{
             'reverse': (Object? ctx) {
               calls.add(ctx);
-              return 'yes';
+              return true;
             },
           },
         ],
         <String, Object?>{'type': 'scale'},
       );
       final options = CoreScaleOptions(view);
-      expect(options.reverse, 'yes');
-      expect(options.reverse, 'yes');
+      expect(options.reverse, isTrue);
+      expect(options.reverse, isTrue);
       // The view caches the value: one call.
       expect(calls, hasLength(1));
       expect((calls.single! as AnyObject)['type'], 'scale');
@@ -181,8 +183,9 @@ void main() {
         ]),
       );
       expect(options.ticks.raw, isFalse);
-      expect(options.ticks.display, same(undefined));
-      expect(options.grid.display, same(undefined));
+      // An absent on/off option is false (row adapt-bool-options).
+      expect(options.ticks.display, isFalse);
+      expect(options.grid.display, isFalse);
     });
 
     test('null and undefined throw a TypeError', () {

@@ -56,7 +56,7 @@ List<Tick> autoSkip(types.Scale scale, List<Tick> ticks) {
     jsTruthy(maxTicksLimit) ? jsToNumber(maxTicksLimit) : determinedMaxTicks,
     determinedMaxTicks,
   );
-  final majorIndices = jsTruthy(tickOpts.major.enabled)
+  final majorIndices = tickOpts.major.enabled
       ? _getMajorIndices(ticks)
       : <double>[];
   final numMajorIndices = majorIndices.length;

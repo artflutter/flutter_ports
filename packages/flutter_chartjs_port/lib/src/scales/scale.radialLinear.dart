@@ -240,7 +240,7 @@ final class _RenderTextOpts implements types.RenderTextOpts {
 double _getTickBackdropHeight(CoreScaleOptions opts) {
   final tickOpts = opts.ticks;
 
-  if (jsTruthy(tickOpts.display) && jsTruthy(opts.display)) {
+  if (tickOpts.display && jsTruthy(opts.display)) {
     final padding = toPadding(tickOpts.backdropPadding);
     final font = tickOpts.font;
     // DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
@@ -355,7 +355,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
   final labelSizes = List<_LabelSize>.filled(valueCount, _noLabelSize);
   final padding = List<Object?>.filled(valueCount, null);
   final pointLabelOpts = scale.options.pointLabels;
-  final additionalAngle = jsTruthy(pointLabelOpts.centerPointLabels)
+  final additionalAngle = pointLabelOpts.centerPointLabels
       ? pi / valueCount
       : 0.0;
 
@@ -608,7 +608,7 @@ List<PointLabelItem> _buildPointLabelItems(
   final display = pointLabels.display;
   final itemOpts = _ItemOpts(
     extra: _getTickBackdropHeight(opts) / 2,
-    additionalAngle: jsTruthy(centerPointLabels) ? pi / valueCount : 0.0,
+    additionalAngle: centerPointLabels ? pi / valueCount : 0.0,
   );
   final positions = scale.prepareRadialPositions();
   PointLabelItem? area;
@@ -873,7 +873,7 @@ void _drawRadiusLine(
   final color = gridLineOpts.color;
   final lineWidth = gridLineOpts.lineWidth;
 
-  if ((!jsTruthy(circular) && labelCount == 0) ||
+  if ((!circular && labelCount == 0) ||
       !jsTruthy(color) ||
       !jsTruthy(lineWidth) ||
       radius < 0) {
@@ -1038,7 +1038,7 @@ class RadialLinearScale extends LinearScaleBase
       min: min,
       max: max,
       scalingFactor: drawingArea / (max - min),
-      reverse: jsTruthy(opts.reverse),
+      reverse: opts.reverse,
     );
   }
 
@@ -1321,7 +1321,7 @@ class RadialLinearScale extends LinearScaleBase
 
     // Take into account half font size + the yPadding of the top value
     final scalingFactor = drawingArea / (max - min);
-    if (jsTruthy(options.reverse)) {
+    if (options.reverse) {
       return (max - jsToNumber(value)) * scalingFactor;
     }
     return (jsToNumber(value) - min) * scalingFactor;
@@ -1337,9 +1337,7 @@ class RadialLinearScale extends LinearScaleBase
     }
 
     final scaledDistance = distance! / (drawingArea / (max - min));
-    return jsTruthy(options.reverse)
-        ? max - scaledDistance
-        : min + scaledDistance;
+    return options.reverse ? max - scaledDistance : min + scaledDistance;
   }
 
   /// scale.radialLinear.js:511 `getPointLabelContext(index)`.
@@ -1451,7 +1449,7 @@ class RadialLinearScale extends LinearScaleBase
       _drawPointLabels(this, labelCount);
     }
 
-    if (jsTruthy(grid.display)) {
+    if (grid.display) {
       final ticks = this.ticks!;
       for (var index = 0; index < ticks.length; index++) {
         final tick = ticks[index];
@@ -1472,7 +1470,7 @@ class RadialLinearScale extends LinearScaleBase
       }
     }
 
-    if (jsTruthy(angleLines.display)) {
+    if (angleLines.display) {
       ctx!.save();
 
       for (var i = labelCount - 1; i >= 0; i--) {
@@ -1493,7 +1491,7 @@ class RadialLinearScale extends LinearScaleBase
           ..lineDashOffset = canvasNumber(optsAtIndex.borderDashOffset);
 
         final offset = getDistanceFromCenterForValue(
-          jsTruthy(opts.reverse) ? min : max,
+          opts.reverse ? min : max,
         );
         final position = getPointPosition(i * 1.0, offset);
         ctx
@@ -1597,7 +1595,7 @@ class RadialLinearScale extends LinearScaleBase
     final opts = options;
     final tickOpts = opts.ticks;
 
-    if (!jsTruthy(tickOpts.display)) {
+    if (!tickOpts.display) {
       return;
     }
 
@@ -1614,7 +1612,7 @@ class RadialLinearScale extends LinearScaleBase
     final ticks = this.ticks!;
     for (var index = 0; index < ticks.length; index++) {
       final tick = ticks[index];
-      if ((index == 0 && min >= 0) && !jsTruthy(opts.reverse)) {
+      if ((index == 0 && min >= 0) && !opts.reverse) {
         continue;
       }
 
@@ -1622,7 +1620,7 @@ class RadialLinearScale extends LinearScaleBase
       final tickFont = toFont(optsAtIndex.font);
       final offset = getDistanceFromCenterForValue(this.ticks![index].value);
 
-      if (jsTruthy(optsAtIndex.showLabelBackdrop)) {
+      if (optsAtIndex.showLabelBackdrop) {
         ctx.font = tickFont;
         final width = ctx.measureText(jsToString(tick.label)).width;
         ctx.fillStyle = canvasStyle(optsAtIndex.backdropColor);

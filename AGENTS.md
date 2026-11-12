@@ -535,7 +535,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
       its type. A getter gives the raw JS value, and the readers keep their JS operators. A
       nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
-      `TickOptions.format` gives the typed `NumberFormat?` of the tick option `format`.
+      `TickOptions.format` gives the typed `NumberFormat?` of the tick option `format`. A getter
+      of an on/off key of the scale and plugin facades gives a `bool` through `boolOption` of
+      `helpers.config.dart` (Chart.js ADR 0121, row `adapt-bool-options`): an absent option is
+      `false` (`includeBounds`: `true`), and another type stops a debug build.
     - Chart.js ADR 0074: `Chart.updateData()` is an explicit data-only lifecycle
       with fixed native ranges, stable configuration, metadata refresh and full
       fallback. `data_update.dart` owns native source/settings checks and
@@ -1303,7 +1306,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0120. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0121. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1382,7 +1385,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       and parts of Chart.js ADRs 0050 and 0054. Chart.js ADR 0119 (the number format is package:intl
       as it is) is accepted (2026-11-12): its code passes the tests. It supersedes Chart.js ADR
       0026. Chart.js ADR 0120 (the port has no UMD entry) is accepted (2026-11-12): its code passes
-      the tests. It supersedes Chart.js ADR 0048 §1 and §7. The other ADRs are accepted. Docs
+      the tests. It supersedes Chart.js ADR 0048 §1 and §7. Chart.js ADR 0121 (an on/off option
+      holds a bool) is accepted (2026-11-12): its code passes the tests. It supersedes a part of
+      Chart.js ADR 0054 §4. The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

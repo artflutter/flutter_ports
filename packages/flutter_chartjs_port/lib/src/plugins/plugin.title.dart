@@ -39,7 +39,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont, toPadding;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -165,7 +164,7 @@ class Title extends Element implements LayoutItem {
     left = 0;
     top = 0;
 
-    if (!jsTruthy(opts.display)) {
+    if (!opts.display) {
       width = height = right = bottom = 0;
       return;
     }
@@ -248,7 +247,7 @@ class Title extends Element implements LayoutItem {
     final ctx = this.ctx;
     final opts = TitleOptions(options);
 
-    if (!jsTruthy(opts.display)) {
+    if (!opts.display) {
       return;
     }
 

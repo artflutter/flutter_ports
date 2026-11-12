@@ -246,13 +246,14 @@ const cases = [
   // A NaN bound is defined for generateTicks (isNullOrUndef), and !== and
   // === never match it.
   run('NaN bounds', chart(data, {scales: {y: {min: NaN, max: NaN}}})),
+  // An on/off option holds a bool (row adapt-bool-options): the port gives a
+  // value of another type no JS truthiness.
   run(
-    'truthy and falsy option values',
+    'false and true option values',
     chart([{data: points([10, 30], [50, 80])}], {
       scales: {
-        x: {beginAtZero: ''},
-        // A text format is no format of the port (row adapt-intl-number-format).
-        y: {beginAtZero: 'yes', max: 99.5, ticks: {includeBounds: 0}},
+        x: {beginAtZero: false},
+        y: {beginAtZero: true, max: 99.5, ticks: {includeBounds: false}},
       },
     }),
   ),
