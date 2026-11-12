@@ -35,6 +35,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/parsed.dart'
     show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// helpers.extras.ts:7 `fontString`.
@@ -164,9 +165,13 @@ final class Debounced<T> {
 ///
 /// Converts 'start' to 'left', 'end' to 'right' and others to 'center'
 /// @private
-String toLeftRightCenter(String align) => align == 'start'
+///
+/// [align] is a [ChartAlign] (row `adapt-chart-align-enum`). Dart `null`, a
+/// value that is not an align, gives `'center'`.
+// DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+String toLeftRightCenter(ChartAlign? align) => align == ChartAlign.start
     ? 'left'
-    : align == 'end'
+    : align == ChartAlign.end
     ? 'right'
     : 'center';
 
@@ -175,9 +180,14 @@ String toLeftRightCenter(String align) => align == 'start'
 /// Returns `start`, `end` or `(start + end) / 2` depending on `align`.
 /// Defaults to `center`
 /// @private
-double alignStartEnd(String align, double start, double end) => align == 'start'
+///
+/// [align] is a [ChartAlign] (row `adapt-chart-align-enum`). Dart `null`, a
+/// value that is not an align, gives the middle.
+// DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+double alignStartEnd(ChartAlign? align, double start, double end) =>
+    align == ChartAlign.start
     ? start
-    : align == 'end'
+    : align == ChartAlign.end
     ? end
     : (start + end) / 2;
 

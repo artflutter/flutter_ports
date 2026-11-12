@@ -9,6 +9,7 @@
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart';
 
 /// The Node.js version that generated the data.
 const String pluginLegendReferenceNode = 'v24.22.1';
@@ -7487,7 +7488,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'align': 'start'},
+          'legend': <String, Object?>{'align': ChartAlign.start},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -8962,7 +8963,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'align': 'end'},
+          'legend': <String, Object?>{'align': ChartAlign.end},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -10437,7 +10438,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'left', 'align': 'start'},
+          'legend': <String, Object?>{
+            'position': 'left',
+            'align': ChartAlign.start,
+          },
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -11928,7 +11932,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'right', 'align': 'end'},
+          'legend': <String, Object?>{
+            'position': 'right',
+            'align': ChartAlign.end,
+          },
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -13407,7 +13414,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'rtl': true, 'align': 'start'},
+          'legend': <String, Object?>{'rtl': true, 'align': ChartAlign.start},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -35341,7 +35348,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'title': <String, Object?>{
               'display': true,
               'text': 'Legend title',
-              'position': 'start',
+              'position': ChartAlign.start,
             },
           },
           'subtitle': false,
@@ -36849,7 +36856,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'title': <String, Object?>{
               'display': true,
               'text': 'Title',
-              'position': 'end',
+              'position': ChartAlign.end,
               'padding': 6.0,
             },
           },

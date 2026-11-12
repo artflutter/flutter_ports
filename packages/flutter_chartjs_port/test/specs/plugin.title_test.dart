@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show clone;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -103,7 +104,7 @@ void main() {
       expect(
         jsGet(jsGet(Chart.defaults, 'plugins'), 'title'),
         jasmineEquals(<String, Object?>{
-          'align': 'center',
+          'align': ChartAlign.center,
           'color': jsGet(Chart.defaults, 'color'),
           'display': false,
           'position': 'top',

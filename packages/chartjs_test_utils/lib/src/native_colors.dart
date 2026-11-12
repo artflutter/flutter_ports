@@ -15,6 +15,7 @@ import 'package:chartjs_test_utils/src/native_easing.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 
 final _callbacks = Expando<Object>('fixture native color callback');
 
@@ -115,6 +116,12 @@ void nativeFixtureColors(Object? config) {
         value[key] = _enumValue(ui.StrokeCap.values, value[key]);
       } else if (key == 'borderJoinStyle' || key == 'lineJoin') {
         value[key] = _enumValue(ui.StrokeJoin.values, value[key]);
+      } else if ((key == 'align' &&
+              (owner == 'legend' || owner == 'title' || owner == 'subtitle')) ||
+          (key == 'position' && owner == 'title')) {
+        // The align of a box takes a ChartAlign (row adapt-chart-align-enum).
+        // A title position (`top`) is no name of it and stays.
+        value[key] = _enumValue(ChartAlign.values, value[key]);
       } else if (_scaleEnumValues(key, owner) case final values?) {
         // A scale option takes its enum, not the upstream keyword (row
         // adapt-scale-option-enums).

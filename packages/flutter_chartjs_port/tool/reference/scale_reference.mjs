@@ -295,11 +295,20 @@ const SCALE_ENUMS = {
 /** Whether the data have a value of a scale enum, which needs its import. */
 let usesScaleEnums = false;
 
+/** Whether the data have a `ChartAlign` value, which needs its import. */
+let usesAligns = false;
+
 /**
  * The Dart literal of the value [x] of the key [k] in the object of the key
  * [owner]: the enum value of a scale option, else `undefined` here.
  */
 function scaleEnum(k, x, owner) {
+  // The `align` of an axis title is a `ChartAlign` (row
+  // adapt-chart-align-enum).
+  if (k === 'align' && owner === 'title' && ['start', 'center', 'end'].includes(x)) {
+    usesAligns = true;
+    return `ChartAlign.${x}`;
+  }
   const rule = SCALE_ENUMS[k];
   if (!rule || typeof x !== 'string' || !rule.values.includes(x)) return undefined;
   if (rule.owner !== null && rule.owner !== owner) return undefined;
@@ -1323,7 +1332,7 @@ const out = `// Original code, not ported from Chart.js: Scale reference data.
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. ${cases.length} cases.
-${usesScaleEnums || usesUndefined ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${usesScaleEnums || usesUndefined || usesAligns ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesAligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = '${process.version}';
 

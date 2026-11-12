@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -252,7 +253,7 @@ void main() {
         'text',
         'weight',
       ]);
-      expect(defaults['align'], 'center');
+      expect(defaults['align'], ChartAlign.center);
       expect(defaults['display'], isFalse);
       expect(_plain(defaults['font']), <String, Object?>{'weight': 'normal'});
       expect(defaults['fullSize'], isTrue);

@@ -23,6 +23,7 @@ CanvasPattern
 CanvasRenderingContext2D
 CategoryScale
 Chart
+ChartAlign
 ChartArea
 ChartConfiguration
 ChartEvent

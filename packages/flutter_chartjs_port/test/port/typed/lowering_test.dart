@@ -619,7 +619,7 @@ const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
   'text': (AxisTitle(text: 'Month'), {'text': 'Month'}),
   'color': (AxisTitle(color: _red), {'color': _redValue}),
   'font': (AxisTitle(font: _font), {'font': _fontValue}),
-  'align': (AxisTitle(align: .end), {'align': 'end'}),
+  'align': (AxisTitle(align: .end), {'align': ChartAlign.end}),
   'padding': (
     AxisTitle(padding: EdgeInsets.symmetric(vertical: 4)),
     {
@@ -837,7 +837,7 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
 const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
   'display': (ChartLegend(display: false), {'display': false}),
   'position': (ChartLegend(position: .chartArea), {'position': 'chartArea'}),
-  'align': (ChartLegend(align: .start), {'align': 'start'}),
+  'align': (ChartLegend(align: .start), {'align': ChartAlign.start}),
   'reverse': (ChartLegend(reverse: true), {'reverse': true}),
   'labelColor': (
     ChartLegend(labelColor: _red),
@@ -887,7 +887,7 @@ const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   'text': (ChartTitle(text: 'Votes'), {'text': 'Votes'}),
   'color': (ChartTitle(color: _blue), {'color': _blueValue}),
   'font': (ChartTitle(font: _font), {'font': _fontValue}),
-  'align': (ChartTitle(align: .start), {'align': 'start'}),
+  'align': (ChartTitle(align: .start), {'align': ChartAlign.start}),
   'position': (ChartTitle(position: .bottom), {'position': 'bottom'}),
   'padding': (
     ChartTitle(padding: EdgeInsets.only(top: 10, bottom: 30)),
@@ -2265,7 +2265,7 @@ void main() {
           'legend': {
             'display': true,
             'position': 'bottom',
-            'align': 'start',
+            'align': ChartAlign.start,
             'reverse': true,
             'labels': {
               'color': _redValue,
@@ -2285,7 +2285,7 @@ void main() {
             'text': 'T',
             'color': _redValue,
             'font': _fontValue,
-            'align': 'end',
+            'align': ChartAlign.end,
             'position': 'left',
             'padding': {'top': 2, 'right': 3, 'bottom': 4, 'left': 1},
             'fullSize': false,

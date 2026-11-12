@@ -7,8 +7,7 @@
 /// shorthand works (`position: .top`, `align: .center`), and a new
 /// constant is an addition that breaks no `switch` of an app.
 ///
-/// - [ChartPosition] and [ChartAlign] are over `String`. The option value is
-///   their `name`.
+/// - [ChartPosition] is over `String`. The option value is its `name`.
 /// - [ChartPointStyle], [ChartFill] and [ChartLength] are over `Object`:
 ///   they also hold `false`, numbers and records. The internal getter
 ///   `optionValue` gives the option value. A record holds
@@ -20,7 +19,8 @@
 ///
 /// The `easing` option of an animation has no type here: it is a Flutter
 /// `Curve`. The `mode` option of the interaction has none either: it is an
-/// `InteractionMode` of the core.
+/// `InteractionMode` of the core. The `align` option of a box is the enum
+/// `ChartAlign` of the core.
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
@@ -54,20 +54,6 @@ extension type const ChartPosition._(String name) {
 
   /// `'chartArea'`: a legend inside the chart area.
   static const ChartPosition chartArea = ChartPosition._('chartArea');
-}
-
-/// The alignment of a box or of a text along its side: the `align` option of
-/// the legend, the title, the subtitle and an axis title (`Align`,
-/// `index.d.ts:1844`).
-extension type const ChartAlign._(String name) {
-  /// `'start'`: the left or the top end.
-  static const ChartAlign start = ChartAlign._('start');
-
-  /// `'center'`: the middle.
-  static const ChartAlign center = ChartAlign._('center');
-
-  /// `'end'`: the right or the bottom end.
-  static const ChartAlign end = ChartAlign._('end');
 }
 
 /// The style of a point: the `pointStyle` option of a dataset and of the

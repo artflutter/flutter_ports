@@ -51,6 +51,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 
 /// `options.setContext(context)` of a nested option object: a view of the
 /// same resolver with the context [context].
@@ -457,8 +458,9 @@ extension type const ScaleTitleOptions(Object? raw) {
   /// index.d.ts:3311 `display: boolean`.
   Object? get display => readOption(raw, OptionKey.display);
 
-  /// index.d.ts:3313 `align: Align`.
-  Object? get align => readOption(raw, OptionKey.align);
+  /// index.d.ts:3313 `align: Align`, a [ChartAlign] (row
+  /// `adapt-chart-align-enum`).
+  ChartAlign? get align => ChartAlign.of(readOption(raw, OptionKey.align));
 
   /// index.d.ts:3315 `text: string | string[]`.
   Object? get text => readOption(raw, OptionKey.text);

@@ -40,6 +40,7 @@ import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
+import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 
@@ -219,6 +220,9 @@ abstract final class ShapeBits {
   /// `tickCrossAlign`: a [TickCrossAlign], the value of `ticks.crossAlign`.
   static const int tickCrossAlign = 131072;
 
+  /// `chartAlign`: a [ChartAlign], the value of `align` of a box.
+  static const int chartAlign = 262144;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -232,7 +236,8 @@ abstract final class ShapeBits {
       scaleBounds |
       tickSource |
       tickAlign |
-      tickCrossAlign;
+      tickCrossAlign |
+      chartAlign;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -319,6 +324,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.tickSource => classifyTyped<TickSource>(raw),
   ShapeBits.tickAlign => classifyTyped<TickAlign>(raw),
   ShapeBits.tickCrossAlign => classifyTyped<TickCrossAlign>(raw),
+  ShapeBits.chartAlign => classifyTyped<ChartAlign>(raw),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };
