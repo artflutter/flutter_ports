@@ -492,6 +492,10 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
 // ---------------------------------------------------------------------------
 // The comparison.
 
+/// The absolute tolerance of [referenceMatcher] for a number up to 1e3. A
+/// test raises it for one case and restores it with `addTearDown`.
+double referenceAbsoluteTolerance = 1e-9;
+
 /// A matcher of a reference value.
 ///
 /// - A number: [closeTo] with 1e-9, or with `n.abs() * 1e-12` above 1e3.
@@ -507,7 +511,10 @@ Object? referenceMatcher(Object? expected) => switch (expected) {
   final String text when isReferenceColor(text) => referenceColorOrString(text),
   final num n when n.isNaN => isNaN,
   final num n when n.isInfinite => equals(n),
-  final num n => closeTo(n, n.abs() > 1e3 ? n.abs() * 1e-12 : 1e-9),
+  final num n => closeTo(
+    n,
+    n.abs() > 1e3 ? n.abs() * 1e-12 : referenceAbsoluteTolerance,
+  ),
   final Map<String, Object?> map when map.length == 1 && map['num'] is String =>
     switch (map['num']) {
       'NaN' => isNaN,

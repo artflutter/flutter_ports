@@ -40,6 +40,8 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart'
     show prepareNativeArcColors;
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
@@ -66,8 +68,7 @@ import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsSetIndex;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsCos, jsMax, jsMin, jsSin;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex;
@@ -115,10 +116,10 @@ _RatioAndOffset _getRatioAndOffset(
   if (circumference < tau) {
     final startAngle = rotation;
     final endAngle = startAngle + circumference;
-    final startX = jsCos(startAngle);
-    final startY = jsSin(startAngle);
-    final endX = jsCos(endAngle);
-    final endY = jsSin(endAngle);
+    final startX = math.cos(startAngle);
+    final startY = math.sin(startAngle);
+    final endX = math.cos(endAngle);
+    final endY = math.sin(endAngle);
     // `Math.max(a, a * cutout, b, b * cutout)` and `Math.min(...)`.
     double calcMax(double angle, double a, double b) =>
         angleBetween(angle, startAngle, endAngle, true)

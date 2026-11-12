@@ -37,6 +37,8 @@
 /// Thus this library is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/painting.dart' show TextStyle;
@@ -68,7 +70,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScalePointLabelContext, toFont, toPadding, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsCos, jsMax, jsMin, jsRound, jsSin;
+    show jsMax, jsMin, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
@@ -517,17 +519,17 @@ void _updateLimits(
   double x;
   double y;
   if (hLimits.start < orig.l) {
-    x = (orig.l - hLimits.start) / jsSin(angle).abs();
+    x = (orig.l - hLimits.start) / math.sin(angle).abs();
     limits.l = jsMin(limits.l, orig.l - x);
   } else if (hLimits.end > orig.r) {
-    x = (hLimits.end - orig.r) / jsSin(angle).abs();
+    x = (hLimits.end - orig.r) / math.sin(angle).abs();
     limits.r = jsMax(limits.r, orig.r + x);
   }
   if (vLimits.start < orig.t) {
-    y = (orig.t - vLimits.start) / jsCos(angle).abs();
+    y = (orig.t - vLimits.start) / math.cos(angle).abs();
     limits.t = jsMin(limits.t, orig.t - y);
   } else if (vLimits.end > orig.b) {
-    y = (vLimits.end - orig.b) / jsCos(angle).abs();
+    y = (vLimits.end - orig.b) / math.cos(angle).abs();
     limits.b = jsMax(limits.b, orig.b + y);
   }
 }
@@ -1365,8 +1367,8 @@ class RadialLinearScale extends LinearScaleBase
   ]) {
     final angle = getIndexAngle(index) - halfPi + additionalAngle;
     return (
-      x: jsCos(angle) * distanceFromCenter + (xCenter ?? double.nan),
-      y: jsSin(angle) * distanceFromCenter + (yCenter ?? double.nan),
+      x: math.cos(angle) * distanceFromCenter + (xCenter ?? double.nan),
+      y: math.sin(angle) * distanceFromCenter + (yCenter ?? double.nan),
       angle: angle,
     );
   }

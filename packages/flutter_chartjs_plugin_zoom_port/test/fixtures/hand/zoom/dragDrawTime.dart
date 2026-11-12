@@ -17,7 +17,6 @@ Map<String, Object?> fixture() {
   for (var i = 0; i < 100; i++) {
     data.add(<String, Object?>{
       'x': i,
-      // js-ok: data of a hidden scale with the nice bounds -10 and 10.
       'y': math.sin((i / 25) * math.pi) * 10,
     });
   }

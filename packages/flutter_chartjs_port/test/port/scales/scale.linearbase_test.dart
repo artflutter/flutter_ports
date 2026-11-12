@@ -3,6 +3,7 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -100,7 +101,7 @@ final class _TestLinearBaseLimitScale extends _TestLinearBaseScale {
     final minRotation = toRadians(
       jsToNumber(jsGet(options['ticks'], 'minRotation')),
     );
-    final sinOrCos = horizontal ? jsSin(minRotation) : jsCos(minRotation);
+    final sinOrCos = horizontal ? math.sin(minRotation) : math.cos(minRotation);
     final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
     final tickFont = resolveTickFontOptions(0);
     return (length / jsMin(40, jsToNumber(tickFont.lineHeight) / ratio))

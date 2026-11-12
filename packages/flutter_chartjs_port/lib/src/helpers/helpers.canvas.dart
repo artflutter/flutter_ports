@@ -347,13 +347,9 @@ void _rectRotPath(
   double rad,
   double? w,
 ) {
-  // js-ok: display only (Chart.js ADR 0045)
   final xOffsetW = math.cos(rad) * (w != null ? w / 2 : radius);
-  // js-ok: display only (Chart.js ADR 0045)
   final xOffset = math.cos(rad) * radius;
-  // js-ok: display only (Chart.js ADR 0045)
   final yOffset = math.sin(rad) * radius;
-  // js-ok: display only (Chart.js ADR 0045)
   final yOffsetW = math.sin(rad) * (w != null ? w / 2 : radius);
   ctx
     ..moveTo(x - xOffsetW, y - yOffset)
@@ -373,13 +369,9 @@ void _crossPath(
   double rad,
   double? w,
 ) {
-  // js-ok: display only (Chart.js ADR 0045)
   final xOffsetW = math.cos(rad) * (w != null ? w / 2 : radius);
-  // js-ok: display only (Chart.js ADR 0045)
   final xOffset = math.cos(rad) * radius;
-  // js-ok: display only (Chart.js ADR 0045)
   final yOffset = math.sin(rad) * radius;
-  // js-ok: display only (Chart.js ADR 0045)
   final yOffsetW = math.sin(rad) * (w != null ? w / 2 : radius);
   ctx
     ..moveTo(x - xOffsetW, y - yOffset)
@@ -423,14 +415,11 @@ final class TrianglePointStyle extends PathPointStyle {
   }) {
     final w = width != null ? width / 2 : radius;
     var r = rad;
-    // js-ok: display only (Chart.js ADR 0045)
     ctx.moveTo(x + math.sin(r) * w, y - math.cos(r) * radius);
     r += twoThirdsPi;
-    // js-ok: display only (Chart.js ADR 0045)
     ctx.lineTo(x + math.sin(r) * w, y - math.cos(r) * radius);
     r += twoThirdsPi;
     ctx
-      // js-ok: display only (Chart.js ADR 0045)
       ..lineTo(x + math.sin(r) * w, y - math.cos(r) * radius)
       ..closePath();
   }
@@ -461,16 +450,12 @@ final class RectRoundedPointStyle extends PathPointStyle {
     // https://github.com/chartjs/Chart.js/issues/5858
     final cornerRadius = radius * 0.516;
     final size = radius - cornerRadius;
-    // js-ok: display only (Chart.js ADR 0045)
     final xOffset = math.cos(rad + quarterPi) * size;
     final xOffsetW =
-        // js-ok: display only (Chart.js ADR 0045)
         math.cos(rad + quarterPi) *
         (width != null ? width / 2 - cornerRadius : size);
-    // js-ok: display only (Chart.js ADR 0045)
     final yOffset = math.sin(rad + quarterPi) * size;
     final yOffsetW =
-        // js-ok: display only (Chart.js ADR 0045)
         math.sin(rad + quarterPi) *
         (width != null ? width / 2 - cornerRadius : size);
     ctx
@@ -602,9 +587,7 @@ final class LinePointStyle extends PathPointStyle {
     required bool rotated,
     required double? width,
   }) {
-    // js-ok: display only (Chart.js ADR 0045)
     final xOffset = width != null ? width / 2 : math.cos(rad) * radius;
-    // js-ok: display only (Chart.js ADR 0045)
     final yOffset = math.sin(rad) * radius;
     ctx
       ..moveTo(x - xOffset, y - yOffset)
@@ -630,9 +613,8 @@ final class DashPointStyle extends PathPointStyle {
     ctx
       ..moveTo(x, y)
       ..lineTo(
-        // js-ok: display only (Chart.js ADR 0045)
         x + math.cos(rad) * (width != null ? width / 2 : radius),
-        y + math.sin(rad) * radius, // js-ok: display only (Chart.js ADR 0045)
+        y + math.sin(rad) * radius,
       );
   }
 }

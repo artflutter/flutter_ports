@@ -120,8 +120,8 @@ void main() {
       _check([
         "import 'dart:math' as math;",
         'final a = jsRound(x) + x.floorToDouble() + x.ceilToDouble();',
-        'final b = x.remainder(2) + math.sqrt(x) + math.pi + jsLog10(x);',
-        'final c = jsAtan2(y, x) + isInt + x.sortKey + power(2) + sinh(x);',
+        'final b = x.remainder(2) + math.sqrt(x) + math.pi + math.log(x);',
+        'final c = math.atan2(y, x) + math.sin(x) + isInt + sinh(x);',
         'jsSort(list, compare);',
         'final d = math.sqrt(jsSquare((p.x ?? 0) - (q.x ?? 0)));',
       ]),
@@ -197,95 +197,6 @@ void main() {
         'Use jsDateNow, which reads clock.now() (Chart.js ADR 0045, '
         'section 6).',
       ),
-    );
-  });
-
-  test('flags the transcendental dart:math functions', () {
-    expect(
-      _sites([
-        "import 'dart:math' as math;",
-        'final a = math.sin(t) + math.cos(t) + math . tan(t);',
-        'final b = math.asin(t) + math.acos(t) + math.atan(t);',
-        'final c = math.atan2(t, 1) + math.exp(t) + math.log(t);',
-        'final d = other.tan(t) + jsAtan2(t, 1) + mathx.log(t);',
-      ]),
-      [
-        '3 math.sin(',
-        '3 math.cos(',
-        '3 math.tan(',
-        '4 math.asin(',
-        '4 math.acos(',
-        '4 math.atan(',
-        '5 math.atan2(',
-        '5 math.exp(',
-        '5 math.log(',
-      ],
-    );
-    expect(
-      _sites([
-        "import 'dart:math';",
-        'final a = tan(t) + x.atan(t) + log(t) + sin(t);',
-      ]),
-      ['3 tan(', '3 log(', '3 sin('],
-    );
-    expect(_sites(['final a = math.tan(t) + log(t);']), isEmpty);
-  });
-
-  test('flags dart:math sin and cos (Chart.js ADR 0045)', () {
-    expect(
-      _sites([
-        "import 'dart:math' as math;",
-        'final a = math.sin(t);',
-        'final b = math.cos(t);',
-      ]),
-      ['3 math.sin(', '4 math.cos('],
-    );
-    expect(
-      _sites([
-        "import 'dart:math';",
-        'final a = sin(t);',
-        'final b = cos(t);',
-      ]),
-      ['3 sin(', '4 cos('],
-    );
-  });
-
-  test('accepts a display-only sin and cos with js-ok (Chart.js ADR 0045)', () {
-    expect(
-      _check([
-        "import 'dart:math' as math;",
-        'final a = math.sin(t); // js-ok: display only (Chart.js ADR 0045)',
-        '// js-ok: display only (Chart.js ADR 0045)',
-        'final b = math.cos(t);',
-        '// js-ok: display only (Chart.js ADR 0045)',
-        'final c = math.sin(t) + math.cos(t);',
-      ]),
-      isEmpty,
-    );
-    expect(
-      _sites([
-        "import 'dart:math' as math;",
-        'final a = jsSin(t) + jsCos(t) + math.asin(t) + math.acos(t);',
-      ]),
-      ['3 math.asin(', '3 math.acos('],
-    );
-  });
-
-  test('names jsSin and Chart.js ADR 0045 for sin', () {
-    final finding = _check([
-      "import 'dart:math' as math;",
-      'final a = math.sin(t);',
-    ]).single;
-    expect(finding, contains('Call jsSin'));
-    expect(finding, contains('(Chart.js ADR 0045)'));
-    expect(finding, contains('the canvas or an easing value'));
-    expect(
-      _check(["import 'dart:math' as math;", 'final a = math.cos(t);']).single,
-      contains('Call jsCos'),
-    );
-    expect(
-      _check(["import 'dart:math' as math;", 'final a = math.tan(t);']).single,
-      contains('(Chart.js ADR 0045)'),
     );
   });
 
@@ -403,61 +314,6 @@ void main() {
         'package:flutter_chartjs_port/js_semantics.dart in an add-on)',
       ),
     );
-  });
-
-  test('flags the tear-offs of the dart:math functions', () async {
-    final tree = FileTree()
-      ..write('lib/a.dart', [
-        _ported,
-        "import 'dart:math' as math;",
-        "import 'dart:math' show cos, log, sin;",
-        'final f = math.sin;',
-        'final g = [1.0].map(math.cos).toList();',
-        'final h = math.sin(1.0) + sin(1.0);',
-        'final k = math.asin;',
-        'final double Function(num) m = sin;',
-        '/// Not [sin], not [math.cos].',
-        'double n(double log) => log + 1;',
-        'double p(List<double> l) => l.map(log).first;',
-      ]);
-    final sites = await resolvedSites([tree.path('lib/a.dart')]);
-    expect(
-      [
-        for (final site in sites[tree.path('lib/a.dart')]!)
-          '${site.line} ${site.name}',
-      ],
-      ['4 math.sin', '5 math.cos', '7 math.asin', '8 sin', '11 log'],
-    );
-    final message = sites.values.first.first.message;
-    expect(message, startsWith('The tear-off of dart:math sin'));
-    expect(message, contains('Call jsSin'));
-    expect(
-      sites.values.first[2].message,
-      contains('Call the port of the function in $jsRuntime'),
-    );
-  });
-
-  test('accepts a tear-off of dart:math with js-ok', () async {
-    const lines = [
-      _ported,
-      "import 'dart:math' as math;",
-      'final f = math.sin; // js-ok: display only (Chart.js ADR 0045)',
-      'final g = math.cos;',
-    ];
-    final tree = FileTree()..write('lib/a.dart', lines);
-    final path = tree.path('lib/a.dart');
-    final sites = await resolvedSites([path]);
-    final findings = <Finding>[];
-    checkJsSemanticsText(
-      lines.join('\n'),
-      'a.dart',
-      findings,
-      languages: _languages,
-      typedSites: sites[path]!,
-    );
-    expect(describeFindings(findings), [
-      startsWith('error: a.dart:4: math.cos: The tear-off of dart:math cos'),
-    ]);
   });
 
   test('examines lib/ and test/ of a package', () async {

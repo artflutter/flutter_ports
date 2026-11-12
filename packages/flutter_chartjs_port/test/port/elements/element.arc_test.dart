@@ -622,10 +622,12 @@ void main() {
       for (final c in arcCenterReference.where(
         (c) => c.name.startsWith('half angle '),
       )) {
-        test('${c.name} equals V8 bit for bit', () {
+        // dart:math sin and cos (Chart.js ADR 0122) can differ from V8 in
+        // the last bit: the center is within 1e-12 px of V8.
+        test('${c.name} equals V8 within the last bits', () {
           final center = _arc(c.cfg).getCenterPoint(c.useFinalPosition);
-          expect(center.x, c.x);
-          expect(center.y, c.y);
+          expect(center.x, closeTo(c.x, 1e-12));
+          expect(center.y, closeTo(c.y, 1e-12));
         });
       }
 

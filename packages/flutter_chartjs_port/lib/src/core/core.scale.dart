@@ -1608,13 +1608,10 @@ class Scale extends _ScalePrototype
       // Thus the calculated degrees have their own local.
       final degrees = toDegrees(
         jsMin(
-          // js-ok: the label sizes differ more (Chart.js ADR 0015)
           math.asin(
             limitValue((labelSizes.highest.height + 6) / tickWidth, -1, 1),
           ),
-          // js-ok: the label sizes differ more (Chart.js ADR 0015)
           math.asin(limitValue(maxHeight / maxLabelDiagonal, -1, 1)) -
-              // js-ok: the label sizes differ more (Chart.js ADR 0015)
               math.asin(limitValue(maxLabelHeight / maxLabelDiagonal, -1, 1)),
         ),
       );
@@ -1694,8 +1691,8 @@ class Scale extends _ScalePrototype
         final _LabelSizes(:first, :last, :widest, :highest) = _getLabelSizes();
         final tickPadding = jsToNumber(tickOpts.padding) * 2;
         final angleRadians = _rotationRadians;
-        final cos = jsCos(angleRadians);
-        final sin = jsSin(angleRadians);
+        final cos = math.cos(angleRadians);
+        final sin = math.sin(angleRadians);
 
         if (isHorizontal) {
           // A horizontal axis is more constrained by the height.
@@ -2213,8 +2210,8 @@ class Scale extends _ScalePrototype
 
     // Calculate space needed by label in axis direction.
     final rot = _rotationRadians;
-    final cos = jsCos(rot).abs();
-    final sin = jsSin(rot).abs();
+    final cos = math.cos(rot).abs();
+    final sin = math.sin(rot).abs();
 
     final labelSizes = _getLabelSizes();
     final autoSkipPadding = optionTicks.autoSkipPadding;
@@ -2582,7 +2579,6 @@ class Scale extends _ScalePrototype
           textOffset *= -1;
         }
         if (rotation != 0 && !optsAtIndex.showLabelBackdrop) {
-          // js-ok: a label pixel of getLabelItems (Chart.js ADR 0045)
           x = jsAdd(x, (lineHeight / 2) * math.sin(rotation));
         }
       } else {

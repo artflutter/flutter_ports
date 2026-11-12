@@ -183,6 +183,13 @@ AnyObject _one(List<Object?> data) => <String, Object?>{
   },
 };
 
+/// The hit points of the generator on the border of two arcs (Chart.js ADR
+/// 0122): upstream finds point 12 (286, 302) in both arcs with the V8
+/// `Math.atan2`, and `dart:math` `atan2` puts it in one.
+const Map<String, Set<String>> _hitBorders = {
+  'the step toggleDataVisibility': {'step 2:12'},
+};
+
 void main() {
   testReferenceOrigin(
     node: controllerPieReferenceNode,
@@ -209,7 +216,11 @@ void main() {
     ]);
   });
 
-  testControllerChartCases(_reference, extras: _extras);
+  testControllerChartCases(
+    _reference,
+    extras: _extras,
+    hitBorders: _hitBorders,
+  );
 
   group('theming.md §8 test 3: the light preset', () {
     // The `legend:` cases run unthemed only, as the `interfaces:` cases:
@@ -223,6 +234,7 @@ void main() {
       ],
       extras: _extras,
       theme: compileLightTheme(),
+      hitBorders: _hitBorders,
     );
   });
 

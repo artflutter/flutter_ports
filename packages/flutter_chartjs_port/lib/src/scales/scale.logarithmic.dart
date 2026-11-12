@@ -17,9 +17,9 @@
 ///   an option with a getter of the facade (`options.ticks.format`), and tests
 ///   it with [jsTruthy].
 /// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
-///   `undefined` and holds a number starts as NaN. `log10` is the fdlibm
-///   port of helpers.math, which gives the bits of V8. `Math.pow` is
-///   `dart:math` `pow` with `double` operands.
+///   `undefined` and holds a number starts as NaN. `log10` of helpers.math
+///   gives the exponent of an exact power of ten (Chart.js ADR 0122).
+///   `Math.pow` is `dart:math` `pow` with `double` operands.
 /// - [LogarithmicScale.parse] gives the [undefined] sentinel for a 0, and
 ///   JS `null` (Dart `null`) for a value that is not a positive finite
 ///   number (scale.logarithmic.js:103-110).

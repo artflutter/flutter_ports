@@ -291,36 +291,4 @@ void main() {
       }
     });
   });
-
-  group('jsLog10', () {
-    test('handles the special values', () {
-      expect(jsLog10(0), double.negativeInfinity);
-      expect(jsLog10(-0), double.negativeInfinity);
-      expect(jsLog10(-1), isNaN);
-      expect(jsLog10(double.negativeInfinity), isNaN);
-      expect(jsLog10(double.infinity), double.infinity);
-      expect(jsLog10(double.nan), isNaN);
-      expect(jsLog10(1), _isSameNumber(0));
-      expect(jsLog10(1000), 3);
-    });
-  });
-
-  group('jsAtan2', () {
-    test('handles the special values', () {
-      const pi = 3.141592653589793;
-      expect(jsAtan2(0, 0), _isSameNumber(0));
-      expect(jsAtan2(-0, 0), _isSameNumber(-0));
-      expect(jsAtan2(0, -0), pi);
-      expect(jsAtan2(-0, -0), -pi);
-      expect(jsAtan2(1, 0), pi / 2);
-      expect(jsAtan2(-1, -0), -pi / 2);
-      expect(jsAtan2(double.infinity, double.infinity), pi / 4);
-      expect(jsAtan2(double.infinity, double.negativeInfinity), 3 * pi / 4);
-      expect(jsAtan2(-1, double.infinity), _isSameNumber(-0));
-      expect(jsAtan2(1, double.negativeInfinity), pi);
-      expect(jsAtan2(double.nan, 1), isNaN);
-      expect(jsAtan2(1, double.nan), isNaN);
-      expect(jsAtan2(1, 1), pi / 4);
-    });
-  });
 }

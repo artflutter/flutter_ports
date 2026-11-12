@@ -367,26 +367,31 @@ void main() {
         (angle: 3.141592654589793, distance: 1.0),
       );
     });
+  });
 
-    test('takes the V8 side of the -PI/2 test where atan2 results differ', () {
-      // Math.atan2(-1e17, -1) is -1.5707963267948968 in V8, below -PI/2, so
-      // the angle is 3PI/2. dart:math atan2 on the VM returns -PI/2.
-      expect(
-        math.getAngleFromPoint(
-          const _Point(0, 0),
-          const _Point(-1, -100_000_000_000_000_000),
-        ),
-        (angle: 4.71238898038469, distance: 100_000_000_000_000_000.0),
-      );
-      // Here |y/x| > 2**60 with x < 0: V8 returns -PI/2, so the angle stays
-      // -PI/2. Netlib fdlibm 5.3 returns 1 ulp below -PI/2.
-      expect(
-        math.getAngleFromPoint(
-          const _Point(0.1 + 0.2, 0),
-          const _Point(0.3, -1000),
-        ),
-        (angle: -1.5707963267948966, distance: 1000.0),
-      );
+  group('log10', () {
+    test('gives the exponent of an exact power of ten (Chart.js ADR 0122)', () {
+      for (var e = -15; e <= 22; e++) {
+        final x = js_math.pow(10.0, e).toDouble();
+        expect(math.log10(x), e.toDouble(), reason: '10^$e');
+      }
+      // log(1000) / ln10 is 2.9999999999999996.
+      expect(math.log10(1000), 3);
+    });
+
+    test('handles the special values', () {
+      expect(math.log10(0), double.negativeInfinity);
+      expect(math.log10(-0), double.negativeInfinity);
+      expect(math.log10(-1), isNaN);
+      expect(math.log10(double.negativeInfinity), isNaN);
+      expect(math.log10(double.infinity), double.infinity);
+      expect(math.log10(double.nan), isNaN);
+      expect(math.log10(1), _isSameNumber(0));
+    });
+
+    test('is the logarithm between the powers of ten', () {
+      expect(math.log10(2), closeTo(0.3010299956639812, 1e-15));
+      expect(math.log10(0.5), closeTo(-0.3010299956639812, 1e-15));
     });
   });
 

@@ -68,8 +68,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsCos, jsMax, jsMin, jsSin;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -269,13 +268,9 @@ void _clipSelf(
       ctx.arc(x, y, clipWidth, endAngle - pi / 2, startAngle + pi / 2, true);
     } else if (borderJoinStyle == ui.StrokeJoin.bevel) {
       final r = 2 * clipWidth * clipWidth;
-      // js-ok: display only (Chart.js ADR 0045)
       final endX = -r * math.cos(endAngle + pi / 2) + x;
-      // js-ok: display only (Chart.js ADR 0045)
       final endY = -r * math.sin(endAngle + pi / 2) + y;
-      // js-ok: display only (Chart.js ADR 0045)
       final startX = r * math.cos(startAngle + pi / 2) + x;
-      // js-ok: display only (Chart.js ADR 0045)
       final startY = r * math.sin(startAngle + pi / 2) + y;
       ctx
         ..lineTo(endX, endY)
@@ -419,7 +414,6 @@ _BorderRadius _parseBorderRadius(
   double x,
   double y,
 ) {
-  // js-ok: display only (Chart.js ADR 0045)
   return (x: x + r * math.cos(theta), y: y + r * math.sin(theta));
 }
 
@@ -460,9 +454,7 @@ void _pathFullCircle(
     // connector.
     ctx
       ..moveTo(
-        // js-ok: display only (Chart.js ADR 0045)
         x + math.cos(start) * innerRadius,
-        // js-ok: display only (Chart.js ADR 0045)
         y + math.sin(start) * innerRadius,
       )
       ..arc(x, y, innerRadius, start + tau, start, true);
@@ -560,14 +552,12 @@ void _pathArc(
         : alpha;
     final proportionalOffset = (alpha - adjustedAngle) / 2;
     final angularOffset = avgNoSpacingRadius > 0
-        // js-ok: the last bit of asin changes only the pixels of the arc.
         ? math.asin(jsMin(1, spacing / avgNoSpacingRadius))
         : 0.0;
 
     // Keep spacing trims below half the available span after base offset
     // trimming.
     final maxOffset = jsMax(0, beta / 2 - 0.001);
-    // js-ok: display only (Chart.js ADR 0045)
     final maxOffsetSin = math.sin(maxOffset);
 
     if (spacingMode == ArcSpacingMode.parallel) {
@@ -589,11 +579,9 @@ void _pathArc(
       final parallelSpacing = jsMin(spacing, maxParallelSpacing);
 
       outerSpacingOffset = outerRadius > 0
-          // js-ok: the last bit of asin changes only the pixels of the arc.
           ? math.asin(jsMin(1, parallelSpacing / outerRadius))
           : jsMin(maxOffset, angularOffset);
       innerSpacingOffset = innerRadius > 0
-          // js-ok: the last bit of asin changes only the pixels of the arc.
           ? math.asin(jsMin(1, parallelSpacing / innerRadius))
           : outerSpacingOffset;
     } else if (spacingMode == ArcSpacingMode.proportional) {
@@ -756,15 +744,11 @@ void _pathArc(
   } else {
     ctx.moveTo(x, y);
 
-    // js-ok: display only (Chart.js ADR 0045)
     final outerStartX = math.cos(outerStartAdjustedAngle) * outerRadius + x;
-    // js-ok: display only (Chart.js ADR 0045)
     final outerStartY = math.sin(outerStartAdjustedAngle) * outerRadius + y;
     ctx.lineTo(outerStartX, outerStartY);
 
-    // js-ok: display only (Chart.js ADR 0045)
     final outerEndX = math.cos(outerEndAdjustedAngle) * outerRadius + x;
-    // js-ok: display only (Chart.js ADR 0045)
     final outerEndY = math.sin(outerEndAdjustedAngle) * outerRadius + y;
     ctx.lineTo(outerEndX, outerEndY);
   }
@@ -1452,8 +1436,8 @@ class ArcElement extends Element
           2;
     }
     return ElementPoint(
-      x + jsCos(halfAngle) * halfRadius,
-      y + jsSin(halfAngle) * halfRadius,
+      x + math.cos(halfAngle) * halfRadius,
+      y + math.sin(halfAngle) * halfRadius,
     );
   }
 
@@ -1558,7 +1542,6 @@ class ArcElement extends Element
         ctx is! ArcSectorCanvas ||
         !(ctx as ArcSectorCanvas).zeroTranslateIsNoOp) {
       final halfAngle = (startAngle + endAngle) / 2;
-      // js-ok: display only (Chart.js ADR 0045)
       ctx.translate(math.cos(halfAngle) * offset, math.sin(halfAngle) * offset);
     }
     // `offset * fix` is 0 for an offset of 0, except that `fix` is NaN for a
@@ -1566,7 +1549,6 @@ class ArcElement extends Element
     var radiusOffset = 0.0;
     if (offset != 0 || circumference == double.negativeInfinity) {
       final fix =
-          // js-ok: display only (Chart.js ADR 0045)
           1 - math.sin(jsMin(pi, jsTruthy(circumference) ? circumference : 0));
       radiusOffset = offset * fix;
     }

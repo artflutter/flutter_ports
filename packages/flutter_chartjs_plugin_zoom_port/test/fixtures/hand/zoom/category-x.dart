@@ -19,7 +19,6 @@ Map<String, Object?> fixture() {
   final data = <Object?>[];
   for (var i = 1; i <= 100; i++) {
     labels.add('Label $i');
-    // js-ok: data of a hidden scale; its max is sin(pi / 2) * 10 = 10.
     data.add(math.sin((i / 100) * math.pi) * 10);
   }
 
