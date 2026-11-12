@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show ticks;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -104,7 +105,7 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'type': 'linear',
-              'position': 'bottom',
+              'position': ChartPosition.bottom,
               'ticks': <String, Object?>{
                 'callback': jsToString,
               },
@@ -153,7 +154,7 @@ void main() {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'logarithmic',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.1,
                 'max': 1,
                 'ticks': <String, Object?>{

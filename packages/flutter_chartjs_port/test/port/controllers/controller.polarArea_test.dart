@@ -38,6 +38,7 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';
@@ -598,7 +599,7 @@ void main() {
 
       (chart.options['scales']! as JsObjectFace)['r2'] = <String, Object?>{
         'type': 'radialLinear',
-        'position': 'left',
+        'position': ChartPosition.left,
       };
       (jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject)['rAxisID'] =
           'r2';
@@ -634,7 +635,7 @@ void main() {
       (jsGet(chart.options, 'scales')!
           as JsObjectFace)['r2'] = <String, Object?>{
         'type': 'radialLinear',
-        'position': 'left',
+        'position': ChartPosition.left,
       };
       dataset['rAxisID'] = 'r2';
       chart.update();

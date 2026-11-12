@@ -90,6 +90,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' as types;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart';
 
 /// The object `{w, h}` of `measureLabelSize` (scale.radialLinear.js:21-24):
@@ -1045,7 +1046,7 @@ class RadialLinearScale extends LinearScaleBase
     ..display = true
     // Boolean - Whether to animate scaling the chart from the centre
     ..animate = true
-    ..position = 'chartArea'
+    ..position = ChartPosition.chartArea
     ..angleLines = (AngleLineOptionsScope()
       ..display = true
       ..lineWidth = 1.0

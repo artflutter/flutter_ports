@@ -10,6 +10,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String pluginTitleReferenceNode = 'v24.22.1';
@@ -92,7 +93,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -126,7 +127,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -583,7 +584,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -595,7 +596,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -607,7 +608,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -626,7 +627,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'text': '',
             'weight': 2000.0,
             'color': '#666',
@@ -647,7 +648,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -681,7 +682,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -1153,7 +1154,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -1165,7 +1166,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -1177,7 +1178,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -1197,7 +1198,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
                 'padding': 10.0,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -1217,7 +1218,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -1251,7 +1252,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -1719,7 +1720,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -1731,7 +1732,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -1743,7 +1744,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -1763,7 +1764,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
                 'padding': 10.0,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -2298,7 +2299,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -2332,7 +2333,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -2785,7 +2786,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -2797,7 +2798,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -2809,7 +2810,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -2829,7 +2830,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -2849,7 +2850,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -2883,7 +2884,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -3355,7 +3356,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -3367,7 +3368,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -3379,7 +3380,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -3399,7 +3400,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
                 'padding': 10.0,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -3419,7 +3420,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -3453,7 +3454,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -3925,7 +3926,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -3937,7 +3938,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -3968,7 +3969,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -4002,7 +4003,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -4470,7 +4471,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -4482,7 +4483,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -4494,7 +4495,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -4514,7 +4515,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
                 'padding': 10.0,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -5034,7 +5035,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'title': <String, Object?>{
             'display': true,
             'text': 'Bottom title',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
           },
           'tooltip': false,
         },
@@ -5048,7 +5049,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -5082,7 +5083,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -5532,7 +5533,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'bottom',
+            ChartPosition.bottom,
             2000.0,
             true,
             0.0,
@@ -5544,7 +5545,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -5556,7 +5557,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -5572,7 +5573,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'options': <String, Object?>{
             'display': true,
             'text': 'Bottom title',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'align': ChartAlign.center,
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
@@ -6095,7 +6096,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'title': <String, Object?>{
             'display': true,
             'text': 'Left title',
-            'position': 'left',
+            'position': ChartPosition.left,
             'align': ChartAlign.start,
           },
           'tooltip': false,
@@ -6115,7 +6116,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -6149,7 +6150,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -6612,7 +6613,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'left',
+            ChartPosition.left,
             2000.0,
             true,
             0.0,
@@ -6624,7 +6625,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             61.74765625,
@@ -6636,7 +6637,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             34.4,
@@ -6652,7 +6653,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'options': <String, Object?>{
             'display': true,
             'text': 'Left title',
-            'position': 'left',
+            'position': ChartPosition.left,
             'align': ChartAlign.start,
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
@@ -7175,7 +7176,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'title': <String, Object?>{
             'display': true,
             'text': 'Left title',
-            'position': 'left',
+            'position': ChartPosition.left,
             'align': ChartAlign.center,
           },
           'tooltip': false,
@@ -7195,7 +7196,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -7229,7 +7230,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -7692,7 +7693,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'left',
+            ChartPosition.left,
             2000.0,
             true,
             0.0,
@@ -7704,7 +7705,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             61.74765625,
@@ -7716,7 +7717,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             34.4,
@@ -7732,7 +7733,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'options': <String, Object?>{
             'display': true,
             'text': 'Left title',
-            'position': 'left',
+            'position': ChartPosition.left,
             'align': ChartAlign.center,
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
@@ -7756,7 +7757,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -7790,7 +7791,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -8262,7 +8263,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'left',
+                ChartPosition.left,
                 2000.0,
                 true,
                 0.0,
@@ -8274,7 +8275,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 61.74765625,
@@ -8286,7 +8287,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 34.4,
@@ -8302,7 +8303,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'options': <String, Object?>{
                 'display': true,
                 'text': 'Left title',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'align': ChartAlign.end,
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
@@ -8826,7 +8827,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'title': <String, Object?>{
             'display': true,
             'text': 'Right title',
-            'position': 'right',
+            'position': ChartPosition.right,
             'align': ChartAlign.start,
           },
           'tooltip': false,
@@ -8841,7 +8842,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -8871,7 +8872,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -9334,7 +9335,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'right',
+            ChartPosition.right,
             2000.0,
             true,
             477.6,
@@ -9346,7 +9347,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -9358,7 +9359,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -9374,7 +9375,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'options': <String, Object?>{
             'display': true,
             'text': 'Right title',
-            'position': 'right',
+            'position': ChartPosition.right,
             'align': ChartAlign.start,
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
@@ -9897,7 +9898,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'title': <String, Object?>{
             'display': true,
             'text': 'Right title',
-            'position': 'right',
+            'position': ChartPosition.right,
             'align': ChartAlign.end,
           },
           'tooltip': false,
@@ -9912,7 +9913,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -9942,7 +9943,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -10405,7 +10406,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'right',
+            ChartPosition.right,
             2000.0,
             true,
             477.6,
@@ -10417,7 +10418,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -10429,7 +10430,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -10445,7 +10446,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'options': <String, Object?>{
             'display': true,
             'text': 'Right title',
-            'position': 'right',
+            'position': ChartPosition.right,
             'align': ChartAlign.end,
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
@@ -10987,7 +10988,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -11021,7 +11022,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -11474,7 +11475,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -11486,7 +11487,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -11498,7 +11499,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -11518,7 +11519,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -11538,7 +11539,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -11572,7 +11573,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -12040,7 +12041,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -12052,7 +12053,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -12064,7 +12065,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -12084,7 +12085,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
                 'padding': 10.0,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -12623,7 +12624,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -12657,7 +12658,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -13110,7 +13111,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -13122,7 +13123,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -13134,7 +13135,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -13154,7 +13155,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -13174,7 +13175,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -13208,7 +13209,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -13676,7 +13677,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -13688,7 +13689,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -13700,7 +13701,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -13720,7 +13721,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
                 'padding': 10.0,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -14259,7 +14260,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -14293,7 +14294,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -14746,7 +14747,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             false,
             27.34765625,
@@ -14758,7 +14759,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -14770,7 +14771,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -14790,7 +14791,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'align': ChartAlign.center,
             'font': <String, Object?>{'weight': 'bold'},
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -14798,7 +14799,11 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.title.position', 'left'],
+          'do': <Object?>[
+            'setOption',
+            'plugins.title.position',
+            ChartPosition.left,
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
               61.74765625,
@@ -14810,7 +14815,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -14844,7 +14849,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -15316,7 +15321,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'left',
+                ChartPosition.left,
                 2000.0,
                 false,
                 0.0,
@@ -15328,7 +15333,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 61.74765625,
@@ -15340,7 +15345,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 34.4,
@@ -15357,7 +15362,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'display': true,
                 'text': 'Not full size',
                 'fullSize': false,
-                'position': 'left',
+                'position': ChartPosition.left,
                 'align': ChartAlign.center,
                 'font': <String, Object?>{'weight': 'bold'},
                 'padding': 10.0,
@@ -15894,7 +15899,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -15923,7 +15928,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -16373,7 +16378,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -16385,7 +16390,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -16397,7 +16402,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -16417,7 +16422,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'align': ChartAlign.center,
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -16959,7 +16964,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -16993,7 +16998,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -17446,7 +17451,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -17458,7 +17463,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -17470,7 +17475,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -17494,7 +17499,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'align': ChartAlign.center,
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -17502,7 +17507,11 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.title.position', 'left'],
+          'do': <Object?>[
+            'setOption',
+            'plugins.title.position',
+            ChartPosition.left,
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
               61.74765625,
@@ -17514,7 +17523,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -17548,7 +17557,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -18020,7 +18029,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'left',
+                ChartPosition.left,
                 2000.0,
                 true,
                 0.0,
@@ -18032,7 +18041,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 61.74765625,
@@ -18044,7 +18053,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 34.4,
@@ -18065,7 +18074,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                   'bottom': 16.0,
                   'left': 30.0,
                 },
-                'position': 'left',
+                'position': ChartPosition.left,
                 'align': ChartAlign.center,
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
@@ -18602,7 +18611,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -18631,7 +18640,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -19078,7 +19087,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -19090,7 +19099,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -19102,7 +19111,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -19122,7 +19131,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'align': ChartAlign.center,
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -19130,7 +19139,11 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.title.position', 'right'],
+          'do': <Object?>[
+            'setOption',
+            'plugins.title.position',
+            ChartPosition.right,
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
               27.34765625,
@@ -19142,7 +19155,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -19172,7 +19185,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -19641,7 +19654,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'title',
-                'right',
+                ChartPosition.right,
                 2000.0,
                 true,
                 438.0,
@@ -19653,7 +19666,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -19665,7 +19678,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -19682,7 +19695,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'display': true,
                 'text': <Object?>['Line one', 'Line two', 'Line three'],
                 'font': <String, Object?>{'lineHeight': 1.5, 'weight': 'bold'},
-                'position': 'right',
+                'position': ChartPosition.right,
                 'align': ChartAlign.center,
                 'fullSize': true,
                 'padding': 10.0,
@@ -20232,7 +20245,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -20261,7 +20274,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -20714,7 +20727,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -20726,7 +20739,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -20738,7 +20751,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -20764,7 +20777,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'align': ChartAlign.center,
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
           },
         },
@@ -21297,7 +21310,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -21331,7 +21344,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -21784,7 +21797,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -21796,7 +21809,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -21808,7 +21821,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -21828,7 +21841,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -22362,7 +22375,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -22396,7 +22409,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -22849,7 +22862,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -22861,7 +22874,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -22873,7 +22886,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -22893,7 +22906,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -23416,7 +23429,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -23445,7 +23458,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -23895,7 +23908,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -23907,7 +23920,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'subtitle',
-            'top',
+            ChartPosition.top,
             1500.0,
             true,
             0.0,
@@ -23919,7 +23932,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -23931,7 +23944,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -23943,7 +23956,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -23963,7 +23976,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'font': <String, Object?>{'weight': 'bold'},
             'fullSize': true,
             'padding': 10.0,
-            'position': 'top',
+            'position': ChartPosition.top,
             'weight': 2000.0,
             'color': '#666',
           },
@@ -23971,7 +23984,11 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.legend.position', 'left'],
+          'do': <Object?>[
+            'setOption',
+            'plugins.legend.position',
+            ChartPosition.left,
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
               113.369140625,
@@ -23983,7 +24000,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -24017,7 +24034,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -24490,7 +24507,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'left',
+                ChartPosition.left,
                 1000.0,
                 true,
                 0.0,
@@ -24502,7 +24519,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'subtitle',
-                'top',
+                ChartPosition.top,
                 1500.0,
                 true,
                 0.0,
@@ -24514,7 +24531,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -24526,7 +24543,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 113.369140625,
@@ -24538,7 +24555,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 86.021484375,
@@ -24558,7 +24575,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
                 'font': <String, Object?>{'weight': 'bold'},
                 'fullSize': true,
                 'padding': 10.0,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 2000.0,
                 'color': '#666',
               },

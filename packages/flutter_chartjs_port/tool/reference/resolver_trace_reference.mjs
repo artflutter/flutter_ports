@@ -76,7 +76,7 @@ import {execFileSync} from 'node:child_process';
 import {types} from 'node:util';
 
 import {loadChartJs, makeChart, named, registerBuiltins} from './controller_chart_common.mjs';
-import {dartLiteral, referenceBuild} from './scale_chart_common.mjs';
+import {dartLiteral, positionValue, referenceBuild} from './scale_chart_common.mjs';
 
 const OUT = fileURLToPath(
   new URL('../../test/port/core/resolver_trace_reference.dart', import.meta.url),
@@ -465,10 +465,12 @@ function applyStep(chart, step) {
       delete object[key];
       return undefined;
     }
+    // A read of a position gives the enum value of the port (row
+    // adapt-chart-position-enum).
     case 'readScale':
-      return valueOf(readPath(chart.scales[args[0]].options, args[1]), 0);
+      return asPosition(args[1], valueOf(readPath(chart.scales[args[0]].options, args[1]), 0));
     case 'readLegend':
-      return valueOf(readPath(chart.legend.options, args[0]), 0);
+      return asPosition(args[0], valueOf(readPath(chart.legend.options, args[0]), 0));
     case 'legendItems':
       return chart.legend.legendItems.map((item) => valueOf(item[args[0]], 1));
     case 'hitNear': {
@@ -485,6 +487,11 @@ function applyStep(chart, step) {
     default:
       throw new Error(`Not a step: ${JSON.stringify(step)}`);
   }
+}
+
+/** [value] as a position of the port when the read [path] ends with `position`. */
+function asPosition(path, value) {
+  return path.split('.').pop() === 'position' ? positionValue(value) : value;
 }
 
 /** The value at the dotted [path] under [root], read key by key. */
@@ -883,7 +890,7 @@ const out = `// Original code, not ported from Chart.js: resolver trace referenc
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // a build of Chart.js v${build.version} at the commit
 // ${build.commit}. ${cases.length} cases.
-${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined || state.arcEnums ? '\n' : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}
+${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined || state.arcEnums || state.positions ? '\n' : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String resolverTraceReferenceNode = '${process.version}';
 

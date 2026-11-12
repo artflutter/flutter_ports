@@ -7,6 +7,7 @@
 // context of tool/reference/scale_chart_common.mjs. 54 cases, 237 widths.
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String scaleLinearBaseReferenceNode = 'v24.22.1';
@@ -73,7 +74,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -139,7 +140,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -754,7 +755,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -824,7 +825,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 20.0,
           'ticks': <Object?>[
@@ -1531,7 +1532,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -1609,7 +1610,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 3.0,
           'max': 9.0,
           'ticks': <Object?>[
@@ -2287,7 +2288,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -2365,7 +2366,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -3165,7 +3166,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 7.0,
           'ticks': <Object?>[
@@ -3235,7 +3236,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 4.0,
           'max': 8.5,
           'ticks': <Object?>[
@@ -3928,7 +3929,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -3998,7 +3999,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 10.0,
           'max': 30.0,
           'ticks': <Object?>[
@@ -4737,7 +4738,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -5.0,
           'max': 55.0,
           'ticks': <Object?>[
@@ -4805,7 +4806,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -5527,7 +5528,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 50.0,
           'ticks': <Object?>[
@@ -5595,7 +5596,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -100.0,
           'max': 300.0,
           'ticks': <Object?>[
@@ -6279,7 +6280,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 50.0,
           'ticks': <Object?>[
@@ -6347,7 +6348,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -40.0,
           'max': 140.0,
           'ticks': <Object?>[
@@ -7061,7 +7062,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 30.0,
           'ticks': <Object?>[
@@ -7127,7 +7128,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -80.0,
           'max': 0.0,
           'ticks': <Object?>[
@@ -7772,7 +7773,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -10.0,
           'max': 30.0,
           'ticks': <Object?>[
@@ -7842,7 +7843,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 20.0,
           'max': 80.0,
           'ticks': <Object?>[
@@ -8482,7 +8483,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -80.0,
           'max': -20.0,
           'ticks': <Object?>[
@@ -8548,7 +8549,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 10.0,
           'max': 30.0,
           'ticks': <Object?>[
@@ -9249,7 +9250,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -1.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -9327,7 +9328,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 4.75,
           'max': 5.25,
           'ticks': <Object?>[
@@ -10150,7 +10151,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -10228,7 +10229,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -3.0,
           'max': 0.0,
           'ticks': <Object?>[
@@ -10927,7 +10928,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 4.0,
           'max': 4.2,
           'ticks': <Object?>[
@@ -10993,7 +10994,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 4.75,
           'max': 5.0,
           'ticks': <Object?>[
@@ -11486,7 +11487,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -11560,7 +11561,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -1.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -12388,7 +12389,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -11.7,
           'max': 8.0,
           'ticks': <Object?>[
@@ -12464,7 +12465,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 99.5,
           'ticks': <Object?>[
@@ -13127,7 +13128,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -13180,7 +13181,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -13731,7 +13732,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 117.0,
           'ticks': <Object?>[
@@ -13809,7 +13810,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -14463,7 +14464,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 10.0,
           'max': 30.0,
           'ticks': <Object?>[
@@ -14537,7 +14538,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 99.5,
           'ticks': <Object?>[
@@ -15362,7 +15363,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -21.0,
           'max': 119.0,
           'ticks': <Object?>[
@@ -15456,7 +15457,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -16463,7 +16464,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 30.0,
           'ticks': <Object?>[
@@ -16529,7 +16530,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 31.0,
           'ticks': <Object?>[
@@ -17132,7 +17133,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -17196,7 +17197,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -13.200000000000001,
           'max': -11.8,
           'ticks': <Object?>[
@@ -17780,7 +17781,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 117.0,
           'ticks': <Object?>[
@@ -17869,7 +17870,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -18376,7 +18377,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -18458,7 +18459,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -19006,7 +19007,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 100.0,
           'ticks': <Object?>[
@@ -19068,7 +19069,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -13.200000000000001,
           'max': -11.8,
           'ticks': <Object?>[
@@ -19626,7 +19627,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -12.5,
           'max': 40.0,
           'ticks': <Object?>[
@@ -19689,7 +19690,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 117.0,
           'ticks': <Object?>[
@@ -19930,7 +19931,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -19990,7 +19991,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -20503,7 +20504,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 2.5,
           'max': 2.64,
           'ticks': <Object?>[
@@ -20569,7 +20570,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -3.0,
           'max': 17.0,
           'ticks': <Object?>[
@@ -21053,7 +21054,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -12.5,
           'max': 40.0,
           'ticks': <Object?>[
@@ -21105,7 +21106,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 117.0,
           'ticks': <Object?>[
@@ -21345,7 +21346,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 3.0,
           'ticks': <Object?>[
@@ -21409,7 +21410,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 0.4,
           'ticks': <Object?>[
@@ -21849,7 +21850,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -21913,7 +21914,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.01,
           'max': 0.33,
           'ticks': <Object?>[
@@ -22429,7 +22430,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -22483,7 +22484,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -22994,7 +22995,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -23049,7 +23050,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -23663,7 +23664,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -23729,7 +23730,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -100.0,
           'max': 200.0,
           'ticks': <Object?>[
@@ -24113,7 +24114,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -24173,7 +24174,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -50.0,
           'max': 150.0,
           'ticks': <Object?>[
@@ -24617,7 +24618,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -11.0,
           'max': 39.9,
           'ticks': <Object?>[
@@ -24681,7 +24682,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -19.5,
           'max': 99.5,
           'ticks': <Object?>[
@@ -25237,7 +25238,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -11.0,
           'max': 39.9,
           'ticks': <Object?>[
@@ -25299,7 +25300,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 3.0,
           'max': 97.0,
           'ticks': <Object?>[
@@ -25872,7 +25873,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.2,
           'max': 49.8,
           'ticks': <Object?>[
@@ -25950,7 +25951,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.4,
           'max': 120.4,
           'ticks': <Object?>[
@@ -26686,7 +26687,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -12.5,
           'max': 40.0,
           'ticks': <Object?>[
@@ -26752,7 +26753,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -21.0,
           'max': 117.0,
           'ticks': <Object?>[
@@ -27217,7 +27218,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -27287,7 +27288,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -27918,7 +27919,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 3.1,
           'max': 3.9,
           'ticks': <Object?>[
@@ -27970,7 +27971,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -28500,7 +28501,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 3.1,
           'max': 3.9,
           'ticks': <Object?>[],
@@ -28550,7 +28551,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -29040,7 +29041,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -29106,7 +29107,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -29695,7 +29696,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -29765,7 +29766,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 117.0,
           'ticks': <Object?>[
@@ -30385,8 +30386,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'position': 'top'},
-          'y': <String, Object?>{'position': 'right'},
+          'x': <String, Object?>{'position': ChartPosition.top},
+          'y': <String, Object?>{'position': ChartPosition.right},
         },
       },
     },
@@ -30402,7 +30403,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'top',
+          'position': ChartPosition.top,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -30468,7 +30469,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'right',
+          'position': ChartPosition.right,
           'min': -20.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -31092,7 +31093,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 1.000000000000001,
           'ticks': <Object?>[
@@ -31149,7 +31150,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -100.0,
           'max': -99.99999999999999,
           'ticks': <Object?>[
@@ -31436,7 +31437,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1.0,
           'max': 1.000000000000001,
           'ticks': <Object?>[
@@ -31520,7 +31521,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -32233,7 +32234,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -20.0,
           'max': 120.0,
           'ticks': <Object?>[
@@ -32301,7 +32302,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20.0,
           'max': 40.0,
           'ticks': <Object?>[
@@ -32926,7 +32927,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': -20000.0,
           'max': 100000.0,
           'ticks': <Object?>[
@@ -32996,7 +32997,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.5,
           'max': 3.0,
           'ticks': <Object?>[
@@ -33551,7 +33552,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -33625,7 +33626,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -34454,7 +34455,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBaseLimit',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 10000000.0,
           'ticks': <Object?>[
@@ -34508,7 +34509,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBaseLimit',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -35115,7 +35116,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBaseLimit',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 999999.0,
           'max': 10000001.0,
           'ticks': <Object?>[
@@ -35193,7 +35194,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.95,
           'max': 2.03,
           'ticks': <Object?>[
@@ -35724,7 +35725,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'x': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1000000.0,
           'max': 10000000.0,
           'ticks': <Object?>[
@@ -35810,7 +35811,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         'y': <String, Object?>{
           'type': 'testLinearBase',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
           'ticks': <Object?>[

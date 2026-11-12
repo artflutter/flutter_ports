@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../controllers/controller_chart_harness.dart'
@@ -291,7 +292,7 @@ void main() {
         'text': 'a',
         'padding': 10,
         'font': <String, Object?>{'size': 12},
-        'position': 'top',
+        'position': ChartPosition.top,
       };
       final withMargins = Title((chart: null, options: options(), ctx: null))
         ..update(300, 100, _Margins(5, 7, 9, 11));

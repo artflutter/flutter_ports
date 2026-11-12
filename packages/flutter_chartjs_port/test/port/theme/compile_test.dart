@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -1242,7 +1243,7 @@ void main() {
           'plugins': <String, Object?>{
             'title': <String, Object?>{
               'color': const ui.Color.fromRGBO(0, 0, 255, 1),
-              'position': 'bottom',
+              'position': ChartPosition.bottom,
             },
           },
         },
@@ -1251,7 +1252,7 @@ void main() {
         _at(compiled, 'plugins.title.color'),
         const ui.Color.fromRGBO(0, 0, 255, 1),
       );
-      expect(_at(compiled, 'plugins.title.position'), 'bottom');
+      expect(_at(compiled, 'plugins.title.position'), ChartPosition.bottom);
     });
   });
 
@@ -1927,9 +1928,9 @@ void main() {
         ('plugins.title', <String, Object?>{}),
         ('plugins.title.color', 'red'),
         ('plugins.title.font', <String, Object?>{}),
-        ('plugins.title.position', 'bottom'),
+        ('plugins.title.position', ChartPosition.bottom),
         ('plugins.title.align', 'start'),
-        ('plugins.legend.position', 'left'),
+        ('plugins.legend.position', ChartPosition.left),
         ('plugins.legend.title', <String, Object?>{}),
         ('plugins.legend.title.color', 'red'),
         ('plugins.legend.labels.color', 'red'),
@@ -2135,7 +2136,7 @@ void main() {
         'raw': <String, Object?>{
           'plugins': <String, Object?>{
             'legend': <String, Object?>{
-              'position': 'left',
+              'position': ChartPosition.left,
               'title': <String, Object?>{
                 'color': const ui.Color.fromRGBO(255, 0, 0, 1),
               },
@@ -2146,7 +2147,7 @@ void main() {
           },
         },
       });
-      expect(_at(compiled, 'plugins.legend.position'), 'left');
+      expect(_at(compiled, 'plugins.legend.position'), ChartPosition.left);
       expect(
         _at(compiled, 'plugins.legend.title.color'),
         const ui.Color.fromRGBO(255, 0, 0, 1),

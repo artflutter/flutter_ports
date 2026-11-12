@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -302,10 +303,10 @@ void main() {
           determineAxis(id, options);
       Map<String, Object?> o(String key, Object? value) => {key: value};
       expect(axis('foo', [o('axis', 'y')]), 'y');
-      expect(axis('foo', [o('position', 'top')]), 'x');
-      expect(axis('foo', [o('position', 'bottom')]), 'x');
-      expect(axis('foo', [o('position', 'left')]), 'y');
-      expect(axis('foo', [o('position', 'right')]), 'y');
+      expect(axis('foo', [o('position', ChartPosition.top)]), 'x');
+      expect(axis('foo', [o('position', ChartPosition.bottom)]), 'x');
+      expect(axis('foo', [o('position', ChartPosition.left)]), 'y');
+      expect(axis('foo', [o('position', ChartPosition.right)]), 'y');
       expect(
         () => axis('foo', [o('position', 'chartArea')]),
         _axisError('foo'),
@@ -321,15 +322,15 @@ void main() {
       );
       expect(
         axis('foo', [
-          <String, Object?>{'axis': 'y', 'position': 'top'},
+          <String, Object?>{'axis': 'y', 'position': ChartPosition.top},
         ]),
         'y',
       );
-      expect(axis('xfoo', [o('position', 'left')]), 'y');
+      expect(axis('xfoo', [o('position', ChartPosition.left)]), 'y');
       expect(axis('foo', [o('axis', 7.0)]), 7.0);
       expect(
         axis('foo', [
-          <String, Object?>{'axis': 0.0, 'position': 'top'},
+          <String, Object?>{'axis': 0.0, 'position': ChartPosition.top},
         ]),
         'x',
       );
@@ -609,7 +610,7 @@ void main() {
                 'type': 'tlin',
                 'extra': 1.0,
               },
-              'myY': <String, Object?>{'position': 'left'},
+              'myY': <String, Object?>{'position': ChartPosition.left},
               'r2': <String, Object?>{},
             },
           },

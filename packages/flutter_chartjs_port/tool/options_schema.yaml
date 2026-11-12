@@ -36,7 +36,10 @@
 # `yAlign` of the tooltip; a keyword is a foreign value), `arcBorderAlign` and `arcSpacingMode` (the `borderAlign`
 # and `spacingMode` of an arc; a keyword is a foreign value), `fillerDrawTime` (a `FillerDrawTime`, the
 # `drawTime` of the filler; a keyword is a foreign value), `timeUnit` (a `TimeUnit`, the `unit`,
-# `minUnit` and `round` of the time options; a keyword is a foreign value), `any` (any JS value: a color, a point
+# `minUnit` and `round` of the time options; a keyword is a foreign value), `chartPosition` (a
+# `ChartPosition`, the `position` of the legend and a title; a keyword is a foreign value),
+# `layoutPosition` (a `LayoutPosition`, the `position` of a scale: a `ChartPosition` or a
+# `ScaleValuePosition`; a keyword or an object is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -857,7 +860,7 @@ kinds:
       afterFit: fn
       afterUpdate: fn
       bounds: scaleBounds
-      position: string | scope ScalePosition
+      position: layoutPosition
       stack: string
       stackWeight: number
       axis: string
@@ -880,10 +883,6 @@ kinds:
       type: string  # index.d.ts:3825 ScaleOptionsByType
       id: string  # written at core.controller.js:309, read at :344
       fullSize: bool  # read at core.scale.js:768 and core.layouts.js:332
-  ScalePosition:
-    doc: Port-only kind for the object form of index.d.ts:3270 CartesianScaleOptions `position` (layout.d.ts LayoutPosition), the value on the scale of each id.
-    others: number
-    keys: none
   TickOptions:
     doc: The union of index.d.ts:3115 TickOptions, :3179 CartesianTickOptions, the linear ticks of :3376, the logarithmic ticks of :3415, :3466 TimeScaleTickOptions and :3535 RadialTickOptions, the scope `ticks` of a scale.
     keys:
@@ -1010,7 +1009,7 @@ kinds:
     doc: index.d.ts:2422 LegendOptions, the scope `plugins.legend`.
     keys:
       display: bool
-      position: string | scope ScalePosition
+      position: layoutPosition
       align: chartAlign
       maxHeight: number
       maxWidth: number
@@ -1056,7 +1055,7 @@ kinds:
     keys:
       align: chartAlign
       display: bool
-      position: string
+      position: chartPosition
       color: any
       font: scope FontSpec
       fullSize: bool

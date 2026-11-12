@@ -100,7 +100,7 @@ import 'package:flutter_chartjs_port/src/platform/index.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show LayoutItem, LayoutItemConfigure, LayoutLayer;
+    show ChartPosition, LayoutItem, LayoutItemConfigure, LayoutLayer;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show
         CancelableHookArgs,
@@ -118,22 +118,23 @@ import 'package:meta/meta.dart';
 // the interfaces of lib/src/types/index.dart.
 
 /// core.controller.js:20 `KNOWN_POSITIONS`.
-const List<String> _knownPositions = [
-  'top',
-  'bottom',
-  'left',
-  'right',
-  'chartArea',
+// DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
+const List<ChartPosition> _knownPositions = [
+  ChartPosition.top,
+  ChartPosition.bottom,
+  ChartPosition.left,
+  ChartPosition.right,
+  ChartPosition.chartArea,
 ];
 
 /// core.controller.js:21 `positionIsHorizontal(position, axis)`.
 ///
 /// [position] is an option value. `KNOWN_POSITIONS.indexOf(position)`
-/// compares with `===`, which is `==` for a `String`. Dart `null` for
+/// compares with `===`, which is `==` for an enum value. Dart `null` for
 /// [axis] stands for an absent argument.
 bool _positionIsHorizontal(Object? position, [Object? axis]) {
-  return position == 'top' ||
-      position == 'bottom' ||
+  return position == ChartPosition.top ||
+      position == ChartPosition.bottom ||
       (!_knownPositions.contains(position) && axis == 'x');
 }
 
@@ -1291,7 +1292,8 @@ class Chart
     final scaleOpts = options.readKey(OptionKey.scales);
     final scales = this.scales;
     final updated = <String, bool>{for (final id in scales.keys) id: false};
-    var items = <({OptionView options, String dposition, String dtype})>[];
+    var items =
+        <({OptionView options, ChartPosition dposition, String dtype})>[];
 
     if (jsTruthy(scaleOpts)) {
       final scaleOptionsById = scaleOpts! as OptionView;
@@ -1304,11 +1306,12 @@ class Chart
           final isHorizontal = axis == 'x';
           return (
             options: scaleOptions,
+            // DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
             dposition: isRadial
-                ? 'chartArea'
+                ? ChartPosition.chartArea
                 : isHorizontal
-                ? 'bottom'
-                : 'left',
+                ? ChartPosition.bottom
+                : ChartPosition.left,
             dtype: isRadial
                 ? 'radialLinear'
                 : isHorizontal
@@ -1320,7 +1323,7 @@ class Chart
     }
 
     each(items, (
-      ({OptionView options, String dposition, String dtype}) item,
+      ({OptionView options, ChartPosition dposition, String dtype}) item,
     ) {
       final scaleOptions = item.options;
       final id = scaleOptions.readKey(OptionKey.id)! as String;
@@ -2188,7 +2191,7 @@ class Chart
 
     _layers = [];
     each(boxes, (LayoutItem box) {
-      if (noArea && box.position == 'chartArea') {
+      if (noArea && box.position == ChartPosition.chartArea) {
         // Skip drawing and configuring chartArea boxes when chartArea is
         // zero or negative
         return;

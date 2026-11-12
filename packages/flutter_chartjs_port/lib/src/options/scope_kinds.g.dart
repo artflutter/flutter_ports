@@ -177,11 +177,6 @@ enum ScopeKind {
   /// Chart.defaults.scale.
   scaleOptions('ScaleOptions'),
 
-  /// Port-only kind for the object form of index.d.ts:3270
-  /// CartesianScaleOptions `position` (layout.d.ts LayoutPosition), the value
-  /// on the scale of each id.
-  scalePosition('ScalePosition'),
-
   /// The union of index.d.ts:3115 TickOptions, :3179 CartesianTickOptions, the
   /// linear ticks of :3376, the logarithmic ticks of :3415, :3466
   /// TimeScaleTickOptions and :3535 RadialTickOptions, the scope `ticks` of a
@@ -349,8 +344,6 @@ enum ScopeKind {
         return GenericDatasetOptionsScope();
       case ScopeKind.scaleOptions:
         return ScaleOptionsScope();
-      case ScopeKind.scalePosition:
-        return ScalePositionScope();
       case ScopeKind.tickOptions:
         return TickOptionsScope();
       case ScopeKind.majorTickOptions:
@@ -470,8 +463,6 @@ enum ScopeKind {
         return GenericDatasetOptionsScope;
       case ScopeKind.scaleOptions:
         return ScaleOptionsScope;
-      case ScopeKind.scalePosition:
-        return ScalePositionScope;
       case ScopeKind.tickOptions:
         return TickOptionsScope;
       case ScopeKind.majorTickOptions:
@@ -1255,8 +1246,6 @@ enum ScopeKind {
           OptionKey.id,
           OptionKey.fullSize,
         ];
-      case ScopeKind.scalePosition:
-        return const [];
       case ScopeKind.tickOptions:
         return const [
           OptionKey.backdropColor,
@@ -2937,7 +2926,7 @@ enum ScopeKind {
           case OptionKey.bounds:
             return 16384;
           case OptionKey.position:
-            return 36;
+            return 67108864;
           case OptionKey.stack:
             return 4;
           case OptionKey.stackWeight:
@@ -2985,8 +2974,6 @@ enum ScopeKind {
           default:
             return 0;
         }
-      case ScopeKind.scalePosition:
-        return 0;
       case ScopeKind.tickOptions:
         switch (key) {
           case OptionKey.backdropColor:
@@ -3215,7 +3202,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.position:
-            return 36;
+            return 67108864;
           case OptionKey.align:
             return 262144;
           case OptionKey.maxHeight:
@@ -3304,7 +3291,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.position:
-            return 4;
+            return 33554432;
           case OptionKey.color:
             return 64;
           case OptionKey.font:
@@ -3918,8 +3905,6 @@ enum ScopeKind {
         }
       case ScopeKind.scaleOptions:
         switch (key) {
-          case OptionKey.position:
-            return ScopeKind.scalePosition;
           case OptionKey.grid:
             return ScopeKind.gridLineOptions;
           case OptionKey.border:
@@ -3937,8 +3922,6 @@ enum ScopeKind {
           default:
             return null;
         }
-      case ScopeKind.scalePosition:
-        return null;
       case ScopeKind.tickOptions:
         switch (key) {
           case OptionKey.backdropPadding:
@@ -3993,8 +3976,6 @@ enum ScopeKind {
         }
       case ScopeKind.legendOptions:
         switch (key) {
-          case OptionKey.position:
-            return ScopeKind.scalePosition;
           case OptionKey.labels:
             return ScopeKind.legendLabelOptions;
           case OptionKey.title:
@@ -4142,8 +4123,6 @@ enum ScopeKind {
         return 64;
       case ScopeKind.scaleOptions:
         return 64;
-      case ScopeKind.scalePosition:
-        return 1;
       case ScopeKind.tickOptions:
         return 64;
       case ScopeKind.majorTickOptions:
@@ -4262,8 +4241,6 @@ enum ScopeKind {
       case ScopeKind.genericDatasetOptions:
         return null;
       case ScopeKind.scaleOptions:
-        return null;
-      case ScopeKind.scalePosition:
         return null;
       case ScopeKind.tickOptions:
         return null;
@@ -4384,8 +4361,6 @@ enum ScopeKind {
         return classifyUnion(raw, 64);
       case ScopeKind.scaleOptions:
         return classifyUnion(raw, 64);
-      case ScopeKind.scalePosition:
-        return classifyNumber(raw);
       case ScopeKind.tickOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.majorTickOptions:

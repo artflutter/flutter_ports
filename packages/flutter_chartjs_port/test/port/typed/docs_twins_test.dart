@@ -627,7 +627,10 @@ Map<String, Object?> _scatterRaw() => <String, Object?>{
   },
   'options': <String, Object?>{
     'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+      'x': <String, Object?>{
+        'type': 'linear',
+        'position': ChartPosition.bottom,
+      },
     },
   },
 };
@@ -1005,7 +1008,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
     'layout': <String, Object?>{'padding': 8},
     'plugins': <String, Object?>{
       'legend': <String, Object?>{
-        'position': 'bottom',
+        'position': ChartPosition.bottom,
         'align': ChartAlign.start,
         'labels': <String, Object?>{
           'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
@@ -1194,7 +1197,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         'display': true,
         'text': 'Steps in thousands',
         'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
-        'position': 'bottom',
+        'position': ChartPosition.bottom,
       },
       'legend': <String, Object?>{
         'reverse': true,
@@ -1297,7 +1300,7 @@ Map<String, Object?> _scatterTypeRaw() => <String, Object?>{
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': 'time',
-        'position': 'bottom',
+        'position': ChartPosition.bottom,
         'min': DateTime.utc(2026, 2, 28),
         'max': DateTime.utc(2026, 3, 7),
         'time': <String, Object?>{
@@ -1486,7 +1489,7 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
   'options': <String, Object?>{
     'plugins': <String, Object?>{
       'legend': <String, Object?>{
-        'position': 'right',
+        'position': ChartPosition.right,
         'labels': <String, Object?>{
           'font': <String, Object?>{'size': 12, 'style': 'italic'},
         },
@@ -1592,7 +1595,7 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
         'display': true,
         'text': 'Tasks',
         'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
-        'position': 'bottom',
+        'position': ChartPosition.bottom,
         'fullSize': false,
       },
     },
@@ -1683,7 +1686,7 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
     },
     'plugins': <String, Object?>{
       'legend': <String, Object?>{
-        'position': 'left',
+        'position': ChartPosition.left,
         'align': ChartAlign.center,
       },
     },

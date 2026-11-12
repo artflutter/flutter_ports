@@ -46,9 +46,9 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show ChartAnimationDetails, ChartLegendEventDetails, ChartTooltipItem;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart' show internal;
 
 /// The legend: the options of the legend plugin, `options.plugins.legend`
@@ -217,7 +217,7 @@ LegendOptionsScope lowerLegend(
   put(labels, OptionKey.usePointStyle, legend.usePointStyle);
   final scope = LegendOptionsScope();
   put(scope, OptionKey.display, legend.display);
-  put(scope, OptionKey.position, legend.position?.name);
+  put(scope, OptionKey.position, legend.position);
   put(scope, OptionKey.align, legend.align);
   put(scope, OptionKey.reverse, legend.reverse);
   if (labels.ownKeyCount != 0) scope.labels = labels;
@@ -347,7 +347,7 @@ TitleOptionsScope lowerTitle(ChartTitle title) {
   put(scope, OptionKey.color, colorValue(title.color));
   put(scope, OptionKey.font, fontScopeOf(title.font));
   put(scope, OptionKey.align, title.align);
-  put(scope, OptionKey.position, title.position?.name);
+  put(scope, OptionKey.position, title.position);
   put(scope, OptionKey.padding, paddingScope(title.padding));
   put(scope, OptionKey.fullSize, title.fullSize);
   return mergeExtra(scope, title.extra);

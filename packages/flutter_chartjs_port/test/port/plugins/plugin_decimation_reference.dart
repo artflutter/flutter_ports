@@ -10,6 +10,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String pluginDecimationReferenceNode = 'v24.22.1';
@@ -160,7 +161,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
             'ticks': <Object?>[
@@ -200,7 +201,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -751,7 +752,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -763,7 +764,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -815,7 +816,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 60.0,
                 'ticks': <Object?>[
@@ -855,7 +856,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 25.0,
                 'ticks': <Object?>[
@@ -1412,7 +1413,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -1424,7 +1425,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -1472,7 +1473,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 60.0,
                 'ticks': <Object?>[
@@ -1512,7 +1513,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 25.0,
                 'ticks': <Object?>[
@@ -2069,7 +2070,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -2081,7 +2082,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -2750,7 +2751,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 200.0,
             'ticks': <Object?>[
@@ -2768,7 +2769,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -10.0,
             'max': 20.0,
             'ticks': <Object?>[
@@ -5025,7 +5026,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             31.34375,
@@ -5037,7 +5038,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -5857,7 +5858,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -5895,7 +5896,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -6866,7 +6867,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -6878,7 +6879,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -7605,7 +7606,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 23.0,
             'ticks': <Object?>[
@@ -7646,7 +7647,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -8674,7 +8675,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -8686,7 +8687,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -9566,7 +9567,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -9604,7 +9605,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -10575,7 +10576,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -10587,7 +10588,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -11295,7 +11296,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -11333,7 +11334,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -12307,7 +12308,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -12319,7 +12320,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -13061,7 +13062,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 10.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -13101,7 +13102,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 22.0,
             'ticks': <Object?>[
@@ -13503,7 +13504,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -13515,7 +13516,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -14275,7 +14276,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 100.0,
             'ticks': <Object?>[
@@ -14301,7 +14302,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 30.0,
             'ticks': <Object?>[
@@ -16555,7 +16556,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             15.0,
@@ -16567,7 +16568,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -16658,7 +16659,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 100.0,
                 'ticks': <Object?>[
@@ -16684,7 +16685,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 30.0,
                 'ticks': <Object?>[
@@ -18938,7 +18939,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 15.0,
@@ -18950,7 +18951,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -19818,7 +19819,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
             'ticks': <Object?>[
@@ -19858,7 +19859,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -20334,7 +20335,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -20346,7 +20347,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -20392,7 +20393,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 80.0,
                 'ticks': <Object?>[
@@ -20436,7 +20437,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 18.0,
                 'ticks': <Object?>[
@@ -20932,7 +20933,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
             'boxes': <Object?>[
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -20944,7 +20945,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -21785,7 +21786,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -21829,7 +21830,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -23625,7 +23626,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -23637,7 +23638,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -24608,7 +24609,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 60.0,
             'ticks': <Object?>[
@@ -24643,7 +24644,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 25.0,
             'ticks': <Object?>[
@@ -25190,7 +25191,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -25202,7 +25203,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'subtitle',
-            'top',
+            ChartPosition.top,
             1500.0,
             true,
             0.0,
@@ -25214,7 +25215,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -25226,7 +25227,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -25238,7 +25239,7 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,

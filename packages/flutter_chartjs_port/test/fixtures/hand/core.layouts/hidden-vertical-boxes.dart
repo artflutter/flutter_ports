@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -27,7 +28,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'position': 'left',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.left,
           'ticks': <String, Object?>{
             'callback': (Object? value) {
               return jsAdd(value, ' very long unit!');
@@ -36,27 +38,32 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         'y1': <String, Object?>{
           'type': 'linear',
-          'position': 'left',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.left,
           'display': false,
         },
         'y2': <String, Object?>{
           'type': 'linear',
-          'position': 'left',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.left,
           'display': false,
         },
         'y3': <String, Object?>{
           'type': 'linear',
-          'position': 'left',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.left,
           'display': false,
         },
         'y4': <String, Object?>{
           'type': 'linear',
-          'position': 'left',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.left,
           'display': false,
         },
         'y5': <String, Object?>{
           'type': 'linear',
-          'position': 'left',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.left,
           'display': false,
         },
       },

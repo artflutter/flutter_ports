@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.logarithmic.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -118,9 +119,12 @@ const List<({String id, String start, String end})> _axes = [
 Chart _acquireWhenChart(Map<String, Object?> setup) {
   final xConfig = <String, Object?>{
     'type': 'logarithmic',
-    'position': 'bottom',
+    'position': ChartPosition.bottom,
   };
-  final yConfig = <String, Object?>{'type': 'logarithmic', 'position': 'left'};
+  final yConfig = <String, Object?>{
+    'type': 'logarithmic',
+    'position': ChartPosition.left,
+  };
   final data =
       (setup['data'] ??
               <String, Object?>{
@@ -211,14 +215,14 @@ void main() {
               'y': <String, Object?>{'id': 'y', 'type': 'logarithmic'},
               'y1': <String, Object?>{
                 'type': 'logarithmic',
-                'position': 'right',
+                'position': ChartPosition.right,
               },
               'y2': <String, Object?>{
                 'type': 'logarithmic',
-                'position': 'right',
+                'position': ChartPosition.right,
               },
               'y3': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },
@@ -277,15 +281,15 @@ void main() {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic'},
               'y1': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
               'y2': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
               'y3': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },
@@ -347,11 +351,11 @@ void main() {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic'},
               'y1': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
               'y2': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },
@@ -437,7 +441,7 @@ void main() {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic'},
               'y1': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },
@@ -482,7 +486,7 @@ void main() {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'logarithmic',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
               },
               'y': <String, Object?>{'type': 'logarithmic'},
             },
@@ -519,7 +523,7 @@ void main() {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'logarithmic',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
               },
               'y': <String, Object?>{'type': 'logarithmic'},
             },
@@ -568,7 +572,7 @@ void main() {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic', 'stacked': true},
               'y1': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },
@@ -616,7 +620,7 @@ void main() {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic', 'stacked': true},
               'y1': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },
@@ -1054,7 +1058,7 @@ void main() {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic'},
               'y1': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },
@@ -1092,7 +1096,7 @@ void main() {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'logarithmic'},
               'y1': <String, Object?>{
-                'position': 'right',
+                'position': ChartPosition.right,
                 'type': 'logarithmic',
               },
             },

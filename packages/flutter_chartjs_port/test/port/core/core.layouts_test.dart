@@ -401,7 +401,7 @@ void main() {
       // `fullSize || false`, `position || 'top'` and `weight || 0`
       // (core.layouts.js:297-299).
       expect(box.fullSize, isFalse);
-      expect(box.position, 'top');
+      expect(box.position, ChartPosition.top);
       expect(box.weight, 0);
       expect(chart.boxes, [box]);
     });
@@ -456,7 +456,7 @@ void main() {
 
     test('writes the three options', () {
       final box = _box(spec, []);
-      final position = <String, Object?>{'x': 0};
+      const position = ScaleValuePosition('x', 0);
       layouts.configure(_Chart(0), box, {
         'fullSize': true,
         'position': position,
@@ -509,11 +509,11 @@ void main() {
       final b = _box(spec, []);
       for (final box in [a, b]) {
         layouts
-          ..configure(chart, box, {'position': 'left'})
+          ..configure(chart, box, {'position': ChartPosition.left})
           ..addBox(chart, box);
       }
       for (final box in [a, b]) {
-        layouts.configure(chart, box, {'position': 'left'});
+        layouts.configure(chart, box, {'position': ChartPosition.left});
       }
       layouts.update(chart, 300, 200);
 
@@ -530,8 +530,8 @@ void main() {
         layouts.addBox(chart, box);
       }
       layouts
-        ..configure(chart, a, {'position': 'left', 'weight': null})
-        ..configure(chart, b, {'position': 'left', 'weight': 0});
+        ..configure(chart, a, {'position': ChartPosition.left, 'weight': null})
+        ..configure(chart, b, {'position': ChartPosition.left, 'weight': 0});
       layouts.update(chart, 300, 200);
 
       expect(a.left, lessThan(b.left));

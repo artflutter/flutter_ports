@@ -936,7 +936,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   @override
   bool isHorizontal() {
     final position = LegendOptions(options).position;
-    return position == 'top' || position == 'bottom';
+    return position == ChartPosition.top || position == ChartPosition.bottom;
   }
 
   /// plugin.legend.js:269 `draw()`.
@@ -1967,7 +1967,7 @@ final Plugin legend = Plugin(supportsDataUpdates: true)
   // (Chart.js ADR 0054 §3).
   ..defaults = (LegendOptionsScope()
     ..display = true
-    ..position = 'top'
+    ..position = ChartPosition.top
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     ..align = ChartAlign.center
     ..fullSize = true

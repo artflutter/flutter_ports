@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
 // The facades of lib/src/core/scale_options.dart (Chart.js ADR 0054 §4).
@@ -71,7 +72,7 @@ Map<String, Object?> _scaleValues() => {
   'beforeUpdate': (Object? scale) => null,
   'afterFit': (Object? scale) => null,
   'axis': 'y',
-  'position': 'left',
+  'position': ChartPosition.left,
   'offset': true,
   'bounds': ScaleBounds.ticks,
   'labels': <Object?>['a', 'b'],

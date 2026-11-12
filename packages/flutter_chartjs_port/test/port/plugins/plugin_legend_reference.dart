@@ -11,6 +11,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String pluginLegendReferenceNode = 'v24.22.1';
@@ -98,7 +99,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -127,7 +128,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -800,7 +801,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -812,7 +813,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -824,7 +825,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -1556,7 +1557,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'bottom'},
+          'legend': <String, Object?>{'position': ChartPosition.bottom},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -1573,7 +1574,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -1602,7 +1603,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -2272,7 +2273,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'bottom',
+            ChartPosition.bottom,
             1000.0,
             true,
             0.0,
@@ -2284,7 +2285,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -2296,7 +2297,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -3028,7 +3029,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'left'},
+          'legend': <String, Object?>{'position': ChartPosition.left},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -3050,7 +3051,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -3084,7 +3085,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -3761,7 +3762,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'left',
+            ChartPosition.left,
             1000.0,
             true,
             0.0,
@@ -3773,7 +3774,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             127.34765625,
@@ -3785,7 +3786,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             100.0,
@@ -4519,7 +4520,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'right'},
+          'legend': <String, Object?>{'position': ChartPosition.right},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -4536,7 +4537,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -4566,7 +4567,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -5240,7 +5241,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'right',
+            ChartPosition.right,
             1000.0,
             true,
             300.0,
@@ -5252,7 +5253,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -5264,7 +5265,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -5998,7 +5999,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'chartArea'},
+          'legend': <String, Object?>{'position': ChartPosition.chartArea},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -6020,7 +6021,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -6054,7 +6055,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -6731,7 +6732,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'chartArea',
+            ChartPosition.chartArea,
             1000.0,
             true,
             27.34765625,
@@ -6743,7 +6744,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -6755,7 +6756,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -7506,7 +7507,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -7535,7 +7536,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -8208,7 +8209,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -8220,7 +8221,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -8232,7 +8233,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -8981,7 +8982,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -9010,7 +9011,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -9683,7 +9684,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -9695,7 +9696,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -9707,7 +9708,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -10440,7 +10441,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'decimation': false,
           'filler': false,
           'legend': <String, Object?>{
-            'position': 'left',
+            'position': ChartPosition.left,
             'align': ChartAlign.start,
           },
           'subtitle': false,
@@ -10464,7 +10465,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -10498,7 +10499,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -11175,7 +11176,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'left',
+            ChartPosition.left,
             1000.0,
             true,
             0.0,
@@ -11187,7 +11188,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             127.34765625,
@@ -11199,7 +11200,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             100.0,
@@ -11934,7 +11935,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'decimation': false,
           'filler': false,
           'legend': <String, Object?>{
-            'position': 'right',
+            'position': ChartPosition.right,
             'align': ChartAlign.end,
           },
           'subtitle': false,
@@ -11953,7 +11954,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -11983,7 +11984,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -12657,7 +12658,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'right',
+            ChartPosition.right,
             1000.0,
             true,
             300.0,
@@ -12669,7 +12670,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -12681,7 +12682,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -13432,7 +13433,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -13461,7 +13462,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -14134,7 +14135,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -14146,7 +14147,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -14158,7 +14159,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -14893,7 +14894,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'rtl': true, 'position': 'left'},
+          'legend': <String, Object?>{
+            'rtl': true,
+            'position': ChartPosition.left,
+          },
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -14915,7 +14919,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -14949,7 +14953,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -15626,7 +15630,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'left',
+            ChartPosition.left,
             1000.0,
             true,
             0.0,
@@ -15638,7 +15642,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             127.34765625,
@@ -15650,7 +15654,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             100.0,
@@ -16404,7 +16408,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -16433,7 +16437,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -17106,7 +17110,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -17118,7 +17122,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -17130,7 +17134,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -17862,7 +17866,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'left', 'fullSize': false},
+          'legend': <String, Object?>{
+            'position': ChartPosition.left,
+            'fullSize': false,
+          },
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -17884,7 +17891,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -17918,7 +17925,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -18595,7 +18602,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'left',
+            ChartPosition.left,
             1000.0,
             false,
             0.0,
@@ -18607,7 +18614,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             127.34765625,
@@ -18619,7 +18626,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             100.0,
@@ -19353,7 +19360,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'right', 'maxWidth': 60.0},
+          'legend': <String, Object?>{
+            'position': ChartPosition.right,
+            'maxWidth': 60.0,
+          },
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -19370,7 +19380,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -19400,7 +19410,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -20074,7 +20084,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'right',
+            ChartPosition.right,
             1000.0,
             true,
             340.0,
@@ -20086,7 +20096,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -20098,7 +20108,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -20873,7 +20883,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -20902,7 +20912,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -22831,7 +22841,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -22843,7 +22853,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -22855,7 +22865,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -24178,7 +24188,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -24207,7 +24217,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -24880,7 +24890,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -24892,7 +24902,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -24904,7 +24914,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -25666,7 +25676,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -25695,7 +25705,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -26368,7 +26378,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -26380,7 +26390,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -26392,7 +26402,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -26506,7 +26516,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -26535,7 +26545,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -27214,7 +27224,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -27226,7 +27236,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -27238,7 +27248,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -27996,7 +28006,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -28025,7 +28035,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -28698,7 +28708,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -28710,7 +28720,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -28722,7 +28732,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -29456,7 +29466,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'decimation': false,
           'filler': false,
           'legend': <String, Object?>{
-            'position': 'left',
+            'position': ChartPosition.left,
             'labels': <String, Object?>{'padding': 25.0},
           },
           'subtitle': false,
@@ -29480,7 +29490,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -29514,7 +29524,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -30191,7 +30201,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'left',
+            ChartPosition.left,
             1000.0,
             true,
             0.0,
@@ -30203,7 +30213,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             127.34765625,
@@ -30215,7 +30225,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             100.0,
@@ -30968,7 +30978,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -30997,7 +31007,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -31670,7 +31680,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -31682,7 +31692,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -31694,7 +31704,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -32401,7 +32411,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -32430,7 +32440,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -33103,7 +33113,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -33115,7 +33125,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -33127,7 +33137,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -33860,7 +33870,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'decimation': false,
           'filler': false,
           'legend': <String, Object?>{
-            'position': 'right',
+            'position': ChartPosition.right,
             'labels': <String, Object?>{'textAlign': 'right'},
           },
           'subtitle': false,
@@ -33879,7 +33889,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -33909,7 +33919,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -34583,7 +34593,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'right',
+            ChartPosition.right,
             1000.0,
             true,
             300.0,
@@ -34595,7 +34605,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -34607,7 +34617,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -35373,7 +35383,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -35407,7 +35417,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -36087,7 +36097,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -36099,7 +36109,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -36111,7 +36121,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -36853,7 +36863,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'decimation': false,
           'filler': false,
           'legend': <String, Object?>{
-            'position': 'left',
+            'position': ChartPosition.left,
             'title': <String, Object?>{
               'display': true,
               'text': 'Title',
@@ -36882,7 +36892,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -36916,7 +36926,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -37593,7 +37603,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'left',
+            ChartPosition.left,
             1000.0,
             true,
             0.0,
@@ -37605,7 +37615,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             127.34765625,
@@ -37617,7 +37627,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             100.0,
@@ -38401,7 +38411,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -38430,7 +38440,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -40356,7 +40366,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -40368,7 +40378,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -40380,7 +40390,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -41711,7 +41721,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'left'},
+          'legend': <String, Object?>{'position': ChartPosition.left},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -41733,7 +41743,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -41767,7 +41777,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -43668,7 +43678,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'left',
+            ChartPosition.left,
             1000.0,
             true,
             0.0,
@@ -43680,7 +43690,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             127.34765625,
@@ -43692,7 +43702,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             100.0,
@@ -44896,7 +44906,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -44925,7 +44935,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -45598,7 +45608,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -45610,7 +45620,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -45622,7 +45632,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -45729,7 +45739,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -45758,7 +45768,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -46437,7 +46447,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -46449,7 +46459,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -46461,7 +46471,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -47175,7 +47185,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -47204,7 +47214,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -47877,7 +47887,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -47889,7 +47899,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -47901,7 +47911,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -48008,7 +48018,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -48037,7 +48047,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -48716,7 +48726,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -48728,7 +48738,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -48740,7 +48750,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -48847,7 +48857,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -48876,7 +48886,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -49555,7 +49565,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -49567,7 +49577,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -49579,7 +49589,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -49686,7 +49696,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -49715,7 +49725,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -50394,7 +50404,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -50406,7 +50416,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -50418,7 +50428,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -50529,7 +50539,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -50558,7 +50568,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -51237,7 +51247,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -51249,7 +51259,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -51261,7 +51271,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -52014,7 +52024,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -52043,7 +52053,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -52716,7 +52726,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -52728,7 +52738,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -52740,7 +52750,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -52847,7 +52857,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -52876,7 +52886,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -53555,7 +53565,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -53567,7 +53577,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -53579,7 +53589,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -53686,7 +53696,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -53715,7 +53725,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 10.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -54389,7 +54399,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -54401,7 +54411,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -54413,7 +54423,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -54520,7 +54530,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -54549,7 +54559,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -55228,7 +55238,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -55240,7 +55250,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -55252,7 +55262,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -55951,7 +55961,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -55980,7 +55990,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -56653,7 +56663,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -56665,7 +56675,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -56677,7 +56687,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -56784,7 +56794,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -56813,7 +56823,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -57492,7 +57502,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -57504,7 +57514,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -57516,7 +57526,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -57623,7 +57633,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -57652,7 +57662,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -58331,7 +58341,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -58343,7 +58353,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -58355,7 +58365,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -59110,7 +59120,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -59144,7 +59154,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -59821,7 +59831,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -59833,7 +59843,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -59845,7 +59855,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -59930,7 +59940,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -59959,7 +59969,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -60638,7 +60648,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -60650,7 +60660,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -60662,7 +60672,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -61419,7 +61429,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -61452,7 +61462,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -62019,7 +62029,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -62031,7 +62041,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -62043,7 +62053,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -62847,7 +62857,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': 'right'},
+          'legend': <String, Object?>{'position': ChartPosition.right},
           'subtitle': false,
           'title': false,
           'tooltip': false,
@@ -63123,7 +63133,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'right',
+            ChartPosition.right,
             1000.0,
             true,
             309.3203125,
@@ -63507,7 +63517,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'right',
+                ChartPosition.right,
                 1000.0,
                 true,
                 309.3203125,
@@ -63859,7 +63869,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'x': <String, Object?>{
             'type': 'category',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -63888,7 +63898,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 5.0,
             'max': 40.0,
             'ticks': <Object?>[
@@ -64561,7 +64571,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         'boxes': <Object?>[
           <Object?>[
             'legend',
-            'top',
+            ChartPosition.top,
             1000.0,
             true,
             0.0,
@@ -64573,7 +64583,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'subtitle',
-            'top',
+            ChartPosition.top,
             1500.0,
             true,
             0.0,
@@ -64585,7 +64595,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'title',
-            'top',
+            ChartPosition.top,
             2000.0,
             true,
             0.0,
@@ -64597,7 +64607,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'x',
-            'bottom',
+            ChartPosition.bottom,
             0.0,
             false,
             27.34765625,
@@ -64609,7 +64619,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           ],
           <Object?>[
             'y',
-            'left',
+            ChartPosition.left,
             0.0,
             false,
             0.0,
@@ -64716,7 +64726,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -64745,7 +64755,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -65424,7 +65434,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -65436,7 +65446,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'subtitle',
-                'top',
+                ChartPosition.top,
                 1500.0,
                 true,
                 0.0,
@@ -65448,7 +65458,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -65460,7 +65470,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -65472,7 +65482,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -65579,7 +65589,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -65608,7 +65618,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -66287,7 +66297,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -66299,7 +66309,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'subtitle',
-                'top',
+                ChartPosition.top,
                 1500.0,
                 true,
                 0.0,
@@ -66311,7 +66321,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -66323,7 +66333,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -66335,7 +66345,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,
@@ -66442,7 +66452,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 3.0,
                 'ticks': <Object?>[
@@ -66471,7 +66481,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 5.0,
                 'max': 40.0,
                 'ticks': <Object?>[
@@ -67150,7 +67160,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'boxes': <Object?>[
               <Object?>[
                 'legend',
-                'top',
+                ChartPosition.top,
                 1000.0,
                 true,
                 0.0,
@@ -67162,7 +67172,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'subtitle',
-                'top',
+                ChartPosition.top,
                 1500.0,
                 true,
                 0.0,
@@ -67174,7 +67184,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'title',
-                'top',
+                ChartPosition.top,
                 2000.0,
                 true,
                 0.0,
@@ -67186,7 +67196,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'x',
-                'bottom',
+                ChartPosition.bottom,
                 0.0,
                 false,
                 27.34765625,
@@ -67198,7 +67208,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               ],
               <Object?>[
                 'y',
-                'left',
+                ChartPosition.left,
                 0.0,
                 false,
                 0.0,

@@ -53,7 +53,9 @@
 import {
   CallsText,
   DartAxis,
+  DartEnum,
   DartMode,
+  DartScalePosition,
   drawCalls,
   jsonValue,
   loadChartJs as loadDist,
@@ -97,6 +99,8 @@ globalThis.Path2D = Path2D;
  */
 export function plain(v, seen = new Set()) {
   if (typeof v === 'function') return '<fn>';
+  // A value of the Dart writer stays (row adapt-chart-position-enum).
+  if (v instanceof DartEnum || v instanceof DartScalePosition) return v;
   if (Array.isArray(v)) return v.map((x) => plain(x, seen));
   if (v && typeof v === 'object') {
     if (seen.has(v)) throw new Error('A plain copy of an object with a cycle.');

@@ -8,6 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -29,7 +30,11 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'plugins': <String, Object?>{
-        'legend': <String, Object?>{'position': 'top', 'rtl': 'true'},
+        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+        'legend': <String, Object?>{
+          'position': ChartPosition.top,
+          'rtl': 'true',
+        },
       },
       'layout': <String, Object?>{
         'padding': <String, Object?>{

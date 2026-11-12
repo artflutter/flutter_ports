@@ -142,8 +142,14 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'position': 'top'},
-              'y': <String, Object?>{'type': 'linear', 'position': 'right'},
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.top,
+              },
+              'y': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.right,
+              },
             },
           },
         },
@@ -304,7 +310,7 @@ void main() {
             'x': <String, Object?>{'type': 'category', 'offset': false},
             'x2': <String, Object?>{
               'type': 'category',
-              'position': 'top',
+              'position': ChartPosition.top,
               'fullSize': true,
               'offset': false,
             },
@@ -494,11 +500,11 @@ void main() {
               'plugins': <String, Object?>{
                 'legend': <String, Object?>{
                   'display': true,
-                  'position': 'left',
+                  'position': ChartPosition.left,
                 },
                 'title': <String, Object?>{
                   'display': true,
-                  'position': 'bottom',
+                  'position': ChartPosition.bottom,
                 },
               },
             },
@@ -542,31 +548,31 @@ void main() {
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
-                  'position': 'bottom',
+                  'position': ChartPosition.bottom,
                   'display': true,
                   'weight': 1,
                 },
                 'x1': <String, Object?>{
                   'type': 'category',
-                  'position': 'bottom',
+                  'position': ChartPosition.bottom,
                   'display': true,
                   'weight': 2,
                 },
                 'x2': <String, Object?>{
                   'type': 'category',
-                  'position': 'bottom',
+                  'position': ChartPosition.bottom,
                   'display': true,
                 },
                 'x3': <String, Object?>{
                   'type': 'category',
                   'display': true,
-                  'position': 'top',
+                  'position': ChartPosition.top,
                   'weight': 1,
                 },
                 'x4': <String, Object?>{
                   'type': 'category',
                   'display': true,
-                  'position': 'top',
+                  'position': ChartPosition.top,
                   'weight': 2,
                 },
                 'y': <String, Object?>{
@@ -576,25 +582,25 @@ void main() {
                 },
                 'y1': <String, Object?>{
                   'type': 'linear',
-                  'position': 'left',
+                  'position': ChartPosition.left,
                   'display': true,
                   'weight': 2,
                 },
                 'y2': <String, Object?>{
                   'type': 'linear',
-                  'position': 'left',
+                  'position': ChartPosition.left,
                   'display': true,
                 },
                 'y3': <String, Object?>{
                   'type': 'linear',
                   'display': true,
-                  'position': 'right',
+                  'position': ChartPosition.right,
                   'weight': 1,
                 },
                 'y4': <String, Object?>{
                   'type': 'linear',
                   'display': true,
-                  'position': 'right',
+                  'position': ChartPosition.right,
                   'weight': 2,
                 },
               },

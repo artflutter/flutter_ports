@@ -11,6 +11,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String controllerScatterReferenceNode = 'v24.22.1';
@@ -92,7 +93,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': -10.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -181,7 +182,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -719,7 +720,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -808,7 +809,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -1443,7 +1444,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -1532,7 +1533,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -2162,7 +2163,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -2251,7 +2252,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -2885,7 +2886,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -2974,7 +2975,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -3654,7 +3655,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -3743,7 +3744,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -4459,7 +4460,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -4548,7 +4549,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -5263,7 +5264,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': -10.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -5352,7 +5353,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -4.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -6839,7 +6840,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -6882,7 +6883,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -6.0,
             'max': 8.0,
             'ticks': <Object?>[
@@ -7999,7 +8000,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -8042,7 +8043,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -6.0,
                 'max': 8.0,
                 'ticks': <Object?>[
@@ -9288,7 +9289,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 12.0,
                 'ticks': <Object?>[
@@ -9323,7 +9324,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -6.0,
                 'max': 8.0,
                 'ticks': <Object?>[
@@ -10608,7 +10609,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 12.0,
                 'ticks': <Object?>[
@@ -10643,7 +10644,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': -6.0,
                 'max': 8.0,
                 'ticks': <Object?>[
@@ -12699,7 +12700,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 2.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -12742,7 +12743,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 2.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -13529,7 +13530,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 2.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -13572,7 +13573,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 2.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -14439,7 +14440,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 2.0,
                 'max': 7.0,
                 'ticks': <Object?>[
@@ -14482,7 +14483,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 2.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -16198,7 +16199,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -16241,7 +16242,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 7.0,
             'ticks': <Object?>[
@@ -17527,7 +17528,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1000.0,
             'ticks': <Object?>[
@@ -17570,7 +17571,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -4.0,
             'max': 16.0,
             'ticks': <Object?>[
@@ -18800,7 +18801,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -18843,7 +18844,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -19408,7 +19409,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -19451,7 +19452,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 5.0,
                 'ticks': <Object?>[
@@ -20050,7 +20051,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 1.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -20085,7 +20086,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -21443,7 +21444,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'logarithmic',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 10.0,
             'max': 100.0,
             'ticks': <Object?>[
@@ -21514,7 +21515,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -22775,7 +22776,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'logarithmic',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 10.0,
             'max': 100.0,
             'ticks': <Object?>[
@@ -22846,7 +22847,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 5.0,
             'ticks': <Object?>[
@@ -24105,7 +24106,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 4.5,
             'max': 9.5,
             'ticks': <Object?>[
@@ -24148,7 +24149,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -24645,7 +24646,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
                 'ticks': <Object?>[
@@ -24688,7 +24689,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -25272,7 +25273,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
                 'ticks': <Object?>[
@@ -25315,7 +25316,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -25936,7 +25937,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 4.5,
                 'max': 9.5,
                 'ticks': <Object?>[
@@ -25979,7 +25980,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 1.0,
                 'max': 4.0,
                 'ticks': <Object?>[
@@ -27283,7 +27284,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -27322,7 +27323,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -28594,7 +28595,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -28629,7 +28630,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 4.0,
             'ticks': <Object?>[
@@ -29528,7 +29529,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': -3.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -29565,7 +29566,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 3.0,
             'ticks': <Object?>[
@@ -30830,7 +30831,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -30873,7 +30874,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 1.0,
             'ticks': <Object?>[
@@ -31879,7 +31880,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -31922,7 +31923,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -33132,7 +33133,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -33175,7 +33176,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 1.0,
             'max': 6.0,
             'ticks': <Object?>[
@@ -34386,7 +34387,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'x': <String, Object?>{
             'type': 'linear',
             'axis': 'x',
-            'position': 'bottom',
+            'position': ChartPosition.bottom,
             'min': 0.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -34429,7 +34430,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
           'y': <String, Object?>{
             'type': 'linear',
             'axis': 'y',
-            'position': 'left',
+            'position': ChartPosition.left,
             'min': 0.0,
             'max': 10.0,
             'ticks': <Object?>[
@@ -34804,7 +34805,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -34847,7 +34848,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -35308,7 +35309,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': 'x',
-                'position': 'bottom',
+                'position': ChartPosition.bottom,
                 'min': 0.0,
                 'max': 10.0,
                 'ticks': <Object?>[
@@ -35351,7 +35352,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
               'y': <String, Object?>{
                 'type': 'linear',
                 'axis': 'y',
-                'position': 'left',
+                'position': ChartPosition.left,
                 'min': 0.0,
                 'max': 10.0,
                 'ticks': <Object?>[

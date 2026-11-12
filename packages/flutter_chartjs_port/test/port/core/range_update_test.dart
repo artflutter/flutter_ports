@@ -38,6 +38,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -567,7 +568,9 @@ Map<String, Object?> _twoAxes(_Log log, {required bool animated}) => _config(
   scales: <String, Object?>{
     'x': _scale(log, 'linear'),
     'y': _scale(log, 'linear'),
-    'y2': _scale(log, 'linear', <String, Object?>{'position': 'right'}),
+    'y2': _scale(log, 'linear', <String, Object?>{
+      'position': ChartPosition.right,
+    }),
   },
 );
 

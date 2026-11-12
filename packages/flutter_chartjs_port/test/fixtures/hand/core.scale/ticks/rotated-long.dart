@@ -7,6 +7,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -37,11 +38,13 @@ Map<String, Object?> fixture() => <String, Object?>{
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'position': 'bottom',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.bottom,
         },
         'x2': <String, Object?>{
           'type': 'category',
-          'position': 'top',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.top,
         },
       },
     },

@@ -8,6 +8,7 @@
 
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
 const String scaleTimeReferenceNode = 'v24.22.1';
@@ -79,7 +80,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612742400000.0,
           'ticks': <Object?>[
@@ -217,7 +218,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 9.0,
           'ticks': <Object?>[
@@ -1187,7 +1188,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609740000000.0,
           'max': 1610186400000.0,
           'ticks': <Object?>[
@@ -1313,7 +1314,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 8.0,
           'ticks': <Object?>[
@@ -2327,7 +2328,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609729200000.0,
           'max': 1609891200000.0,
           'ticks': <Object?>[
@@ -2463,7 +2464,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -3479,7 +3480,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718407000.0,
           'max': 1609718497000.0,
           'ticks': <Object?>[
@@ -3621,7 +3622,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -4725,7 +4726,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400003.0,
           'max': 1609718400503.0,
           'ticks': <Object?>[
@@ -4860,7 +4861,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -6061,7 +6062,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718700000.0,
           'max': 1609725900000.0,
           'ticks': <Object?>[
@@ -6208,7 +6209,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -7377,7 +7378,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1640822400000.0,
           'ticks': <Object?>[
@@ -7492,7 +7493,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -8374,7 +8375,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 959817600000.0,
           'max': 1924905600000.0,
           'ticks': <Object?>[
@@ -8487,7 +8488,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 8.0,
           'ticks': <Object?>[
@@ -9358,7 +9359,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400005.0,
           'max': 1609718400082.0,
           'ticks': <Object?>[
@@ -9499,7 +9500,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -10659,7 +10660,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400900.0,
           'max': 1609718433900.0,
           'ticks': <Object?>[
@@ -10794,7 +10795,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -11871,7 +11872,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718420000.0,
           'max': 1609720400000.0,
           'ticks': <Object?>[
@@ -12006,7 +12007,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -13074,7 +13075,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609719000000.0,
           'max': 1609798200000.0,
           'ticks': <Object?>[
@@ -13224,7 +13225,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -14436,7 +14437,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609722000000.0,
           'max': 1611147600000.0,
           'ticks': <Object?>[
@@ -14560,7 +14561,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -15598,7 +15599,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609891200000.0,
           'max': 1614643200000.0,
           'ticks': <Object?>[
@@ -15706,7 +15707,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -16513,7 +16514,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609977600000.0,
           'max': 1633737600000.0,
           'ticks': <Object?>[
@@ -16623,7 +16624,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -17458,7 +17459,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1610582400000.0,
           'max': 1677110400000.0,
           'ticks': <Object?>[
@@ -17566,7 +17567,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -18368,7 +18369,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1613174400000.0,
           'max': 1898294400000.0,
           'ticks': <Object?>[
@@ -18482,7 +18483,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -19316,7 +19317,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609891200000.0,
           'max': 1614643200000.0,
           'ticks': <Object?>[
@@ -19424,7 +19425,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -20226,7 +20227,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609891200000.0,
           'max': 1614643200000.0,
           'ticks': <Object?>[
@@ -20338,7 +20339,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -21145,7 +21146,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609722000000.0,
           'max': 1609840800000.0,
           'ticks': <Object?>[
@@ -21237,7 +21238,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -21839,7 +21840,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610236800000.0,
           'ticks': <Object?>[
@@ -21982,7 +21983,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -23153,7 +23154,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612742400000.0,
           'ticks': <Object?>[
@@ -23289,7 +23290,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -24363,7 +24364,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1611705600000.0,
           'ticks': <Object?>[
@@ -24477,7 +24478,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -25385,7 +25386,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609826400000.0,
           'max': 1611705600000.0,
           'ticks': <Object?>[
@@ -25533,7 +25534,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -26672,7 +26673,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610668800000.0,
           'ticks': <Object?>[],
@@ -26810,7 +26811,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1611446400000.0,
           'ticks': <Object?>[
@@ -26909,7 +26910,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 8.0,
           'ticks': <Object?>[
@@ -27492,7 +27493,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612137600000.0,
           'ticks': <Object?>[
@@ -27593,7 +27594,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -28079,7 +28080,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609804800000.0,
           'max': 1612224000000.0,
           'ticks': <Object?>[
@@ -28180,7 +28181,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 2.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -28753,7 +28754,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612137600000.0,
           'ticks': <Object?>[
@@ -28850,7 +28851,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -29350,7 +29351,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1610582400000.0,
           'max': 1617321600000.0,
           'ticks': <Object?>[
@@ -29496,7 +29497,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -30650,7 +30651,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1683590400000.0,
           'ticks': <Object?>[
@@ -30792,7 +30793,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -31836,7 +31837,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 959817600000.0,
           'max': 1924905600000.0,
           'ticks': <Object?>[
@@ -31945,7 +31946,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -32798,7 +32799,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610236800000.0,
           'ticks': <Object?>[
@@ -32907,7 +32908,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 9.0,
           'ticks': <Object?>[
@@ -33594,7 +33595,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609739999999.0,
           'max': 1609740000001.0,
           'ticks': <Object?>[
@@ -33677,7 +33678,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -1.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -34166,7 +34167,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610150400000.0,
           'ticks': <Object?>[
@@ -34250,7 +34251,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 2.0,
           'ticks': <Object?>[
@@ -34838,7 +34839,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1614816000000.0,
           'ticks': <Object?>[
@@ -35026,7 +35027,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -36643,7 +36644,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -36817,7 +36818,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -38257,7 +38258,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1610236800000.0,
           'max': 1612180800000.0,
           'ticks': <Object?>[
@@ -38415,7 +38416,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -39482,7 +39483,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609286400000.0,
           'max': 1611446400000.0,
           'ticks': <Object?>[
@@ -39632,7 +39633,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -40688,7 +40689,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609459200000.0,
           'max': 1610928000000.0,
           'ticks': <Object?>[
@@ -40828,7 +40829,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -41906,7 +41907,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1609758000000.0,
           'ticks': <Object?>[
@@ -42002,7 +42003,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -42913,7 +42914,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1623747600000.0,
           'max': 1623798600000.0,
           'ticks': <Object?>[
@@ -43026,7 +43027,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -43839,7 +43840,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610928000000.0,
           'ticks': <Object?>[
@@ -43954,7 +43955,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -44791,7 +44792,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610928000000.0,
           'ticks': <Object?>[
@@ -44930,7 +44931,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -45972,7 +45973,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612656000000.0,
           'ticks': <Object?>[
@@ -46112,7 +46113,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -47251,7 +47252,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1611100800000.0,
           'ticks': <Object?>[
@@ -47348,7 +47349,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -47839,7 +47840,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610496000000.0,
           'ticks': <Object?>[
@@ -47953,7 +47954,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -48812,7 +48813,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1623715200000.0,
           'max': 1623801600000.0,
           'ticks': <Object?>[
@@ -48931,7 +48932,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -49752,7 +49753,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1622505600000.0,
           'max': 1625097600000.0,
           'ticks': <Object?>[
@@ -49945,7 +49946,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1623743999999.0,
           'max': 1623744000001.0,
           'ticks': <Object?>[
@@ -50026,7 +50027,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -50595,7 +50596,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -50715,7 +50716,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -51439,7 +51440,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -51653,7 +51654,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -53635,7 +53636,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       'options': <String, Object?>{
         'indexAxis': 'y',
         'scales': <String, Object?>{
-          'y': <String, Object?>{'position': 'right'},
+          'y': <String, Object?>{'position': ChartPosition.right},
         },
       },
     },
@@ -53651,7 +53652,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'time',
           'axis': 'y',
-          'position': 'right',
+          'position': ChartPosition.right,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -53760,7 +53761,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'linear',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609700000000.0,
           'max': 1610150000000.0,
           'ticks': <Object?>[
@@ -54718,7 +54719,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'position': 'top'},
+          'x': <String, Object?>{'position': ChartPosition.top},
         },
       },
     },
@@ -54734,7 +54735,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'top',
+          'position': ChartPosition.top,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -54908,7 +54909,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -56343,7 +56344,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -56517,7 +56518,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -57925,7 +57926,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1609804800000.0,
           'ticks': <Object?>[
@@ -58058,7 +58059,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -59019,7 +59020,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1611619200000.0,
           'ticks': <Object?>[
@@ -59149,7 +59150,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -60069,7 +60070,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609722000000.0,
           'max': 1609822800000.0,
           'ticks': <Object?>[
@@ -60170,7 +60171,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 5.0,
           'ticks': <Object?>[
@@ -60771,7 +60772,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1611360000000.0,
           'ticks': <Object?>[
@@ -60891,7 +60892,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -61855,7 +61856,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -61983,7 +61984,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -62911,7 +62912,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610150400000.0,
           'ticks': <Object?>[
@@ -63046,7 +63047,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -64009,7 +64010,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1611100800000.0,
           'ticks': <Object?>[
@@ -64134,7 +64135,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 3.0,
           'ticks': <Object?>[
@@ -65135,7 +65136,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1611100800000.0,
           'ticks': <Object?>[
@@ -65225,7 +65226,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 3.0,
           'ticks': <Object?>[
@@ -65786,7 +65787,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 0.0,
           'max': 1611100800000.0,
           'ticks': <Object?>[
@@ -65884,7 +65885,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 3.0,
           'ticks': <Object?>[
@@ -66491,7 +66492,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -66660,7 +66661,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -68099,7 +68100,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -68273,7 +68274,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -69715,7 +69716,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1613088000000.0,
           'ticks': <Object?>[
@@ -69889,7 +69890,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -71294,7 +71295,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609632000000.0,
           'max': 1612656000000.0,
           'ticks': <Object?>[
@@ -71430,7 +71431,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -72514,7 +72515,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612742400000.0,
           'ticks': <Object?>[
@@ -72650,7 +72651,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -73728,7 +73729,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609891200000.0,
           'max': 1614643200000.0,
           'ticks': <Object?>[
@@ -73840,7 +73841,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -74651,7 +74652,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610928000000.0,
           'ticks': <Object?>[
@@ -74756,7 +74757,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -75489,7 +75490,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610236800000.0,
           'ticks': <Object?>[
@@ -75624,7 +75625,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 5.0,
           'ticks': <Object?>[
@@ -76674,7 +76675,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'time',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -76783,7 +76784,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'linear',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609700000000.0,
           'max': 1610150000000.0,
           'ticks': <Object?>[
@@ -77738,7 +77739,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'time',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -77851,7 +77852,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'linear',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609700000000.0,
           'max': 1610150000000.0,
           'ticks': <Object?>[
@@ -78790,7 +78791,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1612137600000.0,
           'ticks': <Object?>[
@@ -78887,7 +78888,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 1.0,
           'max': 4.0,
           'ticks': <Object?>[
@@ -79393,7 +79394,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1683590400000.0,
           'ticks': <Object?>[
@@ -79521,7 +79522,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -80591,7 +80592,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1610582400000.0,
           'max': 1617321600000.0,
           'ticks': <Object?>[
@@ -80737,7 +80738,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 10.0,
           'ticks': <Object?>[
@@ -81872,7 +81873,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609736400000.0,
           'max': 1610521200000.0,
           'ticks': <Object?>[
@@ -81965,7 +81966,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 8.0,
           'ticks': <Object?>[
@@ -82461,7 +82462,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400006.0,
           'max': 1609718400008.0,
           'ticks': <Object?>[
@@ -82542,7 +82543,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': -1.0,
           'max': 1.0,
           'ticks': <Object?>[
@@ -83125,7 +83126,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609718400000.0,
           'max': 1610755200000.0,
           'ticks': <Object?>[
@@ -83221,7 +83222,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 8.0,
           'ticks': <Object?>[
@@ -83759,7 +83760,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'x': <String, Object?>{
           'type': 'time',
           'axis': 'x',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'min': 1609722000000.0,
           'max': 1609822800000.0,
           'ticks': <Object?>[
@@ -83857,7 +83858,7 @@ const List<ScaleTimeReferenceCase> scaleTimeReference = [
         'y': <String, Object?>{
           'type': 'linear',
           'axis': 'y',
-          'position': 'left',
+          'position': ChartPosition.left,
           'min': 0.0,
           'max': 8.0,
           'ticks': <Object?>[

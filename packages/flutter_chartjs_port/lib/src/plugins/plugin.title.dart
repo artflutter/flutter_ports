@@ -185,7 +185,7 @@ class Title extends Element implements LayoutItem {
   @override
   bool isHorizontal() {
     final pos = TitleOptions(options).position;
-    return pos == 'top' || pos == 'bottom';
+    return pos == ChartPosition.top || pos == ChartPosition.bottom;
   }
 
   /// plugin.title.js:59 `_drawArgs(offset)`: the object `{titleX, titleY,
@@ -209,7 +209,7 @@ class Title extends Element implements LayoutItem {
       titleY = top + offset;
       maxWidth = right - left;
     } else {
-      if (options.position == 'left') {
+      if (options.position == ChartPosition.left) {
         titleX = left + offset;
         titleY = alignStartEnd(alignName, bottom, top);
         rotation = pi * -0.5;
@@ -402,7 +402,7 @@ final Plugin title = Plugin(supportsDataUpdates: true)
     ..font = (FontSpecScope()..weight = 'bold')
     ..fullSize = true
     ..padding = 10.0
-    ..position = 'top'
+    ..position = ChartPosition.top
     ..text = ''
     // by default greater than legend (1000) to be above
     ..weight = 2000.0)

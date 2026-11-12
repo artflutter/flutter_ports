@@ -4,6 +4,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -44,7 +45,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         'y': <String, Object?>{
           'type': 'linear',
-          'position': 'right',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.right,
         },
       },
     },

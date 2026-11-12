@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ChartPosition, ScaleValuePosition;
 
 final _callbacks = Expando<Object>('fixture native color callback');
 
@@ -46,6 +48,16 @@ Object? _enumValue<T extends Enum>(List<T> values, Object? value) =>
       ],
       _ => value,
     };
+
+/// The [ScaleValuePosition] of the object form `{id: value}` of a position
+/// [value], else [value] itself.
+Object? _scaleValuePosition(Object? value) {
+  if (value is Map<String, Object?> && value.length == 1) {
+    final MapEntry(:key, value: scaleValue) = value.entries.single;
+    return ScaleValuePosition(key, scaleValue);
+  }
+  return value;
+}
 
 /// The values of the enum of the scale option [key] of the object of the
 /// key [owner], or Dart `null` for another option: `bounds` of a scale, and
@@ -128,12 +140,24 @@ void nativeFixtureColors(Object? config) {
         value[key] = _enumValue(ui.StrokeCap.values, value[key]);
       } else if (key == 'borderJoinStyle' || key == 'lineJoin') {
         value[key] = _enumValue(ui.StrokeJoin.values, value[key]);
-      } else if ((key == 'align' &&
-              (owner == 'legend' || owner == 'title' || owner == 'subtitle')) ||
-          (key == 'position' && owner == 'title')) {
+      } else if (key == 'align' &&
+          (owner == 'legend' || owner == 'title' || owner == 'subtitle')) {
         // The align of a box takes a ChartAlign (row adapt-chart-align-enum).
-        // A title position (`top`) is no name of it and stays.
         value[key] = _enumValue(ChartAlign.values, value[key]);
+      } else if (key == 'position' && owner != 'tooltip') {
+        // The position of the legend title takes a ChartAlign (row
+        // adapt-chart-align-enum); the position of a box takes a
+        // ChartPosition, and the object form `{id: value}` a
+        // ScaleValuePosition (row adapt-chart-position-enum). A name of the
+        // one enum is no name of the other: `center` of the owner `title` is
+        // the align of the legend title.
+        final position = value[key];
+        value[key] = owner == 'title'
+            ? _enumValue(
+                ChartPosition.values,
+                _enumValue(ChartAlign.values, position),
+              )
+            : _scaleValuePosition(_enumValue(ChartPosition.values, position));
       } else if (key == 'borderAlign') {
         // An arc option takes its enum (row adapt-arc-option-enums).
         value[key] = _enumValue(ArcBorderAlign.values, value[key]);

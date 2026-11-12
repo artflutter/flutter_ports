@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -107,7 +108,7 @@ void main() {
           'align': ChartAlign.center,
           'color': jsGet(Chart.defaults, 'color'),
           'display': false,
-          'position': 'top',
+          'position': ChartPosition.top,
           'fullSize': true,
           'weight': 2000,
           'font': <String, Object?>{'weight': 'bold'},
@@ -145,7 +146,7 @@ void main() {
 
       final options = _cloneTitleDefaults();
       options['text'] = 'My title';
-      options['position'] = 'left';
+      options['position'] = ChartPosition.left;
 
       final title = _newTitle(<String, Object?>{
         'chart': chart,
@@ -171,7 +172,7 @@ void main() {
 
         final options = _cloneTitleDefaults();
         options['text'] = <Object?>['line1', 'line2'];
-        options['position'] = 'left';
+        options['position'] = ChartPosition.left;
         options['display'] = true;
         (options['font']! as JsObjectFace)['lineHeight'] = 1.5;
 
@@ -227,7 +228,7 @@ void main() {
 
       final options = _cloneTitleDefaults();
       options['text'] = 'My title';
-      options['position'] = 'left';
+      options['position'] = ChartPosition.left;
 
       final title =
           _newTitle(<String, Object?>{
@@ -258,7 +259,7 @@ void main() {
       );
 
       // Rotation is other way on right side
-      (title.options! as JsObjectFace)['position'] = 'right';
+      (title.options! as JsObjectFace)['position'] = ChartPosition.right;
 
       // Reset call tracker
       context.resetCalls();
@@ -311,7 +312,7 @@ void main() {
             'plugins': <String, Object?>{
               'title': <String, Object?>{
                 'fullSize': true,
-                'position': 'top',
+                'position': ChartPosition.top,
                 'weight': 150,
               },
             },
@@ -319,17 +320,17 @@ void main() {
         });
 
         expect(chart.titleBlock!.fullSize, true);
-        expect(chart.titleBlock!.position, 'top');
+        expect(chart.titleBlock!.position, ChartPosition.top);
         expect(chart.titleBlock!.weight, 150);
 
         _titleOptions(chart)
           ..['fullSize'] = false
-          ..['position'] = 'left'
+          ..['position'] = ChartPosition.left
           ..['weight'] = 42;
         chart.update();
 
         expect(chart.titleBlock!.fullSize, false);
-        expect(chart.titleBlock!.position, 'left');
+        expect(chart.titleBlock!.position, ChartPosition.left);
         expect(chart.titleBlock!.weight, 42);
       });
 
