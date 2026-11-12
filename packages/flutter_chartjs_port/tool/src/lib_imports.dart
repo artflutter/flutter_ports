@@ -249,12 +249,15 @@ const Set<String> typedLibraries = {
 /// `ChartContext`, Chart.js ADR 0054 §11), three files of the JS runtime and
 /// the conversions of `css.dart`. `helpers.options.dart` imports
 /// `core.defaults`, `helpers.canvas`, `helpers.core`, the JS runtime and
-/// `lib/src/types/`, no component.
+/// `lib/src/types/`, no component. The cubic interpolation modes are the
+/// pure `cubic_interpolation_mode.dart` and `helpers.curve.dart`.
 const List<String> typedTargets = [
   typedDirectory,
   'lib/src/types/',
   'lib/src/options/',
   'lib/src/helpers/helpers.options.dart',
+  'lib/src/helpers/cubic_interpolation_mode.dart',
+  'lib/src/helpers/helpers.curve.dart',
   'lib/src/core/core.adapters.dart',
   'lib/src/core/core.controller.dart',
   'lib/src/core/core.interaction.dart',

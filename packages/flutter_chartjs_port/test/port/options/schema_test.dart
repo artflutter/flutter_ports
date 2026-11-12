@@ -9,6 +9,8 @@ import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -198,6 +200,8 @@ String? _mismatch(Object? actual, Object? expected) {
   if (expected is String && actual is TooltipPositioner) return null;
   // The same for an algorithm name and an algorithm object.
   if (expected is String && actual is DecimationAlgorithm) return null;
+  // The same for a cubic interpolation mode.
+  if (expected is String && actual is CubicInterpolationMode) return null;
   // Upstream has the keyword of a line cap, a line join or an interaction
   // axis where the port has the enum: the name of the enum value is the
   // keyword.

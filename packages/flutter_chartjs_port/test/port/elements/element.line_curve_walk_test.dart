@@ -5,6 +5,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -51,7 +53,9 @@ void main() {
       final values = <String, Object?>{
         'tension': seed % 3 == 0 ? 0.0 : .4,
         'stepped': seed % 7 == 0,
-        'cubicInterpolationMode': seed % 5 == 0 ? 'monotone' : 'default',
+        'cubicInterpolationMode': seed % 5 == 0
+            ? const MonotoneCubicInterpolationMode()
+            : const DefaultCubicInterpolationMode(),
         'borderDash': const <double>[],
         'spanGaps': false,
       };

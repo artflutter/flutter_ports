@@ -38,7 +38,7 @@ void main() {
           'tension': tension,
           'capBezierPoints': false,
           'spanGaps': false,
-          'cubicInterpolationMode': 'default',
+          'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
         },
         null,
         loop,

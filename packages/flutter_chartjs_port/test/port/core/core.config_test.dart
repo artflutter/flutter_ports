@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -26,6 +28,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/cubic_mode_json.dart';
 import '../../support/keyword_enum_json.dart';
 
 // Upstream has no spec for src/core/core.config.js (AGENTS.md rule 3). The
@@ -61,6 +64,7 @@ String _jsonRaw(Object? value) => switch (value) {
   num() => throw ArgumentError.value(value, 'value', 'is an int'),
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
+  CubicInterpolationMode() => cubicModeJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>

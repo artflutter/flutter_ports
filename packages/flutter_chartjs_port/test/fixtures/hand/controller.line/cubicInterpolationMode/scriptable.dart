@@ -2,6 +2,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -15,8 +16,12 @@ Map<String, Object?> fixture() => <String, Object?>{
           // option in dataset
           'data': <Object?>[0, 4, 2, 6, 4, 8],
           'borderColor': '#ff0000',
+          // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+          // class.
           'cubicInterpolationMode': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0 ? 'monotone' : 'default';
+            return jsGet(ctx, 'datasetIndex') == 0
+                ? const MonotoneCubicInterpolationMode()
+                : const DefaultCubicInterpolationMode();
           },
         },
         <String, Object?>{
@@ -30,8 +35,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         'line': <String, Object?>{
           'borderColor': '#00ff00',
           'borderWidth': 20,
+          // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+          // class.
           'cubicInterpolationMode': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0 ? 'monotone' : 'default';
+            return jsGet(ctx, 'datasetIndex') == 0
+                ? const MonotoneCubicInterpolationMode()
+                : const DefaultCubicInterpolationMode();
           },
           'fill': false,
           'tension': 0.4,

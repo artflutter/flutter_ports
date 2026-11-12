@@ -34,6 +34,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -275,6 +277,11 @@ abstract final class ShapeBits {
   /// `borderSkipped`.
   static const int borderSkippedEdge = 536870912;
 
+  /// `cubicInterpolationMode`: a `CubicInterpolationMode`, the value of the
+  /// line `cubicInterpolationMode`. It is the last bit below the sign bit of
+  /// a 32-bit mask: dart2js computes the bit operations in 32 bits.
+  static const int cubicInterpolationMode = 1073741824;
+
   /// The bits of the typed atoms: the native types of options that were
   /// names in Chart.js ([classifyTyped]).
   static const int typed =
@@ -300,7 +307,8 @@ abstract final class ShapeBits {
       layoutPosition |
       textAlign |
       steppedLine |
-      borderSkippedEdge;
+      borderSkippedEdge |
+      cubicInterpolationMode;
 }
 
 /// The cell of [raw] for the special values, or Dart `null` for a plain
@@ -413,6 +421,9 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),
+  ShapeBits.cubicInterpolationMode => classifyTyped<CubicInterpolationMode>(
+    raw,
+  ),
   ShapeBits.scope => classifyScope<Object>(raw),
   _ => classifyUnion(raw, mask),
 };

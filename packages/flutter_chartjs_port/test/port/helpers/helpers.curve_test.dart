@@ -255,7 +255,7 @@ void main() {
       updateBezierControlPoints(
         points,
         {
-          'cubicInterpolationMode': 'monotone',
+          'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
           'spanGaps': true,
           'capBezierPoints': true,
         },
@@ -280,7 +280,7 @@ void main() {
       final points = _points();
       updateBezierControlPoints(
         points,
-        {'cubicInterpolationMode': 'monotone'},
+        {'cubicInterpolationMode': const MonotoneCubicInterpolationMode()},
         _area,
         false,
         'r',
@@ -299,7 +299,10 @@ void main() {
       final capped = _points();
       updateBezierControlPoints(
         capped,
-        {'cubicInterpolationMode': 'monotone', 'capBezierPoints': true},
+        {
+          'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
+          'capBezierPoints': true,
+        },
         _area,
         false,
         'r',
@@ -404,7 +407,10 @@ void main() {
       ];
       updateBezierControlPoints(
         points,
-        {'cubicInterpolationMode': 'monotone', 'capBezierPoints': true},
+        {
+          'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
+          'capBezierPoints': true,
+        },
         _area,
         false,
         'x',

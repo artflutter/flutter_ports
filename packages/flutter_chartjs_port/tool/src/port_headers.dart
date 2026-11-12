@@ -162,8 +162,9 @@ final class PortTarget {
 
   /// The source paths that this target maps to the Dart path [dartPath].
   ///
-  /// For a directory, these are the names with the extensions `.js`, `.ts`
-  /// and `.d.ts`, and `.tests.js` and `.spec.js` for a `_test.dart` file.
+  /// For a directory, these are the names with the extensions `.js`, `.ts`,
+  /// `.d.ts` and `.json` (a hand port of a data fixture, Chart.js ADR 0115),
+  /// and `.tests.js` and `.spec.js` for a `_test.dart` file.
   List<String> sourcesOf(String dartPath) {
     if (!isDirectory) return dartPath == dart ? [source] : const [];
     if (!dartPath.startsWith(dart) || !dartPath.endsWith('.dart')) {
@@ -171,7 +172,7 @@ final class PortTarget {
     }
     final rest = dartPath.substring(dart.length, dartPath.length - 5);
     return [
-      for (final extension in const ['.js', '.ts', '.d.ts'])
+      for (final extension in const ['.js', '.ts', '.d.ts', '.json'])
         '$source$rest$extension',
       if (rest.endsWith('_test')) ...[
         '$source${rest.substring(0, rest.length - 5)}.tests.js',

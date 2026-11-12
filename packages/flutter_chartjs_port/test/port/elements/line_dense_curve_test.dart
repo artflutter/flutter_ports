@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show MonotoneCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
@@ -112,7 +114,13 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
   final eighth = math.max(1, count ~/ 8);
   final datasets = switch (variant) {
     'monotone' => [
-      line('a', points, extra: {'cubicInterpolationMode': 'monotone'}),
+      line(
+        'a',
+        points,
+        extra: {
+          'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
+        },
+      ),
     ],
     'fillTo' => [
       line('a', points),

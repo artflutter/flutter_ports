@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/helpers/helpers.curve.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode classes.
 
 /// Port of `src/helpers/helpers.curve.ts`.
 ///
@@ -14,6 +15,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show isPointInArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -334,7 +336,8 @@ void _capBezierPoints(List<SplinePoint> points, ChartArea? area) {
 /// typed fields of resolved element options, else the read by name.
 /// `options.tension` goes to the parameter `t` of [splineCurve] through
 /// `ToNumber`, as the upstream `t * s01` does: undefined gives NaN, and JS
-/// `null` gives 0.
+/// `null` gives 0. The mode of the option `cubicInterpolationMode` writes
+/// the control points ([CubicInterpolationMode.updateControlPoints]).
 /// Dart `null` for [area] is JS `undefined` (see [_capBezierPoints]).
 void updateBezierControlPoints(
   List<SplinePoint> points,
@@ -350,30 +353,88 @@ void updateBezierControlPoints(
     points = points.where((pt) => !(pt.skip ?? false)).toList();
   }
 
-  if (readOption(options, OptionKey.cubicInterpolationMode) == 'monotone') {
-    splineCurveMonotone(points, indexAxis);
-  } else {
-    // `points[0]` of an empty array is undefined. The loop does not run then.
-    var prev = points.isEmpty
-        ? null
-        : loop
-        ? points[points.length - 1]
-        : points[0];
-    final tension = jsToNumber(readOption(options, OptionKey.tension));
-    for (var i = 0, ilen = points.length; i < ilen; ++i) {
-      final point = points[i];
-      // The indexes are list indexes: non-negative integers.
-      _writeSplineControlPoints(
-        prev!,
-        point,
-        points[math.min<int>(i + 1, ilen - (loop ? 0 : 1)).remainder(ilen)],
-        tension,
-      );
-      prev = point;
-    }
-  }
+  // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+  // writes the control points.
+  cubicInterpolationModeOf(
+    readOption(options, OptionKey.cubicInterpolationMode),
+  ).updateControlPoints(
+    points,
+    tension: jsToNumber(readOption(options, OptionKey.tension)),
+    loop: loop,
+    indexAxis: indexAxis,
+  );
 
   if (jsTruthy(readOption(options, OptionKey.capBezierPoints))) {
     _capBezierPoints(points, area);
   }
+}
+
+/// The else branch of helpers.curve.ts:202-216: [splineCurve] of each point
+/// of [points], with its neighbors, into its control points. [t] is the
+/// tension, and [loop] joins the last point to the first.
+// DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the default mode.
+void splineCurveDefault(List<SplinePoint> points, double t, bool loop) {
+  // `points[0]` of an empty array is undefined. The loop does not run then.
+  var prev = points.isEmpty
+      ? null
+      : loop
+      ? points[points.length - 1]
+      : points[0];
+  for (var i = 0, ilen = points.length; i < ilen; ++i) {
+    final point = points[i];
+    // The indexes are list indexes: non-negative integers.
+    _writeSplineControlPoints(
+      prev!,
+      point,
+      points[math.min<int>(i + 1, ilen - (loop ? 0 : 1)).remainder(ilen)],
+      t,
+    );
+    prev = point;
+  }
+}
+
+/// The mode of the option value [value] (`cubicInterpolationMode`): the
+/// [CubicInterpolationMode] itself, else [DefaultCubicInterpolationMode], as
+/// upstream takes the default branch for each value that is not
+/// `'monotone'` (helpers.curve.ts:200).
+CubicInterpolationMode cubicInterpolationModeOf(Object? value) =>
+    CubicInterpolationMode.of(value) ?? const DefaultCubicInterpolationMode();
+
+/// `cubicInterpolationMode: 'default'` (index.d.ts:1984), the default: a
+/// curve of weighted tangents through each point ([splineCurve]). A line of
+/// this mode draws curves when its `tension` is truthy.
+final class DefaultCubicInterpolationMode extends CubicInterpolationMode {
+  /// The default mode.
+  const DefaultCubicInterpolationMode();
+
+  @override
+  bool drawsCurves(Object? tension) => jsTruthy(tension);
+
+  @override
+  void updateControlPoints(
+    List<SplinePoint> points, {
+    required double tension,
+    required bool loop,
+    required String indexAxis,
+  }) => splineCurveDefault(points, tension, loop);
+}
+
+/// `cubicInterpolationMode: 'monotone'` (index.d.ts:1984): a monotone cubic
+/// curve on the index axis ([splineCurveMonotone]), which keeps the
+/// monotonicity of the data. A line of this mode always draws curves, and
+/// the mode reads no `tension`.
+final class MonotoneCubicInterpolationMode extends CubicInterpolationMode {
+  /// The monotone mode.
+  const MonotoneCubicInterpolationMode();
+
+  @override
+  bool drawsCurves(Object? tension) => true;
+
+  @override
+  void updateControlPoints(
+    List<SplinePoint> points, {
+    required double tension,
+    required bool loop,
+    required String indexAxis,
+  }) => splineCurveMonotone(points, indexAxis);
 }

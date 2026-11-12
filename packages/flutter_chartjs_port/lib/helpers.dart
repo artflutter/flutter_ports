@@ -24,7 +24,9 @@ library;
 
 export 'package:flutter_chartjs_port/src/helpers/index.dart'
     hide
+        DefaultCubicInterpolationMode,
         IndexedElementStyles,
+        MonotoneCubicInterpolationMode,
         OptionResolver,
         OptionView,
         ScriptableChartContext,
@@ -49,6 +51,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         computeSegments,
         createBoundarySegment,
         createResolver,
+        cubicInterpolationModeOf,
         decimalPlaces,
         deprecated,
         descriptors,
@@ -79,6 +82,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         rlookupByKey,
         scaleRangesChanged,
         setMinAndMaxByKey,
+        splineCurveDefault,
         splitKey,
         steppedInterpolation,
         steppedLineTo,

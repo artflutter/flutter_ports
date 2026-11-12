@@ -35,6 +35,7 @@ ChartMeta
 ChartMetaClip
 ChartPosition
 CssStyleProperties
+CubicInterpolationMode
 DOMRect
 DatasetController
 DatasetDrawHookArgs
@@ -42,6 +43,7 @@ DatasetInteractionMode
 DatasetUpdateHookArgs
 DateAdapter
 DecimationAlgorithm
+DefaultCubicInterpolationMode
 Defaults
 DoughnutController
 Element
@@ -66,6 +68,7 @@ LinearScale
 LogarithmicScale
 LttbDecimationAlgorithm
 MinMaxDecimationAlgorithm
+MonotoneCubicInterpolationMode
 NativeEvent
 NativeEventListener
 NativeEventTarget
@@ -90,6 +93,7 @@ ScaleBounds
 ScaleValuePosition
 ScatterController
 Segment
+SplinePoint
 SteppedLine
 TRBL
 TextMetrics
@@ -216,6 +220,7 @@ ChartView
 CircumferenceAnimation
 ColorAnimation
 CssStyleProperties
+CubicInterpolationMode
 DOMRect
 DataPoint
 Dataset
@@ -225,6 +230,7 @@ DatasetInteractionMode
 DatasetUpdateHookArgs
 DateAdapter
 DecimationAlgorithm
+DefaultCubicInterpolationMode
 Defaults
 DoughnutController
 DoughnutDataset
@@ -259,6 +265,7 @@ LogarithmicAxis
 LogarithmicScale
 LttbDecimationAlgorithm
 MinMaxDecimationAlgorithm
+MonotoneCubicInterpolationMode
 NativeEvent
 NativeEventListener
 NativeEventTarget
@@ -297,6 +304,7 @@ ScatterDataset
 Segment
 ShowTransition
 SpacingAnimation
+SplinePoint
 StartAngleAnimation
 SteppedLine
 TRBL

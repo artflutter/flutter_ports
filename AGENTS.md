@@ -845,6 +845,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `adapt-arc-option-enums`), also in a raw config; the typed API has
       `ArcElementStyle.borderAlign` and `spacingMode`. The native option plans count an enum
       value as a scalar (`_indexedScalar` of `helpers.config.dart`).
+    - The line option `cubicInterpolationMode` holds a `CubicInterpolationMode` (row
+      `adapt-cubic-interpolation-mode-objects`), also in a raw config: an object with the methods
+      `drawsCurves(tension)` and `updateControlPoints(points, tension:, loop:, indexAxis:)`. The
+      base class is in the pure `lib/src/helpers/cubic_interpolation_mode.dart`, and the two modes
+      of upstream, `DefaultCubicInterpolationMode` (the default) and
+      `MonotoneCubicInterpolationMode`, are in `helpers.curve.dart`. An app or a plugin gives its
+      own mode as a subclass, with no registration. A keyword stops a debug build. The typed API
+      has `cubicInterpolationMode` on the line, scatter and radar datasets and on
+      `LineElementStyle`. A compare with upstream JSON text puts a marker on both sides
+      (`withCubicModeMarkers` of `test/support/cubic_mode_json.dart`). `ShapeBits` of `opt.dart`
+      has no free bit below the sign bit after it: dart2js computes the bit operations in 32 bits.
     - The line option `stepped` holds a boolean or the enum `SteppedLine` (`before`, `after`,
       `middle`) of the pure `lib/src/types/line_option_enums.dart` (row
       `adapt-stepped-line-enum`), and the bar option `borderSkipped` holds a boolean or the enum
@@ -1195,9 +1206,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (147 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (169 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
-    impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`.
+    impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
+    config whose config holds a keyword of an option with a class value (the 22 data fixtures with
+    `cubicInterpolationMode`) also has a hand port, of `<path>.js` or `<path>.json`, with the
+    config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
+    O1 runs such a fixture from its hand port only.
     `test/port/fixtures/index_test.dart` checks the registry against the manifest, the files of
     `hand/` and `doc/differences.md`. `test/port/fixtures/moment_twins_test.dart` has the 36 ICU
     twins of the moment fixtures (row `adapt-date-moment-format`, Chart.js ADR 0029 §9 item 4). Each
@@ -1217,7 +1232,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0114. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0115. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1284,7 +1299,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       decision of Chart.js ADR 0105 and supersedes it. Chart.js ADR 0114 (the merge of the narrow
       curves of a dense line) is accepted (2026-11-11): the maintainer approved it, and its code
       passes the tests. It states the complete decision of Chart.js ADR 0089 (the partitioned
-      fill) and supersedes it. The other ADRs are accepted. Docs
+      fill) and supersedes it. Chart.js ADR 0115 (the hand ports of the data fixtures with a class
+      value) is accepted (2026-11-12): its code passes the tests. It supersedes Chart.js ADR 0029
+      §4 item 1, the last sentence of §4 item 2 and the last sentence of §5 item 7. The other
+      ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of

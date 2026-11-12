@@ -3,6 +3,8 @@
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
     show nativeSegmentType;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -91,12 +93,17 @@ final class _Cursor {
     final options = line.options;
     if (options.runtimeType != LineOptions) return null;
     final resolved = options! as LineOptions;
+    // An enum value of the port and a built-in mode class (final) run no
+    // user code either.
     bool primitive(Object? value) =>
         value == null ||
         value is Undefined ||
         value is num ||
         value is bool ||
-        value is String;
+        value is String ||
+        value is Enum ||
+        value is DefaultCubicInterpolationMode ||
+        value is MonotoneCubicInterpolationMode;
     // The fallback for a nonmatching x must also be free of user callbacks.
     if (!primitive(resolved.steppedValue) ||
         !primitive(resolved.tensionValue) ||

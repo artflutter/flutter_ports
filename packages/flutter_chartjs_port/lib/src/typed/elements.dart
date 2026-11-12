@@ -17,6 +17,10 @@ import 'dart:ui' show Color, StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -245,6 +249,7 @@ final class LineElementStyle with Diagnosticable {
     this.borderJoinStyle,
     this.fill,
     this.stepped,
+    this.cubicInterpolationMode,
     this.extra,
   });
 
@@ -281,8 +286,14 @@ final class LineElementStyle with Diagnosticable {
   /// `adapt-stepped-line-enum`). Dart `null`, the default, draws no steps.
   final SteppedLine? stepped;
 
+  /// The mode of the control points of a curved line:
+  /// `cubicInterpolationMode`, a [CubicInterpolationMode] (row
+  /// `adapt-cubic-interpolation-mode-objects`). Dart `null` keeps the
+  /// default, [DefaultCubicInterpolationMode].
+  final CubicInterpolationMode? cubicInterpolationMode;
+
   /// The Chart.js line options that have no parameter, for example
-  /// `{'cubicInterpolationMode': 'monotone'}`. The rules of
+  /// `{'capBezierPoints': false}`. The rules of
   /// [ChartElements.extra] apply.
   final Map<String, Object?>? extra;
 
@@ -298,6 +309,7 @@ final class LineElementStyle with Diagnosticable {
     StrokeJoin? borderJoinStyle,
     ChartFill? fill,
     SteppedLine? stepped,
+    CubicInterpolationMode? cubicInterpolationMode,
     Map<String, Object?>? extra,
   }) => LineElementStyle(
     tension: tension ?? this.tension,
@@ -309,6 +321,8 @@ final class LineElementStyle with Diagnosticable {
     borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
     fill: fill ?? this.fill,
     stepped: stepped ?? this.stepped,
+    cubicInterpolationMode:
+        cubicInterpolationMode ?? this.cubicInterpolationMode,
     extra: extra ?? this.extra,
   );
 
@@ -324,6 +338,7 @@ final class LineElementStyle with Diagnosticable {
     put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
     put(scope, OptionKey.fill, fill?.optionValue);
     put(scope, OptionKey.stepped, stepped);
+    put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
     return mergeExtra(scope, extra);
   }
 
@@ -337,6 +352,7 @@ final class LineElementStyle with Diagnosticable {
     ('borderJoinStyle', borderJoinStyle),
     ('fill', fill),
     ('stepped', stepped),
+    ('cubicInterpolationMode', cubicInterpolationMode),
     ('extra', byEntries(extra)),
   ];
 

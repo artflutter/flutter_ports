@@ -54,6 +54,7 @@ const List<String> _lineStyle = [
   'spanGaps',
   'showLine',
   'stepped',
+  'cubicInterpolationMode',
   'pointRadius',
   'pointHoverRadius',
   'pointStyle',

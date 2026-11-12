@@ -65,8 +65,12 @@ export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show defaultDateZone, setDefaultDateZone;
 export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+export 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
 export 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
+export 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
 export 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 export 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart'
@@ -119,6 +123,7 @@ export 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 export 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
+export 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
 export 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition, ScaleValuePosition;
 export 'package:flutter_chartjs_port/src/types/line_option_enums.dart'

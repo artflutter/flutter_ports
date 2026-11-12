@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show MonotoneCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -649,7 +651,9 @@ void main() {
           'borderDashOffset': 0.871,
           'borderJoinStyle': native_ui.StrokeJoin.miter,
           'fill': 'start',
-          'cubicInterpolationMode': 'monotone',
+          // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+          // class.
+          'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
         });
 
         final chart = acquireChart(<String, Object?>{
@@ -683,7 +687,10 @@ void main() {
         expect(jsGet(options, 'borderDashOffset'), 0.871);
         expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
         expect(jsGet(options, 'fill'), 'start');
-        expect(jsGet(options, 'cubicInterpolationMode'), 'monotone');
+        expect(
+          jsGet(options, 'cubicInterpolationMode'),
+          const MonotoneCubicInterpolationMode(),
+        );
       });
 
       testWidgets('should be overridden by user-supplied values', (
@@ -754,7 +761,9 @@ void main() {
       'borderDashOffset': 0.871,
       'borderJoinStyle': native_ui.StrokeJoin.miter,
       'fill': 'start',
-      'cubicInterpolationMode': 'monotone',
+      // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+      // class.
+      'cubicInterpolationMode': MonotoneCubicInterpolationMode(),
     };
 
     /// The expectations of :675-685 and :713-723.
@@ -775,7 +784,10 @@ void main() {
       expect(jsGet(options, 'borderDashOffset'), 0.871);
       expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
       expect(jsGet(options, 'fill'), 'start');
-      expect(jsGet(options, 'cubicInterpolationMode'), 'monotone');
+      expect(
+        jsGet(options, 'cubicInterpolationMode'),
+        const MonotoneCubicInterpolationMode(),
+      );
     }
 
     testWidgets('should obey the chart-level dataset options', (tester) async {

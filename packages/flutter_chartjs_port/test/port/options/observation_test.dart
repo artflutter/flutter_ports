@@ -156,15 +156,18 @@ List<_Case> _cases() => [
       make: () => _fixtureInput(path, hand.load()),
       cleanup: null,
     ),
+  // A data fixture with a hand port (Chart.js ADR 0115) runs from its hand
+  // port, above.
   for (final path in _dataFixtures.keys)
-    (
-      name: 'fixture $path',
-      make: () => _fixtureInput(
-        path,
-        _copyJson(_dataFixtures[path])! as Map<String, Object?>,
+    if (!handFixtures.containsKey(path))
+      (
+        name: 'fixture $path',
+        make: () => _fixtureInput(
+          path,
+          _copyJson(_dataFixtures[path])! as Map<String, Object?>,
+        ),
+        cleanup: null,
       ),
-      cleanup: null,
-    ),
   for (final c in _benchCases)
     (name: 'bench ${c.name}', make: c.make, cleanup: c.cleanup),
   for (final c in _focusedCases)

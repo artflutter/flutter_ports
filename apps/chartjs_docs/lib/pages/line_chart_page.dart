@@ -73,10 +73,9 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'cubicInterpolationMode',
     section: 'cubic-interpolation-mode',
-    type: 'String',
-    extra: true,
+    type: 'CubicInterpolationMode',
     scriptable: true,
-    fallback: "'default'",
+    fallback: 'DefaultCubicInterpolationMode()',
   ),
   DocProperty(
     'data',
@@ -287,7 +286,7 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'stepped',
     section: 'stepped',
-    type: 'bool',
+    type: 'SteppedLine or bool',
     fallback: 'false',
   ),
   DocProperty(
@@ -688,15 +687,21 @@ DocPageContent lineChartPage() => DocPageContent(
           body: [
             DocParagraph('The chart has these interpolation modes:'),
             DocBullets([
-              "`'default'` uses a weighted cubic interpolation. This mode "
-                  'gives smooth curves for all types of datasets.',
-              "`'monotone'` is better for `y = f(x)` datasets. This mode "
-                  'keeps the monotonicity of the data. A local extreme '
-                  'stays at a data point.',
+              '`DefaultCubicInterpolationMode()` uses a weighted cubic '
+                  'interpolation. This mode gives smooth curves for all '
+                  'types of datasets.',
+              '`MonotoneCubicInterpolationMode()` is better for `y = f(x)` '
+                  'datasets. This mode keeps the monotonicity of the data. '
+                  'A local extreme stays at a data point.',
             ]),
             DocParagraph(
               'If the dataset does not set the mode, the chart uses '
               '`cubicInterpolationMode` of the line elements.',
+            ),
+            DocParagraph(
+              'An app or a plugin can give its own mode: a subclass of '
+              '`CubicInterpolationMode` with the methods `drawsCurves` and '
+              '`updateControlPoints`.',
             ),
             LiveExample(
               id: 'cubic',
@@ -761,15 +766,15 @@ DocPageContent lineChartPage() => DocPageContent(
             DocBullets([
               '`false`: no step interpolation. This value is the default.',
               '`true`: step-before interpolation. It is the same as '
-                  "`'before'`.",
-              "`'before'`: step-before interpolation.",
-              "`'after'`: step-after interpolation.",
-              "`'middle'`: step-middle interpolation.",
+                  '`SteppedLine.before`.',
+              '`SteppedLine.before`: step-before interpolation.',
+              '`SteppedLine.after`: step-after interpolation.',
+              '`SteppedLine.middle`: step-middle interpolation.',
             ]),
             DocParagraph(
-              'The parameter `stepped` takes a `bool`. The three strings go '
-              'through `extra`. If `stepped` is not `false`, the chart '
-              'ignores `tension`.',
+              'The parameter `stepped` takes a `SteppedLine`. The value '
+              '`true` goes through `extra`. If `stepped` is not `false`, the '
+              'chart ignores `tension`.',
             ),
             LiveExample(
               id: 'stepped',
@@ -794,7 +799,7 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: 'stepped-true',
                 ),
                 ExampleVariant(
-                  label: "'before'",
+                  label: '.before',
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -803,7 +808,7 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: 'stepped-before',
                 ),
                 ExampleVariant(
-                  label: "'after'",
+                  label: '.after',
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -812,7 +817,7 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: 'stepped-after',
                 ),
                 ExampleVariant(
-                  label: "'middle'",
+                  label: '.middle',
                   config: ChartConfig(
                     type: .line,
                     labels: months,

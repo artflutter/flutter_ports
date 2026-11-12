@@ -38,16 +38,38 @@ File _dartSpec(String spec) => File(
 RegExp _match(String prefix) => RegExp('^$prefix.+\\.(json|js)\$');
 
 /// The paths of the hand ports under `test/fixtures/hand/`, as fixture
-/// paths (`hand/<path>.dart` is `<path>.js`).
-Set<String> _handFiles() {
+/// paths: `hand/<path>.dart` is `<path>.json` when [paths] has that path
+/// (the hand port of a data fixture, Chart.js ADR 0115), else `<path>.js`.
+Set<String> _handFiles(Set<String> paths) {
   const root = 'test/fixtures/hand/';
   return {
     for (final entity in Directory(root).listSync(recursive: true))
       if (entity is File && entity.path.endsWith('.dart'))
-        '${entity.path.substring(root.length, entity.path.length - 5)}.js'
-            .replaceAll(r'\', '/'),
+        _fixturePath(
+          entity.path
+              .substring(root.length, entity.path.length - 5)
+              .replaceAll(r'\', '/'),
+          paths,
+        ),
   };
 }
+
+String _fixturePath(String stem, Set<String> paths) =>
+    paths.contains('$stem.json') ? '$stem.json' : '$stem.js';
+
+/// The option keys whose value is a class of the port: a data fixture with
+/// such a key in its config gets a hand port (Chart.js ADR 0115).
+const Set<String> _classValueKeys = {'cubicInterpolationMode'};
+
+/// Whether [value] holds a key of [_classValueKeys] at any depth.
+bool _holdsClassValueKey(Object? value) => switch (value) {
+  final Map<String, Object?> map => map.entries.any(
+    (entry) =>
+        _classValueKeys.contains(entry.key) || _holdsClassValueKey(entry.value),
+  ),
+  final List<Object?> list => list.any(_holdsClassValueKey),
+  _ => false,
+};
 
 void main() {
   const source = FixtureSource();
@@ -61,12 +83,17 @@ void main() {
     expect(unknown, isEmpty);
   });
 
-  test('no key of handFixtures is a pure data fixture', () {
-    final data = [
+  test('a hand port of a data fixture has a class value key', () {
+    // Chart.js ADR 0115: a pure data fixture runs from fixtures.json, unless
+    // its config holds a keyword of an option with a class value.
+    final data =
+        jsonDecode(File('doc/upstream/fixtures.json').readAsStringSync())!
+            as Map<String, Object?>;
+    final wrong = [
       for (final key in handFixtures.keys)
-        if (items[key]?.data ?? false) key,
+        if ((items[key]?.data ?? false) && !_holdsClassValueKey(data[key])) key,
     ];
-    expect(data, isEmpty);
+    expect(wrong, isEmpty);
   });
 
   test('no key is both a hand port and a skip', () {
@@ -101,7 +128,7 @@ void main() {
   });
 
   test('each hand port file has an entry, and each entry has its file', () {
-    final files = _handFiles();
+    final files = _handFiles(items.keys.toSet());
     expect(
       files.difference(handFixtures.keys.toSet()).toList()..sort(),
       isEmpty,

@@ -122,7 +122,6 @@ const Map<String, String> _notExported = {
   'PointProps': 'not in the ADR 0048 export list',
   'Registry': 'not in the ADR 0048 export list',
   'RoundedRect': 'not in the ADR 0048 export list',
-  'SplinePoint': 'not in the ADR 0048 export list',
   'TRBLCorners': 'not in the ADR 0048 export list',
   'TypedRegistry': 'not in the ADR 0048 export list',
   // The typed contexts of Chart.js ADR 0054 section 11: internal, a context

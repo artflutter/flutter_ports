@@ -198,6 +198,7 @@ const Set<String> reviewedForeignPairs = {
   'LineOptions\tcubicInterpolationMode\tnull',
   'LineOptions\tcubicInterpolationMode\tnumber',
   'LineOptions\tcubicInterpolationMode\tobject',
+  'LineOptions\tcubicInterpolationMode\tstring',
   'LineOptions\tcubicInterpolationMode\tundefined',
   'LineOptions\ttension\tarray',
   'LineOptions\ttension\tboolean',

@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
+    show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show MinMax;
@@ -37,6 +39,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/cubic_mode_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
 import 'dataset_controller_reference.dart';
@@ -672,6 +675,7 @@ String _enc(Object? v) => switch (v) {
   Element() => 'element',
   Animation() => 'animation',
   Curve() => curveJson,
+  CubicInterpolationMode() => cubicModeJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
@@ -1129,8 +1133,8 @@ void main() {
         final run = _Run(spec);
         expect(
           run.runAll().map(referenceColorTokens).toList(),
-          withCurveMarkers(
-            observations,
+          withCubicModeMarkers(
+            withCurveMarkers(observations),
           ).split('\n').map(referenceColorTokens).toList(),
         );
       });
