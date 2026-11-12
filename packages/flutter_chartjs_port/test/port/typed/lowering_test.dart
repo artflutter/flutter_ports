@@ -802,9 +802,11 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'arc.extra': (
-    ChartElements(arc: ArcElementStyle(extra: {'borderAlign': 'inner'})),
+    ChartElements(
+      arc: ArcElementStyle(extra: {'borderAlign': ArcBorderAlign.inner}),
+    ),
     {
-      'arc': {'borderAlign': 'inner'},
+      'arc': {'borderAlign': ArcBorderAlign.inner},
     },
   ),
   'extra': (

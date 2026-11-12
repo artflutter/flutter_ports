@@ -827,6 +827,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       the enums `TooltipXAlign` and `TooltipYAlign` of `lib/src/types/align.dart` (row
       `adapt-tooltip-align-enums`); the typed API has `ChartTooltip.xAlign` and `yAlign`. The
       text aligns of the tooltip (`titleAlign`, `bodyAlign`, `footerAlign`) stay text.
+    - The arc options `borderAlign` and `spacingMode` hold the enums `ArcBorderAlign` and
+      `ArcSpacingMode` of the pure `lib/src/types/arc_option_enums.dart` (row
+      `adapt-arc-option-enums`), also in a raw config; the typed API has
+      `ArcElementStyle.borderAlign` and `spacingMode`. The native option plans count an enum
+      value as a scalar (`_indexedScalar` of `helpers.config.dart`).
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
       is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream

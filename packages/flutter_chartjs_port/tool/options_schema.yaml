@@ -33,7 +33,8 @@
 # (the enums of `scale_option_enums.dart`, the values of `bounds`, `ticks.source`, `ticks.align` and
 # `ticks.crossAlign`; a keyword is a foreign value), `chartAlign` (a `ChartAlign`, the `align` of a
 # box; a keyword is a foreign value), `tooltipXAlign` and `tooltipYAlign` (the `xAlign` and
-# `yAlign` of the tooltip; a keyword is a foreign value), `any` (any JS value: a color, a point
+# `yAlign` of the tooltip; a keyword is a foreign value), `arcBorderAlign` and `arcSpacingMode` (the `borderAlign`
+# and `spacingMode` of an arc; a keyword is a foreign value), `any` (any JS value: a color, a point
 # style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
@@ -102,7 +103,7 @@ kinds:
       radius: number | string
       rotation: number
       spacing: number
-      spacingMode: string
+      spacingMode: arcSpacingMode
       startAngle: number  # index.d.ts:400 PolarAreaControllerChartOptions
       scale: scope ScaleOptions  # index.d.ts:708 Defaults, only Chart.defaults has it
       hoverColor: any  # core.defaults.js:64
@@ -164,7 +165,7 @@ kinds:
       hitRadius: number
       hoverRadius: number
       selfJoin: bool
-      borderAlign: string
+      borderAlign: arcBorderAlign
       circular: bool
       hoverOffset: number
       weight: number
@@ -428,7 +429,7 @@ kinds:
       borderColor: any
       backgroundColor: any
       selfJoin: bool
-      borderAlign: string
+      borderAlign: arcBorderAlign
       borderDash: list
       borderDashOffset: number
       borderJoinStyle: strokeJoin
@@ -436,7 +437,7 @@ kinds:
       offset: number
       circular: bool
       spacing: number
-      spacingMode: string
+      spacingMode: arcSpacingMode
       hoverBorderWidth: number
       hoverBorderColor: any
       hoverBackgroundColor: any
@@ -644,7 +645,7 @@ kinds:
       borderColor: any
       backgroundColor: any
       selfJoin: bool
-      borderAlign: string
+      borderAlign: arcBorderAlign
       borderDash: list
       borderDashOffset: number
       borderJoinStyle: strokeJoin
@@ -652,7 +653,7 @@ kinds:
       offset: number
       circular: bool
       spacing: number
-      spacingMode: string
+      spacingMode: arcSpacingMode
       hoverBorderWidth: number
       hoverBorderColor: any
       hoverBackgroundColor: any
@@ -695,7 +696,7 @@ kinds:
       borderColor: any
       backgroundColor: any
       selfJoin: bool
-      borderAlign: string
+      borderAlign: arcBorderAlign
       borderDash: list
       borderDashOffset: number
       borderJoinStyle: strokeJoin
@@ -703,7 +704,7 @@ kinds:
       offset: number
       circular: bool
       spacing: number
-      spacingMode: string
+      spacingMode: arcSpacingMode
       hoverBorderWidth: number
       hoverBorderColor: any
       hoverBackgroundColor: any

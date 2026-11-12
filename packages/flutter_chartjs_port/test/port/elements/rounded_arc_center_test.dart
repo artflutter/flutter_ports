@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';
@@ -31,13 +32,13 @@ void main() {
             'backgroundColor': const Color.fromRGBO(255, 99, 132, 0.5),
             'borderColor': const Color(0xffffffff),
             'borderWidth': 2.0,
-            'borderAlign': 'center',
+            'borderAlign': ArcBorderAlign.center,
             'borderRadius': 4.0,
             'offset': 0.0,
             'spacing': 2.0,
             'circular': true,
             'selfJoin': false,
-            'spacingMode': 'angular',
+            'spacingMode': ArcSpacingMode.angular,
           });
         final image = await renderContext(arc.draw, width: 100, height: 100);
         expect(

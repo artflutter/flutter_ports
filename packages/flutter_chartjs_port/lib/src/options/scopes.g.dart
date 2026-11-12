@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
@@ -1084,13 +1086,13 @@ base class ChartOptionsScope extends OptionScope {
   set spacing(double value) =>
       store(OptionKey.spacing, OptValue<double>(value));
 
-  Opt<String>? _spacingMode;
+  Opt<ArcSpacingMode>? _spacingMode;
 
   /// The cell of `spacingMode`, or Dart `null` when absent.
-  Opt<String>? get spacingModeCell => _spacingMode;
+  Opt<ArcSpacingMode>? get spacingModeCell => _spacingMode;
 
   /// Stores the cell of `spacingMode`. Dart `null` deletes the key.
-  set spacingModeCell(Opt<String>? cell) {
+  set spacingModeCell(Opt<ArcSpacingMode>? cell) {
     if (cell == null) {
       delete(OptionKey.spacingMode);
     } else {
@@ -1099,8 +1101,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `spacingMode`.
-  set spacingMode(String value) =>
-      store(OptionKey.spacingMode, OptValue<String>(value));
+  set spacingMode(ArcSpacingMode value) =>
+      store(OptionKey.spacingMode, OptValue<ArcSpacingMode>(value));
 
   Opt<double>? _startAngle;
 
@@ -2136,13 +2138,13 @@ base class ChartOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `selfJoin`.
   set selfJoin(bool value) => store(OptionKey.selfJoin, OptValue<bool>(value));
 
-  Opt<String>? _borderAlign;
+  Opt<ArcBorderAlign>? _borderAlign;
 
   /// The cell of `borderAlign`, or Dart `null` when absent.
-  Opt<String>? get borderAlignCell => _borderAlign;
+  Opt<ArcBorderAlign>? get borderAlignCell => _borderAlign;
 
   /// Stores the cell of `borderAlign`. Dart `null` deletes the key.
-  set borderAlignCell(Opt<String>? cell) {
+  set borderAlignCell(Opt<ArcBorderAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.borderAlign);
     } else {
@@ -2151,8 +2153,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderAlign`.
-  set borderAlign(String value) =>
-      store(OptionKey.borderAlign, OptValue<String>(value));
+  set borderAlign(ArcBorderAlign value) =>
+      store(OptionKey.borderAlign, OptValue<ArcBorderAlign>(value));
 
   Opt<bool>? _circular;
 
@@ -2537,7 +2539,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.spacing:
         _spacing = fitCell(cell, classifyNumber);
       case OptionKey.spacingMode:
-        _spacingMode = fitCell(cell, classifyString);
+        _spacingMode = fitCell(cell, classifyTyped<ArcSpacingMode>);
       case OptionKey.startAngle:
         _startAngle = fitCell(cell, classifyNumber);
       case OptionKey.scale:
@@ -2656,7 +2658,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         _selfJoin = fitCell(cell, classifyBool);
       case OptionKey.borderAlign:
-        _borderAlign = fitCell(cell, classifyString);
+        _borderAlign = fitCell(cell, classifyTyped<ArcBorderAlign>);
       case OptionKey.circular:
         _circular = fitCell(cell, classifyBool);
       case OptionKey.hoverOffset:
@@ -2866,7 +2868,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.spacing:
         return classifyNumber(raw);
       case OptionKey.spacingMode:
-        return classifyString(raw);
+        return classifyTyped<ArcSpacingMode>(raw);
       case OptionKey.startAngle:
         return classifyNumber(raw);
       case OptionKey.scale:
@@ -2982,7 +2984,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         return classifyBool(raw);
       case OptionKey.borderAlign:
-        return classifyString(raw);
+        return classifyTyped<ArcBorderAlign>(raw);
       case OptionKey.circular:
         return classifyBool(raw);
       case OptionKey.hoverOffset:
@@ -7045,13 +7047,13 @@ base class ArcOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `selfJoin`.
   set selfJoin(bool value) => store(OptionKey.selfJoin, OptValue<bool>(value));
 
-  Opt<String>? _borderAlign;
+  Opt<ArcBorderAlign>? _borderAlign;
 
   /// The cell of `borderAlign`, or Dart `null` when absent.
-  Opt<String>? get borderAlignCell => _borderAlign;
+  Opt<ArcBorderAlign>? get borderAlignCell => _borderAlign;
 
   /// Stores the cell of `borderAlign`. Dart `null` deletes the key.
-  set borderAlignCell(Opt<String>? cell) {
+  set borderAlignCell(Opt<ArcBorderAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.borderAlign);
     } else {
@@ -7060,8 +7062,8 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderAlign`.
-  set borderAlign(String value) =>
-      store(OptionKey.borderAlign, OptValue<String>(value));
+  set borderAlign(ArcBorderAlign value) =>
+      store(OptionKey.borderAlign, OptValue<ArcBorderAlign>(value));
 
   Opt<Object>? _borderDash;
 
@@ -7187,13 +7189,13 @@ base class ArcOptionsScope extends OptionScope {
   set spacing(double value) =>
       store(OptionKey.spacing, OptValue<double>(value));
 
-  Opt<String>? _spacingMode;
+  Opt<ArcSpacingMode>? _spacingMode;
 
   /// The cell of `spacingMode`, or Dart `null` when absent.
-  Opt<String>? get spacingModeCell => _spacingMode;
+  Opt<ArcSpacingMode>? get spacingModeCell => _spacingMode;
 
   /// Stores the cell of `spacingMode`. Dart `null` deletes the key.
-  set spacingModeCell(Opt<String>? cell) {
+  set spacingModeCell(Opt<ArcSpacingMode>? cell) {
     if (cell == null) {
       delete(OptionKey.spacingMode);
     } else {
@@ -7202,8 +7204,8 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `spacingMode`.
-  set spacingMode(String value) =>
-      store(OptionKey.spacingMode, OptValue<String>(value));
+  set spacingMode(ArcSpacingMode value) =>
+      store(OptionKey.spacingMode, OptValue<ArcSpacingMode>(value));
 
   Opt<double>? _hoverBorderWidth;
 
@@ -7438,7 +7440,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         _selfJoin = fitCell(cell, classifyBool);
       case OptionKey.borderAlign:
-        _borderAlign = fitCell(cell, classifyString);
+        _borderAlign = fitCell(cell, classifyTyped<ArcBorderAlign>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
@@ -7454,7 +7456,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.spacing:
         _spacing = fitCell(cell, classifyNumber);
       case OptionKey.spacingMode:
-        _spacingMode = fitCell(cell, classifyString);
+        _spacingMode = fitCell(cell, classifyTyped<ArcSpacingMode>);
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
@@ -7521,7 +7523,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         return classifyBool(raw);
       case OptionKey.borderAlign:
-        return classifyString(raw);
+        return classifyTyped<ArcBorderAlign>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
@@ -7537,7 +7539,7 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.spacing:
         return classifyNumber(raw);
       case OptionKey.spacingMode:
-        return classifyString(raw);
+        return classifyTyped<ArcSpacingMode>(raw);
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
@@ -11938,13 +11940,13 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `selfJoin`.
   set selfJoin(bool value) => store(OptionKey.selfJoin, OptValue<bool>(value));
 
-  Opt<String>? _borderAlign;
+  Opt<ArcBorderAlign>? _borderAlign;
 
   /// The cell of `borderAlign`, or Dart `null` when absent.
-  Opt<String>? get borderAlignCell => _borderAlign;
+  Opt<ArcBorderAlign>? get borderAlignCell => _borderAlign;
 
   /// Stores the cell of `borderAlign`. Dart `null` deletes the key.
-  set borderAlignCell(Opt<String>? cell) {
+  set borderAlignCell(Opt<ArcBorderAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.borderAlign);
     } else {
@@ -11953,8 +11955,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderAlign`.
-  set borderAlign(String value) =>
-      store(OptionKey.borderAlign, OptValue<String>(value));
+  set borderAlign(ArcBorderAlign value) =>
+      store(OptionKey.borderAlign, OptValue<ArcBorderAlign>(value));
 
   Opt<Object>? _borderDash;
 
@@ -12080,13 +12082,13 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   set spacing(double value) =>
       store(OptionKey.spacing, OptValue<double>(value));
 
-  Opt<String>? _spacingMode;
+  Opt<ArcSpacingMode>? _spacingMode;
 
   /// The cell of `spacingMode`, or Dart `null` when absent.
-  Opt<String>? get spacingModeCell => _spacingMode;
+  Opt<ArcSpacingMode>? get spacingModeCell => _spacingMode;
 
   /// Stores the cell of `spacingMode`. Dart `null` deletes the key.
-  set spacingModeCell(Opt<String>? cell) {
+  set spacingModeCell(Opt<ArcSpacingMode>? cell) {
     if (cell == null) {
       delete(OptionKey.spacingMode);
     } else {
@@ -12095,8 +12097,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `spacingMode`.
-  set spacingMode(String value) =>
-      store(OptionKey.spacingMode, OptValue<String>(value));
+  set spacingMode(ArcSpacingMode value) =>
+      store(OptionKey.spacingMode, OptValue<ArcSpacingMode>(value));
 
   Opt<double>? _hoverBorderWidth;
 
@@ -12724,7 +12726,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         _selfJoin = fitCell(cell, classifyBool);
       case OptionKey.borderAlign:
-        _borderAlign = fitCell(cell, classifyString);
+        _borderAlign = fitCell(cell, classifyTyped<ArcBorderAlign>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
@@ -12740,7 +12742,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.spacing:
         _spacing = fitCell(cell, classifyNumber);
       case OptionKey.spacingMode:
-        _spacingMode = fitCell(cell, classifyString);
+        _spacingMode = fitCell(cell, classifyTyped<ArcSpacingMode>);
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
@@ -12889,7 +12891,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         return classifyBool(raw);
       case OptionKey.borderAlign:
-        return classifyString(raw);
+        return classifyTyped<ArcBorderAlign>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
@@ -12905,7 +12907,7 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.spacing:
         return classifyNumber(raw);
       case OptionKey.spacingMode:
-        return classifyString(raw);
+        return classifyTyped<ArcSpacingMode>(raw);
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
@@ -13190,13 +13192,13 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `selfJoin`.
   set selfJoin(bool value) => store(OptionKey.selfJoin, OptValue<bool>(value));
 
-  Opt<String>? _borderAlign;
+  Opt<ArcBorderAlign>? _borderAlign;
 
   /// The cell of `borderAlign`, or Dart `null` when absent.
-  Opt<String>? get borderAlignCell => _borderAlign;
+  Opt<ArcBorderAlign>? get borderAlignCell => _borderAlign;
 
   /// Stores the cell of `borderAlign`. Dart `null` deletes the key.
-  set borderAlignCell(Opt<String>? cell) {
+  set borderAlignCell(Opt<ArcBorderAlign>? cell) {
     if (cell == null) {
       delete(OptionKey.borderAlign);
     } else {
@@ -13205,8 +13207,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderAlign`.
-  set borderAlign(String value) =>
-      store(OptionKey.borderAlign, OptValue<String>(value));
+  set borderAlign(ArcBorderAlign value) =>
+      store(OptionKey.borderAlign, OptValue<ArcBorderAlign>(value));
 
   Opt<Object>? _borderDash;
 
@@ -13332,13 +13334,13 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   set spacing(double value) =>
       store(OptionKey.spacing, OptValue<double>(value));
 
-  Opt<String>? _spacingMode;
+  Opt<ArcSpacingMode>? _spacingMode;
 
   /// The cell of `spacingMode`, or Dart `null` when absent.
-  Opt<String>? get spacingModeCell => _spacingMode;
+  Opt<ArcSpacingMode>? get spacingModeCell => _spacingMode;
 
   /// Stores the cell of `spacingMode`. Dart `null` deletes the key.
-  set spacingModeCell(Opt<String>? cell) {
+  set spacingModeCell(Opt<ArcSpacingMode>? cell) {
     if (cell == null) {
       delete(OptionKey.spacingMode);
     } else {
@@ -13347,8 +13349,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `spacingMode`.
-  set spacingMode(String value) =>
-      store(OptionKey.spacingMode, OptValue<String>(value));
+  set spacingMode(ArcSpacingMode value) =>
+      store(OptionKey.spacingMode, OptValue<ArcSpacingMode>(value));
 
   Opt<double>? _hoverBorderWidth;
 
@@ -13995,7 +13997,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         _selfJoin = fitCell(cell, classifyBool);
       case OptionKey.borderAlign:
-        _borderAlign = fitCell(cell, classifyString);
+        _borderAlign = fitCell(cell, classifyTyped<ArcBorderAlign>);
       case OptionKey.borderDash:
         _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.borderDashOffset:
@@ -14011,7 +14013,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.spacing:
         _spacing = fitCell(cell, classifyNumber);
       case OptionKey.spacingMode:
-        _spacingMode = fitCell(cell, classifyString);
+        _spacingMode = fitCell(cell, classifyTyped<ArcSpacingMode>);
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
@@ -14163,7 +14165,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.selfJoin:
         return classifyBool(raw);
       case OptionKey.borderAlign:
-        return classifyString(raw);
+        return classifyTyped<ArcBorderAlign>(raw);
       case OptionKey.borderDash:
         return classifyUnion(raw, 16);
       case OptionKey.borderDashOffset:
@@ -14179,7 +14181,7 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.spacing:
         return classifyNumber(raw);
       case OptionKey.spacingMode:
-        return classifyString(raw);
+        return classifyTyped<ArcSpacingMode>(raw);
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:

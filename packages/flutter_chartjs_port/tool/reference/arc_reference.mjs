@@ -111,7 +111,9 @@ function str(v) {
 /**
  * The Dart literal of the value [x] of the key [k]: a line cap or a line
  * join of upstream is the Flutter enum value with the name of the keyword
- * (row adapt-flutter-stroke-enums). Another value is `undefined` here.
+ * (row adapt-flutter-stroke-enums), and an arc `borderAlign` or
+ * `spacingMode` is the enum value of the port (row adapt-arc-option-enums).
+ * Another value is `undefined` here.
  */
 function strokeEnum(k, x) {
   if (typeof x !== 'string') return undefined;
@@ -121,8 +123,19 @@ function strokeEnum(k, x) {
   if ((k === 'borderJoinStyle' || k === 'lineJoin') && ['miter', 'round', 'bevel'].includes(x)) {
     return `StrokeJoin.${x}`;
   }
+  if (k === 'borderAlign' && ['center', 'inner'].includes(x)) {
+    usesArcEnums = true;
+    return `ArcBorderAlign.${x}`;
+  }
+  if (k === 'spacingMode' && ['angular', 'proportional', 'parallel'].includes(x)) {
+    usesArcEnums = true;
+    return `ArcSpacingMode.${x}`;
+  }
   return undefined;
 }
+
+/** Whether the data have a value of an arc enum, which needs its import. */
+let usesArcEnums = false;
 
 /**
  * The Dart literal of a configuration value: `undefined` is the sentinel, an
@@ -414,7 +427,7 @@ addDraw('angles undefined', arcCfg({startAngle: undefined, endAngle: undefined})
 addDraw('spec options, full circle', {x: 2, y: 2, startAngle: 0, endAngle: TAU, innerRadius: 0, outerRadius: 2, options: {spacing: 0, offset: 0, borderWidth: 0}});
 
 // spacingMode (pathArc): the three modes, the default for an absent,
-// null or unknown value, the trim limits for a large spacing and a small
+// null or foreign value, the trim limits for a large spacing and a small
 // sweep, the raised root of 'parallel' for an inner radius of 0 and its
 // limit below the outer radius, and an outer radius of 0, also after a
 // negative spacing with an inner radius above 0.
@@ -422,7 +435,9 @@ addDraw('spacing, mode proportional', arcCfg({}, {spacing: 4, spacingMode: 'prop
 addDraw('spacing, mode parallel', arcCfg({}, {spacing: 4, spacingMode: 'parallel'}));
 addDraw('spacing, mode absent', arcCfg({}, {spacing: 4}, ['spacingMode']));
 addDraw('spacing, mode null', arcCfg({}, {spacing: 4, spacingMode: null}));
-addDraw('spacing, mode unknown', arcCfg({}, {spacing: 4, spacingMode: 'radial'}));
+// A value that is not a mode: the typed port holds no mode name, and a name
+// stops a debug build. Upstream gives it the branch of an unknown name.
+addDraw('spacing, mode not a mode', arcCfg({}, {spacing: 4, spacingMode: 7}));
 addDraw('spacing, mode proportional, inner radius 0', arcCfg({innerRadius: 0}, {spacing: 4, spacingMode: 'proportional'}));
 addDraw('spacing, mode parallel, inner radius 0', arcCfg({innerRadius: 0}, {spacing: 4, spacingMode: 'parallel'}));
 addDraw('spacing 40', arcCfg({}, {spacing: 40}));
@@ -519,6 +534,7 @@ const out = `// Original code, not ported from Chart.js: ArcElement reference da
 import 'dart:ui' show StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}
 
 /// The Node.js version that generated the reference data.
 const String arcReferenceNode = '${process.version}';

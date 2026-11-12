@@ -589,7 +589,7 @@ void main() {
       _dataset({
         'backgroundColor': <ui.Color>[red, blue],
         'borderWidth': '3',
-        'borderAlign': 'inner',
+        'borderAlign': ArcBorderAlign.inner,
         'offset': '2',
       }),
     ]),
@@ -601,7 +601,7 @@ void main() {
       _dataset({
         'backgroundColor': <ui.Color>[red, blue],
         'borderWidth': 9.0,
-        'borderAlign': 'inner',
+        'borderAlign': ArcBorderAlign.inner,
       }),
     ]),
   );
@@ -689,7 +689,7 @@ void main() {
         'backgroundColor': <ui.Color>[red, blue],
         'angle': 30.0,
         'spacing': 2.0,
-        'spacingMode': 'proportional',
+        'spacingMode': ArcSpacingMode.proportional,
       }),
     ]),
     types: const ['polarArea'],

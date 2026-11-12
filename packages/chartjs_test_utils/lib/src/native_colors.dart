@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign, ArcSpacingMode;
 
 final _callbacks = Expando<Object>('fixture native color callback');
 
@@ -31,9 +33,16 @@ bool _isColor(String key) =>
     key == r'$backgroundColors';
 
 /// The value of [values] with the name [value] for a String that is such a
-/// name, else [value] itself. A scriptable or an indexable value stays.
+/// name, else [value] itself. An indexable value (a List) gives a new List
+/// with each item so converted. A scriptable value stays.
 Object? _enumValue<T extends Enum>(List<T> values, Object? value) =>
-    value is String ? values.asNameMap()[value] ?? value : value;
+    switch (value) {
+      final String name => values.asNameMap()[name] ?? name,
+      final List<Object?> items => <Object?>[
+        for (final item in items) _enumValue(values, item),
+      ],
+      _ => value,
+    };
 
 /// The values of the enum of the scale option [key] of the object of the
 /// key [owner], or Dart `null` for another option: `bounds` of a scale, and
@@ -122,6 +131,11 @@ void nativeFixtureColors(Object? config) {
         // The align of a box takes a ChartAlign (row adapt-chart-align-enum).
         // A title position (`top`) is no name of it and stays.
         value[key] = _enumValue(ChartAlign.values, value[key]);
+      } else if (key == 'borderAlign') {
+        // An arc option takes its enum (row adapt-arc-option-enums).
+        value[key] = _enumValue(ArcBorderAlign.values, value[key]);
+      } else if (key == 'spacingMode') {
+        value[key] = _enumValue(ArcSpacingMode.values, value[key]);
       } else if (_scaleEnumValues(key, owner) case final values?) {
         // A scale option takes its enum, not the upstream keyword (row
         // adapt-scale-option-enums).

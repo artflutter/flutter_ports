@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -25,6 +26,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'backgroundColor': 'transparent',
           'borderColor': '#ff00ff',
           'borderWidth': 8,
+          // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
           'borderAlign': (Object? ctx) {
             final value = jsOrZero(
               jsGet(
@@ -32,7 +34,7 @@ Map<String, Object?> fixture() => <String, Object?>{
                 jsGet(ctx, 'dataIndex'),
               ),
             );
-            return value > 4 ? 'center' : 'inner';
+            return value > 4 ? ArcBorderAlign.center : ArcBorderAlign.inner;
           },
         },
       },

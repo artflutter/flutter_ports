@@ -15,6 +15,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
+    show ArcBorderAlign;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';
@@ -79,7 +81,7 @@ Map<String, Object?> _options({
   Object? borderRadius = 0.0,
   Object? offset = 0.0,
   Object? spacing = 0.0,
-  Object? borderAlign = 'center',
+  Object? borderAlign = ArcBorderAlign.center,
   Object? circular = true,
 }) => {
   'backgroundColor': backgroundColor,
@@ -499,7 +501,9 @@ void main() {
           borderRadius: <String, Object?>{'outerStart': 0.0},
         ),
       ),
-      'the inner border align': _cfg(options: _options(borderAlign: 'inner')),
+      'the inner border align': _cfg(
+        options: _options(borderAlign: ArcBorderAlign.inner),
+      ),
       'a non-circular arc': _cfg(options: _options(circular: false)),
       'a foreign border width': _cfg(options: _options(borderWidth: '0')),
       'a full circle': _cfg(start: 0, sweep: 2 * math.pi),

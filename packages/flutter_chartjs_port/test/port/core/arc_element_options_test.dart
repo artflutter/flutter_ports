@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:test/test.dart';
 
 const red = Color(0xffff0000);
@@ -26,7 +27,7 @@ class _OrdinaryConfig extends Config {}
 
 /// The own keys of `defaults.elements.arc`, with its route in the last place.
 ArcOptionsScope _keySource() => ArcOptionsScope()
-  ..borderAlign = 'center'
+  ..borderAlign = ArcBorderAlign.center
   ..borderColor = blue
   ..borderDash = <Object?>[]
   ..borderDashOffset = 0.0
@@ -35,7 +36,7 @@ ArcOptionsScope _keySource() => ArcOptionsScope()
   ..borderWidth = 2.0
   ..offset = 0.0
   ..spacing = 0.0
-  ..spacingMode = 'angular'
+  ..spacingMode = ArcSpacingMode.angular
   ..angleCell = optUndefined
   ..circular = true
   ..selfJoin = false
@@ -49,7 +50,7 @@ class _Fixture {
     '_scriptable': true,
     '_indexable': ArcElement.descriptors.jsRead('_indexable'),
     '_allKeys': false,
-    'borderAlign': 'center',
+    'borderAlign': ArcBorderAlign.center,
     'borderColor': blue,
     'borderDash': <Object?>[],
     'borderDashOffset': 0.0,
@@ -57,7 +58,7 @@ class _Fixture {
     'borderWidth': 2.0,
     'offset': 0.0,
     'spacing': 0.0,
-    'spacingMode': 'angular',
+    'spacingMode': ArcSpacingMode.angular,
     'circular': true,
     'selfJoin': false,
     'backgroundColor': red,

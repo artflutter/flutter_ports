@@ -1646,7 +1646,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4;
+            return 4194304;
           case OptionKey.startAngle:
             return 1;
           case OptionKey.scale:
@@ -1762,7 +1762,7 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 4;
+            return 2097152;
           case OptionKey.circular:
             return 2;
           case OptionKey.hoverOffset:
@@ -2126,7 +2126,7 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 4;
+            return 2097152;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
@@ -2142,7 +2142,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4;
+            return 4194304;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2529,7 +2529,7 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 4;
+            return 2097152;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
@@ -2545,7 +2545,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4;
+            return 4194304;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2630,7 +2630,7 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 4;
+            return 2097152;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
@@ -2646,7 +2646,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4;
+            return 4194304;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:

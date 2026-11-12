@@ -883,7 +883,7 @@ const out = `// Original code, not ported from Chart.js: resolver trace referenc
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // a build of Chart.js v${build.version} at the commit
 // ${build.commit}. ${cases.length} cases.
-${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined || state.arcEnums ? '\n' : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String resolverTraceReferenceNode = '${process.version}';
 

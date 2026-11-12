@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -194,8 +195,8 @@ void main() {
       });
 
       final meta = chart.getDatasetMeta(0);
-      expect(_option(meta.data[0], 'spacingMode'), 'proportional');
-      expect(_option(meta.data[1], 'spacingMode'), 'proportional');
+      expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.proportional);
+      expect(_option(meta.data[1], 'spacingMode'), ArcSpacingMode.proportional);
     });
 
     testWidgets('should respect chart-level spacingMode override', (
@@ -213,13 +214,13 @@ void main() {
         },
         'options': <String, Object?>{
           'spacing': 12,
-          'spacingMode': 'parallel',
+          'spacingMode': ArcSpacingMode.parallel,
         },
       });
 
       final meta = chart.getDatasetMeta(0);
-      expect(_option(meta.data[0], 'spacingMode'), 'parallel');
-      expect(_option(meta.data[1], 'spacingMode'), 'parallel');
+      expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.parallel);
+      expect(_option(meta.data[1], 'spacingMode'), ArcSpacingMode.parallel);
       expect(_option(meta.data[0], 'spacing'), 12);
       expect(_option(meta.data[1], 'spacing'), 12);
     });
