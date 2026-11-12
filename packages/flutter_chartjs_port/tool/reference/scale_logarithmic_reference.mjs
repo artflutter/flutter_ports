@@ -431,11 +431,14 @@ const cases = [
 
   // The labels.
   run('a tick callback', log(small, {scales: {y: {ticks: {callback: withUnit}}}})),
+  // The port holds the locale as a Locale and the format as a NumberFormat
+  // of package:intl, which formats a tick as it is (row
+  // adapt-intl-number-format): the cases set the locale and the format apart.
+  run('locale', log([{data: points([0.5, 12345], [1.5, 2750])}], {locale: 'de-DE'})),
   run(
-    'locale and format',
+    'format',
     log([{data: points([0.5, 12345], [1.5, 2750])}], {
-      locale: 'de-DE',
-      scales: {y: {ticks: {format: {maximumFractionDigits: 1}}}},
+      scales: {y: {ticks: {format: {minimumFractionDigits: 0, maximumFractionDigits: 1}}}},
     }),
   ),
   run(

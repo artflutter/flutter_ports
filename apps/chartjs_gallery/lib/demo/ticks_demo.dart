@@ -14,7 +14,13 @@ import 'package:flutter_chartjs_port/src/types/index.dart' show Chart, Scale;
 import 'package:material_ui/material_ui.dart';
 
 /// The locales of the locale menu.
-const List<String> tickLocales = ['en-US', 'de-DE', 'fr-FR', 'ru-RU', 'ja-JP'];
+const List<Locale> tickLocales = [
+  Locale('en', 'US'),
+  Locale('de', 'DE'),
+  Locale('fr', 'FR'),
+  Locale('ru', 'RU'),
+  Locale('ja', 'JP'),
+];
 
 /// The `chart` of the `this` object: the formatters read only
 /// `chart.options.locale`. The same stand-in as the ported spec
@@ -141,15 +147,13 @@ class TicksDemo extends StatefulWidget {
 }
 
 class _TicksDemoState extends State<TicksDemo> {
-  String _locale = 'en-US';
+  Locale _locale = const Locale('en', 'US');
 
   @override
   Widget build(BuildContext context) {
     final scale = _DemoScale(
       _DemoChart(<String, Object?>{'locale': _locale}),
-      <String, Object?>{
-        'ticks': <String, Object?>{'format': <String, Object?>{}},
-      },
+      <String, Object?>{'ticks': <String, Object?>{}},
     );
     final formatters = ticks['formatters']! as Map<String, Object?>;
     return DemoPageBody(
@@ -164,12 +168,12 @@ class _TicksDemoState extends State<TicksDemo> {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               const Text('chart.options.locale'),
-              DropdownButton<String>(
+              DropdownButton<Locale>(
                 key: const ValueKey('ticks.locale'),
                 value: _locale,
                 items: [
                   for (final l in tickLocales)
-                    DropdownMenuItem(value: l, child: Text(l)),
+                    DropdownMenuItem(value: l, child: Text(l.toLanguageTag())),
                 ],
                 onChanged: (v) => setState(() => _locale = v ?? _locale),
               ),

@@ -1287,7 +1287,8 @@ void main() {
         'type': 'line',
         'data': <String, Object?>{},
         'options': <String, Object?>{
-          'locale': 'es',
+          // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+          'locale': const native_ui.Locale('es'),
           'scales': <String, Object?>{
             'x': <String, Object?>{'type': 'time'},
           },

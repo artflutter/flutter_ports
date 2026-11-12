@@ -2,7 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Size;
+import 'dart:ui' show Locale, Size;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
@@ -271,10 +271,11 @@ void main() {
       expect(options.keys.take(3), ['animation', 'responsive', 'locale']);
       expect(options['animation'], false);
       expect(options['responsive'], false);
-      expect(options['locale'], 'en-US');
+      // DIVERGES(chartjs): adapt-intl-number-format, the locale is a Locale.
+      expect(options['locale'], const Locale('en', 'US'));
       expect(chart.options['animation'], false);
       expect(chart.options['responsive'], false);
-      expect(chart.options['locale'], 'en-US');
+      expect(chart.options['locale'], const Locale('en', 'US'));
       expect(chart.config.options, same(options));
 
       // `=== undefined` keeps every other value, also null. `||` replaces a
@@ -289,17 +290,17 @@ void main() {
       expect(kept['animation'], same(animation));
       expect(kept.containsKey('responsive'), isTrue);
       expect(kept['responsive'], isNull);
-      expect(kept['locale'], 'en-US');
+      expect(kept['locale'], const Locale('en', 'US'));
 
       final de = <String, Object?>{
         'animation': undefined,
         'responsive': true,
-        'locale': 'de-DE',
+        'locale': const Locale('de', 'DE'),
       };
       acquireChart(<String, Object?>{'options': de});
       expect(de['animation'], false);
       expect(de['responsive'], true);
-      expect(de['locale'], 'de-DE');
+      expect(de['locale'], const Locale('de', 'DE'));
     });
 
     testWidgets('FlutterPlatform, and the chart is attached at its '

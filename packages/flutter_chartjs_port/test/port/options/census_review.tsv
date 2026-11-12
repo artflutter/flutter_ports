@@ -54,6 +54,8 @@ extra	options.scales.*.grid.width	a test-only grid key
 extra	options.scales.*.lin	a test-only scale key
 extra	options.scales.*.tc	a test-only scale key
 extra	options.scales.*.ticks.beginAtZero	a key of Chart.js v2
+extra	options.scales.*.ticks.format.maximumFractionDigits	an Intl.NumberFormatOptions object of upstream; the port holds a NumberFormat of package:intl (Chart.js ADR 0119)
+extra	options.scales.*.ticks.format.style	an Intl.NumberFormatOptions object of upstream; the port holds a NumberFormat of package:intl (Chart.js ADR 0119)
 extra	options.scales.*.ticks.max	a key of Chart.js v2
 extra	options.scales.*.ticks.min	a key of Chart.js v2
 extra	options.scales.*.time.stepSize	a key of Chart.js v2
@@ -112,6 +114,7 @@ extra	options.scales.*.position.x	the scale id of the object form of a raw censu
 extra	options.scales.*.position.y	the scale id of the object form of a raw census config (row adapt-chart-position-enum)
 foreign	options.scales.*.startAngle	String
 foreign	options.scales.*.ticks.count	String
+foreign	options.scales.*.ticks.format	Map	an Intl.NumberFormatOptions object of upstream; the port holds a NumberFormat of package:intl (Chart.js ADR 0119)
 foreign	options.scales.*.ticks.includeBounds	double
 foreign	options.scales.*.ticks.maxTicksLimit	String
 foreign	options.scales.*.ticks.minRotation	String

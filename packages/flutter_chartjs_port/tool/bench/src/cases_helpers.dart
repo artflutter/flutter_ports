@@ -17,7 +17,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_intl.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -25,6 +24,7 @@ import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 import 'fixtures.dart';
 import 'harness.dart';
@@ -304,9 +304,12 @@ List<BenchCase> helperCases() => [
     'ticks',
     'ticks/numeric_11_cache_hit',
     () {
-      final scale = _Scale(_Chart(<String, Object?>{'locale': 'en-US'}), {
-        'ticks': <String, Object?>{},
-      });
+      final scale = _Scale(
+        _Chart(<String, Object?>{'locale': const ui.Locale('en', 'US')}),
+        {
+          'ticks': <String, Object?>{},
+        },
+      );
       final ticks = <Tick>[
         for (var i = 0; i <= 10; i++) _Tick(i * 10.0),
       ];
@@ -334,16 +337,17 @@ List<BenchCase> helperCases() => [
     'ticks',
     'formatNumber/cache_hit',
     () {
-      final options = <String, Object?>{
-        'notation': undefined,
-        'minimumFractionDigits': 1.0,
-        'maximumFractionDigits': 1.0,
-      };
-      formatNumber(12.5, 'en-US', options);
+      const locale = ui.Locale('en', 'US');
+      formatNumberDigits(12.5, locale, scientific: false, fractionDigits: 1);
       return (n) {
         var acc = 0;
         for (var i = 0; i < n; i++) {
-          acc += formatNumber(12.5, 'en-US', options).length;
+          acc += formatNumberDigits(
+            12.5,
+            locale,
+            scientific: false,
+            fractionDigits: 1,
+          ).length;
         }
         return acc;
       };
@@ -354,20 +358,18 @@ List<BenchCase> helperCases() => [
     'ticks',
     'formatNumber/cache_miss',
     () {
-      final options = <String, Object?>{
-        'notation': undefined,
-        'minimumFractionDigits': 1.0,
-        'maximumFractionDigits': 1.0,
-      };
       return (n) {
         var acc = 0;
         for (var i = 0; i < n; i++) {
-          acc += jsNumberFormat('en-US', options).format(12.5).length;
+          final format = NumberFormat.decimalPattern('en_US')
+            ..maximumFractionDigits = 1
+            ..minimumFractionDigits = 1;
+          acc += format.format(12.5).length;
         }
         return acc;
       };
     },
-    per: 'first call: new jsNumberFormat + format (the cache miss cost)',
+    per: 'first call: new NumberFormat + format (the cache miss cost)',
   ),
   // helpers.easing
   BenchCase(

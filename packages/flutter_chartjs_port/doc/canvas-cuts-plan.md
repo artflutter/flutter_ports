@@ -2698,3 +2698,10 @@ changes. No trigger occurred.
   `test/port/elements/line_dense_curve_test.dart` (new, 13 tests). The tests of §2.6 and §3.5 and the estimates do not
   change. `doc/performance.md` gets section 73 at its end; no cited section number changes. No deferred cut changes.
   No trigger occurred.
+- 2026-11-12, [Chart.js ADR 0119](adr/0119-plain-intl-number-format.md) (the number format is package:intl as it is,
+  the row `adapt-intl-number-format`; the row `adapt-numeric-tick-format-key` is gone). It edits
+  `lib/src/helpers/helpers.config.dart` (`_indexedScalar` counts a `Locale` and a `NumberFormat` as plain values),
+  `lib/src/core/data_update.dart` (`staticDataUpdateOptions` accepts a `Locale`), `lib/src/core/core.ticks.dart` and
+  `helpers.intl.dart`, and removes `lib/src/js/js_intl.dart`. This plan cites no line of these files, and no canvas
+  file changes. The tests of §2.6 and §3.5 and the estimates do not change. No deferred cut changes. No trigger
+  occurred.

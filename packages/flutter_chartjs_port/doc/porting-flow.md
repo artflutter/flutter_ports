@@ -301,12 +301,11 @@ display-only JS exactness. In short:
 - Where the Dart SDK or a package that Flutter 3.47.7 depends on gives the JS result, the port
   uses it. The port-only `jsSort` calls `mergeSort` of `package:collection`. `jsDateNow()` reads
   `clock.now()` of `package:clock`. The `FakeAsync` zone of `testWidgets` fakes that clock.
-- `Intl.NumberFormat` is the `NumberFormat` of `package:intl`. The port-only adapter
-  `lib/src/js/js_intl.dart` maps the JS locale and options onto it
-  ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Its guards write the V8
-  digits where package:intl fails: from `2^53`, in scientific notation, with more than 15
-  fraction digits, and the affixes of NaN and the infinities. A string that differs from
-  the V8 string is the `differences.md` row `adapt-intl-number-format`.
+- `Intl.NumberFormat` is the `NumberFormat` of `package:intl` as it is
+  ([Chart.js ADR 0119](adr/0119-plain-intl-number-format.md)). The chart option `locale` holds a
+  Flutter `Locale`, and the tick option `format` a `NumberFormat`. The port does not correct the
+  defects of package:intl. A string that differs from the V8 string is the `differences.md` row
+  `adapt-intl-number-format`.
 - Tool 3 enforces the translation rules. A site that keeps a flagged form for a stated reason
   carries `// js-ok: <reason>` at the end of its line, or alone on the line before it.
 

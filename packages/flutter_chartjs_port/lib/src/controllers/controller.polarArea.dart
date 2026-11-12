@@ -54,7 +54,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, parseObjectDataRadialScaleOf, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber;
+    show formatNumber, localeOf;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show pi, toRadians;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -300,7 +300,7 @@ class PolarAreaController extends DatasetController {
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
     final value = formatNumber(
       jsToNumber(parsedValueOf(jsGetIndex(meta.parsed, index), const RAxis())),
-      readOption(chart.options, OptionKey.locale),
+      localeOf(readOption(chart.options, OptionKey.locale)),
     );
 
     // `labels[index] || ''`

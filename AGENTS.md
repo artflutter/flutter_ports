@@ -535,10 +535,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
       its type. A getter gives the raw JS value, and the readers keep their JS operators. A
       nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
-      `formatters.numeric` of `core.ticks.dart` with a `ticks.format` that is not an object formats
-      through the internal `formatNumberDigits` of `helpers.intl.dart` (hidden in
-      `lib/helpers.dart`): a record key in the same `intlCache` (row
-      `adapt-numeric-tick-format-key`).
+      `TickOptions.format` gives the typed `NumberFormat?` of the tick option `format`.
     - Chart.js ADR 0074: `Chart.updateData()` is an explicit data-only lifecycle
       with fixed native ranges, stable configuration, metadata refresh and full
       fallback. `data_update.dart` owns native source/settings checks and
@@ -861,6 +858,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `adapt-arc-option-enums`), also in a raw config; the typed API has
       `ArcElementStyle.borderAlign` and `spacingMode`. The native option plans count an enum
       value as a scalar (`_indexedScalar` of `helpers.config.dart`).
+    - The number format is package:intl as it is (Chart.js ADR 0119, row
+      `adapt-intl-number-format`). The chart option `locale` holds a Flutter `Locale`, and the
+      tick option `format` holds a `NumberFormat` of package:intl, also in a raw config; a
+      language tag as text or an options object stops a debug build (`localeOf` and
+      `numberFormatOf` of `helpers.intl.dart`, hidden in `lib/helpers.dart`). A `NumberFormat`
+      formats a tick as it is. Without it, `formatters.numeric` formats through the internal
+      `formatNumberDigits` (the decimal or the scientific pattern of the chart locale with the
+      digits of the tick spacing). The port does not correct the defects of package:intl, and
+      `lib/src/js/` has no number format code. The harness `acquireChart` writes the default
+      `locale: Locale('en', 'US')`.
     - The doughnut and pie options `cutout` and `radius` hold a `RadiusLength` and the scale
       option `grace` a `GraceLength` (row `adapt-length-objects`), also in a raw config: the
       open bases of the pure `lib/src/helpers/radius_length.dart` and `grace_length.dart`, with
@@ -1299,7 +1306,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0118. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0119. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1375,7 +1382,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       It supersedes parts of Chart.js ADR 0050 (the raw Map theme, its presets and its color
       conversion). Chart.js ADR 0118 (the theme compile writes typed setters and has no guard) is
       accepted (2026-11-12): its code passes the tests. It supersedes item 6 of Chart.js ADR 0117
-      and parts of Chart.js ADRs 0050 and 0054. The other ADRs are accepted. Docs
+      and parts of Chart.js ADRs 0050 and 0054. Chart.js ADR 0119 (the number format is package:intl
+      as it is) is accepted (2026-11-12): its code passes the tests. It supersedes Chart.js ADR
+      0026. The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
@@ -1833,8 +1842,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - The module status values of the `parity.md` legend: `porting-flow.md` §1 step 7 (proposed).
 - `// DIVERGES(chartjs): <row id>, <reason>` markers and their `differences.md` rows:
   `porting-flow.md` §4 (proposed). `check:headers` already pairs markers with rows.
-- The JS numeric translation rules: Chart.js ADR 0045. Number formatting: Chart.js ADR 0026
-  (package:intl with the guards of `js_intl.dart`).
+- The JS numeric translation rules: Chart.js ADR 0045. Number formatting: Chart.js ADR 0119
+  (package:intl as it is, with no correction of its defects).
   Emulate JavaScript only where the result changes behavior (Chart.js ADR 0034): the ticks, the
   hit element, the item order, the resolved option, a throw, or a value that reaches a layout, a
   scale, an element property, a hit test, a discrete decision or a public return value. Do not

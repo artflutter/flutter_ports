@@ -2002,7 +2002,7 @@ void main() {
         'data': <String, Object?>{},
         'options': <String, Object?>{
           'animation': false,
-          'locale': 'en-US',
+          'locale': const native_ui.Locale('en', 'US'),
           'responsive': false,
         },
       });
@@ -2010,7 +2010,7 @@ void main() {
       chart
         ..options = <String, Object?>{
           'animation': false,
-          'locale': 'en-US',
+          'locale': const native_ui.Locale('en', 'US'),
           'responsive': false,
         }
         ..update();

@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:intl/intl.dart' show NumberFormat;
 import 'package:test/test.dart';
 
 // The facades of lib/src/core/scale_options.dart (Chart.js ADR 0054 §4).
@@ -196,8 +197,9 @@ void main() {
 
     test('a plain Map reads by name', () {
       // The options of a fake scale of a test (core.ticks, autoskip).
-      const ticks = TickOptions(<String, Object?>{'format': 'f'});
-      expect(ticks.format, 'f');
+      final format = NumberFormat.compact();
+      final ticks = TickOptions(<String, Object?>{'format': format});
+      expect(ticks.format, same(format));
       expect(ticks.count, same(undefined));
     });
 

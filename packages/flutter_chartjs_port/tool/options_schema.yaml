@@ -52,7 +52,9 @@
 # `cartesianAxis` and `radialAxis` (a `ScaleAxis` for the `axis` of a scale, a `CartesianAxis` for
 # the `indexAxis` of a chart and of a cartesian dataset, an `RAxis` for the `indexAxis` of a radial
 # dataset; an axis letter is a foreign value), `textStyle` (a Flutter `TextStyle`, the value of `font`,
-# `titleFont`, `bodyFont` and `footerFont`; a font object is a foreign value), `any` (any
+# `titleFont`, `bodyFont` and `footerFont`; a font object is a foreign value), `locale` (a Flutter
+# `Locale`, the chart `locale`; a language tag is a foreign value), `numberFormat` (a `NumberFormat`
+# of package:intl, the tick `format`; an object of number format options is a foreign value), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -101,7 +103,7 @@ kinds:
       maintainAspectRatio: bool
       resizeDelay: number
       aspectRatio: number
-      locale: string
+      locale: locale  # index.d.ts:1702 `locale: string`, a Flutter Locale (Chart.js ADR 0119)
       onResize: fn
       devicePixelRatio: number
       interaction: scope InteractionOptions
@@ -915,7 +917,7 @@ kinds:
       maxRotation: number
       mirror: bool
       maxTicksLimit: number
-      format: any
+      format: numberFormat  # index.d.ts:3380 `Intl.NumberFormatOptions`, a NumberFormat of package:intl (Chart.js ADR 0119)
       precision: number
       stepSize: number
       count: number

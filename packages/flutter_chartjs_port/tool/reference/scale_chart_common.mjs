@@ -1174,6 +1174,40 @@ export class DartFont {
   }
 }
 
+/**
+ * The chart option `locale` (a BCP 47 tag) as a value of the Dart data: a
+ * Flutter `Locale` of its language and region (row adapt-intl-number-format).
+ */
+export class DartLocale {
+  constructor(tag) {
+    const parts = tag.split('-');
+    if (parts.length > 2) throw new Error(`No Locale for the tag ${tag}.`);
+    this.parts = parts;
+  }
+}
+
+/**
+ * The tick option `format` (an object of `Intl.NumberFormat` options) as a
+ * value of the Dart data: a `NumberFormat` of package:intl in the current
+ * locale (row adapt-intl-number-format). It takes the keys `style`
+ * (`'decimal'` or `'percent'`), `minimumFractionDigits` and
+ * `maximumFractionDigits` only. A `NumberFormat` formats the tick as it is,
+ * so a case gives both digit keys: then upstream and the port agree.
+ */
+export class DartNumberFormat {
+  constructor(options) {
+    for (const key of Object.keys(options)) {
+      if (!['style', 'minimumFractionDigits', 'maximumFractionDigits'].includes(key)) {
+        throw new Error(`No NumberFormat for the format key ${key}.`);
+      }
+    }
+    if (!['decimal', 'percent', undefined].includes(options.style)) {
+      throw new Error(`No NumberFormat for the style ${options.style}.`);
+    }
+    this.options = options;
+  }
+}
+
 /** The option keys whose object is a font (row adapt-text-style-fonts). */
 const FONT_KEYS = new Set(['font', 'titleFont', 'bodyFont', 'footerFont']);
 
@@ -1430,6 +1464,20 @@ function keyedValue(k, value, owner) {
   ) {
     return new DartFont(value);
   }
+  // The chart locale is a Locale, and an object of number format options a
+  // NumberFormat (row adapt-intl-number-format).
+  if (k === 'locale' && owner === 'options' && typeof value === 'string') {
+    return new DartLocale(value);
+  }
+  if (
+    k === 'format' &&
+    owner === 'ticks' &&
+    value !== null &&
+    typeof value === 'object' &&
+    Object.getPrototypeOf(value) === Object.prototype
+  ) {
+    return new DartNumberFormat(value);
+  }
   if (typeof value !== 'string') return value;
   // A fill keyword is a FillBoundary, a relative index a RelativeFill (row
   // adapt-fill-target-objects).
@@ -1605,6 +1653,21 @@ function dart(v, state, owner) {
     if (literal.includes('FontWeight')) (state.strokes ??= new Set()).add('FontWeight');
     return literal;
   }
+  if (v instanceof DartLocale) {
+    (state.strokes ??= new Set()).add('Locale');
+    return `Locale(${v.parts.map((p) => dart(p, state)).join(', ')})`;
+  }
+  if (v instanceof DartNumberFormat) {
+    state.numberFormats = true;
+    const o = v.options;
+    const pattern = o.style === 'percent' ? 'percentPattern' : 'decimalPattern';
+    const digits = ['minimumFractionDigits', 'maximumFractionDigits']
+      .filter((key) => key in o)
+      .sort((a, b) => (a === 'maximumFractionDigits' ? -1 : b === 'maximumFractionDigits' ? 1 : 0))
+      .map((key) => `..${key} = ${o[key]}`)
+      .join('');
+    return digits ? `(NumberFormat.${pattern}()${digits})` : `NumberFormat.${pattern}()`;
+  }
   if (v instanceof DartScaleAxis) {
     state.scaleAxes = true;
     return `${v.name.toUpperCase()}Axis()`;
@@ -1651,15 +1714,46 @@ function dart(v, state, owner) {
       const value = keyedValue(keys[keys.length - 1], v[2], keys[keys.length - 2]);
       return `<Object?>[${[v[0], v[1]].map((x) => dart(x, state)).join(', ')}, ${dart(value, state)}]`;
     }
-    return `<Object?>[${v.map((x) => dart(x, state, owner)).join(', ')}]`;
+    return constLiteral(v, owner, () => `<Object?>[${v.map((x) => dart(x, state, owner)).join(', ')}]`);
   }
   if (typeof v === 'object') {
-    const entries = Object.keys(v).map(
-      (k) => `${dart(k, state)}: ${dart(keyedValue(k, v[k], owner), state, k)}`,
-    );
-    return `<String, Object?>{${entries.join(', ')}}`;
+    return constLiteral(v, owner, () => {
+      const entries = Object.keys(v).map(
+        (k) => `${dart(k, state)}: ${dart(keyedValue(k, v[k], owner), state, k)}`,
+      );
+      return `<String, Object?>{${entries.join(', ')}}`;
+    });
   }
   throw new Error(`No Dart literal for ${String(v)}`);
+}
+
+/** Whether the writer marks each object and array without a NumberFormat const. */
+let constLeaves = false;
+
+/** Whether the writer is inside a const object or array. */
+let inConst = false;
+
+/**
+ * The literal of [write] for the object or array [v] in the object of the
+ * key [owner]: with `const` when [constLeaves] is set, the writer is not
+ * inside a const literal and [v] holds no NumberFormat.
+ */
+function constLiteral(v, owner, write) {
+  if (!constLeaves || inConst || hasNumberFormat(v, owner)) return write();
+  inConst = true;
+  try {
+    return `const ${write()}`;
+  } finally {
+    inConst = false;
+  }
+}
+
+/** Whether the object or array [v] holds a NumberFormat of the Dart data. */
+function hasNumberFormat(v, owner) {
+  if (v instanceof DartNumberFormat) return true;
+  if (Array.isArray(v)) return v.some((x) => hasNumberFormat(x, owner));
+  if (v === null || typeof v !== 'object' || v.constructor !== Object) return false;
+  return Object.keys(v).some((k) => hasNumberFormat(keyedValue(k, v[k], owner), k));
 }
 
 /**
@@ -1704,13 +1798,26 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
   }
   const type = name[0].toUpperCase() + name.slice(1);
   const state = {undefined: false};
-  const body = cases
-    .map(
-      (c) =>
-        `  (name: ${dart(c.name, state)}, config: ${dart(c.config, state)}, ` +
-        `options: ${dart(c.options, state)}, expected: ${dart(c.expected, state)}),\n`,
-    )
-    .join('');
+  const writeBody = () =>
+    cases
+      .map(
+        (c) =>
+          `  (name: ${dart(c.name, state)}, config: ${dart(c.config, state)}, ` +
+          `options: ${dart(c.options, state)}, expected: ${dart(c.expected, state)}),\n`,
+      )
+      .join('');
+  let body = writeBody();
+  // A NumberFormat has no const constructor: the list is final, and each
+  // object or array without a NumberFormat is const, so that its objects of
+  // the port (an axis, a font) stay canonical.
+  if (state.numberFormats) {
+    constLeaves = true;
+    try {
+      body = writeBody();
+    } finally {
+      constLeaves = false;
+    }
+  }
   const widths = [...measured.values()]
     .map((m) => `  (font: ${canvasFont(m.font, state)}, text: ${dart(m.text, state)}, width: ${num(m.width)}),\n`)
     .join('');
@@ -1722,7 +1829,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats ? '\n' : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 
@@ -1763,8 +1870,8 @@ typedef ${type}ReferenceWidth = ({
   double width,
 });
 
-/// The cases.
-const List<${type}ReferenceCase> ${name}Reference = [
+/// The cases.${state.numberFormats ? '\n///\n/// A \`NumberFormat\` of package:intl has no const constructor, so the\n/// list is final.' : ''}
+${state.numberFormats ? 'final' : 'const'} List<${type}ReferenceCase> ${name}Reference = [
 ${body}];
 
 /// Each text that the cases measured, with its font and width.

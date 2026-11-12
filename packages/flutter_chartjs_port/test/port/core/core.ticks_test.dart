@@ -1,17 +1,21 @@
 // Original code, not ported from Chart.js: core.ticks cases with no spec.
+import 'dart:ui' show Locale;
+
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:intl/intl.dart';
 import 'package:test/test.dart';
 
 // The spec core.ticks.tests.js calls formatters.numeric only with one to two
 // ticks, and does not call formatters.values or formatters.logarithmic
 // outside a chart. The expected values come from Node.js v24.12.0 (V8 13.6)
 // on x64. It ran the upstream core.ticks.js with the same `this` objects and
-// tick lists.
+// tick lists. The chart locale is a Locale and the tick format a NumberFormat
+// of package:intl (Chart.js ADR 0119).
 
 /// The `chart` of a `this` object `{chart: {options}, options}`.
 final class _Chart implements Chart {
@@ -50,10 +54,10 @@ final class _Tick implements Tick {
 }
 
 /// `{chart: {options: {locale}}, options: {ticks: {format}}}`.
-_Scale _scale(Object? locale, Object? format) => _Scale(
-  _Chart(<String, Object?>{'locale': locale}),
+_Scale _scale(Locale? locale, [NumberFormat? format]) => _Scale(
+  _Chart(<String, Object?>{'locale': ?locale}),
   <String, Object?>{
-    'ticks': <String, Object?>{'format': format},
+    'ticks': <String, Object?>{'format': ?format},
   },
 );
 
@@ -73,7 +77,7 @@ Object? _apply(
   tickValue,
   index,
   ticks,
-], thisArg: scale ?? _scale('en-US', <String, Object?>{}));
+], thisArg: scale ?? _scale(const Locale('en', 'US')));
 
 void main() {
   group('formatters', () {
@@ -86,7 +90,7 @@ void main() {
     test('logarithmic calls the current formatters.numeric', () {
       // core.ticks.js:77 reads formatters.numeric when logarithmic runs.
       final numeric = formatters['numeric'];
-      final scale = _scale('en-US', <String, Object?>{});
+      final scale = _scale(const Locale('en', 'US'));
       addTearDown(() => formatters['numeric'] = numeric);
       formatters['numeric'] = JsFunction(
         (Object? self, double v, double i, List<Tick> ticks) =>
@@ -165,136 +169,29 @@ void main() {
     test('reads the locale of the chart', () {
       final ticks = _ticks([0, 1234.5, 2469]);
       expect(
-        _apply(numeric, 1234.5, 1, ticks, _scale('de-DE', <String, Object?>{})),
+        _apply(numeric, 1234.5, 1, ticks, _scale(const Locale('de', 'DE'))),
         '1.234,5',
       );
-      // An absent locale is undefined: the default locale, en_US.
-      final noLocale = _Scale(_Chart(<String, Object?>{}), <String, Object?>{
-        'ticks': <String, Object?>{},
-      });
-      expect(_apply(numeric, 1234.5, 1, ticks, noLocale), '1,234.5');
+      // An absent locale is the current locale of package:intl, en_US.
+      expect(_apply(numeric, 1234.5, 1, ticks, _scale(null)), '1,234.5');
     });
 
-    test('assigns ticks.format over the options', () {
+    test('a NumberFormat formats the tick as it is', () {
+      // Row adapt-intl-number-format: the format keeps its own digits and
+      // locale. Dart cannot copy it to merge the digits of the tick.
       final ticks = _ticks([0, 1234.5, 2469]);
+      final de = _scale(const Locale('de', 'DE'), NumberFormat.compact());
+      expect(_apply(numeric, 1234.5, 1, ticks, de), '1.23K');
       expect(
         _apply(
           numeric,
-          1234.5,
+          0.25,
           1,
-          ticks,
-          _scale('en-US', <String, Object?>{
-            'minimumFractionDigits': 0.0,
-            'maximumFractionDigits': 0.0,
-          }),
+          _ticks([0, 0.25, 0.5]),
+          _scale(null, NumberFormat.percentPattern()),
         ),
-        '1,235',
+        '25%',
       );
-      // Object.assign(options, null) copies nothing.
-      expect(
-        _apply(numeric, 1234.5, 1, ticks, _scale('en-US', null)),
-        '1,234.5',
-      );
-      // A maximum below the minimum of 1 throws, as V8 throws a RangeError.
-      expect(
-        () => _apply(
-          numeric,
-          1234.5,
-          1,
-          ticks,
-          _scale('en-US', <String, Object?>{'maximumFractionDigits': 0.0}),
-        ),
-        throwsArgumentError,
-      );
-    });
-
-    // Row adapt-numeric-tick-format-key: a ticks.format that is not an object
-    // takes the record key, and an object ticks.format (also an empty one)
-    // takes the options Map and formatNumber. Both give the same labels.
-    test('record key: the labels of an empty object format', () {
-      final tickLists = [
-        _ticks([0, 2.5, 5, 7.5, 10]),
-        _ticks([0, 1500, 3000, 4500]),
-        _ticks([0, 1.5, 3]),
-        _ticks([0, 0.00003, 0.00006]),
-        _ticks([0, 2e16, 4e16]),
-        _ticks([-1010, -500, 0, 500, 1010]),
-        _ticks([0, 0.125, 0.25, 0.375]),
-        _ticks([1234.5]),
-        _ticks([0, double.nan]),
-      ];
-      final mismatches = <String>[];
-      for (final locale in <Object?>[undefined, 'en-US', 'de-DE', 'fr', 'hi']) {
-        for (final ticks in tickLists) {
-          for (var i = 0; i < ticks.length; i++) {
-            final value = ticks[i].value;
-            final index = i.toDouble();
-            final empty = _apply(
-              numeric,
-              value,
-              index,
-              ticks,
-              _scale(locale, <String, Object?>{}),
-            );
-            for (final format in <Object?>[undefined, null, 0.0, 'x', true]) {
-              final got = _apply(
-                numeric,
-                value,
-                index,
-                ticks,
-                _scale(locale, format),
-              );
-              if (got != empty) {
-                mismatches.add('$locale $format $value: $got, $empty');
-              }
-            }
-          }
-        }
-      }
-      expect(mismatches, isEmpty);
-    });
-
-    test('record key: an object format still assigns its keys', () {
-      final ticks = _ticks([0, 1234.5, 2469]);
-      // The record key of the same locale and digits is in the cache first.
-      expect(
-        _apply(numeric, 1234.5, 1, ticks, _scale('en-US', null)),
-        '1,234.5',
-      );
-      expect(
-        _apply(
-          numeric,
-          1234.5,
-          1,
-          ticks,
-          _scale('en-US', <String, Object?>{'useGrouping': false}),
-        ),
-        '1234.5',
-      );
-      expect(
-        _apply(
-          numeric,
-          1234.5,
-          1,
-          ticks,
-          _scale('en-US', <String, Object?>{'notation': 'scientific'}),
-        ),
-        '1.2E3',
-      );
-    });
-
-    test('record key: the locale throws as before', () {
-      final ticks = _ticks([0, 1234.5, 2469]);
-      for (var i = 0; i < 2; i++) {
-        expect(
-          () => _apply(numeric, 1234.5, 1, ticks, _scale(null, undefined)),
-          throwsA(isA<TypeError>()),
-        );
-        expect(
-          () => _apply(numeric, 1234.5, 1, ticks, _scale('en_US', undefined)),
-          throwsArgumentError,
-        );
-      }
     });
 
     test('throws a TypeError without options.ticks', () {

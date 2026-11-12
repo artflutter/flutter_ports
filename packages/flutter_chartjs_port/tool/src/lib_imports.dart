@@ -202,12 +202,14 @@ const List<String> pureRootExceptions = [
 /// The test libraries that a test without `@TestOn('vm')` can import, in
 /// addition to [pureDartLibraries]. An entry that ends with `/` is a prefix.
 /// [animationLibrary] gives the curve classes of the option `easing`: the
-/// web legs run through Flutter.
+/// web legs run through Flutter. package:intl is pure Dart.
 const Set<String> webTestLibraries = {
   'package:test/',
   'package:chartjs_test_utils/pure.dart',
   animationLibrary,
   paintingLibrary,
+  // The NumberFormat of the tick option `format` (Chart.js ADR 0119).
+  'package:intl/intl.dart',
 };
 
 /// The directory that ported files never import.

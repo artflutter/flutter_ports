@@ -12,7 +12,7 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show TextStyle;
@@ -53,6 +53,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:intl/intl.dart' show NumberFormat;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
@@ -734,13 +735,13 @@ base class ChartOptionsScope extends OptionScope {
   set aspectRatio(double value) =>
       store(OptionKey.aspectRatio, OptValue<double>(value));
 
-  Opt<String>? _locale;
+  Opt<Locale>? _locale;
 
   /// The cell of `locale`, or Dart `null` when absent.
-  Opt<String>? get localeCell => _locale;
+  Opt<Locale>? get localeCell => _locale;
 
   /// Stores the cell of `locale`. Dart `null` deletes the key.
-  set localeCell(Opt<String>? cell) {
+  set localeCell(Opt<Locale>? cell) {
     if (cell == null) {
       delete(OptionKey.locale);
     } else {
@@ -749,7 +750,7 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `locale`.
-  set locale(String value) => store(OptionKey.locale, OptValue<String>(value));
+  set locale(Locale value) => store(OptionKey.locale, OptValue<Locale>(value));
 
   Opt<Object>? _onResize;
 
@@ -2522,7 +2523,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.aspectRatio:
         _aspectRatio = fitCell(cell, classifyNumber);
       case OptionKey.locale:
-        _locale = fitCell(cell, classifyString);
+        _locale = fitCell(cell, classifyTyped<Locale>);
       case OptionKey.onResize:
         _onResize = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.devicePixelRatio:
@@ -2854,7 +2855,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.aspectRatio:
         return classifyNumber(raw);
       case OptionKey.locale:
-        return classifyString(raw);
+        return classifyTyped<Locale>(raw);
       case OptionKey.onResize:
         return classifyUnion(raw, 8);
       case OptionKey.devicePixelRatio:
@@ -18034,13 +18035,13 @@ base class TickOptionsScope extends OptionScope {
   set maxTicksLimit(double value) =>
       store(OptionKey.maxTicksLimit, OptValue<double>(value));
 
-  Opt<Object>? _format;
+  Opt<NumberFormat>? _format;
 
   /// The cell of `format`, or Dart `null` when absent.
-  Opt<Object>? get formatCell => _format;
+  Opt<NumberFormat>? get formatCell => _format;
 
   /// Stores the cell of `format`. Dart `null` deletes the key.
-  set formatCell(Opt<Object>? cell) {
+  set formatCell(Opt<NumberFormat>? cell) {
     if (cell == null) {
       delete(OptionKey.format);
     } else {
@@ -18049,8 +18050,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `format`.
-  set format(Object value) =>
-      store(OptionKey.format, classify(OptionKey.format, value));
+  set format(NumberFormat value) =>
+      store(OptionKey.format, OptValue<NumberFormat>(value));
 
   Opt<double>? _precision;
 
@@ -18257,7 +18258,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.maxTicksLimit:
         _maxTicksLimit = fitCell(cell, classifyNumber);
       case OptionKey.format:
-        _format = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _format = fitCell(cell, classifyTyped<NumberFormat>);
       case OptionKey.precision:
         _precision = fitCell(cell, classifyNumber);
       case OptionKey.stepSize:
@@ -18361,7 +18362,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.maxTicksLimit:
         return classifyNumber(raw);
       case OptionKey.format:
-        return classifyUnion(raw, 64);
+        return classifyTyped<NumberFormat>(raw);
       case OptionKey.precision:
         return classifyNumber(raw);
       case OptionKey.stepSize:

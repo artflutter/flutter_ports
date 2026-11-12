@@ -49,8 +49,11 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextProxy, OptionView, readOption;
+import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
+    show numberFormatOf;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:intl/intl.dart' show NumberFormat;
 
 /// `options.setContext(context)` of a nested option object: a view of the
 /// same resolver with the context [context].
@@ -346,8 +349,10 @@ extension type const TickOptions(Object? raw) {
   Object? get maxTicksLimit => readOption(raw, OptionKey.maxTicksLimit);
 
   /// index.d.ts:3380 `format: Intl.NumberFormatOptions` of the linear,
-  /// logarithmic and radial ticks.
-  Object? get format => readOption(raw, OptionKey.format);
+  /// logarithmic and radial ticks: a `NumberFormat` of package:intl
+  /// (Chart.js ADR 0119), or Dart `null` when absent.
+  // DIVERGES(chartjs): adapt-intl-number-format, a NumberFormat.
+  NumberFormat? get format => numberFormatOf(readOption(raw, OptionKey.format));
 
   /// index.d.ts:3385 `precision: number`.
   Object? get precision => readOption(raw, OptionKey.precision);

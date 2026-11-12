@@ -62,7 +62,7 @@ import 'dart:collection' show LinkedHashMap;
 import 'dart:core' as core;
 import 'dart:core';
 import 'dart:typed_data' show Uint16List;
-import 'dart:ui' show Color, StrokeJoin;
+import 'dart:ui' show Color, Locale, StrokeJoin;
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
@@ -100,6 +100,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:intl/intl.dart' show NumberFormat;
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
@@ -268,7 +269,9 @@ final _nativeIndexedLists = <Type>{
 // type: its identity is its equality, and a read of it runs no user code. A
 // point style, a cubic interpolation mode and a length are such values too:
 // the resolution keeps the object, and only the draw calls its methods. An
-// axis class has no members (row adapt-axis-objects).
+// axis class has no members (row adapt-axis-objects). A `Locale` is a value,
+// and the chart only calls `format` of a `NumberFormat` (row
+// adapt-intl-number-format).
 bool _indexedScalar(Object? value) =>
     value == null ||
     value is Undefined ||
@@ -281,6 +284,8 @@ bool _indexedScalar(Object? value) =>
     value is RadiusLength ||
     value is GraceLength ||
     value is ScaleAxis ||
+    value is Locale ||
+    value is NumberFormat ||
     (value is Color && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list

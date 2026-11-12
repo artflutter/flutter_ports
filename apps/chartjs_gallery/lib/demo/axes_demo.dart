@@ -50,7 +50,10 @@ const List<TimeUnit?> axesDemoTimeUnits = [
 ];
 
 /// The values of the chart option `locale`.
-const List<String> axesDemoLocales = ['en-US', 'de-DE'];
+const List<ui.Locale> axesDemoLocales = [
+  ui.Locale('en', 'US'),
+  ui.Locale('de', 'DE'),
+];
 
 /// The values of the option `ticks.maxRotation`, in degrees.
 const List<double> axesDemoMaxRotations = [0, 30, 50, 90];
@@ -179,7 +182,7 @@ class AxesDemoState extends State<AxesDemo> {
   bool _beginAtZero = false;
   ScaleBounds? _bounds;
   TimeUnit? _timeUnit;
-  String _locale = 'en-US';
+  ui.Locale _locale = const ui.Locale('en', 'US');
 
   /// The value of each point of each dataset, as a fraction from 0 to 1.
   late final List<List<double>> _fractions = [
@@ -503,6 +506,7 @@ class AxesDemoState extends State<AxesDemo> {
     final double number => number.toInt().toString(),
     // The name of an enum value, for example `start` of [TickAlign.start].
     final Enum value => value.name,
+    final ui.Locale locale => locale.toLanguageTag(),
     // The bounds Dart `null`: no option.
     null => 'auto',
     _ => '$value',

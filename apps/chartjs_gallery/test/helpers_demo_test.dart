@@ -133,7 +133,7 @@ void main() {
     );
     await tester.tap(find.byKey(const ValueKey('ticks.locale')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(tickLocales[1]).last);
+    await tester.tap(find.text(tickLocales[1].toLanguageTag()).last);
     await tester.pumpAndSettle();
     expect(find.text('0,5'), findsOneWidget);
     await _scrollTo(tester, find.text('1.000.000').first);
