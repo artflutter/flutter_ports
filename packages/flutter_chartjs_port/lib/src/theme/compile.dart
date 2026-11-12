@@ -2,37 +2,28 @@
 
 /// The theme compiler of Chart.js ADR 0050 (theming.md §3.3), a pure layer.
 ///
-/// [compileChartTheme] turns a raw Map theme into one frozen typed scope with
-/// the key shape of `Chart.defaults`: a `ChartOptionsScope` (Chart.js ADR
-/// 0054 §3), the kind of `Chart.defaults`. The chart puts that scope into
-/// its root configuration under `themeConfigKey` of `core.config.dart`. The
-/// resolver reads it as the option scope between `overrides[type]` and
-/// `defaults` (hunks H0-H3, theming.md §3.1), with the typed reads of a
-/// typed scope.
+/// [compileChartTheme] turns the tokens of a theme into one frozen typed
+/// scope with the key shape of `Chart.defaults`: a `ChartOptionsScope`
+/// (Chart.js ADR 0054 §3), the kind of `Chart.defaults`. The chart puts that
+/// scope into its root configuration under `themeConfigKey` of
+/// `core.config.dart`. The resolver reads it as the option scope between
+/// `overrides[type]` and `defaults` (hunks H0-H3, theming.md §3.1), with the
+/// typed reads of a typed scope.
 ///
-/// The input is a raw Map theme. The public `ChartThemeData` of
-/// `theme_data.dart` (Chart.js ADR 0050) converts to one with
-/// `themeDataToRaw`. The raw Map themes stay for the tests. A raw Map theme
-/// has these fields:
-///
-/// - `colors`: a Map of color tokens. Each value is a [RawThemeColor] or
-///   Dart `null`, which themes nothing.
-/// - `typography`: a Map with the font tokens `font` and `pointLabels`. Each
-///   value is a Flutter `TextStyle` (Chart.js ADR 0116), or Dart `null`.
-/// - `palette`: a Map with the fields `colors`, a List of [RawThemeColor]
-///   values, and `backgroundAlpha`, a number (Chart.js ADR 0050, theming.md
-///   §3.5). It replaces the palette of the colors plugin.
-/// - `raw`: a Map of Chart.js keys without a token. Its keys beat the token
-///   keys. Only the raw Map themes of the tests have it: `ChartThemeData`
-///   has no `raw` in 0.1.0 (Chart.js ADR 0050).
+/// The input is typed (Chart.js ADR 0117): the six colors are Flutter
+/// `Color`s, the two fonts are Flutter `TextStyle`s (Chart.js ADR 0116), and
+/// the palette is a List of `Color`s with its background alpha. The public
+/// `ChartThemeData` of `theme_data.dart` gives its fields to
+/// [compileChartTheme] (`compileThemeData`), and the pure tests give their
+/// tokens in the same way. The compiler emits each value as it gets it: a
+/// color keeps its color space and its components.
 ///
 /// The compiler knows the tokens of these parts: `core.defaults`, the
 /// elements, `core.scale.defaults`, the `scales.radialLinear` keys of
 /// `scale.radialLinear`, the `color` and `font` of `plugins.title` and
 /// `plugins.subtitle`, the two fonts of `plugins.legend`, the colors and the
 /// three fonts of `plugins.tooltip` and the palette of `plugins.colors`
-/// (theming.md §4). A debug assert rejects a field or a token that the
-/// compiler does not know.
+/// (theming.md §4).
 ///
 /// Ported files never import this file (Chart.js ADR 0050, invariant 4).
 library;
@@ -44,8 +35,6 @@ import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsNumberToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsFreezable, JsFrozenMap, jsObjectFreeze;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -55,34 +44,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-
-/// A color token of a raw Map theme: the sRGB components of the `dart:ui`
-/// constructor `Color.from(alpha:, red:, green:, blue:)`, each from 0 to 1.
-///
-/// `rawColorOf` of `css.dart` converts a `dart:ui` `Color` of any color
-/// space through `ColorSpace.extendedSRGB` to these components (Chart.js ADR
-/// 0050, theming.md §3.3). [themeColorValue] clamps them.
-typedef RawThemeColor = ({double alpha, double red, double green, double blue});
-
-/// The native color of a theme token: 8-bit sRGB channels and floating alpha.
-/// A channel uses `(x * 255).round().clamp(0, 255)`; alpha is clamped to [0, 1]
-/// without byte quantization. Thus alpha 0.1 stays 0.1, distinct from the
-/// 26/255 alpha of Color(0x1A000000) (theming.md section 4).
-ui.Color themeColorValue(RawThemeColor color) => ui.Color.fromRGBO(
-  _channel(color.red),
-  _channel(color.green),
-  _channel(color.blue),
-  color.alpha.clamp(0.0, 1.0),
-);
-
-/// Formats legacy reference data; compiled chart themes never call this.
-String themeColorToRgba(RawThemeColor color) =>
-    'rgba(${_channel(color.red)}, ${_channel(color.green)}, '
-    '${_channel(color.blue)}, '
-    '${jsNumberToString(color.alpha.clamp(0.0, 1.0))})';
-
-/// The 8-bit value of the color component [x].
-int _channel(double x) => (x * 255.0).round().clamp(0, 255);
 
 /// The ids of the scale types of Chart.js v4.5.1: `scale.category.js:36`,
 /// `scale.linear.js:8`, `scale.logarithmic.js:76`,
@@ -253,10 +214,10 @@ const Set<String> _paletteKeys = {r'$borderColors', r'$backgroundColors'};
 /// The compiler adds its own `transitions` keys after the guard (theming.md
 /// §3.8). Thus they pass, although `animation` is a behavior key.
 ///
-/// In 0.1.0 no public input reaches the guard (Chart.js ADR 0050): the token
-/// emission of [compileChartTheme] is the allowlist, and its debug assert
-/// checks each token key against the guard. The guard keeps the
-/// never-emitted list for the `raw` keys of the raw Map themes of the tests.
+/// No public input reaches the guard (Chart.js ADR 0050): the token emission
+/// of [compileChartTheme] is the allowlist, and its debug assert checks each
+/// token key against the guard. The guard keeps the never-emitted list of
+/// theming.md §3.3 for a later `raw` field (Chart.js ADR 0050).
 String? themeNeverEmittedReason(List<String> path, Object? value) {
   if (path.length == 1 && _rootStyleKeys.contains(path[0])) {
     return 'a root ${path[0]} beats the element defaults';
@@ -331,9 +292,10 @@ bool _isPaletteKey(List<String> path, int i) =>
     path[1] == 'colors' &&
     _paletteKeys.contains(path[i]);
 
-/// The color tokens and the keys that each token emits (theming.md §4), in
-/// the order of that table. The tooltip tokens are in
-/// [_tooltipColorTokenKeys].
+/// The keys that the color tokens emit (theming.md §4), in the order of that
+/// table: [_colorKeys], [_borderColorKeys], [_backgroundColorKeys] and
+/// [_surfaceKeys]. The tooltip tokens are [_inverseSurfaceKeys] and
+/// [_onInverseSurfaceKeys].
 ///
 /// - `color` replaces `Defaults.color` (`core.defaults.js:43`). The scale
 ///   routes (`core.scale.defaults.js:86, 89`), the route of the point
@@ -362,34 +324,39 @@ bool _isPaletteKey(List<String> path, int i) =>
 /// `angleLines.color`.
 /// `scales.radialLinear.ticks.color` needs no key: H1 fills it from
 /// `scale.ticks.color` first.
-const Map<String, List<String>> _colorTokenKeys = {
-  'color': [
-    'color',
-    'scale.ticks.color',
-    'scale.title.color',
-    'scales.radialLinear.pointLabels.color',
-    'plugins.title.color',
-    'plugins.subtitle.color',
-  ],
-  'borderColor': [
-    'scale.grid.color',
-    'scale.border.color',
-    'scales.radialLinear.angleLines.color',
-    'elements.point.borderColor',
-    'elements.line.borderColor',
-    'elements.bar.borderColor',
-  ],
-  'backgroundColor': [
-    'elements.point.backgroundColor',
-    'elements.line.backgroundColor',
-    'elements.bar.backgroundColor',
-    'elements.arc.backgroundColor',
-  ],
-  'surface': ['elements.arc.borderColor'],
-};
+const List<String> _colorKeys = [
+  'color',
+  'scale.ticks.color',
+  'scale.title.color',
+  'scales.radialLinear.pointLabels.color',
+  'plugins.title.color',
+  'plugins.subtitle.color',
+];
 
-/// The tooltip color tokens and the keys that each token emits (theming.md
-/// §4), in the order of that table.
+/// The keys of the `borderColor` token (see [_colorKeys]).
+const List<String> _borderColorKeys = [
+  'scale.grid.color',
+  'scale.border.color',
+  'scales.radialLinear.angleLines.color',
+  'elements.point.borderColor',
+  'elements.line.borderColor',
+  'elements.bar.borderColor',
+];
+
+/// The keys of the `backgroundColor` token (see [_colorKeys]).
+const List<String> _backgroundColorKeys = [
+  'elements.point.backgroundColor',
+  'elements.line.backgroundColor',
+  'elements.bar.backgroundColor',
+  'elements.arc.backgroundColor',
+];
+
+/// The keys of the `surface` token (see [_colorKeys]), with [_backdropKey]
+/// at alpha 0.75.
+const List<String> _surfaceKeys = ['elements.arc.borderColor'];
+
+/// The keys of the tooltip color tokens (theming.md §4), in the order of
+/// that table: [_inverseSurfaceKeys], then [_onInverseSurfaceKeys].
 ///
 /// - `inverseSurface` replaces the tooltip `backgroundColor`
 ///   `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`).
@@ -397,18 +364,18 @@ const Map<String, List<String>> _colorTokenKeys = {
 ///   `bodyColor`, `footerColor` and `multiKeyBackground`
 ///   (`plugin.tooltip.js:1280, 1287, 1292, 1305`).
 ///
-/// The compiler emits them after the legend fonts, not with
-/// [_colorTokenKeys]. Thus the `plugins` Map has the order `title`,
-/// `subtitle`, `legend`, `tooltip`, `colors` in each compiled theme.
-const Map<String, List<String>> _tooltipColorTokenKeys = {
-  'inverseSurface': ['plugins.tooltip.backgroundColor'],
-  'onInverseSurface': [
-    'plugins.tooltip.titleColor',
-    'plugins.tooltip.bodyColor',
-    'plugins.tooltip.footerColor',
-    'plugins.tooltip.multiKeyBackground',
-  ],
-};
+/// The compiler emits them after the legend fonts, not with [_colorKeys].
+/// Thus the `plugins` Map has the order `title`, `subtitle`, `legend`,
+/// `tooltip`, `colors` in each compiled theme.
+const List<String> _inverseSurfaceKeys = ['plugins.tooltip.backgroundColor'];
+
+/// The keys of the `onInverseSurface` token (see [_inverseSurfaceKeys]).
+const List<String> _onInverseSurfaceKeys = [
+  'plugins.tooltip.titleColor',
+  'plugins.tooltip.bodyColor',
+  'plugins.tooltip.footerColor',
+  'plugins.tooltip.multiKeyBackground',
+];
 
 /// The key of the `surface` token at alpha 0.75: the scale tick backdrop
 /// `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`). "At alpha"
@@ -460,7 +427,7 @@ const List<String> _pluginFontTokenKeys = [
 /// without its `weight`, as `plugins.title.font`. `bodyFont` sets nothing
 /// locally (`plugin.tooltip.js:1289-1290`) and gets the whole font token.
 /// The compiler emits them after the tooltip colors of
-/// [_tooltipColorTokenKeys].
+/// [_onInverseSurfaceKeys].
 const List<(String, bool)> _tooltipFontTokenKeys = [
   ('plugins.tooltip.titleFont', false),
   ('plugins.tooltip.bodyFont', true),
@@ -470,26 +437,16 @@ const List<(String, bool)> _tooltipFontTokenKeys = [
 /// The key of the font token `typography.pointLabels` (theming.md §4, the
 /// last row): the font of the point labels of the radial linear scale.
 ///
-/// Its value is the `typography.font` Map without `size`, then the fields
-/// of `typography.pointLabels` over it. Upstream sets the point-label size
+/// Its value is the `font` token without `size`, then the fields of the
+/// `pointLabelsFont` token over it. Upstream sets the point-label size
 /// 10 locally (`scale.radialLinear.js:383-385`). Thus the base font gives
-/// no size (theming.md §3.4). Without a `typography.pointLabels` size, the
+/// no size (theming.md §3.4). Without a `pointLabelsFont` size, the
 /// size 10 of `defaults.scales.radialLinear` stays. Hunk H1 merges the
 /// theme font into the scale copy-in first. Then `mergeIf` adds the absent
 /// `size` of the defaults font to that font (`core.config.js:109`,
 /// `helpers.core.ts:310-323`). The options of a scale do not have
 /// `defaults.scales.<type>` as a scope.
 const String _pointLabelsFontKey = 'scales.radialLinear.pointLabels.font';
-
-/// The fields of a raw Map theme.
-const Set<String> _themeFields = {'colors', 'typography', 'palette', 'raw'};
-
-/// The typography tokens.
-const Set<String> _typographyTokens = {'font', 'pointLabels'};
-
-/// The fields of the `palette` field of a raw Map theme (Chart.js ADR 0050,
-/// theming.md §4).
-const Set<String> _paletteFields = {'colors', 'backgroundAlpha'};
 
 /// The background alpha of the palette when the theme gives none: the 0.5
 /// of `BACKGROUND_COLORS` (`plugin.colors.ts:25`).
@@ -510,111 +467,86 @@ const Map<String, Object?> _transitions = {
   },
 };
 
-/// The compiled theme of [theme] (theming.md §3.3): one frozen typed scope
-/// with the key shape of `Chart.defaults` (a `ChartOptionsScope`, Chart.js
-/// ADR 0054 §3), or Dart `null`.
+/// The compiled theme of the tokens (theming.md §3.3): one frozen typed
+/// scope with the key shape of `Chart.defaults` (a `ChartOptionsScope`,
+/// Chart.js ADR 0054 §3), or Dart `null`.
 ///
-/// - Dart `null` gives `null`. A theme that emits no key other than
-///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
-/// - Each color token emits its keys of theming.md §4 as [themeColorValue]
-///   strings. The font token `font` emits a Map of its fields that are not
-///   `null` into each scale slot, into the two legend fonts and into
-///   `plugins.tooltip.bodyFont`, and the same Map without `weight` into
-///   `plugins.title.font`, `plugins.subtitle.font`,
+/// - A null token themes nothing. Tokens that emit no key give Dart `null`,
+///   for example no token at all: a per-chart opt-out (theming.md §5.1).
+/// - Each color token emits its `Color` into its keys of theming.md §4.
+///   [surface] also emits the tick backdrop at alpha 0.75.
+/// - The font token [font] goes into each scale slot, into the two legend
+///   fonts and into `plugins.tooltip.bodyFont`, and the same font without
+///   its weight into `plugins.title.font`, `plugins.subtitle.font`,
 ///   `plugins.tooltip.titleFont` and `plugins.tooltip.footerFont`. The
-///   point-label font is the `font` Map without `size`, then the fields of
-///   `pointLabels` over it (theming.md §3.4).
-/// - The `palette` emits the two palette keys of `plugins.colors` as Lists
-///   of [themeColorValue] strings (Chart.js ADR 0050, theming.md §4).
-/// - The `raw` keys beat the token keys, key by key. Maps merge, a raw font
-///   merges over the token font with `TextStyle.merge` (Chart.js ADR 0116),
-///   and a Map that holds no key after the guard is left out.
-/// - A key that [themeNeverEmittedReason] rejects is never emitted. In debug
-///   mode, it fails an assert. A `raw` List with such an item is left out as
-///   a whole.
+///   point-label font is [font] without its size, then [pointLabelsFont]
+///   over it (theming.md §3.4). A font with no field that the chart reads
+///   themes nothing.
+/// - A non-empty [palette] emits the two palette keys of `plugins.colors`:
+///   the colors, and the colors at [paletteBackgroundAlpha] (Chart.js ADR
+///   0050, theming.md §4).
 /// - The `transitions` keys of theming.md §3.8 come only beside other keys.
 /// - The result is a typed scope tree ([_typed]): each object under a key
-///   of a nested kind is a typed scope of that kind, and an object under a
-///   key with no kind a frozen Map. It is frozen deeply: each scope, Map and
-///   List is a [JsFreezable] after [jsObjectFreeze]. A write throws a
-///   [TypeError]. Thus a write of the set trap of a resolver into a theme
-///   scope throws, instead of a leak into other charts
+///   of a nested kind is a typed scope of that kind. It is frozen deeply:
+///   each scope and List is a [JsFreezable] after [jsObjectFreeze]. A write
+///   throws a [TypeError]. Thus a write of the set trap of a resolver into
+///   a theme scope throws, instead of a leak into other charts
 ///   (`helpers.config.ts:101-106`).
 ///
-/// Each call compiles [theme] and gives a new result: no memo (judge-c
+/// Each call compiles the tokens and gives a new result: no memo (judge-c
 /// §3.9, Chart.js ADR 0054 §4). The theme switch of `ChartView` keeps the
 /// compiled theme of its current theme.
-ChartOptionsScope? compileChartTheme(AnyObject? theme) {
-  if (theme == null) return null;
-  return _compile(theme);
-}
-
-/// The [compileChartTheme] of [theme].
-ChartOptionsScope? _compile(AnyObject theme) {
-  assert(
-    theme.keys.every(_themeFields.contains),
-    'Unknown raw theme fields: '
-    '${theme.keys.where((key) => !_themeFields.contains(key)).join(', ')}.',
-  );
+ChartOptionsScope? compileChartTheme({
+  ui.Color? color,
+  ui.Color? borderColor,
+  ui.Color? backgroundColor,
+  ui.Color? surface,
+  ui.Color? inverseSurface,
+  ui.Color? onInverseSurface,
+  TextStyle? font,
+  TextStyle? pointLabelsFont,
+  List<ui.Color>? palette,
+  double paletteBackgroundAlpha = _paletteBackgroundAlpha,
+}) {
   final keys = <String, Object?>{};
-
-  final colors = _field(theme, 'colors');
-  bool isColorToken(String token) =>
-      _colorTokenKeys.containsKey(token) ||
-      _tooltipColorTokenKeys.containsKey(token);
-  assert(
-    colors.keys.every(isColorToken),
-    'Unknown color tokens: '
-    '${colors.keys.where((k) => !isColorToken(k)).join(', ')}.',
-  );
-  for (final MapEntry(key: token, value: paths) in _colorTokenKeys.entries) {
-    final color = _color(colors, token);
-    if (color == null) continue;
-    final rgba = themeColorValue(color);
+  void emit(ui.Color? value, List<String> paths) {
+    if (value == null) return;
     for (final path in paths) {
-      _put(keys, path, rgba);
-    }
-    if (token == 'surface') {
-      _put(
-        keys,
-        _backdropKey,
-        themeColorValue((
-          alpha: _backdropAlpha,
-          red: color.red,
-          green: color.green,
-          blue: color.blue,
-        )),
-      );
+      _put(keys, path, value);
     }
   }
 
-  final typography = _field(theme, 'typography');
-  assert(
-    typography.keys.every(_typographyTokens.contains),
-    'Unknown typography tokens: '
-    '${typography.keys.where((k) => !_typographyTokens.contains(k))}.',
-  );
-  final font = _font(typography['font']);
-  if (font != null) {
+  emit(color, _colorKeys);
+  emit(borderColor, _borderColorKeys);
+  emit(backgroundColor, _backgroundColorKeys);
+  if (surface != null) {
+    emit(surface, _surfaceKeys);
+    _put(keys, _backdropKey, surface.withValues(alpha: _backdropAlpha));
+  }
+
+  final baseFont = _font(font);
+  if (baseFont != null) {
     for (final path in _fontTokenKeys) {
-      _put(keys, path, font);
+      _put(keys, path, baseFont);
     }
   }
   // The base font without size, then the point-label font (theming.md §3.4).
-  final pointLabelsToken = _font(typography['pointLabels']);
-  final baseWithoutSize = font == null ? null : _fontWithout(font, size: true);
-  final pointLabelsFont = baseWithoutSize == null
+  final pointLabelsToken = _font(pointLabelsFont);
+  final baseWithoutSize = baseFont == null
+      ? null
+      : _fontWithout(baseFont, size: true);
+  final pointLabels = baseWithoutSize == null
       ? pointLabelsToken
       : pointLabelsToken == null
       ? baseWithoutSize
       : baseWithoutSize.merge(pointLabelsToken);
-  if (pointLabelsFont != null && _hasFontField(pointLabelsFont)) {
-    _put(keys, _pointLabelsFontKey, pointLabelsFont);
+  if (pointLabels != null && _hasFontField(pointLabels)) {
+    _put(keys, _pointLabelsFontKey, pointLabels);
   }
   // The base font without weight (theming.md §3.4).
-  final fontWithoutWeight = font == null
+  final fontWithoutWeight = baseFont == null
       ? null
-      : _fontWithout(font, weight: true);
+      : _fontWithout(baseFont, weight: true);
   final emitWithoutWeight =
       fontWithoutWeight != null && _hasFontField(fontWithoutWeight);
   if (emitWithoutWeight) {
@@ -622,41 +554,27 @@ ChartOptionsScope? _compile(AnyObject theme) {
       _put(keys, path, fontWithoutWeight);
     }
   }
-  if (font != null) {
+  if (baseFont != null) {
     for (final path in _pluginFontTokenKeys) {
-      _put(keys, path, font);
+      _put(keys, path, baseFont);
     }
   }
 
   // The tooltip keys come after the legend keys (theming.md §4).
-  for (final MapEntry(key: token, value: paths)
-      in _tooltipColorTokenKeys.entries) {
-    final color = _color(colors, token);
-    if (color == null) continue;
-    final rgba = themeColorValue(color);
-    for (final path in paths) {
-      _put(keys, path, rgba);
-    }
-  }
+  emit(inverseSurface, _inverseSurfaceKeys);
+  emit(onInverseSurface, _onInverseSurfaceKeys);
   for (final (path, withWeight) in _tooltipFontTokenKeys) {
     final value = withWeight
-        ? font
+        ? baseFont
         : (emitWithoutWeight ? fontWithoutWeight : null);
     if (value != null) _put(keys, path, value);
   }
 
-  _palette(keys, _field(theme, 'palette'));
-
-  _mergeRaw(keys, _field(theme, 'raw'), const []);
+  _palette(keys, palette, paletteBackgroundAlpha);
 
   // The transitions come only beside other keys (theming.md §3.3).
-  if (keys.keys.every((key) => key == 'transitions')) return null;
-  final transitions = keys['transitions'];
-  if (transitions is AnyObject) {
-    _mergeOver(transitions, _transitions);
-  } else {
-    keys['transitions'] = _transitions;
-  }
+  if (keys.isEmpty) return null;
+  keys['transitions'] = _transitions;
   return _typed(ChartOptionsScope(), keys);
 }
 
@@ -680,90 +598,30 @@ T _typed<T extends OptionScope>(T scope, AnyObject map) {
   return jsObjectFreeze(scope);
 }
 
-/// The Map of the field [name] of [theme]. An absent field and Dart `null`
-/// give an empty Map. In debug mode, a value of another type fails an
-/// assert.
-AnyObject _field(AnyObject theme, String name) {
-  final value = theme[name];
-  assert(
-    value == null || value is AnyObject,
-    'The raw theme field $name is not a Map: $value.',
-  );
-  return value is AnyObject ? value : const <String, Object?>{};
-}
-
-/// The color token [token] of [colors], or Dart `null` for no color. In
-/// debug mode, a value that is not a [RawThemeColor] fails an assert.
-RawThemeColor? _color(AnyObject colors, String token) {
-  final value = colors[token];
-  assert(
-    value == null || value is RawThemeColor,
-    'The color token $token is not a RawThemeColor: $value.',
-  );
-  return value is RawThemeColor ? value : null;
-}
-
-/// Writes the palette keys of the `palette` field [palette] into [keys]
-/// (Chart.js ADR 0050, theming.md §4).
+/// Writes the palette keys of [palette] into [keys] (Chart.js ADR 0050,
+/// theming.md §4).
 ///
 /// `plugins.colors.$borderColors` gets the colors at their alpha.
 /// `plugins.colors.$backgroundColors` gets the same colors with the alpha
-/// replaced by `backgroundAlpha`, as `plugin.colors.ts:25` derives
-/// `BACKGROUND_COLORS` from `BORDER_COLORS`. An absent `backgroundAlpha` is
-/// 0.5. An absent or empty `colors` List emits nothing. In debug mode, an
-/// unknown field, a value of another type and an item that is not a
-/// [RawThemeColor] fail an assert. In release mode, the compiler leaves
-/// out such an item.
-void _palette(AnyObject keys, AnyObject palette) {
-  assert(
-    palette.keys.every(_paletteFields.contains),
-    'Unknown palette fields: '
-    '${palette.keys.where((k) => !_paletteFields.contains(k)).join(', ')}.',
-  );
-  final colors = palette['colors'];
-  final backgroundAlpha = palette['backgroundAlpha'];
-  assert(
-    colors == null || colors is List,
-    'The palette colors are not a List: $colors.',
-  );
-  assert(
-    backgroundAlpha == null || backgroundAlpha is num,
-    'The palette backgroundAlpha is not a number: $backgroundAlpha.',
-  );
-  if (colors is! List) return;
-  assert(
-    colors.every((color) => color is RawThemeColor),
-    'A palette color is not a RawThemeColor: $colors.',
-  );
-  final list = colors.whereType<RawThemeColor>().toList();
-  if (list.isEmpty) return;
-  final alpha = backgroundAlpha is num
-      ? backgroundAlpha.toDouble()
-      : _paletteBackgroundAlpha;
-  _put(keys, r'plugins.colors.$borderColors', [
-    for (final color in list) themeColorValue(color),
-  ]);
+/// replaced by [backgroundAlpha], as `plugin.colors.ts:25` derives
+/// `BACKGROUND_COLORS` from `BORDER_COLORS`. A null or empty [palette] emits
+/// nothing.
+void _palette(
+  AnyObject keys,
+  List<ui.Color>? palette,
+  double backgroundAlpha,
+) {
+  if (palette == null || palette.isEmpty) return;
+  _put(keys, r'plugins.colors.$borderColors', [...palette]);
   _put(keys, r'plugins.colors.$backgroundColors', [
-    for (final color in list)
-      themeColorValue((
-        alpha: alpha,
-        red: color.red,
-        green: color.green,
-        blue: color.blue,
-      )),
+    for (final color in palette) color.withValues(alpha: backgroundAlpha),
   ]);
 }
 
-/// The font token [value]: a `TextStyle` that sets a field of a font, or
-/// Dart `null` (Chart.js ADR 0116). In debug mode, another value fails an
-/// assert.
-TextStyle? _font(Object? value) {
-  assert(
-    value == null || value is TextStyle,
-    'The font token is not a TextStyle: $value.',
-  );
-  return value is TextStyle && _hasFontField(value) ? value : null;
-}
+/// The font token [value] when it sets a field that the chart reads, else
+/// Dart `null` (Chart.js ADR 0116).
+TextStyle? _font(TextStyle? value) =>
+    value != null && _hasFontField(value) ? value : null;
 
 /// Whether [font] sets a field that the chart reads: the family, the
 /// fallback families, the size, the style, the weight, the height, the
@@ -821,82 +679,8 @@ void _put(AnyObject keys, String path, Object? value) {
   node[parts.last] = value;
 }
 
-/// Merges the `raw` keys of [source] at [path] into [target]. A raw key
-/// beats the key in [target]. A Map merges into a Map, and a font into a
-/// font: a field of the raw font beats the field of the token font, as a
-/// key of a font object does upstream. A key that the guard rejects is left
-/// out, and fails an assert in debug mode.
-///
-/// The keys come in the [jsObjectKeys] order, as `Object.keys` gives them
-/// for an object literal.
-void _mergeRaw(AnyObject target, AnyObject source, List<String> path) {
-  for (final key in jsObjectKeys(source)) {
-    final keyPath = [...path, key];
-    final value = source[key];
-    final reason =
-        themeNeverEmittedReason(keyPath, value) ?? _listItem(keyPath, value);
-    if (reason != null) {
-      assert(false, 'The theme never emits ${keyPath.join('.')}: $reason.');
-      continue;
-    }
-    if (value is AnyObject) {
-      final current = target[key];
-      final node = current is AnyObject ? current : <String, Object?>{};
-      _mergeRaw(node, value, keyPath);
-      if (node.isNotEmpty) target[key] = node;
-    } else if (value is TextStyle) {
-      final current = target[key];
-      target[key] = current is TextStyle ? current.merge(value) : value;
-    } else {
-      target[key] = value;
-    }
-  }
-}
-
-/// The reason of the first item of the List [value] at [path], at any
-/// depth, that the guard rejects, or Dart `null`. Another value gives Dart
-/// `null`.
-String? _listItem(List<String> path, Object? value) {
-  String? walk(List<String> at, Object? node) {
-    if (node is List) {
-      for (var i = 0; i < node.length; i++) {
-        final itemPath = [...at, '$i'];
-        final reason =
-            themeNeverEmittedReason(itemPath, node[i]) ??
-            walk(itemPath, node[i]);
-        if (reason != null) return '${itemPath.join('.')}: $reason';
-      }
-    } else if (node is AnyObject) {
-      for (final key in jsObjectKeys(node)) {
-        final keyPath = [...at, key];
-        final reason =
-            themeNeverEmittedReason(keyPath, node[key]) ??
-            walk(keyPath, node[key]);
-        if (reason != null) return '${keyPath.join('.')}: $reason';
-      }
-    }
-    return null;
-  }
-
-  return value is List ? walk(path, value) : null;
-}
-
-/// Writes the keys of [source] over [target], Map into Map.
-void _mergeOver(AnyObject target, AnyObject source) {
-  for (final key in source.keys) {
-    final value = source[key];
-    final current = target[key];
-    if (value is AnyObject && current is AnyObject) {
-      _mergeOver(current, value);
-    } else {
-      target[key] = value;
-    }
-  }
-}
-
 /// The frozen copy of [value]: a frozen [JsFrozenMap] for a Map, a frozen
-/// [_FrozenList] for a List, the [themeColorValue] string for a
-/// [RawThemeColor], else [value].
+/// [_FrozenList] for a List, else [value].
 Object? _freeze(Object? value) => switch (value) {
   final AnyObject map => jsObjectFreeze(
     JsFrozenMap({for (final key in jsObjectKeys(map)) key: _freeze(map[key])}),
@@ -904,7 +688,6 @@ Object? _freeze(Object? value) => switch (value) {
   final List<Object?> list => jsObjectFreeze(
     _FrozenList([for (final item in list) _freeze(item)]),
   ),
-  final RawThemeColor color => themeColorValue(color),
   _ => value,
 };
 

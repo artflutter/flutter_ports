@@ -8,15 +8,15 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart'
+    show jsNumberToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/css.dart' show colorToRgba;
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
 // dart:io reads the manifest and the snapshot, so the web legs
 // (`dart test -p chrome`) cannot compile this file.
 import '../../support/color_json.dart';
+import '../../support/light_theme.dart';
 
 // theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0050,
 // Consequences). The test compares the compiled light preset with the
@@ -24,7 +24,7 @@ import '../../support/color_json.dart';
 // (`defaults.values.defaults`, porting-flow.md §4).
 //
 // 1. The snapshot: light_snapshot.json holds the leaves of
-//    `compileChartTheme(ChartThemes.light)` by dot path, without the
+//    `compileLightTheme()` by dot path, without the
 //    port-only `transitions` keys (theming.md §3.8). A change of the
 //    compiler or of the preset changes the snapshot. With the environment
 //    variable THEME_SNAPSHOT_UPDATE=1, the test writes the snapshot again:
@@ -165,6 +165,13 @@ const Map<String, String> _moduleConstants = {
       'compares its values',
 };
 
+/// The `rgba()` text of the color [color] in the snapshot: the 8-bit
+/// channels and the alpha as `String(alpha)` of JavaScript, the form of the
+/// colors of the manifest.
+String _rgba(native_ui.Color color) =>
+    'rgba(${(color.r * 255).round()}, ${(color.g * 255).round()}, '
+    '${(color.b * 255).round()}, ${jsNumberToString(color.a)})';
+
 /// The environment variable that makes the test write the snapshot.
 const String _updateVariable = 'THEME_SNAPSHOT_UPDATE';
 
@@ -229,7 +236,7 @@ List<String> _families(String text) => [
 /// the content of the snapshot.
 Map<String, Object?> _lightLeaves() => {
   for (final MapEntry(:key, :value) in _leaves(
-    compileChartTheme(ChartThemes.light),
+    compileLightTheme(),
   ).entries)
     if (!key.startsWith('transitions.')) key: value,
 };
@@ -458,7 +465,7 @@ void main() {
         final encoder = JsonEncoder.withIndent(
           '  ',
           (value) => value is native_ui.Color
-              ? colorToRgba(value)
+              ? _rgba(value)
               : throw ArgumentError.value(value),
         );
         snapshotFile!.writeAsStringSync('${encoder.convert(leaves)}\n');

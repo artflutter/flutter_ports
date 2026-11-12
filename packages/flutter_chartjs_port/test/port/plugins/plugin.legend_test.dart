@@ -26,8 +26,7 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show dispatchCanvasEvent;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -37,6 +36,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
 import '../scales/scale_chart_harness.dart';
@@ -371,7 +371,7 @@ void main() {
         'legend': (chart) => _parseItemColors(_observeLegend(chart)),
       },
       functions: _functions,
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
@@ -381,7 +381,7 @@ void main() {
       final config =
           copyReference(pluginLegendReference.first.config, _functions)!
               as AnyObject;
-      config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });
@@ -645,7 +645,10 @@ void main() {
     /// writes of the legend draw of a chart with the option `color`
     /// [color] and the theme [theme], whose item has no `fillStyle` and no
     /// `strokeStyle`.
-    (Object?, List<List<Object?>>) styles({Object? color, AnyObject? theme}) {
+    (Object?, List<List<Object?>>) styles({
+      Object? color,
+      ChartThemeData? theme,
+    }) {
       final config = _line(<String, Object?>{
         'labels': <String, Object?>{
           'generateLabels': (Object? chart) => <Object?>[
@@ -654,7 +657,7 @@ void main() {
         },
       });
       if (color != null) (config['options']! as AnyObject)['color'] = color;
-      if (theme != null) config[themeConfigKey] = compileChartTheme(theme);
+      if (theme != null) config[themeConfigKey] = compileThemeData(theme);
       final chart = acquireChart(config, <String, Object?>{
         'canvas': <String, Object?>{'width': 400, 'height': 300},
       });
@@ -700,13 +703,9 @@ void main() {
       // light preset with a green color gives the chart option `color`, and
       // the box keeps `defaults.color`.
       final (color, calls) = styles(
-        theme: <String, Object?>{
-          ...ChartThemes.light,
-          'colors': <String, Object?>{
-            ...ChartThemes.light['colors']! as AnyObject,
-            'color': (alpha: 1.0, red: 0.0, green: 128 / 255, blue: 0.0),
-          },
-        },
+        theme: const ChartThemeData.light().copyWith(
+          color: const native_ui.Color.fromRGBO(0, 128, 0, 1),
+        ),
       );
       expect(color, const native_ui.Color.fromRGBO(0, 128, 0, 1));
       expect(calls, expected);

@@ -19,14 +19,13 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
 import '../scales/scale_chart_harness.dart';
@@ -174,7 +173,7 @@ void main() {
       pluginTitleReference,
       observers: {'title': _observeTitle},
       functions: _functions,
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
@@ -184,7 +183,7 @@ void main() {
       final config =
           copyReference(pluginTitleReference.first.config, _functions)!
               as AnyObject;
-      config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });

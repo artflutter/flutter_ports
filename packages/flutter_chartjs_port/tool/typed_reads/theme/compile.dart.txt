@@ -1,12 +1,8 @@
 # The output is a frozen typed ChartOptionsScope tree (Chart.js ADR 0054 §3,
-# §18). The by-name forms that stay read the input, a raw Map theme (the
-# format of themeDataToRaw and of the theme tests, Chart.js ADR 0050):
-# - stringIndex 4: typography['font'], typography['pointLabels'],
-#   palette['colors'] and palette['backgroundAlpha'] of the raw Map theme.
-# - stringIndex 2: keys['transitions'] of the build Map of the emitted keys.
-# - jsObjectKeys 3: the Object.keys order of a raw Map theme (_mergeRaw,
-#   _listItem) and of a Map under a key that no scope kind declares
-#   (_freeze, a JsFrozenMap of the JS runtime). A font token is a TextStyle
-#   (Chart.js ADR 0116).
-stringIndex 6
-jsObjectKeys 3
+# §18). The input is typed tokens (Chart.js ADR 0117). The by-name forms
+# that stay build the Map of the emitted keys:
+# - stringIndex 1: keys['transitions'] of the build Map of the emitted keys.
+# - jsObjectKeys 1: the Object.keys order of a Map under a key that no scope
+#   kind declares (_freeze, a JsFrozenMap of the JS runtime).
+stringIndex 1
+jsObjectKeys 1

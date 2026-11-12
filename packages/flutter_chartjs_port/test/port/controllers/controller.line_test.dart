@@ -22,12 +22,11 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/light_theme.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
 import 'controller_line_reference.dart';
@@ -238,7 +237,7 @@ void main() {
       cases,
       functions: _functions,
       extras: _extras,
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
@@ -250,7 +249,7 @@ void main() {
       final config =
           copyReference(controllerLineReference.first.config, _functions)!
               as AnyObject;
-      config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
       expectNoStaleScaleKeys(acquireChart(config), snapshot);
     });

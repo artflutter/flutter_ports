@@ -730,7 +730,6 @@ void main() {
       ..write('lib/src/js/js_function.dart', [_portOnly])
       ..write('lib/src/js/js_number.dart', [_portOnly])
       ..write('lib/src/js/js_undefined.dart', [_portOnly])
-      ..write('lib/src/theme/css.dart', [_portOnly])
       ..write('lib/src/theme/compile.dart', [_portOnly])
       ..write('lib/src/options/opt.dart', [_portOnly])
       ..write('lib/src/helpers/helpers.options.dart', [_ported])
@@ -753,7 +752,6 @@ void main() {
         "import '../js/js_function.dart';",
         "import '../js/js_number.dart';",
         "import '../js/js_undefined.dart';",
-        "import '../theme/css.dart';",
         "import '../options/opt.dart';",
         "import '../helpers/helpers.options.dart';",
         "import 'package:flutter/widgets.dart';",
@@ -770,15 +768,15 @@ void main() {
         'error: lib/src/typed/config.dart:$line: imports $target, which is '
         'not on the allowlist of lib/src/typed/ (Chart.js ADR 0052 §8).';
     expect(run(), [
-      equals(finding(17, 'package:flutter/widgets.dart')),
-      equals(finding(18, 'dart:math')),
-      equals(finding(19, 'lib/src/controllers/controller.line.dart')),
-      equals(finding(20, 'lib/src/scales/scale.linear.dart')),
-      equals(finding(21, 'lib/src/elements/element.point.dart')),
-      equals(finding(22, 'lib/src/plugins/plugin.legend.dart')),
-      equals(finding(23, 'lib/src/helpers/helpers.math.dart')),
-      equals(finding(24, 'lib/src/js/js_math.dart')),
-      equals(finding(25, 'lib/src/theme/compile.dart')),
+      equals(finding(16, 'package:flutter/widgets.dart')),
+      equals(finding(17, 'dart:math')),
+      equals(finding(18, 'lib/src/controllers/controller.line.dart')),
+      equals(finding(19, 'lib/src/scales/scale.linear.dart')),
+      equals(finding(20, 'lib/src/elements/element.point.dart')),
+      equals(finding(21, 'lib/src/plugins/plugin.legend.dart')),
+      equals(finding(22, 'lib/src/helpers/helpers.math.dart')),
+      equals(finding(23, 'lib/src/js/js_math.dart')),
+      equals(finding(24, 'lib/src/theme/compile.dart')),
     ]);
   });
 

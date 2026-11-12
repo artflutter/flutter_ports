@@ -4,25 +4,22 @@
 ///
 /// [ChartThemeData] holds the tokens of a chart theme: 6 colors, 2 fonts and
 /// the palette of the colors plugin. It stores the values of the app and
-/// nothing derived. [compileThemeData] converts it to the raw Map theme of
-/// `compile.dart` ([themeDataToRaw]) and compiles that Map with
-/// `compileChartTheme`. The chart reads the result under `themeConfigKey`
-/// of `core.config.dart`.
+/// nothing derived. [compileThemeData] gives its fields to
+/// `compileChartTheme` of `compile.dart` (Chart.js ADR 0117). The chart
+/// reads the result under `themeConfigKey` of `core.config.dart`.
 ///
 /// Not a pure layer: the file imports `dart:ui` and the painting library.
 /// Ported files never import it (Chart.js ADR 0050, invariant 4).
 library;
 
-import 'dart:ui' show Color, FontStyle, lerpDouble;
+import 'dart:ui' show Color, lerpDouble;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show ColorProperty, TextStyle;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/css.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/src/theme/presets.dart';
 
 /// The tokens of a chart theme (Chart.js ADR 0050, theming.md §4).
 ///
@@ -67,20 +64,16 @@ class ChartThemeData with Diagnosticable {
   /// (`plugin.colors.ts:14-25`).
   const ChartThemeData.light()
     : this(
-        color: const Color.from(
-          alpha: 1,
-          red: 102 / 255,
-          green: 102 / 255,
-          blue: 102 / 255,
-        ),
-        borderColor: _black10,
-        backgroundColor: _black10,
-        surface: _white,
-        inverseSurface: _black80,
-        onInverseSurface: _white,
-        font: _lightFont,
-        pointLabelsFont: _pointLabelsFont,
-        palette: _chartJsPalette,
+        color: LightThemeTokens.color,
+        borderColor: LightThemeTokens.borderColor,
+        backgroundColor: LightThemeTokens.backgroundColor,
+        surface: LightThemeTokens.surface,
+        inverseSurface: LightThemeTokens.inverseSurface,
+        onInverseSurface: LightThemeTokens.onInverseSurface,
+        font: LightThemeTokens.font,
+        pointLabelsFont: LightThemeTokens.pointLabelsFont,
+        palette: LightThemeTokens.palette,
+        paletteBackgroundAlpha: LightThemeTokens.paletteBackgroundAlpha,
       );
 
   /// The dark preset: each color token of [ChartThemeData.light] with red,
@@ -104,9 +97,10 @@ class ChartThemeData with Diagnosticable {
         surface: _black,
         inverseSurface: _white80,
         onInverseSurface: _black,
-        font: _lightFont,
-        pointLabelsFont: _pointLabelsFont,
-        palette: _chartJsPalette,
+        font: LightThemeTokens.font,
+        pointLabelsFont: LightThemeTokens.pointLabelsFont,
+        palette: LightThemeTokens.palette,
+        paletteBackgroundAlpha: LightThemeTokens.paletteBackgroundAlpha,
       );
 
   /// Replaces `Defaults.color` `'#666'` (`core.defaults.js:43`): the ticks,
@@ -288,52 +282,16 @@ class ChartThemeData with Diagnosticable {
   }
 }
 
-/// Black at alpha 0.1: `'rgba(0,0,0,0.1)'` with the exact alpha, not the
-/// 8-bit alpha of `Color(0x1A000000)` (theming.md §4).
-const Color _black10 = Color.from(alpha: 0.1, red: 0, green: 0, blue: 0);
-
-/// Black at alpha 0.8: `'rgba(0,0,0,0.8)'`.
-const Color _black80 = Color.from(alpha: 0.8, red: 0, green: 0, blue: 0);
-
-/// Black: `'#000'`.
+/// Black: `'#000'`, the mirror of the white of the light preset.
 const Color _black = Color.from(alpha: 1, red: 0, green: 0, blue: 0);
 
-/// White: `'#fff'`.
-const Color _white = Color.from(alpha: 1, red: 1, green: 1, blue: 1);
-
-/// White at alpha 0.1, the mirror of [_black10].
+/// White at alpha 0.1, the mirror of the black at alpha 0.1 of the light
+/// preset (`'rgba(0,0,0,0.1)'`, the alpha 0.1 exactly).
 const Color _white10 = Color.from(alpha: 0.1, red: 1, green: 1, blue: 1);
 
-/// White at alpha 0.8, the mirror of [_black80].
+/// White at alpha 0.8, the mirror of the black at alpha 0.8 of the light
+/// preset (`'rgba(0,0,0,0.8)'`).
 const Color _white80 = Color.from(alpha: 0.8, red: 1, green: 1, blue: 1);
-
-/// `Defaults.font` (`core.defaults.js:54-60`): the family
-/// `"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"`, the size 12, the
-/// style `'normal'` and the line height 1.2. Its weight is null, which
-/// themes nothing: the title, subtitle, tooltip title and tooltip footer
-/// fonts keep their local weights (theming.md §3.4). A `ChartTextStyle`, as
-/// the raw light preset holds it (Chart.js ADR 0116).
-const TextStyle _lightFont = ChartTextStyle(
-  fontFamily: 'Helvetica Neue',
-  fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
-  fontSize: 12,
-  fontStyle: FontStyle.normal,
-  height: 1.2,
-);
-
-/// The point-label size 10 (`scale.radialLinear.js:383-385`).
-const TextStyle _pointLabelsFont = ChartTextStyle(fontSize: 10);
-
-/// `BORDER_COLORS` (`plugin.colors.ts:14-22`) at alpha 1.
-const List<Color> _chartJsPalette = [
-  Color.from(alpha: 1, red: 54 / 255, green: 162 / 255, blue: 235 / 255),
-  Color.from(alpha: 1, red: 255 / 255, green: 99 / 255, blue: 132 / 255),
-  Color.from(alpha: 1, red: 255 / 255, green: 159 / 255, blue: 64 / 255),
-  Color.from(alpha: 1, red: 255 / 255, green: 205 / 255, blue: 86 / 255),
-  Color.from(alpha: 1, red: 75 / 255, green: 192 / 255, blue: 192 / 255),
-  Color.from(alpha: 1, red: 153 / 255, green: 102 / 255, blue: 255 / 255),
-  Color.from(alpha: 1, red: 201 / 255, green: 203 / 255, blue: 207 / 255),
-];
 
 /// The interpolation of a color token: `Color.lerp` when both ends have a
 /// color, else a switch at 0.5.
@@ -366,10 +324,10 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
   return [for (var i = 0; i < a.length; i++) Color.lerp(a[i], b[i], t)!];
 }
 
-/// The compiled theme scope of [data] for `themeConfigKey`
-/// (`compileChartTheme` of `compile.dart` over [themeDataToRaw]), or Dart
-/// `null`. Dart `null` and a theme without tokens, for example
-/// `const ChartThemeData()`, give Dart `null`.
+/// The compiled theme scope of [data] for `themeConfigKey`: the fields of
+/// [data] given to `compileChartTheme` of `compile.dart` (Chart.js ADR
+/// 0117), or Dart `null`. Dart `null` and a theme without tokens, for
+/// example `const ChartThemeData()`, give Dart `null`.
 ///
 /// Each call compiles [data]: no memo (judge-c §3.9, Chart.js ADR 0054 §4).
 /// The theme switch of `ChartView` keeps the compiled theme of its current
@@ -377,44 +335,16 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
 @internal
 ChartOptionsScope? compileThemeData(ChartThemeData? data) {
   if (data == null) return null;
-  return compileChartTheme(themeDataToRaw(data));
-}
-
-/// The raw Map theme of [data]: the input of `compileChartTheme`
-/// (`compile.dart`).
-///
-/// - `colors`: each color token that is not null, as the [RawThemeColor] of
-///   [rawColorOf] of `css.dart`:
-///   `Color.withValues(colorSpace: ColorSpace.extendedSRGB)`.
-///   `themeColorToRgba` then clamps the components. A direct conversion to
-///   sRGB would only clamp a Display P3 color (theming.md §3.3).
-/// - `typography`: `font` and `pointLabels`, the `TextStyle`s of the
-///   fonts that are not null (Chart.js ADR 0116).
-/// - `palette`: `{colors, backgroundAlpha}` for a non-empty palette.
-///
-/// A part without a value is left out.
-@internal
-AnyObject themeDataToRaw(ChartThemeData data) {
-  final colors = <String, Object?>{
-    'color': ?rawColorOf(data.color),
-    'borderColor': ?rawColorOf(data.borderColor),
-    'backgroundColor': ?rawColorOf(data.backgroundColor),
-    'surface': ?rawColorOf(data.surface),
-    'inverseSurface': ?rawColorOf(data.inverseSurface),
-    'onInverseSurface': ?rawColorOf(data.onInverseSurface),
-  };
-  final typography = <String, Object?>{
-    'font': ?data.font,
-    'pointLabels': ?data.pointLabelsFont,
-  };
-  final palette = data.palette;
-  return <String, Object?>{
-    if (colors.isNotEmpty) 'colors': colors,
-    if (typography.isNotEmpty) 'typography': typography,
-    if (palette != null && palette.isNotEmpty)
-      'palette': <String, Object?>{
-        'colors': <Object?>[for (final color in palette) rawColorOf(color)],
-        'backgroundAlpha': data.paletteBackgroundAlpha,
-      },
-  };
+  return compileChartTheme(
+    color: data.color,
+    borderColor: data.borderColor,
+    backgroundColor: data.backgroundColor,
+    surface: data.surface,
+    inverseSurface: data.inverseSurface,
+    onInverseSurface: data.onInverseSurface,
+    font: data.font,
+    pointLabelsFont: data.pointLabelsFont,
+    palette: data.palette,
+    paletteBackgroundAlpha: data.paletteBackgroundAlpha,
+  );
 }

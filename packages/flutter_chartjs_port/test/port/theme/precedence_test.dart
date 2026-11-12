@@ -35,12 +35,13 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -53,6 +54,7 @@ import '../../support/easing_json.dart';
 import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
+import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
 import '../../support/point_style_json.dart';
 import 'precedence_reference.dart'
@@ -440,36 +442,33 @@ void _rows(
   }
 }
 
-/// The raw Map theme of the scenarios 'a compiled theme': each color token
-/// and the two font tokens of phase 6 (theming.md §4).
-const AnyObject _tokenTheme = <String, Object?>{
-  'colors': <String, Object?>{
-    'color': (alpha: 1.0, red: 0.2, green: 0.4, blue: 0.6),
-    'borderColor': (alpha: 0.5, red: 0.0, green: 0.5, blue: 0.0),
-    'backgroundColor': (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0),
-    'surface': (alpha: 1.0, red: 0.0, green: 0.0, blue: 0.0),
-  },
-  'typography': <String, Object?>{
-    'font': ChartTextStyle(
-      fontFamily: 'Arial',
-      fontFamilyFallback: [],
-      fontSize: 14,
-    ),
-    'pointLabels': ChartTextStyle(fontStyle: FontStyle.italic, fontSize: 11),
-  },
-};
+/// The compiled theme of the scenarios 'a compiled theme': four color
+/// tokens and the two font tokens of phase 6 (theming.md §4).
+ChartOptionsScope? _tokenTheme() => compileChartTheme(
+  color: const native_ui.Color.fromRGBO(51, 102, 153, 1),
+  borderColor: const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
+  backgroundColor: const native_ui.Color.fromRGBO(200, 0, 0, 1),
+  surface: const native_ui.Color.fromRGBO(0, 0, 0, 1),
+  font: const ChartTextStyle(
+    fontFamily: 'Arial',
+    fontFamilyFallback: [],
+    fontSize: 14,
+  ),
+  pointLabelsFont: const ChartTextStyle(
+    fontStyle: FontStyle.italic,
+    fontSize: 11,
+  ),
+);
 
-/// The raw Map theme of the scenario 'a radial chart with a theme font
-/// without size': the font token without the token `pointLabels`.
-const AnyObject _fontTheme = <String, Object?>{
-  'typography': <String, Object?>{
-    'font': ChartTextStyle(
-      fontFamily: 'serif',
-      fontFamilyFallback: [],
-      fontSize: 14,
-    ),
-  },
-};
+/// The compiled theme of the scenario 'a radial chart with a theme font
+/// without size': the font token without the token `pointLabelsFont`.
+ChartOptionsScope? _fontTheme() => compileChartTheme(
+  font: const ChartTextStyle(
+    fontFamily: 'serif',
+    fontFamilyFallback: [],
+    fontSize: 14,
+  ),
+);
 
 /// The values that the tokens of [_tokenTheme] replace (theming.md §4, the
 /// column "Replaces"), by the dot path in `defaults`, as the generator
@@ -774,17 +773,15 @@ List<String> _axes(String type, Object? theme) {
   return lines;
 }
 
-/// The raw Map theme of the group `hover` (Chart.js ADR 0030, section 10):
+/// The compiled theme of the group `hover` (Chart.js ADR 0030, section 10):
 /// the color tokens `color`, `borderColor` and `backgroundColor`. The
 /// generator writes the values that they replace into `defaults` for its
 /// upstream run (theming.md §4).
-const AnyObject _hoverTheme = <String, Object?>{
-  'colors': <String, Object?>{
-    'color': (alpha: 1.0, red: 0.2, green: 0.4, blue: 0.6),
-    'borderColor': (alpha: 0.5, red: 0.0, green: 0.5, blue: 0.0),
-    'backgroundColor': (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0),
-  },
-};
+ChartOptionsScope? _hoverTheme() => compileChartTheme(
+  color: const native_ui.Color.fromRGBO(51, 102, 153, 1),
+  borderColor: const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
+  backgroundColor: const native_ui.Color.fromRGBO(200, 0, 0, 1),
+);
 
 /// The 8 chart types of phase 7, in code unit order.
 const List<String> _chartTypes = [
@@ -862,7 +859,7 @@ Future<List<String>> _hover(String type) async {
     'type': type,
     'data': _hoverData(type),
     'options': <String, Object?>{},
-    themeConfigKey: compileChartTheme(_hoverTheme),
+    themeConfigKey: _hoverTheme(),
   });
   Future<void> step(String eventType, AnyObject point) async {
     await triggerMouseEvent(chart, eventType, point);
@@ -1174,10 +1171,10 @@ void main() {
       );
     });
 
-    testWidgets('ChartThemes.none compiles to null and changes no option', (
+    testWidgets('no token compiles to null and changes no option', (
       tester,
     ) async {
-      final none = compileChartTheme(ChartThemes.none);
+      final none = compileChartTheme();
       expect(none, isNull);
       expect(_snapshot(none).join('\n'), themePrecedenceUpstream['no theme']);
     });
@@ -1201,7 +1198,7 @@ void main() {
         themePrecedenceUpstream['scopes with a string theme'],
       );
       expect(
-        _scopes(compileChartTheme(ChartThemes.none)).join('\n'),
+        _scopes(compileChartTheme()).join('\n'),
         themePrecedenceUpstream['scopes without a theme'],
       );
     });
@@ -1242,7 +1239,7 @@ void main() {
     testWidgets('a compiled theme fills the options below the user options', (
       tester,
     ) async {
-      final compiled = compileChartTheme(_tokenTheme);
+      final compiled = _tokenTheme();
       expect(
         _snapshot(compiled).join('\n'),
         themePrecedencePrototype['a compiled theme'],
@@ -2140,7 +2137,7 @@ void main() {
       test(
         'the palette keys of plugin.colors equal the keys of the compiler',
         () {
-          final compiled = compileChartTheme(ChartThemes.light);
+          final compiled = compileLightTheme();
           final colorsOptions = _at(compiled, 'plugins.colors')!;
           expect(
             jsObjectKeys(colorsOptions).where((key) => key.startsWith(r'$')),
@@ -2185,7 +2182,7 @@ void main() {
         final name = 'light palette $type';
         final themed = _lightPalette(
           type,
-          compileChartTheme(ChartThemes.light),
+          compileLightTheme(),
         );
         expect(themed.join('\n'), themePrecedencePrototype[name]);
         final unthemed = _lightPalette(type, null);
@@ -2220,7 +2217,7 @@ void main() {
       tester,
     ) async {
       expect(
-        _radialSnapshot(compileChartTheme(_tokenTheme)).join('\n'),
+        _radialSnapshot(_tokenTheme()).join('\n'),
         themePrecedencePrototype['a radial chart with a compiled theme'],
       );
     });
@@ -2228,7 +2225,7 @@ void main() {
     testWidgets('the light preset gives the upstream options', (tester) async {
       // theming.md §8 test 3 on a real radial chart: equal colors after the
       // parse, equal fonts and an equal scale size.
-      final themed = _radialSnapshot(compileChartTheme(ChartThemes.light));
+      final themed = _radialSnapshot(compileLightTheme());
       expect(
         themed.join('\n'),
         themePrecedencePrototype['a radial chart with the light preset'],
@@ -2261,7 +2258,7 @@ void main() {
       // mergeIf adds the size 10 of defaults.scales.radialLinear to that
       // font (core.config.js:109, helpers.core.ts:310-323).
       expect(
-        _radialSnapshot(compileChartTheme(_fontTheme)).join('\n'),
+        _radialSnapshot(_fontTheme()).join('\n'),
         themePrecedencePrototype['a radial chart with a theme font without '
             'size'],
       );
@@ -2288,7 +2285,7 @@ void main() {
         tester,
       ) async {
         // The first line is the compiled theme.
-        final themed = _radialSnapshot(compileChartTheme(theme)).sublist(1);
+        final themed = _radialSnapshot(theme()).sublist(1);
         expect(themed.join('\n'), themePrecedenceUpstream[replaced]);
         expect(
           themePrecedencePrototype[replaced],
@@ -2458,7 +2455,7 @@ void main() {
         const name = 'axes of a cartesian chart with the light preset';
         final observed = _axes(
           'themeReal',
-          compileChartTheme(ChartThemes.light),
+          compileLightTheme(),
         ).join('\n');
         expect(observed, themePrecedencePrototype[name]);
         expect(_prototype(name, 'scales'), 'x,y');
@@ -2493,7 +2490,7 @@ void main() {
       (
         'axes of a bar chart with the light preset',
         'bar',
-        compileChartTheme(ChartThemes.light),
+        compileLightTheme(),
       ),
       ('axes of a doughnut chart without a theme', 'doughnut', null),
       (
@@ -2507,7 +2504,7 @@ void main() {
       (
         'axes of a doughnut chart with the light preset',
         'doughnut',
-        compileChartTheme(ChartThemes.light),
+        compileLightTheme(),
       ),
     ]) {
       testWidgets(name, (tester) async {
@@ -2528,7 +2525,7 @@ void main() {
     // the center of its own elements, and the lines have no position.
     test('the hover theme compiles to the theme of the generator', () {
       expect(
-        _json(compileChartTheme(_hoverTheme)),
+        _json(_hoverTheme()),
         _prototype('hover theme', 'theme'),
       );
     });
@@ -2555,7 +2552,7 @@ void main() {
         'type': 'bar',
         'data': _hoverData('bar'),
         'options': <String, Object?>{},
-        themeConfigKey: compileChartTheme(_hoverTheme),
+        themeConfigKey: _hoverTheme(),
       });
       await triggerMouseEvent(chart, 'mousemove', _hoverPoint(chart, 0));
       expect(

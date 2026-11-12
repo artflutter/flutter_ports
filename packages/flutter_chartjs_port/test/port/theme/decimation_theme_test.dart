@@ -2,18 +2,23 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' as native_ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
     show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/light_theme.dart';
 
 // theming.md section 10, the phase 8 row, and the theme spec of phase 8
 // (Chart.js ADR 0042): a theme leaves the decimated data and `_data` of
@@ -38,31 +43,27 @@ import 'package:flutter_test/flutter_test.dart';
 // sets `plugins.colors.enabled: true`.
 
 /// The color `rgb(200, 0, 0)`.
-const RawThemeColor _red = (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0);
+const native_ui.Color _red = native_ui.Color.fromRGBO(200, 0, 0, 1);
 
 /// The color `rgba(0, 0, 255, 0.8)`.
-const RawThemeColor _blue = (alpha: 0.8, red: 0.0, green: 0.0, blue: 1.0);
+const native_ui.Color _blue = native_ui.Color.fromRGBO(0, 0, 255, 0.8);
 
-/// A theme with each color token and a palette.
-AnyObject _localTheme() => <String, Object?>{
-  'colors': <String, Object?>{
-    'color': _red,
-    'borderColor': _red,
-    'backgroundColor': _blue,
-    'surface': _blue,
-  },
-  'palette': <String, Object?>{
-    'colors': <Object?>[_red, _blue],
-    'backgroundAlpha': 0.25,
-  },
-};
+/// A theme with four color tokens and a palette.
+ChartOptionsScope? _localTheme() => compileChartTheme(
+  color: _red,
+  borderColor: _red,
+  backgroundColor: _blue,
+  surface: _blue,
+  palette: [_red, _blue],
+  paletteBackgroundAlpha: 0.25,
+);
 
 /// The three runs: the name and the compiled theme (Dart `null` for no
 /// theme).
 final List<(String, Object? Function())> _runs = [
   ('no theme', () => null),
-  ('the light preset', () => compileChartTheme(ChartThemes.light)),
-  ('a local theme', () => compileChartTheme(_localTheme())),
+  ('the light preset', compileLightTheme),
+  ('a local theme', _localTheme),
 ];
 
 /// The 5000 input items `{x: i, y: f(i)}`, new for each chart.

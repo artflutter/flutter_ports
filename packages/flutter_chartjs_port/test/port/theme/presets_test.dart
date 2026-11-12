@@ -16,12 +16,12 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
+import '../../support/light_theme.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the parts of phases 5 and 6, and the values that
@@ -156,7 +156,7 @@ void main() {
   group('theming.md §8 test 3, the parts of phases 5 and 6', () {
     test('the light preset restates the upstream values', () {
       // theming.md §9: the values that the preset restates.
-      final compiled = compileChartTheme(ChartThemes.light)!;
+      final compiled = compileLightTheme()!;
       final emitted = {
         for (final path in compiled.jsKeys())
           if (path != 'transitions') path,
@@ -198,7 +198,7 @@ void main() {
     });
 
     test('the element options equal upstream in both modes', () {
-      final theme = compileChartTheme(ChartThemes.light);
+      final theme = compileLightTheme();
       for (final elementCase in themeLightElements) {
         final reason = '${elementCase.type} ${elementCase.mode}';
         final upstream = elementCase.options;
@@ -258,7 +258,7 @@ void main() {
     });
 
     test('the scale options equal upstream', () {
-      final themed = _resolveScale(compileChartTheme(ChartThemes.light));
+      final themed = _resolveScale(compileLightTheme());
       final plain = _resolveScale(null);
       for (final key in themeLightScale.keys) {
         final upstream = themeLightScale[key];
@@ -284,7 +284,7 @@ void main() {
         )['color'];
       }
 
-      final themed = color(compileChartTheme(ChartThemes.light));
+      final themed = color(compileLightTheme());
       expect(themed, const ui.Color.fromRGBO(102, 102, 102, 1));
       expect(_parsed(themed), _parsed(themeLightChartColor));
       expect(color(null), referenceColorOrString(themeLightChartColor));
@@ -292,11 +292,9 @@ void main() {
 
     test('the 8-bit alpha of Color(0x1A000000) gives another hover color', () {
       // theming.md §4: the preset keeps the alpha 0.1 exactly.
-      final theme = compileChartTheme({
-        'colors': <String, Object?>{
-          'backgroundColor': (alpha: 26 / 255, red: 0.0, green: 0.0, blue: 0.0),
-        },
-      });
+      final theme = compileChartTheme(
+        backgroundColor: const ui.Color.fromRGBO(0, 0, 0, 26 / 255),
+      );
       final pointActive = themeLightElements.firstWhere(
         (c) => c.type == 'point' && c.mode == 'active',
       );

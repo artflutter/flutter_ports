@@ -13,13 +13,12 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart' show plainValue;
 import '../scales/scale_chart_harness.dart';
 import 'plugin_chart_harness.dart';
@@ -181,7 +180,7 @@ void main() {
       pluginDecimationReference,
       observers: {'decimation': _observeDecimation},
       functions: _functions,
-      theme: compileChartTheme(ChartThemes.light),
+      theme: compileLightTheme(),
     );
   });
 
@@ -605,7 +604,7 @@ void main() {
       tester,
     ) async {
       final (chart: _, :dataset, :data) = _accessorChart(
-        theme: compileChartTheme(ChartThemes.light),
+        theme: compileLightTheme(),
       );
       expect(jsObjectKeys(dataset), _decimatedKeys);
       expect(_length(dataset['data']), 386);
