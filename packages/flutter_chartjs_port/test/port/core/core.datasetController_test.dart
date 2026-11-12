@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show MinMax;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, createContext;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -42,6 +44,7 @@ import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/point_style_json.dart';
 import 'dataset_controller_reference.dart';
 
 // The specs of core.datasetController.tests.js need the controllers of
@@ -676,6 +679,7 @@ String _enc(Object? v) => switch (v) {
   Animation() => 'animation',
   Curve() => curveJson,
   CubicInterpolationMode() => cubicModeJson,
+  PointStyle() => pointStyleJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
@@ -1133,8 +1137,8 @@ void main() {
         final run = _Run(spec);
         expect(
           run.runAll().map(referenceColorTokens).toList(),
-          withCubicModeMarkers(
-            withCurveMarkers(observations),
+          withPointStyleMarkers(
+            withCubicModeMarkers(withCurveMarkers(observations)),
           ).split('\n').map(referenceColorTokens).toList(),
         );
       });

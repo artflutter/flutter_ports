@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show DefaultCubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -32,8 +34,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         PointOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/typed/values.dart'
-    show ChartFill, ChartPointStyle;
+import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -144,8 +145,10 @@ final class PointElementStyle with Diagnosticable {
   /// default is 3.
   final double? radius;
 
-  /// The style of a point: `pointStyle`. The default is a circle.
-  final ChartPointStyle? pointStyle;
+  /// The style of a point: `pointStyle`, a [PointStyle] (row
+  /// `adapt-point-style-objects`). The default is `CirclePointStyle`.
+  /// `false`, no point, goes through [extra].
+  final PointStyle? pointStyle;
 
   /// The fill color of a point: `backgroundColor`.
   final Color? backgroundColor;
@@ -173,7 +176,7 @@ final class PointElementStyle with Diagnosticable {
   /// that is `null` keeps its value.
   PointElementStyle copyWith({
     double? radius,
-    ChartPointStyle? pointStyle,
+    PointStyle? pointStyle,
     Color? backgroundColor,
     Color? borderColor,
     double? borderWidth,
@@ -195,7 +198,7 @@ final class PointElementStyle with Diagnosticable {
   PointOptionsScope _lower() {
     final scope = PointOptionsScope();
     put(scope, OptionKey.radius, radius);
-    put(scope, OptionKey.pointStyle, pointStyle?.optionValue);
+    put(scope, OptionKey.pointStyle, pointStyle);
     put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
     put(scope, OptionKey.borderColor, colorValue(borderColor));
     put(scope, OptionKey.borderWidth, borderWidth);

@@ -58,6 +58,8 @@ import 'hand/controller.bubble/hover-radius-zero.dart'
     as controller_bubble_hover_radius_zero;
 import 'hand/controller.bubble/padding-update.dart'
     as controller_bubble_padding_update;
+import 'hand/controller.bubble/point-style.dart'
+    as controller_bubble_point_style;
 import 'hand/controller.bubble/radius-data.dart'
     as controller_bubble_radius_data;
 import 'hand/controller.bubble/radius-scriptable.dart'
@@ -116,20 +118,31 @@ import 'hand/controller.line/fill/no-border.dart'
 import 'hand/controller.line/fill/scriptable.dart'
     as controller_line_fill_scriptable;
 import 'hand/controller.line/issue-8902.dart' as controller_line_issue_8902;
+import 'hand/controller.line/point-style-offscreen-canvas.dart'
+    as controller_line_point_style_offscreen_canvas;
+import 'hand/controller.line/point-style.dart' as controller_line_point_style;
 import 'hand/controller.line/pointBackgroundColor/scriptable.dart'
     as controller_line_pointbackgroundcolor_scriptable;
 import 'hand/controller.line/pointBorderColor/scriptable.dart'
     as controller_line_pointbordercolor_scriptable;
 import 'hand/controller.line/pointBorderWidth/scriptable.dart'
     as controller_line_pointborderwidth_scriptable;
+import 'hand/controller.line/pointStyle/indexable.dart'
+    as controller_line_pointstyle_indexable;
 import 'hand/controller.line/pointStyle/scriptable.dart'
     as controller_line_pointstyle_scriptable;
+import 'hand/controller.line/pointStyle/value.dart'
+    as controller_line_pointstyle_value;
 import 'hand/controller.line/radius/scriptable-to-value.dart'
     as controller_line_radius_scriptable_to_value;
 import 'hand/controller.line/radius/scriptable.dart'
     as controller_line_radius_scriptable;
+import 'hand/controller.line/rotation/indexable.dart'
+    as controller_line_rotation_indexable;
 import 'hand/controller.line/rotation/scriptable.dart'
     as controller_line_rotation_scriptable;
+import 'hand/controller.line/rotation/value.dart'
+    as controller_line_rotation_value;
 import 'hand/controller.line/segments/gap.dart' as controller_line_segments_gap;
 import 'hand/controller.line/segments/gradient.dart'
     as controller_line_segments_gradient;
@@ -185,18 +198,27 @@ import 'hand/controller.radar/borderWidth/scriptable.dart'
     as controller_radar_borderwidth_scriptable;
 import 'hand/controller.radar/fill/scriptable.dart'
     as controller_radar_fill_scriptable;
+import 'hand/controller.radar/point-style.dart' as controller_radar_point_style;
 import 'hand/controller.radar/pointBackgroundColor/scriptable.dart'
     as controller_radar_pointbackgroundcolor_scriptable;
 import 'hand/controller.radar/pointBorderColor/scriptable.dart'
     as controller_radar_pointbordercolor_scriptable;
 import 'hand/controller.radar/pointBorderWidth/scriptable.dart'
     as controller_radar_pointborderwidth_scriptable;
+import 'hand/controller.radar/pointStyle/indexable.dart'
+    as controller_radar_pointstyle_indexable;
 import 'hand/controller.radar/pointStyle/scriptable.dart'
     as controller_radar_pointstyle_scriptable;
+import 'hand/controller.radar/pointStyle/value.dart'
+    as controller_radar_pointstyle_value;
 import 'hand/controller.radar/radius/scriptable.dart'
     as controller_radar_radius_scriptable;
+import 'hand/controller.radar/rotation/indexable.dart'
+    as controller_radar_rotation_indexable;
 import 'hand/controller.radar/rotation/scriptable.dart'
     as controller_radar_rotation_scriptable;
+import 'hand/controller.radar/rotation/value.dart'
+    as controller_radar_rotation_value;
 import 'hand/controller.scatter/showLine/changed.dart'
     as controller_scatter_showline_changed;
 import 'hand/core.interaction/drawActiveElementsOnTop-false.dart'
@@ -230,8 +252,28 @@ import 'hand/element.line/skip/first.dart' as element_line_skip_first;
 import 'hand/element.line/skip/last-span.dart' as element_line_skip_last_span;
 import 'hand/element.line/skip/last.dart' as element_line_skip_last;
 import 'hand/element.line/skip/middle.dart' as element_line_skip_middle;
+import 'hand/element.point/point-style-circle.dart'
+    as element_point_point_style_circle;
+import 'hand/element.point/point-style-cross-rot.dart'
+    as element_point_point_style_cross_rot;
+import 'hand/element.point/point-style-cross.dart'
+    as element_point_point_style_cross;
+import 'hand/element.point/point-style-dash.dart'
+    as element_point_point_style_dash;
 import 'hand/element.point/point-style-image.dart'
     as element_point_point_style_image;
+import 'hand/element.point/point-style-line.dart'
+    as element_point_point_style_line;
+import 'hand/element.point/point-style-rect-rot.dart'
+    as element_point_point_style_rect_rot;
+import 'hand/element.point/point-style-rect-rounded.dart'
+    as element_point_point_style_rect_rounded;
+import 'hand/element.point/point-style-rect.dart'
+    as element_point_point_style_rect;
+import 'hand/element.point/point-style-star.dart'
+    as element_point_point_style_star;
+import 'hand/element.point/point-style-triangle.dart'
+    as element_point_point_style_triangle;
 import 'hand/element.point/rotation.dart' as element_point_rotation;
 import 'hand/plugin.colors/dynamic-datasets-default.dart'
     as plugin_colors_dynamic_datasets_default;
@@ -289,10 +331,16 @@ import 'hand/plugin.legend/borderRadius/legend-border-radius.dart'
     as plugin_legend_borderradius_legend_border_radius;
 import 'hand/plugin.legend/horizontal-rtl-hitbox.dart'
     as plugin_legend_horizontal_rtl_hitbox;
+import 'hand/plugin.legend/legend-doughnut-point-style.dart'
+    as plugin_legend_legend_doughnut_point_style;
 import 'hand/plugin.legend/maxWidth/infinity.dart'
     as plugin_legend_maxwidth_infinity;
 import 'hand/plugin.legend/padding/add-column.dart'
     as plugin_legend_padding_add_column;
+import 'hand/plugin.legend/pointStyle-width/legend-pointStyle-width-default.dart'
+    as plugin_legend_pointstyle_width_legend_pointstyle_width_default;
+import 'hand/plugin.legend/pointStyle-width/legend-pointStyle-width.dart'
+    as plugin_legend_pointstyle_width_legend_pointstyle_width;
 import 'hand/plugin.title/scriptable-options.dart'
     as plugin_title_scriptable_options;
 import 'hand/plugin.tooltip/box-padding.dart' as plugin_tooltip_box_padding;
@@ -433,6 +481,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_bubble_padding_update.fixture,
     sha256: '56bb5560a369',
   ),
+  'controller.bubble/point-style.json': (
+    load: controller_bubble_point_style.fixture,
+    sha256: 'e4839b6d9045',
+  ),
   'controller.bubble/radius-data.js': (
     load: controller_bubble_radius_data.fixture,
     sha256: 'd743535961d3',
@@ -553,6 +605,14 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_line_issue_8902.fixture,
     sha256: '748de10df6e0',
   ),
+  'controller.line/point-style-offscreen-canvas.json': (
+    load: controller_line_point_style_offscreen_canvas.fixture,
+    sha256: '1c583297f8d9',
+  ),
+  'controller.line/point-style.json': (
+    load: controller_line_point_style.fixture,
+    sha256: 'b660424602f0',
+  ),
   'controller.line/pointBackgroundColor/scriptable.js': (
     load: controller_line_pointbackgroundcolor_scriptable.fixture,
     sha256: 'a1d05086a20c',
@@ -565,9 +625,17 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_line_pointborderwidth_scriptable.fixture,
     sha256: '43f2ab05206b',
   ),
+  'controller.line/pointStyle/indexable.js': (
+    load: controller_line_pointstyle_indexable.fixture,
+    sha256: '2af01af5af33',
+  ),
   'controller.line/pointStyle/scriptable.js': (
     load: controller_line_pointstyle_scriptable.fixture,
     sha256: '9bcfac10655f',
+  ),
+  'controller.line/pointStyle/value.js': (
+    load: controller_line_pointstyle_value.fixture,
+    sha256: '61ce6f0b6cd8',
   ),
   'controller.line/radius/scriptable-to-value.js': (
     load: controller_line_radius_scriptable_to_value.fixture,
@@ -577,9 +645,17 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_line_radius_scriptable.fixture,
     sha256: '0defd6fe8d7a',
   ),
+  'controller.line/rotation/indexable.js': (
+    load: controller_line_rotation_indexable.fixture,
+    sha256: '526ed66a10e5',
+  ),
   'controller.line/rotation/scriptable.js': (
     load: controller_line_rotation_scriptable.fixture,
     sha256: '41944f013e0a',
+  ),
+  'controller.line/rotation/value.js': (
+    load: controller_line_rotation_value.fixture,
+    sha256: 'be2f073637a3',
   ),
   'controller.line/segments/gap.js': (
     load: controller_line_segments_gap.fixture,
@@ -694,6 +770,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_radar_fill_scriptable.fixture,
     sha256: '2e41806f6eec',
   ),
+  'controller.radar/point-style.json': (
+    load: controller_radar_point_style.fixture,
+    sha256: '783139172038',
+  ),
   'controller.radar/pointBackgroundColor/scriptable.js': (
     load: controller_radar_pointbackgroundcolor_scriptable.fixture,
     sha256: '8397c25979c5',
@@ -706,17 +786,33 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_radar_pointborderwidth_scriptable.fixture,
     sha256: '3a4626248004',
   ),
+  'controller.radar/pointStyle/indexable.js': (
+    load: controller_radar_pointstyle_indexable.fixture,
+    sha256: 'bcd7f3eeb78b',
+  ),
   'controller.radar/pointStyle/scriptable.js': (
     load: controller_radar_pointstyle_scriptable.fixture,
     sha256: '5c91c66e1bc9',
+  ),
+  'controller.radar/pointStyle/value.js': (
+    load: controller_radar_pointstyle_value.fixture,
+    sha256: 'bf236ef43caa',
   ),
   'controller.radar/radius/scriptable.js': (
     load: controller_radar_radius_scriptable.fixture,
     sha256: '15fbd64fc078',
   ),
+  'controller.radar/rotation/indexable.js': (
+    load: controller_radar_rotation_indexable.fixture,
+    sha256: 'c986426a9a3e',
+  ),
   'controller.radar/rotation/scriptable.js': (
     load: controller_radar_rotation_scriptable.fixture,
     sha256: '1ab97bf9b6b1',
+  ),
+  'controller.radar/rotation/value.js': (
+    load: controller_radar_rotation_value.fixture,
+    sha256: '708f548ebe96',
   ),
   'controller.scatter/showLine/changed.js': (
     load: controller_scatter_showline_changed.fixture,
@@ -798,9 +894,49 @@ final Map<String, HandFixture> handFixtures = {
     load: element_line_skip_middle.fixture,
     sha256: 'b018d834ca72',
   ),
+  'element.point/point-style-circle.json': (
+    load: element_point_point_style_circle.fixture,
+    sha256: '7c3e0d406856',
+  ),
+  'element.point/point-style-cross-rot.json': (
+    load: element_point_point_style_cross_rot.fixture,
+    sha256: '620578a81b7e',
+  ),
+  'element.point/point-style-cross.json': (
+    load: element_point_point_style_cross.fixture,
+    sha256: '22c5a0c2491d',
+  ),
+  'element.point/point-style-dash.json': (
+    load: element_point_point_style_dash.fixture,
+    sha256: 'd8137f51627b',
+  ),
   'element.point/point-style-image.js': (
     load: element_point_point_style_image.fixture,
     sha256: '637c90745876',
+  ),
+  'element.point/point-style-line.json': (
+    load: element_point_point_style_line.fixture,
+    sha256: '342b39396bf7',
+  ),
+  'element.point/point-style-rect-rot.json': (
+    load: element_point_point_style_rect_rot.fixture,
+    sha256: '5178013bb8de',
+  ),
+  'element.point/point-style-rect-rounded.json': (
+    load: element_point_point_style_rect_rounded.fixture,
+    sha256: '1039b03d8bf5',
+  ),
+  'element.point/point-style-rect.json': (
+    load: element_point_point_style_rect.fixture,
+    sha256: '88b8616e4ae3',
+  ),
+  'element.point/point-style-star.json': (
+    load: element_point_point_style_star.fixture,
+    sha256: '1dbb903ff31c',
+  ),
+  'element.point/point-style-triangle.json': (
+    load: element_point_point_style_triangle.fixture,
+    sha256: 'effb579d156b',
   ),
   'element.point/rotation.js': (
     load: element_point_rotation.fixture,
@@ -918,6 +1054,10 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_legend_horizontal_rtl_hitbox.fixture,
     sha256: '9936ce127cee',
   ),
+  'plugin.legend/legend-doughnut-point-style.json': (
+    load: plugin_legend_legend_doughnut_point_style.fixture,
+    sha256: '45bf9d8ecf21',
+  ),
   'plugin.legend/maxWidth/infinity.js': (
     load: plugin_legend_maxwidth_infinity.fixture,
     sha256: '66c879c203c1',
@@ -925,6 +1065,15 @@ final Map<String, HandFixture> handFixtures = {
   'plugin.legend/padding/add-column.js': (
     load: plugin_legend_padding_add_column.fixture,
     sha256: 'bd23e530172e',
+  ),
+  'plugin.legend/pointStyle-width/legend-pointStyle-width-default.json': (
+    load:
+        plugin_legend_pointstyle_width_legend_pointstyle_width_default.fixture,
+    sha256: 'd2952260c1a8',
+  ),
+  'plugin.legend/pointStyle-width/legend-pointStyle-width.json': (
+    load: plugin_legend_pointstyle_width_legend_pointstyle_width.fixture,
+    sha256: 'b903fe95c19e',
   ),
   'plugin.title/scriptable-options.js': (
     load: plugin_title_scriptable_options.fixture,

@@ -6,6 +6,8 @@ import 'dart:ui' show TextAlign;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -418,7 +420,8 @@ List<Object?> _calls(List<(String, List<Object?>)> calls) => [
 /// The name of a point style in a test name.
 String _styleName(Object? style) => switch (style) {
   final String name => "'$name'",
-  _Image() => 'an image',
+  ImagePointStyle() => 'an image',
+  final PointStyle style => '${style.runtimeType}',
   Map<String, Object?>() => '{}',
   _ => '$style',
 };
@@ -431,12 +434,19 @@ Object? _fromReference(Object? value) => switch (value) {
   _ => value,
 };
 
+/// The point style [value] of draw_point_reference.dart: the image marker
+/// is the image style of the test image (row `adapt-point-style-objects`).
+Object? _styleFromReference(Object? value) => switch (value) {
+  drawPointImage => const ImagePointStyle(_image),
+  _ => _fromReference(value),
+};
+
 /// The drawPointLegend calls with `x` 50 and `y` 40, and their calls on
 /// the context, from the upstream run.
 final List<DrawPointReferenceCase> _drawPointCases = [
   for (final c in drawPointReference)
     (
-      style: _fromReference(c.style),
+      style: _styleFromReference(c.style),
       rotation: c.rotation,
       w: c.w,
       radius: c.radius,
@@ -812,7 +822,7 @@ void main() {
         drawPointLegend(
           ctx,
           const _PointOptions(
-            pointStyle: 'circle',
+            pointStyle: CirclePointStyle(),
             rotation: null,
             radius: 10,
             borderWidth: 1,
@@ -830,7 +840,7 @@ void main() {
       drawPointLegend(
         ctx,
         const _PointOptions(
-          pointStyle: 'rect',
+          pointStyle: RectPointStyle(),
           rotation: double.nan,
           radius: 10,
           borderWidth: 1,
@@ -865,8 +875,9 @@ void main() {
 
   group('platform-canvas-point-style', () {
     // Upstream draws an HTMLCanvasElement point style as an image. In the
-    // port a canvas element is not a CanvasImageSource, so it draws the
-    // default circle. Its toImageSource() snapshot draws as an image.
+    // port a canvas element is no point style, so it draws the default
+    // circle. Its toImageSource() snapshot draws as an ImagePointStyle (row
+    // adapt-point-style-objects).
     List<Object?> names(_RecordingContext ctx) => [
       for (final call in ctx.getCalls()) call['name'],
     ];
@@ -888,12 +899,12 @@ void main() {
       expect(names(ctx), ['beginPath', 'arc', 'closePath', 'fill', 'stroke']);
     });
 
-    test('a CanvasImageSource draws as an image', () {
+    test('an ImagePointStyle draws as an image', () {
       final ctx = _RecordingContext();
       drawPointLegend(
         ctx,
         const _PointOptions(
-          pointStyle: _image,
+          pointStyle: ImagePointStyle(_image),
           rotation: null,
           radius: 10,
           borderWidth: 1,

@@ -9,6 +9,8 @@
 // nested scopes, the calls of the foreign audit (oracle O2) and the throws.
 
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, merge, mergeIf;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -268,7 +270,7 @@ void main() {
       PointOptionsScope point() => PointOptionsScope()
         ..radius = 3.0
         ..jsWrite('borderWidth', 2)
-        ..jsWrite('pointStyle', 'circle')
+        ..jsWrite('pointStyle', const CirclePointStyle())
         ..jsWrite('tension', 'loose');
       LineOptionsScope line() => LineOptionsScope()
         ..jsWrite('tension', 0.4)

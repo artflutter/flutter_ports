@@ -15,8 +15,12 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
+import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -30,6 +34,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/point_style_json.dart';
 
 // Upstream has no spec for src/core/core.config.js (AGENTS.md rule 3). The
 // expected values come from src/core/core.config.js at v4.5.1, with the
@@ -65,6 +70,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final String s => jsonEncode(s),
   _ when jsIsFunction(value) => '"<fn>"',
   CubicInterpolationMode() => cubicModeJson,
+  PointStyle() => pointStyleJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>
@@ -1390,7 +1396,7 @@ void main() {
           'radius': 3.0,
           'hoverRadius': 4.0,
           'pointRadius': 5.0,
-          'pointStyle': 'circle',
+          'pointStyle': const CirclePointStyle(),
           'nul': null,
           'und': undefined,
           'borderColor': 'B',
@@ -1409,7 +1415,7 @@ void main() {
       expect(
         _json(result),
         referenceColorTokens(
-          r'{"$shared":true,"radius":3,"pointStyle":"circle","nul":null,'
+          r'{"$shared":true,"radius":3,"pointStyle":"<pointStyle>","nul":null,'
           '"und":"<undefined>","missing":"<undefined>","extra":1}',
         ),
       );

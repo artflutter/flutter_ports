@@ -6,6 +6,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CirclePointStyle, ImagePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show updateBezierControlPoints;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -111,7 +113,11 @@ Object? _fromReference(Object? value) => switch (value) {
   pointImage => _image,
   final Map<String, Object?> map => <String, Object?>{
     for (final MapEntry(:key, :value) in map.entries)
-      key: _fromReference(value),
+      // The image as a point style is the image style of the test image
+      // (row `adapt-point-style-objects`).
+      key: key == 'pointStyle' && value == pointImage
+          ? const ImagePointStyle(_image)
+          : _fromReference(value),
   },
   _ => value,
 };
@@ -177,7 +183,7 @@ Map<String, Object?> _options({double radius = 5}) => {
   'borderWidth': 2,
   'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
   'backgroundColor': const ui.Color.fromRGBO(0, 0, 255, 1),
-  'pointStyle': 'circle',
+  'pointStyle': const CirclePointStyle(),
 };
 
 /// The radius of each `arc` call of [ctx].
@@ -220,7 +226,7 @@ void main() {
           for (final key in PointElement.defaults.jsKeys())
             PointElement.defaults[key],
         ],
-        [1, 1, 1, 4, 'circle', 3, 0],
+        [1, 1, 1, 4, const CirclePointStyle(), 3, 0],
       );
     });
 

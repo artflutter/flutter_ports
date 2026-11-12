@@ -8,6 +8,8 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show CirclePointStyle;
 // Not public: jsToNumber of case (c), kept for the series before phase 9.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 // Not public: jsGet of case (c), kept for the series before phase 9.
@@ -388,7 +390,7 @@ Map<String, Object?> stressChartConfig({
           'borderColor': const ui.Color(0xFF36A2EB),
           'borderWidth': 1.0,
           if (type.points) ...{
-            'pointStyle': 'circle',
+            'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
             'showLine': showLine,
             'clip': false,

@@ -93,4 +93,4 @@ export 'package:flutter_chartjs_port/src/typed/groups.dart'
         ChartTitle,
         ChartTooltip;
 export 'package:flutter_chartjs_port/src/typed/values.dart'
-    show ChartFill, ChartLength, ChartPointStyle;
+    show ChartFill, ChartLength;

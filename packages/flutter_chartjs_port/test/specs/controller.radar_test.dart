@@ -15,6 +15,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -229,7 +231,8 @@ void main() {
               'hoverRadius': 4,
               'hoverBorderWidth': 1,
               'radius': 3,
-              'pointStyle': 'circle',
+              // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+              'pointStyle': const CirclePointStyle(),
             },
           },
         },
@@ -273,7 +276,8 @@ void main() {
             'borderColor': jsGet(Chart.defaults, 'borderColor'),
             'hitRadius': 1,
             'radius': 3,
-            'pointStyle': 'circle',
+            // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+            'pointStyle': const CirclePointStyle(),
           }),
           reason: '$i',
         );
@@ -304,7 +308,8 @@ void main() {
             'borderColor': jsGet(Chart.defaults, 'borderColor'),
             'hitRadius': 1,
             'radius': 3,
-            'pointStyle': 'circle',
+            // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+            'pointStyle': const CirclePointStyle(),
           }),
           reason: '$i',
         );
@@ -385,7 +390,8 @@ void main() {
             'borderColor': const native_ui.Color.fromRGBO(56, 57, 58, 1),
             'hitRadius': 3.3,
             'radius': 22,
-            'pointStyle': 'circle',
+            // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+            'pointStyle': const CirclePointStyle(),
           }),
           reason: '$i',
         );

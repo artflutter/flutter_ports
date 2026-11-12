@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CirclePointStyle, RectPointStyle;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -62,7 +64,7 @@ Object _options(math.Random r) {
     'hoverRadius': r.nextBool() ? 4.0 : 0.0,
     'borderWidth': r.nextInt(3) == 0 ? 1.5 : 0.0,
     'rotation': 0.0,
-    'pointStyle': kind == 0 ? 'rect' : 'circle',
+    'pointStyle': kind == 0 ? const RectPointStyle() : const CirclePointStyle(),
     'backgroundColor': _colors[r.nextInt(_colors.length)],
     'borderColor': _colors[r.nextInt(_colors.length)],
   };
@@ -206,7 +208,7 @@ void main() {
       'radius': 3.0,
       'hoverRadius': 4.0,
       'borderWidth': 1.0,
-      'pointStyle': 'circle',
+      'pointStyle': const CirclePointStyle(),
       'backgroundColor': _colors[0],
       'borderColor': _colors[1],
     });
@@ -269,7 +271,7 @@ void main() {
         ..y = 40
         ..options = PointOptions(<String, Object?>{
           'radius': 3.0,
-          'pointStyle': 'circle',
+          'pointStyle': const CirclePointStyle(),
           'hoverRadius': 0.0,
           'borderWidth': 0.0,
           'backgroundColor': _colors[0],
@@ -299,7 +301,7 @@ void main() {
         ..y = 500
         ..options = PointOptions(<String, Object?>{
           'radius': 3.0,
-          'pointStyle': 'circle',
+          'pointStyle': const CirclePointStyle(),
           'hoverRadius': 0.0,
           'borderWidth': 0.0,
           'backgroundColor': _colors[0],
@@ -324,7 +326,7 @@ void main() {
     addTearDown(ctx.dispose);
     PointOptions options(Object? color) => PointOptions(<String, Object?>{
       'radius': 3.0,
-      'pointStyle': 'circle',
+      'pointStyle': const CirclePointStyle(),
       'hoverRadius': 0.0,
       'borderWidth': 0.0,
       'backgroundColor': color,

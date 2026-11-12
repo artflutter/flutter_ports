@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -931,7 +933,7 @@ Map<String, Object?> _benchConfig(
           'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
           'borderWidth': 1.0,
           if (points) ...<String, Object?>{
-            'pointStyle': 'circle',
+            'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
             'showLine': false,
             'clip': false,

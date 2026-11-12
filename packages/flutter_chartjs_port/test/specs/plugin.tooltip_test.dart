@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show IndexInteractionMode, NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -2253,7 +2255,11 @@ void main() {
             ],
             'labelColors': <Object?>[_defaultLabelColor()],
             'labelPointStyles': <Object?>[
-              <String, Object?>{'pointStyle': 'circle', 'rotation': 0},
+              <String, Object?>{
+                // DIVERGES(chartjs): adapt-point-style-objects, the style
+                // class.
+                'pointStyle': const CirclePointStyle(), 'rotation': 0,
+              },
             ],
           }),
         );

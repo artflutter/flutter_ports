@@ -246,10 +246,10 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'pointStyle',
     section: 'point-styling',
-    type: 'ChartPointStyle',
+    type: 'PointStyle',
     scriptable: true,
     indexable: true,
-    fallback: "'circle'",
+    fallback: 'CirclePointStyle()',
   ),
   DocProperty(
     'points',
@@ -491,12 +491,12 @@ DocPageContent lineChartPage() => DocPageContent(
               description: 'A line chart with a point style',
               variants: [
                 for (final (label, style) in const [
-                  ('circle', ChartPointStyle.circle),
-                  ('rect', ChartPointStyle.rect),
-                  ('rectRot', ChartPointStyle.rectRot),
-                  ('triangle', ChartPointStyle.triangle),
-                  ('star', ChartPointStyle.star),
-                  ('cross', ChartPointStyle.cross),
+                  ('circle', CirclePointStyle()),
+                  ('rect', RectPointStyle()),
+                  ('rectRot', RectRotPointStyle()),
+                  ('triangle', TrianglePointStyle()),
+                  ('star', StarPointStyle()),
+                  ('cross', CrossPointStyle()),
                 ])
                   ExampleVariant(
                     label: label,

@@ -57,21 +57,19 @@ const List<double> coreDemoUpdateDurations = [0, 400, 1000, 2000, 3000];
 const int _startCount = 12;
 
 /// The datasets of the chart: the label, the colors and the point style.
-const List<
-  ({String label, Color background, Color border, ChartPointStyle style})
->
+const List<({String label, Color background, Color border, PointStyle style})>
 _datasetStyles = [
   (
     label: 'A',
     background: Color.fromRGBO(54, 162, 235, 0.5),
     border: Color(0xFF36A2EB),
-    style: ChartPointStyle.circle,
+    style: CirclePointStyle(),
   ),
   (
     label: 'B',
     background: Color.fromRGBO(255, 99, 132, 0.5),
     border: Color(0xFFFF6384),
-    style: ChartPointStyle.rectRot,
+    style: RectRotPointStyle(),
   ),
 ];
 

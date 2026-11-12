@@ -1635,7 +1635,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4194304;
+            return 2048;
           case OptionKey.startAngle:
             return 1;
           case OptionKey.scale:
@@ -1655,7 +1655,7 @@ enum ScopeKind {
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
-            return 536870914;
+            return 2946;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
@@ -1679,7 +1679,7 @@ enum ScopeKind {
           case OptionKey.minBarLength:
             return 1;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.grouped:
             return 2;
           case OptionKey.tooltip:
@@ -1719,31 +1719,31 @@ enum ScopeKind {
           case OptionKey.pointHoverRadius:
             return 1;
           case OptionKey.borderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 1073741824;
+            return 3072;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 268435458;
+            return 2818;
           case OptionKey.segment:
             return 32;
           case OptionKey.hoverBorderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.hitRadius:
             return 1;
           case OptionKey.hoverRadius:
@@ -1751,7 +1751,7 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 2097152;
+            return 1920;
           case OptionKey.circular:
             return 2;
           case OptionKey.hoverOffset:
@@ -1957,7 +1957,7 @@ enum ScopeKind {
           case OptionKey.intersect:
             return 2;
           case OptionKey.axis:
-            return 4096;
+            return 768;
           case OptionKey.includeInvisible:
             return 2;
           default:
@@ -2000,7 +2000,7 @@ enum ScopeKind {
           case OptionKey.hitRadius:
             return 1;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.rotation:
             return 1;
           case OptionKey.drawActiveElementsOnTop:
@@ -2029,21 +2029,21 @@ enum ScopeKind {
           case OptionKey.backgroundColor:
             return 64;
           case OptionKey.borderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 1073741824;
+            return 3072;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 268435458;
+            return 2818;
           case OptionKey.fill:
             return 39;
           case OptionKey.spanGaps:
@@ -2057,13 +2057,13 @@ enum ScopeKind {
           case OptionKey.hoverBackgroundColor:
             return 64;
           case OptionKey.hoverBorderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.dollarShared:
             return 2;
           case OptionKey.dollarAnimations:
@@ -2080,7 +2080,7 @@ enum ScopeKind {
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
-            return 536870914;
+            return 2946;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
@@ -2096,7 +2096,7 @@ enum ScopeKind {
           case OptionKey.hoverBorderRadius:
             return 33;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.dollarShared:
             return 2;
           case OptionKey.dollarAnimations:
@@ -2115,13 +2115,13 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 2097152;
+            return 1920;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.offset:
@@ -2131,7 +2131,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4194304;
+            return 2048;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2196,13 +2196,13 @@ enum ScopeKind {
           case OptionKey.borderColor:
             return 64;
           case OptionKey.borderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.borderWidth:
             return 1;
           default:
@@ -2233,7 +2233,7 @@ enum ScopeKind {
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
-            return 536870914;
+            return 2946;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
@@ -2267,7 +2267,7 @@ enum ScopeKind {
           case OptionKey.minBarLength:
             return 1;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.grouped:
             return 2;
           case OptionKey.tooltip:
@@ -2330,7 +2330,7 @@ enum ScopeKind {
           case OptionKey.pointRotation:
             return 1;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.pointHoverBackgroundColor:
             return 64;
           case OptionKey.pointHoverBorderColor:
@@ -2340,21 +2340,21 @@ enum ScopeKind {
           case OptionKey.pointHoverRadius:
             return 1;
           case OptionKey.borderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 1073741824;
+            return 3072;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 268435458;
+            return 2818;
           case OptionKey.fill:
             return 39;
           case OptionKey.spanGaps:
@@ -2368,13 +2368,13 @@ enum ScopeKind {
           case OptionKey.backgroundColor:
             return 64;
           case OptionKey.hoverBorderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2445,7 +2445,7 @@ enum ScopeKind {
           case OptionKey.hitRadius:
             return 1;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.rotation:
             return 1;
           case OptionKey.drawActiveElementsOnTop:
@@ -2518,13 +2518,13 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 2097152;
+            return 1920;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.offset:
@@ -2534,7 +2534,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4194304;
+            return 2048;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2619,13 +2619,13 @@ enum ScopeKind {
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
-            return 2097152;
+            return 1920;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.offset:
@@ -2635,7 +2635,7 @@ enum ScopeKind {
           case OptionKey.spacing:
             return 1;
           case OptionKey.spacingMode:
-            return 4194304;
+            return 2048;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2724,7 +2724,7 @@ enum ScopeKind {
           case OptionKey.hitRadius:
             return 1;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.rotation:
             return 1;
           case OptionKey.drawActiveElementsOnTop:
@@ -2758,21 +2758,21 @@ enum ScopeKind {
           case OptionKey.pointHoverRadius:
             return 1;
           case OptionKey.borderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.borderDash:
             return 16;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.capBezierPoints:
             return 2;
           case OptionKey.cubicInterpolationMode:
-            return 1073741824;
+            return 3072;
           case OptionKey.tension:
             return 1;
           case OptionKey.stepped:
-            return 268435458;
+            return 2818;
           case OptionKey.fill:
             return 39;
           case OptionKey.spanGaps:
@@ -2780,13 +2780,13 @@ enum ScopeKind {
           case OptionKey.segment:
             return 32;
           case OptionKey.hoverBorderCapStyle:
-            return 1024;
+            return 512;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
-            return 2048;
+            return 640;
           case OptionKey.animation:
             return 34;
           case OptionKey.animations:
@@ -2924,9 +2924,9 @@ enum ScopeKind {
           case OptionKey.afterUpdate:
             return 8;
           case OptionKey.bounds:
-            return 16384;
+            return 1024;
           case OptionKey.position:
-            return 67108864;
+            return 2560;
           case OptionKey.stack:
             return 4;
           case OptionKey.stackWeight:
@@ -3003,13 +3003,13 @@ enum ScopeKind {
           case OptionKey.sampleSize:
             return 1;
           case OptionKey.align:
-            return 65536;
+            return 1280;
           case OptionKey.autoSkip:
             return 2;
           case OptionKey.autoSkipPadding:
             return 1;
           case OptionKey.crossAlign:
-            return 131072;
+            return 1408;
           case OptionKey.includeBounds:
             return 2;
           case OptionKey.labelOffset:
@@ -3031,7 +3031,7 @@ enum ScopeKind {
           case OptionKey.count:
             return 1;
           case OptionKey.source:
-            return 32768;
+            return 1152;
           case OptionKey.minor:
             return 32;
           default:
@@ -3099,7 +3099,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.align:
-            return 262144;
+            return 1536;
           case OptionKey.text:
             return 20;
           case OptionKey.color:
@@ -3120,7 +3120,7 @@ enum ScopeKind {
           case OptionKey.parser:
             return 14;
           case OptionKey.round:
-            return 16777218;
+            return 2306;
           case OptionKey.isoWeekday:
             return 3;
           case OptionKey.displayFormats:
@@ -3128,9 +3128,9 @@ enum ScopeKind {
           case OptionKey.tooltipFormat:
             return 4;
           case OptionKey.unit:
-            return 16777218;
+            return 2306;
           case OptionKey.minUnit:
-            return 16777216;
+            return 2304;
           default:
             return 0;
         }
@@ -3202,9 +3202,9 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.position:
-            return 67108864;
+            return 2560;
           case OptionKey.align:
-            return 262144;
+            return 1536;
           case OptionKey.maxHeight:
             return 1;
           case OptionKey.maxWidth:
@@ -3255,9 +3255,9 @@ enum ScopeKind {
           case OptionKey.sort:
             return 8;
           case OptionKey.pointStyle:
-            return 64;
+            return 3202;
           case OptionKey.textAlign:
-            return 134217728;
+            return 2688;
           case OptionKey.usePointStyle:
             return 2;
           case OptionKey.useBorderRadius:
@@ -3276,7 +3276,7 @@ enum ScopeKind {
           case OptionKey.font:
             return 32;
           case OptionKey.position:
-            return 262144;
+            return 1536;
           case OptionKey.padding:
             return 33;
           case OptionKey.text:
@@ -3287,11 +3287,11 @@ enum ScopeKind {
       case ScopeKind.titleOptions:
         switch (key) {
           case OptionKey.align:
-            return 262144;
+            return 1536;
           case OptionKey.display:
             return 2;
           case OptionKey.position:
-            return 33554432;
+            return 2432;
           case OptionKey.color:
             return 64;
           case OptionKey.font:
@@ -3316,7 +3316,7 @@ enum ScopeKind {
           case OptionKey.intersect:
             return 2;
           case OptionKey.axis:
-            return 4096;
+            return 768;
           case OptionKey.includeInvisible:
             return 2;
           case OptionKey.enabled:
@@ -3324,11 +3324,11 @@ enum ScopeKind {
           case OptionKey.external:
             return 8;
           case OptionKey.position:
-            return 512;
+            return 384;
           case OptionKey.xAlign:
-            return 524288;
+            return 1664;
           case OptionKey.yAlign:
-            return 1048576;
+            return 1792;
           case OptionKey.itemSort:
             return 8;
           case OptionKey.filter:
@@ -3346,7 +3346,7 @@ enum ScopeKind {
           case OptionKey.titleMarginBottom:
             return 1;
           case OptionKey.titleAlign:
-            return 134217728;
+            return 2688;
           case OptionKey.bodySpacing:
             return 1;
           case OptionKey.bodyColor:
@@ -3354,7 +3354,7 @@ enum ScopeKind {
           case OptionKey.bodyFont:
             return 32;
           case OptionKey.bodyAlign:
-            return 134217728;
+            return 2688;
           case OptionKey.footerSpacing:
             return 1;
           case OptionKey.footerMarginTop:
@@ -3364,7 +3364,7 @@ enum ScopeKind {
           case OptionKey.footerFont:
             return 32;
           case OptionKey.footerAlign:
-            return 134217728;
+            return 2688;
           case OptionKey.padding:
             return 33;
           case OptionKey.caretPadding:
@@ -3447,7 +3447,7 @@ enum ScopeKind {
       case ScopeKind.fillerOptions:
         switch (key) {
           case OptionKey.drawTime:
-            return 8388608;
+            return 2176;
           case OptionKey.propagate:
             return 2;
           case OptionKey.events:
@@ -3462,7 +3462,7 @@ enum ScopeKind {
           case OptionKey.threshold:
             return 1;
           case OptionKey.algorithm:
-            return 8192;
+            return 896;
           case OptionKey.samples:
             return 1;
           case OptionKey.events:

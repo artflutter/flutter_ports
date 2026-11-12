@@ -515,6 +515,17 @@ function strokeEnum(k, x) {
   }
   // The keyword forms of `stepped` and `borderSkipped` (rows
   // adapt-stepped-line-enum and adapt-border-skipped-enum).
+  // The style class of `pointStyle` (row adapt-point-style-objects).
+  const pointStyles = {
+    circle: 'CirclePointStyle()', cross: 'CrossPointStyle()', crossRot: 'CrossRotPointStyle()',
+    dash: 'DashPointStyle()', line: 'LinePointStyle()', rect: 'RectPointStyle()',
+    rectRounded: 'RectRoundedPointStyle()', rectRot: 'RectRotPointStyle()',
+    star: 'StarPointStyle()', triangle: 'TrianglePointStyle()',
+  };
+  if (k === 'pointStyle' && x in pointStyles) {
+    usesPointStyles = true;
+    return pointStyles[x];
+  }
   // The mode class of `cubicInterpolationMode` (row
   // adapt-cubic-interpolation-mode-objects).
   if (k === 'cubicInterpolationMode' && (x === 'default' || x === 'monotone')) {
@@ -540,6 +551,9 @@ let usesSteppedLines = false;
 
 /** Whether the data have a cubic interpolation mode, for the imports. */
 let usesCubicModes = false;
+
+/** Whether the data have a point style, for the imports. */
+let usesPointStyles = false;
 let usesBorderSkips = false;
 
 /** The Dart literal of a JS value. */
@@ -591,7 +605,7 @@ const out = `// Original code, not ported from Chart.js: light theme reference d
 // ${elementCases.length} element cases.
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
-${usesUndefined || usesArcEnums || usesSteppedLines || usesBorderSkips || usesCubicModes ? '\n' : ''}${usesCubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${usesBorderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${usesSteppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${usesUndefined || usesArcEnums || usesSteppedLines || usesBorderSkips || usesCubicModes || usesPointStyles ? '\n' : ''}${usesPointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${usesCubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${usesBorderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${usesSteppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = '${process.version}';
 

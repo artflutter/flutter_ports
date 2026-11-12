@@ -44,8 +44,9 @@
 # `steppedLine` and `borderSkippedEdge` (the keyword forms of the line `stepped` and the bar
 # `borderSkipped`, with `bool` in their unions; a keyword is a foreign value), `cubicInterpolationMode` (a
 # `CubicInterpolationMode`, the value of the line `cubicInterpolationMode`; a mode name is a foreign
-# value), `any` (any JS value: a color, a point
-# style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
+# value), `pointStyle` (a `PointStyle`, the value of `pointStyle`, with `bool` in its unions for
+# `false`; a style name is a foreign value), `any` (any JS value: a color, an object that
+# is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
 # array (an indexable option), `undefined` and `null` are allowed for every key.
 #
@@ -139,7 +140,7 @@ kinds:
       barThickness: number | string
       maxBarThickness: number
       minBarLength: number
-      pointStyle: any
+      pointStyle: pointStyle | bool
       grouped: bool
       tooltip: scope TooltipDatasetOptions
       type: string
@@ -333,7 +334,7 @@ kinds:
       backgroundColor: any
       radius: number
       hitRadius: number
-      pointStyle: any
+      pointStyle: pointStyle | bool
       rotation: number
       drawActiveElementsOnTop: bool
       hoverBorderWidth: number
@@ -411,7 +412,7 @@ kinds:
       hoverBorderColor: any
       hoverBackgroundColor: any
       hoverBorderRadius: number | scope BorderRadius
-      pointStyle: any  # element.bar.js:153 defaults
+      pointStyle: pointStyle | bool  # element.bar.js:153 defaults
       $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
       $animations: any  # written at core.animations.js:71 and :159
   ArcOptions:
@@ -528,7 +529,7 @@ kinds:
       barThickness: number | string
       maxBarThickness: number
       minBarLength: number
-      pointStyle: any
+      pointStyle: pointStyle | bool
       grouped: bool
       tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
       type: string  # index.d.ts:3859 ChartDatasetProperties
@@ -560,7 +561,7 @@ kinds:
       pointHitRadius: number
       pointRadius: number
       pointRotation: number
-      pointStyle: any
+      pointStyle: pointStyle | bool
       pointHoverBackgroundColor: any
       pointHoverBorderColor: any
       pointHoverBorderWidth: number
@@ -618,7 +619,7 @@ kinds:
       backgroundColor: any
       radius: number
       hitRadius: number
-      pointStyle: any
+      pointStyle: pointStyle | bool
       rotation: number
       drawActiveElementsOnTop: bool
       hoverBorderWidth: number
@@ -759,7 +760,7 @@ kinds:
       backgroundColor: any
       radius: number
       hitRadius: number
-      pointStyle: any
+      pointStyle: pointStyle | bool
       rotation: number
       drawActiveElementsOnTop: bool
       hoverBorderWidth: number
@@ -1041,7 +1042,7 @@ kinds:
       generateLabels: fn
       filter: fn
       sort: fn
-      pointStyle: any
+      pointStyle: pointStyle | bool
       textAlign: textAlign
       usePointStyle: bool
       useBorderRadius: bool

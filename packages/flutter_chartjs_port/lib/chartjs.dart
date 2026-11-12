@@ -67,10 +67,25 @@ export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 export 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
+export 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show
+        CirclePointStyle,
+        CrossPointStyle,
+        CrossRotPointStyle,
+        DashPointStyle,
+        ImagePointStyle,
+        LinePointStyle,
+        RectPointStyle,
+        RectRotPointStyle,
+        RectRoundedPointStyle,
+        StarPointStyle,
+        TrianglePointStyle;
 export 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 export 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
+export 'package:flutter_chartjs_port/src/helpers/point_style.dart'
+    show PathPointStyle, PointStyle;
 export 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 export 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart'

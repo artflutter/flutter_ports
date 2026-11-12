@@ -8,6 +8,8 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show ImagePointStyle;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
@@ -56,7 +58,8 @@ Map<String, Object?> fixture() {
             // the canvas element. The canvas layer draws an image source:
             // the snapshot of the bitmap, which does not change after this
             // line (FR section 4.1 rule 7).
-            'pointStyle': imageCanvas.toImageSource(),
+            // DIVERGES(chartjs): adapt-point-style-objects, the image style.
+            'pointStyle': ImagePointStyle(imageCanvas.toImageSource()),
             'rotation': <Object?>[0, 45, 90, 135, 180, 225, 270, 315],
           },
         },

@@ -7,24 +7,37 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
+    show
+        CirclePointStyle,
+        CrossPointStyle,
+        CrossRotPointStyle,
+        DashPointStyle,
+        LinePointStyle,
+        RectPointStyle,
+        RectRotPointStyle,
+        RectRoundedPointStyle,
+        StarPointStyle,
+        TrianglePointStyle;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   CanvasGradient? gradient;
 
+  // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
   final datasets =
-      <Object?>[
-        'circle',
-        'cross',
-        'crossRot',
-        'dash',
-        'line',
-        'rect',
-        'rectRounded',
-        'rectRot',
-        'star',
-        'triangle',
+      const <Object?>[
+        CirclePointStyle(),
+        CrossPointStyle(),
+        CrossRotPointStyle(),
+        DashPointStyle(),
+        LinePointStyle(),
+        RectPointStyle(),
+        RectRoundedPointStyle(),
+        RectRotPointStyle(),
+        StarPointStyle(),
+        TrianglePointStyle(),
         false,
       ].indexed.map((entry) {
         final (y, style) = entry;

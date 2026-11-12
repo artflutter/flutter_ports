@@ -144,7 +144,7 @@ void main() {
     expect((state.points.first.options! as JsObjectFace)['hitRadius'], 1);
     expect(
       (state.points.first.options! as JsObjectFace)['pointStyle'],
-      'triangle',
+      const TrianglePointStyle(),
     );
     expect((line.options! as JsObjectFace)['capBezierPoints'], isTrue);
     expect(
@@ -228,10 +228,10 @@ void main() {
     expect((state.arcs.first.options! as JsObjectFace)['hoverOffset'], 26);
 
     final choices = <(String, Object, Object? Function())>[
-      ('pointStyle', 'star', () => state.points.first.options),
-      ('stepped', 'middle', () => state.line!.options),
+      ('pointStyle', const StarPointStyle(), () => state.points.first.options),
+      ('stepped', SteppedLine.middle, () => state.line!.options),
       ('stepped', false, () => state.line!.options),
-      ('stepped', 'before', () => state.line!.options),
+      ('stepped', SteppedLine.before, () => state.line!.options),
       ('borderAlign', ArcBorderAlign.inner, () => state.arcs.first.options),
       (
         'borderJoinStyle',
@@ -244,6 +244,7 @@ void main() {
       final text = switch (value) {
         Undefined() => 'undefined',
         final Enum value => value.name,
+        StarPointStyle() => 'star',
         _ => '$value',
       };
       final key = 'elements.$name.$text';

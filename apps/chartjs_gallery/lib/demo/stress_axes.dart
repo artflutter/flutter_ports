@@ -18,7 +18,8 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show Chart, CirclePointStyle;
 
 /// The scale types of the stress mode `axes`.
 ///
@@ -165,7 +166,7 @@ Map<String, Object?> stressAxesConfig({
         'backgroundColor': stressChartBackground,
         'borderColor': const ui.Color(0xFF36A2EB),
         'borderWidth': 1.0,
-        'pointStyle': 'circle',
+        'pointStyle': const CirclePointStyle(),
         'radius': 3.0,
         'showLine': false,
         'clip': false,

@@ -88,21 +88,22 @@ class CanvasDemo extends StatelessWidget {
 
 // Point styles.
 
-/// The point styles of `PointStyle` (index.d.ts:2040), `false`, and an
-/// image.
-const List<String> pointStyleNames = [
-  'circle',
-  'cross',
-  'crossRot',
-  'dash',
-  'line',
-  'rect',
-  'rectRounded',
-  'rectRot',
-  'star',
-  'triangle',
-  'false',
-  'image',
+/// The point styles of the demo with their labels: the ten style classes of
+/// the port, `false`, and an image (Dart `null` here: the card makes the
+/// image).
+const List<(String, Object?)> pointStyleChoices = [
+  ('circle', CirclePointStyle()),
+  ('cross', CrossPointStyle()),
+  ('crossRot', CrossRotPointStyle()),
+  ('dash', DashPointStyle()),
+  ('line', LinePointStyle()),
+  ('rect', RectPointStyle()),
+  ('rectRounded', RectRoundedPointStyle()),
+  ('rectRot', RectRotPointStyle()),
+  ('star', StarPointStyle()),
+  ('triangle', TrianglePointStyle()),
+  ('false', false),
+  ('image', null),
 ];
 
 class _PointStylesCard extends StatefulWidget {
@@ -113,7 +114,7 @@ class _PointStylesCard extends StatefulWidget {
 }
 
 class _PointStylesCardState extends State<_PointStylesCard> {
-  final Set<String> _on = {...pointStyleNames};
+  final Set<String> _on = {for (final (name, _) in pointStyleChoices) name};
   double _radius = 14;
   double _rotation = 0;
   double _borderWidth = 2;
@@ -138,7 +139,11 @@ class _PointStylesCardState extends State<_PointStylesCard> {
       ..lineWidth = 2.5;
     drawPoint(
       ctx,
-      const PointOptions(pointStyle: 'star', radius: 9, borderWidth: 2.5),
+      const PointOptions(
+        pointStyle: StarPointStyle(),
+        radius: 9,
+        borderWidth: 2.5,
+      ),
       16,
       16,
     );
@@ -153,16 +158,10 @@ class _PointStylesCardState extends State<_PointStylesCard> {
     super.dispose();
   }
 
-  Object? _style(String name) => switch (name) {
-    'false' => false,
-    'image' => _image,
-    _ => name,
-  };
-
   void _draw(DemoChart chart, CanvasRenderingContext2D ctx) {
     final styles = [
-      for (final name in pointStyleNames)
-        if (_on.contains(name)) name,
+      for (final (name, style) in pointStyleChoices)
+        if (_on.contains(name)) (name, style ?? ImagePointStyle(_image)),
     ];
     final (columns, cellWidth) = _grid(chart.width);
     const cellHeight = _cellHeight;
@@ -181,7 +180,7 @@ class _PointStylesCardState extends State<_PointStylesCard> {
       drawPointLegend(
         ctx,
         PointOptions(
-          pointStyle: _style(styles[i]),
+          pointStyle: styles[i].$2,
           radius: _radius,
           borderWidth: _borderWidth,
           rotation: _rotation,
@@ -190,7 +189,7 @@ class _PointStylesCardState extends State<_PointStylesCard> {
         y,
         _w > 0 ? _w : null,
       );
-      drawCaption(ctx, styles[i], x, top + cellHeight - 6);
+      drawCaption(ctx, styles[i].$1, x, top + cellHeight - 6);
     }
   }
 
@@ -214,7 +213,7 @@ class _PointStylesCardState extends State<_PointStylesCard> {
         children: [
           ToggleChips(
             toggles: [
-              for (final name in pointStyleNames)
+              for (final (name, _) in pointStyleChoices)
                 (
                   key: 'canvas.style.$name',
                   label: name,
@@ -622,7 +621,11 @@ class _LinesCardState extends State<_LinesCard> {
       for (final point in points) {
         drawPoint(
           ctx,
-          const PointOptions(pointStyle: 'circle', radius: 3.5, borderWidth: 2),
+          const PointOptions(
+            pointStyle: CirclePointStyle(),
+            radius: 3.5,
+            borderWidth: 2,
+          ),
           point.x,
           point.y,
         );
