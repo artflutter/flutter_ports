@@ -41,6 +41,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -1470,11 +1472,13 @@ abstract interface class TooltipModel implements Element {
   /// index.d.ts:2652 `dataPoints`: the tooltip items, plain objects.
   List<Object?>? get dataPoints;
 
-  /// index.d.ts:2655 `xAlign`.
-  String? get xAlign;
+  /// index.d.ts:2655 `xAlign`, a [TooltipXAlign] (row
+  /// `adapt-tooltip-align-enums`).
+  TooltipXAlign? get xAlign;
 
-  /// index.d.ts:2656 `yAlign`.
-  String? get yAlign;
+  /// index.d.ts:2656 `yAlign`, a [TooltipYAlign] (row
+  /// `adapt-tooltip-align-enums`).
+  TooltipYAlign? get yAlign;
 
   /// index.d.ts:2661 `width`.
   double get width;

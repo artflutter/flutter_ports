@@ -39,6 +39,8 @@ const Map<String, int> shapeAtoms = {
   'tickAlign': 65536,
   'tickCrossAlign': 131072,
   'chartAlign': 262144,
+  'tooltipXAlign': 524288,
+  'tooltipYAlign': 1048576,
 };
 
 /// A typed atom: a key with this one atom holds a value of the Dart type
@@ -95,6 +97,16 @@ const Map<String, TypedAtom> typedAtoms = {
   ),
   'chartAlign': (
     type: 'ChartAlign',
+    uri: 'package:flutter_chartjs_port/src/types/align.dart',
+    field: null,
+  ),
+  'tooltipXAlign': (
+    type: 'TooltipXAlign',
+    uri: 'package:flutter_chartjs_port/src/types/align.dart',
+    field: null,
+  ),
+  'tooltipYAlign': (
+    type: 'TooltipYAlign',
     uri: 'package:flutter_chartjs_port/src/types/align.dart',
     field: null,
   ),

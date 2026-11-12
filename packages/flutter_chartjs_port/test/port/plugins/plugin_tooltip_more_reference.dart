@@ -11,6 +11,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart';
 
 /// The Node.js version that generated the data.
 const String pluginTooltipMoreReferenceNode = 'v24.22.1';
@@ -1412,8 +1413,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 79.6,
               'caretX': 260.25537109375,
               'caretY': 141.8166666666667,
-              'xAlign': 'right',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.right,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>['Mar'],
               'beforeBody': <Object?>[],
               'body': <Object?>[
@@ -2657,8 +2658,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 46.8,
               'caretX': 173.28725426057755,
               'caretY': 226.89892622256133,
-              'xAlign': 'left',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.left,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>['Green'],
               'beforeBody': <Object?>[],
               'body': <Object?>[
@@ -3480,8 +3481,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 46.8,
               'caretX': 232.73576026305176,
               'caretY': 147.1,
-              'xAlign': 'right',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.right,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>['Red'],
               'beforeBody': <Object?>[],
               'body': <Object?>[
@@ -4620,8 +4621,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 26.4,
               'caretX': 175.87421875,
               'caretY': 32.0,
-              'xAlign': 'left',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.left,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>[],
               'beforeBody': <Object?>[],
               'body': <Object?>[
@@ -6407,8 +6408,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 63.199999999999996,
               'caretX': 147.45279947916666,
               'caretY': 186.02857142857144,
-              'xAlign': 'left',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.left,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>['Feb'],
               'beforeBody': <Object?>[],
               'body': <Object?>[
@@ -8679,8 +8680,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 46.8,
               'caretX': 147.45279947916666,
               'caretY': 203.14285714285717,
-              'xAlign': 'left',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.left,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>['Feb'],
               'beforeBody': <Object?>[],
               'body': <Object?>[
@@ -10948,8 +10949,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 79.6,
               'caretX': 147.45279947916666,
               'caretY': 191.73333333333335,
-              'xAlign': 'left',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.left,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>['Feb'],
               'beforeBody': <Object?>[],
               'body': <Object?>[
@@ -14125,8 +14126,8 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'height': 63.199999999999996,
               'caretX': 147.45279947916666,
               'caretY': 169.0,
-              'xAlign': 'left',
-              'yAlign': 'center',
+              'xAlign': TooltipXAlign.left,
+              'yAlign': TooltipYAlign.center,
               'title': <Object?>['Feb'],
               'beforeBody': <Object?>[],
               'body': <Object?>[

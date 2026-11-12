@@ -9,7 +9,9 @@
 /// `InteractionAxis`, and the scale options `bounds`, `ticks.source`,
 /// `ticks.align` and `ticks.crossAlign` hold the enums of
 /// `scale_option_enums.dart`, and the `align` of a box holds a `ChartAlign`
-/// (row `adapt-chart-align-enum`). Upstream data hold a keyword in that place.
+/// (row `adapt-chart-align-enum`), and the `xAlign` and `yAlign` of the
+/// tooltip hold a `TooltipXAlign` and a `TooltipYAlign` (row
+/// `adapt-tooltip-align-enums`). Upstream data hold a keyword in that place.
 /// The names of the enum values are the keywords, so a test compares the
 /// name of the value with the upstream text: [keywordJson] gives it as JSON.
 library;
@@ -20,7 +22,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show ChartAlign, TooltipXAlign, TooltipYAlign;
 
 /// Whether [value] is a value of an enum whose names are upstream keywords.
 bool isKeywordEnum(Object? value) =>
@@ -31,7 +34,9 @@ bool isKeywordEnum(Object? value) =>
     value is TickSource ||
     value is TickAlign ||
     value is TickCrossAlign ||
-    value is ChartAlign;
+    value is ChartAlign ||
+    value is TooltipXAlign ||
+    value is TooltipYAlign;
 
 /// The JSON text of the enum value [value]: the upstream keyword, the name
 /// of the value, as a JSON string.

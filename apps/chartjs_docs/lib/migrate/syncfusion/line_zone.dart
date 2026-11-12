@@ -115,8 +115,8 @@ final ChartConfig _config = ChartConfig(
     backgroundColor: _tooltip,
     displayColors: false,
     labelText: _tooltipLabel,
+    yAlign: .bottom,
     extra: {
-      'yAlign': 'bottom',
       'callbacks': {'title': _noTitle},
     },
   ),

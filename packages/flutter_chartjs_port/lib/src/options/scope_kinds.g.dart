@@ -3339,9 +3339,9 @@ enum ScopeKind {
           case OptionKey.position:
             return 512;
           case OptionKey.xAlign:
-            return 4;
+            return 524288;
           case OptionKey.yAlign:
-            return 4;
+            return 1048576;
           case OptionKey.itemSort:
             return 8;
           case OptionKey.filter:

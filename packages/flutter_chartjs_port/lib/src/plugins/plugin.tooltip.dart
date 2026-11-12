@@ -90,6 +90,8 @@ import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show TooltipOptions, optionOf;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -440,15 +442,15 @@ double _lengthOf(Object? list) =>
 /// 0003).
 ///
 /// `x` and `y` are the `ToNumber` of the position coordinates, which each
-/// upstream operator applies. `xAlign` and `yAlign` are the raw values of
-/// the position.
+/// upstream operator applies. `xAlign` and `yAlign` are the aligns of the
+/// position, Dart `null` when it has none (row `adapt-tooltip-align-enums`).
 typedef _PositionAndSize = ({
   double x,
   double y,
   double width,
   double height,
-  Object? xAlign,
-  Object? yAlign,
+  TooltipXAlign? xAlign,
+  TooltipYAlign? yAlign,
 });
 
 /// `Object.assign({}, position, size)` (plugin.tooltip.js:661, :1017).
@@ -468,38 +470,45 @@ _PositionAndSize _positionAndSize(
     y: copies ? jsToNumber(_readY(position)) : double.nan,
     width: size.width,
     height: size.height,
-    xAlign: copies ? _readAlign(position, OptionKey.xAlign) : undefined,
-    yAlign: copies ? _readAlign(position, OptionKey.yAlign) : undefined,
+    xAlign: copies ? _readXAlign(position) : null,
+    yAlign: copies ? _readYAlign(position) : null,
   );
 }
 
-/// The JS read `position.xAlign` or `position.yAlign` ([key]) of a
-/// position: a [TooltipPosition] gives its field, a [Point] has neither
-/// key, and another value (the result of a positioner of user code) gives
-/// the read by name.
-Object? _readAlign(Object? position, OptionKey key) => switch (position) {
-  final TooltipPosition typed =>
-    key == OptionKey.xAlign ? typed.xAlign : typed.yAlign,
-  Point() => undefined,
-  _ => jsGet(position, key.jsName),
+/// The JS read `position.xAlign` of a position: a [TooltipPosition] gives
+/// its field, a [Point] has no key, and another value gives the align of
+/// its read by name (row `adapt-tooltip-align-enums`).
+// DIVERGES(chartjs): adapt-tooltip-align-enums, the enum value.
+TooltipXAlign? _readXAlign(Object? position) => switch (position) {
+  final TooltipPosition typed => typed.xAlign,
+  Point() => null,
+  _ => TooltipXAlign.of(jsGet(position, 'xAlign')),
+};
+
+/// The JS read `position.yAlign`, as [_readXAlign] reads `xAlign`.
+TooltipYAlign? _readYAlign(Object? position) => switch (position) {
+  final TooltipPosition typed => typed.yAlign,
+  Point() => null,
+  _ => TooltipYAlign.of(jsGet(position, 'yAlign')),
 };
 
 /// plugin.tooltip.js:223 `determineYAlign(chart, size)`.
-String _determineYAlign(types.Chart chart, _PositionAndSize size) {
+// DIVERGES(chartjs): adapt-tooltip-align-enums, the enum value.
+TooltipYAlign _determineYAlign(types.Chart chart, _PositionAndSize size) {
   final (:y, :height, x: _, width: _, xAlign: _, yAlign: _) = size;
 
   if (y < height / 2) {
-    return 'top';
+    return TooltipYAlign.top;
   } else if (y > (chart.height - height / 2)) {
-    return 'bottom';
+    return TooltipYAlign.bottom;
   }
-  return 'center';
+  return TooltipYAlign.center;
 }
 
 /// plugin.tooltip.js:234 `doesNotFitWithAlign(xAlign, chart, options,
 /// size)`. Upstream returns `true` or `undefined`: here `true` or `false`.
 bool _doesNotFitWithAlign(
-  Object? xAlign,
+  TooltipXAlign xAlign,
   types.Chart chart,
   TooltipOptions options,
   _PositionAndSize size,
@@ -507,11 +516,11 @@ bool _doesNotFitWithAlign(
   final (:x, :width, y: _, height: _, xAlign: _, yAlign: _) = size;
   final caret =
       jsToNumber(options.caretSize) + jsToNumber(options.caretPadding);
-  if (xAlign == 'left' && x + width + caret > chart.width) {
+  if (xAlign == TooltipXAlign.left && x + width + caret > chart.width) {
     return true;
   }
 
-  if (xAlign == 'right' && x - width - caret < 0) {
+  if (xAlign == TooltipXAlign.right && x - width - caret < 0) {
     return true;
   }
   return false;
@@ -521,27 +530,27 @@ bool _doesNotFitWithAlign(
 ///
 /// A chart without a chart area throws the [TypeError] of the null check,
 /// as the destructuring of `undefined` throws.
-String _determineXAlign(
+TooltipXAlign _determineXAlign(
   types.Chart chart,
   TooltipOptions options,
   _PositionAndSize size,
-  Object? yAlign,
+  TooltipYAlign yAlign,
 ) {
   final (:x, :width, y: _, height: _, xAlign: _, yAlign: _) = size;
   final chartWidth = chart.width;
   final ChartArea(:left, :right) = chart.chartArea!;
-  var xAlign = 'center';
+  var xAlign = TooltipXAlign.center;
 
-  if (yAlign == 'center') {
-    xAlign = x <= (left + right) / 2 ? 'left' : 'right';
+  if (yAlign == TooltipYAlign.center) {
+    xAlign = x <= (left + right) / 2 ? TooltipXAlign.left : TooltipXAlign.right;
   } else if (x <= width / 2) {
-    xAlign = 'left';
+    xAlign = TooltipXAlign.left;
   } else if (x >= chartWidth - width / 2) {
-    xAlign = 'right';
+    xAlign = TooltipXAlign.right;
   }
 
   if (_doesNotFitWithAlign(xAlign, chart, options, size)) {
-    xAlign = 'center';
+    xAlign = TooltipXAlign.center;
   }
 
   return xAlign;
@@ -551,47 +560,48 @@ String _determineXAlign(
 ///
 /// Helper to get the alignment of a tooltip given the size
 ///
-/// The `||` chains apply ToBoolean to the raw values ([jsTruthy]), so a
-/// positioner result and the options can give any value.
-({Object? xAlign, Object? yAlign}) _determineAlignment(
+/// The `||` chains take the first align that is present: an align of the
+/// position, of the options, else the align that the tooltip finds. A
+/// value that is not an align is Dart `null` (row
+/// `adapt-tooltip-align-enums`), as a falsy value falls through upstream.
+// DIVERGES(chartjs): adapt-tooltip-align-enums, the enum values.
+({TooltipXAlign xAlign, TooltipYAlign yAlign}) _determineAlignment(
   types.Chart chart,
   TooltipOptions options,
   _PositionAndSize size,
 ) {
-  final yAlign = _or(
-    _or(size.yAlign, () => options.yAlign),
-    () => _determineYAlign(chart, size),
-  );
+  final yAlign = size.yAlign ?? options.yAlign ?? _determineYAlign(chart, size);
 
   return (
-    xAlign: _or(
-      _or(size.xAlign, () => options.xAlign),
-      () => _determineXAlign(chart, options, size, yAlign),
-    ),
+    xAlign:
+        size.xAlign ??
+        options.xAlign ??
+        _determineXAlign(chart, options, size, yAlign),
     yAlign: yAlign,
   );
 }
 
-/// The JS operator `a || b`: [a] when it is truthy, else the result of [b].
-Object? _or(Object? a, Object? Function() b) => jsTruthy(a) ? a : b();
-
 /// plugin.tooltip.js:278 `alignX(size, xAlign)`.
-double _alignX(_PositionAndSize size, Object? xAlign) {
+double _alignX(_PositionAndSize size, TooltipXAlign xAlign) {
   var (:x, :width, y: _, height: _, xAlign: _, yAlign: _) = size;
-  if (xAlign == 'right') {
+  if (xAlign == TooltipXAlign.right) {
     x -= width;
-  } else if (xAlign == 'center') {
+  } else if (xAlign == TooltipXAlign.center) {
     x -= width / 2;
   }
   return x;
 }
 
 /// plugin.tooltip.js:288 `alignY(size, yAlign, paddingAndSize)`.
-double _alignY(_PositionAndSize size, Object? yAlign, double paddingAndSize) {
+double _alignY(
+  _PositionAndSize size,
+  TooltipYAlign yAlign,
+  double paddingAndSize,
+) {
   var (:y, :height, x: _, width: _, xAlign: _, yAlign: _) = size;
-  if (yAlign == 'top') {
+  if (yAlign == TooltipYAlign.top) {
     y += paddingAndSize;
-  } else if (yAlign == 'bottom') {
+  } else if (yAlign == TooltipYAlign.bottom) {
     y -= height + paddingAndSize;
   } else {
     y -= height / 2;
@@ -607,7 +617,7 @@ double _alignY(_PositionAndSize size, Object? yAlign, double paddingAndSize) {
 ({double x, double y}) _getBackgroundPoint(
   TooltipOptions options,
   _PositionAndSize size,
-  ({Object? xAlign, Object? yAlign}) alignment,
+  ({TooltipXAlign xAlign, TooltipYAlign yAlign}) alignment,
   types.Chart chart,
 ) {
   final caretSize = jsToNumber(options.caretSize);
@@ -621,15 +631,15 @@ double _alignY(_PositionAndSize size, Object? yAlign, double paddingAndSize) {
   var x = _alignX(size, xAlign);
   final y = _alignY(size, yAlign, paddingAndSize);
 
-  if (yAlign == 'center') {
-    if (xAlign == 'left') {
+  if (yAlign == TooltipYAlign.center) {
+    if (xAlign == TooltipXAlign.left) {
       x += paddingAndSize;
-    } else if (xAlign == 'right') {
+    } else if (xAlign == TooltipXAlign.right) {
       x -= paddingAndSize;
     }
-  } else if (xAlign == 'left') {
+  } else if (xAlign == TooltipXAlign.left) {
     x -= jsMax(topLeft, bottomLeft) + caretSize;
-  } else if (xAlign == 'right') {
+  } else if (xAlign == TooltipXAlign.right) {
     x += jsMax(topRight, bottomRight) + caretSize;
   }
 
@@ -1054,8 +1064,8 @@ class Tooltip extends Element implements types.TooltipModel {
   double? _height;
   double? _caretX;
   double? _caretY;
-  String? _xAlign;
-  String? _yAlign;
+  TooltipXAlign? _xAlign;
+  TooltipYAlign? _yAlign;
   List<Object?>? _dataPoints;
   List<Object?>? _title;
   List<Object?>? _beforeBody;
@@ -1124,15 +1134,15 @@ class Tooltip extends Element implements types.TooltipModel {
 
   /// plugin.tooltip.js:483 `xAlign`. Dart `null` for JS `undefined`.
   @override
-  String? get xAlign => _xAlign;
+  TooltipXAlign? get xAlign => _xAlign;
 
-  set xAlign(String value) => _xAlign = value;
+  set xAlign(TooltipXAlign value) => _xAlign = value;
 
   /// plugin.tooltip.js:484 `yAlign`. Dart `null` for JS `undefined`.
   @override
-  String? get yAlign => _yAlign;
+  TooltipYAlign? get yAlign => _yAlign;
 
-  set yAlign(String value) => _yAlign = value;
+  set yAlign(TooltipYAlign value) => _yAlign = value;
 
   /// plugin.tooltip.js:477 `dataPoints`, the tooltip items. Dart `null` for
   /// JS `undefined`.
@@ -1552,8 +1562,8 @@ class Tooltip extends Element implements types.TooltipModel {
         chart,
       );
 
-      _xAlign = toObjectProp<String>('xAlign', alignment.xAlign);
-      _yAlign = toObjectProp<String>('yAlign', alignment.yAlign);
+      _xAlign = alignment.xAlign;
+      _yAlign = alignment.yAlign;
 
       properties = <String, Object?>{
         'opacity': 1.0,
@@ -1629,10 +1639,10 @@ class Tooltip extends Element implements types.TooltipModel {
     double y2;
     double y3;
 
-    if (yAlign == 'center') {
+    if (yAlign == TooltipYAlign.center) {
       y2 = ptY + (height / 2);
 
-      if (xAlign == 'left') {
+      if (xAlign == TooltipXAlign.left) {
         x1 = ptX;
         x2 = x1 - caretSize;
 
@@ -1650,15 +1660,15 @@ class Tooltip extends Element implements types.TooltipModel {
 
       x3 = x1;
     } else {
-      if (xAlign == 'left') {
+      if (xAlign == TooltipXAlign.left) {
         x2 = ptX + jsMax(topLeft, bottomLeft) + caretSize;
-      } else if (xAlign == 'right') {
+      } else if (xAlign == TooltipXAlign.right) {
         x2 = ptX + width - jsMax(topRight, bottomRight) - caretSize;
       } else {
         x2 = caretX;
       }
 
-      if (yAlign == 'top') {
+      if (yAlign == TooltipYAlign.top) {
         y1 = ptY;
         y2 = y1 - caretSize;
 
@@ -2003,13 +2013,13 @@ class Tooltip extends Element implements types.TooltipModel {
       ..lineWidth = canvasNumber(options.borderWidth)
       ..beginPath()
       ..moveTo(x + topLeft, y);
-    if (yAlign == 'top') {
+    if (yAlign == TooltipYAlign.top) {
       drawCaret(caretPoint, ctx, tooltipSize, options);
     }
     ctx
       ..lineTo(x + width - topRight, y)
       ..quadraticCurveTo(x + width, y, x + width, y + topRight);
-    if (yAlign == 'center' && xAlign == 'right') {
+    if (yAlign == TooltipYAlign.center && xAlign == TooltipXAlign.right) {
       drawCaret(caretPoint, ctx, tooltipSize, options);
     }
     ctx
@@ -2020,13 +2030,13 @@ class Tooltip extends Element implements types.TooltipModel {
         x + width - bottomRight,
         y + height,
       );
-    if (yAlign == 'bottom') {
+    if (yAlign == TooltipYAlign.bottom) {
       drawCaret(caretPoint, ctx, tooltipSize, options);
     }
     ctx
       ..lineTo(x + bottomLeft, y + height)
       ..quadraticCurveTo(x, y + height, x, y + height - bottomLeft);
-    if (yAlign == 'center' && xAlign == 'left') {
+    if (yAlign == TooltipYAlign.center && xAlign == TooltipXAlign.left) {
       drawCaret(caretPoint, ctx, tooltipSize, options);
     }
     ctx
@@ -2067,8 +2077,8 @@ class Tooltip extends Element implements types.TooltipModel {
       );
       if (!_strictEquals(animX!.to, point.x) ||
           !_strictEquals(animY!.to, point.y)) {
-        _xAlign = toObjectProp<String>('xAlign', alignment.xAlign);
-        _yAlign = toObjectProp<String>('yAlign', alignment.yAlign);
+        _xAlign = alignment.xAlign;
+        _yAlign = alignment.yAlign;
         _width = size.width;
         _height = size.height;
         _caretX = toNumberProp('caretX', _readX(position));
@@ -2387,10 +2397,11 @@ class Tooltip extends Element implements types.TooltipModel {
         _caretX = toNumberProp(prop, value);
       case 'caretY':
         _caretY = toNumberProp(prop, value);
+      // DIVERGES(chartjs): adapt-tooltip-align-enums, the enum value.
       case 'xAlign':
-        _xAlign = toObjectProp<String>(prop, value);
+        _xAlign = toObjectProp<TooltipXAlign>(prop, value);
       case 'yAlign':
-        _yAlign = toObjectProp<String>(prop, value);
+        _yAlign = toObjectProp<TooltipYAlign>(prop, value);
       case 'title':
         _title = toObjectProp<List<Object?>>(prop, value);
       case 'beforeBody':

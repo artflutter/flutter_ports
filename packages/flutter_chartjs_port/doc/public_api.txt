@@ -95,6 +95,8 @@ TooltipDrawHookArgs
 TooltipModel
 TooltipPosition
 TooltipPositioner
+TooltipXAlign
+TooltipYAlign
 Undefined
 UpdateHookArgs
 VisualElement
@@ -296,6 +298,8 @@ TooltipDrawHookArgs
 TooltipModel
 TooltipPosition
 TooltipPositioner
+TooltipXAlign
+TooltipYAlign
 Undefined
 UpdateHookArgs
 VisibleAnimation

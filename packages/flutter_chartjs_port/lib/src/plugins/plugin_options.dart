@@ -31,7 +31,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show ChartAlign, TooltipXAlign, TooltipYAlign;
 
 /// The option [key] of the options object [options]: `options[key]`, the
 /// shared typed read [readOption] of `helpers.config.dart`.
@@ -315,10 +316,12 @@ extension type const TooltipOptions(Object? object) {
   Object? get usePointStyle => optionOf(object, OptionKey.usePointStyle);
 
   /// `xAlign`.
-  Object? get xAlign => optionOf(object, OptionKey.xAlign);
+  TooltipXAlign? get xAlign =>
+      TooltipXAlign.of(optionOf(object, OptionKey.xAlign));
 
   /// `yAlign`.
-  Object? get yAlign => optionOf(object, OptionKey.yAlign);
+  TooltipYAlign? get yAlign =>
+      TooltipYAlign.of(optionOf(object, OptionKey.yAlign));
 }
 
 /// `FillerOptions` (`index.d.ts`): the options of the filler plugin

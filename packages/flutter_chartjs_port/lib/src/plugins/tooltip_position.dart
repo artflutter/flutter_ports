@@ -14,6 +14,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -78,7 +80,9 @@ abstract class TooltipPositioner {
 /// `TooltipPosition` (`index.d.ts`): the position `{x, y}` of a built-in
 /// positioner (plugin.tooltip.js:53, :90) and the event position `{x, y}`
 /// of `handleEvent` (:1173), with the optional `xAlign` and `yAlign` of a
-/// position. Each field holds any JS value.
+/// position. `x` and `y` hold any JS value; `xAlign` and `yAlign` hold a
+/// [TooltipXAlign] and a [TooltipYAlign] (row `adapt-tooltip-align-enums`).
+/// A write by name of another value keeps it in the foreign slot.
 final class TooltipPosition extends TypedRecord {
   /// An object without own keys.
   TooltipPosition();
@@ -106,9 +110,9 @@ final class TooltipPosition extends TypedRecord {
 
   Object? _y;
 
-  Object? _xAlign;
+  TooltipXAlign? _xAlign;
 
-  Object? _yAlign;
+  TooltipYAlign? _yAlign;
 
   /// `x`, or [undefined] when absent.
   Object? get x => hasSlot(0) ? _x : undefined;
@@ -126,18 +130,18 @@ final class TooltipPosition extends TypedRecord {
     touchSlot(1);
   }
 
-  /// `xAlign`, or [undefined] when absent.
-  Object? get xAlign => hasSlot(2) ? _xAlign : undefined;
+  /// `xAlign`, or Dart `null` when absent.
+  TooltipXAlign? get xAlign => _xAlign;
 
-  set xAlign(Object? value) {
+  set xAlign(TooltipXAlign? value) {
     _xAlign = value;
     touchSlot(2);
   }
 
-  /// `yAlign`, or [undefined] when absent.
-  Object? get yAlign => hasSlot(3) ? _yAlign : undefined;
+  /// `yAlign`, or Dart `null` when absent.
+  TooltipYAlign? get yAlign => _yAlign;
 
-  set yAlign(Object? value) {
+  set yAlign(TooltipYAlign? value) {
     _yAlign = value;
     touchSlot(3);
   }
@@ -158,8 +162,16 @@ final class TooltipPosition extends TypedRecord {
       case 1:
         _y = value;
       case 2:
+        if (value is! TooltipXAlign?) {
+          _xAlign = null;
+          return false;
+        }
         _xAlign = value;
       default:
+        if (value is! TooltipYAlign?) {
+          _yAlign = null;
+          return false;
+        }
         _yAlign = value;
     }
     return true;

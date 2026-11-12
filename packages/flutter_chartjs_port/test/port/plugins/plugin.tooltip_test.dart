@@ -33,6 +33,8 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart'
+    show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -178,8 +180,8 @@ final class _CustomPositioner extends TooltipPositioner {
     return TooltipPosition()
       ..x = area.left + 20
       ..y = eventPosition is Point ? eventPosition.y : jsGet(eventPosition, 'y')
-      ..xAlign = 'left'
-      ..yAlign = 'top';
+      ..xAlign = TooltipXAlign.left
+      ..yAlign = TooltipYAlign.top;
   }
 }
 
@@ -827,8 +829,8 @@ void main() {
         'height': 20.0,
         'caretX': 1.0,
         'caretY': 2.0,
-        'xAlign': 'left',
-        'yAlign': 'top',
+        'xAlign': TooltipXAlign.left,
+        'yAlign': TooltipYAlign.top,
         'title': list,
         'beforeBody': list,
         'body': list,
@@ -985,8 +987,8 @@ void main() {
       expect(args, [true, 150]);
       expect(t.caretX, 10);
       expect(t.caretY, 20);
-      expect(t.xAlign, 'left');
-      expect(t.yAlign, 'top');
+      expect(t.xAlign, TooltipXAlign.left);
+      expect(t.yAlign, TooltipYAlign.top);
     });
 
     testWidgets('a result with xAlign and yAlign sets the alignment', (
@@ -1000,15 +1002,15 @@ void main() {
             (tooltip, items, eventPosition) => TooltipPosition()
               ..x = 100
               ..y = 100
-              ..xAlign = 'right'
-              ..yAlign = 'bottom',
+              ..xAlign = TooltipXAlign.right
+              ..yAlign = TooltipYAlign.bottom,
           ),
         }),
       );
       _activate(chart);
       final t = _tooltipOf(chart);
-      expect(t.xAlign, 'right');
-      expect(t.yAlign, 'bottom');
+      expect(t.xAlign, TooltipXAlign.right);
+      expect(t.yAlign, TooltipYAlign.bottom);
       expect(t.caretX, 100);
       expect(t.caretY, 100);
       expect(t.x, closeTo(44.962890625, 1e-9));
@@ -1031,8 +1033,8 @@ void main() {
       expect(t.y, isNaN);
       expect(identical(t['caretX'], undefined), isTrue);
       expect(identical(t['caretY'], undefined), isTrue);
-      expect(t.xAlign, 'right');
-      expect(t.yAlign, 'center');
+      expect(t.xAlign, TooltipXAlign.right);
+      expect(t.yAlign, TooltipYAlign.center);
     });
 
     testWidgets('a string coordinate throws an ArgumentError', (tester) async {
@@ -1074,8 +1076,8 @@ void main() {
       expect(t.y, closeTo(7, 1e-9));
       expect(t.width, closeTo(66.037109375, 1e-9));
       expect(t.height, closeTo(46.8, 1e-9));
-      expect(t.xAlign, 'left');
-      expect(t.yAlign, 'top');
+      expect(t.xAlign, TooltipXAlign.left);
+      expect(t.yAlign, TooltipYAlign.top);
       expect(identical(t['caretX'], undefined), isTrue);
     });
 
