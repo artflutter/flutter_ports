@@ -58,6 +58,8 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show LineSegmentStyle;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     show TooltipCallbacks;
 import 'package:intl/intl.dart' show NumberFormat;
@@ -2013,13 +2015,13 @@ base class ChartOptionsScope() extends OptionScope {
   set stepped(Object value) =>
       store(OptionKey.stepped, classify(OptionKey.stepped, value));
 
-  Opt<SegmentOptionsScope>? _segment;
+  Opt<LineSegmentStyle>? _segment;
 
   /// The cell of `segment`, or Dart `null` when absent.
-  Opt<SegmentOptionsScope>? get segmentCell => _segment;
+  Opt<LineSegmentStyle>? get segmentCell => _segment;
 
   /// Stores the cell of `segment`. Dart `null` deletes the key.
-  set segmentCell(Opt<SegmentOptionsScope>? cell) {
+  set segmentCell(Opt<LineSegmentStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.segment);
     } else {
@@ -2028,8 +2030,8 @@ base class ChartOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `segment`.
-  set segment(SegmentOptionsScope value) =>
-      store(OptionKey.segment, OptScope<SegmentOptionsScope>(value));
+  set segment(LineSegmentStyle value) =>
+      store(OptionKey.segment, OptValue<LineSegmentStyle>(value));
 
   Opt<StrokeCap>? _hoverBorderCapStyle;
 
@@ -2662,7 +2664,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         _stepped = fitCell(cell, (raw) => classifyUnion(raw, 2818));
       case OptionKey.segment:
-        _segment = fitCell(cell, classifyScope<SegmentOptionsScope>);
+        _segment = fitCell(cell, classifyTyped<LineSegmentStyle>);
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
@@ -2988,7 +2990,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         return classifyUnion(raw, 2818);
       case OptionKey.segment:
-        return classifyScope<SegmentOptionsScope>(raw);
+        return classifyTyped<LineSegmentStyle>(raw);
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
@@ -5888,13 +5890,13 @@ base class LineOptionsScope() extends OptionScope {
   set spanGaps(Object value) =>
       store(OptionKey.spanGaps, classify(OptionKey.spanGaps, value));
 
-  Opt<SegmentOptionsScope>? _segment;
+  Opt<LineSegmentStyle>? _segment;
 
   /// The cell of `segment`, or Dart `null` when absent.
-  Opt<SegmentOptionsScope>? get segmentCell => _segment;
+  Opt<LineSegmentStyle>? get segmentCell => _segment;
 
   /// Stores the cell of `segment`. Dart `null` deletes the key.
-  set segmentCell(Opt<SegmentOptionsScope>? cell) {
+  set segmentCell(Opt<LineSegmentStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.segment);
     } else {
@@ -5903,8 +5905,8 @@ base class LineOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `segment`.
-  set segment(SegmentOptionsScope value) =>
-      store(OptionKey.segment, OptScope<SegmentOptionsScope>(value));
+  set segment(LineSegmentStyle value) =>
+      store(OptionKey.segment, OptValue<LineSegmentStyle>(value));
 
   Opt<double>? _hoverBorderWidth;
 
@@ -6159,7 +6161,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
-        _segment = fitCell(cell, classifyScope<SegmentOptionsScope>);
+        _segment = fitCell(cell, classifyTyped<LineSegmentStyle>);
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
@@ -6245,7 +6247,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
-        return classifyScope<SegmentOptionsScope>(raw);
+        return classifyTyped<LineSegmentStyle>(raw);
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
@@ -7519,224 +7521,6 @@ base class BorderRadiusScope() extends OptionScope {
       case OptionKey.innerStart:
         return classifyNumber(raw);
       case OptionKey.innerEnd:
-        return classifyNumber(raw);
-      default:
-        return kind.classifyOther(raw);
-    }
-  }
-}
-
-/// Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable
-/// styles of a line segment.
-base class SegmentOptionsScope() extends OptionScope {
-  /// An empty scope.
-  this;
-
-  @override
-  ScopeKind get kind => ScopeKind.segmentOptions;
-
-  Opt<ChartPaint>? _backgroundColor;
-
-  /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
-
-  /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<ChartPaint>? cell) {
-    if (cell == null) {
-      delete(OptionKey.backgroundColor);
-    } else {
-      store(OptionKey.backgroundColor, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(ChartPaint value) =>
-      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
-
-  Opt<ChartPaint>? _borderColor;
-
-  /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<ChartPaint>? get borderColorCell => _borderColor;
-
-  /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<ChartPaint>? cell) {
-    if (cell == null) {
-      delete(OptionKey.borderColor);
-    } else {
-      store(OptionKey.borderColor, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `borderColor`.
-  set borderColor(ChartPaint value) =>
-      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
-
-  Opt<StrokeCap>? _borderCapStyle;
-
-  /// The cell of `borderCapStyle`, or Dart `null` when absent.
-  Opt<StrokeCap>? get borderCapStyleCell => _borderCapStyle;
-
-  /// Stores the cell of `borderCapStyle`. Dart `null` deletes the key.
-  set borderCapStyleCell(Opt<StrokeCap>? cell) {
-    if (cell == null) {
-      delete(OptionKey.borderCapStyle);
-    } else {
-      store(OptionKey.borderCapStyle, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `borderCapStyle`.
-  set borderCapStyle(StrokeCap value) =>
-      store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
-
-  Opt<Object>? _borderDash;
-
-  /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
-
-  /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.borderDash);
-    } else {
-      store(OptionKey.borderDash, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
-
-  Opt<double>? _borderDashOffset;
-
-  /// The cell of `borderDashOffset`, or Dart `null` when absent.
-  Opt<double>? get borderDashOffsetCell => _borderDashOffset;
-
-  /// Stores the cell of `borderDashOffset`. Dart `null` deletes the key.
-  set borderDashOffsetCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.borderDashOffset);
-    } else {
-      store(OptionKey.borderDashOffset, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `borderDashOffset`.
-  set borderDashOffset(double value) =>
-      store(OptionKey.borderDashOffset, OptValue<double>(value));
-
-  Opt<StrokeJoin>? _borderJoinStyle;
-
-  /// The cell of `borderJoinStyle`, or Dart `null` when absent.
-  Opt<StrokeJoin>? get borderJoinStyleCell => _borderJoinStyle;
-
-  /// Stores the cell of `borderJoinStyle`. Dart `null` deletes the key.
-  set borderJoinStyleCell(Opt<StrokeJoin>? cell) {
-    if (cell == null) {
-      delete(OptionKey.borderJoinStyle);
-    } else {
-      store(OptionKey.borderJoinStyle, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `borderJoinStyle`.
-  set borderJoinStyle(StrokeJoin value) =>
-      store(OptionKey.borderJoinStyle, OptValue<StrokeJoin>(value));
-
-  Opt<double>? _borderWidth;
-
-  /// The cell of `borderWidth`, or Dart `null` when absent.
-  Opt<double>? get borderWidthCell => _borderWidth;
-
-  /// Stores the cell of `borderWidth`. Dart `null` deletes the key.
-  set borderWidthCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.borderWidth);
-    } else {
-      store(OptionKey.borderWidth, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `borderWidth`.
-  set borderWidth(double value) =>
-      store(OptionKey.borderWidth, OptValue<double>(value));
-
-  @override
-  Opt<Object?>? cellOf(OptionKey key) {
-    switch (key) {
-      case OptionKey.backgroundColor:
-        return _backgroundColor;
-      case OptionKey.borderColor:
-        return _borderColor;
-      case OptionKey.borderCapStyle:
-        return _borderCapStyle;
-      case OptionKey.borderDash:
-        return _borderDash;
-      case OptionKey.borderDashOffset:
-        return _borderDashOffset;
-      case OptionKey.borderJoinStyle:
-        return _borderJoinStyle;
-      case OptionKey.borderWidth:
-        return _borderWidth;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  void setCell(OptionKey key, Opt<Object?>? cell) {
-    switch (key) {
-      case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
-      case OptionKey.borderColor:
-        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
-      case OptionKey.borderCapStyle:
-        _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
-      case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
-      case OptionKey.borderDashOffset:
-        _borderDashOffset = fitCell(cell, classifyNumber);
-      case OptionKey.borderJoinStyle:
-        _borderJoinStyle = fitCell(cell, classifyTyped<StrokeJoin>);
-      case OptionKey.borderWidth:
-        _borderWidth = fitCell(cell, classifyNumber);
-      default:
-        throw ArgumentError.value(key, 'key', 'Not a key of SegmentOptions');
-    }
-  }
-
-  @override
-  bool hasField(OptionKey key) {
-    switch (key) {
-      case OptionKey.backgroundColor:
-      case OptionKey.borderColor:
-      case OptionKey.borderCapStyle:
-      case OptionKey.borderDash:
-      case OptionKey.borderDashOffset:
-      case OptionKey.borderJoinStyle:
-      case OptionKey.borderWidth:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @override
-  Opt<Object?> classify(OptionKey key, Object? raw) {
-    switch (key) {
-      case OptionKey.backgroundColor:
-        return classifyTyped<ChartPaint>(raw);
-      case OptionKey.borderColor:
-        return classifyTyped<ChartPaint>(raw);
-      case OptionKey.borderCapStyle:
-        return classifyTyped<StrokeCap>(raw);
-      case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
-      case OptionKey.borderDashOffset:
-        return classifyNumber(raw);
-      case OptionKey.borderJoinStyle:
-        return classifyTyped<StrokeJoin>(raw);
-      case OptionKey.borderWidth:
         return classifyNumber(raw);
       default:
         return kind.classifyOther(raw);
@@ -9444,13 +9228,13 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   set spanGaps(Object value) =>
       store(OptionKey.spanGaps, classify(OptionKey.spanGaps, value));
 
-  Opt<SegmentOptionsScope>? _segment;
+  Opt<LineSegmentStyle>? _segment;
 
   /// The cell of `segment`, or Dart `null` when absent.
-  Opt<SegmentOptionsScope>? get segmentCell => _segment;
+  Opt<LineSegmentStyle>? get segmentCell => _segment;
 
   /// Stores the cell of `segment`. Dart `null` deletes the key.
-  set segmentCell(Opt<SegmentOptionsScope>? cell) {
+  set segmentCell(Opt<LineSegmentStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.segment);
     } else {
@@ -9459,8 +9243,8 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `segment`.
-  set segment(SegmentOptionsScope value) =>
-      store(OptionKey.segment, OptScope<SegmentOptionsScope>(value));
+  set segment(LineSegmentStyle value) =>
+      store(OptionKey.segment, OptValue<LineSegmentStyle>(value));
 
   Opt<double>? _borderWidth;
 
@@ -10123,7 +9907,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
-        _segment = fitCell(cell, classifyScope<SegmentOptionsScope>);
+        _segment = fitCell(cell, classifyTyped<LineSegmentStyle>);
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
@@ -10315,7 +10099,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
-        return classifyScope<SegmentOptionsScope>(raw);
+        return classifyTyped<LineSegmentStyle>(raw);
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
@@ -14634,13 +14418,13 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   set spanGaps(Object value) =>
       store(OptionKey.spanGaps, classify(OptionKey.spanGaps, value));
 
-  Opt<SegmentOptionsScope>? _segment;
+  Opt<LineSegmentStyle>? _segment;
 
   /// The cell of `segment`, or Dart `null` when absent.
-  Opt<SegmentOptionsScope>? get segmentCell => _segment;
+  Opt<LineSegmentStyle>? get segmentCell => _segment;
 
   /// Stores the cell of `segment`. Dart `null` deletes the key.
-  set segmentCell(Opt<SegmentOptionsScope>? cell) {
+  set segmentCell(Opt<LineSegmentStyle>? cell) {
     if (cell == null) {
       delete(OptionKey.segment);
     } else {
@@ -14649,8 +14433,8 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `segment`.
-  set segment(SegmentOptionsScope value) =>
-      store(OptionKey.segment, OptScope<SegmentOptionsScope>(value));
+  set segment(LineSegmentStyle value) =>
+      store(OptionKey.segment, OptValue<LineSegmentStyle>(value));
 
   Opt<StrokeCap>? _hoverBorderCapStyle;
 
@@ -15217,7 +15001,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
-        _segment = fitCell(cell, classifyScope<SegmentOptionsScope>);
+        _segment = fitCell(cell, classifyTyped<LineSegmentStyle>);
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
@@ -15421,7 +15205,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
-        return classifyScope<SegmentOptionsScope>(raw);
+        return classifyTyped<LineSegmentStyle>(raw);
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:

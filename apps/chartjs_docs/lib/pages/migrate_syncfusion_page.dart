@@ -63,7 +63,7 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
     ),
     ('MarkerSettings', '`pointRadius`, `pointStyle` and the point colors'),
     ('width, dashArray', '`borderWidth`, `borderDash`'),
-    ('pointColorMapper', "a scriptable `'segment'` color in `extra`"),
+    ('pointColorMapper', 'the `borderColor` function of `segment`'),
     ('onCreateShader', 'a scriptable `borderColor` that returns a gradient'),
     (
       'onCreateRenderer, annotations',
@@ -110,8 +110,9 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       original: '${_demos}multi-colored-line',
       region: 'sf-multi-colored-line',
       notes: const [
-        '`pointColorMapper` is a scriptable `borderColor` in the `segment` '
-            'Map. Each segment takes the color of its end point.',
+        '`pointColorMapper` is the `borderColor` function of a '
+            '`LineSegmentStyle` in `segment`. Each segment takes the color of '
+            'its end point.',
         'The trackball is `interaction` with `mode: NearestInteractionMode()`, '
             '`intersect: false` and `axis: .x`. An inline plugin draws '
             'its vertical line.',

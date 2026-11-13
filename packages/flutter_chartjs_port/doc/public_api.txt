@@ -88,6 +88,7 @@ LegendLabelsGenerator
 LineController
 LineElement
 LinePointStyle
+LineSegmentStyle
 LinearChartGradient
 LinearScale
 LogarithmicScale
@@ -135,6 +136,7 @@ ScaleBounds
 ScaleHook
 ScaleValuePosition
 ScatterController
+ScriptableLineSegmentContext
 Segment
 ShapeFill
 SolidChartPaint
@@ -346,6 +348,7 @@ LineDataset
 LineElement
 LineElementStyle
 LinePointStyle
+LineSegmentStyle
 LinearAxis
 LinearChartGradient
 LinearScale
@@ -407,6 +410,7 @@ ScaleHook
 ScaleValuePosition
 ScatterController
 ScatterDataset
+ScriptableLineSegmentContext
 Segment
 ShapeFill
 ShowTransition

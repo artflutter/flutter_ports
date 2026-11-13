@@ -37,7 +37,10 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show LineSegmentStyle;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+import 'package:meta/meta.dart' show internal;
 
 // DIVERGES(chartjs): adapt-tooltip-callback-objects, no noop.
 // helpers.core.ts:11 `noop` is the default of 9 tooltip callbacks
@@ -373,13 +376,12 @@ void merger(String key, Object target, Object source, MergeOptions options) {
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     merge(tval, sval, options);
-  } else if (sval is TooltipCallbacks && tval is TooltipCallbacks) {
-    _setProp(target, key, tval.merge(sval));
-  } else if (sval is TextStyle && tval is TextStyle) {
-    // Two fonts merge as two font objects: a field of the source wins (row
+  } else if (mergeNativeOptionValues(tval, sval) case final Object merged) {
+    // Two fonts merge as two font objects, and so do two values of the other
+    // kinds of [nativeMergeKind]: a field of the source wins (row
     // adapt-text-style-fonts).
     // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
-    _setProp(target, key, tval.merge(sval));
+    _setProp(target, key, merged);
   } else if (_isMapObject(sval) && tval is PropertyAccess) {
     // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
     merge(tval, sval, options);
@@ -596,23 +598,13 @@ void _mergeScope(
       } else {
         merge(tval, sval, options);
       }
-    } else if (tval is TooltipCallbacks && sval is TooltipCallbacks) {
-      target.storeNormalized(
-        tk,
-        target.classifyNormalized(
-          tk,
-          ifAbsent ? sval.merge(tval) : tval.merge(sval),
-        ),
-      );
-    } else if (tval is TextStyle && sval is TextStyle) {
+    } else if (mergeNativeOptionValues(
+          ifAbsent ? sval : tval,
+          ifAbsent ? tval : sval,
+        )
+        case final Object merged) {
       // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
-      target.storeNormalized(
-        tk,
-        target.classifyNormalized(
-          tk,
-          ifAbsent ? sval.merge(tval) : tval.merge(sval),
-        ),
-      );
+      target.storeNormalized(tk, target.classifyNormalized(tk, merged));
     } else if (ifAbsent) {
       // `hasOwnProperty`: the target has no route.
       if (tcell == null) {
@@ -683,17 +675,43 @@ void mergerIf(
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     mergeIf(tval, sval);
-  } else if (tval is TooltipCallbacks && sval is TooltipCallbacks) {
-    _setProp(target, key, sval.merge(tval));
-  } else if (tval is TextStyle && sval is TextStyle) {
-    // Two fonts merge as two font objects: a field of the target stays, and
-    // the source fills its absent fields (row adapt-text-style-fonts).
+  } else if (mergeNativeOptionValues(sval, tval) case final Object merged) {
+    // Two fonts merge as two font objects, and so do two values of the other
+    // kinds of [nativeMergeKind]: a field of the target stays, and the
+    // source fills its absent fields (row adapt-text-style-fonts).
     // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
-    _setProp(target, key, sval.merge(tval));
+    _setProp(target, key, merged);
   } else if (!_hasOwn(target, key)) {
     _setProp(target, key, _cloneFor(target, key, sval));
   }
 }
+
+/// The kind of an option value that merges field by field, as the keys of
+/// an option object merge upstream: 1 for the tooltip callbacks (Chart.js
+/// ADR 0125), 2 for a font, a `TextStyle` (Chart.js ADR 0116), 3 for a line
+/// segment style (Chart.js ADR 0142), and 0 for any other value. [merge],
+/// [mergeIf], the resolver and `Defaults.route` merge two values of one
+/// kind with [mergeNativeOptionValues].
+// DIVERGES(chartjs): adapt-text-style-fonts, the native option objects merge.
+@internal
+int nativeMergeKind(Object? value) => switch (value) {
+  TooltipCallbacks() => 1,
+  TextStyle() => 2,
+  LineSegmentStyle() => 3,
+  _ => 0,
+};
+
+/// [higher] merged over [lower] when both have one kind of
+/// [nativeMergeKind]: a field that [higher] sets wins, and [lower] fills the
+/// others. Dart `null` for another pair.
+@internal
+Object? mergeNativeOptionValues(Object? lower, Object? higher) =>
+    switch ((lower, higher)) {
+      (final TooltipCallbacks l, final TooltipCallbacks h) => l.merge(h),
+      (final TextStyle l, final TextStyle h) => l.merge(h),
+      (final LineSegmentStyle l, final LineSegmentStyle h) => l.merge(h),
+      _ => null,
+    };
 
 /// helpers.core.ts:328 `_deprecated`.
 /// @private

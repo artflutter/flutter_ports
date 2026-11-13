@@ -140,6 +140,13 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
   ),
 };
 
+/// The segment function of the cases: red from the second part on.
+ChartPaint? _segmentColor(ScriptableLineSegmentContext s) =>
+    s.p0DataIndex > 0 ? const ChartPaint.solid(_red) : null;
+
+/// The segment style of the cases (Chart.js ADR 0142).
+const LineSegmentStyle _segment = LineSegmentStyle(borderColor: _segmentColor);
+
 /// A [LineDataset], a [ScatterDataset] and a [RadarDataset] with the same
 /// line style parameters.
 List<Dataset> _lineStyle({
@@ -149,6 +156,7 @@ List<Dataset> _lineStyle({
   bool? spanGaps,
   bool? showLine,
   SteppedLine? stepped,
+  LineSegmentStyle? segment,
   double? pointRadius,
   double? pointHoverRadius,
   PointStyle? pointStyle,
@@ -165,6 +173,7 @@ List<Dataset> _lineStyle({
     spanGaps: spanGaps,
     showLine: showLine,
     stepped: stepped,
+    segment: segment,
     pointRadius: pointRadius,
     pointHoverRadius: pointHoverRadius,
     pointStyle: pointStyle,
@@ -181,6 +190,7 @@ List<Dataset> _lineStyle({
     spanGaps: spanGaps,
     showLine: showLine,
     stepped: stepped,
+    segment: segment,
     pointRadius: pointRadius,
     pointHoverRadius: pointHoverRadius,
     pointStyle: pointStyle,
@@ -197,6 +207,7 @@ List<Dataset> _lineStyle({
     spanGaps: spanGaps,
     showLine: showLine,
     stepped: stepped,
+    segment: segment,
     pointRadius: pointRadius,
     pointHoverRadius: pointHoverRadius,
     pointStyle: pointStyle,
@@ -335,6 +346,7 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
     _lineStyle(stepped: SteppedLine.before),
     {'stepped': SteppedLine.before},
   ),
+  'segment': (_lineStyle(segment: _segment), {'segment': _segment}),
   'pointRadius': (_lineStyle(pointRadius: 0), {'pointRadius': 0}),
   'pointHoverRadius': (
     _lineStyle(pointHoverRadius: 6),
@@ -801,6 +813,12 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     ),
     {
       'line': {'cubicInterpolationMode': MonotoneCubicInterpolationMode()},
+    },
+  ),
+  'line.segment': (
+    ChartElements(line: LineElementStyle(segment: _segment)),
+    {
+      'line': {'segment': _segment},
     },
   ),
   'line.extra': (
@@ -1520,18 +1538,23 @@ void main() {
       });
 
       test('a List and a function go by reference', () {
-        final segment = <String, Object?>{
-          'borderColor': (Object? c) =>
+        final datalabels = <String, Object?>{
+          'formatter': (Object? c) =>
               const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
         };
         final list = <Object?>[1, 2];
         final lowered = _lower(
-          LineDataset(extra: {'segment': segment, 'tags': list}),
+          LineDataset(extra: {'datalabels': datalabels, 'tags': list}),
         );
         expect(lowered['tags'], same(list));
-        final copy = lowered['segment']!;
-        expect(copy, isNot(same(segment)));
-        expect(jsGet(copy, 'borderColor'), same(segment['borderColor']));
+        final copy = lowered['datalabels']!;
+        expect(copy, isNot(same(datalabels)));
+        expect(jsGet(copy, 'formatter'), same(datalabels['formatter']));
+      });
+
+      test('a segment style goes by reference', () {
+        final segment = LineSegmentStyle(borderWidth: (s) => 2);
+        expect(_lower(LineDataset(segment: segment))['segment'], same(segment));
       });
 
       test('an entry with the value null gives the JS null', () {

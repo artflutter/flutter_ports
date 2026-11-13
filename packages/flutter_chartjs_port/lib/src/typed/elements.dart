@@ -41,6 +41,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show LineSegmentStyle;
 import 'package:meta/meta.dart' show internal;
 
 /// The options of the element types: `options.elements`
@@ -273,6 +275,11 @@ final class const LineElementStyle({
   /// default, [DefaultCubicInterpolationMode].
   final CubicInterpolationMode? cubicInterpolationMode,
 
+  /// The style functions of the parts of a line: `segment`, a
+  /// [LineSegmentStyle] (Chart.js ADR 0142). A function that gives null
+  /// keeps the line style for that part.
+  final LineSegmentStyle? segment,
+
   /// The Chart.js line options that have no parameter, for example
   /// `{'capBezierPoints': false}`. The rules of
   /// [ChartElements.extra] apply.
@@ -294,6 +301,7 @@ final class const LineElementStyle({
     FillTarget? fill,
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
+    LineSegmentStyle? segment,
     Map<String, Object?>? extra,
   }) => LineElementStyle(
     tension: tension ?? this.tension,
@@ -307,6 +315,7 @@ final class const LineElementStyle({
     stepped: stepped ?? this.stepped,
     cubicInterpolationMode:
         cubicInterpolationMode ?? this.cubicInterpolationMode,
+    segment: segment ?? this.segment,
     extra: extra ?? this.extra,
   );
 
@@ -323,6 +332,7 @@ final class const LineElementStyle({
     put(scope, OptionKey.fill, fill);
     put(scope, OptionKey.stepped, stepped);
     put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
+    put(scope, OptionKey.segment, segment);
     return mergeExtra(scope, extra);
   }
 
@@ -337,6 +347,7 @@ final class const LineElementStyle({
     ('fill', fill),
     ('stepped', stepped),
     ('cubicInterpolationMode', cubicInterpolationMode),
+    ('segment', segment),
     ('extra', byEntries(extra)),
   ];
 

@@ -882,29 +882,29 @@ const Map<String, String> observationDigests = {
   'fixture controller.line/rotation/value.js (trace)':
       '09ff19c9fb481a70cc6ecf6ffb1b9cbfc017aabbbff77a454bb556c79557b7c9',
   'fixture controller.line/segments/gap.js (plain)':
-      '4cbb1f3d386a2e38560606fe5d714421a445a211e13b9a934bd77fadc4b9c265',
+      '9763d3be801bbdb8c3b7ae46ef7992358976760cd931c93e0ec1ca93fb3a081a',
   'fixture controller.line/segments/gap.js (trace)':
-      '60ad464e4b2a5c0bcffca1780b7eaabafb346e853f63ac851bedd3e2353dc46e',
+      'd00f18b97889da6c326c81c312bc16d0cfb907caebd4d520ca10f8d6b4217639',
   'fixture controller.line/segments/gradient.js (plain)':
-      '901b415bc94823ea282048478540624f8fab0015729459317d14f4a7bb0e7889',
+      '656e69504dae5c379227ab891b3067c9dbf19014e368490a23e3d4b0ed9582bd',
   'fixture controller.line/segments/gradient.js (trace)':
-      'a9e1a218db7a16211f5f890e0bb5b0c94586e8ff89b4f95c6228a20989218e07',
+      '1b8521fd54a0fc73200df743afa2cc9df559a1effe852c91c1efe2b565078b0f',
   'fixture controller.line/segments/range.js (plain)':
-      '63d0660c4db15dffb155231987cd103fee213d71c5d58ebd215d3f8737422091',
+      '4f47b64fff2dd15f89237db56ac9f75c42b01bdaf8792a6ac279dd03dc2ea56a',
   'fixture controller.line/segments/range.js (trace)':
-      '5bc88f628f8bd0359c63b2fe1e70a838c7af8c1fd69df410fb7573c496a9d223',
+      'f8211e39dbf20283031372f9f64d8e7e8e2e6eb93e96bbb5a772f9ea29efc0e7',
   'fixture controller.line/segments/single.js (plain)':
-      '871d6bfe98b01ec8fd0bbebc12b10304760bb0bc6b8a5bbe485b401287e87634',
+      'd029c9c36e1fa9b9a7d40118da5dbf0806c510807ce4497b721e458ef4463dd7',
   'fixture controller.line/segments/single.js (trace)':
-      '6b4c6758f456eb1bab69de46068437bcb16003f431e15f9ec7fb9f09a8ff4aff',
+      '22e17e45808c626a881e4b8bc8bc175f7683c616f226ea53f81d216eb5dbb155',
   'fixture controller.line/segments/slope.js (plain)':
-      'a099e599cd62657807d2a81c4c1ab32f8f01dd260e20a81a6e5d28a06c8acdb0',
+      '5f7b443bfec90d2dcc35a5d7add27535ce283dcf2250e6462977c71634f45349',
   'fixture controller.line/segments/slope.js (trace)':
-      'bc99af5bf4ee9bf7a8e11e2f01a7ddc067fd4261df66598704d89192ed3a8dfb',
+      'ac991c4aa150cd81ed3bcc24311aee14cd7fec8735d3831b960c425c3ee606df',
   'fixture controller.line/segments/spanGaps.js (plain)':
-      '63bfb5aa334ebd3c7b75647c70d177b239eb28944deb62d9ed993d5254cb72ab',
+      '4db6f3624f52e26a8253208feecc7f148508829accf5dab9ff42926954ebbcc7',
   'fixture controller.line/segments/spanGaps.js (trace)':
-      '250750f69344396e4da607106c745a029a407db2a2cca545359470d2c807e4fc',
+      '7fd00f9183582b117db03885044f283fed67f04e03ab61d3f23c9f36574974e1',
   'fixture controller.line/showLine/dataset.js (plain)':
       '55d4094665aab130fcdac2e68787aa6e26e828a85bff451a939ad1ae33292df2',
   'fixture controller.line/showLine/dataset.js (trace)':
@@ -1982,17 +1982,17 @@ const Map<String, String> observationDigests = {
   'fixture plugin.filler/line/points-outside-canvas-update.js (trace)':
       'b6d81dac7dcd6ea0be32a22b947161802b49aa123c47a4806b2313affcdd6364',
   'fixture plugin.filler/line/segments/alignToPixels.js (plain)':
-      'cd6bab17c96eada9865084906e54ced7f93176a6dcacad45e33958fa92e857e8',
+      '885064f33bd52b0554fe1fb423964d00ff61499eacfb6c8bc98f06ded49fde84',
   'fixture plugin.filler/line/segments/alignToPixels.js (trace)':
-      'aa2dd00bf64fc19fcc3a2955c906d0420d43108f656d5b19d42368b88e7eab09',
+      '94dea898654f16341e80e756b4178d3e0f1ddb19162aae4e9318d874e9af01c9',
   'fixture plugin.filler/line/segments/gap.js (plain)':
-      '858e5801076e62e3fe494db88ed485d442bb89242c5d0a56b0cee4ca2b5c8072',
+      '250f8325bb4d3cd18f6742716683ffaf845d7dca6634d50c4b866e2b46304bc0',
   'fixture plugin.filler/line/segments/gap.js (trace)':
-      'c06fc6ff4f13868b8734cc065d06e1aa999b210b0151c6f74edd65a32ffee726',
+      'ee9248f28131a1f361ba70757052fce273894430632416f347a366b58fde4256',
   'fixture plugin.filler/line/segments/slope.js (plain)':
-      '7e7f862b3ad23d735c31241669a388437272d4a5d2b2c91367012bd9eab2e9fe',
+      '5ad1b44e7990d776a0805240d2e09388346164aeaef3b8626fb3724a86087919',
   'fixture plugin.filler/line/segments/slope.js (trace)':
-      '94c3b841b4a6fa2b4ae7caa8c0e99bf837b530ebc05f82f840348646ed360a70',
+      'e644eb9451ab96ade822cc75c1a61d241e9eac023eb23e543a0c6a47d7ad317d',
   'fixture plugin.filler/line/shape.js (plain)':
       '903b633b38a1b49ba6a5d3d0d04936c45d16a0433c71f94575d7c6b733011d47',
   'fixture plugin.filler/line/shape.js (trace)':

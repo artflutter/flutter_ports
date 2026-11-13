@@ -74,6 +74,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show lineSegmentStyleOf;
 
 /// The JS write `element[key] = value` by name into an element of a user
 /// element class (Chart.js ADR 0017, section 5), or of a property that the
@@ -328,10 +330,9 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     if (!jsTruthy(this.options.readKey(OptionKey.showLine))) {
       options.storeKey(OptionKey.borderWidth, 0.0);
     }
-    options.storeKey(
-      OptionKey.segment,
-      this.options.readKey(OptionKey.segment),
-    );
+    // The typed value of the option (Chart.js ADR 0142); a falsy value stays.
+    final segment = this.options.readKey(OptionKey.segment);
+    options.storeKey(OptionKey.segment, lineSegmentStyleOf(segment) ?? segment);
     updateElement(
       target,
       null,
@@ -393,11 +394,11 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     final vAxis = vScale!.axis;
     final options = this.options;
     final spanGaps = options.readKey(OptionKey.spanGaps);
-    final segment = options.readKey(OptionKey.segment);
+    final segment = lineSegmentStyleOf(options.readKey(OptionKey.segment));
     // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:101)
     // and `if (segment)` (:105) test two locals of this call: once here.
     final hasStack = stacked != types.StackMode.off;
-    final hasSegment = jsTruthy(segment);
+    final hasSegment = segment != null;
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)
         : double.infinity;

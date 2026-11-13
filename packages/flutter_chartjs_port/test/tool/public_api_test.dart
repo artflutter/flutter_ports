@@ -148,7 +148,6 @@ const Map<String, String> _notExported = {
   // is a ContextObject of lib/helpers.dart.
   'ScriptableChartContext': 'a typed context of ADR 0054',
   'ScriptableContext': 'a typed context of ADR 0054',
-  'ScriptableLineSegmentContext': 'a typed context of ADR 0054',
   'ScriptableScaleContext': 'a typed context of ADR 0054',
   'ScriptableScalePointLabelContext': 'a typed context of ADR 0054',
   'ScriptableTooltipContext': 'a typed context of ADR 0054',

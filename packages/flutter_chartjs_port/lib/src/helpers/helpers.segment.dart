@@ -19,33 +19,29 @@
 /// with `toInt()`. Each index comes from a list length or from a segment of
 /// the same points, so it is finite. JS `%` is Dart `remainder`.
 ///
-/// `line.options` and `segmentOptions` are option values. Their reads go
-/// through [readOption] of `helpers.config` (Chart.js ADR 0054 §4): the
-/// typed read of a resolver view or of resolved element options, else the
-/// read by name. Each keeps JS `undefined` apart from JS `null`. The style
-/// of a segment is a [SegmentStyle], a typed record with the keys of the
-/// object literal of `readStyle` (Chart.js ADR 0054 §9).
+/// `line.options` is an option value. Its reads go through [readOption] of
+/// `helpers.config` (Chart.js ADR 0054 §4): the typed read of a resolver
+/// view or of resolved element options, else the read by name. Each keeps
+/// JS `undefined` apart from JS `null`. `segmentOptions` is a
+/// [LineSegmentStyle], the native value of the option `segment` (Chart.js
+/// ADR 0142). The style of a segment is a [SegmentStyle], an immutable
+/// object with the keys of the object literal of `readStyle`.
 library;
-
-import 'dart:convert';
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show isPatternOrGradient;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show angleBetween, angleDiff, isBetween, normalizeAngle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
+    show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 import 'package:meta/meta.dart';
 
 /// helpers.segment.js:8 `@typedef Segment`: the plain object
@@ -477,11 +473,12 @@ List<Segment> _solidSegments(
 /// @return {Segment[]}
 /// @private
 ///
-/// [segmentOptions] is the option value `line.options.segment` (Chart.js ADR
-/// 0043). Its default is the [undefined] sentinel.
+/// [segmentOptions] is the option value `line.options.segment`: a
+/// [LineSegmentStyle], or Dart `null` for no segment styles (Chart.js ADR
+/// 0142).
 List<Segment> computeSegments(
   LineElement line, [
-  Object? segmentOptions = undefined,
+  LineSegmentStyle? segmentOptions,
 ]) {
   final points = line.points;
   final spanGaps = readOption(line.options, OptionKey.spanGaps);
@@ -520,19 +517,32 @@ List<Segment> computeSegments(
 /// @param {PointElement[]} points
 /// @param {object} [segmentOptions]
 /// @return {Segment[]}
+///
+/// `!segmentOptions.setContext` is a [LineSegmentStyle] with no function
+/// (Chart.js ADR 0142): no part can take another style. A List [points] is
+/// always truthy.
+// DIVERGES(chartjs): adapt-native-line-segment-style, a style with no function.
 List<Segment> _splitByStyles(
   LineElement line,
   List<Segment> segments,
   List<PointElement> points,
-  Object? segmentOptions,
+  LineSegmentStyle? segmentOptions,
 ) {
-  if (!jsTruthy(segmentOptions) ||
-      !jsTruthy(_setContextOf(segmentOptions)) ||
-      !jsTruthy(points)) {
+  if (segmentOptions == null || !_hasFunctions(segmentOptions)) {
     return segments;
   }
   return _doSplitByStyles(line, segments, points, segmentOptions);
 }
+
+/// Whether [style] has a function.
+bool _hasFunctions(LineSegmentStyle style) =>
+    style.borderColor != null ||
+    style.backgroundColor != null ||
+    style.borderWidth != null ||
+    style.borderDash != null ||
+    style.borderDashOffset != null ||
+    style.borderCapStyle != null ||
+    style.borderJoinStyle != null;
 
 /// helpers.segment.js:279 `doSplitByStyles`.
 ///
@@ -542,15 +552,17 @@ List<Segment> _splitByStyles(
 /// @param {object} [segmentOptions]
 /// @return {Segment[]}
 ///
-/// `segmentOptions.setContext(ctx)` is the typed call of a resolver view
-/// ([_setContext]). A `null` `line._datasetIndex` is JS `undefined` (see
-/// [LineElement.datasetIndex]). The context gets it as the [undefined]
-/// sentinel.
+/// `readStyle(segmentOptions.setContext(ctx))` is [_readSegmentStyle]: it
+/// calls each function of the [LineSegmentStyle] with the typed context of
+/// the part (Chart.js ADR 0142). A `null` `line._datasetIndex` is JS
+/// `undefined` (see [LineElement.datasetIndex]). The context gets it as the
+/// [undefined] sentinel.
+// DIVERGES(chartjs): adapt-native-line-segment-style, typed calls.
 List<Segment> _doSplitByStyles(
   LineElement line,
   List<Segment> segments,
   List<PointElement> points,
-  Object? segmentOptions,
+  LineSegmentStyle segmentOptions,
 ) {
   final chartContext = line.chart!.getContext();
   final baseStyle = _readStyle(line.options);
@@ -596,17 +608,15 @@ List<Segment> _doSplitByStyles(
     SegmentStyle style;
     for (i = start + 1; i <= segment.end; i++) {
       final pt = points[i.remainder(count).toInt()];
-      style = _readStyle(
-        _setContext(
-          segmentOptions,
-          createContext(chartContext, <String, Object?>{
-            'type': 'segment',
-            'p0': prev,
-            'p1': pt,
-            'p0DataIndex': (i - 1).remainder(count),
-            'p1DataIndex': i.remainder(count),
-            'datasetIndex': datasetIndex ?? undefined,
-          }),
+      style = _readSegmentStyle(
+        segmentOptions,
+        ScriptableLineSegmentContext.segment(
+          chartContext,
+          p0: prev,
+          p1: pt,
+          p0DataIndex: (i - 1).remainder(count).toInt(),
+          p1DataIndex: i.remainder(count).toInt(),
+          datasetIndex: datasetIndex,
         ),
       );
       if (_styleChanged(style, prevStyle)) {
@@ -623,43 +633,55 @@ List<Segment> _doSplitByStyles(
   return result;
 }
 
-/// `segmentOptions.setContext`, the function of the segment options: the
-/// method of a resolver view, else the read by name of an object of user
-/// code (the face, Chart.js ADR 0054 §5).
-Object? _setContextOf(Object? segmentOptions) => switch (segmentOptions) {
-  final OptionView view => view.setContext,
-  _ => jsGet(segmentOptions, 'setContext'),
-};
-
-/// `segmentOptions.setContext(ctx)` (helpers.segment.js:300): the typed call
-/// of a resolver view, else [jsCall] of the function by name with
-/// `segmentOptions` as `this`.
-Object? _setContext(Object? segmentOptions, Object ctx) =>
-    switch (segmentOptions) {
-      final OptionView view => view.setContext(ctx),
-      _ => jsCall(_setContextOf(segmentOptions), [
-        ctx,
-      ], thisArg: segmentOptions),
-    };
+/// helpers.segment.js:337 `readStyle` of `segmentOptions.setContext(ctx)`
+/// (helpers.segment.js:300): the style of one part (Chart.js ADR 0142).
+///
+/// The functions run in the order of the keys of the object literal of
+/// `readStyle`, as the reads of the scriptable options of the resolver view
+/// do upstream. An absent function and a null result give the [undefined]
+/// sentinel, as a key that no segment scope has and a function that gives
+/// `undefined` do upstream. The draw then takes the value of the line
+/// options (`setStyle` of element.line.js:202, the filler).
+SegmentStyle _readSegmentStyle(
+  LineSegmentStyle segment,
+  ScriptableLineSegmentContext context,
+) {
+  final backgroundColor = segment.backgroundColor?.call(context);
+  final borderCapStyle = segment.borderCapStyle?.call(context);
+  final borderDash = segment.borderDash?.call(context);
+  final borderDashOffset = segment.borderDashOffset?.call(context);
+  final borderJoinStyle = segment.borderJoinStyle?.call(context);
+  final borderWidth = segment.borderWidth?.call(context);
+  final borderColor = segment.borderColor?.call(context);
+  return SegmentStyle(
+    backgroundColor: backgroundColor ?? undefined,
+    borderCapStyle: borderCapStyle ?? undefined,
+    borderDash: borderDash ?? undefined,
+    borderDashOffset: borderDashOffset ?? undefined,
+    borderJoinStyle: borderJoinStyle ?? undefined,
+    borderWidth: borderWidth ?? undefined,
+    borderColor: borderColor ?? undefined,
+  );
+}
 
 /// helpers.segment.js:337 `readStyle`.
 ///
-/// Each key is an own key of the result, in the order of the object literal.
 /// A value that [options] does not resolve is the [undefined] sentinel, as
 /// in the upstream object literal. [readOption] reads [options]: a resolver
-/// view gives its typed read (the scriptable options of a segment run here,
-/// in the key order), resolved element options give their typed fields.
+/// view gives its typed read, resolved element options give their typed
+/// fields.
 SegmentStyle _readStyle(Object? options) {
-  return SegmentStyle()
-    ..backgroundColor = _styleColor(
+  return SegmentStyle(
+    backgroundColor: _styleColor(
       readOption(options, OptionKey.backgroundColor),
-    )
-    ..borderCapStyle = readOption(options, OptionKey.borderCapStyle)
-    ..borderDash = readOption(options, OptionKey.borderDash)
-    ..borderDashOffset = readOption(options, OptionKey.borderDashOffset)
-    ..borderJoinStyle = readOption(options, OptionKey.borderJoinStyle)
-    ..borderWidth = readOption(options, OptionKey.borderWidth)
-    ..borderColor = _styleColor(readOption(options, OptionKey.borderColor));
+    ),
+    borderCapStyle: readOption(options, OptionKey.borderCapStyle),
+    borderDash: readOption(options, OptionKey.borderDash),
+    borderDashOffset: readOption(options, OptionKey.borderDashOffset),
+    borderJoinStyle: readOption(options, OptionKey.borderJoinStyle),
+    borderWidth: readOption(options, OptionKey.borderWidth),
+    borderColor: _styleColor(readOption(options, OptionKey.borderColor)),
+  );
 }
 
 Object? _styleColor(Object? value) {
@@ -673,292 +695,108 @@ Object? _styleColor(Object? value) {
 }
 
 /// helpers.segment.js:337-347 the object literal of `readStyle`: the style
-/// of a segment ([Segment.style]), a typed record (Chart.js ADR 0054 §9).
+/// of a segment ([Segment.style]).
 ///
-/// Each key is a field of the type `Object?`: the raw value of the option,
-/// also the [undefined] sentinel. A getter gives [undefined] for a key that
-/// the object does not own (after a `delete` by name). The face
-/// ([TypedRecord.jsRead]) reads it by name, for example the filler
-/// (filler.drawing.js:131).
-final class SegmentStyle() extends TypedRecord {
-  /// An object without own keys. [_readStyle] writes the seven keys.
-  this;
-
-  static const List<String> _fieldNames = [
-    'backgroundColor',
-    'borderCapStyle',
-    'borderDash',
-    'borderDashOffset',
-    'borderJoinStyle',
-    'borderWidth',
-    'borderColor',
-  ];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'backgroundColor' => 0,
-    'borderCapStyle' => 1,
-    'borderDash' => 2,
-    'borderDashOffset' => 3,
-    'borderJoinStyle' => 4,
-    'borderWidth' => 5,
-    'borderColor' => 6,
-    _ => -1,
-  };
-
-  Object? _backgroundColor;
-  Object? _borderCapStyle;
-  Object? _borderDash;
-  Object? _borderDashOffset;
-  Object? _borderJoinStyle;
-  Object? _borderWidth;
-  Object? _borderColor;
-
+/// Each field holds the value of the option: the value of the line options,
+/// the result of a function of a [LineSegmentStyle], or the [undefined]
+/// sentinel. The draw takes the value of the line options for [undefined]
+/// (element.line.js:202, filler.drawing.js:131).
+///
+/// `==` is the compare of `styleChanged` (helpers.segment.js:349): a
+/// gradient or a pattern compares by identity, as the replacer of upstream
+/// gives each one its index in a cache; a List compares item by item; NaN
+/// equals NaN, as `JSON.stringify` writes each NaN the same; any other value
+/// compares with `==` (Chart.js ADR 0142).
+// DIVERGES(chartjs): adapt-native-line-segment-style, == for JSON.stringify.
+@immutable
+final class const SegmentStyle({
   /// `backgroundColor`.
-  Object? get backgroundColor => hasSlot(0) ? _backgroundColor : undefined;
-
-  set backgroundColor(Object? value) {
-    _backgroundColor = value;
-    touchSlot(0);
-  }
+  final Object? backgroundColor = undefined,
 
   /// `borderCapStyle`.
-  Object? get borderCapStyle => hasSlot(1) ? _borderCapStyle : undefined;
-
-  set borderCapStyle(Object? value) {
-    _borderCapStyle = value;
-    touchSlot(1);
-  }
+  final Object? borderCapStyle = undefined,
 
   /// `borderDash`.
-  Object? get borderDash => hasSlot(2) ? _borderDash : undefined;
-
-  set borderDash(Object? value) {
-    _borderDash = value;
-    touchSlot(2);
-  }
+  final Object? borderDash = undefined,
 
   /// `borderDashOffset`.
-  Object? get borderDashOffset => hasSlot(3) ? _borderDashOffset : undefined;
-
-  set borderDashOffset(Object? value) {
-    _borderDashOffset = value;
-    touchSlot(3);
-  }
+  final Object? borderDashOffset = undefined,
 
   /// `borderJoinStyle`.
-  Object? get borderJoinStyle => hasSlot(4) ? _borderJoinStyle : undefined;
-
-  set borderJoinStyle(Object? value) {
-    _borderJoinStyle = value;
-    touchSlot(4);
-  }
+  final Object? borderJoinStyle = undefined,
 
   /// `borderWidth`.
-  Object? get borderWidth => hasSlot(5) ? _borderWidth : undefined;
-
-  set borderWidth(Object? value) {
-    _borderWidth = value;
-    touchSlot(5);
-  }
+  final Object? borderWidth = undefined,
 
   /// `borderColor`.
-  Object? get borderColor => hasSlot(6) ? _borderColor : undefined;
-
-  set borderColor(Object? value) {
-    _borderColor = value;
-    touchSlot(6);
-  }
-
-  /// The value of the field [slot], for [_jsonStringify].
-  Object? valueOf(int slot) => readSlot(slot);
+  final Object? borderColor = undefined,
+}) {
+  /// A style with the given values; an absent value is [undefined].
+  this;
 
   @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _backgroundColor,
-    1 => _borderCapStyle,
-    2 => _borderDash,
-    3 => _borderDashOffset,
-    4 => _borderJoinStyle,
-    5 => _borderWidth,
-    _ => _borderColor,
-  };
+  bool operator ==(Object other) =>
+      other is SegmentStyle &&
+      _sameStyleValue(backgroundColor, other.backgroundColor) &&
+      _sameStyleValue(borderCapStyle, other.borderCapStyle) &&
+      _sameStyleValue(borderDash, other.borderDash) &&
+      _sameStyleValue(borderDashOffset, other.borderDashOffset) &&
+      _sameStyleValue(borderJoinStyle, other.borderJoinStyle) &&
+      _sameStyleValue(borderWidth, other.borderWidth) &&
+      _sameStyleValue(borderColor, other.borderColor);
 
   @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _backgroundColor = value;
-      case 1:
-        _borderCapStyle = value;
-      case 2:
-        _borderDash = value;
-      case 3:
-        _borderDashOffset = value;
-      case 4:
-        _borderJoinStyle = value;
-      case 5:
-        _borderWidth = value;
-      default:
-        _borderColor = value;
+  int get hashCode => Object.hash(
+    _styleValueHash(backgroundColor),
+    _styleValueHash(borderCapStyle),
+    _styleValueHash(borderDash),
+    _styleValueHash(borderDashOffset),
+    _styleValueHash(borderJoinStyle),
+    _styleValueHash(borderWidth),
+    _styleValueHash(borderColor),
+  );
+
+  @override
+  String toString() =>
+      'SegmentStyle(backgroundColor: $backgroundColor, '
+      'borderCapStyle: $borderCapStyle, borderDash: $borderDash, '
+      'borderDashOffset: $borderDashOffset, '
+      'borderJoinStyle: $borderJoinStyle, borderWidth: $borderWidth, '
+      'borderColor: $borderColor)';
+}
+
+/// Whether two values of a style field are the same for `styleChanged`.
+bool _sameStyleValue(Object? a, Object? b) {
+  if (identical(a, b)) return true;
+  if (isPatternOrGradient(a) || isPatternOrGradient(b)) return false;
+  if (a is double && b is double && a.isNaN && b.isNaN) return true;
+  if (a is List<Object?> && b is List<Object?>) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (!_sameStyleValue(a[i], b[i])) return false;
     }
     return true;
   }
-
-  @override
-  void clearSlot(int slot) {
-    writeSlot(slot, null);
-  }
+  return a == b;
 }
 
-/// helpers.segment.js:349 `styleChanged`.
-///
-/// `cache.includes(value)` and `cache.indexOf(value)` compare objects by
-/// identity, as SameValueZero and `===` do for objects. The replacer gives
-/// the index as a JS number.
+/// The hash of a value of a style field, equal for two values that
+/// [_sameStyleValue] takes as the same.
+int _styleValueHash(Object? value) => switch (value) {
+  _ when isPatternOrGradient(value) => identityHashCode(value),
+  final double d when d.isNaN => 0x7FF8,
+  final List<Object?> list => Object.hashAll(list.map(_styleValueHash)),
+  _ => value.hashCode,
+};
+
+/// helpers.segment.js:349 `styleChanged`: `JSON.stringify` of the two
+/// styles with a replacer that gives each gradient and pattern its index in
+/// a cache. The port compares the styles with [SegmentStyle.==] (Chart.js
+/// ADR 0142).
+// DIVERGES(chartjs): adapt-native-line-segment-style, == for JSON.stringify.
 bool _styleChanged(SegmentStyle style, SegmentStyle? prevStyle) {
   if (prevStyle == null) {
     return false;
   }
-  final cache = <Object?>[];
-  final solidColors = <Object?>[];
-  Object? replacer(String key, Object? value) {
-    if (value is SolidChartPaint) {
-      var index = solidColors.indexOf(value.color);
-      if (index < 0) {
-        index = solidColors.length;
-        solidColors.add(value.color);
-      }
-      // An internal comparison token, never a CSS paint value.
-      return 'native-color:$index';
-    }
-    if (!isPatternOrGradient(value)) {
-      return value;
-    }
-    if (!cache.any((cached) => identical(cached, value))) {
-      cache.add(value);
-    }
-    return cache.indexWhere((cached) => identical(cached, value)).toDouble();
-  }
-
-  return _jsonStringify(style, replacer) != _jsonStringify(prevStyle, replacer);
-}
-
-/// `JSON.stringify(value, replacer)` (ECMA-262 `SerializeJSONProperty`) for
-/// the values of a style object, or `null` where JSON.stringify returns
-/// `undefined`.
-///
-/// `styleChanged` only compares two results. The replacer gets each key and
-/// value, also the root value with the key `''`. Then:
-/// - Dart `null` gives `null`. The [undefined] sentinel and a function value
-///   give no result: an object leaves out the key, and an array writes
-///   `null`.
-/// - A number gives `String(number)`, and NaN and the infinities give
-///   `null`.
-/// - A `List` is an array. A [SegmentStyle] is an object with its own keys
-///   in their order and its typed fields. A `Map` is an object with the keys
-///   of [jsObjectKeys].
-/// - Any other object gives `{}`.
-///
-/// No style value has a `toJSON` method. A cycle overflows the stack, where
-/// JavaScript throws a `TypeError`.
-String? _jsonStringify(
-  Object? value,
-  Object? Function(String key, Object? value) replacer,
-) => _serializeJsonProperty('', value, replacer);
-
-/// ECMA-262 `SerializeJSONProperty(state, key, holder)` with a replacer
-/// function. See [_jsonStringify].
-String? _serializeJsonProperty(
-  String key,
-  Object? value,
-  Object? Function(String key, Object? value) replacer,
-) {
-  final replaced = replacer(key, value);
-  return switch (replaced) {
-    null => 'null',
-    Undefined() => null,
-    final bool b => b ? 'true' : 'false',
-    final num n => n.isFinite ? jsNumberToString(n) : 'null',
-    final String s => _quote(s),
-    final List<Object?> list => _serializeJsonArray(list, replacer),
-    final SegmentStyle style => _serializeJsonStyle(style, replacer),
-    final Map<String, Object?> map => _serializeJsonObject(map, replacer),
-    _ when jsIsFunction(replaced) => null,
-    // DIVERGES(chartjs): js-semantics-segment-style-json, a leaf gives {}.
-    _ => '{}',
-  };
-}
-
-/// ECMA-262 `SerializeJSONArray` with a replacer function. A missing element
-/// result is `null`.
-String _serializeJsonArray(
-  List<Object?> list,
-  Object? Function(String key, Object? value) replacer,
-) {
-  final partial = <String>[];
-  for (var i = 0; i < list.length; i++) {
-    final json = _serializeJsonProperty(jsNumberToString(i), list[i], replacer);
-    partial.add(json ?? 'null');
-  }
-  return '[${partial.join(',')}]';
-}
-
-/// ECMA-262 `SerializeJSONObject` of a [SegmentStyle] with a replacer
-/// function: its own keys in the `Object.keys` order, the typed field of
-/// each key, and the value by name of an extra key. A key without a result
-/// is left out.
-String _serializeJsonStyle(
-  SegmentStyle style,
-  Object? Function(String key, Object? value) replacer,
-) {
-  final partial = <String>[];
-  for (var i = 0, n = style.ownKeyCount; i < n; i++) {
-    final key = style.keyAt(i);
-    final slot = style.slotAt(i);
-    final value = slot < 0 ? style.jsRead(key) : style.valueOf(slot);
-    final json = _serializeJsonProperty(key, value, replacer);
-    if (json != null) {
-      partial.add('${_quote(key)}:$json');
-    }
-  }
-  return '{${partial.join(',')}}';
-}
-
-/// ECMA-262 `SerializeJSONObject` with a replacer function. The keys are
-/// [jsObjectKeys] (`EnumerableOwnProperties`) of a plain object of user
-/// code, a value of a style. A key without a result is left out.
-String _serializeJsonObject(
-  Map<String, Object?> map,
-  Object? Function(String key, Object? value) replacer,
-) {
-  final partial = <String>[];
-  for (final key in jsObjectKeys(map)) {
-    final json = _serializeJsonProperty(key, map[key], replacer);
-    if (json != null) {
-      partial.add('${_quote(key)}:$json');
-    }
-  }
-  return '{${partial.join(',')}}';
-}
-
-/// `QuoteJSONString` (ECMA-262) of [s]: the JSON string literal of [s].
-///
-/// Only a code unit below U+0020, `"`, `\` or a surrogate (U+D800 to U+DFFF)
-/// can need an escape. When [s] has none of these code units, the result is
-/// [s] between double quotes. Else [jsonEncode] gives the result. It writes
-/// the same text as JSON.stringify, also for a lone surrogate. Thus this
-/// step does not change the result. It only removes the [jsonEncode] call
-/// for most keys and values.
-String _quote(String s) {
-  for (var i = 0; i < s.length; i++) {
-    final c = s.codeUnitAt(i);
-    if (c < 0x20 || c == 0x22 || c == 0x5C || (c >= 0xD800 && c <= 0xDFFF)) {
-      return jsonEncode(s);
-    }
-  }
-  return '"$s"';
+  return style != prevStyle;
 }

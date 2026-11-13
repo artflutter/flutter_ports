@@ -1,18 +1,27 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.line/segments/range.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-line-segment-style, a LineSegmentStyle.
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'dart:ui' show Color;
+
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   // `ctx[p].parsed[axis]`: `ctx.p0` and `ctx.p1` are point elements, read by
   // name (Chart.js ADR 0017, section 5). The parsed value is a number.
-  double parsed(Object? ctx, String p, String axis) =>
-      jsToNumber(jsGet((jsGet(ctx, p)! as Element)['parsed'], axis));
+  double parsed(ScriptableLineSegmentContext ctx, String p, String axis) =>
+      jsToNumber(
+        jsGet(((p == 'p0' ? ctx.p0 : ctx.p1) as Element)['parsed'], axis),
+      );
 
   // A destructuring default applies only when the property is undefined.
   double prop(Object? range, String key, double fallback) {
@@ -21,7 +30,7 @@ Map<String, Object?> fixture() {
   }
 
   // Upstream: function x(ctx, {min = -Infinity, max = Infinity}).
-  bool x(Object? ctx, Object? range) {
+  bool x(ScriptableLineSegmentContext ctx, Object? range) {
     final min = prop(range, 'min', double.negativeInfinity);
     final max = prop(range, 'max', double.infinity);
     return (parsed(ctx, 'p0', 'x') >= min || parsed(ctx, 'p1', 'x') >= min) &&
@@ -29,14 +38,14 @@ Map<String, Object?> fixture() {
   }
 
   // Upstream: function y(ctx, {min = -Infinity, max = Infinity}).
-  bool y(Object? ctx, Object? range) {
+  bool y(ScriptableLineSegmentContext ctx, Object? range) {
     final min = prop(range, 'min', double.negativeInfinity);
     final max = prop(range, 'max', double.infinity);
     return (parsed(ctx, 'p0', 'y') >= min || parsed(ctx, 'p1', 'y') >= min) &&
         (parsed(ctx, 'p0', 'y') < max || parsed(ctx, 'p1', 'y') < max);
   }
 
-  bool xy(Object? ctx, Object? xr, Object? yr) {
+  bool xy(ScriptableLineSegmentContext ctx, Object? xr, Object? yr) {
     return x(ctx, xr) && y(ctx, yr);
   }
 
@@ -57,25 +66,25 @@ Map<String, Object?> fixture() {
               <String, Object?>{'x': 7, 'y': 8},
             ],
             'borderColor': 'black',
-            'segment': <String, Object?>{
-              'borderColor': (Object? ctx) =>
+            'segment': LineSegmentStyle(
+              borderColor: (ctx) =>
                   x(ctx, <String, Object?>{'min': 3, 'max': 4})
-                  ? 'red'
+                  ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
                   : y(ctx, <String, Object?>{'min': 5})
-                  ? 'green'
+                  ? const ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1))
                   : xy(
                       ctx,
                       <String, Object?>{'min': 0},
                       <String, Object?>{'max': 1},
                     )
-                  ? 'blue'
-                  : undefined,
-              'borderDash': (Object? ctx) =>
+                  ? const ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1))
+                  : null,
+              borderDash: (ctx) =>
                   x(ctx, <String, Object?>{'min': 3, 'max': 4}) ||
                       y(ctx, <String, Object?>{'min': 5})
-                  ? <Object?>[5, 5]
-                  : undefined,
-            },
+                  ? <double>[5, 5]
+                  : null,
+            ),
           },
         ],
       },

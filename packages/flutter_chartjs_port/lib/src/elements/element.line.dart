@@ -32,8 +32,8 @@
 /// user code or of a spec. Each read goes through one small function for
 /// each option, for example `_stepped`, which gives the typed field of a
 /// [LineOptions] with its presence bit and foreign slot (`rawOption` and
-/// `plainOption`, Chart.js ADR 0054 §6), the typed field of a
-/// [SegmentStyle], or the read by name of a plain Map (`_byName`). Each gives
+/// `plainOption`, Chart.js ADR 0054 §6), the field of a [SegmentStyle], or
+/// the read by name of a plain Map (`_byName`). Each gives
 /// JS `undefined` for an absent key. The read by name throws a [TypeError]
 /// for the `undefined` state, as a JavaScript property read of `undefined`
 /// does.
@@ -90,6 +90,8 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show LineSegmentStyle, lineSegmentStyleOf;
 import 'package:meta/meta.dart';
 
 /// `object[name]` of an object that is not typed: the read by name of a
@@ -228,10 +230,13 @@ bool _borderWidthTruthy(Object? options) {
 }
 
 /// The option `segment` of [options], which the line controller writes
-/// (controller.line.js:66), as [_borderCapStyle] reads `borderCapStyle`.
-Object? _segment(Object? options) => options is LineOptions
-    ? rawOption(options, OptionKey.segment, options.segment)
-    : _byName(options, 'segment');
+/// (controller.line.js:66), as [_borderCapStyle] reads `borderCapStyle`: a
+/// [LineSegmentStyle], or Dart `null` for a falsy value (Chart.js ADR 0142).
+LineSegmentStyle? _segment(Object? options) => lineSegmentStyleOf(
+  options is LineOptions
+      ? rawOption(options, OptionKey.segment, options.segment)
+      : _byName(options, 'segment'),
+);
 
 /// element.line.js:12 `setStyle(ctx, options, style = options)`.
 ///
@@ -801,7 +806,7 @@ void _draw(
   int? start,
   int? count,
 ) {
-  if (_usePath2D && !jsTruthy(_segment(line.options))) {
+  if (_usePath2D && _segment(line.options) == null) {
     _strokePathWithCache(ctx, line, start, count);
   } else {
     _strokePathDirect(ctx, line, start, count);

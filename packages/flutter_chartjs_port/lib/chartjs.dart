@@ -48,6 +48,10 @@
 /// `scaleCfgArg` read the arguments of the `construct` closure of the class
 /// value of a controller, an element or a scale (Chart.js ADR 0133).
 ///
+/// It exports `LineSegmentStyle`, the value of the line option `segment`,
+/// and `ScriptableLineSegmentContext`, the argument of its functions
+/// (Chart.js ADR 0142).
+///
 /// The Dart names of the upstream `_` exports, the other port-only
 /// declarations of `lib/src/types/` and `LayoutItem` stay internal (Chart.js
 /// ADR 0048, section 6).
@@ -100,6 +104,8 @@ export 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 export 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
+export 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableLineSegmentContext;
 export 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PathPointStyle, PointStyle;
 export 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
@@ -187,6 +193,8 @@ export 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 export 'package:flutter_chartjs_port/src/types/legend_item.dart';
 export 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+export 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show LineSegmentStyle;
 export 'package:flutter_chartjs_port/src/types/plugin.dart'
     show
         CancelableHookArgs,

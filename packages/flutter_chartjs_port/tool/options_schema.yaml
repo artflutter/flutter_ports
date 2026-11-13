@@ -57,7 +57,9 @@
 # `Locale`, the chart `locale`; a language tag is a foreign value), `numberFormat` (a `NumberFormat`
 # of package:intl, the tick `format`; an object of number format options is a foreign value),
 # `chartClip` (a `ChartClip`, the dataset `clip`; a number, a bool or an object is a foreign value),
-# `chartShadow` (a `ChartShadow`, the port-only dataset `shadow` of Chart.js ADR 0139), `any` (any
+# `chartShadow` (a `ChartShadow`, the port-only dataset `shadow` of Chart.js ADR 0139),
+# `lineSegmentStyle` (a `LineSegmentStyle`, the line `segment` of Chart.js ADR 0142; a Map is a
+# foreign value), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -181,7 +183,7 @@ kinds:
       cubicInterpolationMode: cubicInterpolationMode
       tension: number
       stepped: steppedLine | bool
-      segment: scope SegmentOptions
+      segment: lineSegmentStyle
       hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number
@@ -375,7 +377,7 @@ kinds:
       stepped: steppedLine | bool
       fill: fillTarget
       spanGaps: bool | number
-      segment: scope SegmentOptions
+      segment: lineSegmentStyle
       hoverBorderWidth: number
       hoverBorderColor: chartPaint
       hoverBackgroundColor: chartPaint
@@ -471,16 +473,6 @@ kinds:
       outerEnd: number
       innerStart: number
       innerEnd: number
-  SegmentOptions:
-    doc: Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable styles of a line segment.
-    keys:
-      backgroundColor: chartPaint
-      borderColor: chartPaint
-      borderCapStyle: strokeCap
-      borderDash: list
-      borderDashOffset: number
-      borderJoinStyle: strokeJoin
-      borderWidth: number
   # ---------------------------------------------------------------------------------------------
   # The datasets. Each kind also holds the chart options of its controller, which live in
   # `defaults.datasets.<type>`, and the keys that core code reads for each dataset: the axis ids
@@ -569,7 +561,7 @@ kinds:
       stepped: steppedLine | bool
       fill: fillTarget
       spanGaps: bool | number
-      segment: scope SegmentOptions
+      segment: lineSegmentStyle
       borderWidth: number
       borderColor: chartPaint
       backgroundColor: chartPaint
@@ -784,7 +776,7 @@ kinds:
       stepped: steppedLine | bool
       fill: fillTarget
       spanGaps: bool | number
-      segment: scope SegmentOptions
+      segment: lineSegmentStyle
       hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number

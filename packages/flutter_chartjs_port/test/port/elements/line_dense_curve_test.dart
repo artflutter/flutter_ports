@@ -22,7 +22,6 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show MonotoneCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
@@ -36,6 +35,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _blue = ui.Color(0xff4f6bed);
@@ -97,6 +97,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     String key,
     List<DataPoint> points, {
     FillTarget fill = FillTarget.none,
+    LineSegmentStyle? segment,
     Map<String, Object?>? extra,
   }) => LineDataset(
     key: ValueKey(key),
@@ -113,6 +114,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     tension: .35,
     fill: fill,
     spanGaps: variant == 'spanGaps' ? true : null,
+    segment: segment,
     extra: extra,
   );
   final eighth = math.max(1, count ~/ 8);
@@ -136,16 +138,11 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
       line(
         'a',
         points,
-        extra: {
-          'segment': <String, Object?>{
-            'borderColor': (Object? ctx) {
-              final i = jsGet(ctx, 'p0DataIndex');
-              return i is num && (i ~/ eighth).isOdd
-                  ? const ChartPaint.solid(_green)
-                  : undefined;
-            },
-          },
-        },
+        segment: LineSegmentStyle(
+          borderColor: (s) => (s.p0DataIndex ~/ eighth).isOdd
+              ? const ChartPaint.solid(_green)
+              : null,
+        ),
       ),
     ],
     _ => [

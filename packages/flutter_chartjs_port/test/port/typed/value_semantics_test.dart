@@ -58,6 +58,7 @@ const List<String> _lineStyle = [
   'showLine',
   'stepped',
   'cubicInterpolationMode',
+  'segment',
   'pointRadius',
   'pointHoverRadius',
   'pointStyle',

@@ -52,6 +52,8 @@ import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show LineSegmentStyle;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
@@ -522,6 +524,7 @@ base mixin _LineStyle on Dataset {
   bool? get showLine;
   SteppedLine? get stepped;
   CubicInterpolationMode? get cubicInterpolationMode;
+  LineSegmentStyle? get segment;
   double? get pointRadius;
   double? get pointHoverRadius;
   PointStyle? get pointStyle;
@@ -542,6 +545,7 @@ base mixin _LineStyle on Dataset {
     put(scope, OptionKey.showLine, showLine);
     put(scope, OptionKey.stepped, stepped);
     put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
+    put(scope, OptionKey.segment, segment);
     put(scope, OptionKey.pointRadius, pointRadius);
     put(scope, OptionKey.pointHoverRadius, pointHoverRadius);
     put(scope, OptionKey.pointStyle, pointStyle);
@@ -571,6 +575,7 @@ base mixin _LineStyle on Dataset {
     ('showLine', showLine),
     ('stepped', stepped),
     ('cubicInterpolationMode', cubicInterpolationMode),
+    ('segment', segment),
     ('pointRadius', pointRadius),
     ('pointHoverRadius', pointHoverRadius),
     ('pointStyle', pointStyle),
@@ -677,6 +682,13 @@ final class const LineDataset({
   /// {@endtemplate}
   @override final CubicInterpolationMode? cubicInterpolationMode,
 
+  /// {@template flutter_chartjs_port.typed.segment}
+  /// The style functions of the parts of the line: `segment`, a
+  /// [LineSegmentStyle] (Chart.js ADR 0142). A function that gives null
+  /// keeps the line style for that part.
+  /// {@endtemplate}
+  @override final LineSegmentStyle? segment,
+
   /// {@template flutter_chartjs_port.typed.pointRadius}
   /// The radius of the points in pixels: `pointRadius`. 0 draws no points.
   /// {@endtemplate}
@@ -754,6 +766,7 @@ final class const LineDataset({
     bool? showLine,
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
+    LineSegmentStyle? segment,
     double? pointRadius,
     double? pointHoverRadius,
     PointStyle? pointStyle,
@@ -793,6 +806,7 @@ final class const LineDataset({
     stepped: stepped ?? this.stepped,
     cubicInterpolationMode:
         cubicInterpolationMode ?? this.cubicInterpolationMode,
+    segment: segment ?? this.segment,
     pointRadius: pointRadius ?? this.pointRadius,
     pointHoverRadius: pointHoverRadius ?? this.pointHoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,
@@ -900,6 +914,9 @@ final class const ScatterDataset({
   /// {@macro flutter_chartjs_port.typed.cubicInterpolationMode}
   @override final CubicInterpolationMode? cubicInterpolationMode,
 
+  /// {@macro flutter_chartjs_port.typed.segment}
+  @override final LineSegmentStyle? segment,
+
   /// {@macro flutter_chartjs_port.typed.pointRadius}
   @override final double? pointRadius,
 
@@ -957,6 +974,7 @@ final class const ScatterDataset({
     bool? showLine,
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
+    LineSegmentStyle? segment,
     double? pointRadius,
     double? pointHoverRadius,
     PointStyle? pointStyle,
@@ -995,6 +1013,7 @@ final class const ScatterDataset({
     stepped: stepped ?? this.stepped,
     cubicInterpolationMode:
         cubicInterpolationMode ?? this.cubicInterpolationMode,
+    segment: segment ?? this.segment,
     pointRadius: pointRadius ?? this.pointRadius,
     pointHoverRadius: pointHoverRadius ?? this.pointHoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,
@@ -1626,6 +1645,9 @@ final class const RadarDataset({
   /// {@macro flutter_chartjs_port.typed.cubicInterpolationMode}
   @override final CubicInterpolationMode? cubicInterpolationMode,
 
+  /// {@macro flutter_chartjs_port.typed.segment}
+  @override final LineSegmentStyle? segment,
+
   /// {@macro flutter_chartjs_port.typed.pointRadius}
   @override final double? pointRadius,
 
@@ -1679,6 +1701,7 @@ final class const RadarDataset({
     bool? showLine,
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
+    LineSegmentStyle? segment,
     double? pointRadius,
     double? pointHoverRadius,
     PointStyle? pointStyle,
@@ -1713,6 +1736,7 @@ final class const RadarDataset({
     stepped: stepped ?? this.stepped,
     cubicInterpolationMode:
         cubicInterpolationMode ?? this.cubicInterpolationMode,
+    segment: segment ?? this.segment,
     pointRadius: pointRadius ?? this.pointRadius,
     pointHoverRadius: pointHoverRadius ?? this.pointHoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,

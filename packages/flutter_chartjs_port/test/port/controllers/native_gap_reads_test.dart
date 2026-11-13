@@ -475,9 +475,7 @@ void main() {
             type,
             spanGaps: 1.5,
             dataset: <String, Object?>{
-              'segment': <String, Object?>{
-                'borderColor': (Object? ctx) => null,
-              },
+              'segment': LineSegmentStyle(borderColor: (s) => null),
             },
           ),
         ]) {

@@ -67,10 +67,12 @@ import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/data_label.dart';
+import '../../support/segment_style.dart';
 import '../scales/scale_chart_harness.dart';
 import '../scales/scale_time_harness.dart' show atNow;
 
@@ -212,6 +214,8 @@ Object? plainValue(Object? value, [int depth = 0]) {
   }
   return switch (value) {
     Function() || JsClass() => '<fn>',
+    // The names of the functions of a segment style (Chart.js ADR 0142).
+    final LineSegmentStyle style => segmentStyleMarker(style),
     // A side of Dart `null` is the JS `false` of `toClip` (row
     // `adapt-native-chart-meta`).
     final types.ChartClip clip => <String, Object?>{
@@ -724,7 +728,7 @@ void expectControllerObservations(
         referenceMatcher(switch (key) {
           'labelAndValue' => nativeLabelAndValue(expectedDataset[key]),
           '_clip' => _nativeClip(expectedDataset[key]),
-          _ => expectedDataset[key],
+          _ => withSegmentMarkers(expectedDataset[key]),
         }),
         reason: '$label: datasets.$i.$key',
       );

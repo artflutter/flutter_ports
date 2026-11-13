@@ -18,6 +18,8 @@ import 'package:flutter_chartjs_port/chartjs.dart'
         LegendItemComparator,
         LegendItemFilter,
         LegendLabelsGenerator,
+        LineSegmentStyle,
+        ScriptableLineSegmentContext,
         TooltipCallbacks,
         TooltipItem;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
@@ -841,6 +843,28 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
               trace.add(_traceLine('$path.labelPointStyle', [arg]));
               return value.labelPointStyle!(tooltip, arg);
             },
+    );
+  }
+  // The segment functions take the typed context (Chart.js ADR 0142); trace
+  // each one with the path of its key, as the functions of the segment Map.
+  if (value is LineSegmentStyle) {
+    T? Function(ScriptableLineSegmentContext)? rec<T>(
+      String key,
+      T? Function(ScriptableLineSegmentContext)? f,
+    ) => f == null
+        ? null
+        : (s) {
+            trace.add(_traceLine('$path.$key', [s]));
+            return f(s);
+          };
+    return LineSegmentStyle(
+      borderColor: rec('borderColor', value.borderColor),
+      backgroundColor: rec('backgroundColor', value.backgroundColor),
+      borderWidth: rec('borderWidth', value.borderWidth),
+      borderDash: rec('borderDash', value.borderDash),
+      borderDashOffset: rec('borderDashOffset', value.borderDashOffset),
+      borderCapStyle: rec('borderCapStyle', value.borderCapStyle),
+      borderJoinStyle: rec('borderJoinStyle', value.borderJoinStyle),
     );
   }
   // The legend label callbacks return typed values (Chart.js ADR 0130): a

@@ -256,30 +256,29 @@ const segmentLine = ChartConfig(
       data: trend,
       borderColor: .constant(.solid(teal)),
       spanGaps: true,
-      extra: {
-        'segment': {'borderColor': segmentColor, 'borderDash': segmentDash},
-      },
+      segment: LineSegmentStyle(
+        borderColor: segmentColor,
+        borderDash: segmentDash,
+      ),
     ),
   ],
 );
 
-num? trendAt(JsObjectFace context, String key) =>
-    trend[(context[key]! as num).toInt()];
-
-Object? segmentColor(JsObjectFace context) {
-  final from = trendAt(context, 'p0DataIndex');
-  final to = trendAt(context, 'p1DataIndex');
+// Gray across a gap, red where the line goes down; null keeps the line color.
+ChartPaint? segmentColor(ScriptableLineSegmentContext segment) {
+  final from = trend[segment.p0DataIndex];
+  final to = trend[segment.p1DataIndex];
   if (from == null || to == null) {
     return const ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.2));
   }
-  return from > to ? const ChartPaint.solid(red) : undefined;
+  return from > to ? const ChartPaint.solid(red) : null;
 }
 
-Object? segmentDash(JsObjectFace context) =>
-    trendAt(context, 'p0DataIndex') == null ||
-        trendAt(context, 'p1DataIndex') == null
-    ? <double>[6, 6]
-    : undefined;
+// Dashed across a gap.
+List<double>? segmentDash(ScriptableLineSegmentContext segment) =>
+    trend[segment.p0DataIndex] == null || trend[segment.p1DataIndex] == null
+    ? const [6, 6]
+    : null;
 // #enddocregion segment
 
 /// The data of the stepped examples.

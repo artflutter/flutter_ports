@@ -114,7 +114,6 @@ void validateChartColors(Object? config) {
       } else if (const [
         'scale',
         'hover',
-        'segment',
         'pointLabels',
         'ticks',
         'grid',

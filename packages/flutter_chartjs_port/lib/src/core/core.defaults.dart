@@ -30,7 +30,6 @@ import 'dart:core';
 import 'dart:ui' as ui;
 import 'dart:ui' show FontStyle;
 
-import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
@@ -50,7 +49,6 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart';
 
 /// core.defaults.js:7 `overrides`, `Object.create(null)`.
@@ -356,11 +354,8 @@ base class Defaults(
       // `Object.assign({}, target, local)` of two fonts: the local font
       // merges over the target font (row adapt-text-style-fonts).
       // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
-      if (local is TooltipCallbacks) {
-        return value is TooltipCallbacks ? value.merge(local) : local;
-      }
-      if (local is TextStyle) {
-        return value is TextStyle ? value.merge(local) : local;
+      if (nativeMergeKind(local) != 0) {
+        return mergeNativeOptionValues(value, local) ?? local;
       }
       if (isObject(local)) {
         return _assign(<String, Object?>{}, [value, local]);
