@@ -13,7 +13,7 @@ library;
 
 /// `stepped` of a line (index.d.ts:1994 `'before' | 'after' | 'middle'`, with
 /// `boolean`): where the step of each segment of a stepped line lies.
-enum SteppedLine {
+enum SteppedLine() {
   /// `'before'`: the step at the start of the segment, the form of `true`.
   before,
 

@@ -32,22 +32,22 @@ export 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart';
 /// is a byte [0..255], as in the results of the parse functions.
 ///
 /// A JS object compares by identity. Thus the class has no `==`.
-final class RGBA {
-  /// The object literal `{r, g, b, a}`.
-  RGBA({required this.r, required this.g, required this.b, required this.a});
-
+final class RGBA({
   /// index.esm.js:17 `r`: red [0..255].
-  double r;
+  required var double r,
 
   /// index.esm.js:18 `g`: green [0..255].
-  double g;
+  required var double g,
 
   /// index.esm.js:19 `b`: blue [0..255].
-  double b;
+  required var double b,
 
   /// index.esm.js:20 `a`: alpha [0..1], or a byte [0..255] inside a
   /// [Color].
-  double a;
+  required var double a,
+}) {
+  /// The object literal `{r, g, b, a}`.
+  this;
 }
 
 /// index.esm.js:29 the default export.

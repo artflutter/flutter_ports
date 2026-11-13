@@ -36,8 +36,8 @@ const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const green = ChartPaint.solid(ui.Color(0xff00ff00));
 
 // Trivial user subclasses: the same results, with no native loop.
-class _RefDoughnut extends DoughnutController {
-  _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget])
+    extends DoughnutController {
   static final value = JsClass(
     'RefDoughnut',
     superclass: DoughnutController.jsClass,
@@ -49,8 +49,8 @@ class _RefDoughnut extends DoughnutController {
   );
 }
 
-class _RefPie extends PieController {
-  _RefPie(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefPie(super.chart, super.datasetIndex, [super.newTarget])
+    extends PieController {
   static final value = JsClass(
     'RefPie',
     superclass: PieController.jsClass,
@@ -62,8 +62,8 @@ class _RefPie extends PieController {
   );
 }
 
-class _RefPolar extends PolarAreaController {
-  _RefPolar(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefPolar(super.chart, super.datasetIndex, [super.newTarget])
+    extends PolarAreaController {
   static final value = JsClass(
     'RefPolar',
     superclass: PolarAreaController.jsClass,
@@ -75,23 +75,24 @@ class _RefPolar extends PolarAreaController {
   );
 }
 
-class _TrivialConfig extends Config {
-  _TrivialConfig(super.config);
-}
+class _TrivialConfig(super.config) extends Config;
 
-class _ConfigChart extends Chart {
-  _ConfigChart(Object item, this.supplied) : super(item, <String, Object?>{});
-  final Config supplied;
+class _ConfigChart(Object item, final Config supplied) extends Chart {
+  this : super(item, <String, Object?>{});
   @override
   Config get config => supplied;
 }
 
 /// The reference of a twin: a trivial Config in a chart subclass, a trivial
 /// controller subclass, or both.
-enum _Reference { config, controller, both }
+enum _Reference() {
+  config,
+  controller,
+  both,
+}
 
 // Explicit test opt-in: counters only, with native reads and writes.
-class _ProbeArc extends ArcElement {
+class _ProbeArc() extends ArcElement {
   int contextReads = 0;
   int hiddenReads = 0;
   void Function(int reads)? onHidden;
@@ -111,9 +112,7 @@ class _ProbeArc extends ArcElement {
 }
 
 // A user subclass: its reads stay observable, so the native loops decline it.
-class _UserArc extends ArcElement {
-  _UserArc(this.trace);
-  final List<Object?> trace;
+class _UserArc(final List<Object?> trace) extends ArcElement {
   void Function()? onHidden;
   @override
   ScriptableContext? get $context {
@@ -129,7 +128,7 @@ class _UserArc extends ArcElement {
   }
 }
 
-class _UserElement extends ArcElement {
+class _UserElement() extends ArcElement {
   static final value = JsClass(
     'ArcUserElement',
     superclass: ArcElement.jsClass,
@@ -138,10 +137,8 @@ class _UserElement extends ArcElement {
   );
 }
 
-class _ObservedMap extends MapBase<String, Object?> {
-  _ObservedMap(this.fields, this.reads);
-  final Map<String, Object?> fields;
-  final List<Object?> reads;
+class _ObservedMap(final Map<String, Object?> fields, final List<Object?> reads)
+    extends MapBase<String, Object?> {
   void Function(Object? key)? onRead;
   @override
   Object? operator [](Object? key) {
@@ -160,10 +157,9 @@ class _ObservedMap extends MapBase<String, Object?> {
   void clear() => fields.clear();
 }
 
-final class _UserScope extends ChartOptionsScope;
+final class _UserScope() extends ChartOptionsScope;
 
-class _UserRadial extends RadialLinearScale {
-  _UserRadial(super.cfg);
+class _UserRadial(super.cfg) extends RadialLinearScale {
   static List<Object?> trace = [];
   static final value = JsClass(
     'ArcUserRadial',
@@ -207,10 +203,8 @@ const _updateOptionNames = {
   'radius',
 };
 
-class _ObservedList extends ListBase<Object?> {
-  _ObservedList(this.values, this.reads);
-  final List<Object?> values;
-  final List<Object?> reads;
+class _ObservedList(final List<Object?> values, final List<Object?> reads)
+    extends ListBase<Object?> {
   @override
   int get length {
     reads.add('length');

@@ -9,11 +9,8 @@ import 'package:test/test.dart';
 // cover the two methods of src/platform/platform.basic.js without a chart.
 
 /// A canvas element whose `getContext('2d')` gives [context].
-final class _Canvas implements HTMLCanvasElement {
-  _Canvas(this.context);
-
-  final CanvasRenderingContext2D? context;
-
+final class _Canvas(final CanvasRenderingContext2D? context)
+    implements HTMLCanvasElement {
   final List<String> contextIds = [];
 
   @override
@@ -30,12 +27,12 @@ final class _Canvas implements HTMLCanvasElement {
       throw UnimplementedError();
 }
 
-final class _Context implements CanvasRenderingContext2D {
+final class _Context() implements CanvasRenderingContext2D {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _Config implements types.ChartConfiguration {
+final class _Config() implements types.ChartConfiguration {
   @override
   final Map<String, Object?> options = {'animation': <String, Object?>{}};
 

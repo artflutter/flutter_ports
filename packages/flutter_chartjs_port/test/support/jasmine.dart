@@ -70,12 +70,12 @@ import 'legend_item.dart';
 /// depth of 8 only. A [JasmineOptions] prints the `Object.keys`
 /// ([jsObjectKeys]) of its resolver. [jasmineEquals] and [objectContaining]
 /// compare the resolver in it.
-final class JasmineOptions {
-  /// The resolver [resolver] as an actual value.
-  const JasmineOptions(this.resolver);
-
+final class const JasmineOptions(
   /// The resolver.
-  final Object resolver;
+  final Object resolver,
+) {
+  /// The resolver [resolver] as an actual value.
+  this;
 
   @override
   String toString() => 'resolver {${jsObjectKeys(resolver).join(', ')}}';
@@ -124,11 +124,7 @@ bool _isObject(Object? value) =>
 /// The actual value can be a [JasmineOptions].
 Matcher jasmineEquals(Object? expected) => _JasmineEquals(expected);
 
-final class _JasmineEquals extends Matcher {
-  const _JasmineEquals(this.expected);
-
-  final Object? expected;
-
+final class const _JasmineEquals(final Object? expected) extends Matcher {
   @override
   bool matches(Object? item, Map<Object?, Object?> matchState) {
     final path = <String>[];
@@ -256,11 +252,8 @@ final class _JasmineEquals extends Matcher {
 Matcher objectContaining(Map<String, Object?> expected) =>
     _JasmineObjectContaining(expected);
 
-final class _JasmineObjectContaining extends Matcher {
-  const _JasmineObjectContaining(this.expected);
-
-  final Map<String, Object?> expected;
-
+final class const _JasmineObjectContaining(final Map<String, Object?> expected)
+    extends Matcher {
   @override
   bool matches(Object? item, Map<Object?, Object?> matchState) {
     final object = _actual(item);
@@ -310,9 +303,7 @@ final class _JasmineObjectContaining extends Matcher {
 /// value.
 const Matcher anyFunction = _AnyFunction();
 
-final class _AnyFunction extends Matcher {
-  const _AnyFunction();
-
+final class const _AnyFunction() extends Matcher {
   @override
   bool matches(Object? item, Map<Object?, Object?> matchState) =>
       jsIsFunction(item);
@@ -329,7 +320,7 @@ final class _AnyFunction extends Matcher {
 typedef JasmineCall = ({Object? object, List<Object?> args});
 
 /// `spy.calls` of Jasmine: the calls of a spy, in order.
-final class JasmineCalls {
+final class JasmineCalls() {
   final List<JasmineCall> _all = [];
 
   /// Records a call with the arguments [args] and the receiver [object].
@@ -364,12 +355,10 @@ const Object _none = Object();
 /// A Jasmine spy of [spyOn]: a function value that records the arguments
 /// of each call and returns [undefined], or the result of the original
 /// function after `and.callThrough()`.
-final class JasmineSpy {
-  JasmineSpy._(this._original);
-
+final class JasmineSpy._(
   /// The function value that the spy replaces.
-  final Object? _original;
-
+  final Object? _original,
+) {
   bool _callThrough = false;
 
   /// `spy.calls`.
@@ -392,11 +381,7 @@ final class JasmineSpy {
 }
 
 /// `spy.and` of a [JasmineSpy].
-final class JasmineSpyStrategy {
-  JasmineSpyStrategy._(this._spy);
-
-  final JasmineSpy _spy;
-
+final class JasmineSpyStrategy._(final JasmineSpy _spy) {
   /// `and.callThrough()`: each call also calls the original function, with
   /// the same `this` and arguments, and returns its result.
   void callThrough() => _spy._callThrough = true;
@@ -514,13 +499,15 @@ const List<String> _lineKeys = [
 ];
 
 /// The draw spy of a point: `spyOn(point, 'draw')`.
-final class _PointDrawSpy extends PointElement {
-  _PointDrawSpy(PointElement of, {required this.callThrough}) {
-    _copyProperties(of, this, _pointKeys);
-  }
+final class _PointDrawSpy(
+  PointElement of, {
 
   /// `.and.callThrough()`.
-  final bool callThrough;
+  required final bool callThrough,
+}) extends PointElement {
+  this {
+    _copyProperties(of, this, _pointKeys);
+  }
 
   /// `element.draw.calls`.
   final JasmineCalls calls = JasmineCalls();
@@ -533,13 +520,15 @@ final class _PointDrawSpy extends PointElement {
 }
 
 /// The draw spy of a bar: `spyOn(bar, 'draw')`.
-final class _BarDrawSpy extends BarElement {
-  _BarDrawSpy(BarElement of, {required this.callThrough}) {
-    _copyProperties(of, this, _barKeys);
-  }
+final class _BarDrawSpy(
+  BarElement of, {
 
   /// `.and.callThrough()`.
-  final bool callThrough;
+  required final bool callThrough,
+}) extends BarElement {
+  this {
+    _copyProperties(of, this, _barKeys);
+  }
 
   /// `element.draw.calls`.
   final JasmineCalls calls = JasmineCalls();
@@ -552,13 +541,15 @@ final class _BarDrawSpy extends BarElement {
 }
 
 /// The draw spy of an arc: `spyOn(arc, 'draw')`.
-final class _ArcDrawSpy extends ArcElement {
-  _ArcDrawSpy(ArcElement of, {required this.callThrough}) {
-    _copyProperties(of, this, _arcKeys);
-  }
+final class _ArcDrawSpy(
+  ArcElement of, {
 
   /// `.and.callThrough()`.
-  final bool callThrough;
+  required final bool callThrough,
+}) extends ArcElement {
+  this {
+    _copyProperties(of, this, _arcKeys);
+  }
 
   /// `element.draw.calls`.
   final JasmineCalls calls = JasmineCalls();
@@ -572,13 +563,15 @@ final class _ArcDrawSpy extends ArcElement {
 
 /// The spy of a line: `spyOn(line, 'draw')` and
 /// `spyOn(line, 'updateControlPoints')`.
-final class _LineSpy extends LineElement {
-  _LineSpy(LineElement of, {required this.callThrough}) {
-    _copyProperties(of, this, _lineKeys);
-  }
+final class _LineSpy(
+  LineElement of, {
 
   /// `.and.callThrough()`.
-  final bool callThrough;
+  required final bool callThrough,
+}) extends LineElement {
+  this {
+    _copyProperties(of, this, _lineKeys);
+  }
 
   /// `line.draw.calls`.
   final JasmineCalls draws = JasmineCalls();
@@ -659,14 +652,12 @@ JasmineCalls spyOnElementDraw(
 // The spy of the array listener of a controller.
 
 /// The listener of [spyOnArrayListener]: it records each `_onData*` call.
-final class _ArrayListenerSpy with ArrayListener<Object?> {
-  _ArrayListenerSpy(this._of, {required this.callThrough});
-
-  final ArrayListener<Object?> _of;
+final class _ArrayListenerSpy(
+  final ArrayListener<Object?> _of, {
 
   /// `.and.callThrough()`.
-  final bool callThrough;
-
+  required final bool callThrough,
+}) with ArrayListener<Object?> {
   /// The calls by method name.
   final Map<String, JasmineCalls> calls = {
     for (final name in const [

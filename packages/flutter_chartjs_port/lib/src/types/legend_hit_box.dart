@@ -15,7 +15,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 /// identity and dispatch hit testing and centers through the public methods.
 class LegendHitBox {
   /// Creates a hit box in a horizontal legend row.
-  LegendHitBox.row({
+  new row({
     required this.left,
     required this.top,
     required this.width,
@@ -26,7 +26,7 @@ class LegendHitBox {
        col = null;
 
   /// Creates a hit box in a vertical legend column.
-  LegendHitBox.col({
+  new col({
     required this.left,
     required this.top,
     required this.width,

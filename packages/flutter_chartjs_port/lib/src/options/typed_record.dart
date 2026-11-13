@@ -30,7 +30,10 @@ import 'package:meta/meta.dart';
 
 /// A JS object with typed fields (Chart.js ADR 0054). See the library
 /// documentation.
-abstract base class TypedRecord implements JsObjectFace {
+abstract base class TypedRecord() implements JsObjectFace {
+  /// The constructor of the subclasses.
+  this;
+
   /// The JS names of the fields, by slot. At most 30 names.
   @protected
   List<String> get fieldNames;

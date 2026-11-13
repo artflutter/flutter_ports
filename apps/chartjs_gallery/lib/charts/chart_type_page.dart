@@ -33,19 +33,23 @@ import 'package:material_ui/material_ui.dart';
 /// Escape clears the hover. Its semantics label is
 /// `<title> chart: <variant>`, for example `Bar chart: vertical`. The
 /// [ChartTheme] of the app themes the chart (Chart.js ADR 0050).
-class ChartTypePage extends StatefulWidget {
-  /// Creates the page of [entry].
-  const ChartTypePage({required this.entry, super.key});
-
+class const ChartTypePage({
   /// The chart type of the page.
-  final ChartTypeEntry entry;
+  required final ChartTypeEntry entry,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the page of [entry].
+  this;
 
   @override
   State<ChartTypePage> createState() => ChartTypePageState();
 }
 
 /// The state of a [ChartTypePage]: the selected variant and its chart.
-class ChartTypePageState extends State<ChartTypePage> {
+class ChartTypePageState() extends State<ChartTypePage> {
+  /// A new state of [ChartTypePage].
+  this;
+
   static const String _input =
       'Hover or tap an element: the tooltip shows its label and value. '
       'Tap outside the chart: the tooltip hides. '

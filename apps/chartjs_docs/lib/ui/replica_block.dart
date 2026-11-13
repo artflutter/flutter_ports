@@ -9,53 +9,42 @@ import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/link.dart';
 
 /// One demo of another chart library and its replica with the port.
-class ReplicaDemo {
-  /// Creates a demo.
-  const ReplicaDemo({
-    required this.id,
-    required this.title,
-    required this.original,
-    required this.region,
-    required this.notes,
-    required this.replica,
-  });
-
+class const ReplicaDemo({
   /// The id of the section of the demo, unique on the site.
-  final String id;
+  required final String id,
 
   /// The name of the demo in the other library.
-  final String title;
+  required final String title,
 
   /// The address of the original demo.
-  final String original;
+  required final String original,
 
   /// The name of the code region of the replica.
-  final String region;
+  required final String region,
 
   /// What maps to what, with the inline forms of [DocText].
-  final List<String> notes;
+  required final List<String> notes,
 
   /// Builds the live replica.
-  final WidgetBuilder replica;
+  required final WidgetBuilder replica,
+}) {
+  /// Creates a demo.
+  this;
 }
 
 /// The look of the frame of the replicas of a library.
-class ReplicaFrame {
-  /// Creates the look of a frame.
-  const ReplicaFrame({
-    required this.background,
-    this.dark = false,
-    this.padding = const EdgeInsets.all(12),
-  });
-
+class const ReplicaFrame({
   /// The color behind the replica: the page color of the original demo.
-  final Color background;
+  required final Color background,
 
   /// Whether the replica shows under the dark chart theme.
-  final bool dark;
+  final bool dark = false,
 
   /// The space around the replica.
-  final EdgeInsets padding;
+  final EdgeInsets padding = const EdgeInsets.all(12),
+}) {
+  /// Creates the look of a frame.
+  this;
 }
 
 /// The page of a migration from another library: an introduction, a table
@@ -120,12 +109,10 @@ DocPageContent migrationPage({
 );
 
 /// A link that opens [url] in a new tab.
-class _OriginalLink extends StatelessWidget {
-  const _OriginalLink({required this.url, required this.label});
-
-  final String url;
-  final String label;
-
+class const _OriginalLink({
+  required final String url,
+  required final String label,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Align(
     alignment: Alignment.centerLeft,
@@ -146,21 +133,22 @@ class _OriginalLink extends StatelessWidget {
 }
 
 /// A demo with its notes, its live replica and its code on demand.
-class ReplicaBlock extends StatefulWidget {
-  /// Creates the block of [demo].
-  const ReplicaBlock({required this.demo, required this.frame, super.key});
-
+class const ReplicaBlock({
   /// The demo.
-  final ReplicaDemo demo;
+  required final ReplicaDemo demo,
 
   /// The look of the frame of the replica.
-  final ReplicaFrame frame;
+  required final ReplicaFrame frame,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the block of [demo].
+  this;
 
   @override
   State<ReplicaBlock> createState() => _ReplicaBlockState();
 }
 
-class _ReplicaBlockState extends State<ReplicaBlock> {
+class _ReplicaBlockState() extends State<ReplicaBlock> {
   bool _code = false;
 
   @override

@@ -9,14 +9,14 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// Explicit contract for ordinary controller/scale metadata reads. Unknown
 /// subclasses must retain their virtual methods and user getter behavior.
-abstract interface class NativeBarIndexReads {
+abstract interface class NativeBarIndexReads() {
   /// Whether index-layout metadata has the built-in read behavior.
   bool get supportsNativeBarIndexReads;
 }
 
 /// A chart that can prove the single-dataset axis/stack position at this
 /// instant. The caller rechecks after option resolution; nothing is frozen.
-abstract interface class SingleBarIndexSource {
+abstract interface class SingleBarIndexSource() {
   /// True only when the axis count is one and axis/stack indices are zero.
   bool hasSingleBarIndexLayout(
     types.DatasetController controller,
@@ -48,13 +48,11 @@ final _lists = <Type>{
 
 /// Validate a container's implementation only when its identity changes.
 /// Its contents, routes, list length and selected axis id are always live.
-final class SingleBarDatasetSource {
+final class SingleBarDatasetSource(final Object _config) {
   /// The config object itself is retained by Config and cannot be replaced.
-  SingleBarDatasetSource(this._config)
-    : _rootKind = _kind(_config, ChartConfigurationScope);
+  this;
 
-  final Object _config;
-  final int _rootKind;
+  final int _rootKind = _kind(_config, ChartConfigurationScope);
   Object? _data;
   int _dataKind = 0;
   Object? _datasets;
@@ -136,7 +134,10 @@ final class SingleBarDatasetSource {
 
 /// Only immutable key order is cached, never scale fields or option values.
 /// The caller owns a native map and checks all its current keys on each read.
-final class BarScaleKeys {
+final class BarScaleKeys() {
+  /// A new [BarScaleKeys].
+  this;
+
   List<String> _insertion = const [];
   List<String> _ordered = const [];
 

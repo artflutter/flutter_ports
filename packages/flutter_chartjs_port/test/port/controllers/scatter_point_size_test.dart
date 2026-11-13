@@ -31,9 +31,8 @@ const _length = 8;
 
 /// A trivial user subclass: the exact-class guard fails, and each call stays on
 /// the ordinary path. Its charts are the reference of each twin.
-class _ReferenceScatter extends ScatterController {
-  _ReferenceScatter(super.chart, super.datasetIndex, [super.newTarget]);
-
+class _ReferenceScatter(super.chart, super.datasetIndex, [super.newTarget])
+    extends ScatterController {
   static final JsClass value = JsClass(
     'ReferenceScatter',
     superclass: ScatterController.jsClass,
@@ -46,9 +45,8 @@ class _ReferenceScatter extends ScatterController {
 }
 
 /// A user subclass that counts each option resolve.
-class _CountingScatter extends ScatterController {
-  _CountingScatter(super.chart, super.datasetIndex, [super.newTarget]);
-
+class _CountingScatter(super.chart, super.datasetIndex, [super.newTarget])
+    extends ScatterController {
   static int resolves = 0;
 
   static final JsClass value = JsClass(
@@ -68,15 +66,14 @@ class _CountingScatter extends ScatterController {
   }
 }
 
-class _ReferenceChart extends Chart {
-  _ReferenceChart(super.item, super.userConfig);
+class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativePointOptions => false;
 }
 
 /// A platform that keeps the option `animation`: an unhosted canvas otherwise
 /// gets a [BasicPlatform], whose `updateConfig` writes `false` into it.
-class _AnimatedPlatform extends BasicPlatform {
+class _AnimatedPlatform() extends BasicPlatform {
   static final JsClass value = JsClass(
     'AnimatedPlatform',
     superclass: BasicPlatform.jsClass,
@@ -88,7 +85,7 @@ class _AnimatedPlatform extends BasicPlatform {
 }
 
 // Explicit test opt-in: counters only, with native size/context behavior.
-class _ProbePoint extends PointElement {
+class _ProbePoint() extends PointElement {
   int planReads = 0;
   int sizeCalls = 0;
   @override
@@ -107,7 +104,7 @@ class _ProbePoint extends PointElement {
   }
 }
 
-class _CustomSize extends PointElement {
+class _CustomSize() extends PointElement {
   void Function()? afterSize;
   int calls = 0;
   @override

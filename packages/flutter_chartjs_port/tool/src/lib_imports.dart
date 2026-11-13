@@ -302,37 +302,32 @@ const Set<String> addOnHarnessLibraries = {
 };
 
 /// The host of an add-on port: its package name and its public libraries.
-final class _Host {
-  const _Host(this.name, this.libraries);
-
+final class const _Host(
   /// The package name, for example `flutter_chartjs_port`.
-  final String name;
+  final String name,
 
   /// The URIs of the libraries directly in the `lib/` of the host, sorted.
-  final List<String> libraries;
-}
+  final List<String> libraries,
+);
 
 /// One Dart file of the package.
-final class _Library {
-  _Library(this.path, this.source) : header = Header.parse(source.lines);
-
+final class _Library(
   /// The path relative to the package.
-  final String path;
-  final DartSource source;
-  final Header header;
+  final String path,
+  final DartSource source,
+) {
+  final Header header = Header.parse(source.lines);
   final List<_Edge> edges = [];
 }
 
 /// One URI of a directive.
-final class _Edge {
-  _Edge(this.uri, this.line, this.target);
-
-  final String uri;
-  final int line;
+final class _Edge(
+  final String uri,
+  final int line,
 
   /// The package-relative path for a URI of this package, else null.
-  final String? target;
-}
+  final String? target,
+);
 
 /// Runs the guard over the package in [packageDirectory]. The paths in the
 /// findings start with [displayPrefix].

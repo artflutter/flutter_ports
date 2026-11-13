@@ -25,12 +25,10 @@ const Color _red = Color.from(alpha: 1, red: 200 / 255, green: 0, blue: 0);
 const ChartThemeData _redTheme = ChartThemeData(color: _red);
 
 /// A widget that records the [ChartTheme.maybeOf] of each build.
-class _Reader extends StatelessWidget {
-  const _Reader(this.log);
-
+class const _Reader(
   /// The theme of each build.
-  final List<ChartThemeData?> log;
-
+  final List<ChartThemeData?> log,
+) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log.add(ChartTheme.maybeOf(context));

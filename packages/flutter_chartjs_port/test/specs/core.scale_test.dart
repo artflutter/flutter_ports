@@ -77,9 +77,7 @@ List<Object?> _getLabels(Scale scale) {
 }
 
 /// core.scale.tests.js:514-519 `class CustomScale extends Chart.Scale`.
-final class _CustomScale extends Scale {
-  _CustomScale(super.cfg);
-
+final class _CustomScale(super.cfg) extends Scale {
   @override
   void draw([types.ChartArea? chartArea]) {}
 
@@ -91,9 +89,7 @@ final class _CustomScale extends Scale {
 }
 
 /// core.scale.tests.js:547-552 `class CustomScale1 extends Chart.Scale`.
-final class _CustomScale1 extends Scale {
-  _CustomScale1(super.cfg);
-
+final class _CustomScale1(super.cfg) extends Scale {
   @override
   void draw([types.ChartArea? chartArea]) {}
 
@@ -105,9 +101,7 @@ final class _CustomScale1 extends Scale {
 }
 
 /// core.scale.tests.js:580-582 `class CustomScale2 extends Chart.Scale`.
-final class _CustomScale2 extends Scale {
-  _CustomScale2(super.cfg);
-
+final class _CustomScale2(super.cfg) extends Scale {
   @override
   void draw([types.ChartArea? chartArea]) {}
 }

@@ -35,27 +35,18 @@ import '../support/jasmine.dart';
 
 /// A test container: the parent node of a canvas, with the content box
 /// [contentWidth] x [contentHeight].
-final class _Container implements CanvasContainer {
-  const _Container(this.contentWidth, this.contentHeight);
-
-  @override
-  final double contentWidth;
-
-  @override
-  final double contentHeight;
-
+final class const _Container(
+  @override final double contentWidth,
+  @override final double contentHeight,
+) implements CanvasContainer {
   @override
   bool get isConnected => true;
 }
 
 /// A canvas element in [parentNode]. `getMaximumSize` reads only the parent
 /// node.
-final class _Canvas implements HTMLCanvasElement, CanvasNode {
-  _Canvas(this.parentNode);
-
-  @override
-  final CanvasContainer? parentNode;
-
+final class _Canvas(@override final CanvasContainer? parentNode)
+    implements HTMLCanvasElement, CanvasNode {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 

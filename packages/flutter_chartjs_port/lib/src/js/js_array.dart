@@ -60,7 +60,7 @@ int _sign(num result) {
 /// [jsHas] the `getOwnPropertyDescriptor` trap (`hasOwnProperty`).
 /// [hasProperty] is the `has` trap (the `in` operator) and [ownKeys] the
 /// `ownKeys` trap (`Object.getOwnPropertyNames`).
-abstract interface class JsProxyObject implements JsObjectFace {
+abstract interface class JsProxyObject() implements JsObjectFace {
   /// `Object.keys(proxy)`: the `ownKeys` trap result without the keys that
   /// the `getOwnPropertyDescriptor` trap rejects.
   ///
@@ -263,12 +263,12 @@ double _toIntegerOrInfinity(double value) =>
 /// It stays a `List` for the other checks: `isArray` is true and `typeof` is
 /// `'object'`, where JavaScript gives false and `'string'`. No ported reader
 /// of `_data` or of the parsed items makes these checks on the List itself.
-final class JsStringList extends ListBase<Object?> {
-  /// The array-like view of [string].
-  JsStringList(this.string);
-
+final class JsStringList(
   /// The JavaScript string.
-  final String string;
+  final String string,
+) extends ListBase<Object?> {
+  /// The array-like view of [string].
+  this;
 
   @override
   int get length => string.length;

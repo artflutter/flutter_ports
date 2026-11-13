@@ -36,12 +36,10 @@ import '../../support/light_theme.dart';
 Object? _fn(Object? ctx) => ctx;
 
 /// An instance of a Dart class: a leaf for clone and merge.
-final class _Instance {
-  const _Instance();
-}
+final class const _Instance();
 
 /// A subclass of a scope class: the merge reads and writes it by name.
-final class _SubScale extends ScaleOptionsScope;
+final class _SubScale() extends ScaleOptionsScope;
 
 /// The structure of [value]: the keys in their order, the class of each
 /// cell, the values and the classes of the objects. A function and a class

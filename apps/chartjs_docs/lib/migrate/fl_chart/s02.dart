@@ -103,13 +103,12 @@ final ChartConfig _main = _config(const [
 ], average: false);
 final ChartConfig _average = _config(List.filled(7, 3.44), average: true);
 
-class Sample2 extends StatefulWidget {
-  const Sample2({super.key});
+class const Sample2({super.key}) extends StatefulWidget {
   @override
   State<Sample2> createState() => _Sample2State();
 }
 
-class _Sample2State extends State<Sample2> {
+class _Sample2State() extends State<Sample2> {
   bool _showAvg = false;
 
   @override

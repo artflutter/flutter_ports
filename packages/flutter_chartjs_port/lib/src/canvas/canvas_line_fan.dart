@@ -6,7 +6,7 @@ import 'dart:typed_data';
 /// from one start point: the angle lines of a radial scale (Chart.js ADR 0103).
 ///
 /// A context that does not implement it gets the Canvas 2D calls of the run.
-abstract interface class LineFanCanvas {
+abstract interface class LineFanCanvas() {
   /// Strokes [count] lines from ([x], [y]), in order, with the current style:
   /// `beginPath`, `moveTo(x, y)`, `lineTo` and `stroke` for each line.
   ///

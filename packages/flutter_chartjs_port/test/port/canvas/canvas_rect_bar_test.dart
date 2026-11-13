@@ -19,11 +19,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
 
-class _ReferenceBar extends BarElement {
-  _ReferenceBar(super.cfg);
-}
+class _ReferenceBar(super.cfg) extends BarElement;
 
-class _Probe extends MockContext implements RectBarCanvas {
+class _Probe() extends MockContext implements RectBarCanvas {
   int probes = 0;
   @override
   bool tryDrawRectBar({

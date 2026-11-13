@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The colors of `Defaults` of Graphic.
-abstract final class Gx {
+abstract final class Gx() {
   static const primary = Color(0xff1890ff);
   static const stroke = Color(0xffe8e8e8);
   static const text = Color(0xff808080);
@@ -196,9 +196,9 @@ Offset? _pointer(Object? position) => switch (position) {
 /// `followPointer: [false, true]`, `align: topLeft`, `offset: (-20, -20)`:
 /// the bottom right corner 20 px left of the point and 20 px above the
 /// pointer.
-final class FollowYPositioner extends TooltipPositioner {
+final class const FollowYPositioner() extends TooltipPositioner {
   /// The positioner.
-  const FollowYPositioner();
+  this;
 
   @override
   TooltipPosition? positionOf(
@@ -218,9 +218,9 @@ final class FollowYPositioner extends TooltipPositioner {
 
 /// `followPointer: [true, true]`, `align: topLeft`: the bottom right corner
 /// at the pointer.
-final class AtPointerPositioner extends TooltipPositioner {
+final class const AtPointerPositioner() extends TooltipPositioner {
   /// The positioner.
-  const AtPointerPositioner();
+  this;
 
   @override
   TooltipPosition? positionOf(
@@ -240,9 +240,9 @@ final class AtPointerPositioner extends TooltipPositioner {
 
 /// `anchor: (_) => Offset.zero`, `align: bottomRight`: the top left corner
 /// of the chart.
-final class TopLeftPositioner extends TooltipPositioner {
+final class const TopLeftPositioner() extends TooltipPositioner {
   /// The positioner.
-  const TopLeftPositioner();
+  this;
 
   @override
   TooltipPosition? positionOf(

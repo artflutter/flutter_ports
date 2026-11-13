@@ -106,7 +106,7 @@ String categoryOf(String id) => differenceCategories.firstWhere(
 );
 
 /// The kind of the table of an area.
-enum AreaKind {
+enum AreaKind() {
   /// Upstream files with their Dart targets.
   sources,
 
@@ -115,40 +115,32 @@ enum AreaKind {
 }
 
 /// One section of `parity.md` with a table of upstream files.
-final class ParityArea {
-  /// An area of the [project] files that [selectors] list.
-  const ParityArea({
-    required this.id,
-    required this.heading,
-    required this.label,
-    required this.project,
-    required this.selectors,
-    this.kind = AreaKind.sources,
-    this.level = 2,
-  });
-
+final class const ParityArea({
   /// The key of the prose of the area in `doc/status.yaml`.
-  final String id;
+  required final String id,
 
   /// The heading text. `{version}` is the version of [project] without `v`.
-  final String heading;
+  required final String heading,
 
   /// The label of the area in the Summary table.
-  final String label;
+  required final String label,
 
   /// The project of `tool/port_sources.yaml`.
-  final String project;
+  required final String project,
 
   /// The project-relative files of the area, in order. `<dir>/` is each file
   /// under the directory, `<dir>/*` is each file directly in the directory,
   /// and another value is one file. The files of a selector are sorted.
-  final List<String> selectors;
+  required final List<String> selectors,
 
   /// The kind of the table.
-  final AreaKind kind;
+  final AreaKind kind = AreaKind.sources,
 
   /// The heading level.
-  final int level;
+  final int level = 2,
+}) {
+  /// An area of the [project] files that [selectors] list.
+  this;
 
   /// The heading line of the area for the [version] of its project.
   String headingLine(String version) =>
@@ -270,12 +262,12 @@ const List<String> fixedProseKeys = [
 ];
 
 /// A missing input: the command exits with 2.
-final class ParityInputError implements Exception {
-  /// The error [message].
-  const ParityInputError(this.message);
-
+final class const ParityInputError(
   /// What is missing.
-  final String message;
+  final String message,
+) implements Exception {
+  /// The error [message].
+  this;
 
   @override
   String toString() => message;
@@ -285,50 +277,47 @@ final class ParityInputError implements Exception {
 // doc/status.yaml.
 
 /// One row of the port-only table: three cell texts.
-final class PortOnlyEntry {
-  /// A row with the cells [file], [contents] and [tests].
-  const PortOnlyEntry(this.file, this.contents, this.tests);
-
+final class const PortOnlyEntry(
   /// The text of the File cell.
-  final String file;
+  final String file,
 
   /// The text of the Contents cell.
-  final String contents;
+  final String contents,
 
   /// The text of the Tests cell.
-  final String tests;
+  final String tests,
+) {
+  /// A row with the cells [file], [contents] and [tests].
+  this;
 
   /// The three cells, in table order.
   List<String> get cells => [file, contents, tests];
 }
 
 /// The content of `doc/status.yaml`.
-final class StatusFile {
+final class StatusFile({
+  Map<String, List<String>>? prose,
+  Map<String, Map<String, String>>? rows,
+  Map<String, Map<String, String>>? dart,
+  List<PortOnlyEntry>? portOnly,
+}) {
   /// A status file with its parts.
-  StatusFile({
-    Map<String, List<String>>? prose,
-    Map<String, Map<String, String>>? rows,
-    Map<String, Map<String, String>>? dart,
-    List<PortOnlyEntry>? portOnly,
-  }) : prose = prose ?? {},
-       rows = rows ?? {},
-       dart = dart ?? {},
-       portOnly = portOnly ?? [];
+  this;
 
   /// The lines of each prose block. The keys are [fixedProseKeys], the area
   /// ids for the text before a table and `<area id>.after` for the text
   /// after a table.
-  final Map<String, List<String>> prose;
+  final Map<String, List<String>> prose = prose ?? {};
 
   /// The status text of each row, by project and upstream path.
-  final Map<String, Map<String, String>> rows;
+  final Map<String, Map<String, String>> rows = rows ?? {};
 
   /// The Dart target of a row without a header that names its file, by
   /// project and upstream path. The target is relative to its package.
-  final Map<String, Map<String, String>> dart;
+  final Map<String, Map<String, String>> dart = dart ?? {};
 
   /// The rows of the port-only table, in order.
-  final List<PortOnlyEntry> portOnly;
+  final List<PortOnlyEntry> portOnly = portOnly ?? [];
 }
 
 /// Reads `doc/status.yaml`. Throws a [FormatException].
@@ -514,72 +503,57 @@ String _yamlString(String value) {
 // The inputs.
 
 /// The inputs of tool 6.
-final class ParityInput {
-  /// The inputs for the [package] (`flutter_chartjs_port`) in the [repository],
-  /// with the JSON reporter output [results] of the spec tests.
-  const ParityInput({
-    required this.repository,
-    required this.package,
-    required this.results,
-  });
-
+final class const ParityInput({
   /// The repository root, absolute, with `/` separators.
-  final String repository;
+  required final String repository,
 
   /// The `flutter_chartjs_port` package, absolute, with `/` separators.
-  final String package;
+  required final String package,
 
   /// The tests of the spec files.
-  final ReporterOutput results;
+  required final ReporterOutput results,
+}) {
+  /// The inputs for the [package] (`flutter_chartjs_port`) in the [repository],
+  /// with the JSON reporter output [results] of the spec tests.
+  this;
 }
 
 /// One table row of an upstream file.
-final class UpstreamRow {
-  /// The row of [path] of the project [source] in [area].
-  const UpstreamRow({
-    required this.area,
-    required this.source,
-    required this.path,
-    required this.lines,
-    required this.targets,
-    required this.differences,
-    this.spec,
-    this.specFile,
-    this.vmOnly,
-    this.fixtures,
-  });
-
+final class const UpstreamRow({
   /// The area of the row.
-  final ParityArea area;
+  required final ParityArea area,
 
   /// The project.
-  final PortSource source;
+  required final PortSource source,
 
   /// The project-relative upstream path.
-  final String path;
+  required final String path,
 
   /// The line count of the upstream file.
-  final int lines;
+  required final int lines,
 
   /// The Dart files whose headers name [path], relative to their packages.
-  final List<String> targets;
+  required final List<String> targets,
 
   /// The `differences.md` row IDs of the row, in the order of the
   /// categories and then of `differences.md`.
-  final List<String> differences;
+  required final List<String> differences,
 
   /// The tool 5 report of the spec of the row, or null.
-  final SpecReport? spec;
+  final SpecReport? spec,
 
   /// The upstream spec file of [spec], for messages.
-  final String? specFile;
+  final String? specFile,
 
   /// Whether the Dart spec file of [spec] has `@TestOn('vm')`, or null
   /// without a Dart spec file.
-  final bool? vmOnly;
+  final bool? vmOnly,
 
   /// The fixture count of a spec row, or null.
-  final int? fixtures;
+  final int? fixtures,
+}) {
+  /// The row of [path] of the project [source] in [area].
+  this;
 
   /// The link of the upstream file, at the pinned tree.
   String get url => '${source.url}/blob/${source.treeRef}/$path';
@@ -589,32 +563,26 @@ final class UpstreamRow {
 }
 
 /// The derived data of `parity.md`.
-final class ParityModel {
-  /// The model of the [package] in the [repository].
-  ParityModel({
-    required this.repository,
-    required this.package,
-    required this.sources,
-    required this.rows,
-    required this.portOnlyFiles,
-  });
-
+final class ParityModel({
   /// The repository root.
-  final String repository;
+  required final String repository,
 
   /// The `flutter_chartjs_port` package.
-  final String package;
+  required final String package,
 
   /// The projects of `tool/port_sources.yaml` by header name.
-  final Map<String, PortSource> sources;
+  required final Map<String, PortSource> sources,
 
   /// The rows of every area, in document order.
-  final List<UpstreamRow> rows;
+  required final List<UpstreamRow> rows,
 
   /// The repository-relative Dart files that the port-only section lists:
   /// the files with the port-only marker and the files of projects without
   /// an area.
-  final List<String> portOnlyFiles;
+  required final List<String> portOnlyFiles,
+}) {
+  /// The model of the [package] in the [repository].
+  this;
 
   /// The row of [path] in [project], or null.
   UpstreamRow? rowOf(String project, String path) => _index['$project $path'];
@@ -820,15 +788,13 @@ int _lineCount(String path) =>
 final RegExp _placeholder = RegExp(r'\{\{([^{}]*)\}\}');
 
 /// The values of the placeholders of one text.
-final class _Scope {
-  const _Scope(this.model, {this.row, this.statuses = const {}});
-
-  final ParityModel model;
-  final UpstreamRow? row;
+final class const _Scope(
+  final ParityModel model, {
+  final UpstreamRow? row,
 
   /// The expanded status of each row, for `{{rows:...}}`.
-  final Map<UpstreamRow, String> statuses;
-}
+  final Map<UpstreamRow, String> statuses = const {},
+});
 
 /// [template] with each placeholder replaced. Adds a message to [errors] for
 /// each placeholder without a value.
@@ -994,15 +960,15 @@ List<String> _tableHead(List<String> names, List<bool> numeric) {
 }
 
 /// The result of [renderParity].
-final class ParityOutput {
-  /// The [text] of `parity.md` and the [findings].
-  const ParityOutput(this.text, this.findings);
-
+final class const ParityOutput(
   /// The text of `parity.md`.
-  final String text;
+  final String text,
 
   /// The errors and the warnings.
-  final List<Finding> findings;
+  final List<Finding> findings,
+) {
+  /// The [text] of `parity.md` and the [findings].
+  this;
 }
 
 /// Renders `parity.md` from [model] and [status]. Paths in findings are
@@ -1258,20 +1224,12 @@ void _checkPortOnly(
 // The import of parity.md into status.yaml.
 
 /// One table of a parsed `parity.md`.
-final class _Table {
-  _Table(this.line, this.head);
-
-  final int line;
-  final List<String> head;
+final class _Table(final int line, final List<String> head) {
   final List<({int line, List<String> cells})> rows = [];
 }
 
 /// One section of a parsed `parity.md`.
-final class _Section {
-  _Section(this.heading, this.line);
-
-  final String heading;
-  final int line;
+final class _Section(final String heading, final int line) {
   final List<String> before = [];
   final List<String> after = [];
   _Table? table;
@@ -1341,16 +1299,16 @@ List<_Section> _sections(String markdown) {
 }
 
 /// The result of [importParity].
-final class ParityImport {
-  /// The new [status] and the [findings].
-  const ParityImport(this.status, this.findings);
-
+final class const ParityImport(
   /// The content of the new `doc/status.yaml`.
-  final StatusFile status;
+  final StatusFile status,
 
   /// The differences between the cells of `parity.md` and the derived
   /// values, and the cells that tool 6 cannot read.
-  final List<Finding> findings;
+  final List<Finding> findings,
+) {
+  /// The new [status] and the [findings].
+  this;
 }
 
 /// Reads the hand-written parts of the `parity.md` text [markdown] into a

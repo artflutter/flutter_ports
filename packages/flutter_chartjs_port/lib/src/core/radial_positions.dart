@@ -10,7 +10,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:meta/meta.dart';
 
 /// A radial scale whose position methods have the built-in behavior.
-abstract interface class NativeRadialPositionScale {
+abstract interface class NativeRadialPositionScale() {
   /// The current inputs of the position methods, or null for their ordinary
   /// calls. Unknown subclasses and an option that no ordinary read resolved yet
   /// give null, so that this call runs no user code.
@@ -25,42 +25,33 @@ abstract interface class NativeRadialPositionScale {
 /// The arithmetic is the arithmetic of the methods, in their order, so each
 /// result has the bits of the method result.
 @internal
-final class RadialPositions {
-  /// The inputs at the current state of the scale.
-  const RadialPositions({
-    required this.angleStep,
-    required this.startRadians,
-    required this.xCenter,
-    required this.yCenter,
-    required this.min,
-    required this.max,
-    required this.scalingFactor,
-    required this.reverse,
-  });
-
+final class const RadialPositions({
   /// `TAU / (this._pointLabels.length || 1)`.
-  final double angleStep;
+  required final double angleStep,
 
   /// `toRadians(this.options.startAngle || 0)`.
-  final double startRadians;
+  required final double startRadians,
 
   /// `xCenter`, NaN for `undefined`.
-  final double xCenter;
+  required final double xCenter,
 
   /// `yCenter`, NaN for `undefined`.
-  final double yCenter;
+  required final double yCenter,
 
   /// `min`.
-  final double min;
+  required final double min,
 
   /// `max`.
-  final double max;
+  required final double max,
 
   /// `this.drawingArea / (this.max - this.min)`.
-  final double scalingFactor;
+  required final double scalingFactor,
 
   /// The truth of `this.options.reverse`.
-  final bool reverse;
+  required final bool reverse,
+}) {
+  /// The inputs at the current state of the scale.
+  this;
 
   /// `getIndexAngle(index)`.
   @pragma('vm:prefer-inline')

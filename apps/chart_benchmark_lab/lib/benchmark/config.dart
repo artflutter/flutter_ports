@@ -1,7 +1,16 @@
 import 'package:material_ui/material_ui.dart';
 
 /// Engines installed in this benchmark, with reproducible dependency versions.
-enum ChartLibrary {
+enum ChartLibrary(
+  /// Display name.
+  final String label,
+
+  /// Pinned dependency version.
+  final String version,
+
+  /// Engine identity color, independent of chart styling.
+  final Color color,
+) {
   /// Our native Chart.js port.
   chartjs('Chart.js port', '0.1.0', Color(0xff4f46e5)),
 
@@ -13,17 +22,6 @@ enum ChartLibrary {
 
   /// Syncfusion's native Flutter charts.
   syncfusion('Syncfusion', '35.1.43', Color(0xffbe185d));
-
-  ChartLibrary(this.label, this.version, this.color);
-
-  /// Display name.
-  final String label;
-
-  /// Pinned dependency version.
-  final String version;
-
-  /// Engine identity color, independent of chart styling.
-  final Color color;
 
   /// Whether the public API of this library can draw [type].
   ///
@@ -107,7 +105,13 @@ enum ChartLibrary {
 }
 
 /// The eight chart types of Chart.js, on every adapter that has them.
-enum ChartType {
+enum ChartType(
+  /// Display name.
+  final String label,
+
+  /// Control icon.
+  final IconData icon,
+) {
   /// Ordered x/y line.
   line('Line', Icons.show_chart),
 
@@ -132,14 +136,6 @@ enum ChartType {
   /// A closed line around a center, with one spoke per value.
   radar('Radar', Icons.radar);
 
-  ChartType(this.label, this.icon);
-
-  /// Display name.
-  final String label;
-
-  /// Control icon.
-  final IconData icon;
-
   /// Whether the line settings for point markers and area fill apply.
   bool get drawsLine => this == line || this == radar;
 
@@ -158,17 +154,15 @@ enum ChartType {
 }
 
 /// Public-widget workload; these are not internal renderer draw-only calls.
-enum Workload {
+enum Workload(
+  /// Display name.
+  final String label,
+) {
   /// New values on every display tick.
   live('Live data'),
 
   /// Dispose and recreate the chart with unchanged values.
-  rebuild('Recreate chart');
-
-  Workload(this.label);
-
-  /// Display name.
-  final String label;
+  rebuild('Recreate chart'),
 }
 
 /// Shared chart appearance, with no engine-specific defaults.
@@ -195,76 +189,59 @@ const chartMaxZoom = 100.0;
 
 /// Immutable test configuration; library selection is deliberately separate.
 @immutable
-class BenchmarkConfig {
-  /// A repeatable line workload by default.
-  const BenchmarkConfig({
-    this.type = ChartType.line,
-    this.count = 1000,
-    this.workload = Workload.live,
-    this.markers = false,
-    this.curved = false,
-    this.fill = false,
-    this.axes = false,
-    this.grid = false,
-    this.alternateColors = false,
-    this.tooltips = false,
-    this.shadow = false,
-    this.shadowBlur = false,
-    this.zoom = false,
-    this.overlayLabels = 0,
-    this.rotateLabels = false,
-    this.seed = 7,
-  });
-
+class const BenchmarkConfig({
   /// Selected chart type.
-  final ChartType type;
+  final ChartType type = ChartType.line,
 
   /// Number of actual data items; never downsampled by the harness.
-  final int count;
+  final int count = 1000,
 
   /// Shared update workload.
-  final Workload workload;
+  final Workload workload = Workload.live,
 
   /// Point markers of a line or a radar.
-  final bool markers;
+  final bool markers = false,
 
   /// Library-native smooth line geometry.
-  final bool curved;
+  final bool curved = false,
 
   /// Fill under a line or inside a radar.
-  final bool fill;
+  final bool fill = false,
 
   /// Axis labels, of cartesian axes or around a radar.
-  final bool axes;
+  final bool axes = false,
 
   /// Grid lines, of cartesian axes or the rings and spokes of a radar.
-  final bool grid;
+  final bool grid = false,
 
   /// Alternating colors for bars, points, bubbles and slices.
-  final bool alternateColors;
+  final bool alternateColors = false,
 
   /// Enable the selected library's pointer tooltip behavior.
-  final bool tooltips;
+  final bool tooltips = false,
 
   /// A shadow under the series, offset by [chartShadowOffset].
-  final bool shadow;
+  final bool shadow = false,
 
   /// Blur the [shadow] with [chartShadowSigma].
-  final bool shadowBlur;
+  final bool shadowBlur = false,
 
   /// Zoom and pan of the x axis with the input of a person: a pinch or the
   /// mouse wheel zooms, a drag pans. It applies only to a type with an x axis
   /// ([zooms]). Each test starts with a new chart at the full range.
-  final bool zoom;
+  final bool zoom = false,
 
   /// Common overlay text count, outside each library's renderer.
-  final int overlayLabels;
+  final int overlayLabels = 0,
 
   /// Rotate overlay labels with the shared frame index.
-  final bool rotateLabels;
+  final bool rotateLabels = false,
 
   /// Stable dataset seed.
-  final int seed;
+  final int seed = 7,
+}) {
+  /// A repeatable line workload by default.
+  this;
 
   /// Modify controls without losing the other settings.
   BenchmarkConfig copyWith({

@@ -13,7 +13,7 @@ library;
 
 /// `bounds` of a cartesian scale (index.d.ts:3265 `'ticks' | 'data'`): what
 /// the range of the scale keeps.
-enum ScaleBounds {
+enum ScaleBounds() {
   /// `'data'`: the range keeps the data, and the ticks can lie inside it.
   data,
 
@@ -34,7 +34,7 @@ enum ScaleBounds {
 
 /// `ticks.source` of a time scale (index.d.ts:3476 `'labels' | 'auto' |
 /// 'data'`): where the ticks come from.
-enum TickSource {
+enum TickSource() {
   /// `'auto'`: ticks that the scale makes from its unit and its size.
   auto,
 
@@ -57,7 +57,7 @@ enum TickSource {
 
 /// `ticks.align` of a cartesian scale (index.d.ts:3189 `Align | 'inner'`):
 /// the place of a tick label along the axis.
-enum TickAlign {
+enum TickAlign() {
   /// `'start'`: the label starts at its tick.
   start,
 
@@ -83,7 +83,7 @@ enum TickAlign {
 
 /// `ticks.crossAlign` of a cartesian scale (index.d.ts:3206 `'near' |
 /// 'center' | 'far'`): the place of a tick label across the axis.
-enum TickCrossAlign {
+enum TickCrossAlign() {
   /// `'near'`: the label is near the axis.
   near,
 

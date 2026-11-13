@@ -14,19 +14,12 @@ import 'package:test/test.dart';
 // src/matchers.js and src/matchers.options.js: each case states the JS
 // expression that gives the same result.
 
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements Point;
 
 /// The inline style of [_Canvas].
-final class _Style implements CSSStyleDeclaration {
-  _Style(String cssText) {
+final class _Style(String cssText) implements CSSStyleDeclaration {
+  this {
     for (final declaration in cssText.split(';')) {
       final colon = declaration.indexOf(':');
       if (colon < 0) continue;
@@ -56,17 +49,13 @@ final class _Style implements CSSStyleDeclaration {
 
 /// A canvas with the render size [width] x [height] and the inline style
 /// [style].
-final class _Canvas implements HTMLCanvasElement {
-  _Canvas(this.width, this.height, [String style = '']) : style = _Style(style);
-
+final class _Canvas(
+  @override var int width,
+  @override var int height, [
+  String style = '',
+]) implements HTMLCanvasElement {
   @override
-  int width;
-
-  @override
-  int height;
-
-  @override
-  final _Style style;
+  final _Style style = _Style(style);
 
   @override
   CanvasRenderingContext2D? getContext(String contextId) => null;
@@ -86,19 +75,11 @@ final class _Canvas implements HTMLCanvasElement {
 }
 
 /// The mock context of [_Canvas].
-final class _Context extends MockContext {
-  _Context(this.canvas);
-
-  @override
-  final HTMLCanvasElement canvas;
-}
+final class _Context(@override final HTMLCanvasElement canvas)
+    extends MockContext;
 
 /// A platform with the device pixel ratio [ratio].
-final class _Platform implements types.BasePlatform {
-  _Platform(this.ratio);
-
-  final double ratio;
-
+final class _Platform(final double ratio) implements types.BasePlatform {
   @override
   double getDevicePixelRatio() => ratio;
 
@@ -107,38 +88,25 @@ final class _Platform implements types.BasePlatform {
 }
 
 /// A chart with the members that the chart matchers read.
-final class _Chart implements types.Chart {
-  _Chart({
-    required this.canvas,
-    required this.width,
-    required this.height,
-    CanvasRenderingContext2D? ctx,
-    bool noContext = false,
-    Object? devicePixelRatio,
-    double platformRatio = 1,
-  }) : ctx = noContext
-           ? null
-           : (ctx ?? (canvas == null ? null : _Context(canvas))),
-       options = {'devicePixelRatio': devicePixelRatio},
-       platform = _Platform(platformRatio);
+final class _Chart({
+  @override required final HTMLCanvasElement? canvas,
+  @override required var double width,
+  @override required var double height,
+  CanvasRenderingContext2D? ctx,
+  bool noContext = false,
+  Object? devicePixelRatio,
+  double platformRatio = 1,
+}) implements types.Chart {
+  @override
+  final CanvasRenderingContext2D? ctx = noContext
+      ? null
+      : (ctx ?? (canvas == null ? null : _Context(canvas)));
 
   @override
-  final HTMLCanvasElement? canvas;
+  final Map<String, Object?> options = {'devicePixelRatio': devicePixelRatio};
 
   @override
-  final CanvasRenderingContext2D? ctx;
-
-  @override
-  double width;
-
-  @override
-  double height;
-
-  @override
-  final Map<String, Object?> options;
-
-  @override
-  final types.BasePlatform platform;
+  final types.BasePlatform platform = _Platform(platformRatio);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

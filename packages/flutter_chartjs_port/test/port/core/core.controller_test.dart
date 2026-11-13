@@ -74,7 +74,7 @@ import 'registry_observe.dart';
 // The fixtures of the scenarios.
 
 /// The inline style of [_Canvas]: a Map of the properties.
-final class _Style implements CSSStyleDeclaration {
+final class _Style() implements CSSStyleDeclaration {
   final Map<String, String> _properties = {};
 
   @override
@@ -95,7 +95,7 @@ final class _Style implements CSSStyleDeclaration {
 
 /// The mock context of the harness with a recorded `resetTransform`, as the
 /// fake context of the generator.
-final class _Context extends MockContext {
+final class _Context() extends MockContext {
   @override
   late final HTMLCanvasElement canvas;
 
@@ -105,18 +105,15 @@ final class _Context extends MockContext {
 
 /// The fake canvas of the generator: a canvas of [width] x [height] with a
 /// mock context and no attributes.
-final class _Canvas implements HTMLCanvasElement {
-  _Canvas([this.width = 300, this.height = 150]) {
+final class _Canvas([
+  @override var int width = 300,
+  @override var int height = 150,
+]) implements HTMLCanvasElement {
+  this {
     context.canvas = this;
   }
 
   final _Context context = _Context();
-
-  @override
-  int width;
-
-  @override
-  int height;
 
   @override
   final _Style style = _Style();
@@ -141,9 +138,8 @@ final class _Canvas implements HTMLCanvasElement {
 
 /// The dataset controller `test` of the generator: it places each point at
 /// its parsed x and y.
-final class _TestController extends DatasetController {
-  _TestController(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   @override
   void update(String mode) {
     final meta = cachedMeta;
@@ -197,9 +193,7 @@ final JsClass _testController = JsClass(
 
 /// The scale `testlinear` of the generator: the range 0 to 10, with the
 /// ticks 0, 5 and 10.
-final class _TestScale extends Scale {
-  _TestScale(super.cfg);
-
+final class _TestScale(super.cfg) extends Scale {
   @override
   void determineDataLimits() {
     min = 0;
@@ -383,36 +377,21 @@ String _activeFlags(Chart chart) => [0.0, 1.0]
     .join(' ');
 
 /// The chart event `{type, native: {type}, x, y}` of the generator.
-final class _Event implements types.ChartEvent {
-  _Event(this.type, this.x, this.y)
-    : native = NativeEvent(type: type, offsetX: x!, offsetY: y!);
-
+final class _Event(
+  @override final String type,
+  @override final double? x,
+  @override final double? y,
+) implements types.ChartEvent {
   @override
-  final String type;
-
-  @override
-  final NativeEvent native;
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
+  final NativeEvent native = NativeEvent(type: type, offsetX: x!, offsetY: y!);
 
   @override
   types.Chart? get chart => null;
 }
 
 /// A point `{x, y}`.
-final class _Point implements types.Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements types.Point;
 
 /// Runs the scenario [name] of the reference: [body] observes, and the
 /// charts of [body] are destroyed at the end, as in the generator.
@@ -2097,9 +2076,7 @@ void main() {
 
 /// A chart whose `resize` field records each call, from the construction on
 /// (core.controller.js:241, `harness-method-fields`).
-final class _ResizeSpyChart extends Chart {
-  _ResizeSpyChart(super.item, [super.userConfig]);
-
+final class _ResizeSpyChart(super.item, [super.userConfig]) extends Chart {
   final List<String> calls = [];
 
   @override
@@ -2113,7 +2090,7 @@ final class _ResizeSpyChart extends Chart {
 }
 
 /// A clip `{left, top, right, bottom, disabled}`.
-final class _TestClip implements types.ChartMetaClip {
+final class _TestClip() implements types.ChartMetaClip {
   @override
   Object? get left => 1;
 

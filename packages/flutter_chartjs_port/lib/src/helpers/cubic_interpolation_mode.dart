@@ -45,9 +45,9 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
 ///   }
 /// }
 /// ```
-abstract class CubicInterpolationMode {
+abstract class const CubicInterpolationMode() {
   /// A mode.
-  const CubicInterpolationMode();
+  this;
 
   /// Whether a line of this mode with the option `tension` [tension] draws
   /// curves through its control points. Upstream: `options.tension ||

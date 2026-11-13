@@ -59,15 +59,16 @@ Color? flutterColor(kc.Color color) {
 /// The page builds all its sections at once, in a [SingleChildScrollView]:
 /// a section that scrolls out of view keeps its state (its toggles, its
 /// sliders and its chart). A tab has at most a few cards.
-class DemoPageBody extends StatelessWidget {
-  /// Creates the body with [children], padded and capped at [maxWidth].
-  const DemoPageBody({required this.children, this.maxWidth = 1100, super.key});
-
+class const DemoPageBody({
   /// The sections of the page.
-  final List<Widget> children;
+  required final List<Widget> children,
 
   /// The largest width of the content.
-  final double maxWidth;
+  final double maxWidth = 1100,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the body with [children], padded and capped at [maxWidth].
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -96,23 +97,19 @@ class DemoPageBody extends StatelessWidget {
 }
 
 /// A card with a title, an optional note on the ported source, and content.
-class DemoCard extends StatelessWidget {
-  /// Creates a card titled [title] around [child].
-  const DemoCard({
-    required this.title,
-    required this.child,
-    this.source,
-    super.key,
-  });
-
+class const DemoCard({
   /// The heading of the card.
-  final String title;
-
-  /// The ported function or file that the card calls, shown in monospace.
-  final String? source;
+  required final String title,
 
   /// The content of the card.
-  final Widget child;
+  required final Widget child,
+
+  /// The ported function or file that the card calls, shown in monospace.
+  final String? source,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates a card titled [title] around [child].
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -145,15 +142,16 @@ class DemoCard extends StatelessWidget {
 }
 
 /// A color swatch over a checkerboard, so that alpha shows.
-class ColorSwatchBox extends StatelessWidget {
-  /// Creates a swatch of [color]; `null` shows a crossed-out box.
-  const ColorSwatchBox({required this.color, this.size = 40, super.key});
-
+class const ColorSwatchBox({
   /// The color, or `null` for a color that did not parse.
-  final Color? color;
+  required final Color? color,
 
   /// The side of the square.
-  final double size;
+  final double size = 40,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates a swatch of [color]; `null` shows a crossed-out box.
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -169,12 +167,8 @@ class ColorSwatchBox extends StatelessWidget {
   }
 }
 
-class _SwatchPainter extends CustomPainter {
-  _SwatchPainter(this.color, this.outline);
-
-  final Color? color;
-  final Color outline;
-
+class _SwatchPainter(final Color? color, final Color outline)
+    extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     const cell = 6.0;
@@ -213,31 +207,25 @@ class _SwatchPainter extends CustomPainter {
 }
 
 /// Monospace text.
-class Mono extends StatelessWidget {
-  /// Creates monospace [text].
-  const Mono(
-    this.text, {
-    this.style,
-    this.softWrap,
-    this.overflow,
-    this.maxLines,
-    super.key,
-  });
-
+class const Mono(
   /// The text.
-  final String text;
+  final String text, {
 
   /// The style merged over the monospace body style.
-  final TextStyle? style;
+  final TextStyle? style,
 
   /// The [Text.softWrap] of the text.
-  final bool? softWrap;
+  final bool? softWrap,
 
   /// The [Text.overflow] of the text.
-  final TextOverflow? overflow;
+  final TextOverflow? overflow,
 
   /// The [Text.maxLines] of the text.
-  final int? maxLines;
+  final int? maxLines,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates monospace [text].
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -257,18 +245,20 @@ class Mono extends StatelessWidget {
 
 /// Keeps the state of a tab (a typed text, dragged points, a running
 /// animation) when the user switches to another tab and back.
-class KeepAliveTab extends StatefulWidget {
-  /// Keeps [child] alive.
-  const KeepAliveTab({required this.child, super.key});
-
+class const KeepAliveTab({
   /// The content of the tab.
-  final Widget child;
+  required final Widget child,
+  super.key,
+}) extends StatefulWidget {
+  /// Keeps [child] alive.
+  this;
 
   @override
   State<KeepAliveTab> createState() => _KeepAliveTabState();
 }
 
-class _KeepAliveTabState extends State<KeepAliveTab>
+class _KeepAliveTabState()
+    extends State<KeepAliveTab>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -291,18 +281,19 @@ class _KeepAliveTabState extends State<KeepAliveTab>
 ///
 /// It reads the controller of the enclosing [DefaultTabController]. During
 /// a tab animation, both the old and the new tab run their tickers.
-class DemoTabBarView extends StatefulWidget {
-  /// Creates the view of [children], one for each tab.
-  const DemoTabBarView({required this.children, super.key});
-
+class const DemoTabBarView({
   /// The content of the tabs.
-  final List<Widget> children;
+  required final List<Widget> children,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the view of [children], one for each tab.
+  this;
 
   @override
   State<DemoTabBarView> createState() => _DemoTabBarViewState();
 }
 
-class _DemoTabBarViewState extends State<DemoTabBarView> {
+class _DemoTabBarViewState() extends State<DemoTabBarView> {
   TabController? _controller;
 
   @override

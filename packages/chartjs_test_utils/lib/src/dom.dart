@@ -56,9 +56,7 @@ final HarnessDocument document = HarnessDocument._();
 final HarnessWindow window = HarnessWindow._();
 
 /// `window.document`: the body, `createElement` and `getElementById`.
-final class HarnessDocument {
-  HarnessDocument._();
-
+final class HarnessDocument._() {
   /// `document.body`. The harness body shows it (see [HarnessElement]).
   final HarnessElement body = HarnessElement._(true);
 
@@ -132,9 +130,7 @@ final class HarnessDocument {
 }
 
 /// `window`: the device pixel ratio.
-final class HarnessWindow {
-  HarnessWindow._();
-
+final class HarnessWindow._() {
   /// `window.devicePixelRatio`: the device pixel ratio of the implicit test
   /// view.
   ///
@@ -213,12 +209,11 @@ final Expando<UiCanvasElement> _canvasOfStyle = Expando('style canvas');
 /// with `position: absolute` goes to its `left` and `top`. Thus
 /// `canvas.getBoundingClientRect()` of a canvas in a wrapper with
 /// `position: absolute; left: 50px; top: 50px` has `left` 50 and `top` 50.
-final class HarnessElement {
-  HarnessElement._([this._isBody = false]) {
+final class HarnessElement._([final bool _isBody = false]) {
+  /// A new element.
+  this {
     style = _HarnessStyle(this);
   }
-
-  final bool _isBody;
 
   /// `element.style`: the inline style.
   late final CSSStyleDeclaration style;
@@ -372,11 +367,8 @@ final class HarnessElement {
 
 /// The inline style of a [HarnessElement]: a write rebuilds the harness
 /// body.
-final class _HarnessStyle implements CSSStyleDeclaration {
-  _HarnessStyle(this._element);
-
-  final HarnessElement _element;
-
+final class _HarnessStyle(final HarnessElement _element)
+    implements CSSStyleDeclaration {
   final UiCssStyleDeclaration _inner = UiCssStyleDeclaration();
 
   @override
@@ -504,7 +496,7 @@ void _canvasStyleWritten(UiCssStyleDeclaration style) {
 final _Harness _harness = _Harness();
 
 /// The state of the harness in the current test.
-final class _Harness {
+final class _Harness() {
   /// The generation of the current test. A body of an earlier test does
   /// nothing at its unmount.
   int generation = 0;
@@ -726,16 +718,13 @@ void afterEachChart(void Function() callback) {
 // The harness body.
 
 /// The root widget of a test: it shows `document.body`.
-final class _HarnessBody extends StatefulWidget {
-  const _HarnessBody({required this.generation});
-
-  final int generation;
-
+final class const _HarnessBody({required final int generation})
+    extends StatefulWidget {
   @override
   State<_HarnessBody> createState() => _HarnessBodyState();
 }
 
-final class _HarnessBodyState extends State<_HarnessBody> {
+final class _HarnessBodyState() extends State<_HarnessBody> {
   bool get _current => widget.generation == _harness.generation;
 
   @override
@@ -796,16 +785,15 @@ final class _HarnessBodyState extends State<_HarnessBody> {
 /// gets its standby host back as its parent node, after the frame. Thus a
 /// removed canvas keeps `FlutterPlatform`, as a removed canvas keeps the
 /// DOM platform upstream.
-final class _CanvasSlot extends StatefulWidget {
-  const _CanvasSlot({required this.canvas, super.key});
-
-  final UiCanvasElement canvas;
-
+final class const _CanvasSlot({
+  required final UiCanvasElement canvas,
+  super.key,
+}) extends StatefulWidget {
   @override
   State<_CanvasSlot> createState() => _CanvasSlotState();
 }
 
-final class _CanvasSlotState extends State<_CanvasSlot> {
+final class _CanvasSlotState() extends State<_CanvasSlot> {
   @override
   void dispose() {
     final canvas = widget.canvas;
@@ -829,22 +817,26 @@ final class _CanvasSlotState extends State<_CanvasSlot> {
 
 /// The CSS subset of one element, read at the build of the body.
 @immutable
-final class _Layout {
-  const _Layout({
-    required this.isBody,
-    required this.none,
-    required this.absolute,
-    required this.padding,
-    this.width,
-    this.height,
-    this.maxWidth,
-    this.maxHeight,
-    this.left,
-    this.top,
-    this.direction,
-  });
+final class const _Layout({
+  required final bool isBody,
+  required final bool none,
 
-  factory _Layout.of(HarnessElement element) {
+  /// `position: absolute`: shrink-to-fit width, out of the flow.
+  required final bool absolute,
+  required final double padding,
+  final double? width,
+  final double? height,
+  final double? maxWidth,
+  final double? maxHeight,
+
+  /// `left` of an element with `position: absolute`, else `null`.
+  final double? left,
+
+  /// `top` of an element with `position: absolute`, else `null`.
+  final double? top,
+  final TextDirection? direction,
+}) {
+  factory of(HarnessElement element) {
     final style = element._declarations;
     final classes = (element._attributes['class'] ?? '').split(_spaces);
     final wrapper = classes.contains('chartjs-wrapper');
@@ -897,24 +889,6 @@ final class _Layout {
     return match[2] != null || number == 0 ? number : null;
   }
 
-  final bool isBody;
-  final bool none;
-
-  /// `position: absolute`: shrink-to-fit width, out of the flow.
-  final bool absolute;
-  final double padding;
-  final double? width;
-  final double? height;
-  final double? maxWidth;
-  final double? maxHeight;
-
-  /// `left` of an element with `position: absolute`, else `null`.
-  final double? left;
-
-  /// `top` of an element with `position: absolute`, else `null`.
-  final double? top;
-  final TextDirection? direction;
-
   /// The offset of the box from the parent: [left] and [top] where they
   /// are set, else the static position [inFlow].
   Offset place(Offset inFlow) => Offset(left ?? inFlow.dx, top ?? inFlow.dy);
@@ -951,18 +925,12 @@ final class _Layout {
 }
 
 /// The render widget of one element.
-final class _ElementBox extends MultiChildRenderObjectWidget {
-  const _ElementBox({
-    required this.element,
-    required this.layout,
-    required this.revision,
-    super.children,
-  });
-
-  final HarnessElement element;
-  final _Layout layout;
-  final int revision;
-
+final class const _ElementBox({
+  required final HarnessElement element,
+  required final _Layout layout,
+  required final int revision,
+  super.children,
+}) extends MultiChildRenderObjectWidget {
   @override
   _RenderHarnessElement createRenderObject(BuildContext context) =>
       _RenderHarnessElement(element, layout, revision);
@@ -979,19 +947,22 @@ final class _ElementBox extends MultiChildRenderObjectWidget {
   }
 }
 
-final class _ElementParentData extends ContainerBoxParentData<RenderBox>;
+final class _ElementParentData() extends ContainerBoxParentData<RenderBox>;
 
 /// The render box of one [HarnessElement] (see its CSS subset).
-final class _RenderHarnessElement extends RenderBox
+final class _RenderHarnessElement(
+  var HarnessElement _element,
+  var _Layout _layout,
+  var int _revision,
+) extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, _ElementParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, _ElementParentData> {
-  _RenderHarnessElement(this._element, this._layout, this._revision) {
+  this {
     _element._box = this;
   }
 
   HarnessElement get element => _element;
-  HarnessElement _element;
   set element(HarnessElement value) {
     if (identical(value, _element)) return;
     if (identical(_element._box, this)) _element._box = null;
@@ -1001,7 +972,6 @@ final class _RenderHarnessElement extends RenderBox
   }
 
   _Layout get elementLayout => _layout;
-  _Layout _layout;
   set elementLayout(_Layout value) {
     if (value == _layout) return;
     final moved = value.left != _layout.left || value.top != _layout.top;
@@ -1019,7 +989,6 @@ final class _RenderHarnessElement extends RenderBox
   bool _hiddenByAncestor = false;
 
   int get revision => _revision;
-  int _revision;
   set revision(int value) {
     if (value == _revision) return;
     _revision = value;
@@ -1242,13 +1211,11 @@ const Duration frameInterval = Duration(milliseconds: 16);
 const Duration specTimeout = Duration(milliseconds: 5000);
 
 /// One harness task: a [callback] due at [due].
-final class _Task {
-  _Task(this.due, this.order, this.callback);
-
-  final DateTime due;
-  final int order;
-  final void Function() callback;
-}
+final class _Task(
+  final DateTime due,
+  final int order,
+  final void Function() callback,
+);
 
 /// `window.setTimeout(callback, delay)` of a spec: a harness task that is
 /// due at `clock.now()` plus [delay] ms. A negative [delay] is 0.

@@ -28,9 +28,9 @@ import 'package:meta/meta.dart' show immutable;
 /// }
 /// ```
 @immutable
-abstract class GraceLength {
+abstract class const GraceLength() {
   /// A grace.
-  const GraceLength();
+  this;
 
   /// The grace in data value units for half the data range [halfRange]:
   /// upstream `toDimension(grace, (max - min) / 2)` (helpers.options.ts:188).
@@ -49,12 +49,12 @@ abstract class GraceLength {
 }
 
 /// A percent of half the data range: `PercentGrace(5)` is `'5%'` upstream.
-final class PercentGrace extends GraceLength {
-  /// The grace of [percent] percent of half the data range.
-  const PercentGrace(this.percent);
-
+final class const PercentGrace(
   /// The percent.
-  final double percent;
+  final double percent,
+) extends GraceLength {
+  /// The grace of [percent] percent of half the data range.
+  this;
 
   @override
   double amountOf(double halfRange) => percent / 100 * halfRange;
@@ -71,12 +71,12 @@ final class PercentGrace extends GraceLength {
 }
 
 /// An amount in data value units: `ValueGrace(0.3)` is `0.3` upstream.
-final class ValueGrace extends GraceLength {
-  /// The grace of [amount] data value units.
-  const ValueGrace(this.amount);
-
+final class const ValueGrace(
   /// The amount.
-  final double amount;
+  final double amount,
+) extends GraceLength {
+  /// The grace of [amount] data value units.
+  this;
 
   @override
   double amountOf(double halfRange) => amount;

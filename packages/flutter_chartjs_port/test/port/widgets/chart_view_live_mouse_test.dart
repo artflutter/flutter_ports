@@ -12,7 +12,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The events and the draws of the chart since the last [clear].
-final class _Log {
+final class _Log() {
   final List<String> events = <String>[];
   int draws = 0;
 

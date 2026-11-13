@@ -22,7 +22,7 @@ import 'fake_chart.dart';
 // of core.controller.js. chart_host_test.dart covers the input mapping.
 
 /// A canvas whose context belongs to another canvas.
-final class _ForeignCanvas implements HTMLCanvasElement {
+final class _ForeignCanvas() implements HTMLCanvasElement {
   @override
   CanvasRenderingContext2D? getContext(String contextId) =>
       UiCanvasElement().getContext2d();

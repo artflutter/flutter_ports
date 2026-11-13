@@ -23,9 +23,9 @@ helpersDemoTabs = [
 /// `helpers.color`, `core.ticks` and `helpers.intl`, `helpers.curve`,
 /// `helpers.config`, `core.defaults` and `helpers.options`) and draws the
 /// results with Flutter widgets and `CustomPaint`.
-class HelpersDemoPage extends StatelessWidget {
+class const HelpersDemoPage({super.key}) extends StatelessWidget {
   /// Creates the demo page.
-  const HelpersDemoPage({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) {

@@ -8,20 +8,17 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// What the blocks of a page read: the code regions and the section links.
-class DocScope extends InheritedWidget {
-  /// Creates the scope of a page.
-  const DocScope({
-    required this.snippets,
-    required this.jumpTo,
-    required super.child,
-    super.key,
-  });
-
+class const DocScope({
   /// The code regions.
-  final Snippets snippets;
+  required final Snippets snippets,
 
   /// Scrolls to the section with an id.
-  final ValueChanged<String> jumpTo;
+  required final ValueChanged<String> jumpTo,
+  required super.child,
+  super.key,
+}) extends InheritedWidget {
+  /// Creates the scope of a page.
+  this;
 
   /// The scope above [context].
   static DocScope of(BuildContext context) =>
@@ -36,21 +33,22 @@ final RegExp _inline = RegExp(
 );
 
 /// A text with the inline forms `` `code` ``, `**bold**` and `[text](#id)`.
-class DocText extends StatefulWidget {
-  /// Creates the text [text].
-  const DocText(this.text, {this.style, super.key});
-
+class const DocText(
   /// The text with its inline forms.
-  final String text;
+  final String text, {
 
   /// The style of the plain text.
-  final TextStyle? style;
+  final TextStyle? style,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the text [text].
+  this;
 
   @override
   State<DocText> createState() => _DocTextState();
 }
 
-class _DocTextState extends State<DocText> {
+class _DocTextState() extends State<DocText> {
   final List<TapGestureRecognizer> _links = [];
 
   @override
@@ -122,12 +120,13 @@ class _DocTextState extends State<DocText> {
 }
 
 /// A paragraph.
-class DocParagraph extends StatelessWidget {
-  /// Creates a paragraph of [text].
-  const DocParagraph(this.text, {super.key});
-
+class const DocParagraph(
   /// The text with its inline forms.
-  final String text;
+  final String text, {
+  super.key,
+}) extends StatelessWidget {
+  /// Creates a paragraph of [text].
+  this;
 
   @override
   Widget build(BuildContext context) =>
@@ -135,12 +134,13 @@ class DocParagraph extends StatelessWidget {
 }
 
 /// A list with bullets.
-class DocBullets extends StatelessWidget {
-  /// Creates a list of [items].
-  const DocBullets(this.items, {super.key});
-
+class const DocBullets(
   /// The items with their inline forms.
-  final List<String> items;
+  final List<String> items, {
+  super.key,
+}) extends StatelessWidget {
+  /// Creates a list of [items].
+  this;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -171,12 +171,13 @@ class DocBullets extends StatelessWidget {
 }
 
 /// A tip in a tinted box.
-class DocTip extends StatelessWidget {
-  /// Creates a tip with [text].
-  const DocTip(this.text, {super.key});
-
+class const DocTip(
   /// The text with its inline forms.
-  final String text;
+  final String text, {
+  super.key,
+}) extends StatelessWidget {
+  /// Creates a tip with [text].
+  this;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -202,12 +203,13 @@ Widget _panel({required Widget child}) => Container(
 );
 
 /// A code panel of the region [region], with no chart.
-class DocCode extends StatelessWidget {
-  /// Creates the panel.
-  const DocCode(this.region, {super.key});
-
+class const DocCode(
   /// The name of the code region.
-  final String region;
+  final String region, {
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the panel.
+  this;
 
   @override
   Widget build(BuildContext context) => _panel(
@@ -219,52 +221,43 @@ class DocCode extends StatelessWidget {
 }
 
 /// One form of a live example.
-class ExampleVariant {
-  /// Creates a form with the name [label].
-  const ExampleVariant({
-    required this.label,
-    required this.config,
-    required this.region,
-  });
-
+class const ExampleVariant({
   /// The name of the form.
-  final String label;
+  required final String label,
 
   /// The chart of the form.
-  final ChartConfig config;
+  required final ChartConfig config,
 
   /// The name of the code region of the form.
-  final String region;
+  required final String region,
+}) {
+  /// Creates a form with the name [label].
+  this;
 }
 
 /// A live chart with its code, and a choice of forms when it has several.
-class LiveExample extends StatefulWidget {
-  /// Creates the example.
-  const LiveExample({
-    required this.id,
-    required this.description,
-    required this.variants,
-    this.hint,
-    super.key,
-  });
-
+class const LiveExample({
   /// The start of the keys of the example.
-  final String id;
+  required final String id,
 
   /// The text of the chart for a screen reader.
-  final String description;
+  required final String description,
 
   /// The forms of the example.
-  final List<ExampleVariant> variants;
+  required final List<ExampleVariant> variants,
 
   /// A short instruction above the chart.
-  final String? hint;
+  final String? hint,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the example.
+  this;
 
   @override
   State<LiveExample> createState() => _LiveExampleState();
 }
 
-class _LiveExampleState extends State<LiveExample> {
+class _LiveExampleState() extends State<LiveExample> {
   int _selected = 0;
 
   @override
@@ -323,15 +316,16 @@ class _LiveExampleState extends State<LiveExample> {
 typedef DocRow = (String name, String description);
 
 /// A table of option names and their descriptions.
-class DocTable extends StatelessWidget {
-  /// Creates the table of [rows].
-  const DocTable(this.rows, {this.nameWidth = 210, super.key});
-
+class const DocTable(
   /// The rows, with the inline forms in the cells.
-  final List<DocRow> rows;
+  final List<DocRow> rows, {
 
   /// The width of the column of the names on a wide screen.
-  final double nameWidth;
+  final double nameWidth = 210,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the table of [rows].
+  this;
 
   @override
   Widget build(BuildContext context) => _panel(
@@ -375,47 +369,40 @@ class DocTable extends StatelessWidget {
 const TextStyle _cell = TextStyle(fontSize: 13.5, height: 1.5);
 
 /// One row of the table of dataset properties.
-class DocProperty {
-  /// Creates a row for the option [name].
-  const DocProperty(
-    this.name, {
-    required this.type,
-    required this.fallback,
-    this.section,
-    this.extra = false,
-    this.scriptable = false,
-    this.indexable = false,
-  });
-
+class const DocProperty(
   /// The name of the Chart.js option.
-  final String name;
+  final String name, {
 
   /// The Dart type of the value.
-  final String type;
+  required final String type,
 
   /// The default value.
-  final String fallback;
+  required final String fallback,
 
   /// The id of the section that describes the option.
-  final String? section;
+  final String? section,
 
   /// Whether the option goes through `extra`, because it has no parameter.
-  final bool extra;
+  final bool extra = false,
 
   /// Whether a function can give the value.
-  final bool scriptable;
+  final bool scriptable = false,
 
   /// Whether a list can give one value for each data item.
-  final bool indexable;
+  final bool indexable = false,
+}) {
+  /// Creates a row for the option [name].
+  this;
 }
 
 /// The table of the dataset properties of a chart type.
-class DocPropertyTable extends StatelessWidget {
-  /// Creates the table of [rows].
-  const DocPropertyTable(this.rows, {super.key});
-
+class const DocPropertyTable(
   /// The rows.
-  final List<DocProperty> rows;
+  final List<DocProperty> rows, {
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the table of [rows].
+  this;
 
   static const _flex = [24, 9, 18, 9, 9, 17];
   static const _headers = [

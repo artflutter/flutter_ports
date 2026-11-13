@@ -32,7 +32,7 @@ import '../../support/mode_json.dart';
 
 /// The observations of one scenario: one line `<label>: <value>` for each
 /// [observe] call, and the labels of the known objects.
-final class Observations {
+final class Observations() {
   final Map<Object?, String> _labels = Map<Object?, String>.identity();
   final List<String> _lines = [];
 

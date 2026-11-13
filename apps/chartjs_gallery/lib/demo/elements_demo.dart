@@ -92,7 +92,11 @@ const ui.Color _lineBackground = ui.Color.fromRGBO(255, 99, 132, 0.5);
 const double _arcHoverGain = 16;
 
 /// The kinds of elements that the hit test finds.
-enum _Kind { bar, point, arc }
+enum _Kind() {
+  bar,
+  point,
+  arc,
+}
 
 /// The element under the pointer: its kind and its index in its dataset.
 typedef _Hit = ({_Kind kind, int index});
@@ -156,9 +160,9 @@ typedef _Options = ({JsObjectFace base, JsObjectFace active});
 /// An active bar draws in its place, as controller.bar.js:668 draws each
 /// bar in index order. A `mouseout` makes no element active. The
 /// chart draws again only when a control or the active element changes.
-class ElementsDemo extends StatefulWidget {
+class const ElementsDemo({super.key}) extends StatefulWidget {
   /// Creates the elements tab.
-  const ElementsDemo({super.key});
+  this;
 
   @override
   State<ElementsDemo> createState() => ElementsDemoState();
@@ -166,7 +170,10 @@ class ElementsDemo extends StatefulWidget {
 
 /// The state of [ElementsDemo]: the control values, the elements and the
 /// element under the pointer.
-class ElementsDemoState extends State<ElementsDemo> {
+class ElementsDemoState() extends State<ElementsDemo> {
+  /// A new state of [ElementsDemo].
+  this;
+
   DemoChart? _chart;
 
   /// Bumped when the hit readout changes, without a rebuild of the page.
@@ -922,11 +929,7 @@ class ElementsDemoState extends State<ElementsDemo> {
 }
 
 /// The heading of a group of controls.
-class _GroupTitle extends StatelessWidget {
-  const _GroupTitle(this.text);
-
-  final String text;
-
+class const _GroupTitle(final String text) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -940,24 +943,16 @@ class _GroupTitle extends StatelessWidget {
 ///
 /// The row has the key `elements.<name>`, and each chip has the key
 /// `elements.<name>.<value>`.
-class _Choices extends StatelessWidget {
-  const _Choices({
-    required this.name,
-    required this.values,
-    required this.value,
-    required this.onSelected,
-    this.labels,
-  });
-
-  final String name;
-  final List<Object> values;
-  final Object value;
-  final ValueChanged<Object> onSelected;
+class const _Choices({
+  required final String name,
+  required final List<Object> values,
+  required final Object value,
+  required final ValueChanged<Object> onSelected,
 
   /// The label of each value of [values], or Dart `null` for the text of
   /// the value ([_text]).
-  final List<String>? labels;
-
+  final List<String>? labels,
+}) extends StatelessWidget {
   /// The text of [value]: `undefined` for the sentinel.
   static String _text(Object value) => switch (value) {
     Undefined() => 'undefined',

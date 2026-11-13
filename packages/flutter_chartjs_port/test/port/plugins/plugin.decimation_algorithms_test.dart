@@ -75,16 +75,13 @@ AnyObject _p(Object? x, Object? y) => <String, Object?>{'x': x, 'y': y};
 /// The chart members that `beforeElementsUpdate` reads before its switch
 /// on `algorithm`: one line dataset with [data] on a linear x scale, with
 /// `parsing: false`.
-final class _Chart implements types.Chart {
-  _Chart(List<Object?> data)
-    : data = <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': data},
-        ],
-      };
-
+final class _Chart(List<Object?> data) implements types.Chart {
   @override
-  final Object data;
+  final Object data = <String, Object?>{
+    'datasets': <Object?>[
+      <String, Object?>{'data': data},
+    ],
+  };
 
   @override
   final Object options = <String, Object?>{'parsing': false};
@@ -103,12 +100,8 @@ final class _Chart implements types.Chart {
 }
 
 /// The meta of a line dataset on the scale `x`.
-final class _Meta implements types.ChartMeta {
-  _Meta(this.iScale);
-
-  @override
-  types.Scale? iScale;
-
+final class _Meta(@override var types.Scale? iScale)
+    implements types.ChartMeta {
   @override
   Object? xAxisID = 'x';
 
@@ -120,7 +113,7 @@ final class _Meta implements types.ChartMeta {
 }
 
 /// A controller that supports the decimation, as the line controller does.
-final class _Controller implements types.DatasetController {
+final class _Controller() implements types.DatasetController {
   @override
   bool get supportsDecimation => true;
 
@@ -129,7 +122,7 @@ final class _Controller implements types.DatasetController {
 }
 
 /// A linear scale `x` without user bounds.
-final class _Scale implements types.Scale {
+final class _Scale() implements types.Scale {
   @override
   String get type => 'linear';
 

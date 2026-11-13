@@ -140,7 +140,7 @@ bool almostWhole(double x, double epsilon) {
 /// `_setMinAndMaxByKey` target.
 ///
 /// `Scale` of `core.scale.dart` implements it (Chart.js ADR 0025, section 7).
-abstract interface class MinMax {
+abstract interface class MinMax() {
   /// helpers.math.ts:81 `min`.
   abstract double min;
 

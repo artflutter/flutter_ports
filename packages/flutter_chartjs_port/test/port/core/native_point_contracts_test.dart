@@ -6,7 +6,7 @@ import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
-class _Capability implements NativePointChart, NativePointElement {
+class _Capability() implements NativePointChart, NativePointElement {
   bool allowed = true;
   int reads = 0;
   @override
@@ -16,7 +16,7 @@ class _Capability implements NativePointChart, NativePointElement {
   }
 }
 
-class _Scale implements types.Scale, BulkBarScale {
+class _Scale() implements types.Scale, BulkBarScale {
   bool allowed = true;
   int reads = 0;
   @override
@@ -30,7 +30,7 @@ class _Scale implements types.Scale, BulkBarScale {
       throw StateError('Unexpected ${invocation.memberName}');
 }
 
-class _UnknownScale implements types.Scale {
+class _UnknownScale() implements types.Scale {
   @override
   dynamic noSuchMethod(Invocation invocation) =>
       throw StateError('Unexpected ${invocation.memberName}');

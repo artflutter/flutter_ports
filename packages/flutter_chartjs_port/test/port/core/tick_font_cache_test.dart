@@ -33,7 +33,7 @@ ChartTextStyle _resolve(TickFontCache cache, OptionView ticks, int index) {
   return font;
 }
 
-final class _DescriptorDefaults implements DescriptorDefaults {
+final class _DescriptorDefaults() implements DescriptorDefaults {
   int reads = 0;
 
   @override

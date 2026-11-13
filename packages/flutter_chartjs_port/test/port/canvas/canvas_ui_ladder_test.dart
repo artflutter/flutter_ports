@@ -36,8 +36,8 @@ const _wideBlue = ui.Color.from(
 
 /// Circles that do not overlap, with random radii between `low` and `high` and
 /// random centers.
-final class _Circles {
-  _Circles(double low, double high, {int size = 700}) {
+final class _Circles(double low, double high, {int size = 700}) {
+  this {
     final random = math.Random(7);
     var y = 4.0;
     while (y + 2 * high + 8 < size) {

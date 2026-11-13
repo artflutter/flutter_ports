@@ -40,12 +40,13 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 /// controller.pie.js:4 `PieController extends DoughnutController`.
 ///
 /// Pie charts are Doughnut chart with different defaults
-class PieController extends DoughnutController {
+class PieController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DoughnutController {
   /// The default constructor of the JS class: `constructor(...args) {
   /// super(...args); }` (controller.pie.js:4 has no constructor).
   ///
-  /// [newTarget] is `new.target` (Chart.js ADR 0020, section 4).
-  PieController(super.chart, super.datasetIndex, [super.newTarget]);
+  /// `newTarget` is `new.target` (Chart.js ADR 0020, section 4).
+  this;
 
   /// Native support for the explicit data-only lifecycle.
   @override

@@ -49,26 +49,14 @@ typedef AnimationListener = void Function(AnimationEvent event);
 /// Dart `null` stands for JS `undefined` in [initial], [numSteps] and
 /// [currentStep]. `core.controller.js:694` passes `{chart: this}` only. JS
 /// `null` never reaches these fields.
-final class AnimationEvent implements types.AnimationEvent {
+final class AnimationEvent({
+  @override required final types.Chart chart,
+  @override final bool? initial,
+  @override final double? numSteps,
+  @override final double? currentStep,
+}) implements types.AnimationEvent {
   /// The object literal `{chart, initial, numSteps, currentStep}`.
-  AnimationEvent({
-    required this.chart,
-    this.initial,
-    this.numSteps,
-    this.currentStep,
-  });
-
-  @override
-  final types.Chart chart;
-
-  @override
-  final bool? initial;
-
-  @override
-  final double? numSteps;
-
-  @override
-  final double? currentStep;
+  this;
 }
 
 /// core.animator.js:116-124 the record of one chart: the object literal
@@ -78,7 +66,7 @@ final class AnimationEvent implements types.AnimationEvent {
 /// It is not private, because [Animator.getAnims] returns it to the fixtures
 /// (Chart.js ADR 0029, section 6).
 @internal
-final class Anims {
+final class Anims() {
   /// core.animator.js:117 `running: false`.
   bool running = false;
 
@@ -108,9 +96,9 @@ final class Anims {
 /// Please use the module's default export which provides a singleton
 /// instance
 /// Note: class is export for typedoc
-class Animator {
+class Animator() {
   /// core.animator.js:13 `constructor()`.
-  Animator();
+  this;
 
   /// core.animator.js:14 `_request`: the id of the pending frame callback,
   /// or Dart `null` (JS `null`). The ids of `scheduleFrameCallback` start at

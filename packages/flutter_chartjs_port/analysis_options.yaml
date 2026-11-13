@@ -11,4 +11,4 @@ analyzer:
 
 linter:
   rules:
-    unnecessary_type_name_in_constructor: false
+    use_primary_constructors: true

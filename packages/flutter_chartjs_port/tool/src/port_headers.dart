@@ -124,15 +124,15 @@ RegExp _versionConstantPattern(String constant) => RegExp(
 );
 
 /// One source-to-Dart mapping of a project.
-final class PortTarget {
-  /// Maps [source] (a file, or a directory that ends with `/`) to [dart].
-  const PortTarget(this.source, this.dart);
-
+final class const PortTarget(
   /// The project-relative source path.
-  final String source;
+  final String source,
 
   /// The repository-relative Dart path.
-  final String dart;
+  final String dart,
+) {
+  /// Maps [source] (a file, or a directory that ends with `/`) to [dart].
+  this;
 
   /// Whether [source] is a directory.
   bool get isDirectory => source.endsWith('/');
@@ -183,27 +183,55 @@ final class PortTarget {
 }
 
 /// One entry of `tool/port_sources.yaml`.
-final class PortSource {
+final class const PortSource({
+  /// The project name in headers.
+  required final String header,
+
+  /// The header version.
+  required final String version,
+
+  /// The project repository.
+  required final String url,
+
+  /// The language of the source: an item of [sourceLanguages].
+  required final String language,
+
+  /// The SPDX license identifier.
+  required final String spdx,
+
+  /// The copyright holder.
+  required final String holder,
+
+  /// `submodule` or `copy`.
+  required final String pinKind,
+
+  /// The repository-relative directory of the reference copy.
+  required final String pinPath,
+
+  /// The source-to-Dart mappings.
+  required final List<PortTarget> targets,
+
+  /// Source paths that exist at the pin.
+  required final List<String> files,
+
+  /// Where [version] comes from. For the primary project of a package, this
+  /// is `<constant> in <package>/lib/src/upstream.dart`.
+  final String? versionSource,
+
+  /// The tag or release of the pin. For a commit pin, the full pin commit.
+  final String? pinRef,
+
+  /// The commit of a submodule pin.
+  final String? pinCommit,
+
+  /// A Markdown file whose links name source paths that exist at the pin.
+  final String? fileIndex,
+}) {
   /// An entry for the project [header].
-  const PortSource({
-    required this.header,
-    required this.version,
-    required this.url,
-    required this.language,
-    required this.spdx,
-    required this.holder,
-    required this.pinKind,
-    required this.pinPath,
-    required this.targets,
-    required this.files,
-    this.versionSource,
-    this.pinRef,
-    this.pinCommit,
-    this.fileIndex,
-  });
+  this;
 
   /// Reads the entry [map]. Throws a [FormatException].
-  factory PortSource.fromYaml(Object? map) {
+  factory fromYaml(Object? map) {
     if (map is! Map<String, Object?>) {
       throw const FormatException('each source is a mapping');
     }
@@ -276,16 +304,6 @@ final class PortSource {
     );
   }
 
-  /// The project name in headers.
-  final String header;
-
-  /// The header version.
-  final String version;
-
-  /// Where [version] comes from. For the primary project of a package, this
-  /// is `<constant> in <package>/lib/src/upstream.dart`.
-  final String? versionSource;
-
   /// The constant of `<package>/lib/src/upstream.dart` that [versionSource]
   /// names, or null. [package] is relative to the repository.
   String? versionConstantIn(String package) {
@@ -296,9 +314,6 @@ final class PortSource {
     final constant = source.substring(0, source.length - suffix.length);
     return RegExp(r'^[A-Za-z_]\w*$').hasMatch(constant) ? constant : null;
   }
-
-  /// The project repository.
-  final String url;
 
   /// The `<owner>/<repo>` of [url], for example `chartjs/Chart.js`: the
   /// repository that a backport line names. Null when the path of [url] has
@@ -311,29 +326,8 @@ final class PortSource {
     return segments.length < 2 ? null : '${segments[0]}/${segments[1]}';
   }
 
-  /// The language of the source: an item of [sourceLanguages].
-  final String language;
-
   /// Whether the source is JavaScript or TypeScript.
   bool get isJs => language == jsLanguage;
-
-  /// The SPDX license identifier.
-  final String spdx;
-
-  /// The copyright holder.
-  final String holder;
-
-  /// `submodule` or `copy`.
-  final String pinKind;
-
-  /// The repository-relative directory of the reference copy.
-  final String pinPath;
-
-  /// The tag or release of the pin. For a commit pin, the full pin commit.
-  final String? pinRef;
-
-  /// The commit of a submodule pin.
-  final String? pinCommit;
 
   /// Whether [version] is a commit pin, `<release>+<sha8>`
   /// (upstream-tracking.md 2.4).
@@ -343,15 +337,6 @@ final class PortSource {
   /// pin commit for a commit pin, else [version]. A git host has no tree
   /// with the name `<release>+<sha8>`.
   String get treeRef => isCommitPin ? pinCommit ?? version : version;
-
-  /// The source-to-Dart mappings.
-  final List<PortTarget> targets;
-
-  /// Source paths that exist at the pin.
-  final List<String> files;
-
-  /// A Markdown file whose links name source paths that exist at the pin.
-  final String? fileIndex;
 
   /// The Dart path of the source [path]: an exact target first, else the
   /// longest directory target. Null if no target covers [path].
@@ -372,24 +357,20 @@ final class PortSource {
 }
 
 /// The contents of `tool/port_sources.yaml`.
-final class PortSourcesFile {
-  /// The [sources], the [marker] tag and the [host] package.
-  const PortSourcesFile({
-    required this.sources,
-    this.marker = defaultMarker,
-    this.host,
-  });
-
+final class const PortSourcesFile({
   /// The entries of the `sources` list.
-  final List<PortSource> sources;
+  required final List<PortSource> sources,
 
   /// The tag of the `DIVERGES(<tag>)` markers: the top-level key `marker`,
   /// else [defaultMarker].
-  final String marker;
+  final String marker = defaultMarker,
 
   /// The host package of an add-on port (ADR 0009): the top-level key
   /// `host`, for example `flutter_chartjs_port`. Null for a host port.
-  final String? host;
+  final String? host,
+}) {
+  /// The [sources], the [marker] tag and the [host] package.
+  this;
 }
 
 /// The top-level keys of `tool/port_sources.yaml`.
@@ -465,15 +446,15 @@ List<String> targetPackages(String repository, List<PortSource> sources) {
 }
 
 /// One row of `doc/differences.md`.
-final class DifferenceRow {
-  /// The row [id] on [line].
-  const DifferenceRow(this.id, this.line);
-
+final class const DifferenceRow(
   /// The row ID.
-  final String id;
+  final String id,
 
   /// The 1-based line.
-  final int line;
+  final int line,
+) {
+  /// The row [id] on [line].
+  this;
 }
 
 /// The rows of the tables in [text] whose first header cell is `ID`.
@@ -540,16 +521,16 @@ int compareVersions(List<int> a, List<int> b) {
 
 /// A header or pin version: a dotted release, and the commit of a commit pin
 /// (upstream-tracking.md 2.4).
-final class PortVersion {
-  /// The [release] parts, with the 8 hex digits [commit] of a commit pin.
-  const PortVersion(this.release, [this.commit]);
-
+final class const PortVersion(
   /// The parts of the dotted release, for example `[4, 5, 1]`.
-  final List<int> release;
+  final List<int> release, [
 
   /// The abbreviated commit of a commit pin (8 lowercase hex digits), or
   /// null for a release.
-  final String? commit;
+  final String? commit,
+]) {
+  /// The [release] parts, with the 8 hex digits [commit] of a commit pin.
+  this;
 }
 
 final RegExp _portVersion = RegExp(r'^v?(\d+(?:\.\d+)*)(?:\+([0-9a-f]{8}))?$');
@@ -627,49 +608,41 @@ String? checkoutHeadOf(String directory) {
 }
 
 /// The inputs of the header check.
-final class HeaderCheckInput {
-  /// The check of [packages] in the repository [repository]. [home] is the
-  /// package with `tool/port_sources.yaml`, `doc/differences.md` and
-  /// `lib/src/upstream.dart`. All are absolute paths with `/` separators.
-  const HeaderCheckInput({
-    required this.repository,
-    required this.home,
-    required this.packages,
-    this.gitlink = gitlinkOf,
-    this.checkoutHead = checkoutHeadOf,
-  });
-
+final class const HeaderCheckInput({
   /// The repository root, with `REUSE.toml`.
-  final String repository;
+  required final String repository,
 
   /// The home package, for example `flutter_chartjs_port`.
-  final String home;
+  required final String home,
 
   /// The packages to examine. The check also examines each package that a
   /// `dart` target of the home names ([targetPackages]).
-  final List<String> packages;
+  required final List<String> packages,
 
   /// Reads a gitlink; replaceable for tests.
-  final String? Function(String repository, String path) gitlink;
+  final String? Function(String repository, String path) gitlink = gitlinkOf,
 
   /// Reads the checked-out commit of a submodule directory; replaceable for
   /// tests.
-  final String? Function(String directory) checkoutHead;
+  final String? Function(String directory) checkoutHead = checkoutHeadOf,
+}) {
+  /// The check of [packages] in the repository [repository]. [home] is the
+  /// package with `tool/port_sources.yaml`, `doc/differences.md` and
+  /// `lib/src/upstream.dart`. All are absolute paths with `/` separators.
+  this;
 }
 
 /// The source paths that exist at the pin of one project.
-final class _PinIndex {
-  _PinIndex(this.directory, {required this.checkedOut, required this.listed});
-
+final class _PinIndex(
   /// The absolute directory of the reference copy.
-  final String directory;
+  final String directory, {
 
   /// Whether the reference copy is on disk.
-  final bool checkedOut;
+  required final bool checkedOut,
 
   /// The `files` and `file_index` paths, for a pin that is not on disk.
-  final Set<String> listed;
-
+  required final Set<String> listed,
+}) {
   bool has(String path) => checkedOut
       ? File('$directory/$path').existsSync()
       : listed.contains(path);
@@ -681,13 +654,7 @@ String _malformedMarker(String tag) =>
     '"DIVERGES($tag): <row id>, <reason>" (porting-flow.md 4).';
 
 /// One `DIVERGES(<tag>)` marker.
-final class _Marker {
-  const _Marker(this.path, this.line, this.id);
-
-  final String path;
-  final int line;
-  final String id;
-}
+final class const _Marker(final String path, final int line, final String id);
 
 /// The version constant of `lib/src/upstream.dart` that a project of
 /// `tool/port_sources.yaml` follows, and its value (null when the file has
@@ -954,32 +921,23 @@ Map<String, _PinIndex> _validateSources(
 }
 
 /// The per-file part of the header check.
-final class _FileContext {
-  _FileContext({
-    required this.sources,
-    required this.pins,
-    required this.annotations,
-    required this.versions,
-    required this.primary,
-    required this.markerTag,
-    required this.findings,
-  }) : _marker = _markerPattern(markerTag);
-
-  final Map<String, PortSource> sources;
-  final Map<String, _PinIndex> pins;
-  final List<ReuseAnnotation> annotations;
+final class _FileContext({
+  required final Map<String, PortSource> sources,
+  required final Map<String, _PinIndex> pins,
+  required final List<ReuseAnnotation> annotations,
 
   /// The version constants of the projects of `lib/src/upstream.dart`.
-  final Map<String, _VersionPin> versions;
+  required final Map<String, _VersionPin> versions,
 
   /// The primary project of the home package, or null when no entry names
   /// `lib/src/upstream.dart` (a finding of the source list).
-  final PortSource? primary;
+  required final PortSource? primary,
 
   /// The tag of the `DIVERGES(<tag>)` markers.
-  final String markerTag;
-  final RegExp _marker;
-  final List<Finding> findings;
+  required final String markerTag,
+  required final List<Finding> findings,
+}) {
+  final RegExp _marker = _markerPattern(markerTag);
   final List<_Marker> markers = [];
 
   void check({

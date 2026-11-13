@@ -468,16 +468,16 @@ Object? chartThemeOf(types.ChartConfiguration config) =>
 ///
 /// It implements [types.ChartConfiguration], the type of the configuration
 /// that `core.controller.js:137` gives to `platform.updateConfig`.
-class Config implements types.ChartConfiguration {
+class Config([Object? config]) implements types.ChartConfiguration {
   /// core.config.js:159 `constructor(config)`.
   ///
   /// [config] is the raw configuration: a Map of the user or a typed root
   /// scope. A falsy value gives a new Map. A truthy value that is not an
   /// object throws a [TypeError] (row `adapt-config-objects`).
-  Config([Object? config]) : _config = _initConfig(config);
+  this;
 
   /// core.config.js:160 `_config`: the raw configuration.
-  final Object _config;
+  final Object _config = _initConfig(config);
 
   // DIVERGES(chartjs): adapt-native-line-resolution, lookup generation.
   int _resolutionGeneration = 0;

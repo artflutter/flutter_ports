@@ -8,49 +8,22 @@ import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
 import 'package:test/test.dart';
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements Point;
 
 /// A JavaScript object literal `{x, y, cp1x, cp1y, cp2x, cp2y}`, passed as a
 /// [SplinePoint]. A member that the literal does not set is `double.nan`,
 /// which stands for JS `undefined` (row `adapt-spline-control-point-nan`).
-final class _SplinePoint implements SplinePoint {
-  _SplinePoint({
-    required this.x,
-    required this.y,
-    this.cp1x = double.nan,
-    this.cp1y = double.nan,
-    this.cp2x = double.nan,
-    this.cp2y = double.nan,
-  });
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _SplinePoint({
+  @override required final double x,
+  @override required final double y,
+  @override var double cp1x = double.nan,
+  @override var double cp1y = double.nan,
+  @override var double cp2x = double.nan,
+  @override var double cp2y = double.nan,
+}) implements SplinePoint {
   @override
   bool? get skip => null;
-
-  @override
-  double cp1x;
-
-  @override
-  double cp1y;
-
-  @override
-  double cp2x;
-
-  @override
-  double cp2y;
 }
 
 /// Jasmine `toEqual` on a number: SameValue, so NaN equals NaN and `-0` does

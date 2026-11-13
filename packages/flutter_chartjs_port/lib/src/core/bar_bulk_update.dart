@@ -6,13 +6,13 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// A chart with ordinary context, pixel-ratio and visibility reads. Unknown
 /// subclasses must not opt in merely because their topology reads are native.
-abstract interface class BulkBarChart {
+abstract interface class BulkBarChart() {
   /// True only when no user code runs in those chart reads.
   bool get supportsBulkBarUpdate;
 }
 
 /// A scale whose numeric projection and grid-width lookup can be reused.
-abstract interface class BulkBarScale {
+abstract interface class BulkBarScale() {
   /// Whether numeric value reads have the built-in linear-scale behavior.
   bool get supportsBulkBarUpdate;
 
@@ -23,7 +23,7 @@ abstract interface class BulkBarScale {
 
 /// The direct write contract for exact native bar elements. Custom elements
 /// retain DatasetController.updateElement and their property interception.
-abstract interface class BulkBarElement {
+abstract interface class BulkBarElement() {
   /// True only for the exact built-in element. An explicit test opt-in must
   /// preserve ordinary active/context reads as well as native property writes.
   bool get supportsBulkBarWrites;

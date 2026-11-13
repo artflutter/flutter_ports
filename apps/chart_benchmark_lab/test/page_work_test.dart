@@ -16,7 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The work of one interaction.
-class _Work {
+class _Work() {
   int builds = 0;
   int chartBuilds = 0;
   int settingsBuilds = 0;

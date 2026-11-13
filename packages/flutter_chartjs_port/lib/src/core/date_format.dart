@@ -294,15 +294,13 @@ List<(String, String)> _namesOf(String pattern, DateFormat format) {
 /// A pattern of [_lowerCaseDayPeriod] is split at its `a` field. The text
 /// before the field is a `DateFormat`, and the field writes the day period
 /// of the locale in lower case. Any other pattern is one `DateFormat`.
-final class _Pattern {
-  _Pattern(this.pattern, this.locale);
-
+final class _Pattern(
   /// The ICU pattern.
-  final String pattern;
+  final String pattern,
 
   /// The locale of the patterns.
-  final String locale;
-
+  final String locale,
+) {
   /// The `DateFormat` of the whole pattern.
   late final DateFormat whole = DateFormat(pattern, locale);
 

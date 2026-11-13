@@ -20,13 +20,12 @@ LineDataset _line(List<DataPoint> points, Color color) => LineDataset(
   },
 );
 
-class Sample10 extends StatefulWidget {
-  const Sample10({super.key});
+class const Sample10({super.key}) extends StatefulWidget {
   @override
   State<Sample10> createState() => _Sample10State();
 }
 
-class _Sample10State extends State<Sample10> {
+class _Sample10State() extends State<Sample10> {
   static const _limit = 100;
   List<DataPoint> _sin = [];
   List<DataPoint> _cos = [];

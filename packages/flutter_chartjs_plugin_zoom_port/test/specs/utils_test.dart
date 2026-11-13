@@ -11,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../support/jasmine.dart';
 
 /// `{} as Chart`: a chart that `directionEnabled` only passes on.
-final class _FakeChart extends Fake implements Chart;
+final class _FakeChart() extends Fake implements Chart;
 
 void main() {
   group('utils', () {

@@ -35,17 +35,13 @@ import 'layouts_reference.dart';
 
 /// A fake box of the reference. Its [update] records the call in [log] and
 /// sets the size with the rule of the generator.
-class _Box implements LayoutItem {
-  _Box(this.spec, this.log)
-    : options = spec.options == null ? null : {...spec.options!},
-      axis = spec.axis;
-
+class _Box(
   /// The box of the reference.
-  final LayoutsReferenceBox spec;
+  final LayoutsReferenceBox spec,
 
   /// The calls of the scene.
-  final List<(String, String, List<double>)> log;
-
+  final List<(String, String, List<double>)> log,
+) implements LayoutItem {
   @override
   Object? position = undefined;
 
@@ -74,10 +70,12 @@ class _Box implements LayoutItem {
   double bottom = double.nan;
 
   @override
-  final Map<String, Object?>? options;
+  final Map<String, Object?>? options = spec.options == null
+      ? null
+      : {...spec.options!};
 
   @override
-  final ScaleAxis? axis;
+  final ScaleAxis? axis = spec.axis;
 
   @override
   List<LayoutLayer> Function()? layers;
@@ -116,9 +114,9 @@ class _Box implements LayoutItem {
 }
 
 /// A fake box with `beforeLayout`.
-class _BeforeLayoutBox extends _Box implements LayoutItemBeforeLayout {
-  _BeforeLayoutBox(super.spec, super.log);
-
+class _BeforeLayoutBox(super.spec, super.log)
+    extends _Box
+    implements LayoutItemBeforeLayout {
   @override
   void beforeLayout() {
     log.add(('beforeLayout', spec.name, const []));
@@ -126,26 +124,17 @@ class _BeforeLayoutBox extends _Box implements LayoutItemBeforeLayout {
 }
 
 /// The padding `{left, top, right, bottom}` of `getPadding`.
-final class _Padding implements TRBL {
-  _Padding(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-}
+final class _Padding(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements TRBL;
 
 /// A fake box with `getPadding`.
-final class _PaddingBox extends _Box implements LayoutItemPadding {
-  _PaddingBox(super.spec, super.log);
-
+final class _PaddingBox(super.spec, super.log)
+    extends _Box
+    implements LayoutItemPadding {
   @override
   TRBL getPadding() {
     final (left, top, right, bottom) = spec.padding!;
@@ -154,9 +143,9 @@ final class _PaddingBox extends _Box implements LayoutItemPadding {
 }
 
 /// A fake box with `beforeLayout` and `getPadding`, as a scale.
-final class _ScaleBox extends _BeforeLayoutBox implements LayoutItemPadding {
-  _ScaleBox(super.spec, super.log);
-
+final class _ScaleBox(super.spec, super.log)
+    extends _BeforeLayoutBox
+    implements LayoutItemPadding {
   @override
   TRBL getPadding() {
     final (left, top, right, bottom) = spec.padding!;
@@ -174,14 +163,11 @@ _Box _box(LayoutsReferenceBox spec, List<(String, String, List<double>)> log) =>
     };
 
 /// A chart with the members that core.layouts.js reads and writes.
-final class _Chart implements types.Chart {
-  _Chart(Object? padding)
-    : options = {
-        'layout': <String, Object?>{'padding': padding},
-      };
-
+final class _Chart(Object? padding) implements types.Chart {
   @override
-  final Map<String, Object?> options;
+  final Map<String, Object?> options = {
+    'layout': <String, Object?>{'padding': padding},
+  };
 
   @override
   final List<LayoutItem> boxes = [];
@@ -545,12 +531,10 @@ void main() {
 }
 
 /// A chart area over the four edges of [edges].
-final class _Area implements ChartArea {
-  _Area(this.edges);
-
+final class _Area(
   /// The four edges.
-  final TRBL edges;
-
+  final TRBL edges,
+) implements ChartArea {
   @override
   double get left => edges.left;
 

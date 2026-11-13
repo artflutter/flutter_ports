@@ -481,13 +481,13 @@ typedef Merger = void Function(
 );
 
 /// helpers.core.ts:236 `MergeOptions`.
-final class MergeOptions {
-  /// The options `{merger}`. A null [merger] is an absent one.
-  const MergeOptions({this.merger});
-
+final class const MergeOptions({
   /// helpers.core.ts:237 `merger?`. [merge] passes it the options object as
   /// its last argument.
-  final Merger? merger;
+  final Merger? merger,
+}) {
+  /// The options `{merger}`. A null [merger] is an absent one.
+  this;
 }
 
 /// helpers.core.ts:260 `merge`, with the overloads at :249-259.

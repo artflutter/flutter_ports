@@ -97,9 +97,13 @@ import '../helpers/rounded_rect_upstream.dart';
 /// The cartesian test controller of the generators: a point for each value,
 /// at the pixels of its index scale and of its value scale
 /// (controller.line.js:83-112 without the line, the gaps and the stacks).
-final class ScaleTestController extends DatasetController {
-  /// The controller of the dataset [datasetIndex] of [chart].
-  ScaleTestController(super.chart, super.datasetIndex, [super.newTarget]);
+final class ScaleTestController(
+  super.chart,
+  super.datasetIndex, [
+  super.newTarget,
+]) extends DatasetController {
+  /// The controller of the dataset `datasetIndex` of `chart`.
+  this;
 
   @override
   void update(String mode) {
@@ -203,17 +207,16 @@ typedef RadialPointPositionOf = RadialPointPosition Function(
 /// controller.radar.js:88 and the generators do (Chart.js ADR 0025, section
 /// 9). The parse of null, undefined and NaN is null. Thus the scale gets
 /// null, and the radial linear scale gives a point at NaN.
-final class RadialTestController extends DatasetController {
-  /// The controller of the dataset [datasetIndex] of [chart].
-  RadialTestController(
-    super.chart,
-    super.datasetIndex,
-    this.pointPosition, [
-    super.newTarget,
-  ]);
+final class RadialTestController(
+  super.chart,
+  super.datasetIndex,
 
   /// The call of `getPointPositionForValue` on the scale r.
-  final RadialPointPositionOf pointPosition;
+  final RadialPointPositionOf pointPosition, [
+  super.newTarget,
+]) extends DatasetController {
+  /// The controller of the dataset `datasetIndex` of `chart`.
+  this;
 
   @override
   void update(String mode) {
@@ -289,12 +292,12 @@ JsClass radialLinearTestController(RadialPointPositionOf pointPosition) =>
 /// call as the upstream arcs and lines of `addRoundedRectPath`
 /// (differences.md `adapt-rounded-rect-path`), so that the records compare
 /// with the upstream calls.
-final class RecordingContext extends MockContext {
-  /// A recording context over [target].
-  RecordingContext(this.target);
-
+final class RecordingContext(
   /// The real context: the context of the chart.
-  final CanvasRenderingContext2D target;
+  final CanvasRenderingContext2D target,
+) extends MockContext {
+  /// A recording context over [target].
+  this;
 
   @override
   HTMLCanvasElement get canvas => target.canvas;
@@ -995,25 +998,17 @@ void testReferenceWidths(List<ScaleChartWidth> widths) {
 /// and the bounding box of the mock context of the generators
 /// (`LiberationContext` of scale_chart_common.mjs, `context.js:150` of
 /// chartjs-test-utils): 4, 8, 15, 25 for a text that is not empty, else 0.
-final class _MockBoxMetrics implements TextMetrics {
-  _MockBoxMetrics(this.width, {required bool empty})
-    : actualBoundingBoxAscent = empty ? 0 : 4,
-      actualBoundingBoxDescent = empty ? 0 : 8,
-      actualBoundingBoxLeft = empty ? 0 : 15,
-      actualBoundingBoxRight = empty ? 0 : 25;
+final class _MockBoxMetrics(@override final double width, {required bool empty})
+    implements TextMetrics {
+  @override
+  final double actualBoundingBoxAscent = empty ? 0 : 4;
 
   @override
-  final double width;
+  final double actualBoundingBoxDescent = empty ? 0 : 8;
 
   @override
-  final double actualBoundingBoxAscent;
+  final double actualBoundingBoxLeft = empty ? 0 : 15;
 
   @override
-  final double actualBoundingBoxDescent;
-
-  @override
-  final double actualBoundingBoxLeft;
-
-  @override
-  final double actualBoundingBoxRight;
+  final double actualBoundingBoxRight = empty ? 0 : 25;
 }

@@ -15,18 +15,18 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 
 /// The RGBA bytes of a render of [width] x [height] pixels.
-final class Render {
-  /// The bytes of [width] x [height] pixels.
-  Render(this.bytes, this.width, this.height);
-
+final class Render(
   /// The RGBA bytes, row by row.
-  final Uint8List bytes;
+  final Uint8List bytes,
 
   /// The width in pixels.
-  final int width;
+  final int width,
 
   /// The height in pixels.
-  final int height;
+  final int height,
+) {
+  /// The bytes of [width] x [height] pixels.
+  this;
 
   /// The alpha of the pixel (x, y).
   int alpha(int x, int y) => bytes[(y * width + x) * 4 + 3];
@@ -62,39 +62,30 @@ Future<Render> renderContext(
 }
 
 /// The difference of two renders of one size.
-final class PixelDiff {
-  PixelDiff._(
-    this.maxChannel,
-    this.differing,
-    this.solidDiffering,
-    this.opaqueFlips,
-    this.inkA,
-    this.inkB,
-  );
-
+final class PixelDiff._(
   /// The largest difference of one channel, 0 to 255.
-  final int maxChannel;
+  final int maxChannel,
 
   /// The count of pixels that differ.
-  final int differing;
+  final int differing,
 
   /// The count of pixels that differ although each render has them fully
   /// opaque or fully transparent: a difference of area, not of
   /// anti-aliasing.
-  final int solidDiffering;
+  final int solidDiffering,
 
   /// The count of pixels that one render has fully opaque and the other
   /// fully transparent. Unlike [solidDiffering], it ignores two fills of
   /// other colors that overlap on an edge, whose anti-aliasing can change
   /// the color of an opaque pixel.
-  final int opaqueFlips;
+  final int opaqueFlips,
 
   /// The inked area of the first render, in pixels.
-  final double inkA;
+  final double inkA,
 
   /// The inked area of the second render, in pixels.
-  final double inkB;
-
+  final double inkB,
+) {
   /// The relative difference of the inked areas.
   double get inkRatio =>
       inkA == inkB ? 0 : (inkA - inkB).abs() / math.max(inkA, inkB);

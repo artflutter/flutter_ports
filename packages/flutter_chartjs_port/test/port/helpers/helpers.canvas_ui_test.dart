@@ -23,47 +23,22 @@ import 'rounded_rect_upstream.dart';
 
 /// A JavaScript object literal `{topLeft, topRight, bottomLeft,
 /// bottomRight}`, passed as [TRBLCorners].
-final class _Corners implements TRBLCorners {
-  const _Corners(
-    this.topLeft,
-    this.topRight,
-    this.bottomLeft,
-    this.bottomRight,
-  );
-
-  @override
-  final double topLeft;
-
-  @override
-  final double topRight;
-
-  @override
-  final double bottomLeft;
-
-  @override
-  final double bottomRight;
-}
+final class const _Corners(
+  @override final double topLeft,
+  @override final double topRight,
+  @override final double bottomLeft,
+  @override final double bottomRight,
+) implements TRBLCorners;
 
 /// A JavaScript object literal `{x, y, w, h, radius}`, passed as a
 /// [RoundedRect].
-final class _Box implements RoundedRect {
-  const _Box(this.x, this.y, this.w, this.h, this.radius);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final double w;
-
-  @override
-  final double h;
-
-  @override
-  final _Corners radius;
-
+final class const _Box(
+  @override final double x,
+  @override final double y,
+  @override final double w,
+  @override final double h,
+  @override final _Corners radius,
+) implements RoundedRect {
   @override
   String toString() =>
       '($x, $y, $w, $h, ${radius.topLeft} ${radius.topRight} '

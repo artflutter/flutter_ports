@@ -233,7 +233,7 @@ Chart _chart(WidgetTester tester) => Chart.getChart(
 )!;
 
 /// The updates and the layouts of the chart since the last [clear].
-final class _Spy {
+final class _Spy() {
   final List<Object?> modes = <Object?>[];
   int layouts = 0;
   int draws = 0;

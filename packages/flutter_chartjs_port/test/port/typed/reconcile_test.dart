@@ -108,17 +108,15 @@ List<Object?> _spyOnUpdates([void Function(Chart chart)? onBeforeUpdate]) {
 
 /// A host whose state sets the config and the theme of its ChartView in one
 /// `setState`.
-class _Host extends StatefulWidget {
-  const _Host({required this.config, this.theme});
-
-  final ChartConfig config;
-  final ChartThemeData? theme;
-
+class const _Host({
+  required final ChartConfig config,
+  final ChartThemeData? theme,
+}) extends StatefulWidget {
   @override
   State<_Host> createState() => _HostState();
 }
 
-class _HostState extends State<_Host> {
+class _HostState() extends State<_Host> {
   late ChartConfig config = widget.config;
   late ChartThemeData? theme = widget.theme;
 

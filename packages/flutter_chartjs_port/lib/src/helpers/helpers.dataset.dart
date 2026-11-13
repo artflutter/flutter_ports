@@ -19,26 +19,12 @@ import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// helpers.dataset.ts:10 and :27 the object literal
 /// `{left, right, top, bottom}`.
-final class _Trbl implements TRBL {
-  const _Trbl({
-    required this.left,
-    required this.right,
-    required this.top,
-    required this.bottom,
-  });
-
-  @override
-  final double left;
-
-  @override
-  final double right;
-
-  @override
-  final double top;
-
-  @override
-  final double bottom;
-}
+final class const _Trbl({
+  @override required final double left,
+  @override required final double right,
+  @override required final double top,
+  @override required final double bottom,
+}) implements TRBL;
 
 /// The member `item[field]` of a scale or of a chart area, for a `field` of
 /// `keyof ChartArea`. helpers.dataset.ts passes only the four edge names.

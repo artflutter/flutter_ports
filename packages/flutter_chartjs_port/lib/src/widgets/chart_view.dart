@@ -179,7 +179,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// `MediaQuery` with `disableAnimations: false`.
 class ChartView extends StatefulWidget {
   /// Creates a widget that shows the chart of the typed [config].
-  const ChartView({
+  const new({
     required ChartConfig this.config,
     this.updateMode,
     this.dataOnlyUpdates = false,
@@ -196,7 +196,7 @@ class ChartView extends StatefulWidget {
   /// `{type, data, options, plugins, platform}`: the escape hatch for a
   /// copy of the Chart.js docs, `jsonDecode` output and the options that
   /// [ChartConfig] does not have. The widget keeps it in [rawConfig].
-  const ChartView.raw({
+  const new raw({
     required Map<String, Object?> config,
     this.updateMode,
     this.onChartCreated,
@@ -376,7 +376,7 @@ class ChartView extends StatefulWidget {
   }
 }
 
-class _ChartViewState extends State<ChartView> {
+class _ChartViewState() extends State<ChartView> {
   /// The canvas of the chart, for the life of the state (Chart.js ADR
   /// 0016:300).
   final UiCanvasElement _canvas = UiCanvasElement();

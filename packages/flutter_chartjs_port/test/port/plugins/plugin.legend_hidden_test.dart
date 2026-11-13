@@ -160,10 +160,8 @@ Map<String, Object?> _hook(String hook, Object? Function(Chart chart) run) => {
 };
 
 /// A list of another class: each read can run user code.
-final class _ObservedList extends ListBase<Object?> {
-  _ObservedList(this.values);
-
-  final List<Object?> values;
+final class _ObservedList(final List<Object?> values)
+    extends ListBase<Object?> {
   int reads = 0;
 
   @override
@@ -186,9 +184,8 @@ final class _ObservedList extends ListBase<Object?> {
 }
 
 /// A trivial user subclass of the pie controller.
-final class _PieChild extends PieController {
-  _PieChild(super.chart, super.datasetIndex, [super.newTarget]);
-}
+final class _PieChild(super.chart, super.datasetIndex, [super.newTarget])
+    extends PieController;
 
 final JsClass _pieChild = JsClass(
   'PieChild',
@@ -201,9 +198,8 @@ final JsClass _pieChild = JsClass(
 );
 
 /// A trivial user subclass of the doughnut controller.
-final class _DoughnutChild extends DoughnutController {
-  _DoughnutChild(super.chart, super.datasetIndex, [super.newTarget]);
-}
+final class _DoughnutChild(super.chart, super.datasetIndex, [super.newTarget])
+    extends DoughnutController;
 
 final JsClass _doughnutChild = JsClass(
   'DoughnutChild',
@@ -216,9 +212,8 @@ final JsClass _doughnutChild = JsClass(
 );
 
 /// A trivial user subclass of the polar area controller.
-final class _PolarChild extends PolarAreaController {
-  _PolarChild(super.chart, super.datasetIndex, [super.newTarget]);
-}
+final class _PolarChild(super.chart, super.datasetIndex, [super.newTarget])
+    extends PolarAreaController;
 
 final JsClass _polarChild = JsClass(
   'PolarChild',
@@ -231,14 +226,10 @@ final JsClass _polarChild = JsClass(
 );
 
 /// A trivial user subclass of the chart.
-final class _ChildChart extends Chart {
-  _ChildChart(super.item, [super.userConfig]);
-}
+final class _ChildChart(super.item, [super.userConfig]) extends Chart;
 
 /// A user subclass of the box, with a count of its builds.
-final class _CountingLegend extends Legend {
-  _CountingLegend(super.config);
-
+final class _CountingLegend(super.config) extends Legend {
   int builds = 0;
 
   @override
@@ -248,7 +239,7 @@ final class _CountingLegend extends Legend {
   }
 }
 
-final class _Margins implements TRBL {
+final class _Margins() implements TRBL {
   @override
   double get top => 0;
 
@@ -466,14 +457,12 @@ final Map<String, void Function(Chart chart)> _steps = {
 };
 
 /// A user subclass of the arc: its reads stay observable.
-final class _UserArc extends ArcElement {
-  _UserArc(this.reads, [this.onRead]);
-
-  final List<Object?> reads;
+final class _UserArc(
+  final List<Object?> reads, [
 
   /// Runs at each read of the context.
-  final void Function()? onRead;
-
+  final void Function()? onRead,
+]) extends ArcElement {
   @override
   ScriptableContext? get $context {
     reads.add('context');
@@ -483,14 +472,12 @@ final class _UserArc extends ArcElement {
 }
 
 /// A Map of another class: each read can run user code.
-final class _ObservedMap extends MapBase<String, Object?> {
-  _ObservedMap(this.fields, [this.onRead]);
-
-  final Map<String, Object?> fields;
+final class _ObservedMap(
+  final Map<String, Object?> fields, [
 
   /// Runs at each read, with its key.
-  final void Function(Object? key)? onRead;
-
+  final void Function(Object? key)? onRead,
+]) extends MapBase<String, Object?> {
   int reads = 0;
 
   @override
@@ -513,9 +500,7 @@ final class _ObservedMap extends MapBase<String, Object?> {
   void clear() => fields.clear();
 }
 
-final class _TrivialConfig extends Config {
-  _TrivialConfig(super.config);
-}
+final class _TrivialConfig(super.config) extends Config;
 
 /// A chart of [config] of the exact class, or of a trivial user subclass, which
 /// takes the ordinary path at each point. Both have the same canvas size.

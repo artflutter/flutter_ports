@@ -97,12 +97,12 @@ double _itemAt(List<double?> items, int index) =>
     index >= 0 && index < items.length ? jsToNumber(items[index]) : double.nan;
 
 /// scale.timeseries.js:34 `TimeSeriesScale extends TimeScale`.
-class TimeSeriesScale extends TimeScale {
+class TimeSeriesScale(super.cfg) extends TimeScale {
   /// scale.timeseries.js:46 `constructor(props)`.
   ///
   /// The fields get their start values in their declarations
   /// (scale.timeseries.js:50-54).
-  TimeSeriesScale(super.cfg);
+  this;
 
   // scale.timeseries.js:36 `static id = 'timeseries'`. Scale has the
   // instance field `id`. Thus the value is only in the statics of jsClass.

@@ -11,15 +11,8 @@ import 'package:test/test.dart';
 // `Math.floor(width / aspectRatio)`.
 
 /// A canvas element with a render size. Only `width` and `height` are read.
-final class _Canvas implements HTMLCanvasElement {
-  _Canvas(this.width, this.height);
-
-  @override
-  int width;
-
-  @override
-  int height;
-
+final class _Canvas(@override var int width, @override var int height)
+    implements HTMLCanvasElement {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
@@ -29,19 +22,19 @@ final class _Canvas implements HTMLCanvasElement {
 }
 
 /// A chart object. The base platform reads none of its members.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A context object. The base platform reads none of its members.
-final class _Context implements CanvasRenderingContext2D {
+final class _Context() implements CanvasRenderingContext2D {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A config object `{options, data}`.
-final class _Config implements types.ChartConfiguration {
+final class _Config() implements types.ChartConfiguration {
   @override
   final Map<String, Object?> options = {'animation': true};
 

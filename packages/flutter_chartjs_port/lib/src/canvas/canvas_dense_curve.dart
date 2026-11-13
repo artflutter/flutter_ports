@@ -6,7 +6,7 @@
 ///
 /// A context without this interface (a recording context of a test, a context
 /// of user code) gets the upstream commands.
-abstract interface class DenseCurveCanvas {
+abstract interface class DenseCurveCanvas() {
   /// The count of bitmap pixels of one unit of x under the current transform.
   ///
   /// Null when the context takes only the upstream geometry: a transform that

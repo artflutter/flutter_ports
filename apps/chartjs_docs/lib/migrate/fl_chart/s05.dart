@@ -10,13 +10,12 @@ const _values = [1.0, 2.0, 1.5, 3.0, 3.5, 5.0, 8.0];
 const List<Color> _colors = [Fl.blue, Fl.pink, Fl.red];
 const _stops = [0.1, 0.4, 0.9];
 
-class Sample5 extends StatefulWidget {
-  const Sample5({super.key});
+class const Sample5({super.key}) extends StatefulWidget {
   @override
   State<Sample5> createState() => _Sample5State();
 }
 
-class _Sample5State extends State<Sample5> {
+class _Sample5State() extends State<Sample5> {
   final List<int> _shown = [1, 3, 5];
 
   /// fl_chart keeps tooltips open. The Chart.js tooltip shows one group.

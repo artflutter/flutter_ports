@@ -60,7 +60,7 @@ String? _option(String name) {
 
 final _watch = Stopwatch()..start();
 
-class _Phase {
+class _Phase() {
   int totalUs = 0;
   int count = 0;
   int? _start;

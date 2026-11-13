@@ -37,7 +37,7 @@ const int _intervalSlots = 64;
 
 /// A time zone of the default date adapter. The calendar functions get
 /// `null` for UTC.
-abstract interface class DateZone {
+abstract interface class DateZone() {
   /// The offset of the instant [t] in ms. The wall time is `t + offsetAt(t)`.
   int offsetAt(int t);
 
@@ -65,21 +65,19 @@ abstract interface class DateZone {
 /// The default `formats` member clears the cache once in each chart update
 /// (Chart.js ADR 0024, decision 3). Thus a change of the platform zone
 /// reaches the next update.
-final class LocalZone implements DateZone {
-  LocalZone._(this._offsetOf);
-
+final class LocalZone._(
+  /// The offset at an instant: [_platformOffset] for [instance].
+  final int Function(int t) _offsetOf,
+) implements DateZone {
   /// A zone with the cache rule and the rule of [fromWall] of the local
   /// zone, on the offsets [offsetOf] in place of the offsets of the
   /// platform. The tests run the code of the local zone with the offset
   /// changes of a table, also on a machine in UTC.
   @visibleForTesting
-  LocalZone.withOffsets(int Function(int t) offsetOf) : this._(offsetOf);
+  new withOffsets(int Function(int t) offsetOf) : this._(offsetOf);
 
   /// The one local zone.
   static final LocalZone instance = LocalZone._(_platformOffset);
-
-  /// The offset at an instant: [_platformOffset] for [instance].
-  final int Function(int t) _offsetOf;
 
   /// The first instant of the interval of each slot. A slot is empty when
   /// its first instant is larger than its last instant.

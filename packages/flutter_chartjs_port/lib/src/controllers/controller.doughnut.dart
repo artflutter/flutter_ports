@@ -152,13 +152,14 @@ Object? _lengthOf(Object? value) => switch (value) {
 };
 
 /// controller.doughnut.js:37 `DoughnutController extends DatasetController`.
-class DoughnutController extends DatasetController {
+class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   /// controller.doughnut.js:133 `constructor(chart, datasetIndex)`.
   ///
-  /// [newTarget] is `new.target` (Chart.js ADR 0020, section 4). The body
+  /// `newTarget` is `new.target` (Chart.js ADR 0020, section 4). The body
   /// runs after the constructor of [DatasetController], as the statements
   /// after `super(chart, datasetIndex)` do.
-  DoughnutController(super.chart, super.datasetIndex, [super.newTarget]) {
+  this {
     enableOptionSharing = true;
     innerRadius = null;
     outerRadius = null;

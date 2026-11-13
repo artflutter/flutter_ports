@@ -150,7 +150,8 @@ typedef PointProps = Point;
 /// [getRange] (element.point.ts:102, Chart.js ADR 0020, section 9). It
 /// implements `types.PointElementWrites`, the typed writes of the line and
 /// scatter controllers (Chart.js ADR 0054 §9).
-class PointElement extends Element
+class PointElement([AnyObject? cfg])
+    extends Element
     implements
         types.RadialPointElement,
         types.VisualElementRange,
@@ -163,7 +164,7 @@ class PointElement extends Element
   /// `undefined`, which is their start state here. Then [cfg] goes through
   /// [assign], as `Object.assign(this, cfg)` (element.point.ts:57-59). A
   /// Map is always truthy, so Dart `null` stands for a falsy `cfg`.
-  PointElement([AnyObject? cfg]) {
+  this {
     if (cfg != null) assign(cfg);
   }
 
@@ -798,13 +799,11 @@ class PointElement extends Element
 /// is NaN. `drawPointLegend` treats 0 and NaN alike for these three
 /// numbers: `rotation || 0` (helpers.canvas.ts:178) and `!rotation` (:238),
 /// `isNaN(radius) || radius <= 0` (:192), and `borderWidth > 0` (:305).
-final class _MapPointOptions implements DrawPointOptions {
-  _MapPointOptions(this.options);
-
+final class _MapPointOptions(
   /// The options object of the point: a Map, or a typed object with a face
   /// that is not a [PointOptions].
-  final Object options;
-
+  final Object options,
+) implements DrawPointOptions {
   /// helpers.canvas.ts:150 `pointStyle`, the value as it is.
   @override
   Object? get pointStyle => _byName(options, OptionKey.pointStyle);

@@ -207,11 +207,7 @@ _Comparison _compareObject(
 /// resolver of the options, a typed scope of the defaults).
 Matcher toEqualOptions(Object expected) => _ToEqualOptions(expected);
 
-final class _ToEqualOptions extends Matcher {
-  const _ToEqualOptions(this.expected);
-
-  final Object expected;
-
+final class const _ToEqualOptions(final Object expected) extends Matcher {
   @override
   bool matches(Object? item, Map<Object?, Object?> matchState) {
     final result = _compareObject(item, expected);

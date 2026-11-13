@@ -31,24 +31,24 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
 
 /// core.typedRegistry.js:8 `TypedRegistry`, the default export.
-final class TypedRegistry {
+final class TypedRegistry(
+  /// core.typedRegistry.js:10 `type`: the class value of the base class of
+  /// the components, or [jsObjectClass] for the plugins.
+  final JsClass type,
+
+  /// core.typedRegistry.js:11 `scope`: the scope of the defaults, for
+  /// example `'datasets'`.
+  final String scope, [
+
+  /// core.typedRegistry.js:12 `override`: whether [register] writes the
+  /// `overrides` of a component.
+  final bool override = false,
+]) {
   /// core.typedRegistry.js:9 `constructor(type, scope, override)`.
   ///
   /// An absent [override] is false: upstream tests only its truthiness
   /// (core.typedRegistry.js:48, :77).
-  TypedRegistry(this.type, this.scope, [this.override = false]);
-
-  /// core.typedRegistry.js:10 `type`: the class value of the base class of
-  /// the components, or [jsObjectClass] for the plugins.
-  final JsClass type;
-
-  /// core.typedRegistry.js:11 `scope`: the scope of the defaults, for
-  /// example `'datasets'`.
-  final String scope;
-
-  /// core.typedRegistry.js:12 `override`: whether [register] writes the
-  /// `overrides` of a component.
-  final bool override;
+  this;
 
   /// core.typedRegistry.js:13 `items`, `Object.create(null)`: the
   /// registered components by `id`.

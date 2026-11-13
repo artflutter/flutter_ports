@@ -20,21 +20,19 @@ import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
 /// TypeScript gives the literal no declared type. The fields are mutable,
 /// because `element.line.js:374` writes `interpolated[property]`. A JS object
 /// compares by identity. Thus the class has no `==`.
-final class InterpolatedPoint implements Point {
-  /// The literal `{x, y}`.
-  InterpolatedPoint(this.x, this.y);
-
+final class InterpolatedPoint(
   /// The `x` member. Dart `null` is JS `null`, as in [Point.x]. Only
   /// `_steppedInterpolation` copies a `y`, so `x` is never `null` in the
   /// results of this file.
-  @override
-  double? x;
+  @override var double? x,
 
   /// The `y` member. Dart `null` is JS `null`, as in [Point.y].
   /// `_steppedInterpolation` copies `p1.y` or `p2.y` unchanged, also a JS
   /// `null`.
-  @override
-  double? y;
+  @override var double? y,
+) implements Point {
+  /// The literal `{x, y}`.
+  this;
 }
 
 /// helpers.interpolation.ts:6 `_pointInLine`. Upstream does not read

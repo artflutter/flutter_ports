@@ -8,7 +8,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 /// A point of a user class: it takes the loop of `boundSegment`.
-class _UserPoint extends PointElement;
+class _UserPoint() extends PointElement;
 
 List<Object?> _trace(List<types.Segment> segments) => [
   for (final s in segments) (s.start, s.end, s.loop, s.style),
@@ -169,22 +169,20 @@ void main() {
   });
 }
 
-final class _RawSegment implements types.Segment {
-  _RawSegment(this.start, this.end);
-  @override
-  final double start;
-  @override
-  final double end;
+final class _RawSegment(
+  @override final double start,
+  @override final double end,
+) implements types.Segment {
   @override
   bool get loop => false;
   @override
   Object? get style => null;
 }
 
-final class _CountingList extends ListBase<types.PointElement> {
-  _CountingList(this._items, this._reads);
-  final List<types.PointElement> _items;
-  final List<int> _reads;
+final class _CountingList(
+  final List<types.PointElement> _items,
+  final List<int> _reads,
+) extends ListBase<types.PointElement> {
   @override
   int get length => _items.length;
   @override
@@ -200,10 +198,8 @@ final class _CountingList extends ListBase<types.PointElement> {
       _items[index] = value;
 }
 
-class _CountingPoint extends PointElement {
-  _CountingPoint(this._read, this._x);
-  final void Function() _read;
-  final double _x;
+class _CountingPoint(final void Function() _read, final double _x)
+    extends PointElement {
   @override
   double get x {
     _read();

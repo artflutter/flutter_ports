@@ -15,7 +15,14 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 
 /// A kind of option scope.
-enum ScopeKind {
+enum ScopeKind(
+  /// The kind name of the schema.
+  final String typeName, {
+
+  /// The element type id of an element kind (`point`, `line`, `bar`,
+  /// `arc` or `generic`), else Dart `null`.
+  final String? element,
+}) {
   /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
   /// of a chart.
   chartConfiguration('ChartConfiguration'),
@@ -254,15 +261,6 @@ enum ScopeKind {
   /// (core.defaults.js:165-175) and the `descriptors` statics, by option scope
   /// path.
   descriptors('Descriptors');
-
-  const ScopeKind(this.typeName, {this.element});
-
-  /// The kind name of the schema.
-  final String typeName;
-
-  /// The element type id of an element kind (`point`, `line`, `bar`,
-  /// `arc` or `generic`), else Dart `null`.
-  final String? element;
 
   /// A new empty scope of this kind.
   OptionScope create() {

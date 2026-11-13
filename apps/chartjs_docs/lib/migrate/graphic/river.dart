@@ -113,9 +113,9 @@ final ChartConfig _config = ChartConfig(
 );
 
 /// The replica of the Graphic demo "River chart".
-class GraphicRiver extends StatelessWidget {
+class const GraphicRiver({super.key}) extends StatelessWidget {
   /// Creates the replica.
-  const GraphicRiver({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) => graphicBox(

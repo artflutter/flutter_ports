@@ -142,19 +142,12 @@ Object? _defaultClip(
 
 /// core.datasetController.js:28-33 the object `{top, right, bottom, left}`
 /// of `defaultClip`. Only `toClip` reads it.
-final class _ClipEdges {
-  _ClipEdges({
-    required this.top,
-    required this.right,
-    required this.bottom,
-    required this.left,
-  });
-
-  final Object? top;
-  final Object? right;
-  final Object? bottom;
-  final Object? left;
-}
+final class _ClipEdges({
+  required final Object? top,
+  required final Object? right,
+  required final Object? bottom,
+  required final Object? left,
+});
 
 /// core.datasetController.js:38 `toClip`.
 ///
@@ -187,30 +180,13 @@ types.ChartMetaClip _toClip(Object? value) {
 
 /// core.datasetController.js:50 the object `{top, right, bottom, left,
 /// disabled}` of `toClip`.
-final class _Clip implements types.ChartMetaClip {
-  _Clip({
-    required this.top,
-    required this.right,
-    required this.bottom,
-    required this.left,
-    required this.disabled,
-  });
-
-  @override
-  final Object? top;
-
-  @override
-  final Object? right;
-
-  @override
-  final Object? bottom;
-
-  @override
-  final Object? left;
-
-  @override
-  final bool disabled;
-}
+final class _Clip({
+  @override required final Object? top,
+  @override required final Object? right,
+  @override required final Object? bottom,
+  @override required final Object? left,
+  @override required final bool disabled,
+}) implements types.ChartMetaClip;
 
 /// core.datasetController.js:59 `getSortedDatasetIndices`.
 List<double> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
@@ -696,32 +672,25 @@ DatasetStack? _createStack(
 /// values}` of `createStack` and of the method `applyStack`.
 ///
 /// `updateRangeFromParsed` writes [values] (:612).
-final class DatasetStack {
-  /// The object `{keys, values}`.
-  DatasetStack(this.keys, this.values);
-
+final class DatasetStack(
   /// `keys`: the indices of the visible datasets in the drawing order
   /// (`getSortedDatasetIndices`).
-  final List<double> keys;
+  final List<double> keys,
 
   /// `values`: the values of the stack by dataset index: a [StackEntry]
   /// (`updateRangeFromParsed`, :612), its [IndexValues] `_visualValues`
   /// (`applyStack`, :599), or a stack object that user code gave a data
   /// item. Dart `null` stands for the JS `null` of `createStack`. The
   /// [undefined] sentinel stands for an absent `_visualValues`.
-  Object? values;
+  var Object? values,
+) {
+  /// The object `{keys, values}`.
+  this;
 }
 
 /// core.datasetController.js:629 the object `{min, max}` of `getMinMax`.
-final class _Range implements MinMax {
-  _Range(this.min, this.max);
-
-  @override
-  double min;
-
-  @override
-  double max;
-}
+final class _Range(@override var double min, @override var double max)
+    implements MinMax;
 
 /// The value of the data elements at [DatasetController._insertElements]
 /// between the move of the elements and the new elements. The new elements
@@ -964,9 +933,12 @@ void _consoleWarn(String message) {
 }
 
 /// core.datasetController.js:234 `DatasetController`.
-class DatasetController
-    with ArrayListener<Object?>
-    implements types.DatasetController {
+class DatasetController(
+  /// core.datasetController.js:256 `chart` (index.d.ts:630).
+  final types.Chart chart,
+  double datasetIndex, [
+  JsClass? newTarget,
+]) with ArrayListener<Object?> implements types.DatasetController {
   /// core.datasetController.js:255 `constructor(chart, datasetIndex)`.
   ///
   /// @param {Chart} chart
@@ -980,9 +952,7 @@ class DatasetController
   /// The fields with a start value get it before the body, and the body
   /// reads the meta. A subclass that overrides [getMeta] thus sees the start
   /// values of upstream.
-  DatasetController(this.chart, double datasetIndex, [JsClass? newTarget])
-    : ctx = chart.ctx,
-      index = datasetIndex {
+  this {
     cachedMeta = getMeta();
     type = cachedMeta.type;
     final target = newTarget ?? jsClass;
@@ -1022,20 +992,17 @@ class DatasetController
     },
   );
 
-  /// core.datasetController.js:256 `chart` (index.d.ts:630).
-  final types.Chart chart;
-
   /// core.datasetController.js:257 `_ctx`, the context of the chart.
   /// controller.bar.js:677 reads it. Dart `null` stands for the JS `null` of
   /// a chart without a context. It is writable, as the JS property: the
   /// reference tests put a recording context here.
   @internal
-  CanvasRenderingContext2D? ctx;
+  CanvasRenderingContext2D? ctx = chart.ctx;
 
   /// core.datasetController.js:258 `index`, the dataset index
   /// (index.d.ts:631). [updateIndex] writes it.
   @override
-  double index;
+  double index = datasetIndex;
 
   /// core.datasetController.js:259 `_cachedDataOpts`, the part of the
   /// element options: the frozen options of `_resolveElementOptions` by the

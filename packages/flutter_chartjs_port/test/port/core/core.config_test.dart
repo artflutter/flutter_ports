@@ -245,7 +245,7 @@ void _setUpScopeTypes() {
 }
 
 /// A [types.ChartConfiguration] that is not a [Config], for `chartThemeOf`.
-final class _OtherConfiguration implements types.ChartConfiguration {
+final class _OtherConfiguration() implements types.ChartConfiguration {
   @override
   final Map<String, Object?> options = {
     themeConfigKey: <String, Object?>{'color': 'T'},

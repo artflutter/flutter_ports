@@ -46,36 +46,24 @@ import 'point_reference.dart';
 // cache of the drawPoint adapter.
 
 /// A test animation with the two members that getProps reads.
-final class _Animation implements types.Animation {
-  _Animation(this.to, {required this.isActive});
+final class _Animation(
+  @override final Object? to, {
 
   /// The result of [active].
-  final bool isActive;
-
+  required final bool isActive,
+}) implements types.Animation {
   @override
   bool active() => isActive;
-
-  @override
-  final Object? to;
 }
 
 /// A JavaScript object literal `{left, top, right, bottom}`, passed as a
 /// [ChartArea].
-final class _Area implements ChartArea {
-  const _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class const _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -84,9 +72,7 @@ final class _Area implements ChartArea {
 }
 
 /// An image point style, the `{width, height}` of an `HTMLImageElement`.
-final class _Image implements CanvasImageSource {
-  const _Image();
-
+final class const _Image() implements CanvasImageSource {
   @override
   double get width => 8;
 
@@ -98,7 +84,7 @@ const _image = _Image();
 
 /// The mock context with a recorded `drawImage`. The generator adds the same
 /// method to the upstream mock, which has none.
-final class _Context extends MockContext {
+final class _Context() extends MockContext {
   @override
   void drawImage(
     CanvasImageSource image,
@@ -827,11 +813,7 @@ void main() {
 }
 
 /// A point of a user subclass that records each write by name.
-final class _RecordingPoint extends PointElement {
-  _RecordingPoint(this.order);
-
-  final List<String> order;
-
+final class _RecordingPoint(final List<String> order) extends PointElement {
   @override
   void operator []=(String prop, Object? value) {
     order.add(prop);

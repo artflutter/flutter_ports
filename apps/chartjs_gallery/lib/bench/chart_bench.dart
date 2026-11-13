@@ -100,26 +100,22 @@ const Map<String, Object?> chartBenchOptions = {
 
 /// The settings of a benchmark run. `lib/main_bench.dart` gives the defaults
 /// of its defines: 15 batches of 200 ms after a warm-up of 1000 ms.
-final class ChartBenchSettings {
-  /// The settings of a run.
-  const ChartBenchSettings({
-    required this.batches,
-    required this.batchMs,
-    required this.warmupMs,
-  });
-
+final class const ChartBenchSettings({
   /// The timed batches of each case.
-  final int batches;
+  required final int batches,
 
   /// The target duration of one batch, in milliseconds.
-  final int batchMs;
+  required final int batchMs,
 
   /// The warm-up of each case, in milliseconds.
-  final int warmupMs;
+  required final int warmupMs,
+}) {
+  /// The settings of a run.
+  this;
 }
 
 /// The call of each iteration of a case.
-enum ChartBenchCall {
+enum ChartBenchCall() {
   /// `chart.draw()`. The data does not change.
   draw,
 
@@ -158,42 +154,13 @@ const List<ChartBenchCall> chartBenchDrawAndUpdate = [
 ];
 
 /// The chart of a case for one point count.
-final class ChartBenchScene {
-  /// A chart with the config [config]. [change] changes the data before
-  /// each update. [takeParts] gives the times of the parts. [describe]
-  /// gives keys of the chart after the last batch.
-  const ChartBenchScene({
-    required this.config,
-    this.change,
-    this.takeParts,
-    this.describe,
-    this.prepare,
-    this.frame,
-    this.dispose,
-  });
-
+final class const ChartBenchScene({
   /// The config of `new Chart(canvas, config)`.
-  final Map<String, Object?> config;
-
-  /// Brings the new chart into the state of the case, outside the timing,
-  /// before the warm-up: for example a hover and the end of the
-  /// animations. Dart `null` for no preparation.
-  final void Function(Chart chart)? prepare;
-
-  /// The frame of [ChartBenchCall.frame], timed. Dart `null` for the other
-  /// calls.
-  final void Function(Chart chart)? frame;
+  required final Map<String, Object?> config,
 
   /// Changes the data before each update, or the state before each frame,
   /// outside the timing. Dart `null` for no change.
-  final VoidCallback? change;
-
-  /// Ends the scene after its chart is destroyed, also when the chart
-  /// throws at its construction: for example the unregister of a plugin
-  /// that the scene registered. Dart `null` for nothing to end. A caller
-  /// that makes the chart of the scene itself calls it after
-  /// `chart.destroy()`.
-  final VoidCallback? dispose;
+  final VoidCallback? change,
 
   /// The ticks of a `Stopwatch` of each part of the update and the draw
   /// since the last call, by the name of the part. A call resets the parts.
@@ -202,12 +169,33 @@ final class ChartBenchScene {
   /// The loop calls it before and after each batch. The BENCH line gets the
   /// figures `<name>MedianMs`, `<name>P10Ms` and `<name>P90Ms` of each part,
   /// after the figures of the end of the recording.
-  final Map<String, int> Function()? takeParts;
+  final Map<String, int> Function()? takeParts,
 
   /// The keys of the chart after the last batch, for example the tick count
   /// of a scale. The BENCH line gets them after the keys of the case. Dart
   /// `null` for no keys.
-  final Map<String, Object?> Function(Chart chart)? describe;
+  final Map<String, Object?> Function(Chart chart)? describe,
+
+  /// Brings the new chart into the state of the case, outside the timing,
+  /// before the warm-up: for example a hover and the end of the
+  /// animations. Dart `null` for no preparation.
+  final void Function(Chart chart)? prepare,
+
+  /// The frame of [ChartBenchCall.frame], timed. Dart `null` for the other
+  /// calls.
+  final void Function(Chart chart)? frame,
+
+  /// Ends the scene after its chart is destroyed, also when the chart
+  /// throws at its construction: for example the unregister of a plugin
+  /// that the scene registered. Dart `null` for nothing to end. A caller
+  /// that makes the chart of the scene itself calls it after
+  /// `chart.destroy()`.
+  final VoidCallback? dispose,
+}) {
+  /// A chart with the config [config]. [change] changes the data before
+  /// each update. [takeParts] gives the times of the parts. [describe]
+  /// gives keys of the chart after the last batch.
+  this;
 }
 
 /// The counts of a case without its own counts and without the define `N`.
@@ -218,19 +206,40 @@ const List<int> chartBenchDefaultCounts = [1000, 5000, 20000];
 /// The BENCH line of a case has the keys `mode` and `case`, and the keys of
 /// [keys]. A later phase adds its cases to [chartBenchCases], or to
 /// [chartBenchExplicitCases] for a case with [explicit].
-final class ChartBenchCase {
-  /// A case [name] of the mode [mode].
-  const ChartBenchCase({
-    required this.mode,
-    required this.name,
-    required this.call,
-    required this.scene,
-    this.keys = const {},
-    this.counts,
-    this.primary,
-    this.explicit = false,
-    this.stepTimes = false,
-  });
+final class const ChartBenchCase({
+  /// The mode, for example `chart`.
+  required final String mode,
+
+  /// The name of the case in its mode, for example `b`. Two cases can have
+  /// the same name and other [keys].
+  required final String name,
+
+  /// The call of each iteration.
+  required final ChartBenchCall call,
+
+  /// Makes the chart of the case for a point count. Runs outside the
+  /// timing.
+  required final ChartBenchScene Function(int n) scene,
+
+  /// The other keys of the BENCH line, for example `type` and `sharing`.
+  final Map<String, Object?> keys = const {},
+
+  /// The point counts of the case without the define `N`, or Dart `null`
+  /// for [chartBenchDefaultCounts].
+  final List<int>? counts,
+
+  /// The primary metric of the case, for example `update+draw+end`
+  /// ([ChartBenchCall.frameMetric]): the BENCH line gets it as the key
+  /// `primary`. The cases of phase 8 name it. Dart `null` for the cases of
+  /// phases 5 to 7, whose lines keep their keys.
+  final String? primary,
+
+  /// Whether only the full [id] selects the case ([selectedBy]). A mode, a
+  /// name and the empty selection never select it. Thus an explicit case
+  /// does not change the cases of an older selector. The cases of the
+  /// resolver series of phase 10 (Chart.js ADR 0053,
+  /// [chartBenchExplicitCases]) are explicit.
+  final bool explicit = false,
 
   /// Whether the BENCH line has the figures of the single timed steps: the
   /// key `steps` (the count of the timed steps) and `stepP50Ms`,
@@ -240,41 +249,10 @@ final class ChartBenchCase {
   /// batch means; these are percentiles of the steps themselves, so a slow
   /// step (a collection of the garbage) shows in `stepP90Ms` and
   /// `stepMaxMs`. The cases of the mode `zoom` have them.
-  final bool stepTimes;
-
-  /// Whether only the full [id] selects the case ([selectedBy]). A mode, a
-  /// name and the empty selection never select it. Thus an explicit case
-  /// does not change the cases of an older selector. The cases of the
-  /// resolver series of phase 10 (Chart.js ADR 0053,
-  /// [chartBenchExplicitCases]) are explicit.
-  final bool explicit;
-
-  /// The primary metric of the case, for example `update+draw+end`
-  /// ([ChartBenchCall.frameMetric]): the BENCH line gets it as the key
-  /// `primary`. The cases of phase 8 name it. Dart `null` for the cases of
-  /// phases 5 to 7, whose lines keep their keys.
-  final String? primary;
-
-  /// The point counts of the case without the define `N`, or Dart `null`
-  /// for [chartBenchDefaultCounts].
-  final List<int>? counts;
-
-  /// The mode, for example `chart`.
-  final String mode;
-
-  /// The name of the case in its mode, for example `b`. Two cases can have
-  /// the same name and other [keys].
-  final String name;
-
-  /// The call of each iteration.
-  final ChartBenchCall call;
-
-  /// Makes the chart of the case for a point count. Runs outside the
-  /// timing.
-  final ChartBenchScene Function(int n) scene;
-
-  /// The other keys of the BENCH line, for example `type` and `sharing`.
-  final Map<String, Object?> keys;
+  final bool stepTimes = false,
+}) {
+  /// A case [name] of the mode [mode].
+  this;
 
   /// The mode and the name: `chart.b`.
   String get id => '$mode.$name';
@@ -422,31 +400,25 @@ const List<int> chartBenchPluginCounts = [100, 1000];
 /// The values of [datasets] datasets of [n] points each, at the y values
 /// of a `StressPointField` of `datasets * n` points: the point `i` of the
 /// dataset `k` is the point `k * n + i` of the field.
-final class _BenchSeries {
-  _BenchSeries(
-    this.datasets,
-    this.n, {
-    this.scale = 1,
-    this.offset = 0,
-    this.gapEvery = 0,
-  }) : field = StressPointField(datasets * n) {
+final class _BenchSeries(
+  final int datasets,
+  final int n, {
+
+  /// The value of a field value `y` is `offset + scale * y`.
+  final double scale = 1,
+  final double offset = 0,
+
+  /// A gap (`null`) at each point `i` with `i % gapEvery == gapEvery - 1`.
+  /// 0 for no gap.
+  final int gapEvery = 0,
+}) {
+  this {
     for (var k = 0; k < datasets; k++) {
       data.add([for (var i = 0; i < n; i++) _value(k, i)]);
     }
   }
 
-  final int datasets;
-  final int n;
-
-  /// The value of a field value `y` is `offset + scale * y`.
-  final double scale;
-  final double offset;
-
-  /// A gap (`null`) at each point `i` with `i % gapEvery == gapEvery - 1`.
-  /// 0 for no gap.
-  final int gapEvery;
-
-  final StressPointField field;
+  final StressPointField field = StressPointField(datasets * n);
 
   /// The data of each dataset.
   final List<List<Object?>> data = [];
@@ -521,10 +493,7 @@ Map<String, Object?> _benchHiddenScales({
 /// `StressChartTiming`, and with [tooltip] the part `tooltipDraw`, the
 /// draw of the tooltip from `beforeTooltipDraw` to `afterTooltipDraw`
 /// (plugin.tooltip.js:1246-1262).
-final class _PluginTiming {
-  _PluginTiming({this.tooltip = false});
-
-  final bool tooltip;
+final class _PluginTiming({final bool tooltip = false}) {
   final StressChartTiming _parts = StressChartTiming();
   int _tooltipStart = 0;
   int _tooltipTicks = 0;
@@ -668,7 +637,7 @@ void _benchFinishAnimations() {
 
 /// The pointer of the tooltip cases: the x of each point of dataset 0 and
 /// the y of the middle of the chart area.
-final class _BenchPointer {
+final class _BenchPointer() {
   Float64List _xs = Float64List(0);
   double _y = 0;
 
@@ -695,7 +664,7 @@ final class _BenchPointer {
 /// `BasicPlatform` writes `animation: false` (platform.basic.js:20-22). The
 /// cases `tooltip.still` and `tooltip.fade` need the animations. The
 /// reference generators of the controllers do the same in Node.js.
-final class _AnimatedPlatform extends BasicPlatform {
+final class _AnimatedPlatform() extends BasicPlatform {
   /// The class value of `config.platform` (core.controller.js:136).
   static final JsClass jsClass = JsClass(
     'AnimatedBasicPlatform',
@@ -1279,17 +1248,18 @@ const List<ChartThemeData> chartBenchThemes = [
 /// The theme state of a chart of the mode `theme`: the `ChartThemeSwitch`
 /// of `ChartView` (Chart.js ADR 0050, "Runtime switch") on the root config
 /// of the case, as the widget has it on its root Map.
-final class _BenchTheme {
+final class _BenchTheme(
+  /// The root config of the chart.
+  final Map<String, Object?> root,
+  ChartThemeData theme,
+) {
   /// Records the user `scales` of [root] and writes the compiled [theme]
   /// under `$theme`, before `new Chart`, as the start of the widget does.
-  _BenchTheme(this.root, ChartThemeData theme) {
+  this {
     _switch
       ..recordUserScales(root['options'])
       ..start(root, theme);
   }
-
-  /// The root config of the chart.
-  final Map<String, Object?> root;
 
   // The bench runs the switch of the widget without a widget.
   // ignore: invalid_use_of_internal_member
@@ -1618,17 +1588,11 @@ void _benchRestoreRanges(
 /// [step] is the timed step `i` (from 0). With [restores], the ranges of the
 /// scales go back to their ranges after [setUp] before each even step,
 /// outside the timing ([_benchRestoreRanges]).
-final class _ZoomInput {
-  const _ZoomInput({
-    required this.setUp,
-    required this.step,
-    this.restores = true,
-  });
-
-  final void Function(Chart chart) setUp;
-  final void Function(Chart chart, int i) step;
-  final bool restores;
-}
+final class const _ZoomInput({
+  required final void Function(Chart chart) setUp,
+  required final void Function(Chart chart, int i) step,
+  final bool restores = true,
+});
 
 /// `zoom.wheel`: one `wheel` event at the center of the chart area in each
 /// step, with the `deltaY` -100 (zoom in) and +100 (zoom out) in turn
@@ -2159,10 +2123,7 @@ final Stopwatch _watch = Stopwatch()..start();
 
 /// The `Chart` of a case: it adds the ticks of each `draw()` to
 /// [drawTicks], also of the draw inside `update()`.
-final class _BenchChart extends Chart {
-  _BenchChart(super.item, [super.userConfig]);
-
-  // This wrapper only records timings; data/config getters remain Chart's.
+final class _BenchChart(super.item, [super.userConfig]) extends Chart {
   @override
   bool get supportsNativeCategoryLabels => true;
 
@@ -2201,23 +2162,14 @@ final class _BenchChart extends Chart {
 }
 
 /// The iterations of one case, with the sums of their times in ticks.
-final class _Loop {
-  _Loop(
-    this.chart,
-    this.context,
-    this.call,
-    this.change,
-    this.takeParts,
-    this.frame,
-  );
-
-  final _BenchChart chart;
-  final UiCanvasContext context;
-  final ChartBenchCall call;
-  final VoidCallback? change;
-  final Map<String, int> Function()? takeParts;
-  final void Function(Chart chart)? frame;
-
+final class _Loop(
+  final _BenchChart chart,
+  final UiCanvasContext context,
+  final ChartBenchCall call,
+  final VoidCallback? change,
+  final Map<String, int> Function()? takeParts,
+  final void Function(Chart chart)? frame,
+) {
   int updateTicks = 0;
   int drawTicks = 0;
   int endTicks = 0;

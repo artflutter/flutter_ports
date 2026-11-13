@@ -27,22 +27,16 @@ import 'package:test/test.dart';
 // and Infinity and true for 0, -0 and '5'.
 
 /// A test animation with the two members that getProps reads.
-final class _Animation implements types.Animation {
-  _Animation(this.to, {this._active = true});
-
-  final bool _active;
-
+final class _Animation(@override final Object? to, {final bool _active = true})
+    implements types.Animation {
   @override
   bool active() => _active;
-
-  @override
-  final Object? to;
 }
 
 /// A subclass that follows the protocol of the Element doc: a numeric, a
 /// boolean and an object property, each with the access by name.
-final class _Box extends Element {
-  _Box([AnyObject? cfg]) {
+final class _Box([AnyObject? cfg]) extends Element {
+  this {
     if (cfg != null) assign(cfg);
   }
 
@@ -778,11 +772,7 @@ void main() {
 }
 
 /// An element that records the names of its writes by name.
-final class _Recorder extends Element {
-  _Recorder(this.order);
-
-  final List<String> order;
-
+final class _Recorder(final List<String> order) extends Element {
   @override
   void operator []=(String prop, Object? value) {
     order.add(prop);

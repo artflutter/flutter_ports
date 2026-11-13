@@ -204,13 +204,10 @@ bool tryPartitionedBaselineFill(
 /// partitions of [tryPartitionedBaselineFill]. After each 32
 /// commands it closes a partition over the baseline and starts the next one at
 /// the same vertex.
-final class _MergedPartitions implements CanvasPath {
-  _MergedPartitions(this._path, this._baseline);
-
+final class _MergedPartitions(final CanvasPath _path, final double _baseline)
+    implements CanvasPath {
   static const int _commands = 32;
 
-  final CanvasPath _path;
-  final double _baseline;
   double _headX = 0;
   int _count = 0;
   double _x = 0;

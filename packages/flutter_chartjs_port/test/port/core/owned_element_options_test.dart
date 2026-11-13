@@ -18,7 +18,7 @@ import 'package:test/test.dart';
 const red = ChartPaint.solid(Color(0xffff0000));
 const blue = ChartPaint.solid(Color(0xff0000ff));
 
-class _ObservedId {
+class _ObservedId() {
   int calls = 0;
   @override
   String toString() {
@@ -27,7 +27,7 @@ class _ObservedId {
   }
 }
 
-class _OrdinaryConfig extends Config {
+class _OrdinaryConfig() extends Config {
   final results = <ElementOptions>[];
   @override
   ElementOptions resolveElementNamedOptions(
@@ -48,11 +48,8 @@ class _OrdinaryConfig extends Config {
   }
 }
 
-class _Fixture {
-  _Fixture({bool ordinary = false, this.point = true})
-    : config = ordinary ? _OrdinaryConfig() : Config();
-  final Config config;
-  final bool point;
+class _Fixture({bool ordinary = false, final bool point = true}) {
+  final Config config = ordinary ? _OrdinaryConfig() : Config();
   final scope = <String, Object?>{
     '_scriptable': true,
     '_indexable': true,

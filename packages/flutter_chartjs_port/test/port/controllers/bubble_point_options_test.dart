@@ -42,9 +42,8 @@ const _length = 8;
 
 /// A trivial user subclass: the exact-class guard fails, and each call stays on
 /// the ordinary path. Its charts are the reference of each twin.
-class _ReferenceBubble extends BubbleController {
-  _ReferenceBubble(super.chart, super.datasetIndex, [super.newTarget]);
-
+class _ReferenceBubble(super.chart, super.datasetIndex, [super.newTarget])
+    extends BubbleController {
   static final JsClass value = JsClass(
     'ReferenceBubble',
     superclass: BubbleController.jsClass,
@@ -57,9 +56,8 @@ class _ReferenceBubble extends BubbleController {
 }
 
 /// A user subclass that counts each option resolve.
-class _CountingBubble extends BubbleController {
-  _CountingBubble(super.chart, super.datasetIndex, [super.newTarget]);
-
+class _CountingBubble(super.chart, super.datasetIndex, [super.newTarget])
+    extends BubbleController {
   static int resolves = 0;
 
   static final JsClass value = JsClass(
@@ -79,15 +77,14 @@ class _CountingBubble extends BubbleController {
   }
 }
 
-class _ReferenceChart extends Chart {
-  _ReferenceChart(super.item, super.userConfig);
+class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativePointOptions => false;
 }
 
 /// A platform that keeps the option `animation`: an unhosted canvas otherwise
 /// gets a [BasicPlatform], whose `updateConfig` writes `false` into it.
-class _AnimatedPlatform extends BasicPlatform {
+class _AnimatedPlatform() extends BasicPlatform {
   static final JsClass value = JsClass(
     'AnimatedPlatform',
     superclass: BasicPlatform.jsClass,
@@ -99,7 +96,7 @@ class _AnimatedPlatform extends BasicPlatform {
 }
 
 // Explicit test opt-in: counters only, with native size/context behavior.
-class _ProbePoint extends PointElement {
+class _ProbePoint() extends PointElement {
   int planReads = 0;
   int sizeCalls = 0;
   @override
@@ -118,7 +115,7 @@ class _ProbePoint extends PointElement {
   }
 }
 
-class _CustomSize extends PointElement {
+class _CustomSize() extends PointElement {
   void Function()? afterSize;
   int calls = 0;
   @override
@@ -130,8 +127,7 @@ class _CustomSize extends PointElement {
   }
 }
 
-class _CustomScale extends LinearScale {
-  _CustomScale(super.cfg);
+class _CustomScale(super.cfg) extends LinearScale {
   int calls = 0;
   static final value = JsClass(
     'BubbleCustomScale',
@@ -146,9 +142,8 @@ class _CustomScale extends LinearScale {
   }
 }
 
-class _ObservedMap extends MapBase<String, Object?> {
-  _ObservedMap(this.fields);
-  final Map<String, Object?> fields;
+class _ObservedMap(final Map<String, Object?> fields)
+    extends MapBase<String, Object?> {
   final List<Object?> reads = [];
   void Function(Object?)? onRead;
   @override
@@ -1501,9 +1496,8 @@ void allowForeign() {
 }
 
 /// A user object whose JS conversion runs user code.
-class _Custom {
-  _Custom([List<String>? log]) : log = log ?? [];
-  final List<String> log;
+class _Custom([List<String>? log]) {
+  final List<String> log = log ?? [];
 
   /// Runs at each conversion, as a `toString` of the user can.
   void Function()? onConvert;

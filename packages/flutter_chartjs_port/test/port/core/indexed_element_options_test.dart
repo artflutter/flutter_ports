@@ -21,9 +21,9 @@ const _red = ChartPaint.solid(Color(0xffff0000));
 const _blue = ChartPaint.solid(Color(0xff0000ff));
 
 // An otherwise identical Config that intentionally retains the ordinary path.
-class _OrdinaryConfig extends Config;
+class _OrdinaryConfig() extends Config;
 
-class _ObservedConfig extends Config {
+class _ObservedConfig() extends Config {
   int calls = 0;
   @override
   ElementOptions resolveElementNamedOptions(
@@ -44,11 +44,9 @@ class _ObservedConfig extends Config {
   }
 }
 
-class _DerivedColor extends Color {
-  const _DerivedColor(super.value);
-}
+class const _DerivedColor(super.value) extends Color;
 
-class _Opaque {
+class _Opaque() {
   int reads = 0;
   @override
   Type get runtimeType {
@@ -57,9 +55,7 @@ class _Opaque {
   }
 }
 
-class _ObservedList extends ListBase<Object?> {
-  _ObservedList(this.values);
-  final List<Object?> values;
+class _ObservedList(final List<Object?> values) extends ListBase<Object?> {
   final List<String> reads = [];
   @override
   int get length {
@@ -79,20 +75,18 @@ class _ObservedList extends ListBase<Object?> {
   void operator []=(int index, Object? value) => values[index] = value;
 }
 
-class _Fixture {
-  _Fixture({bool ordinary = false, Object? colors = const [_red, _blue]})
-    : config = ordinary ? _OrdinaryConfig() : Config(),
-      scope = {
-        '_scriptable': true,
-        '_indexable': true,
-        'radius': 3.0,
-        'backgroundColor': colors,
-        'borderColor': _blue,
-      } {
+class _Fixture({bool ordinary = false, Object? colors = const [_red, _blue]}) {
+  this {
     scopes = [scope];
   }
-  final Config config;
-  final Map<String, Object?> scope;
+  final Config config = ordinary ? _OrdinaryConfig() : Config();
+  final Map<String, Object?> scope = {
+    '_scriptable': true,
+    '_indexable': true,
+    'radius': 3.0,
+    'backgroundColor': colors,
+    'borderColor': _blue,
+  };
   late final List<Object?> scopes;
   final keys = <Object>[
     OptionKey.radius,

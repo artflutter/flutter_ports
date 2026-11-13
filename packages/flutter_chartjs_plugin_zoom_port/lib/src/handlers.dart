@@ -210,12 +210,7 @@ void mouseDown(Chart chart, NativeEvent event) {
 
 /// The points `{ begin, end }` of a drag in canvas pixels
 /// (handlers.ts:114, :147). `applyAspectRatio` changes [end].
-final class _Points {
-  _Points({required this.begin, required this.end});
-
-  final Point begin;
-  Point end;
-}
+final class _Points({required final Point begin, required var Point end});
 
 /// handlers.ts:113 `applyAspectRatio({ begin, end }, aspectRatio)`: moves
 /// the end of [points] so that the drag rectangle has [aspectRatio].
@@ -236,19 +231,12 @@ void _applyAspectRatio(_Points points, double aspectRatio) {
 
 /// handlers.ts:131 `Rect`: the edges of the drag rectangle while
 /// `computeDragRect` builds it.
-final class _Rect {
-  _Rect({
-    required this.top,
-    required this.left,
-    required this.right,
-    required this.bottom,
-  });
-
-  double top;
-  double left;
-  double right;
-  double bottom;
-}
+final class _Rect({
+  required var double top,
+  required var double left,
+  required var double right,
+  required var double bottom,
+});
 
 /// handlers.ts:132 `applyMinMaxProps(rect, chartArea, points, { min, max,
 /// prop })`: sets two edges of [rect] to the drag [points], inside
@@ -299,44 +287,35 @@ _Points _getRelativePoints(
 
 /// The result of [computeDragRect] (handlers.ts:183-190): the drag
 /// rectangle in canvas pixels, and the zoom factor of each axis.
-final class DragRect {
-  /// A drag rectangle.
-  const DragRect({
-    required this.top,
-    required this.left,
-    required this.right,
-    required this.bottom,
-    required this.width,
-    required this.height,
-    required this.zoomX,
-    required this.zoomY,
-  });
-
+final class const DragRect({
   /// The top edge.
-  final double top;
+  required final double top,
 
   /// The left edge.
-  final double left;
+  required final double left,
 
   /// The right edge.
-  final double right;
+  required final double right,
 
   /// The bottom edge.
-  final double bottom;
+  required final double bottom,
 
   /// `right - left`.
-  final double width;
+  required final double width,
 
   /// `bottom - top`.
-  final double height;
+  required final double height,
 
   /// The zoom factor of the x axis: 1 when the x direction is off or the
   /// rectangle has no width.
-  final double zoomX;
+  required final double zoomX,
 
   /// The zoom factor of the y axis: 1 when the y direction is off or the
   /// rectangle has no height.
-  final double zoomY;
+  required final double zoomY,
+}) {
+  /// A drag rectangle.
+  this;
 }
 
 /// handlers.ts:160 `computeDragRect(chart, mode, pointEvents,

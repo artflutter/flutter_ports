@@ -12,7 +12,7 @@ library;
 
 /// `drawTime` of the filler options (index.d.ts:2296
 /// `'beforeDraw' | 'beforeDatasetDraw' | 'beforeDatasetsDraw'`).
-enum FillerDrawTime {
+enum FillerDrawTime() {
   /// `'beforeDraw'`: the filler fills each area in the hook `beforeDraw`,
   /// before the chart draws its scales.
   beforeDraw,

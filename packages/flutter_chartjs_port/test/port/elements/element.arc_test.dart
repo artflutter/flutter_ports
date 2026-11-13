@@ -43,28 +43,17 @@ import 'arc_reference.dart';
 // entries. Both compare with the same reference data.
 
 /// A test animation with the two members that getProps reads.
-final class _Animation implements types.Animation {
-  const _Animation(this.to, {required this._active});
-
-  final bool _active;
-
+final class const _Animation(
+  @override final Object? to, {
+  required final bool _active,
+}) implements types.Animation {
   @override
   bool active() => _active;
-
-  @override
-  final Object? to;
 }
 
 /// The canvas of [_CanvasContext]: the size that `clipSelf` reads.
-final class _Canvas implements HTMLCanvasElement {
-  _Canvas(this.width, this.height);
-
-  @override
-  int width;
-
-  @override
-  int height;
-
+final class _Canvas(@override var int width, @override var int height)
+    implements HTMLCanvasElement {
   @override
   CSSStyleDeclaration get style => throw UnimplementedError();
 
@@ -90,9 +79,8 @@ final class _Canvas implements HTMLCanvasElement {
 /// `ctx.canvas.height`. The mock context of chartjs-test-utils has no
 /// canvas, in JavaScript and in Dart. The reference generator gives the
 /// upstream mock the same canvas.
-final class _CanvasContext extends MockContext {
-  _CanvasContext()
-    : canvas = _Canvas(arcReferenceCanvasWidth, arcReferenceCanvasHeight);
+final class _CanvasContext() extends MockContext {
+  this : canvas = _Canvas(arcReferenceCanvasWidth, arcReferenceCanvasHeight);
 
   @override
   final HTMLCanvasElement canvas;
@@ -831,7 +819,7 @@ void main() {
 }
 
 /// An area for [ArcElement.draw], which ignores it.
-final class _Area implements ChartArea {
+final class _Area() implements ChartArea {
   @override
   double get left => 0;
 

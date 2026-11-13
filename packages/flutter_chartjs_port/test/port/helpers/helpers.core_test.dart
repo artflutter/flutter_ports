@@ -22,36 +22,24 @@ import 'package:test/test.dart';
 
 /// A JavaScript object literal `{datasetIndex, index}`, passed as an
 /// [ActiveDataPoint].
-final class _Active implements ActiveDataPoint {
-  const _Active(this.datasetIndex, this.index);
-
-  @override
-  final double datasetIndex;
-
-  @override
-  final double index;
-}
+final class const _Active(
+  @override final double datasetIndex,
+  @override final double index,
+) implements ActiveDataPoint;
 
 /// A JavaScript event object `{type}`, passed as a [ChartEvent]. Only
 /// `type` is read.
-final class _Event implements ChartEvent {
-  const _Event(this.type);
-
-  @override
-  final String type;
-
+final class const _Event(@override final String type) implements ChartEvent {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// An instance of a Dart class: a leaf for clone and merge.
-final class _Instance {
-  const _Instance();
-}
+final class const _Instance();
 
 /// An object with the access by name of [PropertyAccess] that is not an
 /// element: a store of named values, with [undefined] for an absent name.
-final class _ByName implements PropertyAccess {
+final class _ByName() implements PropertyAccess {
   final Map<String, Object?> values = {};
 
   @override

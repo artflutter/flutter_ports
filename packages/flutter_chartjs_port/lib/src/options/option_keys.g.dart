@@ -10,7 +10,10 @@
 library;
 
 /// An option key by its JS name.
-enum OptionKey {
+enum OptionKey(
+  /// The JS property name.
+  final String jsName,
+) {
   /// The key `$animations`.
   dollarAnimations(r'$animations'),
 
@@ -978,12 +981,7 @@ enum OptionKey {
   year('year'),
 
   /// The key `z`.
-  z('z');
-
-  const OptionKey(this.jsName);
-
-  /// The JS property name.
-  final String jsName;
+  z('z'),
 }
 
 /// The [OptionKey] of the JS name [name], or Dart `null` for a name

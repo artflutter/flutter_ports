@@ -40,46 +40,38 @@ typedef ChartScript<T> = T Function(ChartContext context);
 /// The arguments of the event callbacks `onClick` and `onHover` of a chart
 /// (`options.onClick`, `options.onHover`; `core.controller.js:1222-1226`).
 @immutable
-final class ChartEventDetails {
-  /// The details of one event.
-  const ChartEventDetails({
-    required this.event,
-    required this.hits,
-    required this.chart,
-  });
-
+final class const ChartEventDetails({
   /// The chart event: its `type` (`'click'`, `'mousemove'`, ...) and its
   /// position `x` and `y` in the chart.
-  final ChartEvent event;
+  required final ChartEvent event,
 
   /// The active elements of the event by the interaction options, in the
   /// order of the interaction mode. Empty when the event hits no element.
-  final List<ChartHit> hits;
+  required final List<ChartHit> hits,
 
   /// The chart of the event.
-  final Chart chart;
+  required final Chart chart,
+}) {
+  /// The details of one event.
+  this;
 }
 
 /// The arguments of the legend handlers `onClick`, `onHover` and `onLeave`
 /// (`plugins.legend.onClick`; `plugin.legend.js:539-550`).
 @immutable
-final class ChartLegendEventDetails {
-  /// The details of one legend event.
-  const ChartLegendEventDetails({
-    required this.event,
-    required this.item,
-    required this.legend,
-  });
-
+final class const ChartLegendEventDetails({
   /// The chart event.
-  final ChartEvent event;
+  required final ChartEvent event,
 
   /// The legend item under the event, or the item that the pointer left
   /// for `onLeave`.
-  final LegendItem item;
+  required final LegendItem item,
 
   /// The legend box.
-  final LegendElement legend;
+  required final LegendElement legend,
+}) {
+  /// The details of one legend event.
+  this;
 }
 
 /// The arguments of the animation callbacks `onProgress` and `onComplete`
@@ -90,60 +82,50 @@ final class ChartLegendEventDetails {
 /// `onProgress` (`docs/configuration/animations.md`, "Animation
 /// Callbacks").
 @immutable
-final class ChartAnimationDetails {
-  /// The details of one animation step.
-  const ChartAnimationDetails({
-    required this.chart,
-    required this.initial,
-    this.numSteps,
-    this.currentStep,
-  });
-
+final class const ChartAnimationDetails({
   /// The chart of the animation.
-  final Chart chart;
+  required final Chart chart,
 
   /// Whether the animation is the first animation of the chart, from its
   /// start. `false` after the first `onComplete`.
-  final bool initial;
+  required final bool initial,
 
   /// The duration of the animations of the chart in milliseconds. `null`
   /// in the `onComplete` of a chart that draws with no animation.
-  final double? numSteps;
+  final double? numSteps,
 
   /// The milliseconds since the start of the animations, at most
   /// [numSteps]. `null` in the `onComplete` of a chart that draws with no
   /// animation.
-  final double? currentStep;
+  final double? currentStep,
+}) {
+  /// The details of one animation step.
+  this;
 }
 
 /// The arguments of the tick label callback of an axis: the arguments
 /// `value`, `index` and `ticks` and the `this` of the Chart.js `callback`
 /// (`core.scale.js:574`).
 @immutable
-final class AxisTickInfo {
-  /// The details of one tick.
-  const AxisTickInfo({
-    required this.value,
-    required this.index,
-    required this.ticks,
-    required this.scale,
-  });
-
+final class const AxisTickInfo({
   /// The value of the tick: a number of a linear or a logarithmic axis, the
   /// index of the label of a category axis, or the time value of a time
   /// axis in milliseconds.
-  final double value;
+  required final double value,
 
   /// The index of the tick in [ticks].
-  final int index;
+  required final int index,
 
   /// All ticks of the axis.
-  final List<Tick> ticks;
+  required final List<Tick> ticks,
 
   /// The scale of the axis. `scale.getLabelForValue(value)` gives the
   /// label of a category tick, as `this.getLabelForValue(value)` does in
   /// the Chart.js docs.
-  final Scale scale;
+  required final Scale scale,
+}) {
+  /// The details of one tick.
+  this;
 }
 
 /// An active element of an event: a hit of `onClick` and `onHover`.

@@ -144,7 +144,7 @@ Manifest _fixtureManifest() =>
     Manifest.parse(jsonEncode(_fixtureManifestJson()));
 
 /// JSON reporter lines for one suite of `test/specs/<file>`.
-final class _Reporter {
+final class _Reporter() {
   final List<String> lines = [
     'Resolving dependencies...',
     jsonEncode({'type': 'start', 'protocolVersion': '0.1.1'}),

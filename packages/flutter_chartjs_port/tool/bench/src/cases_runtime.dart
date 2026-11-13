@@ -13,12 +13,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'harness.dart';
 
 /// An item of the sort cases: a value with ties and its insertion index.
-final class _Item {
-  _Item(this.value, this.index);
-
-  final double value;
-  final double index;
-}
+final class _Item(final double value, final double index);
 
 /// The JS runtime cases.
 List<BenchCase> runtimeCases() => [

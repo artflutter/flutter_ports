@@ -91,20 +91,14 @@ const Object _present = _Present();
 
 /// The diagnostics form of a callback that is present.
 @immutable
-final class _Present {
-  const _Present();
-
+final class const _Present() {
   @override
   String toString() => 'set';
 }
 
 /// A List that compares its items by `==`.
 @immutable
-final class _Items {
-  const _Items(this.list);
-
-  final List<Object?> list;
-
+final class const _Items(final List<Object?> list) {
   @override
   bool operator ==(Object other) =>
       other is _Items && listEquals(list, other.list);
@@ -118,11 +112,7 @@ final class _Items {
 
 /// A List that compares its items by identity.
 @immutable
-final class _IdentityItems {
-  const _IdentityItems(this.list);
-
-  final List<Object?> list;
-
+final class const _IdentityItems(final List<Object?> list) {
   @override
   bool operator ==(Object other) {
     if (other is! _IdentityItems) return false;
@@ -146,11 +136,7 @@ final class _IdentityItems {
 /// A Map that compares its entries by `==` in key order. A value that is a
 /// Map compares by its entries too.
 @immutable
-final class _Entries {
-  const _Entries(this.map);
-
-  final Map<Object?, Object?> map;
-
+final class const _Entries(final Map<Object?, Object?> map) {
   @override
   bool operator ==(Object other) =>
       other is _Entries && _entriesEqual(map, other.map);

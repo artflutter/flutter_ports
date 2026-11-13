@@ -4,14 +4,14 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 import 'package:meta/meta.dart';
 
 /// Native arc context and property reads and writes, without user callbacks.
-abstract interface class NativeArcElement {
+abstract interface class NativeArcElement() {
   /// Unknown subclasses must retain ordinary resolution at their own arc.
   bool get supportsNativeArcOptions;
 }
 
 /// The exact radial scale: `getDistanceFromCenterForValue` of an arc loop runs
 /// no user code once its `reverse` option is a scalar.
-abstract interface class NativeArcScale {
+abstract interface class NativeArcScale() {
   /// Unknown subclasses keep the ordinary options and context refresh.
   bool get supportsNativeArcOptions;
 }

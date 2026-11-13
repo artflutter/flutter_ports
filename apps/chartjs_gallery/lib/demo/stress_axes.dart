@@ -26,7 +26,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 ///
 /// The x axis (`SCALE`) takes each type. The y axis (`YSCALE`) takes
 /// [linear] and [logarithmic]: [stressAxesValueTypes].
-enum StressAxisType {
+enum StressAxisType() {
   /// `LinearScale`: values from 0 to 100.
   linear,
 
@@ -72,41 +72,36 @@ double stressAxesValue(double fraction, StressAxisType type) =>
 /// linear axis, equal factors on a logarithmic axis, the label index on a
 /// category axis, and one day for each point on a time axis. Only the y
 /// values move.
-final class StressAxesScene {
-  /// The first [n] points of [x] and [y] values. [positions] gives the
-  /// fractions of the moving y values.
-  StressAxesScene(
-    this.n, {
-    required this.x,
-    required this.y,
-    required StressPointField positions,
-  }) : labels = [
-         if (x == StressAxisType.category)
-           for (var i = 0; i < n; i++) 'Point $i',
-       ],
-       data = [
-         for (var i = 0; i < n; i++)
-           <String, Object?>{
-             'x': _xValue(x, i, n),
-             'y': stressAxesValue(positions.y[i], y),
-           },
-       ];
-
+final class StressAxesScene(
   /// The point count.
-  final int n;
+  final int n, {
 
   /// The scale type of the x axis.
-  final StressAxisType x;
+  required final StressAxisType x,
 
   /// The scale type of the y axis.
-  final StressAxisType y;
+  required final StressAxisType y,
+  required StressPointField positions,
+}) {
+  /// The first [n] points of [x] and [y] values. [positions] gives the
+  /// fractions of the moving y values.
+  this;
 
   /// `data.labels`: the label of each point for a category axis, else
   /// empty.
-  final List<Object?> labels;
+  final List<Object?> labels = [
+    if (x == StressAxisType.category)
+      for (var i = 0; i < n; i++) 'Point $i',
+  ];
 
   /// The data objects `{x, y}`.
-  final List<Map<String, Object?>> data;
+  final List<Map<String, Object?>> data = [
+    for (var i = 0; i < n; i++)
+      <String, Object?>{
+        'x': _xValue(x, i, n),
+        'y': stressAxesValue(positions.y[i], y),
+      },
+  ];
 
   /// The x of the point [i] of [n] points: it increases with [i].
   static double _xValue(StressAxisType type, int i, int n) => switch (type) {

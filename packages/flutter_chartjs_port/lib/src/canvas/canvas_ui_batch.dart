@@ -112,17 +112,16 @@ const int _ladderTableScale = 8;
 /// paints its coverage: a ramp of one bitmap pixel across the radius. A
 /// rasterized edge has half that width in a master of twice the resolution,
 /// and a scaled copy of it would be too sharp.
-final class _FillLadder {
-  _FillLadder._(
-    this.image,
-    this._table,
-    this._scales,
-    this._tops,
-    this._cells,
-    this._centers,
-  );
-
-  factory _FillLadder._build() {
+final class _FillLadder._(
+  /// The atlas image.
+  final ui.Image image,
+  final Uint8List _table,
+  final Float32List _scales,
+  final Float32List _tops,
+  final Float32List _cells,
+  final Float32List _centers,
+) {
+  factory _build() {
     final radii = <double>[];
     for (var r = minLadderRadius; ; r *= _ladderStep) {
       radii.add(r);
@@ -178,16 +177,8 @@ final class _FillLadder {
     return _FillLadder._(image, table, scales, tops, cells, centers);
   }
 
-  /// The atlas image.
-  final ui.Image image;
-
-  final Uint8List _table;
   // For each rung: 1 over its radius in master pixels, the top of its cell,
   // the side of its cell and its center in the cell.
-  final Float32List _scales;
-  final Float32List _tops;
-  final Float32List _cells;
-  final Float32List _centers;
 }
 
 _FillLadder? _fillLadder;
@@ -254,7 +245,10 @@ ui.Image _sprite(_SpriteKey key, int cell) {
 /// A run of full-circle fills and strokes with one radius and one stroke
 /// width, in bitmap space: with one fill color and one stroke color, or
 /// with a color for each instance.
-final class CircleBatch {
+final class CircleBatch() {
+  /// A new [CircleBatch].
+  this;
+
   // The radius of a run of one radius, else the last radius of a run with a
   // radius for each instance ([_varying]).
   double _radius = 0;

@@ -397,18 +397,9 @@ void main() {
 }
 
 /// The margins `{left, top, right, bottom}` of `core.layouts.js:167`.
-final class _Margins implements TRBL {
-  _Margins(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-}
+final class _Margins(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements TRBL;

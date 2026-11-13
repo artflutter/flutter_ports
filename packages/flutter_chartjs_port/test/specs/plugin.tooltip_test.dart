@@ -248,7 +248,7 @@ ChartTextStyle get _normalFont => toFont(_modelFont());
 
 /// The chart of the text align cases (:1487-1496): `getContext` and
 /// `options` only. The draw of these cases reads only `getContext()`.
-final class _TextAlignChart implements types.Chart {
+final class _TextAlignChart() implements types.Chart {
   @override
   AnyObject getContext() => <String, Object?>{};
 
@@ -2160,7 +2160,9 @@ void main() {
 /// The positioner of the case `Should call custom positioner with correct
 /// parameters and scope`: the function `() => ({x: 0, y: 0})` of upstream,
 /// with a record of each call in place of the Jasmine spy.
-final class _RecordingPositioner extends TooltipPositioner {
+// The list of the calls grows: the positioner cannot be const.
+// ignore: prefer_const_constructors_in_immutables
+final class _RecordingPositioner() extends TooltipPositioner {
   /// The calls, in order.
   final List<
     ({
@@ -2185,9 +2187,7 @@ final class _RecordingPositioner extends TooltipPositioner {
 }
 
 /// An active item without an element.
-final class _NoElementItem implements types.ActiveElement {
-  const _NoElementItem();
-
+final class const _NoElementItem() implements types.ActiveElement {
   @override
   Element? get element => null;
 
@@ -2199,7 +2199,7 @@ final class _NoElementItem implements types.ActiveElement {
 }
 
 /// A chart that no positioner of the tests reads.
-final class _NoChart implements types.Chart {
+final class _NoChart() implements types.Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

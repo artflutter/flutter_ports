@@ -34,38 +34,17 @@ import 'rounded_rect_upstream.dart';
 // (Chart.js ADR 0034).
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements Point;
 
 /// A JavaScript object literal `{left, top, right, bottom}`, passed as a
 /// [TRBL].
-final class _Area implements TRBL {
-  const _Area({
-    required this.left,
-    required this.top,
-    required this.right,
-    required this.bottom,
-  });
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-}
+final class const _Area({
+  @override required final double left,
+  @override required final double top,
+  @override required final double right,
+  @override required final double bottom,
+}) implements TRBL;
 
 /// Point coordinates for the tests that compare a function with its earlier
 /// `jsToNumber` form: JS `null`, the signed zeros, NaN (a copied
@@ -92,7 +71,7 @@ const List<double?> _coordinates = [
 /// A [MockContext] that also records the members that `src/context.js`
 /// lacks and that the canvas helpers call: `ellipse`, `drawImage` and
 /// `resetTransform`. The upstream run used the same recording context.
-final class _RecordingContext extends MockContext {
+final class _RecordingContext() extends MockContext {
   @override
   void ellipse(
     double x,
@@ -135,17 +114,11 @@ final class _RecordingContext extends MockContext {
 
 /// A canvas element with a fixed size, whose `getContext('2d')` gives
 /// [context].
-final class _Canvas implements HTMLCanvasElement {
-  _Canvas(this.context, this.width, this.height);
-
-  final CanvasRenderingContext2D? context;
-
-  @override
-  int width;
-
-  @override
-  int height;
-
+final class _Canvas(
+  final CanvasRenderingContext2D? context,
+  @override var int width,
+  @override var int height,
+) implements HTMLCanvasElement {
   @override
   CanvasRenderingContext2D? getContext(String contextId) =>
       contextId == '2d' ? context : null;
@@ -168,9 +141,7 @@ final class _Canvas implements HTMLCanvasElement {
 }
 
 /// An image point style, the `{width, height}` of an `HTMLImageElement`.
-final class _Image implements CanvasImageSource {
-  const _Image();
-
+final class const _Image() implements CanvasImageSource {
   @override
   double get width => 8;
 
@@ -185,108 +156,52 @@ const Object _object = <String, Object?>{};
 
 /// The JavaScript object literal `{pointStyle, rotation, radius,
 /// borderWidth}`, passed as [DrawPointOptions].
-final class _PointOptions implements DrawPointOptions {
-  const _PointOptions({
-    required this.pointStyle,
-    required this.rotation,
-    required this.radius,
-    required this.borderWidth,
-  });
-
-  @override
-  final Object? pointStyle;
-
-  @override
-  final double? rotation;
-
-  @override
-  final double radius;
-
-  @override
-  final double borderWidth;
-}
+final class const _PointOptions({
+  @override required final Object? pointStyle,
+  @override required final double? rotation,
+  @override required final double radius,
+  @override required final double borderWidth,
+}) implements DrawPointOptions;
 
 /// A chart that has only a device pixel ratio.
-final class _Chart implements Chart {
-  _Chart(this.currentDevicePixelRatio);
-
-  @override
-  double currentDevicePixelRatio;
-
+final class _Chart(@override var double currentDevicePixelRatio)
+    implements Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A JavaScript object literal `{x, y, cp1x, cp1y, cp2x, cp2y}`, passed as a
 /// [SplinePoint].
-final class _SplinePoint implements SplinePoint {
-  _SplinePoint(this.x, this.y, this.cp1x, this.cp1y, this.cp2x, this.cp2y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  double cp1x;
-
-  @override
-  double cp1y;
-
-  @override
-  double cp2x;
-
-  @override
-  double cp2y;
-
+final class _SplinePoint(
+  @override final double x,
+  @override final double y,
+  @override var double cp1x,
+  @override var double cp1y,
+  @override var double cp2x,
+  @override var double cp2y,
+) implements SplinePoint {
   @override
   bool? get skip => null;
 }
 
 /// The JavaScript object literal `{x, y, w, h, radius}`, passed as a
 /// [RoundedRect].
-final class _RoundedRect implements RoundedRect {
-  const _RoundedRect(this.x, this.y, this.w, this.h, this.radius);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final double w;
-
-  @override
-  final double h;
-
-  @override
-  final Object? radius;
-}
+final class const _RoundedRect(
+  @override final double x,
+  @override final double y,
+  @override final double w,
+  @override final double h,
+  @override final Object? radius,
+) implements RoundedRect;
 
 /// A JavaScript object literal `{topLeft, topRight, bottomLeft,
 /// bottomRight}`, passed as [TRBLCorners].
-final class _Corners implements TRBLCorners {
-  const _Corners(
-    this.topLeft,
-    this.topRight,
-    this.bottomLeft,
-    this.bottomRight,
-  );
-
-  @override
-  final double topLeft;
-
-  @override
-  final double topRight;
-
-  @override
-  final double bottomLeft;
-
-  @override
-  final double bottomRight;
-}
+final class const _Corners(
+  @override final double topLeft,
+  @override final double topRight,
+  @override final double bottomLeft,
+  @override final double bottomRight,
+) implements TRBLCorners;
 
 /// A font of the family `x` and the size 10 with the line height
 /// [lineHeight] (Chart.js ADR 0116, row `adapt-text-style-fonts`).

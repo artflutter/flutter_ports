@@ -413,9 +413,10 @@ CubicInterpolationMode cubicInterpolationModeOf(Object? value) =>
 /// `cubicInterpolationMode: 'default'` (index.d.ts:1984), the default: a
 /// curve of weighted tangents through each point ([splineCurve]). A line of
 /// this mode draws curves when its `tension` is truthy.
-final class DefaultCubicInterpolationMode extends CubicInterpolationMode {
+final class const DefaultCubicInterpolationMode()
+    extends CubicInterpolationMode {
   /// The default mode.
-  const DefaultCubicInterpolationMode();
+  this;
 
   @override
   bool drawsCurves(Object? tension) => jsTruthy(tension);
@@ -433,9 +434,10 @@ final class DefaultCubicInterpolationMode extends CubicInterpolationMode {
 /// curve on the index axis ([splineCurveMonotone]), which keeps the
 /// monotonicity of the data. A line of this mode always draws curves, and
 /// the mode reads no `tension`.
-final class MonotoneCubicInterpolationMode extends CubicInterpolationMode {
+final class const MonotoneCubicInterpolationMode()
+    extends CubicInterpolationMode {
   /// The monotone mode.
-  const MonotoneCubicInterpolationMode();
+  this;
 
   @override
   bool drawsCurves(Object? tension) => true;

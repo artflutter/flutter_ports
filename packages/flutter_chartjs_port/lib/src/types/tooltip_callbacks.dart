@@ -143,7 +143,7 @@ final class const TooltipCornerRadii({
   this;
 
   /// The same radius for each corner.
-  const TooltipCornerRadii.all(double radius)
+  const new all(double radius)
     : this(
         topLeft: radius,
         topRight: radius,
@@ -186,11 +186,9 @@ final class const TooltipLabelPointStyle._(
   final double rotation,
 ) {
   /// Draws the native marker with the given rotation.
-  const TooltipLabelPointStyle.draw(
-    PointStyle pointStyle, {
-    double rotation = 0,
-  }) : this._(pointStyle, rotation);
+  const new draw(PointStyle pointStyle, {double rotation = 0})
+    : this._(pointStyle, rotation);
 
   /// Suppresses the point marker.
-  const TooltipLabelPointStyle.hidden() : this._(null, 0);
+  const new hidden() : this._(null, 0);
 }

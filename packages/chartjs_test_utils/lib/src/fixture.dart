@@ -121,39 +121,33 @@ final Map<String, Object?> _decoded = {};
 /// port of an add-on gives its own files and the [submodule] that holds
 /// its upstream fixture files (Chart.js ADR 0108), for example
 /// `third_party/chartjs-plugin-zoom`.
-final class FixtureSource {
-  /// The files of tool 4 at [manifest] and [data], and the upstream
-  /// fixture files in [upstream], a folder of the [submodule].
-  const FixtureSource({
-    this.manifest = 'doc/upstream/manifest.json',
-    this.data = 'doc/upstream/fixtures.json',
-    this.upstream = '../../third_party/Chart.js/test/fixtures',
-    this.submodule = 'third_party/Chart.js',
-    this.requireUpstream,
-  });
-
+final class const FixtureSource({
   /// The manifest of tool 4.
-  final String manifest;
+  final String manifest = 'doc/upstream/manifest.json',
 
   /// The pure data configs of tool 4, by fixture path.
-  final String data;
+  final String data = 'doc/upstream/fixtures.json',
 
   /// The directory of the upstream fixture files at the pin.
-  final String upstream;
+  final String upstream = '../../third_party/Chart.js/test/fixtures',
 
   /// The path of the submodule that holds [upstream], from the repository
   /// root. The skip reason of a missing checkout names it.
-  final String submodule;
+  final String submodule = 'third_party/Chart.js',
+
+  /// Whether a missing [upstream] directory fails each fixture. Null reads
+  /// the environment variable `FIXTURES_REQUIRED`: `1` fails.
+  final bool? requireUpstream,
+}) {
+  /// The files of tool 4 at [manifest] and [data], and the upstream
+  /// fixture files in [upstream], a folder of the [submodule].
+  this;
 
   /// The skip reason of each fixture when [upstream] is not checked out:
   /// `'n/a: the submodule <submodule> is not checked out'`. It is
   /// [noSubmoduleReason] for the default [submodule].
   String get noSubmoduleReason =>
       'n/a: the submodule $submodule is not checked out';
-
-  /// Whether a missing [upstream] directory fails each fixture. Null reads
-  /// the environment variable `FIXTURES_REQUIRED`: `1` fails.
-  final bool? requireUpstream;
 
   /// Whether a missing [upstream] directory fails each fixture.
   bool get upstreamRequired =>

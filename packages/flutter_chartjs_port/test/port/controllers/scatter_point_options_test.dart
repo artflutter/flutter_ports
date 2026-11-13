@@ -17,14 +17,13 @@ const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const green = ChartPaint.solid(ui.Color(0xff00ff00));
 
-class _ReferenceChart extends Chart {
-  _ReferenceChart(super.item, super.userConfig);
+class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativePointOptions => false;
 }
 
 // Explicit test opt-in: counters only, with native size/context/property behavior.
-class _ProbePoint extends PointElement {
+class _ProbePoint() extends PointElement {
   int planReads = 0;
   @override
   bool get supportsNativePointOptions {
@@ -36,7 +35,7 @@ class _ProbePoint extends PointElement {
   bool get typedWrites => true;
 }
 
-class _CustomSize extends PointElement {
+class _CustomSize() extends PointElement {
   void Function()? afterSize;
   int calls = 0;
   @override
@@ -48,8 +47,7 @@ class _CustomSize extends PointElement {
   }
 }
 
-class _CustomScale extends LinearScale {
-  _CustomScale(super.cfg);
+class _CustomScale(super.cfg) extends LinearScale {
   int calls = 0;
   static final value = JsClass(
     'ScatterCustomScale',
@@ -64,9 +62,8 @@ class _CustomScale extends LinearScale {
   }
 }
 
-class _ObservedMap extends MapBase<String, Object?> {
-  _ObservedMap(this.fields);
-  final Map<String, Object?> fields;
+class _ObservedMap(final Map<String, Object?> fields)
+    extends MapBase<String, Object?> {
   final List<Object?> reads = [];
   void Function(Object?)? onRead;
   @override

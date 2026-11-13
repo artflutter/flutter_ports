@@ -1,44 +1,66 @@
 import 'dart:math' as math;
 
 /// Engine timing for a rendered frame, in one monotonic clock domain.
-class FrameSample {
-  /// Times use microseconds for timestamps and milliseconds for durations.
-  const FrameSample(this.vsyncUs, this.uiMs, this.rasterMs);
-
+class const FrameSample(
   /// Engine vsync timestamp, never a wall-clock date.
-  final int vsyncUs;
+  final int vsyncUs,
 
   /// Flutter UI work for the frame.
-  final double uiMs;
+  final double uiMs,
 
   /// Raster-thread work for the frame.
-  final double rasterMs;
+  final double rasterMs,
+) {
+  /// Times use microseconds for timestamps and milliseconds for durations.
+  this;
 }
 
 /// Summary of actual engine frames, not ticker callbacks.
-class FrameMetrics {
+class const FrameMetrics({
+  /// Number of accepted engine timings.
+  final int samples = 0,
+
+  /// Delivered frame rate estimated from consecutive vsync timestamps.
+  final double fps = 0,
+
+  /// Time between engine frames; includes work outside the build phase.
+  final double intervalP90 = 0,
+
+  /// Longest observed frame gap.
+  final double intervalMax = 0,
+
+  /// Gaps over the 60-Hz budget plus 1 ms scheduling tolerance.
+  final double cadenceMissPercent = 0,
+
+  /// Mean UI duration.
+  final double uiMean = 0,
+
+  /// Median UI duration.
+  final double uiP50 = 0,
+
+  /// 90th percentile UI duration.
+  final double uiP90 = 0,
+
+  /// Maximum UI duration.
+  final double uiMax = 0,
+
+  /// Mean raster duration.
+  final double rasterMean = 0,
+
+  /// 90th percentile raster duration.
+  final double rasterP90 = 0,
+
+  /// Maximum raster duration.
+  final double rasterMax = 0,
+
+  /// Frames with UI/raster over 16.67 ms or a preceding gap over 17.67 ms.
+  final double overBudgetPercent = 0,
+}) {
   /// An empty summary uses zero samples; the UI displays dashes.
-  const FrameMetrics({
-    this.samples = 0,
-    this.fps = 0,
-    this.intervalP90 = 0,
-    this.intervalMax = 0,
-    this.cadenceMissPercent = 0,
-    this.uiMean = 0,
-    this.uiP50 = 0,
-    this.uiP90 = 0,
-    this.uiMax = 0,
-    this.rasterMean = 0,
-    this.rasterP90 = 0,
-    this.rasterMax = 0,
-    this.overBudgetPercent = 0,
-  });
+  this;
 
   /// Summarize a window without mutating the input list.
-  factory FrameMetrics.fromSamples(
-    List<FrameSample> frames, {
-    double? windowSeconds,
-  }) {
+  factory fromSamples(List<FrameSample> frames, {double? windowSeconds}) {
     if (frames.isEmpty) return const FrameMetrics();
     final ordered = List<FrameSample>.of(frames)
       ..sort((a, b) => a.vsyncUs.compareTo(b.vsyncUs));
@@ -84,45 +106,6 @@ class FrameMetrics {
     );
   }
 
-  /// Number of accepted engine timings.
-  final int samples;
-
-  /// Delivered frame rate estimated from consecutive vsync timestamps.
-  final double fps;
-
-  /// Time between engine frames; includes work outside the build phase.
-  final double intervalP90;
-
-  /// Longest observed frame gap.
-  final double intervalMax;
-
-  /// Gaps over the 60-Hz budget plus 1 ms scheduling tolerance.
-  final double cadenceMissPercent;
-
-  /// Mean UI duration.
-  final double uiMean;
-
-  /// Median UI duration.
-  final double uiP50;
-
-  /// 90th percentile UI duration.
-  final double uiP90;
-
-  /// Maximum UI duration.
-  final double uiMax;
-
-  /// Mean raster duration.
-  final double rasterMean;
-
-  /// 90th percentile raster duration.
-  final double rasterP90;
-
-  /// Maximum raster duration.
-  final double rasterMax;
-
-  /// Frames with UI/raster over 16.67 ms or a preceding gap over 17.67 ms.
-  final double overBudgetPercent;
-
   /// Machine-readable result with units in every timing name.
   Map<String, Object> toJson() => {
     'samples': samples,
@@ -143,12 +126,12 @@ class FrameMetrics {
 
 /// Filters delayed timing batches by the selected session and measurement
 /// window.
-class TimingWindow {
-  /// Data generation and chart construction settle before measurement.
-  TimingWindow({this.warmup = const Duration(seconds: 2)});
-
+class TimingWindow({
   /// Excluded initial duration.
-  final Duration warmup;
+  final Duration warmup = const Duration(seconds: 2),
+}) {
+  /// Data generation and chart construction settle before measurement.
+  this;
 
   /// First vsync of this run, assigned by the ticker.
   int? startUs;

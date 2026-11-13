@@ -22,15 +22,15 @@ bool isSnippetSource(String path) =>
 final RegExp _marker = RegExp(r'^\s*//\s*#(end)?docregion\s+(\S+)\s*$');
 
 /// The named code regions of the source files.
-class Snippets {
+class const Snippets._(final Map<String, String> _regions) {
   /// The regions of [source], between `// #docregion <name>` and
   /// `// #enddocregion <name>`. The text of a region has no markers and no
   /// common indent.
-  factory Snippets.parse(String source) => Snippets.parseAll([source]);
+  factory parse(String source) => Snippets.parseAll([source]);
 
   /// The regions of each source of [sources]. A name must be unique over all
   /// the sources.
-  factory Snippets.parseAll(Iterable<String> sources) {
+  factory parseAll(Iterable<String> sources) {
     final closed = <String, String>{};
     for (final source in sources) {
       final open = <String, List<String>>{};
@@ -54,8 +54,6 @@ class Snippets {
     return Snippets._(closed);
   }
 
-  const Snippets._(this._regions);
-
   /// Loads the regions of the source files of [snippetFolders].
   static Future<Snippets> load() async {
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
@@ -64,8 +62,6 @@ class Snippets {
       for (final path in paths) await rootBundle.loadString(path),
     ]);
   }
-
-  final Map<String, String> _regions;
 
   /// The names of the regions.
   Iterable<String> get names => _regions.keys;

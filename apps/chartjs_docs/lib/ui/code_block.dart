@@ -72,18 +72,19 @@ List<TextSpan> highlightDart(String code) {
 }
 
 /// A panel of Dart code with a copy button.
-class CodeBlock extends StatefulWidget {
-  /// Creates a panel for [code].
-  const CodeBlock({required this.code, super.key});
-
+class const CodeBlock({
   /// The Dart code.
-  final String code;
+  required final String code,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates a panel for [code].
+  this;
 
   @override
   State<CodeBlock> createState() => _CodeBlockState();
 }
 
-class _CodeBlockState extends State<CodeBlock> {
+class _CodeBlockState() extends State<CodeBlock> {
   Timer? _reset;
   bool _copied = false;
 

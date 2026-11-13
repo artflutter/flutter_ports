@@ -6,9 +6,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:test/test.dart';
 
-final class _ObservedMap extends MapBase<String, Object?> {
-  _ObservedMap(this.entriesByKey);
-  final Map<String, Object?> entriesByKey;
+final class _ObservedMap(final Map<String, Object?> entriesByKey)
+    extends MapBase<String, Object?> {
   int reads = 0;
   @override
   Object? operator [](Object? key) {
@@ -26,7 +25,7 @@ final class _ObservedMap extends MapBase<String, Object?> {
   Object? remove(Object? key) => entriesByKey.remove(key);
 }
 
-final class _ObservedList extends ListBase<Object?> {
+final class _ObservedList() extends ListBase<Object?> {
   int reads = 0;
   final values = <Object?>['a', 'b'];
   @override

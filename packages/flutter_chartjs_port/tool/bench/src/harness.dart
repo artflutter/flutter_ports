@@ -12,59 +12,47 @@ library;
 import 'dart:convert';
 
 /// One benchmark case.
-final class BenchCase {
+final class BenchCase(
+  /// The group, for example `resolver`.
+  final String group,
+
+  /// The case name, unique in the suite, for example `resolver/warm_10`.
+  final String name,
+
+  /// Returns the body. Runs outside the timing.
+  final int Function(int n) Function() setup, {
+
+  /// The items in one operation.
+  final int items = 1,
+
+  /// What one operation does, for the report.
+  final String per = 'op',
+}) {
   /// A case [name] in [group]. [setup] runs once, outside the timing, and
   /// returns the body. The body runs `n` operations and returns a checksum.
   /// One operation handles [items] items, for example 1,000 points.
-  BenchCase(
-    this.group,
-    this.name,
-    this.setup, {
-    this.items = 1,
-    this.per = 'op',
-  });
-
-  /// The group, for example `resolver`.
-  final String group;
-
-  /// The case name, unique in the suite, for example `resolver/warm_10`.
-  final String name;
-
-  /// Returns the body. Runs outside the timing.
-  final int Function(int n) Function() setup;
-
-  /// The items in one operation.
-  final int items;
-
-  /// What one operation does, for the report.
-  final String per;
+  this;
 }
 
 /// The settings of one run.
-final class BenchSettings {
-  /// The settings of one run.
-  const BenchSettings({
-    required this.target,
-    this.filter,
-    this.batches = 15,
-    this.batchMs = 20,
-    this.warmupMs = 300,
-  });
-
+final class const BenchSettings({
   /// The compile target, for example `vm-jit` or `dart2wasm-O2`.
-  final String target;
+  required final String target,
 
   /// A pattern on the case names. Null runs every case.
-  final RegExp? filter;
+  final RegExp? filter,
 
   /// The timed batches of each case.
-  final int batches;
+  final int batches = 15,
 
   /// The target duration of one batch, in milliseconds.
-  final int batchMs;
+  final int batchMs = 20,
 
   /// The warm-up of each case, in milliseconds.
-  final int warmupMs;
+  final int warmupMs = 300,
+}) {
+  /// The settings of one run.
+  this;
 }
 
 /// The sink of the checksums.

@@ -23,16 +23,13 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
-class _ReferenceChart extends Chart {
-  _ReferenceChart(super.item, super.userConfig);
+class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativeBarIndexReads => false;
 }
 
-class _ReadMap extends MapBase<String, Object?> {
-  _ReadMap(this.data, this.reads);
-  final Map<String, Object?> data;
-  final List<String> reads;
+class _ReadMap(final Map<String, Object?> data, final List<String> reads)
+    extends MapBase<String, Object?> {
   @override
   Object? operator [](Object? key) {
     reads.add('$key');
@@ -49,7 +46,7 @@ class _ReadMap extends MapBase<String, Object?> {
   Object? remove(Object? key) => data.remove(key);
 }
 
-class _ReadList extends ListBase<Object?> {
+class _ReadList() extends ListBase<Object?> {
   int reads = 0;
   @override
   int get length {
@@ -70,8 +67,7 @@ class _ReadList extends ListBase<Object?> {
       throw UnsupportedError('write');
 }
 
-class _ObservedCategory extends CategoryScale {
-  _ObservedCategory(super.cfg);
+class _ObservedCategory(super.cfg) extends CategoryScale {
   int matches = 0;
   static final value = JsClass(
     'ObservedBarCategory',
@@ -86,8 +82,8 @@ class _ObservedCategory extends CategoryScale {
   }
 }
 
-class _ValuesController extends BarController {
-  _ValuesController(super.chart, super.datasetIndex, super.newTarget);
+class _ValuesController(super.chart, super.datasetIndex, super.newTarget)
+    extends BarController {
   static List<double> values = [];
   static final value = JsClass(
     'BarValuesProbe',

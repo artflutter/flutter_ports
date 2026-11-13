@@ -10,10 +10,9 @@ import 'package:test/test.dart';
 import '../../tool/src/check_support.dart';
 
 /// A temporary directory that the test deletes in its tear-down.
-final class FileTree {
+final class FileTree() {
   /// Creates the directory and registers its deletion with [addTearDown].
-  FileTree()
-    : root = posixPath(Directory.systemTemp.createTempSync('pc_').path) {
+  this : root = posixPath(Directory.systemTemp.createTempSync('pc_').path) {
     addTearDown(() => Directory(root).deleteSync(recursive: true));
   }
 

@@ -106,9 +106,9 @@ final ChartConfig _config = ChartConfig(
 );
 
 /// The replica of the Graphic demo "Group interactions".
-class GraphicGroupInteractions extends StatelessWidget {
+class const GraphicGroupInteractions({super.key}) extends StatelessWidget {
   /// Creates the replica.
-  const GraphicGroupInteractions({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) => graphicBox(

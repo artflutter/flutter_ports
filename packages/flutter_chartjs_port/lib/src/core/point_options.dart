@@ -25,20 +25,20 @@ import 'package:meta/meta.dart';
 
 /// A chart whose config/data/context, metadata and DPR reads run no user code.
 /// Unknown subclasses retain ordinary option resolution.
-abstract interface class NativePointChart {
+abstract interface class NativePointChart() {
   /// True only for the built-in chart, or an explicit equivalent wrapper.
   bool get supportsNativePointOptions;
 }
 
 /// A chart that finds the meta of a dataset with no write (Chart.js ADR 0092).
-abstract interface class DatasetMetaSource {
+abstract interface class DatasetMetaSource() {
   /// The meta of `getDatasetMeta(datasetIndex)` when it has one, or Dart
   /// `null`. `getDatasetMeta` adds a meta for a dataset that has none.
   types.ChartMeta? existingDatasetMeta(num datasetIndex);
 }
 
 /// Native point size/context/property reads and writes, without user callbacks.
-abstract interface class NativePointElement {
+abstract interface class NativePointElement() {
   /// Unknown subclasses must retain ordinary resolution, even if their typed
   /// property writes are enabled independently.
   bool get supportsNativePointOptions;
@@ -137,9 +137,16 @@ double nativePointSize(double radius, double hoverRadius, double borderWidth) {
 /// inside one synchronous native loop. Absent or foreign values decline: their
 /// JS conversions stay with the ordinary options object and `size`.
 @internal
-final class NativePointSizeFields {
-  NativePointSizeFields._(this.radius, this.hoverRadius, this.borderWidth);
+final class NativePointSizeFields._(
+  /// `options.radius`.
+  final double radius,
 
+  /// `options.hoverRadius`.
+  final double hoverRadius,
+
+  /// `options.borderWidth`.
+  final double borderWidth,
+) {
   /// The fields of [options], or Dart `null` unless all three are plain.
   static NativePointSizeFields? of(Object? options) =>
       options is PointOptions &&
@@ -152,22 +159,13 @@ final class NativePointSizeFields {
           options.borderWidth,
         )
       : null;
-
-  /// `options.radius`.
-  final double radius;
-
-  /// `options.hoverRadius`.
-  final double hoverRadius;
-
-  /// `options.borderWidth`.
-  final double borderWidth;
 }
 
 /// Weak identities of maps already accepted by the native container contract.
 /// Values are never cached. Slots follow point indexes, and fill is bounded to
 /// avoid allocating a weak reference for every point in replacement workloads.
 @internal
-final class NativePointCoordinateCache {
+final class NativePointCoordinateCache() {
   List<WeakReference<Object>?> _maps = [];
   int _remaining = 0;
 
@@ -205,7 +203,7 @@ final class NativePointCoordinateCache {
 /// One loop's classifier of typed data items: the implementation class is
 /// cached by type, and the fields of an item stay live.
 @internal
-final class NativeTypedItems {
+final class NativeTypedItems() {
   Type? _lastType;
   bool _native = false;
 
@@ -223,12 +221,13 @@ final class NativeTypedItems {
 /// Qualifies each parsed item at its original iteration, before any conversion
 /// can run user code. It never validates the whole dataset a second time.
 /// Container implementation is cached by type; coordinate values stay live.
-final class NativePointCoordinates {
-  /// Classifier state belongs to this loop; only proven map identities survive.
-  NativePointCoordinates({this.cache});
-
+final class NativePointCoordinates({
   /// Controller-owned storage, enabled after a native color plan exists.
-  final NativePointCoordinateCache? cache;
+  final NativePointCoordinateCache? cache,
+}) {
+  /// Classifier state belongs to this loop; only proven map identities survive.
+  this;
+
   final NativeTypedItems _typedItems = NativeTypedItems();
   Type? _lastType;
   bool _nativeObject = false;
@@ -300,9 +299,11 @@ const bool _sameTypeIsCheap = !bool.fromEnvironment('dart.tool.dart2wasm');
 /// between the two reads no code wrote the item, so the read would give the
 /// same value, with no effect and no throw, and its `ToNumber` is the held x.
 @internal
-final class NativeGapReads {
-  NativeGapReads._(this._meta, this._parsed, this._maxGapLength);
-
+final class NativeGapReads._(
+  final types.ChartMeta _meta,
+  final List<Object?> _parsed,
+  final double _maxGapLength,
+) {
   /// The gap reads of one loop over the parsed items of [meta] with the
   /// `ToNumber` of `maxGapLength` [maxGapLength], or Dart `null` unless the
   /// switch is on and the parsed list is native. The caller has proved the
@@ -314,10 +315,6 @@ final class NativeGapReads {
         ? NativeGapReads._(meta, parsed, maxGapLength)
         : null;
   }
-
-  final types.ChartMeta _meta;
-  final List<Object?> _parsed;
-  final double _maxGapLength;
 
   /// A native map item of this loop: a map of the same class qualifies by one
   /// class compare.
@@ -392,21 +389,15 @@ final class NativeGapReads {
 /// every scope shortcut. Its context shortcut is used only in a proven native
 /// resolver window; ordinary fallback keeps the ordinary context factory.
 @internal
-final class NativePointResolution {
-  NativePointResolution({
-    required this.data,
-    required this.raw,
-    required this.valid,
-    required this._resolve,
-  });
-  final Object data;
-  final List<Object?> raw;
+final class NativePointResolution({
+  required final Object data,
+  required final List<Object?> raw,
 
   /// Diagnostic source check; [resolve] always invokes it itself.
-  final bool Function() valid;
-  final ElementOptions? Function(Object Function(), Object Function()?)
-  _resolve;
-
+  required final bool Function() valid,
+  required final ElementOptions? Function(Object Function(), Object Function()?)
+  _resolve,
+}) {
   /// Revalidate before touching contexts or resolving options. The executor
   /// still owns its finer-grained generation checks during user callbacks.
   ElementOptions? resolve(
@@ -423,20 +414,13 @@ final class NativePointResolution {
 /// on a data context, of any element class: the capability check of [read] is
 /// for points, and a loop over other elements calls [readQualified].
 @internal
-final class NativePointContextReader {
-  NativePointContextReader._(
-    this._meta,
-    this._points,
-    this._parsed,
-    this._raw,
-    this._mode,
-  );
-  final types.ChartMeta _meta;
-  final List<types.Element> _points;
-  final List<Object?> _parsed;
-  final List<Object?> _raw;
-  final String _mode;
-
+final class NativePointContextReader._(
+  final types.ChartMeta _meta,
+  final List<types.Element> _points,
+  final List<Object?> _parsed,
+  final List<Object?> _raw,
+  final String _mode,
+) {
   static NativePointContextReader? prepare(
     types.ChartMeta meta,
     List<Object?> raw,

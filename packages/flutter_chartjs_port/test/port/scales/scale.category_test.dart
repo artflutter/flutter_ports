@@ -60,9 +60,7 @@ import 'scale_chart_harness.dart';
 /// The test scale `testLinear` of the generator: the range of the data
 /// (`getMinMax`), five ticks at equal steps from min to max, and a linear
 /// mapping.
-final class _TestLinearScale extends Scale {
-  _TestLinearScale(super.cfg);
-
+final class _TestLinearScale(super.cfg) extends Scale {
   @override
   void determineDataLimits() {
     final (:min, :max) = getMinMax(false);
@@ -338,10 +336,8 @@ CategoryScale _x(Chart chart) => chart.scales['x']! as CategoryScale;
 Matcher _samePixel(double pixel) => pixel.isNaN ? isNaN : equals(pixel);
 
 /// A `List<String>` class of an app that counts the reads of its items.
-final class _CountingLabels extends ListBase<String> {
-  _CountingLabels(List<String> labels) : _labels = [...labels];
-
-  final List<String> _labels;
+final class _CountingLabels(List<String> labels) extends ListBase<String> {
+  final List<String> _labels = [...labels];
 
   /// The number of item reads.
   int reads = 0;

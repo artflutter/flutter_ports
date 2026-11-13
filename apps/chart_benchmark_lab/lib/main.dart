@@ -9,12 +9,14 @@ void main() {
 }
 
 /// A separate app for reproducible public-widget chart comparisons.
-class ChartBenchmarkApp extends StatelessWidget {
-  /// Creates the benchmark dashboard.
-  const ChartBenchmarkApp({this.onControllerReady, super.key});
-
+class const ChartBenchmarkApp({
   /// Optional driver hook for native smoke runs, called once at initialization.
-  final ValueChanged<BenchmarkController>? onControllerReady;
+  final ValueChanged<BenchmarkController>? onControllerReady,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the benchmark dashboard.
+  this;
+
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'Chart benchmark lab',

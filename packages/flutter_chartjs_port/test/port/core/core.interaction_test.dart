@@ -39,35 +39,29 @@ import 'interaction_reference.dart';
 // (adapt-arc-axis-range, differences.md).
 
 /// The JS animation object `{active: () => active, _to: to}`.
-final class _Animation implements Animation {
-  _Animation({required this.isActive, required this.to});
-
+final class _Animation({
   /// The result of [active].
-  final bool isActive;
-
+  required final bool isActive,
+  @override required final Object? to,
+}) implements Animation {
   @override
   bool active() => isActive;
-
-  @override
-  final Object? to;
 }
 
 /// A data element that records its calls under its [name].
-abstract interface class _Spy {
+abstract interface class _Spy() {
   /// `<dataset index>:<data index>`.
   String get name;
 }
 
 /// A [PointElement] that records its calls in [trace].
-final class _SpyPoint extends PointElement implements _Spy {
-  _SpyPoint(this.name, this.trace, [super.cfg]);
-
-  @override
-  final String name;
+final class _SpyPoint(
+  @override final String name,
 
   /// The calls of the query.
-  final List<String> trace;
-
+  final List<String> trace, [
+  super.cfg,
+]) extends PointElement implements _Spy {
   @override
   bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) {
     trace.add('inRange $name');
@@ -94,15 +88,13 @@ final class _SpyPoint extends PointElement implements _Spy {
 }
 
 /// A [BarElement] that records its calls in [trace].
-final class _SpyBar extends BarElement implements _Spy {
-  _SpyBar(this.name, this.trace, [super.cfg]);
-
-  @override
-  final String name;
+final class _SpyBar(
+  @override final String name,
 
   /// The calls of the query.
-  final List<String> trace;
-
+  final List<String> trace, [
+  super.cfg,
+]) extends BarElement implements _Spy {
   @override
   bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) {
     trace.add('inRange $name');
@@ -130,15 +122,13 @@ final class _SpyBar extends BarElement implements _Spy {
 
 /// An [ArcElement] that records its calls in [trace]. Upstream has no
 /// `inXRange` and no `inYRange`: they record nothing.
-final class _SpyArc extends ArcElement implements _Spy {
-  _SpyArc(this.name, this.trace, [super.cfg]);
-
-  @override
-  final String name;
+final class _SpyArc(
+  @override final String name,
 
   /// The calls of the query.
-  final List<String> trace;
-
+  final List<String> trace, [
+  super.cfg,
+]) extends ArcElement implements _Spy {
   @override
   bool inRange(double? chartX, double? chartY, [bool? useFinalPosition]) {
     trace.add('inRange $name');
@@ -153,21 +143,12 @@ final class _SpyArc extends ArcElement implements _Spy {
 }
 
 /// A chart area `{left, top, right, bottom, width, height}`.
-final class _Area implements types.ChartArea {
-  _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements types.ChartArea {
   @override
   double get width => right - left;
 
@@ -176,81 +157,39 @@ final class _Area implements types.ChartArea {
 }
 
 /// A position `{x, y}`.
-final class _Point implements types.Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-}
+final class const _Point(@override final double x, @override final double y)
+    implements types.Point;
 
 /// A scale with the two members that core.interaction.js reads.
-final class _Scale implements types.Scale {
-  _Scale(this.axis, {this.reversePixels = false});
-
-  @override
-  final ScaleAxis axis;
-
-  @override
-  final bool reversePixels;
-
+final class _Scale(
+  @override final ScaleAxis axis, {
+  @override final bool reversePixels = false,
+}) implements types.Scale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A controller with `_cachedMeta` and `_sharedOptions`.
-final class _Controller implements types.DatasetController {
-  _Controller(this.sharedOptions);
-
+final class _Controller(@override final Map<String, Object?>? sharedOptions)
+    implements types.DatasetController {
   @override
   late final types.ChartMeta cachedMeta;
-
-  @override
-  final Map<String, Object?>? sharedOptions;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A meta with the members that core.interaction.js reads.
-final class _Meta implements types.ChartMeta {
-  _Meta({
-    required this.index,
-    required this.sorted,
-    required this.data,
-    required this.parsed,
-    required this.dataset,
-    required this.iScale,
-    required this.vScale,
-    required this.controller,
-  });
-
-  @override
-  final double index;
-
-  @override
-  final bool sorted;
-
-  @override
-  final List<types.Element> data;
-
-  @override
-  final List<Map<String, Object?>> parsed;
-
-  @override
-  final types.Element? dataset;
-
-  @override
-  final types.Scale? iScale;
-
-  @override
-  final types.Scale? vScale;
-
-  @override
-  final types.DatasetController controller;
-
+final class _Meta({
+  @override required final double index,
+  @override required final bool sorted,
+  @override required final List<types.Element> data,
+  @override required final List<Map<String, Object?>> parsed,
+  @override required final types.Element? dataset,
+  @override required final types.Scale? iScale,
+  @override required final types.Scale? vScale,
+  @override required final types.DatasetController controller,
+}) implements types.ChartMeta {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -258,16 +197,11 @@ final class _Meta implements types.ChartMeta {
 /// A chart with the members that core.interaction.js reads.
 /// `isPointInArea` is `_isPointInArea(point, chartArea, minPadding)`, as
 /// core.controller.js:816-818.
-final class _Chart implements types.Chart {
-  _Chart(this.chartArea, this._minPadding, this._metas);
-
-  @override
-  types.ChartArea chartArea;
-
-  final double _minPadding;
-
-  final List<types.ChartMeta> _metas;
-
+final class _Chart(
+  @override var types.ChartArea chartArea,
+  final double _minPadding,
+  final List<types.ChartMeta> _metas,
+) implements types.Chart {
   @override
   List<types.ChartMeta> getSortedVisibleDatasetMetas() => [..._metas];
 
@@ -284,23 +218,16 @@ final class _Chart implements types.Chart {
 }
 
 /// The event `{type: 'click', native: true, chart, x, y}` of the specs.
-final class _Event implements types.ChartEvent {
-  _Event(this.x, this.y, this.chart);
-
+final class _Event(
+  @override final double? x,
+  @override final double? y,
+  @override final types.Chart? chart,
+) implements types.ChartEvent {
   @override
   String get type => 'click';
 
   @override
   NativeEvent? get native => null;
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-
-  @override
-  final types.Chart? chart;
 }
 
 /// The data element [e] of the dataset [datasetIndex] at [index], which
@@ -623,9 +550,7 @@ void main() {
 }
 
 /// A mode of the test: it finds no item.
-final class _NoItemsMode extends InteractionMode {
-  const _NoItemsMode();
-
+final class const _NoItemsMode() extends InteractionMode {
   @override
   List<InteractionItem> itemsAt(
     types.Chart chart,

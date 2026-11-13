@@ -53,15 +53,15 @@ const List<Object?> longestTextLabels = [
 /// Text on the canvas: `fillText` with every `textAlign` and
 /// `textBaseline`, the `measureText` box, the RTL adapter and
 /// `_longestText`.
-class TextDemo extends StatefulWidget {
+class const TextDemo({super.key}) extends StatefulWidget {
   /// Creates the text tab.
-  const TextDemo({super.key});
+  this;
 
   @override
   State<TextDemo> createState() => _TextDemoState();
 }
 
-class _TextDemoState extends State<TextDemo> {
+class _TextDemoState() extends State<TextDemo> {
   final TextEditingController _sample = TextEditingController(
     text: 'Hgjy Åb 12',
   );

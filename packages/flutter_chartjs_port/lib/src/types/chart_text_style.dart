@@ -48,42 +48,47 @@ import 'package:meta/meta.dart' show immutable;
 /// `ChartTextStyle(fontSize: 20)` merged over a font with `height: 1.2` has the
 /// line height 24.
 @immutable
-class ChartTextStyle extends TextStyle {
+class const ChartTextStyle({
+  super.inherit,
+  super.color,
+  super.backgroundColor,
+  super.fontSize,
+  super.fontWeight,
+  super.fontStyle,
+  super.letterSpacing,
+  super.wordSpacing,
+  super.textBaseline,
+  super.height,
+  super.leadingDistribution,
+  super.locale,
+  super.foreground,
+  super.background,
+  super.shadows,
+  super.fontFeatures,
+  super.fontVariations,
+  super.decoration,
+  super.decorationColor,
+  super.decorationStyle,
+  super.decorationThickness,
+  super.debugLabel,
+  super.fontFamily,
+  super.fontFamilyFallback,
+  super.package,
+  super.overflow,
+}) extends TextStyle {
   /// A font. [lineHeight] is `fontSize * height`, or Dart `null` when one of
   /// the two is `null`.
-  const ChartTextStyle({
-    super.inherit,
-    super.color,
-    super.backgroundColor,
-    super.fontSize,
-    super.fontWeight,
-    super.fontStyle,
-    super.letterSpacing,
-    super.wordSpacing,
-    super.textBaseline,
-    super.height,
-    super.leadingDistribution,
-    super.locale,
-    super.foreground,
-    super.background,
-    super.shadows,
-    super.fontFeatures,
-    super.fontVariations,
-    super.decoration,
-    super.decorationColor,
-    super.decorationStyle,
-    super.decorationThickness,
-    super.debugLabel,
-    super.fontFamily,
-    super.fontFamilyFallback,
-    super.package,
-    super.overflow,
-  }) : lineHeight = fontSize != null && height != null
-           ? fontSize * height
-           : null;
+  this
+    // The initializer stays in the list: the analyzer of Dart 3.14 rejects
+    // each const instance when a field initializer reads a super parameter
+    // of a superclass from another library (the VM accepts it).
+    // ignore: initialize_in_field_declaration
+    : lineHeight = fontSize != null && height != null
+          ? fontSize * height
+          : null;
 
   /// The font of the fields of [style].
-  ChartTextStyle.from(TextStyle style)
+  new from(TextStyle style)
     : this(
         inherit: style.inherit,
         color: style.color,

@@ -17,9 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 // takes the numeric path, and a trivial subclass takes the generic loop. The
 // records must have the same own keys and the same value bits.
 
-class _OrdinaryRadial extends RadialLinearScale {
-  _OrdinaryRadial(super.cfg);
-
+class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
   int parses = 0;
 
   @override
@@ -36,9 +34,7 @@ class _OrdinaryRadial extends RadialLinearScale {
   );
 }
 
-class _ObservedList extends ListBase<Object?> {
-  _ObservedList(this.values);
-  final List<Object?> values;
+class _ObservedList(final List<Object?> values) extends ListBase<Object?> {
   @override
   int get length => values.length;
   @override

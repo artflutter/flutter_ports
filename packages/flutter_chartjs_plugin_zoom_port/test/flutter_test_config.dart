@@ -190,46 +190,39 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
 /// member that the DOM event of its type has: a `MouseEvent` and a
 /// `WheelEvent` have no `pointerType`.
 // DIVERGES(zoom): harness-dom-events, a typed init, offsets of the canvas.
-final class EventInit {
+final class const EventInit({
+  /// `button`: the button that changed. 0 is the main button.
+  final int button = 0,
+
+  /// `pointerType` of a pointer event, or `null` for the default of the
+  /// helper.
+  final String? pointerType,
+
+  /// `ctrlKey`.
+  final bool ctrlKey = false,
+
+  /// `altKey`.
+  final bool altKey = false,
+
+  /// `shiftKey`.
+  final bool shiftKey = false,
+
+  /// `metaKey`.
+  final bool metaKey = false,
+}) {
   /// An init with the DOM defaults of the members that are not given.
-  const EventInit({
-    this.button = 0,
-    this.pointerType,
-    this.ctrlKey = false,
-    this.altKey = false,
-    this.shiftKey = false,
-    this.metaKey = false,
-  });
+  this;
 
   /// `init[key + 'Key'] = true` (zoom.drag.spec.js:309,
   /// zoom.wheel.spec.js:70): the init with the modifier [key] down. [key]
   /// is `'ctrl'`, `'alt'`, `'shift'` or `'meta'`. Another key names no
   /// member of the DOM init, which ignores it: no modifier is down.
-  factory EventInit.withKey(ModifierKey key) => switch (key) {
+  factory withKey(ModifierKey key) => switch (key) {
     ModifierKey.ctrl => const EventInit(ctrlKey: true),
     ModifierKey.alt => const EventInit(altKey: true),
     ModifierKey.shift => const EventInit(shiftKey: true),
     ModifierKey.meta => const EventInit(metaKey: true),
   };
-
-  /// `button`: the button that changed. 0 is the main button.
-  final int button;
-
-  /// `pointerType` of a pointer event, or `null` for the default of the
-  /// helper.
-  final String? pointerType;
-
-  /// `ctrlKey`.
-  final bool ctrlKey;
-
-  /// `altKey`.
-  final bool altKey;
-
-  /// `shiftKey`.
-  final bool shiftKey;
-
-  /// `metaKey`.
-  final bool metaKey;
 }
 
 /// index.js:20 `jasmine.triggerMouseEvent = triggerMouseEvent` of

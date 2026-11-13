@@ -59,75 +59,56 @@ import 'package:meta/meta.dart' show internal;
 /// shows its data. An [onClick] replaces that default toggle, as in
 /// Chart.js.
 @immutable
-final class ChartLegend with Diagnosticable {
-  /// The legend options.
-  const ChartLegend({
-    this.display,
-    this.position,
-    this.align,
-    this.reverse,
-    this.labelColor,
-    this.labelFont,
-    this.boxWidth,
-    this.boxHeight,
-    this.labelPadding,
-    this.usePointStyle,
-    this.onClick,
-    this.onHover,
-    this.onLeave,
-    this.textDirection,
-    this.extra,
-  });
-
+final class const ChartLegend({
   /// Whether the chart shows the legend: `display`. The default is `true`.
-  final bool? display;
+  final bool? display,
 
   /// The side of the chart of the legend: `position`. The default is
   /// [ChartPosition.top]. [ChartPosition.chartArea] puts the legend in the
   /// chart area.
-  final ChartPosition? position;
+  final ChartPosition? position,
 
   /// The alignment of the legend along its side: `align`.
-  final ChartAlign? align;
+  final ChartAlign? align,
 
   /// Whether the items come in the reverse order: `reverse`.
-  final bool? reverse;
+  final bool? reverse,
 
   /// The color of the item text: `labels.color`.
-  final ChartPaint? labelColor;
+  final ChartPaint? labelColor,
 
   /// The font of the item text: `labels.font`. The color of the font is
   /// not read: set [labelColor].
-  final TextStyle? labelFont;
+  final TextStyle? labelFont,
 
   /// The width of the color box of an item, in pixels: `labels.boxWidth`.
   /// The default is 40.
-  final double? boxWidth;
+  final double? boxWidth,
 
   /// The height of the color box of an item, in pixels:
   /// `labels.boxHeight`. The default is the font size.
-  final double? boxHeight;
+  final double? boxHeight,
 
   /// The space between the items, in pixels: `labels.padding`. The default
   /// is 10.
-  final double? labelPadding;
+  final double? labelPadding,
 
   /// Whether the item shows the point style of its data in place of the
   /// color box: `labels.usePointStyle`.
-  final bool? usePointStyle;
+  final bool? usePointStyle,
 
   /// The function of a click on an item: `onClick`. It replaces the
   /// default toggle of the visibility.
-  final ValueChanged<ChartLegendEventDetails>? onClick;
+  final ValueChanged<ChartLegendEventDetails>? onClick,
 
   /// The function of a pointer that moves onto an item: `onHover`.
-  final ValueChanged<ChartLegendEventDetails>? onHover;
+  final ValueChanged<ChartLegendEventDetails>? onHover,
 
   /// The function of a pointer that leaves an item: `onLeave`.
-  final ValueChanged<ChartLegendEventDetails>? onLeave;
+  final ValueChanged<ChartLegendEventDetails>? onLeave,
 
   /// The text direction during drawing. Null keeps the canvas direction.
-  final TextDirection? textDirection;
+  final TextDirection? textDirection,
 
   /// The Chart.js legend options that have no parameter, for example
   /// `{'title': {'display': true, 'text': 'Votes'}}`.
@@ -136,7 +117,10 @@ final class ChartLegend with Diagnosticable {
   /// parameter with the same key. A Map value merges into the Map of the
   /// key, a List or another value replaces it. The chart gets a copy of
   /// each Map and the Lists of the app.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The legend options.
+  this;
 
   /// A copy of these legend options with the given parameters. A
   /// parameter that is `null` keeps its value.
@@ -246,54 +230,44 @@ LegendOptionsScope lowerLegend(
 /// `options.plugins.subtitle` (`docs/configuration/title.md`,
 /// `docs/configuration/subtitle.md`).
 @immutable
-final class ChartTitle with Diagnosticable {
-  /// The title options.
-  const ChartTitle({
-    this.display,
-    this.text,
-    this.color,
-    this.font,
-    this.align,
-    this.position,
-    this.padding,
-    this.fullSize,
-    this.extra,
-  });
-
+final class const ChartTitle({
   /// Whether the chart shows the title: `display`. The default is `false`.
   /// Set it to `true` to show the [text].
-  final bool? display;
+  final bool? display,
 
   /// The text of the title: `text`. The lines of a title with more lines
   /// go through [extra] as a List.
-  final String? text;
+  final String? text,
 
   /// The color of the text: `color`.
-  final ChartPaint? color;
+  final ChartPaint? color,
 
   /// The font of the text: `font`. The color of the font is not read: set
   /// [color].
-  final TextStyle? font;
+  final TextStyle? font,
 
   /// The alignment of the title along its side: `align`.
-  final ChartAlign? align;
+  final ChartAlign? align,
 
   /// The side of the chart of the title: `position`. The title takes
   /// [ChartPosition.top], [ChartPosition.left], [ChartPosition.bottom] and
   /// [ChartPosition.right]. The default is the top.
-  final ChartPosition? position;
+  final ChartPosition? position,
 
   /// The space around the title: `padding`. Chart.js reads the top and the
   /// bottom.
-  final EdgeInsets? padding;
+  final EdgeInsets? padding,
 
   /// Whether the box of the title takes the full width or height of the
   /// chart: `fullSize`. The default is `true`.
-  final bool? fullSize;
+  final bool? fullSize,
 
   /// The Chart.js title options that have no parameter. The rules of
   /// [ChartLegend.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The title options.
+  this;
 
   /// A copy of these title options with the given parameters. A parameter
   /// that is `null` keeps its value.
@@ -367,105 +341,84 @@ TitleOptionsScope lowerTitle(ChartTitle title) {
 /// The text callbacks give the text of the title, of a label line and of
 /// the footer. Dart `null` gives the default text of Chart.js.
 @immutable
-final class ChartTooltip with Diagnosticable {
-  /// The tooltip options.
-  const ChartTooltip({
-    this.enabled,
-    this.mode,
-    this.intersect,
-    this.axis,
-    this.position,
-    this.xAlign,
-    this.yAlign,
-    this.backgroundColor,
-    this.titleColor,
-    this.titleFont,
-    this.bodyColor,
-    this.bodyFont,
-    this.footerColor,
-    this.footerFont,
-    this.padding,
-    this.cornerRadius,
-    this.displayColors,
-    this.callbacks,
-    this.textDirection,
-    this.extra,
-  });
-
+final class const ChartTooltip({
   /// Whether the chart shows the tooltip: `enabled`. The default is
   /// `true`.
-  final bool? enabled;
+  final bool? enabled,
 
   /// The items of the tooltip: `mode`. The default is the mode of
   /// `ChartConfig.interaction`.
-  final InteractionMode? mode;
+  final InteractionMode? mode,
 
   /// Whether the tooltip shows only when the pointer is on an item:
   /// `intersect`. The default is the value of `ChartConfig.interaction`.
-  final bool? intersect;
+  final bool? intersect,
 
   /// The axes of the distance from the event to an item: `axis`. The
   /// default is the value of `ChartConfig.interaction`.
-  final InteractionAxis? axis;
+  final InteractionAxis? axis,
 
   /// The object that finds the position of the tooltip: `position`. The
   /// default is `AverageTooltipPositioner()`. `NearestTooltipPositioner()`
   /// puts the tooltip at the item nearest to the pointer. An app gives its
   /// own positioner as a subclass of [TooltipPositioner].
-  final TooltipPositioner? position;
+  final TooltipPositioner? position,
 
   /// The place of the tooltip box beside its caret along x: `xAlign`. The
   /// default is the place that the tooltip finds for its size.
-  final TooltipXAlign? xAlign;
+  final TooltipXAlign? xAlign,
 
   /// The place of the tooltip box beside its caret along y: `yAlign`. The
   /// default is the place that the tooltip finds for its size.
-  final TooltipYAlign? yAlign;
+  final TooltipYAlign? yAlign,
 
   /// The color of the tooltip box: `backgroundColor`.
-  final ChartPaint? backgroundColor;
+  final ChartPaint? backgroundColor,
 
   /// The color of the title text: `titleColor`.
-  final ChartPaint? titleColor;
+  final ChartPaint? titleColor,
 
   /// The font of the title text: `titleFont`. The color of the font is not
   /// read: set [titleColor].
-  final TextStyle? titleFont;
+  final TextStyle? titleFont,
 
   /// The color of the label text: `bodyColor`.
-  final ChartPaint? bodyColor;
+  final ChartPaint? bodyColor,
 
   /// The font of the label text: `bodyFont`. The color of the font is not
   /// read: set [bodyColor].
-  final TextStyle? bodyFont;
+  final TextStyle? bodyFont,
 
   /// The color of the footer text: `footerColor`.
-  final ChartPaint? footerColor;
+  final ChartPaint? footerColor,
 
   /// The font of the footer text: `footerFont`. The color of the font is
   /// not read: set [footerColor].
-  final TextStyle? footerFont;
+  final TextStyle? footerFont,
 
   /// The space in the tooltip box around the text: `padding`.
-  final EdgeInsets? padding;
+  final EdgeInsets? padding,
 
   /// The radius of the corners of the tooltip box, in pixels:
   /// `cornerRadius`.
-  final double? cornerRadius;
+  final double? cornerRadius,
 
   /// Whether each label line shows the color box of its dataset:
   /// `displayColors`.
-  final bool? displayColors;
+  final bool? displayColors,
 
   /// The native callbacks of the tooltip. Null inherits the defaults.
-  final TooltipCallbacks? callbacks;
+  final TooltipCallbacks? callbacks,
 
   /// The text direction during drawing. Null keeps the canvas direction.
-  final TextDirection? textDirection;
+  final TextDirection? textDirection,
 
   /// The Chart.js tooltip options that have no parameter, for example
   /// `{'caretSize': 8}`. The rules of [ChartLegend.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The tooltip options.
+  this;
 
   /// A copy of these tooltip options with the given parameters. A
   /// parameter that is `null` keeps its value.
@@ -591,36 +544,30 @@ TooltipOptionsScope lowerTooltip(
 ///
 /// The hover, the click callbacks and the tooltip read it.
 @immutable
-final class ChartInteraction with Diagnosticable {
-  /// The interaction options.
-  const ChartInteraction({
-    this.mode,
-    this.intersect,
-    this.axis,
-    this.includeInvisible,
-    this.extra,
-  });
-
+final class const ChartInteraction({
   /// The elements that an event hits: `mode`. The default is
   /// `NearestInteractionMode()`.
-  final InteractionMode? mode;
+  final InteractionMode? mode,
 
   /// Whether an event hits only the elements under the pointer:
   /// `intersect`. The default is `true`.
-  final bool? intersect;
+  final bool? intersect,
 
   /// The axes of the distance from the event to an element: `axis`. The
   /// default is [InteractionAxis.x] for the mode index and
   /// [InteractionAxis.xy] for the other modes.
-  final InteractionAxis? axis;
+  final InteractionAxis? axis,
 
   /// Whether an event also hits the elements outside the chart area:
   /// `includeInvisible`. The default is `false`.
-  final bool? includeInvisible;
+  final bool? includeInvisible,
 
   /// The Chart.js interaction options that have no parameter. The rules of
   /// [ChartLegend.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The interaction options.
+  this;
 
   /// A copy of these interaction options with the given parameters. A
   /// parameter that is `null` keeps its value.
@@ -678,22 +625,22 @@ InteractionOptionsScope lowerInteraction(ChartInteraction interaction) {
 /// The filler plugin fills the area of a dataset with a `fill`, for
 /// example `LineDataset.fill`.
 @immutable
-final class ChartFiller with Diagnosticable {
-  /// The filler options.
-  const ChartFiller({this.propagate, this.drawTime, this.extra});
-
+final class const ChartFiller({
   /// Whether the fill of a dataset whose target dataset is hidden goes on
   /// to the next visible target: `propagate`. The default is `true`. With
   /// `false`, the dataset has no fill when its target is hidden.
-  final bool? propagate;
+  final bool? propagate,
 
   /// The hook in which the filler fills the areas: `drawTime`. The default
   /// is [FillerDrawTime.beforeDatasetDraw], just before each dataset draws.
-  final FillerDrawTime? drawTime;
+  final FillerDrawTime? drawTime,
 
   /// The Chart.js filler options that have no parameter, for example
   /// `{'events': ['click']}`. The rules of [ChartLegend.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The filler options.
+  this;
 
   /// A copy of these filler options with the given parameters. A parameter
   /// that is `null` keeps its value.
@@ -750,7 +697,7 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
   /// A constant of `Curves` and a `const` curve of the app compare by
   /// identity. A curve that `build` makes anew at each call is a new value,
   /// and it gives a chart update, unless its class has `==`.
-  const ChartAnimation({
+  const new({
     super.duration,
     super.delay,
     super.easing,
@@ -760,7 +707,7 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     this.extra,
   }) : _none = false;
 
-  const ChartAnimation._none()
+  const new _none()
     : onProgress = null,
       onComplete = null,
       extra = null,

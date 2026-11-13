@@ -218,8 +218,9 @@ void main() {
   });
 }
 
-class _CustomHit extends LegendHitBox {
-  _CustomHit(LegendHitBox source, {required this.accepts})
+class _CustomHit(LegendHitBox source, {required final bool accepts})
+    extends LegendHitBox {
+  this
     : super.row(
         left: source.left,
         top: source.top,
@@ -227,7 +228,6 @@ class _CustomHit extends LegendHitBox {
         height: source.height,
         row: source.row!,
       );
-  final bool accepts;
   int calls = 0;
 
   @override
@@ -238,7 +238,7 @@ class _CustomHit extends LegendHitBox {
 }
 
 class _PluginBox extends LegendHitBox {
-  _PluginBox.row(
+  new row(
     this.owner, {
     required super.left,
     required super.top,
@@ -246,7 +246,7 @@ class _PluginBox extends LegendHitBox {
     required super.height,
     required super.row,
   }) : super.row();
-  _PluginBox.col(
+  new col(
     this.owner, {
     required super.left,
     required super.top,

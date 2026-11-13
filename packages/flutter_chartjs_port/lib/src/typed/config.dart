@@ -63,41 +63,14 @@ import 'package:meta/meta.dart' show internal;
 /// The config of a live chart, `chart.config`, is a `ChartConfiguration`,
 /// another type.
 @immutable
-final class ChartConfig with Diagnosticable {
-  /// A chart config.
-  const ChartConfig({
-    required this.type,
-    required this.datasets,
-    this.labels,
-    this.scales,
-    this.indexAxis,
-    this.responsive,
-    this.maintainAspectRatio,
-    this.aspectRatio,
-    this.padding,
-    this.legend,
-    this.title,
-    this.subtitle,
-    this.tooltip,
-    this.filler,
-    this.interaction,
-    this.animation,
-    this.animations,
-    this.transitions,
-    this.elements,
-    this.onClick,
-    this.onHover,
-    this.plugins,
-    this.extra,
-  });
-
+final class const ChartConfig({
   /// The chart type: `type`. It gives the controller of each dataset that
   /// has the class of this type, and the defaults of the options.
-  final ChartKind type;
+  required final ChartKind type,
 
   /// The datasets of the chart: `data.datasets`. The legend shows them in
   /// this order.
-  final List<Dataset> datasets;
+  required final List<Dataset> datasets,
 
   /// The labels of the index axis: `data.labels`. An item is a `String`, a
   /// `num`, a `DateTime` or a `List<String>` of the lines of a label.
@@ -106,58 +79,58 @@ final class ChartConfig with Diagnosticable {
   /// label to it for a data item with a label that is not in the List:
   /// `DataPoint.label` and `CategoryAxis.min` can do that. A `const` List
   /// then throws an `UnsupportedError`.
-  final List<Object>? labels;
+  final List<Object>? labels,
 
   /// The axes of the chart by id: `options.scales`, for example
   /// `{'x': CategoryAxis(), 'y': LinearAxis(beginAtZero: true)}`.
   ///
   /// The order of the entries is the order of the axes in the layout. A
   /// chart type has default axes: give only the axes with other options.
-  final Map<String, ChartAxis>? scales;
+  final Map<String, ChartAxis>? scales,
 
   /// The index axis of the chart: `options.indexAxis`, [XAxis] or [YAxis].
   /// `const YAxis()` gives a horizontal bar chart. It also sets the default
   /// axes.
-  final CartesianAxis? indexAxis;
+  final CartesianAxis? indexAxis,
 
   /// Whether the chart resizes with its box: `options.responsive`. The
   /// default is `true`.
-  final bool? responsive;
+  final bool? responsive,
 
   /// Whether the chart keeps its aspect ratio when it resizes:
   /// `options.maintainAspectRatio`. The default is `true`.
-  final bool? maintainAspectRatio;
+  final bool? maintainAspectRatio,
 
   /// The width divided by the height of the chart: `options.aspectRatio`.
   /// The default is 2, and 1 for a pie, a doughnut, a polar area and a
   /// radar chart.
-  final double? aspectRatio;
+  final double? aspectRatio,
 
   /// The space around the chart: `options.layout.padding`.
-  final EdgeInsets? padding;
+  final EdgeInsets? padding,
 
   /// The legend: `options.plugins.legend`.
-  final ChartLegend? legend;
+  final ChartLegend? legend,
 
   /// The title: `options.plugins.title`.
-  final ChartTitle? title;
+  final ChartTitle? title,
 
   /// The subtitle below the title: `options.plugins.subtitle`.
-  final ChartTitle? subtitle;
+  final ChartTitle? subtitle,
 
   /// The tooltip: `options.plugins.tooltip`.
-  final ChartTooltip? tooltip;
+  final ChartTooltip? tooltip,
 
   /// The filler, the plugin that fills the area of a dataset with a `fill`:
   /// `options.plugins.filler`.
-  final ChartFiller? filler;
+  final ChartFiller? filler,
 
   /// The elements that an event hits: `options.interaction`.
-  final ChartInteraction? interaction;
+  final ChartInteraction? interaction,
 
   /// The animation: `options.animation`. [ChartAnimation.none] turns it
   /// off.
-  final ChartAnimation? animation;
+  final ChartAnimation? animation,
 
   /// The animation of single properties of the elements:
   /// `options.animations`, for example
@@ -168,7 +141,7 @@ final class ChartConfig with Diagnosticable {
   /// the item. The List has one item for each class. The animations of the
   /// chart read each item as the object of this List: no option holds a
   /// copy of it.
-  final List<PropertyAnimation>? animations;
+  final List<PropertyAnimation>? animations,
 
   /// The animation of single update modes: `options.transitions`, for
   /// example `[HoverTransition(duration: Duration(milliseconds: 150))]`.
@@ -178,20 +151,20 @@ final class ChartConfig with Diagnosticable {
   /// item goes before the parameter of [animation] in its mode. The List has
   /// one item for each class. The animations of the chart read each item as
   /// the object of this List.
-  final List<ChartTransition>? transitions;
+  final List<ChartTransition>? transitions,
 
   /// The options of the element types, a default of all datasets of the
   /// chart: `options.elements`, for example
   /// `ChartElements(line: LineElementStyle(borderWidth: 3))`.
-  final ChartElements? elements;
+  final ChartElements? elements,
 
   /// The function of a click on the chart: `options.onClick`. The details
   /// give the elements under the pointer, with `int` indexes
   /// (`docs/configuration/interactions.md`, "Events").
-  final ValueChanged<ChartEventDetails>? onClick;
+  final ValueChanged<ChartEventDetails>? onClick,
 
   /// The function of a pointer move on the chart: `options.onHover`.
-  final ValueChanged<ChartEventDetails>? onHover;
+  final ValueChanged<ChartEventDetails>? onHover,
 
   /// The inline plugins of the chart: `plugins`, each a plugin Map with an
   /// `id` and its hooks (`docs/developers/plugins.md`). The List goes to
@@ -200,7 +173,7 @@ final class ChartConfig with Diagnosticable {
   /// `==` compares the plugins one by one by identity. Thus
   /// `plugins: [plugin]` in each build gives no update while `plugin` is
   /// the same object, for example a field or a top-level constant.
-  final List<Map<String, Object?>>? plugins;
+  final List<Map<String, Object?>>? plugins,
 
   /// The Chart.js options that have no parameter, for example
   /// `{'locale': 'de-DE'}`.
@@ -209,7 +182,10 @@ final class ChartConfig with Diagnosticable {
   /// with the same key. A Map value merges into the Map of the key, a List
   /// or another value replaces it. The chart gets a copy of each Map and
   /// the Lists of the app.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// A chart config.
+  this;
 
   /// A copy of this config with the given parameters. A parameter that is
   /// `null` keeps its value.

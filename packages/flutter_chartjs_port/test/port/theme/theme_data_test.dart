@@ -243,23 +243,16 @@ const Map<String, Set<String>> _tokenPaths = {
 };
 
 /// A chart event at ([x], [y]) for `getElementsAtEventForMode`.
-final class _Event implements types.ChartEvent {
-  _Event(this.chart, this.x, this.y);
-
+final class _Event(
+  @override final types.Chart? chart,
+  @override final double? x,
+  @override final double? y,
+) implements types.ChartEvent {
   @override
   String get type => 'mousemove';
 
   @override
   NativeEvent? get native => null;
-
-  @override
-  final types.Chart? chart;
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
 }
 
 /// The scatter chart of the probe F-P1b of Chart.js ADR 0050: 3 points,

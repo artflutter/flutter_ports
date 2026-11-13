@@ -37,11 +37,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// The test controller of the registered class values.
 final class _TypedController extends DatasetController {
-  _TypedController(super.chart, super.datasetIndex, [super.newTarget])
-    : drawElements = true;
+  new(super.chart, super.datasetIndex, [super.newTarget]) : drawElements = true;
 
   /// A controller whose [draw] draws nothing.
-  _TypedController.noDraw(super.chart, super.datasetIndex, [super.newTarget])
+  new noDraw(super.chart, super.datasetIndex, [super.newTarget])
     : drawElements = false;
 
   /// Whether [draw] draws the elements. The bar, arc and custom elements of
@@ -137,9 +136,7 @@ JsClass _controller(
 );
 
 /// The scale `typedLinear`: the range 0 to 10, with the ticks 0, 5 and 10.
-final class _TypedScale extends Scale {
-  _TypedScale(super.cfg);
-
+final class _TypedScale(super.cfg) extends Scale {
   @override
   void determineDataLimits() {
     min = 0;

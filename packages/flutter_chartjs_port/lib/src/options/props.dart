@@ -37,9 +37,9 @@ bool _isOptionsObject(Object? value) =>
 /// radar controllers give to `updateElement` (U `controller.line.js:91-111`,
 /// `controller.scatter.js:127-140`, `controller.bubble.js:128-138`,
 /// `controller.radar.js:93-99`).
-final class PointProperties extends TypedRecord {
+final class PointProperties() extends TypedRecord {
   /// An object without own keys.
-  PointProperties();
+  this;
 
   static const List<String> _fieldNames = [
     'x',
@@ -218,11 +218,11 @@ final class PointProperties extends TypedRecord {
 /// `updateElement` (U `controller.bar.js:407-424`, `:183-255`).
 final class BarProperties extends TypedRecord {
   /// An object without own keys.
-  BarProperties();
+  new();
 
   /// The initial seven fields of controller.bar's property literal, in the
   /// same own-key order. Later options/edge/inflation writes keep that order.
-  BarProperties.geometry({
+  new geometry({
     required this._horizontal,
     required this._base,
     required this._enableBorderRadius,
@@ -446,9 +446,9 @@ final class BarProperties extends TypedRecord {
 /// The properties of an arc element that the doughnut, pie and polar area
 /// controllers give to `updateElement` (U `controller.doughnut.js:278-289`,
 /// `controller.polarArea.js:194-203`).
-final class ArcProperties extends TypedRecord {
+final class ArcProperties() extends TypedRecord {
   /// An object without own keys.
-  ArcProperties();
+  this;
 
   static const List<String> _fieldNames = [
     'x',
@@ -626,9 +626,9 @@ final class ArcProperties extends TypedRecord {
 /// The properties of a line element that the line, scatter and radar
 /// controllers give to `updateElement` (U `controller.line.js:67-70`,
 /// `controller.scatter.js:87-90`, `controller.radar.js:68-74`).
-final class LineProperties extends TypedRecord {
+final class LineProperties() extends TypedRecord {
   /// An object without own keys.
-  LineProperties();
+  this;
 
   static const List<String> _fieldNames = [
     'animated',
@@ -740,11 +740,11 @@ final class LineProperties extends TypedRecord {
 /// `borderSkipped: 'foo'` gives `res.foo = true`) is an extra.
 final class BorderSkipped extends TypedRecord {
   /// An object without own keys: the `{}` of upstream.
-  BorderSkipped();
+  new();
 
   /// `{top: true, right: true, bottom: true, left: true}` of
   /// `borderSkipped: true` (U `controller.bar.js:211-213`).
-  BorderSkipped.all() {
+  new all() {
     this
       ..top = true
       ..right = true

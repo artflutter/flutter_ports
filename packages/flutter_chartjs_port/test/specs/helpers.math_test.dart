@@ -12,15 +12,8 @@ import 'package:test/test.dart';
 // `math` is helpers.math and `js_math` is dart:math.
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements Point;
 
 /// Jasmine `toBeCloseTo(expected, precision)`: within half a unit in the
 /// `precision`-th decimal place.

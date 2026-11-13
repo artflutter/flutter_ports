@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 /// The tokens of the light preset at their Chart.js v4.5.1 values
 /// (theming.md §4). A chart with them equals an unthemed chart. The tokens
 /// restate these values (theming.md §9).
-abstract final class LightThemeTokens {
+abstract final class LightThemeTokens() {
   /// `Defaults.color` `'#666'` (`core.defaults.js:43`), also the value of
   /// the title and subtitle color routes (`plugin.title.js:158-160`,
   /// `plugin.subtitle.js:45-47`).

@@ -10,15 +10,8 @@ import 'package:test/test.dart';
 
 /// A point element with only the members that the lookups read. The
 /// control points are NaN, which stands for JS `undefined` (`SplinePoint`).
-final class _Point implements PointElement {
-  _Point(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _Point(@override final double x, @override final double y)
+    implements PointElement {
   @override
   Map<String, Object?>? get options => null;
 
@@ -53,12 +46,8 @@ final class _Point implements PointElement {
 
 /// A listener that records each call, as the JavaScript objects of the
 /// probe do.
-final class _Listener with ArrayListener<double> {
-  _Listener(this.name, this.log);
-
-  final String name;
-  final List<List<Object?>> log;
-
+final class _Listener(final String name, final List<List<Object?>> log)
+    with ArrayListener<double> {
   /// Called after each call of [onDataPush].
   void Function()? afterPush;
 
@@ -84,11 +73,11 @@ final class _Listener with ArrayListener<double> {
 }
 
 /// A listener that keeps the empty default members.
-final class _EmptyListener with ArrayListener<double>;
+final class _EmptyListener() with ArrayListener<double>;
 
 /// A listener of any element type, as a dataset controller of
 /// `unknown[]` data is.
-final class _AnyListener with ArrayListener<Object?> {
+final class _AnyListener() with ArrayListener<Object?> {
   final List<List<Object?>> log = [];
 
   @override

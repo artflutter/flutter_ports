@@ -200,7 +200,12 @@ bool _numericPoint(TypedDataItem point) =>
 
 /// The fields read by native default parsers. Custom parsing keys fall back.
 @internal
-enum DataUpdateShape { cartesian, bubble, radial, scalar }
+enum DataUpdateShape() {
+  cartesian,
+  bubble,
+  radial,
+  scalar,
+}
 
 /// Preflight values without executing user conversions. Null means fallback;
 /// true means primitive numeric data, false means supported structured data.
@@ -265,20 +270,13 @@ bool? dataUpdateValues(
 /// dataset identities, counts and label containers stay stable. In-place edits
 /// to options/labels are explicitly outside updateData's caller contract.
 @internal
-final class DataUpdateSnapshot {
-  DataUpdateSnapshot._(
-    this.data,
-    this.options,
-    this.datasets,
-    this.labels,
-    this.counts,
-  );
-  final Object data;
-  final Object options;
-  final List<Object> datasets;
-  final List<({Object? source, int length})> labels;
-  final List<int> counts;
-
+final class DataUpdateSnapshot._(
+  final Object data,
+  final Object options,
+  final List<Object> datasets,
+  final List<({Object? source, int length})> labels,
+  final List<int> counts,
+) {
   List<Object?>? _validatedSources;
   List<bool?>? _primitiveSources;
 
@@ -397,35 +395,26 @@ final class DataUpdateSnapshot {
 /// range update parses the data as `update` does, so new values, a new data
 /// List and new labels are allowed.
 @internal
-final class RangeUpdateSnapshot {
-  RangeUpdateSnapshot._(
-    this.data,
-    this.options,
-    this.datasets,
-    this.type,
-    this.plugins,
-    this.pluginCount,
-  );
-
+final class RangeUpdateSnapshot._(
   /// The `data` object of the config.
-  final Object data;
+  final Object data,
 
   /// The `options` object of the config.
-  final Object options;
+  final Object options,
 
   /// The dataset objects, in their order.
-  final List<Object> datasets;
+  final List<Object> datasets,
 
   /// The chart type of the config (`config.type`).
-  final Object? type;
+  final Object? type,
 
   /// The inline plugins of the config (`config.plugins`): a List, or another
   /// value.
-  final Object? plugins;
+  final Object? plugins,
 
   /// The length of [plugins] when it is a List, else -1.
-  final int pluginCount;
-
+  final int pluginCount,
+) {
   /// The capture of [data] and [options], or null when one of them, the
   /// dataset List or a dataset is not a native object, or when a route of the
   /// typed data scope could run code in a read. [type] and [plugins] are the

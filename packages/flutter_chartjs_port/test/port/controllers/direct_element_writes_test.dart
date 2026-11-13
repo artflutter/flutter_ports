@@ -34,8 +34,8 @@ const green = ui.Color(0xff00ff00);
 
 // Trivial user subclasses: the exact-class guard fails, and each element takes
 // `updateElement`. Their charts are the reference of each twin.
-class _RefDoughnut extends DoughnutController {
-  _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget])
+    extends DoughnutController {
   static final value = JsClass(
     'WritesRefDoughnut',
     superclass: DoughnutController.jsClass,
@@ -47,8 +47,8 @@ class _RefDoughnut extends DoughnutController {
   );
 }
 
-class _RefPie extends PieController {
-  _RefPie(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefPie(super.chart, super.datasetIndex, [super.newTarget])
+    extends PieController {
   static final value = JsClass(
     'WritesRefPie',
     superclass: PieController.jsClass,
@@ -60,8 +60,8 @@ class _RefPie extends PieController {
   );
 }
 
-class _RefPolar extends PolarAreaController {
-  _RefPolar(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefPolar(super.chart, super.datasetIndex, [super.newTarget])
+    extends PolarAreaController {
   static final value = JsClass(
     'WritesRefPolar',
     superclass: PolarAreaController.jsClass,
@@ -73,8 +73,8 @@ class _RefPolar extends PolarAreaController {
   );
 }
 
-class _RefBubble extends BubbleController {
-  _RefBubble(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefBubble(super.chart, super.datasetIndex, [super.newTarget])
+    extends BubbleController {
   static final value = JsClass(
     'WritesRefBubble',
     superclass: BubbleController.jsClass,
@@ -87,8 +87,8 @@ class _RefBubble extends BubbleController {
 }
 
 /// A user controller: `updateElement` sees each element of each loop.
-class _CountingPie extends PieController {
-  _CountingPie(super.chart, super.datasetIndex, [super.newTarget]);
+class _CountingPie(super.chart, super.datasetIndex, [super.newTarget])
+    extends PieController {
   static int updates = 0;
   static final value = JsClass(
     'WritesCountingPie',
@@ -112,7 +112,7 @@ class _CountingPie extends PieController {
 }
 
 // Explicit test opt-in: an arc that takes the typed setters and counts them.
-class _ProbeArc extends ArcElement {
+class _ProbeArc() extends ArcElement {
   int assigns = 0;
   int startAngleWrites = 0;
   void Function()? onActive;
@@ -140,7 +140,7 @@ class _ProbeArc extends ArcElement {
 }
 
 // Explicit test opt-in, as the arc above.
-class _ProbePoint extends PointElement {
+class _ProbePoint() extends PointElement {
   int assigns = 0;
   int skipWrites = 0;
   @override
@@ -165,9 +165,7 @@ void _clearCounts(_ProbeArc probe) {
 }
 
 /// A user arc: its `operator []=` sees each write, by name, in the key order.
-class _UserArc extends ArcElement {
-  _UserArc(this.writes);
-  final List<String> writes;
+class _UserArc(final List<String> writes) extends ArcElement {
   @override
   void operator []=(String prop, Object? value) {
     writes.add(prop);
@@ -176,9 +174,7 @@ class _UserArc extends ArcElement {
 }
 
 /// A user point, as [_UserArc].
-class _UserPoint extends PointElement {
-  _UserPoint(this.writes);
-  final List<String> writes;
+class _UserPoint(final List<String> writes) extends PointElement {
   @override
   void operator []=(String prop, Object? value) {
     writes.add(prop);
@@ -186,14 +182,12 @@ class _UserPoint extends PointElement {
   }
 }
 
-class _ReferenceChart extends Chart {
-  _ReferenceChart(super.item, super.userConfig);
+class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativePointOptions => false;
 }
 
-class _UserRadial extends RadialLinearScale {
-  _UserRadial(super.cfg);
+class _UserRadial(super.cfg) extends RadialLinearScale {
   static final value = JsClass(
     'WritesUserRadial',
     superclass: RadialLinearScale.jsClass,
@@ -202,9 +196,8 @@ class _UserRadial extends RadialLinearScale {
   );
 }
 
-class _CustomList extends ListBase<types.Element> {
-  _CustomList(this.values);
-  final List<types.Element> values;
+class _CustomList(final List<types.Element> values)
+    extends ListBase<types.Element> {
   @override
   int get length => values.length;
   @override
@@ -216,9 +209,7 @@ class _CustomList extends ListBase<types.Element> {
 }
 
 /// A parsed list of the user: the loop must not treat it as a native list.
-class _CustomParsed extends ListBase<Object?> {
-  _CustomParsed(this.values);
-  final List<Object?> values;
+class _CustomParsed(final List<Object?> values) extends ListBase<Object?> {
   @override
   int get length => values.length;
   @override
@@ -230,10 +221,8 @@ class _CustomParsed extends ListBase<Object?> {
 }
 
 /// A scope of the user: each read of its `operator []` is user code.
-class _CountingScope extends MapBase<String, Object?> {
-  _CountingScope(this.own, this.reads);
-  final Map<String, Object?> own;
-  final List<String> reads;
+class _CountingScope(final Map<String, Object?> own, final List<String> reads)
+    extends MapBase<String, Object?> {
   @override
   Object? operator [](Object? key) {
     if (key == 'spacing' || key == 'spacingMode') reads.add(key! as String);
@@ -251,7 +240,7 @@ class _CountingScope extends MapBase<String, Object?> {
 }
 
 /// A platform that keeps the option `animation`.
-class _AnimatedPlatform extends BasicPlatform {
+class _AnimatedPlatform() extends BasicPlatform {
   static final JsClass value = JsClass(
     'WritesAnimatedPlatform',
     superclass: BasicPlatform.jsClass,
@@ -262,9 +251,7 @@ class _AnimatedPlatform extends BasicPlatform {
 }
 
 /// A value whose `ToNumber` is user code.
-class _Counted {
-  _Counted(this.calls);
-  final List<Object?> calls;
+class _Counted(final List<Object?> calls) {
   @override
   String toString() {
     calls.add('toString');
@@ -2005,4 +1992,4 @@ void main() {
 }
 
 /// An axis of a class that the core does not know.
-final class _OtherAxis implements ScaleAxis;
+final class _OtherAxis() implements ScaleAxis;

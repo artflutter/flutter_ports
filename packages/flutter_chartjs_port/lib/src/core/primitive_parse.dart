@@ -7,13 +7,13 @@ import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// A category scale with ordinary, already-resolved label-source reads.
-abstract interface class NativeCategoryParseScale {
+abstract interface class NativeCategoryParseScale() {
   /// Whether [labels] is still the native source used by ordinary parsing.
   bool supportsNativeCategoryParse(List<Object?> labels);
 }
 
 /// A scale whose number/null parsing has the built-in linear behavior.
-abstract interface class NativeNumericParseScale {
+abstract interface class NativeNumericParseScale() {
   /// Unknown subclasses keep their ordinary parse calls.
   bool get supportsNativeNumericParse;
 }

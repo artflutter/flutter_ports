@@ -45,15 +45,15 @@ typedef _LogEntry = ({
 /// delivers them through one throttled proxy per type: the events of one
 /// type coalesce to one in each frame. The chart draws a crosshair at the
 /// position of `getRelativePosition`.
-class EventsDemo extends StatefulWidget {
+class const EventsDemo({super.key}) extends StatefulWidget {
   /// Creates the events tab.
-  const EventsDemo({super.key});
+  this;
 
   @override
   State<EventsDemo> createState() => _EventsDemoState();
 }
 
-class _EventsDemoState extends State<EventsDemo> {
+class _EventsDemoState() extends State<EventsDemo> {
   DemoChart? _chart;
   HTMLCanvasElement? _canvas;
 
@@ -524,17 +524,11 @@ class _EventsDemoState extends State<EventsDemo> {
   }
 }
 
-class _Counter extends StatelessWidget {
-  const _Counter({
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  final String label;
-  final int value;
-  final ui.Color color;
-
+class const _Counter({
+  required final String label,
+  required final int value,
+  required final ui.Color color,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

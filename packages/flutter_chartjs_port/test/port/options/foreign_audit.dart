@@ -45,7 +45,7 @@ String jsKindOf(Object? value) => switch (value) {
 };
 
 /// The pairs of one test file.
-final class ForeignAuditCollector {
+final class ForeignAuditCollector() {
   /// The pairs of the file, as TSV lines, in the order of their first store.
   final Set<String> pairs = <String>{};
 

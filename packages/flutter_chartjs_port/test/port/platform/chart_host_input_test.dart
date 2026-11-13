@@ -86,7 +86,7 @@ const List<String> _domTypes = [
 ];
 
 /// The logs of one case.
-final class _Logs {
+final class _Logs() {
   final List<NativeEvent> dom = [];
   final List<Object?> events = [];
   final List<String> legend = [];
@@ -173,14 +173,12 @@ Map<String, Object?> _observe(Chart chart, _Logs logs) {
 /// a time, as in the generator. A `touchDown` action with the fourth item
 /// `stylus` puts down a stylus, which gives the touch rows (Chart.js ADR
 /// 0037, section 6).
-final class _Pointers {
-  _Pointers(this.tester, this.origin);
-
-  final WidgetTester tester;
+final class _Pointers(
+  final WidgetTester tester,
 
   /// The global position of the canvas origin.
-  final Offset origin;
-
+  final Offset origin,
+) {
   TestGesture? touch;
   TestGesture? mouse;
 

@@ -166,14 +166,9 @@ bool _jsGreaterOrEqual(Object? a, Object? b) {
 /// port makes a [Tick]. The scales of phase 6 construct it. `buildTicks`
 /// returns a list of them, and the `afterBuildTicks` callback can replace the
 /// list. The value is a number (`index.d.ts:1195`).
-final class Tick implements types.Tick {
-  /// The object literal `{value, label, major, significand}`. Dart `null`
-  /// stands for an absent key, JS `undefined`.
-  Tick({required this.value, this.label, this.major, this.significand});
-
+final class Tick({
   /// `value`, the value of the tick.
-  @override
-  double value;
+  @override required var double value,
 
   /// `label`, the label that `generateTickLabels` writes
   /// (core.scale.js:574): the result of the tick `callback`.
@@ -184,17 +179,20 @@ final class Tick implements types.Tick {
   /// `isArray` (core.scale.js:783, :829, :836, :839), so the two values give
   /// the same result. A callback that returns the [undefined] sentinel keeps
   /// it.
-  Object? label;
+  var Object? label,
 
   /// `major`, whether the tick is a major tick. Dart `null` stands for JS
   /// `undefined`, the start value. The readers test it for truthiness
   /// (core.scale.autoskip.js:89).
-  bool? major;
+  var bool? major,
 
   /// scale.logarithmic.js:55 `significand`. Dart `null` stands for JS
   /// `undefined`: the ticks of the other scales do not set it.
-  @override
-  double? significand;
+  @override var double? significand,
+}) implements types.Tick {
+  /// The object literal `{value, label, major, significand}`. Dart `null`
+  /// stands for an absent key, JS `undefined`.
+  this;
 
   /// `$context`, the scriptable context of the tick that [Scale.getContext]
   /// makes (core.scale.js:966-967). Dart `null` stands for JS `undefined`,
@@ -294,7 +292,7 @@ double? _getPixelForGridLine(Scale scale, int index, Object? offsetGridLines) {
 
 /// The cache of one font in `_longestTextCache` (core.scale.js:832): the
 /// object literal `{data: {}, gc: []}`.
-final class _TextCache {
+final class _TextCache() {
   /// `data`, the measured widths, keyed by text.
   final Map<String, double> data = {};
 
@@ -448,24 +446,20 @@ TextAlign? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
 
 /// The `{left, right, top, bottom}` object of `_margins`
 /// (core.scale.js:198-203, :403-408).
-final class _Margins {
-  _Margins(this.left, this.right, this.top, this.bottom);
-
-  double left;
-  double right;
-  double top;
-  double bottom;
-}
+final class _Margins(
+  var double left,
+  var double right,
+  var double top,
+  var double bottom,
+);
 
 /// One full candidate-label measurement, independent of viewport and tick
 /// selection. Keep just one plan; fitted/auto-skipped subsets do not replace it.
-final class _AxisLabelPlan {
-  _AxisLabelPlan(this.labels, this.font, this.sizes);
-
-  final List<String> labels;
-  final TextStyle font;
-  final _LabelSizes sizes;
-
+final class _AxisLabelPlan(
+  final List<String> labels,
+  final TextStyle font,
+  final _LabelSizes sizes,
+) {
   bool matches(List<Tick> ticks, TextStyle currentFont) {
     if (font != currentFont || labels.length != ticks.length) return false;
     for (var i = 0; i < labels.length; i++) {
@@ -488,126 +482,81 @@ final class _AxisLabelPlan {
 
 /// The label sizes of `_computeLabelSizes` (core.scale.js:862-869): the
 /// object `{first, last, widest, highest, widths, heights}`.
-final class _LabelSizes {
-  _LabelSizes(
-    this.first,
-    this.last,
-    this.widest,
-    this.highest,
-    this.widths,
-    this.heights,
-  );
-
-  final ({double width, double height}) first;
-  final ({double width, double height}) last;
-  final ({double width, double height}) widest;
-  final ({double width, double height}) highest;
-  final List<double> widths;
-  final List<double> heights;
-}
+final class _LabelSizes(
+  final ({double width, double height}) first,
+  final ({double width, double height}) last,
+  final ({double width, double height}) widest,
+  final ({double width, double height}) highest,
+  final List<double> widths,
+  final List<double> heights,
+);
 
 /// The line style of `drawLine` in `drawGrid` (core.scale.js:1474): the
 /// object `{width, color, borderDash, borderDashOffset}`.
 ///
 /// The members keep the option values as they are. `drawLine` tests them for
 /// truthiness and gives them to the canvas setters.
-class _LineStyle {
-  _LineStyle(this.width, this.color, this.borderDash, this.borderDashOffset);
-
-  final Object? width;
-  final Object? color;
-  final Object? borderDash;
-  final Object? borderDashOffset;
-}
+class _LineStyle(
+  final Object? width,
+  final Object? color,
+  final Object? borderDash,
+  final Object? borderDashOffset,
+);
 
 /// A grid line item of `_computeGridLineItems` (core.scale.js:1118-1135).
 ///
 /// It is also the line style of the grid line (core.scale.js:1496-1500).
 /// A coordinate that upstream leaves `undefined` is NaN, its `ToNumber`. The
 /// canvas methods convert their arguments with `ToNumber` in JavaScript.
-final class _GridLineItem extends _LineStyle {
-  _GridLineItem({
-    required this.tx1,
-    required this.ty1,
-    required this.tx2,
-    required this.ty2,
-    required this.x1,
-    required this.y1,
-    required this.x2,
-    required this.y2,
-    required Object? width,
-    required Object? color,
-    required Object? borderDash,
-    required Object? borderDashOffset,
-    required this.tickWidth,
-    required this.tickColor,
-    required this.tickBorderDash,
-    required this.tickBorderDashOffset,
-  }) : super(width, color, borderDash, borderDashOffset);
-
-  final double tx1;
-  final double ty1;
-  final double tx2;
-  final double ty2;
-  final double x1;
-  final double y1;
-  final double x2;
-  final double y2;
-  final Object? tickWidth;
-  final Object? tickColor;
-  final Object? tickBorderDash;
-  final Object? tickBorderDashOffset;
+final class _GridLineItem({
+  required final double tx1,
+  required final double ty1,
+  required final double tx2,
+  required final double ty2,
+  required final double x1,
+  required final double y1,
+  required final double x2,
+  required final double y2,
+  required Object? width,
+  required Object? color,
+  required Object? borderDash,
+  required Object? borderDashOffset,
+  required final Object? tickWidth,
+  required final Object? tickColor,
+  required final Object? tickBorderDash,
+  required final Object? tickBorderDashOffset,
+}) extends _LineStyle {
+  this : super(width, color, borderDash, borderDashOffset);
 }
 
 /// A label item of `_computeLabelItems` (core.scale.js:1311-1325), the
 /// object literal `{label, font, textOffset, options}`.
-final class _LabelItem implements types.LabelItem {
-  _LabelItem(this.label, this.font, this.textOffset, this.options);
-
-  @override
-  final Object? label;
-
-  @override
-  final ChartTextStyle font;
-
-  @override
-  final double textOffset;
-
-  @override
-  final types.RenderTextOpts options;
-}
+final class _LabelItem(
+  @override final Object? label,
+  @override final ChartTextStyle font,
+  @override final double textOffset,
+  @override final types.RenderTextOpts options,
+) implements types.LabelItem;
 
 /// The area of `_computeLabelArea` (core.scale.js:1432, :1434): the object
 /// `{top, left, bottom, right}`.
-final class _LabelArea implements types.TRBL {
-  _LabelArea(this.top, this.left, this.bottom, this.right);
-
-  @override
-  final double top;
-
-  @override
-  final double left;
-
-  @override
-  final double bottom;
-
-  @override
-  final double right;
-}
+final class _LabelArea(
+  @override final double top,
+  @override final double left,
+  @override final double bottom,
+  @override final double right,
+) implements types.TRBL;
 
 /// A layer of `_layers` (core.scale.js:1647-1669): the object literal
 /// `{z, draw}`.
 ///
 /// `core.controller.js:637` writes `_idx` into the layer: [idx].
-final class _ScaleLayer implements types.LayoutLayer {
-  _ScaleLayer(this.z, this._draw);
-
-  @override
-  final double z;
+final class _ScaleLayer(
+  @override final double z,
 
   /// The `draw` function of the literal.
-  final void Function(types.ChartArea chartArea) _draw;
-
+  final void Function(types.ChartArea chartArea) _draw,
+) implements types.LayoutLayer {
   @override
   void draw(types.ChartArea chartArea) => _draw(chartArea);
 
@@ -632,7 +581,7 @@ ContextProxy _setContext(Object? options, Object context) =>
 /// equal unless a subclass of [Scale] overrides `draw`. The VM, dart2js and
 /// dart2wasm give this result. [draw] calls [_draw], the upstream body in
 /// [Scale]. A subclass that overrides `draw` can call `super.draw`.
-abstract class _ScalePrototype extends Element {
+abstract class _ScalePrototype() extends Element {
   /// core.scale.js:1623 `draw(chartArea)`. [Scale] has the body.
   ///
   /// Dart `null` for [chartArea] stands for JS `undefined`.
@@ -645,7 +594,8 @@ abstract class _ScalePrototype extends Element {
 /// core.scale.js:168 `Scale`.
 ///
 /// The base class of the scales. A scale is an element and a layout box.
-class Scale extends _ScalePrototype
+class Scale(AnyObject cfg)
+    extends _ScalePrototype
     implements
         types.Scale,
         NativeBarIndexReads,
@@ -661,11 +611,7 @@ class Scale extends _ScalePrototype
   /// canvas context or Dart `null` (JS `null`), and `chart` is the chart.
   /// A value of another type throws a `TypeError` at the cast.
   // eslint-disable-next-line max-statements
-  Scale(AnyObject cfg)
-    : id = cfg['id']! as String,
-      type = cfg['type']! as String,
-      ctx = cfg['ctx'] as CanvasRenderingContext2D?,
-      chart = cfg['chart']! as types.Chart;
+  this;
 
   /// core.scale.js:168 `class Scale` as a value (Chart.js ADR 0020, section
   /// 3).
@@ -681,20 +627,20 @@ class Scale extends _ScalePrototype
 
   /// core.scale.js:175 `id`.
   @override
-  final String id;
+  final String id = cfg['id']! as String;
 
   /// core.scale.js:177 `type`.
   @override
-  final String type;
+  final String type = cfg['type']! as String;
 
   /// core.scale.js:181 `ctx`. The specs replace it with a mock context
   /// (core.scale.tests.js:184). Dart `null` stands for JS `null`: a chart
   /// without a context.
-  CanvasRenderingContext2D? ctx;
+  CanvasRenderingContext2D? ctx = cfg['ctx'] as CanvasRenderingContext2D?;
 
   /// core.scale.js:183 `chart`.
   @override
-  final types.Chart chart;
+  final types.Chart chart = cfg['chart']! as types.Chart;
 
   // implements box
 

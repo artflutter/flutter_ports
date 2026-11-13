@@ -239,12 +239,7 @@ bool writeDenseCurve(
 }
 
 /// The vertices of the narrow curves of a run, by bitmap pixel column.
-final class _DenseWriter {
-  _DenseWriter(this._ctx, this._scale);
-
-  final CanvasPath _ctx;
-  final double _scale;
-
+final class _DenseWriter(final CanvasPath _ctx, final double _scale) {
   /// The vertices of the column after its first one, until the column merges.
   final Float64List _kept = Float64List(_mergeAbove * 2);
 

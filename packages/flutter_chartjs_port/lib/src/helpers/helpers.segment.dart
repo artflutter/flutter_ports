@@ -54,26 +54,12 @@ import 'package:meta/meta.dart';
 /// A segment of `solidSegments` and of `_computeSegments` with `spanGaps`
 /// has no `style` key. Upstream reads it as `undefined`, and [style] is Dart
 /// `null` (see [Segment.style]).
-final class _Segment implements Segment {
-  _Segment({
-    required this.start,
-    required this.end,
-    required this.loop,
-    this.style,
-  });
-
-  @override
-  final double start;
-
-  @override
-  final double end;
-
-  @override
-  final bool loop;
-
-  @override
-  final Object? style;
-}
+final class _Segment({
+  @override required final double start,
+  @override required final double end,
+  @override required final bool loop,
+  @override final Object? style,
+}) implements Segment;
 
 /// Type identity for the stack guard without constructing a dummy line.
 @internal
@@ -694,9 +680,9 @@ Object? _styleColor(Object? value) {
 /// the object does not own (after a `delete` by name). The face
 /// ([TypedRecord.jsRead]) reads it by name, for example the filler
 /// (filler.drawing.js:131).
-final class SegmentStyle extends TypedRecord {
+final class SegmentStyle() extends TypedRecord {
   /// An object without own keys. [_readStyle] writes the seven keys.
-  SegmentStyle();
+  this;
 
   static const List<String> _fieldNames = [
     'backgroundColor',

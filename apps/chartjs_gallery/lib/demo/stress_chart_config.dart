@@ -57,14 +57,10 @@ ChartPaint stressScriptableBackground(Object? context) =>
 /// in each process. Point `i` gets the same values for each point count
 /// larger than `i`. Thus a field of N points has the first N points of the
 /// stress tab.
-final class StressPointField {
+final class StressPointField(int count) {
   /// Makes [count] points at random positions, with random directions and
   /// speeds.
-  StressPointField(int count)
-    : x = Float64List(count),
-      y = Float64List(count),
-      vx = Float64List(count),
-      vy = Float64List(count) {
+  this {
     final random = math.Random(7);
     for (var i = 0; i < count; i++) {
       x[i] = random.nextDouble();
@@ -77,16 +73,16 @@ final class StressPointField {
   }
 
   /// The x positions.
-  final Float64List x;
+  final Float64List x = Float64List(count);
 
   /// The y positions.
-  final Float64List y;
+  final Float64List y = Float64List(count);
 
   /// The x velocities.
-  final Float64List vx;
+  final Float64List vx = Float64List(count);
 
   /// The y velocities.
-  final Float64List vy;
+  final Float64List vy = Float64List(count);
 
   /// Moves the first [n] points by their velocities for [dt] seconds. A
   /// point that goes out of the range 0 to 1 stops at the edge and turns
@@ -125,7 +121,15 @@ final class StressPointField {
 
 /// The chart types of the stress mode `chart` (`--dart-define=TYPE=<name>`).
 /// The name is the `type` of the chart config.
-enum StressChartType {
+enum StressChartType(
+  /// The N choices of the type, in ascending order.
+  final List<int> counts, {
+
+  /// `enableOptionSharing` of the controller (controller.line.js:35-39,
+  /// controller.bar.js:380, controller.bubble.js:38,
+  /// controller.doughnut.js:136). A test compares it with the controller.
+  required final bool sharing,
+}) {
   /// `LineController` with `showLine: false`: the points of phase 5.
   line(stressPointCounts, sharing: true),
 
@@ -150,16 +154,6 @@ enum StressChartType {
   /// `RadarController`: one line of N points on a hidden radial axis.
   radar(stressArcCounts, sharing: false);
 
-  StressChartType(this.counts, {required this.sharing});
-
-  /// The N choices of the type, in ascending order.
-  final List<int> counts;
-
-  /// `enableOptionSharing` of the controller (controller.line.js:35-39,
-  /// controller.bar.js:380, controller.bubble.js:38,
-  /// controller.doughnut.js:136). A test compares it with the controller.
-  final bool sharing;
-
   /// Whether the config is the line and scatter form of Chart.js ADR 0031
   /// section 3: `parsing: false` and the data objects of the field.
   bool get points => this == line || this == scatter;
@@ -173,31 +167,30 @@ const List<int> stressArcCounts = [100, 1000, 5000];
 
 /// The data of a chart of the stress mode `chart`: N items of a type, at
 /// the values of a `StressPointField`.
-final class StressChartScene {
-  /// The first [n] items of [type], at the positions of [field].
-  StressChartScene(this.type, this.n, StressPointField field)
-    : labels = [
-        if (_labeled(type))
-          for (var i = 0; i < n; i++) 'Point $i',
-      ],
-      data = _data(type, n, field);
-
+final class StressChartScene(
   /// The chart type.
-  final StressChartType type;
+  final StressChartType type,
 
   /// The item count.
-  final int n;
+  final int n,
+  StressPointField field,
+) {
+  /// The first [n] items of [type], at the positions of [field].
+  this;
 
   /// `data.labels`: `Point <i>` for bar, doughnut, pie, polarArea and
   /// radar; empty for line, scatter and bubble.
-  final List<Object?> labels;
+  final List<Object?> labels = [
+    if (_labeled(type))
+      for (var i = 0; i < n; i++) 'Point $i',
+  ];
 
   /// The dataset data:
   /// - line, scatter: the data objects `{x, y}` of `field.data(n)`;
   /// - bubble: `{x, y, r}` with `r = 2 + 4 * (vx / 0.3)^2`;
   /// - bar, radar: the numbers `y`;
   /// - doughnut, pie, polarArea: the numbers `0.05 + 0.95 * y`.
-  final List<Object?> data;
+  final List<Object?> data = _data(type, n, field);
 
   /// The bubble radius of the x velocity [vx]: `2 + 4 * (vx / 0.3)^2`.
   static double _radius(double vx) {

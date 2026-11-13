@@ -77,12 +77,7 @@ bool directionEnabled(Object? mode, String dir, Chart chart) {
 
 /// utils.ts:58 `EnabledDirections`: the enabled state of the `x` and `y`
 /// directions. `convertOverScaleMode` changes it.
-final class _Directions {
-  _Directions({required this.x, required this.y});
-
-  bool x;
-  bool y;
-
+final class _Directions({required var bool x, required var bool y}) {
   /// `enabled[axis]` for the `axis` of a scale, a class of the host (row
   /// `adapt-axis-classes`). Another axis (`RAxis`) gives `undefined`
   /// upstream, which is false.

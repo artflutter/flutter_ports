@@ -4,15 +4,15 @@
 import 'package:material_ui/material_ui.dart';
 
 /// One dated group of changes that a lab run can show.
-class ChangeLogEntry {
-  /// A group of [items], as of [date].
-  const ChangeLogEntry(this.date, this.items);
-
+class const ChangeLogEntry(
   /// The day of the changes, as `YYYY-MM-DD`.
-  final String date;
+  final String date,
 
   /// The changes, in plain words, with the figures that they gave.
-  final List<String> items;
+  final List<String> items,
+) {
+  /// A group of [items], as of [date].
+  this;
 }
 
 /// The changes that affect what this lab measures, newest first. Add a line
@@ -86,19 +86,16 @@ const List<ChangeLogEntry> changeLog = [
 /// needs no scrolling and does not move the chart. It waits while a run is
 /// active, because a dialog over the chart would disturb the frames of that
 /// run.
-class ChangeLogButton extends StatelessWidget {
-  /// Creates the button.
-  const ChangeLogButton({
-    required this.enabled,
-    this.iconOnly = false,
-    super.key,
-  });
-
+class const ChangeLogButton({
   /// Whether a press opens the log.
-  final bool enabled;
+  required final bool enabled,
 
   /// Whether the button shows only its icon, with a tooltip, as on a phone.
-  final bool iconOnly;
+  final bool iconOnly = false,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the button.
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -133,9 +130,7 @@ class ChangeLogButton extends StatelessWidget {
   }
 }
 
-class _ChangeLogDialog extends StatelessWidget {
-  const _ChangeLogDialog();
-
+class const _ChangeLogDialog() extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AlertDialog(
     title: const Text('Change log'),

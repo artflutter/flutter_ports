@@ -15,12 +15,12 @@ import 'package:test/test.dart';
 
 /// A curve of our own: [steps] equal steps, with the value of the last
 /// reached step. No constant of `Curves` has this form.
-final class StepsCurve extends Curve {
-  /// A curve of [steps] steps.
-  const StepsCurve(this.steps);
-
+final class const StepsCurve(
   /// The number of steps.
-  final int steps;
+  final int steps,
+) extends Curve {
+  /// A curve of [steps] steps.
+  this;
 
   @override
   double transformInternal(double t) => (t * steps).floorToDouble() / steps;

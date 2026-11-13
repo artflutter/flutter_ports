@@ -71,9 +71,9 @@ final ChartConfig _config = ChartConfig(
 );
 
 /// The replica of the Graphic demo "Area chart".
-class GraphicArea extends StatelessWidget {
+class const GraphicArea({super.key}) extends StatelessWidget {
   /// Creates the replica.
-  const GraphicArea({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) => graphicBox(

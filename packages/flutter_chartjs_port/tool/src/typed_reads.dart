@@ -115,7 +115,7 @@ const Set<String> expressionKeywords = {
 };
 
 /// A by-name form. The order is the line order of a baseline file.
-enum ByNameForm {
+enum ByNameForm() {
   /// A call of `jsGet`, the property read `object[key]`.
   jsGet,
 
@@ -142,27 +142,27 @@ enum ByNameForm {
 }
 
 /// One by-name form in a file.
-final class ByNameSite {
-  /// The [form] on the 1-based [line].
-  const ByNameSite(this.form, this.line);
-
+final class const ByNameSite(
   /// The form.
-  final ByNameForm form;
+  final ByNameForm form,
 
   /// The 1-based line of the start of the form.
-  final int line;
+  final int line,
+) {
+  /// The [form] on the 1-based [line].
+  this;
 
   @override
   String toString() => '$line ${form.name}';
 }
 
 /// The count of each [ByNameForm] in a file or a tree.
-final class FormCounts {
+final class FormCounts() {
   /// Counts that are all 0.
-  FormCounts() : _counts = List.filled(ByNameForm.values.length, 0);
+  this : _counts = List.filled(ByNameForm.values.length, 0);
 
   /// The counts of the forms of [sites].
-  factory FormCounts.of(Iterable<ByNameSite> sites) {
+  factory of(Iterable<ByNameSite> sites) {
     final counts = FormCounts();
     for (final site in sites) {
       counts[site.form]++;
@@ -373,18 +373,18 @@ int _skipSpace(String code, int from) {
 
 /// A class, a mixin or an extension type of a Dart file with a Map
 /// supertype (the structural rule).
-final class MapSupertype {
-  /// The supertype [type] of the declaration [name] on the 1-based [line].
-  const MapSupertype(this.line, this.name, this.type);
-
+final class const MapSupertype(
   /// The 1-based line of the declaration.
-  final int line;
+  final int line,
 
   /// The name of the class, the mixin or the extension type.
-  final String name;
+  final String name,
 
   /// The name of the Map supertype.
-  final String type;
+  final String type,
+) {
+  /// The supertype [type] of the declaration [name] on the 1-based [line].
+  this;
 
   @override
   String toString() => '$line $name $type';
@@ -497,15 +497,15 @@ String formatBaseline(FormCounts counts) => [
 ].join();
 
 /// A baseline line that does not parse.
-final class BaselineFormatException implements Exception {
-  /// The error [message] for the 1-based [line].
-  const BaselineFormatException(this.line, this.message);
-
+final class const BaselineFormatException(
   /// The 1-based line.
-  final int line;
+  final int line,
 
   /// What is wrong.
-  final String message;
+  final String message,
+) implements Exception {
+  /// The error [message] for the 1-based [line].
+  this;
 
   @override
   String toString() => 'line $line: $message';
@@ -559,24 +559,20 @@ FormCounts parseBaseline(String text) {
 }
 
 /// The result of [compareTypedReads].
-final class TypedReadsReport {
-  /// A report with the [findings], the number of counted [files] and the
-  /// [totals] over these files.
-  const TypedReadsReport({
-    required this.findings,
-    required this.files,
-    required this.totals,
-  });
-
+final class const TypedReadsReport({
   /// The errors (a count above its baseline, a stale or malformed baseline)
   /// and the warnings (a count below its baseline).
-  final List<Finding> findings;
+  required final List<Finding> findings,
 
   /// The number of counted files.
-  final int files;
+  required final int files,
 
   /// The sum of the counts of the counted files.
-  final FormCounts totals;
+  required final FormCounts totals,
+}) {
+  /// A report with the [findings], the number of counted [files] and the
+  /// [totals] over these files.
+  this;
 
   /// The number of errors.
   int get errors => findings.where((finding) => finding.isError).length;

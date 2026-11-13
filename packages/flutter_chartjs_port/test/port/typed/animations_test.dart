@@ -92,14 +92,10 @@ double _borderWidth(Chart chart) =>
 
 /// The animation of a property of an element of another library. The type
 /// is all that the library needs: it finds its items in the List by it.
-final class _BadgeAnimation extends PropertyAnimation {
-  const _BadgeAnimation({super.duration});
-}
+final class const _BadgeAnimation({super.duration}) extends PropertyAnimation;
 
 /// The transition of an update mode of another library.
-final class _PulseTransition extends ChartTransition {
-  const _PulseTransition({super.duration});
-}
+final class const _PulseTransition({super.duration}) extends ChartTransition;
 
 void main() {
   group('PropertyAnimation', () {

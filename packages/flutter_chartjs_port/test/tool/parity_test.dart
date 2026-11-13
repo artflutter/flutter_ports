@@ -266,8 +266,8 @@ String _reporter([List<_Test> tests = _tests]) {
 
 /// A repository with the three pins, the two packages and the inputs of
 /// tool 6.
-final class _Repo {
-  _Repo() : tree = FileTree() {
+final class _Repo() {
+  this : tree = FileTree() {
     tree
       ..write('REUSE.toml', ['version = 1'])
       ..write('$_package/pubspec.yaml', ['name: flutter_chartjs_port'])

@@ -43,12 +43,14 @@ import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:meta/meta.dart';
 
 /// scale.linear.js:6 `LinearScale extends LinearScaleBase`.
-class LinearScale extends LinearScaleBase implements NativeNumericParseScale {
+class LinearScale(super.cfg)
+    extends LinearScaleBase
+    implements NativeNumericParseScale {
   /// The constructor of LinearScaleBase (scale.linearbase.js:156). Upstream
   /// declares no constructor in this class.
   ///
-  /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new].
-  LinearScale(super.cfg);
+  /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new].
+  this;
 
   // scale.linear.js:8 `static id = 'linear'`. Scale has the instance field
   // `id`. Thus the value is only in the statics of jsClass.

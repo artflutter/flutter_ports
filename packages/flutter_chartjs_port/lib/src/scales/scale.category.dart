@@ -229,12 +229,14 @@ int _relativeIndex(double value, int length) {
 /// scale.category.js:34 `CategoryScale`.
 ///
 /// The scale of the labels: the value of a label is its index.
-class CategoryScale extends Scale implements NativeCategoryParseScale {
+class CategoryScale(super.cfg)
+    extends Scale
+    implements NativeCategoryParseScale {
   /// scale.category.js:47 `constructor(cfg)`.
   ///
   /// The fields `_startValue`, `_valueRange` and `_addedLabels` get their
   /// start values in their declarations (scale.category.js:51-53).
-  CategoryScale(super.cfg);
+  this;
 
   @override
   @internal

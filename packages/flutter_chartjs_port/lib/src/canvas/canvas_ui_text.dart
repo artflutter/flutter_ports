@@ -61,51 +61,39 @@ ui.TextStyle _textStyle(
 );
 
 /// A laid out text: the paragraph and its metrics.
-final class CanvasTextLayout {
-  CanvasTextLayout._(this.paragraph)
-    : width = paragraph.maxIntrinsicWidth,
-      ascent = paragraph.alphabeticBaseline,
-      descent = paragraph.height - paragraph.alphabeticBaseline,
-      ideographic = paragraph.ideographicBaseline;
-
+final class CanvasTextLayout._(
   /// The paragraph, laid out on one line, aligned left.
-  final ui.Paragraph paragraph;
-
+  final ui.Paragraph paragraph,
+) {
   /// The advance width.
-  final double width;
+  final double width = paragraph.maxIntrinsicWidth;
 
   /// The font ascent: the distance from the top of the paragraph to the
   /// alphabetic baseline.
-  final double ascent;
+  final double ascent = paragraph.alphabeticBaseline;
 
   /// The font descent: the distance from the alphabetic baseline to the
   /// bottom of the paragraph.
-  final double descent;
+  final double descent = paragraph.height - paragraph.alphabeticBaseline;
 
   /// The distance from the top of the paragraph to the ideographic
   /// baseline.
-  final double ideographic;
+  final double ideographic = paragraph.ideographicBaseline;
 }
 
 /// The metrics of a text, without the paragraph.
-final class CanvasTextMetricsData {
-  CanvasTextMetricsData._(CanvasTextLayout layout)
-    : width = layout.width,
-      ascent = layout.ascent,
-      descent = layout.descent,
-      ideographic = layout.ideographic;
-
+final class CanvasTextMetricsData._(CanvasTextLayout layout) {
   /// See [CanvasTextLayout.width].
-  final double width;
+  final double width = layout.width;
 
   /// See [CanvasTextLayout.ascent].
-  final double ascent;
+  final double ascent = layout.ascent;
 
   /// See [CanvasTextLayout.descent].
-  final double descent;
+  final double descent = layout.descent;
 
   /// See [CanvasTextLayout.ideographic].
-  final double ideographic;
+  final double ideographic = layout.ideographic;
 }
 
 /// The bound of the paragraph cache.

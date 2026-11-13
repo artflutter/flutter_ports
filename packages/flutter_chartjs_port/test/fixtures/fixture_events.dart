@@ -36,20 +36,13 @@ types.ChartEvent fixtureMouseMove(Point point) =>
 /// The chart event of [fixtureMouseMove]: the type `mousemove` and the
 /// relative position. The form of `_PointEvent` of
 /// `test/specs/controller.line_test.dart`.
-final class _FixtureEvent implements types.ChartEvent {
-  _FixtureEvent(this.x, this.y);
-
+final class _FixtureEvent(@override final double? x, @override final double? y)
+    implements types.ChartEvent {
   @override
   String get type => 'mousemove';
 
   @override
   NativeEvent? get native => null;
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
 
   @override
   types.Chart? get chart => null;

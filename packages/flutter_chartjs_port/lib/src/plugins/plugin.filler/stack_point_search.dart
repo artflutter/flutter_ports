@@ -28,9 +28,7 @@ final _segmentListTypes = <Type>{
 
 /// Search state owned by one synchronous buildStackLine call, never by a chart.
 /// It only bypasses interpolation for exact samples of an ordinary target line.
-final class StackPointSearch {
-  StackPointSearch._(int count) : _slots = List<_Cursor?>.filled(count, null);
-
+final class StackPointSearch._(int count) {
   /// A foreign source/list/segment can run user code while the stack is built.
   /// Preserve its reads and side effects by using the original algorithm.
   static StackPointSearch? create(
@@ -50,7 +48,7 @@ final class StackPointSearch {
     return StackPointSearch._(targetCount);
   }
 
-  final List<_Cursor?> _slots;
+  final List<_Cursor?> _slots = List<_Cursor?>.filled(count, null);
   bool _enabled = true;
 
   /// Returns null to run the original interpolate call. The final boundary
@@ -80,10 +78,7 @@ final class StackPointSearch {
   }
 }
 
-final class _Cursor {
-  _Cursor(this.points);
-
-  final List<types.PointElement> points;
+final class _Cursor(final List<types.PointElement> points) {
   int _index = 0;
   double _last = double.negativeInfinity;
 

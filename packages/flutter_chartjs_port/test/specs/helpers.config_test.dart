@@ -49,8 +49,8 @@ extension on Object? {
 ///
 /// `operator []` is `[[Get]]`, which also finds the inherited getter.
 /// [keys] and [containsKey] give the own properties only.
-final class _Options extends MapBase<String, Object?> {
-  _Options(Object? option2) {
+final class _Options(Object? option2) extends MapBase<String, Object?> {
+  this {
     _own['option2'] = option2;
   }
 
@@ -75,7 +75,7 @@ final class _Options extends MapBase<String, Object?> {
 
 /// The JavaScript class `MyClass` of the case "should not create proxy for
 /// objects with custom constructor".
-final class _MyClass {
+final class _MyClass() {
   final String string = 'test string';
 
   Object? method([Object? arg = undefined]) {
@@ -85,7 +85,7 @@ final class _MyClass {
 
 /// A `jasmine.createSpy` that records the two arguments of each call and
 /// returns [undefined].
-final class _Spy {
+final class _Spy() {
   /// The arguments of each call.
   final List<List<Object?>> calls = [];
 

@@ -53,9 +53,7 @@ import 'scale_chart_harness_reference.dart';
 /// The test scale `harnessLinear` of the generator: the range of the data
 /// (`getMinMax`), five ticks at equal steps from min to max, and a linear
 /// mapping.
-final class _HarnessLinearScale extends Scale {
-  _HarnessLinearScale(super.cfg);
-
+final class _HarnessLinearScale(super.cfg) extends Scale {
   @override
   void determineDataLimits() {
     final (:min, :max) = getMinMax(false);
@@ -94,9 +92,7 @@ final JsClass _harnessLinearScale = JsClass(
 /// the last tick font of the layout. Before the measure, a save, a font
 /// write and a restore must leave that font. [measures] has the widths of
 /// the measures, in order.
-final class _HarnessMeasureScale extends _HarnessLinearScale {
-  _HarnessMeasureScale(super.cfg);
-
+final class _HarnessMeasureScale(super.cfg) extends _HarnessLinearScale {
   /// The width of each measure, in order.
   final List<double> measures = [];
 
@@ -135,9 +131,7 @@ Map<String, Object?> _measures(Scale scale, Chart chart) =>
 /// depends on the box, the index and the value. Its options have
 /// `display: false`: the base class has no drawing for the position
 /// `chartArea`.
-final class _HarnessRadialScale extends Scale {
-  _HarnessRadialScale(super.cfg);
-
+final class _HarnessRadialScale(super.cfg) extends Scale {
   @override
   void determineDataLimits() {
     final (:min, :max) = getMinMax(false);

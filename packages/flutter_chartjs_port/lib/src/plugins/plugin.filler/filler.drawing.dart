@@ -154,26 +154,12 @@ types.TRBL? clipToIndexBounds(types.ChartArea? area, types.Scale? iScale) {
 
 /// The object `{...area, left, right}` or `{...area, top, bottom}` of
 /// filler.drawing.js:36-37.
-final class _Trbl implements types.TRBL {
-  const _Trbl({
-    required this.top,
-    required this.right,
-    required this.bottom,
-    required this.left,
-  });
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
-  @override
-  final double left;
-}
+final class const _Trbl({
+  @override required final double top,
+  @override required final double right,
+  @override required final double bottom,
+  @override required final double left,
+}) implements types.TRBL;
 
 /// The property key of `cfg.axis` (filler.drawing.js:42): the key of the
 /// axis class in a point (`x` or `y`, [axisDataKey]), else the `ToString`

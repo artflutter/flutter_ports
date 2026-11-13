@@ -40,18 +40,18 @@ const String jsRuntime =
     'package:flutter_chartjs_port/js_semantics.dart in an add-on)';
 
 /// One pattern of the check.
-final class JsSemanticsRule {
-  /// A rule that flags [pattern] with [message].
-  const JsSemanticsRule(this.name, this.pattern, this.message);
-
+final class const JsSemanticsRule(
   /// The short name of the flagged construct.
-  final String name;
+  final String name,
 
   /// The pattern, applied to the code without comments and strings.
-  final String pattern;
+  final String pattern,
 
   /// Why the construct differs from JavaScript, and what to use.
-  final String message;
+  final String message,
+) {
+  /// A rule that flags [pattern] with [message].
+  this;
 }
 
 /// The lexical rules of the check. [resolvedSites] adds more rules.
@@ -199,18 +199,18 @@ final RegExp _jsOkCandidate = RegExp(r'^///?\s*js-ok\b');
 const List<String> jsSemanticsDirectories = ['lib', 'test'];
 
 /// One flagged site.
-final class JsSite {
-  /// The construct [name] on [line], with [message].
-  const JsSite(this.line, this.name, this.message);
-
+final class const JsSite(
   /// The 1-based line.
-  final int line;
+  final int line,
 
   /// The short name of the flagged construct.
-  final String name;
+  final String name,
 
   /// Why the construct differs from JavaScript, and what to use.
-  final String message;
+  final String message,
+) {
+  /// The construct [name] on [line], with [message].
+  this;
 }
 
 /// Whether the check examines a file with [header]. [languages] maps each
@@ -370,10 +370,8 @@ Future<Map<String, List<JsSite>>> resolvedSites(List<String> files) async {
   return result;
 }
 
-final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
-  _ResolvedSitesVisitor(this.unit);
-
-  final ResolvedUnitResult unit;
+final class _ResolvedSitesVisitor(final ResolvedUnitResult unit)
+    extends RecursiveAstVisitor<void> {
   final List<JsSite> sites = [];
 
   static bool _isNumber(DartType? type) =>

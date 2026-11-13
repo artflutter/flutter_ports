@@ -43,9 +43,9 @@ import 'package:meta/meta.dart';
 /// }
 /// ```
 @immutable
-abstract class DecimationAlgorithm {
+abstract class const DecimationAlgorithm() {
   /// An algorithm.
-  const DecimationAlgorithm();
+  this;
 
   /// The decimated items of the [count] items of [data] from the index
   /// [start], for a chart area of [availableWidth] pixels. The items are the

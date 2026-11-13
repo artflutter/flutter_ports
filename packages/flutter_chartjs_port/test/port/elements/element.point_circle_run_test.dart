@@ -23,15 +23,15 @@ import 'package:flutter_test/flutter_test.dart';
 import '../canvas/pixel_compare.dart';
 
 /// A point of a user class: the run stops at it.
-class _UserPoint extends PointElement;
+class _UserPoint() extends PointElement;
 
 /// A point of a user class that gives the type of the built-in class.
-class _DisguisedPoint extends PointElement {
+class _DisguisedPoint() extends PointElement {
   @override
   Type get runtimeType => PointElement;
 }
 
-final class _Area implements ChartArea {
+final class _Area() implements ChartArea {
   @override
   double get left => 10;
   @override

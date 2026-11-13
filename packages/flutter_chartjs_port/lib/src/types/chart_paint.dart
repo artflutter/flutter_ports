@@ -24,11 +24,11 @@ import 'package:meta/meta.dart' show immutable;
 @immutable
 sealed class const ChartPaint() {
   /// A solid Flutter color.
-  const factory ChartPaint.solid(Color color) = SolidChartPaint;
+  const factory solid(Color color) = SolidChartPaint;
 
   /// Keeps the resolved baseline paint: the paint of the tooltip item, or
   /// the style of the canvas.
-  const factory ChartPaint.unchanged() = UnchangedChartPaint;
+  const factory unchanged() = UnchangedChartPaint;
 }
 
 /// A solid color value.
@@ -87,7 +87,7 @@ sealed class const ChartShaderPaint() extends ChartPaint;
 sealed class const ChartGradient() extends ChartShaderPaint {
   /// A gradient along the line from [from] to [to]. Equal points paint
   /// nothing.
-  const factory ChartGradient.linear(
+  const factory linear(
     Offset from,
     Offset to,
     List<Color> colors, {
@@ -97,7 +97,7 @@ sealed class const ChartGradient() extends ChartShaderPaint {
   /// A gradient from the circle of [focal] and [focalRadius] to the circle
   /// of [center] and [radius]. Without [focal], both circles have the
   /// center [center]. Equal circles paint nothing.
-  const factory ChartGradient.radial(
+  const factory radial(
     Offset center,
     double radius,
     List<Color> colors, {
@@ -108,7 +108,7 @@ sealed class const ChartGradient() extends ChartShaderPaint {
 
   /// A gradient around [center]. It starts at [startAngle], in radians
   /// clockwise from the positive x axis, and makes one full turn.
-  const factory ChartGradient.sweep(
+  const factory sweep(
     Offset center,
     List<Color> colors, {
     List<double>? stops,

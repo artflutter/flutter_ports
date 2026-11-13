@@ -18,7 +18,7 @@ import 'package:test/test.dart';
 final Matcher _isUndefined = same(undefined);
 
 /// A Map that records the order of its writes.
-final class _RecordingMap extends MapBase<String, Object?> {
+final class _RecordingMap() extends MapBase<String, Object?> {
   final Map<String, Object?> _map = {};
 
   /// The keys of the writes, in their order.

@@ -95,16 +95,13 @@ List<String> _properties(Diagnosticable object) => [
 ];
 
 /// A parent that shows a ChartView of its config and a [Text] of its label.
-class _Parent extends StatefulWidget {
-  const _Parent({required this.config});
-
-  final Map<String, Object?> config;
-
+class const _Parent({required final Map<String, Object?> config})
+    extends StatefulWidget {
   @override
   State<_Parent> createState() => _ParentState();
 }
 
-class _ParentState extends State<_Parent> {
+class _ParentState() extends State<_Parent> {
   late Map<String, Object?> config = widget.config;
   String label = '';
   String? updateMode;

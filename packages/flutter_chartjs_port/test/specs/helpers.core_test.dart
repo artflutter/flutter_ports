@@ -16,15 +16,10 @@ import 'package:test/test.dart';
 
 /// A JavaScript object literal `{datasetIndex, index}`, passed as an
 /// [ActiveDataPoint].
-final class _Active implements ActiveDataPoint {
-  const _Active(this.datasetIndex, this.index);
-
-  @override
-  final double datasetIndex;
-
-  @override
-  final double index;
-}
+final class const _Active(
+  @override final double datasetIndex,
+  @override final double index,
+) implements ActiveDataPoint;
 
 /// The marker of an argument that a call did not pass.
 const Object _none = Object();
@@ -34,7 +29,7 @@ typedef _Call = ({Object? object, List<Object?> args});
 
 /// A `jasmine.createSpy`: a [JsFunction] that records `this` and up to four
 /// arguments of each call.
-final class _Spy {
+final class _Spy() {
   /// The recorded calls, as `spy.calls.all()`.
   final List<_Call> calls = [];
 

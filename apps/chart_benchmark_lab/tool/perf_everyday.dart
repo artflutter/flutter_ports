@@ -210,7 +210,7 @@ cj.ChartConfig _config({
   );
 }
 
-class _Phase {
+class _Phase() {
   final Stopwatch _watch = Stopwatch()..start();
   int total = 0;
   int count = 0;
@@ -248,13 +248,12 @@ Map<String, Object?> _timingPlugin() => <String, Object?>{
   },
 };
 
-class _Harness extends StatefulWidget {
-  const _Harness({super.key});
+class const _Harness({super.key}) extends StatefulWidget {
   @override
   State<_Harness> createState() => _HarnessState();
 }
 
-class _HarnessState extends State<_Harness> {
+class _HarnessState() extends State<_Harness> {
   cj.ChartConfig? config;
   double widthDelta = 0;
   int mount = 0;
@@ -300,7 +299,7 @@ final _harnessKey = GlobalKey<_HarnessState>();
 Future<void> _delay(int ms) => Future<void>.delayed(Duration(milliseconds: ms));
 
 /// A window of frames with their timings.
-class _Capture {
+class _Capture() {
   final List<FrameSample> frames = [];
   final List<double> busy = [];
   bool _on = false;

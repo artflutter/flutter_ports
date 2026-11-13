@@ -44,7 +44,7 @@ typedef NativeEventListener = void Function(NativeEvent event);
 /// A canvas element gives itself as a target through
 /// `canvas.eventTarget`, and its document through `canvas.ownerDocument`
 /// (the extension `CanvasEventTarget` of `chart_host.dart`).
-abstract interface class NativeEventTarget {
+abstract interface class NativeEventTarget() {
   /// `addEventListener(type, listener, {passive})`.
   ///
   /// A listener that the target already has for [type] is not added again:
@@ -76,24 +76,24 @@ abstract interface class NativeEventTarget {
 /// As in the DOM, [width] and [height] can be negative. [left], [top],
 /// [right] and [bottom] then give the normalized edges.
 @immutable
-final class DOMRect {
+final class const DOMRect(
+  /// `x`: the origin on the x axis.
+  final double x,
+
+  /// `y`: the origin on the y axis.
+  final double y,
+
+  /// `width`. It can be negative.
+  final double width,
+
+  /// `height`. It can be negative.
+  final double height,
+) {
   /// `new DOMRect(x, y, width, height)`.
-  const DOMRect(this.x, this.y, this.width, this.height);
+  this;
 
   /// The rectangle of an element outside the document: all zeros.
   static const DOMRect zero = DOMRect(0, 0, 0, 0);
-
-  /// `x`: the origin on the x axis.
-  final double x;
-
-  /// `y`: the origin on the y axis.
-  final double y;
-
-  /// `width`. It can be negative.
-  final double width;
-
-  /// `height`. It can be negative.
-  final double height;
 
   /// `left`: `min(x, x + width)`.
   double get left => math.min(x, x + width);
@@ -156,121 +156,98 @@ final class DOMRect {
 ///   document of `canvas.ownerDocument`. A dispatch sets it.
 /// - [source] is the Flutter `PointerEvent`, the Flutter `KeyEvent` of a key,
 ///   or `null` (in tests, and for the `mouseout` of a focus loss).
-final class NativeEvent {
+final class NativeEvent({
+  /// The DOM event name, for example `'mousemove'`.
+  required final String type,
+
+  /// The DOM `offsetX`, in logical pixels. NaN for a `touch*` event and for
+  /// a key event.
+  required final double offsetX,
+
+  /// The DOM `offsetY`, in logical pixels. NaN for a `touch*` event and for
+  /// a key event.
+  required final double offsetY,
+
+  /// The touch pointers that went down on the chart host, sorted by pointer
+  /// id (the DOM `targetTouches`). Empty for an event of another device and
+  /// for a `touchend` after the last finger lifts.
+  final List<NativeTouch> touches = const [],
+  var Object? _target,
+
+  /// The Flutter event that this event stands for, an opaque value.
+  final Object? source,
+
+  /// `bubbles`: whether a dispatch on a canvas also calls the listeners of
+  /// its document. The DOM default is false.
+  final bool bubbles = false,
+
+  /// `cancelable`: whether [preventDefault] sets [defaultPrevented]. The DOM
+  /// default is false.
+  final bool cancelable = false,
+
+  /// `clientX`: the position on the x axis in the logical pixels of the
+  /// view. NaN for a `touch*` event and for a key event of the host.
+  final double clientX = 0,
+
+  /// `clientY`: the position on the y axis in the logical pixels of the
+  /// view. NaN for a `touch*` event and for a key event of the host.
+  final double clientY = 0,
+
+  /// `MouseEvent.button`: the button that changed. 0 is the main button, 1
+  /// the auxiliary (middle) button, 2 the secondary button, 3 back and 4
+  /// forward. A `pointer*` event with no change of the buttons has -1.
+  final int button = 0,
+
+  /// `MouseEvent.buttons`: the bit set of the pressed buttons. 1 is the main
+  /// button or the contact of a touch or a pen, 2 the secondary button or
+  /// the pen barrel, 4 the auxiliary button, 8 back, 16 forward and 32 the
+  /// eraser.
+  final int buttons = 0,
+
+  /// `PointerEvent.pointerId`. 1 is the mouse. 0 for an event that is not a
+  /// `PointerEvent`.
+  final int pointerId = 0,
+
+  /// `PointerEvent.pointerType`: `'mouse'`, `'pen'`, `'touch'`, or `''`.
+  final String pointerType = '',
+
+  /// `WheelEvent.deltaX`, in [deltaMode] units.
+  final double deltaX = 0,
+
+  /// `WheelEvent.deltaY`, in [deltaMode] units. Positive scrolls down.
+  final double deltaY = 0,
+
+  /// `WheelEvent.deltaMode`: 0 is pixels, 1 lines, 2 pages.
+  final int deltaMode = 0,
+
+  /// `KeyboardEvent.key`: the UI Events key value, for example `'Escape'`,
+  /// `'ArrowLeft'` or `'a'`.
+  final String key = '',
+
+  /// `ctrlKey`: whether a Control key was down.
+  final bool ctrlKey = false,
+
+  /// `altKey`: whether an Alt key was down.
+  final bool altKey = false,
+
+  /// `shiftKey`: whether a Shift key was down.
+  final bool shiftKey = false,
+
+  /// `metaKey`: whether a Meta key was down.
+  final bool metaKey = false,
+}) {
   /// Creates a native event of the DOM event name [type].
   ///
   /// Each optional field has the default of its DOM init dictionary
   /// (`EventInit`, `MouseEventInit`, `PointerEventInit`, `WheelEventInit`,
   /// `KeyboardEventInit`). [target] serves an event that a caller passes to
   /// a listener directly: a dispatch replaces it.
-  NativeEvent({
-    required this.type,
-    required this.offsetX,
-    required this.offsetY,
-    this.touches = const [],
-    this._target,
-    this.source,
-    this.bubbles = false,
-    this.cancelable = false,
-    this.clientX = 0,
-    this.clientY = 0,
-    this.button = 0,
-    this.buttons = 0,
-    this.pointerId = 0,
-    this.pointerType = '',
-    this.deltaX = 0,
-    this.deltaY = 0,
-    this.deltaMode = 0,
-    this.key = '',
-    this.ctrlKey = false,
-    this.altKey = false,
-    this.shiftKey = false,
-    this.metaKey = false,
-  });
-
-  /// The DOM event name, for example `'mousemove'`.
-  final String type;
-
-  /// The DOM `offsetX`, in logical pixels. NaN for a `touch*` event and for
-  /// a key event.
-  final double offsetX;
-
-  /// The DOM `offsetY`, in logical pixels. NaN for a `touch*` event and for
-  /// a key event.
-  final double offsetY;
-
-  /// The touch pointers that went down on the chart host, sorted by pointer
-  /// id (the DOM `targetTouches`). Empty for an event of another device and
-  /// for a `touchend` after the last finger lifts.
-  final List<NativeTouch> touches;
-
-  /// The Flutter event that this event stands for, an opaque value.
-  final Object? source;
-
-  /// `bubbles`: whether a dispatch on a canvas also calls the listeners of
-  /// its document. The DOM default is false.
-  final bool bubbles;
-
-  /// `cancelable`: whether [preventDefault] sets [defaultPrevented]. The DOM
-  /// default is false.
-  final bool cancelable;
-
-  /// `clientX`: the position on the x axis in the logical pixels of the
-  /// view. NaN for a `touch*` event and for a key event of the host.
-  final double clientX;
-
-  /// `clientY`: the position on the y axis in the logical pixels of the
-  /// view. NaN for a `touch*` event and for a key event of the host.
-  final double clientY;
-
-  /// `MouseEvent.button`: the button that changed. 0 is the main button, 1
-  /// the auxiliary (middle) button, 2 the secondary button, 3 back and 4
-  /// forward. A `pointer*` event with no change of the buttons has -1.
-  final int button;
-
-  /// `MouseEvent.buttons`: the bit set of the pressed buttons. 1 is the main
-  /// button or the contact of a touch or a pen, 2 the secondary button or
-  /// the pen barrel, 4 the auxiliary button, 8 back, 16 forward and 32 the
-  /// eraser.
-  final int buttons;
-
-  /// `PointerEvent.pointerId`. 1 is the mouse. 0 for an event that is not a
-  /// `PointerEvent`.
-  final int pointerId;
-
-  /// `PointerEvent.pointerType`: `'mouse'`, `'pen'`, `'touch'`, or `''`.
-  final String pointerType;
-
-  /// `WheelEvent.deltaX`, in [deltaMode] units.
-  final double deltaX;
-
-  /// `WheelEvent.deltaY`, in [deltaMode] units. Positive scrolls down.
-  final double deltaY;
-
-  /// `WheelEvent.deltaMode`: 0 is pixels, 1 lines, 2 pages.
-  final int deltaMode;
-
-  /// `KeyboardEvent.key`: the UI Events key value, for example `'Escape'`,
-  /// `'ArrowLeft'` or `'a'`.
-  final String key;
-
-  /// `ctrlKey`: whether a Control key was down.
-  final bool ctrlKey;
-
-  /// `altKey`: whether an Alt key was down.
-  final bool altKey;
-
-  /// `shiftKey`: whether a Shift key was down.
-  final bool shiftKey;
-
-  /// `metaKey`: whether a Meta key was down.
-  final bool metaKey;
+  this;
 
   /// The DOM `event.target`: the canvas element of the chart, or the
   /// document of `canvas.ownerDocument`. A dispatch sets it. Before a
   /// dispatch, it is the value of the constructor.
   Object? get target => _target;
-  Object? _target;
 
   /// `defaultPrevented`: whether a listener canceled the event.
   bool get defaultPrevented => _canceled;

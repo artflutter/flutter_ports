@@ -313,11 +313,11 @@ void _consoleWarn(String message) {
 }
 
 /// scale.linearbase.js:154 `LinearScaleBase extends Scale`.
-class LinearScaleBase extends Scale {
+class LinearScaleBase(super.cfg) extends Scale {
   /// scale.linearbase.js:156 `constructor(cfg)`.
   ///
-  /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new].
-  LinearScaleBase(super.cfg);
+  /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new].
+  this;
 
   /// scale.linearbase.js:154 `class LinearScaleBase` as a value (Chart.js
   /// ADR 0020, section 3).

@@ -70,9 +70,9 @@ typedef PluginDescriptor = ({Object plugin, Object options});
 typedef FilterCallback = bool Function(PluginDescriptor value);
 
 /// core.plugins.js:20 `PluginService`, the default export.
-final class PluginService {
+final class PluginService() {
   /// core.plugins.js:21 `constructor()`.
-  PluginService();
+  this;
 
   /// core.plugins.js:22 `_init`: the descriptors of all plugins, also the
   /// disabled ones, from the hook `beforeInit` to the hook `afterDestroy`.

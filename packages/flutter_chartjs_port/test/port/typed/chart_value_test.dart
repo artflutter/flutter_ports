@@ -22,7 +22,7 @@ ChartPaint _colorFor(ChartContext context) =>
 const _derived = SolidChartPaint(ui.Color(0xff00ff00));
 SolidChartPaint _derivedFor(ChartContext context) => _derived;
 
-class _Provider {
+class _Provider() {
   ChartPaint choose(ChartContext context) => _red;
 }
 

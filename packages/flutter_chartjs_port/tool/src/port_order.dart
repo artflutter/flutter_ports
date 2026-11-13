@@ -118,39 +118,39 @@ String phaseTitle(int phase) {
 // The module reader.
 
 /// A part of an upstream module that the helper cannot read.
-final class ModuleSyntaxError implements Exception {
-  /// An error on [line] of the module.
-  const ModuleSyntaxError(this.line, this.message);
-
+final class const ModuleSyntaxError(
   /// The 1-based line.
-  final int line;
+  final int line,
 
   /// What the helper cannot read.
-  final String message;
+  final String message,
+) implements Exception {
+  /// An error on [line] of the module.
+  this;
 
   @override
   String toString() => 'line $line: $message';
 }
 
 /// One name of an import or a re-export.
-final class ImportBinding {
-  /// The name [imported] of the target module, bound to [local].
-  const ImportBinding(this.imported, this.local, {this.typeOnly = false});
-
+final class const ImportBinding(
   /// The name in the target module: `default`, `*` for the namespace, or an
   /// exported name.
-  final String imported;
+  final String imported,
 
   /// The name in the importing module (an import), or the exported name (a
   /// re-export).
-  final String local;
+  final String local, {
 
   /// Whether the specifier has the `type` modifier.
-  final bool typeOnly;
+  final bool typeOnly = false,
+}) {
+  /// The name [imported] of the target module, bound to [local].
+  this;
 }
 
 /// The form of a [ModuleImport].
-enum ImportKind {
+enum ImportKind() {
   /// `import ... from '<specifier>'` or `import '<specifier>'`.
   import,
 
@@ -165,31 +165,25 @@ enum ImportKind {
 }
 
 /// One import, re-export or JSDoc `import()` type of an upstream module.
-final class ModuleImport {
-  /// An import of [specifier] on [line].
-  const ModuleImport({
-    required this.line,
-    required this.specifier,
-    required this.kind,
-    required this.bindings,
-    this.typeOnly = false,
-  });
-
+final class const ModuleImport({
   /// The 1-based line of the `import` or `export` keyword.
-  final int line;
+  required final int line,
 
   /// The module specifier, for example `../helpers/helpers.core.js`.
-  final String specifier;
+  required final String specifier,
 
   /// The form of the statement.
-  final ImportKind kind;
+  required final ImportKind kind,
 
   /// The names. Empty for a side-effect import and for `export *`.
-  final List<ImportBinding> bindings;
+  required final List<ImportBinding> bindings,
 
   /// Whether the statement is `import type` or `export type`, or a JSDoc
   /// type.
-  final bool typeOnly;
+  final bool typeOnly = false,
+}) {
+  /// An import of [specifier] on [line].
+  this;
 
   /// Whether the module needs all of the target: a side-effect import, a
   /// namespace import or `export *`.
@@ -199,28 +193,23 @@ final class ModuleImport {
 }
 
 /// The imports and exports of one upstream module.
-final class ModuleSyntax {
-  /// The syntax of a module with [lines] lines.
-  const ModuleSyntax({
-    required this.imports,
-    required this.localExports,
-    required this.defaultName,
-    required this.lines,
-  });
-
+final class const ModuleSyntax({
   /// The imports, re-exports and JSDoc types, in source order.
-  final List<ModuleImport> imports;
+  required final List<ModuleImport> imports,
 
   /// The exports of the module's own bindings: the exported name and the
   /// local name. A declaration (`export class A`) maps `A` to `A`.
-  final Map<String, String> localExports;
+  required final Map<String, String> localExports,
 
   /// The name of the default export: the class, the function or the
   /// identifier of `export default`, or null.
-  final String? defaultName;
+  required final String? defaultName,
 
   /// The `wc -l` count: the number of line ends.
-  final int lines;
+  required final int lines,
+}) {
+  /// The syntax of a module with [lines] lines.
+  this;
 }
 
 /// Reads the imports and exports of the module [text]. Throws a
@@ -266,21 +255,24 @@ final RegExp _jsDocImport = RegExp(
   r'''import\(\s*(['"])([^'"\n]+)\1\s*\)(?:\s*\.\s*([A-Za-z_$][\w$]*))?''',
 );
 
-enum _Kind { word, string, punct, template, regex }
+enum _Kind() {
+  word,
+  string,
+  punct,
+  template,
+  regex,
+}
 
-final class _Token {
-  const _Token(this.kind, this.text, this.line, this.depth);
-
-  final _Kind kind;
+final class const _Token(
+  final _Kind kind,
 
   /// The text, or the value of a string literal.
-  final String text;
-
-  final int line;
+  final String text,
+  final int line,
 
   /// The number of open `{` and `${` before the token.
-  final int depth;
-
+  final int depth,
+) {
   bool isWord([String? word]) =>
       kind == _Kind.word && (word == null || text == word);
 
@@ -330,10 +322,7 @@ bool _isWordChar(int c) =>
 
 /// A JavaScript and TypeScript tokenizer. It keeps words, string values and
 /// punctuators, and skips the content of templates and regular expressions.
-final class _Lexer {
-  _Lexer(this.text);
-
-  final String text;
+final class _Lexer(final String text) {
   final List<_Token> tokens = [];
   final List<({int line, String text})> comments = [];
   int _pos = 0;
@@ -521,10 +510,7 @@ final class _Lexer {
 }
 
 /// Reads the top-level `import` and `export` statements of the tokens.
-final class _Parser {
-  _Parser(this.tokens);
-
-  final List<_Token> tokens;
+final class _Parser(final List<_Token> tokens) {
   final List<ModuleImport> imports = [];
   final Map<String, String> localExports = {};
   String? defaultName;
@@ -790,7 +776,7 @@ final class _Parser {
 // The port state.
 
 /// The state of a `parity.md` status (porting-flow.md section 1 step 7).
-enum ParityState {
+enum ParityState() {
   /// `not started`.
   notStarted,
 
@@ -840,18 +826,18 @@ enum ParityState {
 }
 
 /// One row of a `parity.md` table of the upstream sources.
-final class ParityRow {
-  /// The row of [path] on [line] with its [status].
-  const ParityRow(this.path, this.line, this.status);
-
+final class const ParityRow(
   /// The project-relative upstream path, for example `src/core/core.scale.js`.
-  final String path;
+  final String path,
 
   /// The 1-based line.
-  final int line;
+  final int line,
 
   /// The text of the status column.
-  final String status;
+  final String status,
+) {
+  /// The row of [path] on [line] with its [status].
+  this;
 }
 
 /// The rows of the tables in [markdown] whose first cell links an upstream
@@ -894,7 +880,7 @@ Map<String, String> declaredTypes(Map<String, String> files) {
 // The report.
 
 /// What a [Dependency] names.
-enum DependencyKind {
+enum DependencyKind() {
   /// A module of `src/`.
   module,
 
@@ -906,16 +892,16 @@ enum DependencyKind {
 }
 
 /// A value import of a module, by the module that declares the names.
-final class Dependency {
-  /// A dependency on [target].
-  Dependency(this.target, this.kind);
-
+final class Dependency(
   /// The module path, the package name, or the specifier that does not
   /// resolve.
-  final String target;
+  final String target,
 
   /// What [target] names.
-  final DependencyKind kind;
+  final DependencyKind kind,
+) {
+  /// A dependency on [target].
+  this;
 
   /// The imported names. Empty when the module needs all of [target].
   final Set<String> names = {};
@@ -926,23 +912,23 @@ final class Dependency {
 }
 
 /// A type that a module imports for its types only (Chart.js ADR 0003).
-final class Interface {
-  /// The type [name] of the module [from].
-  const Interface(this.name, this.from, this.declaredIn);
-
+final class const Interface(
   /// The type name.
-  final String name;
+  final String name,
 
   /// The upstream module (or package) that declares the type.
-  final String from;
+  final String from,
 
   /// The package-relative Dart file of `lib/src/types/` that declares
   /// [name], or null.
-  final String? declaredIn;
+  final String? declaredIn,
+) {
+  /// The type [name] of the module [from].
+  this;
 }
 
 /// The port category of a module.
-enum ModuleCategory {
+enum ModuleCategory() {
   /// The status is `ported`, `replaced`, `distributed` or `n/a`.
   done,
 
@@ -958,42 +944,33 @@ enum ModuleCategory {
 }
 
 /// The report of one upstream module.
-final class ModuleReport {
-  /// The report of the module [path].
-  ModuleReport({
-    required this.path,
-    required this.lines,
-    required this.phase,
-    required this.parityStatus,
-    required this.dartFile,
-    required this.dependencies,
-    required this.interfaces,
-    required this.error,
-  });
-
+final class ModuleReport({
   /// The project-relative path, for example `src/core/core.scale.js`.
-  final String path;
+  required final String path,
 
   /// The `wc -l` count of the upstream file.
-  final int lines;
+  required final int lines,
 
   /// The phase of porting-flow.md section 5 ([phaseOf]).
-  final int phase;
+  required final int phase,
 
   /// The `parity.md` status, or null without a row.
-  final String? parityStatus;
+  required final String? parityStatus,
 
   /// The package-relative Dart file whose header names the module, or null.
-  final String? dartFile;
+  required final String? dartFile,
 
   /// The value imports, by target.
-  final List<Dependency> dependencies;
+  required final List<Dependency> dependencies,
 
   /// The types of the type-only imports.
-  final List<Interface> interfaces;
+  required final List<Interface> interfaces,
 
   /// Why the helper cannot read the module, or null.
-  final String? error;
+  required final String? error,
+}) {
+  /// The report of the module [path].
+  this;
 
   /// The category.
   ModuleCategory category = ModuleCategory.blocked;
@@ -1010,34 +987,27 @@ final class ModuleReport {
 }
 
 /// The result of [computePortOrder].
-final class PortOrder {
-  /// The report of the upstream [project] at [version].
-  const PortOrder({
-    required this.project,
-    required this.version,
-    required this.sourceDirectory,
-    required this.modules,
-    required this.findings,
-    required this.files,
-  });
-
+final class const PortOrder({
   /// The project, `Chart.js`.
-  final String project;
+  required final String project,
 
   /// The pinned version, for example `v4.5.1`.
-  final String version;
+  required final String version,
 
   /// The repository-relative directory of the modules.
-  final String sourceDirectory;
+  required final String sourceDirectory,
 
   /// One report for each module, sorted by phase and path.
-  final List<ModuleReport> modules;
+  required final List<ModuleReport> modules,
 
   /// The errors and warnings.
-  final List<Finding> findings;
+  required final List<Finding> findings,
 
   /// The number of files that the helper read: modules and Dart files.
-  final int files;
+  required final int files,
+}) {
+  /// The report of the upstream [project] at [version].
+  this;
 
   /// The modules of [category], in phase order.
   List<ModuleReport> inCategory(ModuleCategory category) => [
@@ -1047,29 +1017,29 @@ final class PortOrder {
 }
 
 /// An input of the helper that is missing or does not parse.
-final class PortOrderInputError implements Exception {
-  /// The error [message].
-  const PortOrderInputError(this.message);
-
+final class const PortOrderInputError(
   /// What is missing.
-  final String message;
+  final String message,
+) implements Exception {
+  /// The error [message].
+  this;
 
   @override
   String toString() => message;
 }
 
 /// The inputs of the helper.
-final class PortOrderInput {
-  /// The helper for [package] in [repository]. Both are absolute paths with
-  /// `/` separators.
-  const PortOrderInput({required this.repository, required this.package});
-
+final class const PortOrderInput({
   /// The repository root, with `third_party/` and `REUSE.toml`.
-  final String repository;
+  required final String repository,
 
   /// The `flutter_chartjs_port` package, with `tool/port_sources.yaml`,
   /// `doc/parity.md` and `lib/`.
-  final String package;
+  required final String package,
+}) {
+  /// The helper for [package] in [repository]. Both are absolute paths with
+  /// `/` separators.
+  this;
 }
 
 /// The extensions of the upstream modules.
@@ -1468,14 +1438,21 @@ Map<String, ParityRow> _parityStatuses(
 typedef _Origin = ({String target, DependencyKind kind, String name});
 
 /// The upstream modules and their imports.
-final class _Graph {
-  _Graph(
-    Map<String, String> texts, {
-    required this.externals,
-    required this.pinPath,
-    required this.pinFile,
-    required this.findings,
-  }) {
+final class _Graph(
+  Map<String, String> texts, {
+
+  /// The project names of `tool/port_sources.yaml`: the packages that the
+  /// port has.
+  required final Set<String> externals,
+
+  /// The repository-relative directory of the pin.
+  required final String pinPath,
+
+  /// Whether a path (relative to the pin) is a file of the pin.
+  required final bool Function(String path) pinFile,
+  required final List<Finding> findings,
+}) {
+  this {
     for (final MapEntry(key: path, value: text) in texts.entries) {
       lines[path] = '\n'.allMatches(text).length;
       try {
@@ -1504,15 +1481,6 @@ final class _Graph {
     }
   }
 
-  /// The project names of `tool/port_sources.yaml`: the packages that the
-  /// port has.
-  final Set<String> externals;
-
-  /// The repository-relative directory of the pin.
-  final String pinPath;
-
-  final List<Finding> findings;
-
   /// The `wc -l` count of each module.
   final Map<String, int> lines = {};
 
@@ -1521,9 +1489,6 @@ final class _Graph {
 
   /// The error of each module that the helper cannot read.
   final Map<String, String> errors = {};
-
-  /// Whether a path (relative to the pin) is a file of the pin.
-  final bool Function(String path) pinFile;
 
   /// Whether the relative [specifier] in [importer] names a JSON file of the
   /// pin: data, not a module. `core.controller.js:12` imports `version` from

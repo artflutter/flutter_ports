@@ -67,9 +67,9 @@ void drawCaption(
 ///
 /// Every drawing goes through the ported `helpers.canvas` on the
 /// `UiCanvasContext` of a chart host.
-class CanvasDemo extends StatelessWidget {
+class const CanvasDemo({super.key}) extends StatelessWidget {
   /// Creates the canvas tab.
-  const CanvasDemo({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -106,14 +106,12 @@ const List<(String, Object?)> pointStyleChoices = [
   ('image', null),
 ];
 
-class _PointStylesCard extends StatefulWidget {
-  const _PointStylesCard();
-
+class const _PointStylesCard() extends StatefulWidget {
   @override
   State<_PointStylesCard> createState() => _PointStylesCardState();
 }
 
-class _PointStylesCardState extends State<_PointStylesCard> {
+class _PointStylesCardState() extends State<_PointStylesCard> {
   final Set<String> _on = {for (final (name, _) in pointStyleChoices) name};
   double _radius = 14;
   double _rotation = 0;
@@ -292,14 +290,12 @@ class _PointStylesCardState extends State<_PointStylesCard> {
 
 // renderText.
 
-class _RenderTextCard extends StatefulWidget {
-  const _RenderTextCard();
-
+class const _RenderTextCard() extends StatefulWidget {
   @override
   State<_RenderTextCard> createState() => _RenderTextCardState();
 }
 
-class _RenderTextCardState extends State<_RenderTextCard> {
+class _RenderTextCardState() extends State<_RenderTextCard> {
   bool _underline = false;
   bool _strikethrough = false;
   bool _stroke = true;
@@ -467,14 +463,12 @@ class _RenderTextCardState extends State<_RenderTextCard> {
 
 // addRoundedRectPath.
 
-class _RoundedRectCard extends StatefulWidget {
-  const _RoundedRectCard();
-
+class const _RoundedRectCard() extends StatefulWidget {
   @override
   State<_RoundedRectCard> createState() => _RoundedRectCardState();
 }
 
-class _RoundedRectCardState extends State<_RoundedRectCard> {
+class _RoundedRectCardState() extends State<_RoundedRectCard> {
   final Map<String, double> _radii = {
     'topLeft': 24,
     'topRight': 4,
@@ -569,14 +563,12 @@ const List<(double, double)> _linePoints = [
   (0.97, 0.15),
 ];
 
-class _LinesCard extends StatefulWidget {
-  const _LinesCard();
-
+class const _LinesCard() extends StatefulWidget {
   @override
   State<_LinesCard> createState() => _LinesCardState();
 }
 
-class _LinesCardState extends State<_LinesCard> {
+class _LinesCardState() extends State<_LinesCard> {
   bool _path2d = false;
 
   static const List<(String, String)> _modes = [
@@ -687,14 +679,12 @@ class _LinesCardState extends State<_LinesCard> {
 
 // clipArea.
 
-class _ClipCard extends StatefulWidget {
-  const _ClipCard();
-
+class const _ClipCard() extends StatefulWidget {
   @override
   State<_ClipCard> createState() => _ClipCardState();
 }
 
-class _ClipCardState extends State<_ClipCard> {
+class _ClipCardState() extends State<_ClipCard> {
   bool _clip = true;
   double _inset = 36;
 
@@ -775,14 +765,13 @@ class _ClipCardState extends State<_ClipCard> {
 
 // Gradients, patterns and line dashes.
 
-class _PaintCard extends StatefulWidget {
-  const _PaintCard();
-
+class const _PaintCard() extends StatefulWidget {
   @override
   State<_PaintCard> createState() => _PaintCardState();
 }
 
-class _PaintCardState extends State<_PaintCard>
+class _PaintCardState()
+    extends State<_PaintCard>
     with SingleTickerProviderStateMixin {
   late final UiImageSource _tile = _makeTile();
   late final _ticker = createTicker(_tick);

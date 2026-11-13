@@ -52,9 +52,7 @@ import 'scale_linearbase_reference.dart';
 /// The test scale `testLinearBase` of the generator: [LinearScaleBase] with
 /// the data limits and the pixel mapping of the linear scale
 /// (scale.linear.js:20-50).
-class _TestLinearBaseScale extends LinearScaleBase {
-  _TestLinearBaseScale(super.cfg);
-
+class _TestLinearBaseScale(super.cfg) extends LinearScaleBase {
   @override
   void determineDataLimits() {
     final (:min, :max) = getMinMax(true);
@@ -91,9 +89,7 @@ final JsClass _testLinearBaseScale = JsClass(
 
 /// The test scale `testLinearBaseLimit` of the generator: `testLinearBase`
 /// with the computeTickLimit of the linear scale (scale.linear.js:34-41).
-final class _TestLinearBaseLimitScale extends _TestLinearBaseScale {
-  _TestLinearBaseLimitScale(super.cfg);
-
+final class _TestLinearBaseLimitScale(super.cfg) extends _TestLinearBaseScale {
   @override
   double computeTickLimit() {
     final horizontal = isHorizontal();

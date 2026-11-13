@@ -74,9 +74,9 @@ double measureText(
 /// properties. Here it is a class with three fields. Dart `null` stands for
 /// an absent property, JS `undefined`. The spec passes `{}`, which is
 /// `LongestTextCache()`.
-final class LongestTextCache {
+final class LongestTextCache() {
   /// An empty cache, the JS object `{}`.
-  LongestTextCache();
+  this;
 
   /// `data?: Record<string, number>`: the measured widths, keyed by text.
   Map<String, double>? data;
@@ -221,7 +221,7 @@ void clearCanvas([HTMLCanvasElement? canvas, CanvasRenderingContext2D? ctx]) {
 /// `element.point.ts:99` passes the resolved options of a point, and
 /// `plugin.legend.js:328` and `plugin.tooltip.js:808` pass an object
 /// literal. Their ports implement this interface.
-abstract interface class DrawPointOptions {
+abstract interface class DrawPointOptions() {
   /// helpers.canvas.ts:150 `pointStyle: PointStyle`.
   ///
   /// `PointStyle` (index.d.ts:2040) is the union of ten style names, of
@@ -381,9 +381,9 @@ void _crossPath(
 
 /// `pointStyle: 'circle'` (index.d.ts:2040), the default of a point: a
 /// circle, or an ellipse of the legend width.
-final class CirclePointStyle extends PathPointStyle {
+final class const CirclePointStyle() extends PathPointStyle {
   /// The circle.
-  const CirclePointStyle();
+  this;
 
   @override
   void addPath(
@@ -398,9 +398,9 @@ final class CirclePointStyle extends PathPointStyle {
 }
 
 /// `pointStyle: 'triangle'` (helpers.canvas.ts:204-212).
-final class TrianglePointStyle extends PathPointStyle {
+final class const TrianglePointStyle() extends PathPointStyle {
   /// The triangle.
-  const TrianglePointStyle();
+  this;
 
   @override
   void addPath(
@@ -425,9 +425,9 @@ final class TrianglePointStyle extends PathPointStyle {
 }
 
 /// `pointStyle: 'rectRounded'` (helpers.canvas.ts:213-230).
-final class RectRoundedPointStyle extends PathPointStyle {
+final class const RectRoundedPointStyle() extends PathPointStyle {
   /// The square with round corners.
-  const RectRoundedPointStyle();
+  this;
 
   @override
   void addPath(
@@ -469,9 +469,9 @@ final class RectRoundedPointStyle extends PathPointStyle {
 /// `pointStyle: 'rect'` (helpers.canvas.ts:231-237): a square, or the
 /// `rectRot` path turned by a quarter of pi when the rotation is truthy
 /// (the fall-through of upstream).
-final class RectPointStyle extends PathPointStyle {
+final class const RectPointStyle() extends PathPointStyle {
   /// The square.
-  const RectPointStyle();
+  this;
 
   @override
   void addPath(
@@ -496,9 +496,9 @@ final class RectPointStyle extends PathPointStyle {
 
 /// `pointStyle: 'rectRot'` (helpers.canvas.ts:238-247): a square turned by
 /// a quarter of pi.
-final class RectRotPointStyle extends PathPointStyle {
+final class const RectRotPointStyle() extends PathPointStyle {
   /// The turned square.
-  const RectRotPointStyle();
+  this;
 
   @override
   void addPath(
@@ -514,9 +514,9 @@ final class RectRotPointStyle extends PathPointStyle {
 
 /// `pointStyle: 'crossRot'` (helpers.canvas.ts:248-251): the cross turned
 /// by a quarter of pi (the fall-through of upstream).
-final class CrossRotPointStyle extends PathPointStyle {
+final class const CrossRotPointStyle() extends PathPointStyle {
   /// The turned cross.
-  const CrossRotPointStyle();
+  this;
 
   @override
   void addPath(
@@ -534,9 +534,9 @@ final class CrossRotPointStyle extends PathPointStyle {
 }
 
 /// `pointStyle: 'cross'` (helpers.canvas.ts:252-261).
-final class CrossPointStyle extends PathPointStyle {
+final class const CrossPointStyle() extends PathPointStyle {
   /// The cross.
-  const CrossPointStyle();
+  this;
 
   @override
   void addPath(
@@ -552,9 +552,9 @@ final class CrossPointStyle extends PathPointStyle {
 
 /// `pointStyle: 'star'` (helpers.canvas.ts:262-281): a cross and the cross
 /// turned by a quarter of pi.
-final class StarPointStyle extends PathPointStyle {
+final class const StarPointStyle() extends PathPointStyle {
   /// The star.
-  const StarPointStyle();
+  this;
 
   @override
   void addPath(
@@ -572,9 +572,9 @@ final class StarPointStyle extends PathPointStyle {
 }
 
 /// `pointStyle: 'line'` (helpers.canvas.ts:282-287).
-final class LinePointStyle extends PathPointStyle {
+final class const LinePointStyle() extends PathPointStyle {
   /// The line.
-  const LinePointStyle();
+  this;
 
   @override
   void addPath(
@@ -595,9 +595,9 @@ final class LinePointStyle extends PathPointStyle {
 }
 
 /// `pointStyle: 'dash'` (helpers.canvas.ts:288-291).
-final class DashPointStyle extends PathPointStyle {
+final class const DashPointStyle() extends PathPointStyle {
   /// The dash.
-  const DashPointStyle();
+  this;
 
   @override
   void addPath(
@@ -622,12 +622,12 @@ final class DashPointStyle extends PathPointStyle {
 /// with an `HTMLImageElement` or an `HTMLCanvasElement` upstream. The image
 /// draws at its own size, centered and turned by the rotation, with no fill
 /// and no stroke, also for a radius of 0.
-final class ImagePointStyle extends PointStyle {
-  /// The style that draws [image].
-  const ImagePointStyle(this.image);
-
+final class const ImagePointStyle(
   /// The image.
-  final CanvasImageSource image;
+  final CanvasImageSource image,
+) extends PointStyle {
+  /// The style that draws [image].
+  this;
 
   @override
   void draw(

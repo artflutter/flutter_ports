@@ -15,74 +15,57 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBLCorners;
 /// Plugins may extend or implement this class. Consumers retain item identity.
 /// Subclasses override [copyWith] to preserve their type and extra state, and
 /// [merge] when their additional fields participate in merging.
-class LegendItem {
-  /// Creates a mutable legend entry. Lists and style objects retain identity.
-  LegendItem({
-    required this.text,
-    this.fillStyle = const ChartPaint.unchanged(),
-    this.fontColor = const ChartPaint.unchanged(),
-    this.hidden = false,
-    this.lineCap,
-    this.lineDash,
-    this.lineDashOffset,
-    this.lineJoin,
-    this.lineWidth,
-    this.strokeStyle = const ChartPaint.unchanged(),
-    this.pointStyle,
-    this.rotation,
-    this.textAlign,
-    this.borderRadius,
-    this.datasetIndex,
-    this.index,
-  });
-
+class LegendItem({
   /// The label lines.
-  List<String> text;
+  required var List<String> text,
 
   /// The box fill; unchanged uses the resolved legend baseline.
-  ChartPaint fillStyle;
+  var ChartPaint fillStyle = const ChartPaint.unchanged(),
 
   /// The text paint; unchanged uses the resolved legend baseline.
-  ChartPaint fontColor;
+  var ChartPaint fontColor = const ChartPaint.unchanged(),
 
   /// Whether the represented dataset or data item is hidden.
-  bool hidden;
+  var bool hidden = false,
 
   /// The border cap, or the legend default.
-  StrokeCap? lineCap;
+  var StrokeCap? lineCap,
 
   /// The border dash pattern, or the legend default.
-  List<double>? lineDash;
+  var List<double>? lineDash,
 
   /// The border dash offset in pixels.
-  double? lineDashOffset;
+  var double? lineDashOffset,
 
   /// The border join, or the legend default.
-  StrokeJoin? lineJoin;
+  var StrokeJoin? lineJoin,
 
   /// The border width in pixels.
-  double? lineWidth;
+  var double? lineWidth,
 
   /// The box stroke; unchanged uses the resolved legend baseline.
-  ChartPaint strokeStyle;
+  var ChartPaint strokeStyle = const ChartPaint.unchanged(),
 
   /// The point marker, including custom plugin styles.
-  PointStyle? pointStyle;
+  var PointStyle? pointStyle,
 
   /// The point marker rotation in degrees.
-  double? rotation;
+  var double? rotation,
 
   /// The label alignment, or the legend default.
-  TextAlign? textAlign;
+  var TextAlign? textAlign,
 
   /// The four box corner radii, or square corners.
-  TRBLCorners? borderRadius;
+  var TRBLCorners? borderRadius,
 
   /// The dataset index, absent for a data-item or descriptive entry.
-  int? datasetIndex;
+  var int? datasetIndex,
 
   /// The data-item index, absent for a dataset or descriptive entry.
-  int? index;
+  var int? index,
+}) {
+  /// Creates a mutable legend entry. Lists and style objects retain identity.
+  this;
 
   /// Null arguments retain the current field. Nullable fields can be cleared
   /// directly on the returned mutable item.

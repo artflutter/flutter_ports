@@ -17,7 +17,7 @@ import 'package:meta/meta.dart' show immutable;
 
 /// A fill target that upstream gives as text: a [FillBoundary] or a
 /// [RelativeFill].
-sealed class FillTarget {
+sealed class FillTarget() {
   /// The target of [value], the value of the option `fill`, or Dart `null`
   /// for another value (a number, a boolean, an object). A text of
   /// Chart.js is not a target: a debug build stops on it.
@@ -33,7 +33,7 @@ sealed class FillTarget {
 
 /// A fill to a boundary of the chart: the keywords of `fill`
 /// (filler.options.js:73). The name of each value is the keyword.
-enum FillBoundary implements FillTarget {
+enum FillBoundary() implements FillTarget {
   /// `'origin'`: to the origin of the value axis. `fill: true` gives it.
   origin,
 
@@ -53,12 +53,12 @@ enum FillBoundary implements FillTarget {
 /// A fill to the dataset at [offset] from this dataset: the text `'+1'` for
 /// 1 and `'-1'` for -1 upstream (filler.options.js:58-65).
 @immutable
-final class RelativeFill implements FillTarget {
-  /// The fill to the dataset at [offset] from this one.
-  const RelativeFill(this.offset);
-
+final class const RelativeFill(
   /// The offset of the target dataset from this dataset.
-  final int offset;
+  final int offset,
+) implements FillTarget {
+  /// The fill to the dataset at [offset] from this one.
+  this;
 
   @override
   bool operator ==(Object other) =>

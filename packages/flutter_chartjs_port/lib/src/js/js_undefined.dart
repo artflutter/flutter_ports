@@ -22,9 +22,7 @@ library;
 
 /// The type of the JavaScript value [undefined]. Its only instance is
 /// [undefined].
-final class Undefined {
-  const Undefined._();
-
+final class const Undefined._() {
   /// `String(undefined)`: `'undefined'`.
   @override
   String toString() => 'undefined';

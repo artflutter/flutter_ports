@@ -306,14 +306,19 @@ types.ChartEvent? _determineLastEvent(
 /// object. The animations read and write [visible] and `$animations` by name
 /// (core.controller.js:903, Chart.js ADR 0019, section 9). A name that the
 /// meta does not declare goes to a Map of extra properties.
-final class ChartMeta
-    implements types.ChartMeta, types.ChartMetaFiller, types.PropertyAccess {
-  ChartMeta._({
-    required this.order,
-    required this.index,
-    required this.dataset_,
-  });
+final class ChartMeta._({
+  /// core.controller.js:843 `order: dataset && dataset.order || 0`.
+  required var double order,
 
+  /// core.controller.js:844 `index: datasetIndex`.
+  @override required var double index,
+
+  /// core.controller.js:845 `_dataset: dataset`, the dataset object of the
+  /// meta. The name has a trailing underscore, because [dataset] has the
+  /// name without the leading underscore (Chart.js ADR 0023). The specs read
+  /// it (core.controller.tests.js:1973).
+  @internal @override required final Object? dataset_,
+}) implements types.ChartMeta, types.ChartMetaFiller, types.PropertyAccess {
   /// core.controller.js:836 `type: null`, then the dataset type
   /// (core.controller.js:431). Dart `null` is the JS `null`. The value is
   /// `dataset.type || this.config.type`, which can be `undefined`.
@@ -353,21 +358,6 @@ final class ChartMeta
   /// core.controller.js:842 `yAxisID: null`.
   @override
   Object? yAxisID;
-
-  /// core.controller.js:843 `order: dataset && dataset.order || 0`.
-  double order;
-
-  /// core.controller.js:844 `index: datasetIndex`.
-  @override
-  double index;
-
-  /// core.controller.js:845 `_dataset: dataset`, the dataset object of the
-  /// meta. The name has a trailing underscore, because [dataset] has the
-  /// name without the leading underscore (Chart.js ADR 0023). The specs read
-  /// it (core.controller.tests.js:1973).
-  @internal
-  @override
-  final Object? dataset_;
 
   /// core.controller.js:846 `_parsed: []`.
   @internal
@@ -612,23 +602,13 @@ final class ChartMeta
 
 /// core.controller.js:1104-1108 the object `{datasetIndex, element, index}`
 /// of `setActiveElements`.
-final class _ActiveElement implements types.ActiveElement {
-  _ActiveElement({
-    required this.datasetIndex,
-    required this.element,
-    required this.index,
-  });
-
-  @override
-  final double datasetIndex;
+final class _ActiveElement({
+  @override required final double datasetIndex,
 
   /// Dart `null` stands for the `undefined` of an index without an element.
-  @override
-  final types.Element? element;
-
-  @override
-  final double index;
-}
+  @override required final types.Element? element,
+  @override required final double index,
+}) implements types.ActiveElement;
 
 Config _colorConfig(Object? userConfig) {
   validateChartColors(userConfig);
@@ -636,15 +616,26 @@ Config _colorConfig(Object? userConfig) {
 }
 
 /// core.controller.js:103 `Chart`.
-class Chart
-    implements
-        types.Chart,
-        CategoryLabelSource,
-        SingleBarIndexSource,
-        BulkBarChart,
-        NativePointChart,
-        DatasetMetaSource,
-        ChartAnimationItems {
+class Chart(
+  Object? item, [
+  Object? userConfig,
+
+  /// The items of `ChartConfig.animations`: the animation of single
+  /// properties, or Dart `null` (row `adapt-property-animations`). The
+  /// animations of the chart read each item as the object of the app.
+  @override var List<PropertyAnimation>? propertyAnimations,
+
+  /// The items of `ChartConfig.transitions`: the animation of single update
+  /// modes, or Dart `null`.
+  @override var List<ChartTransition>? chartTransitions,
+]) implements
+    types.Chart,
+    CategoryLabelSource,
+    SingleBarIndexSource,
+    BulkBarChart,
+    NativePointChart,
+    DatasetMetaSource,
+    ChartAnimationItems {
   /// core.controller.js:123 `constructor(item, userConfig)`.
   ///
   /// [item] is a canvas element, a context, an object with a `canvas`, or
@@ -664,12 +655,7 @@ class Chart
   /// `ChartConfig.animations` and `ChartConfig.transitions` of a typed
   /// config: the first update of the constructor reads them.
   // DIVERGES(chartjs): adapt-property-animations, the items of the app.
-  Chart(
-    Object? item, [
-    Object? userConfig,
-    this.propertyAnimations,
-    this.chartTransitions,
-  ]) : config = _colorConfig(userConfig) {
+  this {
     final config = this.config;
     final initialCanvas = _getCanvas(item);
     final existingChart = _getChart(initialCanvas);
@@ -822,7 +808,7 @@ class Chart
 
   /// core.controller.js:124 `config`: the `Config` of the configuration.
   @override
-  final Config config;
+  final Config config = _colorConfig(userConfig);
 
   /// core.controller.js:136 `platform`.
   @override
@@ -3055,17 +3041,6 @@ class Chart
   /// no update takes the move. Dart `null` never holds a move.
   @internal
   bool Function()? holdMouseMove;
-
-  /// The items of `ChartConfig.animations`: the animation of single
-  /// properties, or Dart `null` (row `adapt-property-animations`). The
-  /// animations of the chart read each item as the object of the app.
-  @override
-  List<PropertyAnimation>? propertyAnimations;
-
-  /// The items of `ChartConfig.transitions`: the animation of single update
-  /// modes, or Dart `null`.
-  @override
-  List<ChartTransition>? chartTransitions;
 
   /// The mouse move that waits for the update of its frame.
   types.ChartEvent? _heldMove;

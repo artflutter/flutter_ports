@@ -73,21 +73,19 @@ import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// One option value of a typed scope (Chart.js ADR 0054 §1).
-sealed class Opt<T> {
-  const Opt();
-
+sealed class const Opt<T>() {
   /// The JS value of the cell, as the user gave it: [undefined] for
   /// [OptUndefined] and Dart `null` (JS `null`) for [OptNull].
   Object? get raw;
 }
 
 /// A value of the type of the key.
-final class OptValue<T> extends Opt<T> {
-  /// The cell of [value].
-  const OptValue(this.value);
-
+final class const OptValue<T>(
   /// The value. A JS number is a `double`.
-  final T value;
+  final T value,
+) extends Opt<T> {
+  /// The cell of [value].
+  this;
 
   @override
   Object? get raw => value;
@@ -98,12 +96,12 @@ final class OptValue<T> extends Opt<T> {
 
 /// A function value: a Dart `Function`, a `JsFunction` or a class value
 /// (`jsIsFunction`).
-final class OptFunction<T> extends Opt<T> {
-  /// The cell of [function].
-  const OptFunction(this.function);
-
+final class const OptFunction<T>(
   /// The function value, as the user gave it.
-  final Object function;
+  final Object function,
+) extends Opt<T> {
+  /// The cell of [function].
+  this;
 
   @override
   Object? get raw => function;
@@ -113,12 +111,12 @@ final class OptFunction<T> extends Opt<T> {
 }
 
 /// An array, as the user gave it (the same List).
-final class OptList<T> extends Opt<T> {
-  /// The cell of [items].
-  const OptList(this.items);
-
+final class const OptList<T>(
   /// The array.
-  final List<Object?> items;
+  final List<Object?> items,
+) extends Opt<T> {
+  /// The cell of [items].
+  this;
 
   @override
   Object? get raw => items;
@@ -129,12 +127,12 @@ final class OptList<T> extends Opt<T> {
 
 /// A nested option object: a typed scope or a raw `Map<String, Object?>`
 /// (the same object).
-final class OptScope<T> extends Opt<T> {
-  /// The cell of [scope].
-  const OptScope(this.scope);
-
+final class const OptScope<T>(
   /// The nested object.
-  final Object scope;
+  final Object scope,
+) extends Opt<T> {
+  /// The cell of [scope].
+  this;
 
   @override
   Object? get raw => scope;
@@ -144,9 +142,7 @@ final class OptScope<T> extends Opt<T> {
 }
 
 /// An own key with the value `undefined`.
-final class OptUndefined extends Opt<Never> {
-  const OptUndefined._();
-
+final class const OptUndefined._() extends Opt<Never> {
   @override
   Object? get raw => undefined;
 
@@ -155,9 +151,7 @@ final class OptUndefined extends Opt<Never> {
 }
 
 /// An own key with the value JS `null`.
-final class OptNull extends Opt<Never> {
-  const OptNull._();
-
+final class const OptNull._() extends Opt<Never> {
   @override
   Object? get raw => null;
 
@@ -167,12 +161,12 @@ final class OptNull extends Opt<Never> {
 
 /// A JS value outside the type of the key, kept as given (Chart.js ADR 0054
 /// §6), for example the string `'5'` of a number key.
-final class OptForeign<T> extends Opt<T> {
-  /// The cell of [value].
-  const OptForeign(this.value);
-
+final class const OptForeign<T>(
   /// The value, as the user gave it.
-  final Object value;
+  final Object value,
+) extends Opt<T> {
+  /// The cell of [value].
+  this;
 
   @override
   Object? get raw => value;
@@ -194,7 +188,7 @@ const Opt<Never> optNull = OptNull._();
 /// is its index from 1 shifted left by 7, in the bits of [typed]: a shape
 /// holds at most one typed atom, and the index leaves room for 2^24 of them
 /// below the sign bit (dart2js computes the bit operations in 32 bits).
-abstract final class ShapeBits {
+abstract final class ShapeBits() {
   /// `number`: a JS number.
   static const int number = 1;
 
@@ -368,7 +362,7 @@ Opt<T>? _special<T>(Object? raw) {
 
 /// A typed option object that a cell can hold as a nested scope: the base
 /// of the typed scope classes (`option_scope.dart`).
-abstract interface class OptionObject;
+abstract interface class OptionObject();
 
 /// The cell of [raw] for a key of the shape `number`.
 Opt<double> classifyNumber(Object? raw) =>

@@ -289,7 +289,7 @@ _Diff _compare(_Shot a, _Shot b, Uint8List band) {
   );
 }
 
-class _UserLine extends LineElement;
+class _UserLine() extends LineElement;
 
 void main() {
   setUp(() => denseCurveMergeEnabled = true);

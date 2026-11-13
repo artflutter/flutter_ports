@@ -33,7 +33,7 @@ import 'package:meta/meta.dart';
 /// A generation changes whenever existing font/text measurements become stale.
 /// Null disables cross-update measurement reuse. The font setter and measuring
 /// text must have no user-observable side effects beyond canvas font state.
-abstract interface class CanvasTextMetricsSource {
+abstract interface class CanvasTextMetricsSource() {
   /// Identity token for the current font environment, or null without tracking.
   Object? get textMetricsGeneration;
 }
@@ -42,7 +42,7 @@ abstract interface class CanvasTextMetricsSource {
 ///
 /// Assign these values to [CanvasRenderingContext2D.globalCompositeOperation].
 /// The native canvas maps them to its renderer's blend modes at the boundary.
-enum CanvasCompositeOperation {
+enum CanvasCompositeOperation() {
   /// The Canvas 2D `source-over` operation.
   sourceOver,
 
@@ -127,7 +127,7 @@ enum CanvasCompositeOperation {
 ///
 /// The canvas closes the set, and `dart:ui` has no enum with these six
 /// values. The name of each value is the keyword of the DOM.
-enum CanvasTextBaseline {
+enum CanvasTextBaseline() {
   /// `'top'`: the top of the em box.
   top,
 
@@ -149,7 +149,7 @@ enum CanvasTextBaseline {
 
 /// lib.dom.d.ts `CanvasPath`: the path methods that
 /// [CanvasRenderingContext2D] and [Path2D] share.
-abstract interface class CanvasPath {
+abstract interface class CanvasPath() {
   /// `closePath()`.
   void closePath();
 
@@ -380,7 +380,7 @@ typedef CanvasFillRule = String;
 /// `dart:ui` implementation wraps a `ui.Image`. A point style that is an
 /// image (`drawPointLegend`, helpers.canvas.ts:181-191) reads [width] and
 /// [height].
-abstract interface class CanvasImageSource {
+abstract interface class CanvasImageSource() {
   /// The width in CSS pixels.
   double get width;
 
@@ -393,7 +393,7 @@ abstract interface class CanvasImageSource {
 ///
 /// Upstream reads [width] (`_measureText`, helpers.canvas.ts:47) and the
 /// four `actualBoundingBox*` values (`decorateText`, helpers.canvas.ts:391).
-abstract interface class TextMetrics {
+abstract interface class TextMetrics() {
   /// `width`: the advance width of the text.
   double get width;
 
@@ -423,7 +423,7 @@ abstract interface class TextMetrics {
 /// [CanvasRenderingContext2D.direction] is `'inherit'`, as the DOM does. The
 /// chart host reads `width` and `height`, and `touch-action` at the first
 /// touch-like down of a touch sequence (Chart.js ADR 0108).
-abstract interface class CSSStyleDeclaration {
+abstract interface class CSSStyleDeclaration() {
   /// `getPropertyValue(property)`. An unset property gives `''`.
   String getPropertyValue(String property);
 
@@ -479,7 +479,7 @@ extension CssStyleProperties on CSSStyleDeclaration {
 /// attributes `width` and `height`. The DOM converts an assigned number with
 /// `ToUint32` (it truncates a fraction). A Dart caller that assigns a
 /// fractional value calls `toInt()` first.
-abstract interface class HTMLCanvasElement {
+abstract interface class HTMLCanvasElement() {
   /// `width`: the render width in device pixels. The DOM default is 300.
   /// It reflects the `width` attribute: a write sets the attribute.
   abstract int width;
@@ -528,7 +528,7 @@ abstract interface class HTMLCanvasElement {
 /// canvas element that a host can show implements this interface, and the
 /// host sets [parentNode]. `_getParentNode` (`helpers.dom.dart`) gives
 /// `null` for a canvas element that does not implement it.
-abstract interface class CanvasNode {
+abstract interface class CanvasNode() {
   /// `parentNode`: the container that shows the canvas. Dart `null` is the
   /// JS `null` of a canvas outside the document.
   CanvasContainer? get parentNode;
@@ -542,7 +542,7 @@ abstract interface class CanvasNode {
 /// padding, border, `max-width` or `max-height`. The Flutter layout above
 /// the host (`Padding`, `ConstrainedBox`, `SizedBox`) applies them before
 /// the host gets its constraints.
-abstract interface class CanvasContainer {
+abstract interface class CanvasContainer() {
   /// The width of the content box of the container, in logical pixels:
   /// `rect.width - containerPadding.width - containerBorder.width` at
   /// helpers.dom.ts:146. A chart host gives the max width of its incoming
@@ -573,7 +573,7 @@ abstract interface class CanvasContainer {
 /// `adapt-chart-paint-objects`). The port also
 /// calls [roundRect], which upstream source does not call
 /// (differences.md `adapt-rounded-rect-path`).
-abstract interface class CanvasRenderingContext2D implements CanvasPath {
+abstract interface class CanvasRenderingContext2D() implements CanvasPath {
   /// `canvas`: the canvas element of this context.
   HTMLCanvasElement get canvas;
 
@@ -763,9 +763,9 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
 /// The class is pure Dart. It records the path commands in [commands]. A
 /// context replays them. A context can keep a converted form of the path in
 /// [cache] and reuse it while [version] does not change.
-final class Path2D implements CanvasPath {
+final class Path2D() implements CanvasPath {
   /// `new Path2D()`: an empty path.
-  Path2D();
+  this;
 
   List<PathCommand>? _commands;
   Uint8List? _kinds;
@@ -1089,81 +1089,72 @@ final class Path2D implements CanvasPath {
 }
 
 /// One recorded command of a [Path2D].
-sealed class PathCommand {
-  const PathCommand();
-
+sealed class const PathCommand() {
   /// Calls the method of this command on [target].
   void applyTo(CanvasPath target);
 }
 
 /// A recorded [CanvasPath.closePath].
-final class ClosePathCommand extends PathCommand {
+final class const ClosePathCommand() extends PathCommand {
   /// Creates the command.
-  const ClosePathCommand();
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.closePath();
 }
 
 /// A recorded [CanvasPath.moveTo].
-final class MoveToCommand extends PathCommand {
+final class const MoveToCommand(
+  /// An argument.
+  final double x,
+
+  /// An argument.
+  final double y,
+) extends PathCommand {
   /// Creates the command.
-  const MoveToCommand(this.x, this.y);
-
-  /// An argument.
-  final double x;
-
-  /// An argument.
-  final double y;
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.moveTo(x, y);
 }
 
 /// A recorded [CanvasPath.lineTo].
-final class LineToCommand extends PathCommand {
+final class const LineToCommand(
+  /// An argument.
+  final double x,
+
+  /// An argument.
+  final double y,
+) extends PathCommand {
   /// Creates the command.
-  const LineToCommand(this.x, this.y);
-
-  /// An argument.
-  final double x;
-
-  /// An argument.
-  final double y;
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.lineTo(x, y);
 }
 
 /// A recorded [CanvasPath.bezierCurveTo].
-final class BezierCurveToCommand extends PathCommand {
+final class const BezierCurveToCommand(
+  /// An argument.
+  final double cp1x,
+
+  /// An argument.
+  final double cp1y,
+
+  /// An argument.
+  final double cp2x,
+
+  /// An argument.
+  final double cp2y,
+
+  /// An argument.
+  final double x,
+
+  /// An argument.
+  final double y,
+) extends PathCommand {
   /// Creates the command.
-  const BezierCurveToCommand(
-    this.cp1x,
-    this.cp1y,
-    this.cp2x,
-    this.cp2y,
-    this.x,
-    this.y,
-  );
-
-  /// An argument.
-  final double cp1x;
-
-  /// An argument.
-  final double cp1y;
-
-  /// An argument.
-  final double cp2x;
-
-  /// An argument.
-  final double cp2y;
-
-  /// An argument.
-  final double x;
-
-  /// An argument.
-  final double y;
+  this;
 
   @override
   void applyTo(CanvasPath target) =>
@@ -1171,55 +1162,48 @@ final class BezierCurveToCommand extends PathCommand {
 }
 
 /// A recorded [CanvasPath.quadraticCurveTo].
-final class QuadraticCurveToCommand extends PathCommand {
+final class const QuadraticCurveToCommand(
+  /// An argument.
+  final double cpx,
+
+  /// An argument.
+  final double cpy,
+
+  /// An argument.
+  final double x,
+
+  /// An argument.
+  final double y,
+) extends PathCommand {
   /// Creates the command.
-  const QuadraticCurveToCommand(this.cpx, this.cpy, this.x, this.y);
-
-  /// An argument.
-  final double cpx;
-
-  /// An argument.
-  final double cpy;
-
-  /// An argument.
-  final double x;
-
-  /// An argument.
-  final double y;
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.quadraticCurveTo(cpx, cpy, x, y);
 }
 
 /// A recorded [CanvasPath.arc].
-final class ArcCommand extends PathCommand {
-  /// Creates the command.
-  const ArcCommand(
-    this.x,
-    this.y,
-    this.radius,
-    this.startAngle,
-    this.endAngle,
-    this.counterclockwise,
-  );
+final class const ArcCommand(
+  /// An argument.
+  final double x,
 
   /// An argument.
-  final double x;
+  final double y,
 
   /// An argument.
-  final double y;
+  final double radius,
 
   /// An argument.
-  final double radius;
+  final double startAngle,
 
   /// An argument.
-  final double startAngle;
-
-  /// An argument.
-  final double endAngle;
+  final double endAngle,
 
   /// The direction argument.
-  final bool counterclockwise;
+  final bool counterclockwise,
+) extends PathCommand {
+  /// Creates the command.
+  this;
 
   @override
   void applyTo(CanvasPath target) =>
@@ -1227,66 +1211,57 @@ final class ArcCommand extends PathCommand {
 }
 
 /// A recorded [CanvasPath.arcTo].
-final class ArcToCommand extends PathCommand {
+final class const ArcToCommand(
+  /// An argument.
+  final double x1,
+
+  /// An argument.
+  final double y1,
+
+  /// An argument.
+  final double x2,
+
+  /// An argument.
+  final double y2,
+
+  /// An argument.
+  final double radius,
+) extends PathCommand {
   /// Creates the command.
-  const ArcToCommand(this.x1, this.y1, this.x2, this.y2, this.radius);
-
-  /// An argument.
-  final double x1;
-
-  /// An argument.
-  final double y1;
-
-  /// An argument.
-  final double x2;
-
-  /// An argument.
-  final double y2;
-
-  /// An argument.
-  final double radius;
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.arcTo(x1, y1, x2, y2, radius);
 }
 
 /// A recorded [CanvasPath.ellipse].
-final class EllipseCommand extends PathCommand {
-  /// Creates the command.
-  const EllipseCommand(
-    this.x,
-    this.y,
-    this.radiusX,
-    this.radiusY,
-    this.rotation,
-    this.startAngle,
-    this.endAngle,
-    this.counterclockwise,
-  );
+final class const EllipseCommand(
+  /// An argument.
+  final double x,
 
   /// An argument.
-  final double x;
+  final double y,
 
   /// An argument.
-  final double y;
+  final double radiusX,
 
   /// An argument.
-  final double radiusX;
+  final double radiusY,
 
   /// An argument.
-  final double radiusY;
+  final double rotation,
 
   /// An argument.
-  final double rotation;
+  final double startAngle,
 
   /// An argument.
-  final double startAngle;
-
-  /// An argument.
-  final double endAngle;
+  final double endAngle,
 
   /// The direction argument.
-  final bool counterclockwise;
+  final bool counterclockwise,
+) extends PathCommand {
+  /// Creates the command.
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.ellipse(
@@ -1302,45 +1277,45 @@ final class EllipseCommand extends PathCommand {
 }
 
 /// A recorded [CanvasPath.rect].
-final class RectCommand extends PathCommand {
+final class const RectCommand(
+  /// An argument.
+  final double x,
+
+  /// An argument.
+  final double y,
+
+  /// An argument.
+  final double w,
+
+  /// An argument.
+  final double h,
+) extends PathCommand {
   /// Creates the command.
-  const RectCommand(this.x, this.y, this.w, this.h);
-
-  /// An argument.
-  final double x;
-
-  /// An argument.
-  final double y;
-
-  /// An argument.
-  final double w;
-
-  /// An argument.
-  final double h;
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.rect(x, y, w, h);
 }
 
 /// A recorded [CanvasPath.roundRect].
-final class RoundRectCommand extends PathCommand {
-  /// Creates the command.
-  const RoundRectCommand(this.x, this.y, this.w, this.h, this.radii);
+final class const RoundRectCommand(
+  /// An argument.
+  final double x,
 
   /// An argument.
-  final double x;
+  final double y,
 
   /// An argument.
-  final double y;
+  final double w,
 
   /// An argument.
-  final double w;
-
-  /// An argument.
-  final double h;
+  final double h,
 
   /// The radii argument: a number, an unmodifiable list or `null`.
-  final Object? radii;
+  final Object? radii,
+) extends PathCommand {
+  /// Creates the command.
+  this;
 
   @override
   void applyTo(CanvasPath target) => target.roundRect(x, y, w, h, radii);

@@ -36,9 +36,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// The type of [_absent].
-final class _Absent {
-  const _Absent();
-}
+final class const _Absent();
 
 /// The value of the slot of `id` when the class value has no own `id`.
 const Object _absent = _Absent();
@@ -69,7 +67,21 @@ typedef JsConstruct = Object Function(JsClass newTarget, List<Object?> args);
 ///   `delete` and no `Object.keys`: no ported code deletes or enumerates a
 ///   static property.
 /// - Equality is identity, as `===` of two class values.
-final class JsClass {
+final class JsClass(
+  /// `C.name`, the class name. [toString] reads it.
+  final String name, {
+
+  /// `Object.getPrototypeOf(C)` when it is a class value.
+  ///
+  /// Dart `null` for a base class, whose static prototype is
+  /// `Function.prototype`.
+  final JsClass? superclass,
+
+  /// The `[[Construct]]` of this class value, or Dart `null` for the
+  /// implicit constructor.
+  final JsConstruct? _construct,
+  Map<String, Object?>? statics,
+}) {
   /// `class <name> extends <superclass> { static ... }`.
   ///
   /// `statics` are the static properties of the class body, in their order
@@ -77,31 +89,13 @@ final class JsClass {
   /// `construct` is the `[[Construct]]` of the class. A class value without
   /// `construct` uses the closure of its nearest superclass that has one
   /// ([jsConstruct]).
-  JsClass(
-    this.name, {
-    this.superclass,
-    this._construct,
-    Map<String, Object?>? statics,
-  }) {
+  this {
     if (statics != null) {
       for (final MapEntry(:key, :value) in statics.entries) {
         this[key] = value;
       }
     }
   }
-
-  /// `C.name`, the class name. [toString] reads it.
-  final String name;
-
-  /// `Object.getPrototypeOf(C)` when it is a class value.
-  ///
-  /// Dart `null` for a base class, whose static prototype is
-  /// `Function.prototype`.
-  final JsClass? superclass;
-
-  /// The `[[Construct]]` of this class value, or Dart `null` for the
-  /// implicit constructor.
-  final JsConstruct? _construct;
 
   /// The own static properties, in insertion order.
   final Map<String, Object?> _statics = <String, Object?>{};

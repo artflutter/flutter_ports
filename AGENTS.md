@@ -1800,7 +1800,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   the GitHub Pages site, a template that the workflow `pages` fills in.
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
   art for future ports. Docs for one port go in the `doc/` folder of its package.
-  - ADR 0007 (package names) is accepted (2026-10-22). It supersedes ADR 0003. ADR 0008 (shared
+  - ADR 0007 (package names) is accepted (2026-10-22). It supersedes ADR 0003. ADR 0010 (primary
+    constructors) is accepted (2026-11-13). ADR 0008 (shared
     JS runtime and port tools) is proposed. The gate of ADR 0008 is D3 phase 1. ADR 0009 (ports of
     add-on libraries) is proposed. Its gate is zoom phase 0. An add-on port depends on its host
     port and imports only the public libraries of the host. ADR 0008 item 1 has the clause for it.
@@ -2395,6 +2396,10 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 - Lints: `very_good_analysis` (root `analysis_options.yaml`, which also carries its formatter
   settings, so run Dart tools after `flutter pub get`). The `analysis_options.yaml` of
   `flutter_chartjs_port` includes the same rules (Chart.js ADR 0047). Public APIs are documented.
+- Constructors: each class, enum and mixin class uses a primary constructor when its constructors
+  allow it, also a class with no declared constructor (ADR 0010). Both `analysis_options.yaml`
+  files turn on `use_primary_constructors`, and `dart fix` makes the form. A secondary
+  constructor is `new <name>(...)` or `factory <name>(...)`. The generators write the form.
 - Commits: Conventional Commits, signed off (`git commit -s`, DCO), for example
   `feat(flutter_chartjs_port): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
   The scope of the ECharts port is `flutter_echarts_port`. The scope of the zoom port is

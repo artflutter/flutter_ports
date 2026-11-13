@@ -58,37 +58,30 @@ void main() {
 /// animator in its transient callbacks, and the chart updates of its
 /// post-frame callbacks.
 @immutable
-final class InputProbeFrame {
-  /// Creates the counts of one frame.
-  const InputProbeFrame({
-    required this.number,
-    required this.movesByPointer,
-    required this.scrolls,
-    required this.panZooms,
-    required this.updates,
-    required this.draws,
-  });
-
+final class const InputProbeFrame({
   /// `FrameData.frameNumber` of the engine, the number of `FrameTiming`;
   /// -1 when the engine gives none.
-  final int number;
+  required final int number,
 
   /// The `PointerMoveEvent`s of each pointer that was down in the frame, by
   /// the Flutter pointer id: 0 for a pointer that was down and did not move.
-  final Map<int, int> movesByPointer;
+  required final Map<int, int> movesByPointer,
 
   /// The `PointerScrollEvent`s of the frame (the `wheel` of the host).
-  final int scrolls;
+  required final int scrolls,
 
   /// The `PointerPanZoomUpdateEvent`s of the frame (a trackpad; the host
   /// maps none of them, Chart.js ADR 0108 Open 5).
-  final int panZooms;
+  required final int panZooms,
 
   /// The chart updates of the frame (`afterUpdate`).
-  final int updates;
+  required final int updates,
 
   /// The chart draws of the frame (`afterDraw`).
-  final int draws;
+  required final int draws,
+}) {
+  /// Creates the counts of one frame.
+  this;
 
   /// The `PointerMoveEvent`s of all pointers.
   int get moves => movesByPointer.values.fold(0, (sum, n) => sum + n);
@@ -106,7 +99,10 @@ final class InputProbeFrame {
 /// The counter of the probe: a global pointer route of [GestureBinding], a
 /// post-frame callback of each frame, the timings callback of
 /// [SchedulerBinding] and the inline chart plugin [plugin].
-final class InputProbeRecorder {
+final class InputProbeRecorder() {
+  /// A new [InputProbeRecorder].
+  this;
+
   final Set<int> _down = {};
   Set<int> _framePointers = {};
   final Map<int, int> _moves = {};
@@ -403,12 +399,14 @@ Map<String, Object?> inputProbeConfig(
 };
 
 /// The app of the probe.
-class InputProbeApp extends StatelessWidget {
-  /// Creates the app with a chart of [points] points.
-  const InputProbeApp({super.key, this.points = inputProbePoints});
+class const InputProbeApp({
+  super.key,
 
   /// The point count of the chart.
-  final int points;
+  final int points = inputProbePoints,
+}) extends StatelessWidget {
+  /// Creates the app with a chart of [points] points.
+  this;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -419,19 +417,23 @@ class InputProbeApp extends StatelessWidget {
 }
 
 /// The page of the probe: the summary above the chart.
-class InputProbePage extends StatefulWidget {
-  /// Creates the page with a chart of [points] points.
-  const InputProbePage({required this.points, super.key});
-
+class const InputProbePage({
   /// The point count of the chart.
-  final int points;
+  required final int points,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the page with a chart of [points] points.
+  this;
 
   @override
   State<InputProbePage> createState() => InputProbePageState();
 }
 
 /// The state of [InputProbePage].
-class InputProbePageState extends State<InputProbePage> {
+class InputProbePageState() extends State<InputProbePage> {
+  /// A new state of [InputProbePage].
+  this;
+
   /// The counter of the page.
   final InputProbeRecorder recorder = InputProbeRecorder();
 

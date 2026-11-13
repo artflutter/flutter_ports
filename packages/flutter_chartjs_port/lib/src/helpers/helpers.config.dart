@@ -115,9 +115,7 @@ typedef Resolver = OptionResolver;
 typedef ContextResolver = OptionView;
 
 /// The type of [_absent].
-final class _Absent {
-  const _Absent();
-}
+final class const _Absent();
 
 /// The marker of a property that a target does not own.
 const Object _absent = _Absent();
@@ -137,7 +135,7 @@ Object _keyOf(String name) => optionKeyOf(name) ?? name;
 /// more than [_scanMax] keys also has an index of the positions: by
 /// [OptionKey.index] for a key, and a hashed one for a name, as the
 /// properties of the upstream cache object have.
-final class _Cache {
+final class _Cache() {
   List<Object>? _keys;
   List<Object?>? _values;
 
@@ -316,30 +314,22 @@ typedef _ScriptableColor = ({OptionKey key, Object? callback, int position});
 
 // DIVERGES(chartjs): adapt-varying-color-resolution, ordered varying operations
 // and immutable references to the already-cached descriptor inputs.
-final class _ScriptableElementPlan {
-  _ScriptableElementPlan(
-    this.keys,
-    this.colors,
-    this.template,
-    this.scriptable,
-    this.indexable,
-    this.allKeys,
-    this.rawList,
-  ) : contextOnly = colors.every(
-        (color) =>
-            color.callback is Object? Function(Never) &&
-            color.callback is! Object? Function(Never, Never),
-      );
-  final List<OptionKey> keys;
-  final List<_ScriptableColor> colors;
-  final ElementOptions template;
-  final bool contextOnly;
-  final Object? scriptable;
-  final Object? indexable;
-  final Object? allKeys;
+final class _ScriptableElementPlan(
+  final List<OptionKey> keys,
+  final List<_ScriptableColor> colors,
+  final ElementOptions template,
+  final Object? scriptable,
+  final Object? indexable,
+  final Object? allKeys,
 
   /// The `borderDash` list that the template holds by reference, or null.
-  final List<Object?>? rawList;
+  final List<Object?>? rawList,
+) {
+  final bool contextOnly = colors.every(
+    (color) =>
+        color.callback is Object? Function(Never) &&
+        color.callback is! Object? Function(Never, Never),
+  );
 
   /// A callback or a context factory can change the items of [rawList].
   bool get rawListPlain {
@@ -377,13 +367,13 @@ final class _ScriptableElementPlan {
   }
 }
 
-final class _IndexedElementPlan {
-  _IndexedElementPlan(this.keys, this.values, this.rawListAt);
-  final List<OptionKey> keys;
-  final List<Object?> values;
+final class _IndexedElementPlan(
+  final List<OptionKey> keys,
+  final List<Object?> values,
 
   /// The position in [values] of the list that stays a raw reference, or -1.
-  final int rawListAt;
+  final int rawListAt,
+) {
   ElementOptions? _template;
   late List<int> _varying;
 
@@ -536,19 +526,12 @@ final class _IndexedElementPlan {
 /// The one or two colors of a loop-local plan (`prepareIndexedPointColors` and
 /// its twins) that vary with the index. The lists stay live.
 // DIVERGES(chartjs): adapt-prepared-indexed-options, the colors of a loop plan.
-final class _VaryingColors {
-  _VaryingColors(
-    this._firstKey,
-    this._firstValues,
-    this._secondKey,
-    this._secondValues,
-  );
-
-  final OptionKey _firstKey;
-  final List<Object?> _firstValues;
-  final OptionKey? _secondKey;
-  final List<Object?>? _secondValues;
-
+final class _VaryingColors(
+  final OptionKey _firstKey,
+  final List<Object?> _firstValues,
+  final OptionKey? _secondKey,
+  final List<Object?>? _secondValues,
+) {
   /// Stores the colors of [index] into the fresh [result], in the key order.
   void storeInto(ElementOptions result, int index) {
     final first = _firstValues;
@@ -581,13 +564,11 @@ int _indexedSlot(double index, int length) => index < 9007199254740992.0
 /// resolve of a context with this index. The items of the lists stay live.
 @internal
 // DIVERGES(chartjs): adapt-hidden-legend-items, the styles of a later build.
-final class IndexedElementStyles {
-  IndexedElementStyles._(this._resolver, this._plan, this._kind);
-
-  final OptionResolver _resolver;
-  final _IndexedElementPlan _plan;
-  final ElementOptions _kind;
-
+final class IndexedElementStyles._(
+  final OptionResolver _resolver,
+  final _IndexedElementPlan _plan,
+  final ElementOptions _kind,
+) {
   /// The `index` of the context of a resolve, with no other effect.
   final ScriptableContext _context = ScriptableContext(null);
 
@@ -693,31 +674,23 @@ OptionResolver createResolver(
 /// name, as upstream does on its cache object. A [OptionResolver] gives the
 /// [undefined] sentinel for a key that it does not resolve, and Dart `null`
 /// for a JS `null` value.
-final class OptionResolver implements ResolverProxy {
-  OptionResolver._(
-    this._scopes,
-    this._prefixes,
-    this._rootScopes,
-    this._fallback,
-    this._getTarget,
-  );
-
+final class OptionResolver._(
   /// The `scopes` parameter of `_createResolver`: `_scopes` of the target.
-  final List<Object?> _scopes;
+  final List<Object?> _scopes,
 
   /// The `prefixes` parameter of `_createResolver`.
-  final List<String> _prefixes;
+  final List<String> _prefixes,
 
   /// `_rootScopes` of the target.
-  final List<Object?> _rootScopes;
+  final List<Object?> _rootScopes,
 
   /// `_fallback` of the target.
-  final Object? _fallback;
+  final Object? _fallback,
 
   /// The `getTarget` parameter of `_createResolver`: `_getTarget` of the
   /// target.
-  final Object? Function() _getTarget;
-
+  final Object? Function() _getTarget,
+) implements ResolverProxy {
   /// `override` of the target (helpers.config.ts:48).
   // One function value for each target, as the upstream cache object
   // holds one.
@@ -1678,32 +1651,24 @@ OptionView attachContext(
 ///
 /// The slots of the cache object are fields. The cached option values are a
 /// typed table. The library documentation lists the trap of each member.
-final class OptionView implements ContextProxy {
-  OptionView._(
-    this._proxy,
-    this._context,
-    this._subProxy,
-    this._descriptors,
-    this._descriptorDefaults,
-  );
-
+final class OptionView._(
   /// The `proxy` parameter of `_attachContext`: `_proxy` of the target.
-  final Object? _proxy;
+  final Object? _proxy,
 
   /// `_context` of the target.
-  final Object _context;
+  final Object _context,
 
   /// `_subProxy` of the target.
-  final Object? _subProxy;
-
-  /// `_stack` of the target.
-  final Set<String> _stack = <String>{};
+  final Object? _subProxy,
 
   /// `_descriptors` of the target.
-  final Descriptor _descriptors;
+  final Descriptor _descriptors,
 
   /// The `descriptorDefaults` parameter of `_attachContext`.
-  final DescriptorDefaults? _descriptorDefaults;
+  final DescriptorDefaults? _descriptorDefaults,
+) implements ContextProxy {
+  /// `_stack` of the target.
+  final Set<String> _stack = <String>{};
 
   /// The resolver under this view: the `proxy` parameter of
   /// `_attachContext`. A range update of the chart attaches a new context to
@@ -2303,25 +2268,16 @@ Descriptor descriptors(Object? proxy, [DescriptorDefaults? defaults]) {
 /// (`core.config.js:409-410` and helpers.config.ts:283). The method call at
 /// :242 is `_isScriptableMethod`. They return the ToBoolean of the result
 /// ([jsTruthy]), because every caller tests only its truth.
-final class _Descriptor implements Descriptor {
-  _Descriptor({
-    required this.allKeys,
-    required this.scriptable,
-    required this.indexable,
-  });
-
+final class _Descriptor({
   /// helpers.config.ts:206 `allKeys`.
-  @override
-  final Object? allKeys;
+  @override required final Object? allKeys,
 
   /// helpers.config.ts:207 `scriptable`.
-  @override
-  final Object? scriptable;
+  @override required final Object? scriptable,
 
   /// helpers.config.ts:208 `indexable`.
-  @override
-  final Object? indexable;
-
+  @override required final Object? indexable,
+}) implements Descriptor {
   /// helpers.config.ts:209 `isScriptable`.
   @override
   bool isScriptable(String key) =>

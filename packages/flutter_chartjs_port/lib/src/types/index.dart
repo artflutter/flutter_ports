@@ -75,7 +75,7 @@ export 'package:flutter_chartjs_port/src/types/layout.dart' show LayoutItem;
 /// and `undefined` gives NaN. It adds such an edge as the JavaScript `+`
 /// does: a `num`, `null` or `undefined` adds with `ToNumber`, and another
 /// value gives `ToNumber` of the joined string.
-abstract interface class ChartMetaClip {
+abstract interface class ChartMetaClip() {
   /// index.d.ts:464 `left: number | boolean`. See [ChartMetaClip].
   Object? get left;
 
@@ -94,7 +94,7 @@ abstract interface class ChartMetaClip {
 
 /// index.d.ts:507 `ChartMeta`, with the members of `ChartMetaCommon`
 /// (index.d.ts:471).
-abstract interface class ChartMeta {
+abstract interface class ChartMeta() {
   /// index.d.ts:472 `type: string`, the dataset type.
   /// `getMatchingVisibleMetas` compares it with `===` (core.scale.js:1688).
   String get type;
@@ -265,7 +265,7 @@ abstract interface class ChartMeta {
 /// fakes of the tests implement [ChartMeta], so [ChartMeta] does not declare
 /// it. The meta class of core.controller.dart implements both interfaces.
 /// The filler, a pure layer, casts a meta to this interface.
-abstract interface class ChartMetaFiller {
+abstract interface class ChartMetaFiller() {
   /// plugin.filler/index.js:37 `meta.$filler`: the `FillerSource` of the
   /// dataset, or the `undefined` sentinel before the filler writes it.
   abstract Object? $filler;
@@ -274,7 +274,7 @@ abstract interface class ChartMetaFiller {
 /// helpers.extras.ts:146 the type `{xmin, xmax, ymin, ymax}` of
 /// `ChartMeta._scaleRanges`. `index.d.ts` does not declare it.
 /// `_scaleRangesChanged` writes its fields with `Object.assign` (:161).
-abstract interface class ScaleRanges {
+abstract interface class ScaleRanges() {
   /// helpers.extras.ts:147 `xmin`.
   abstract double xmin;
 
@@ -289,7 +289,7 @@ abstract interface class ScaleRanges {
 }
 
 /// index.d.ts:515 `ActiveDataPoint`.
-abstract interface class ActiveDataPoint {
+abstract interface class ActiveDataPoint() {
   /// index.d.ts:516 `datasetIndex: number`.
   double get datasetIndex;
 
@@ -304,7 +304,7 @@ abstract interface class ActiveDataPoint {
 /// (core.interaction.js:10), which has the same members.
 /// `setActiveElements` makes the object `{datasetIndex, element, index}`
 /// (core.controller.js:1104-1108).
-abstract interface class ActiveElement implements ActiveDataPoint {
+abstract interface class ActiveElement() implements ActiveDataPoint {
   /// index.d.ts:521 `element: Element`.
   ///
   /// Dart `null` stands for JS `undefined`: `setActiveElements` copies
@@ -315,7 +315,7 @@ abstract interface class ActiveElement implements ActiveDataPoint {
 }
 
 /// index.d.ts:524 `Chart`.
-abstract interface class Chart {
+abstract interface class Chart() {
   /// index.d.ts:529 `readonly platform: BasePlatform`.
   BasePlatform get platform;
 
@@ -548,7 +548,7 @@ abstract interface class Chart {
 }
 
 /// index.d.ts:622 `DatasetController`.
-abstract interface class DatasetController {
+abstract interface class DatasetController() {
   /// index.d.ts:631 `readonly index: number`, the dataset index.
   /// `clearStacks` reads it from the meta (core.datasetController.js:210).
   double get index;
@@ -629,7 +629,7 @@ abstract interface class DatasetController {
 /// `PluginChartOptions` (index.d.ts:706) wait for their first ported caller.
 /// The concrete class of `core.defaults.js` has the same name. Thus that file
 /// imports this library with the prefix `types`.
-abstract interface class Defaults {
+abstract interface class Defaults() {
   /// index.d.ts:714 `set(scope: string, values: AnyObject): AnyObject`.
   ///
   /// The overload `set(values)` (index.d.ts:713) has the same name. The
@@ -654,7 +654,7 @@ abstract interface class Defaults {
 }
 
 /// index.d.ts:1194 `Tick`.
-abstract interface class Tick {
+abstract interface class Tick() {
   /// index.d.ts:1195 `value: number`.
   double get value;
 
@@ -666,7 +666,7 @@ abstract interface class Tick {
 }
 
 /// index.d.ts:1303 `Scale`.
-abstract interface class Scale implements Element, LayoutItem {
+abstract interface class Scale() implements Element, LayoutItem {
   /// index.d.ts:1304 `readonly id: string`. `getStackKey` reads it
   /// (core.datasetController.js:125).
   String get id;
@@ -785,7 +785,7 @@ abstract interface class Scale implements Element, LayoutItem {
 /// `scale.radialLinear.dart` implements it. The filler tests
 /// `scale is RadialLinearScale` for `if (scale.getPointPositionForValue)`
 /// (filler.target.js:50, filler.drawing.js:28).
-abstract interface class RadialLinearScale implements Scale {
+abstract interface class RadialLinearScale() implements Scale {
   /// index.d.ts:3677 `xCenter`. controller.polarArea.js:167 and
   /// controller.radar.js:90 read it.
   ///
@@ -818,7 +818,7 @@ abstract interface class RadialLinearScale implements Scale {
 
 /// index.d.ts:1530 `LabelItem`, an item of `Scale.getLabelItems`
 /// (index.d.ts:1390, core.scale.js:1321-1334).
-abstract interface class LabelItem {
+abstract interface class LabelItem() {
   /// index.d.ts:1531 `label: string | string[]`: a `String`, a `List` of
   /// lines or another value of the tick callback.
   Object? get label;
@@ -950,7 +950,7 @@ class const BackdropOptions({
 /// It implements [Point], because ported code passes an event where
 /// upstream expects a point: `this.isPointInArea(e)`
 /// (core.controller.js:1168). TypeScript accepts it by structure.
-abstract interface class ChartEvent implements Point {
+abstract interface class ChartEvent() implements Point {
   /// index.d.ts:1575 `type`, one of the DOM event names.
   String get type;
 
@@ -998,7 +998,7 @@ abstract interface class ChartEvent implements Point {
 /// and an event coordinate can be JS `null` (`Point`). `BarElement` reads a
 /// `null` coordinate as "ignore this axis" (element.bar.js:103-111). The
 /// other elements do arithmetic on it, where JS `null` is 0.
-abstract interface class VisualElement {
+abstract interface class VisualElement() {
   /// index.d.ts:1847 `draw(ctx: CanvasRenderingContext2D, area?:
   /// ChartArea): void`. Dart `null` stands for an absent [area], JS
   /// `undefined`.
@@ -1035,7 +1035,7 @@ abstract interface class VisualElement {
 /// port tests the element against this interface. An element without it
 /// gives `false`, as upstream. `PointElement` and `BarElement` implement
 /// it. `ArcElement` and `LineElement` have no upstream `getRange`.
-abstract interface class VisualElementRange implements VisualElement {
+abstract interface class VisualElementRange() implements VisualElement {
   /// index.d.ts:1852 `getRange(axis)`.
   ///
   /// The declared type is `number`, but `PointElement.getRange` gives the JS
@@ -1046,7 +1046,7 @@ abstract interface class VisualElementRange implements VisualElement {
 }
 
 /// index.d.ts:1867 `Segment`.
-abstract interface class Segment {
+abstract interface class Segment() {
   /// index.d.ts:1868 `start: number`.
   double get start;
 
@@ -1067,7 +1067,7 @@ abstract interface class Segment {
 
 /// index.d.ts:2022 `LineElement`, with the fields of the class
 /// (element.line.js:243) that `helpers.segment.js` reads.
-abstract interface class LineElement implements Element {
+abstract interface class LineElement() implements Element {
   /// index.d.ts:2026 `points: Point[]`. The port narrows it to point
   /// elements: `helpers.segment.js` reads their `skip` and `stop`, and
   /// `helpers.curve` writes their control points, which the line reads.
@@ -1166,7 +1166,7 @@ abstract interface class LineElement implements Element {
 /// interface only when [typedWrites] is true. An element of a user subclass
 /// takes the writes by name, so that its `operator []=` sees each write.
 /// The getters pair the setters.
-abstract interface class PointElementWrites {
+abstract interface class PointElementWrites() {
   /// `Element.typedWrites`: true for an element of the built-in class
   /// itself, not of a user subclass (the exact-class rule of Chart.js ADR
   /// 0054 §9).
@@ -1218,7 +1218,7 @@ abstract interface class PointElementWrites {
 /// [PointElementWrites] states for a point. A controller writes through it
 /// only when [typedWrites] is true, and by name through [PropertyAccess]
 /// otherwise. The getters pair the setters.
-abstract interface class LineElementWrites {
+abstract interface class LineElementWrites() {
   /// `Element.typedWrites`: true for an element of the built-in class
   /// itself, as [PointElementWrites.typedWrites].
   bool get typedWrites;
@@ -1255,7 +1255,7 @@ abstract interface class LineElementWrites {
 /// when [typedWrites] is true. An element of a user subclass takes
 /// `updateElement`, so that its `operator []=` sees each write. The getters
 /// pair the setters.
-abstract interface class ArcElementWrites {
+abstract interface class ArcElementWrites() {
   /// `Element.typedWrites`: true for an element of the built-in class itself,
   /// as [PointElementWrites.typedWrites].
   bool get typedWrites;
@@ -1310,7 +1310,7 @@ abstract interface class ArcElementWrites {
 /// (filler.segment.js:15) takes the `simpleArc` branch for each target that
 /// is not a [LineElement].
 // DIVERGES(chartjs): adapt-filler-target-classes, a port-only target interface.
-abstract interface class SimpleArc {
+abstract interface class SimpleArc() {
   /// simpleArc.js:11 `pathSegment(ctx, bounds, opts)`. Dart `null` for
   /// [bounds] is JS `undefined`.
   bool pathSegment(
@@ -1331,7 +1331,10 @@ abstract interface class SimpleArc {
 /// Each field is a key of the upstream object; Dart `null` is an absent
 /// key. `beforeLayout` gives the scale a new empty cache
 /// (core.scale.js:375).
-final class ScaleCache {
+final class ScaleCache() {
+  /// A new [ScaleCache].
+  this;
+
   /// scale.time.js:627-648 `_cache.data`: the sorted unique parsed values
   /// of the visible datasets.
   List<double>? data;
@@ -1360,7 +1363,7 @@ final class ScaleCache {
 /// `Legend` class of `plugin.legend.dart` extends the `Element` of
 /// `core.element.dart` and implements [LayoutItem] and [TRBL] itself
 /// (Chart.js ADR 0038, section 6).
-abstract interface class LegendElement implements TRBL {
+abstract interface class LegendElement() implements TRBL {
   /// index.d.ts:2415 `chart`.
   Chart get chart;
 
@@ -1388,7 +1391,7 @@ abstract interface class LegendElement implements TRBL {
 /// `ChartTooltipItem` of the typed API reads its keys with no import of a
 /// plugin (Chart.js ADR 0052 §8). Each getter gives the JS value of the key,
 /// the `undefined` sentinel for an absent key.
-abstract interface class TypedTooltipItem {
+abstract interface class TypedTooltipItem() {
   /// The data element.
   Object? get element;
 
@@ -1426,7 +1429,7 @@ abstract interface class TypedTooltipItem {
 /// these members, and `0` for [opacity] (plugin.tooltip.js:467-494). Dart
 /// `null` for a list or an alignment stands for JS `undefined`. A number
 /// getter gives NaN for JS `undefined` (Chart.js ADR 0039, section 2).
-abstract interface class TooltipModel implements Element {
+abstract interface class TooltipModel() implements Element {
   /// index.d.ts:2649 `readonly chart`.
   Chart get chart;
 
@@ -1499,7 +1502,7 @@ abstract interface class TooltipModel implements Element {
 }
 
 /// index.d.ts:2212 `BasePlatform`.
-abstract interface class BasePlatform {
+abstract interface class BasePlatform() {
   /// index.d.ts:2219 `acquireContext(canvas, options?)`.
   ///
   /// The JS code passes `options.aspectRatio` as the second argument
@@ -1561,7 +1564,7 @@ abstract interface class BasePlatform {
 ///
 /// The typed config of the app library, `ChartConfig` (Chart.js ADR 0052),
 /// is another type: it lowers to the Maps of a Chart.js config.
-abstract interface class ChartConfiguration {
+abstract interface class ChartConfiguration() {
   /// index.d.ts:3921 `options?: ChartOptions<TType>`. A Map
   /// (Chart.js ADR 0043).
   Object get options;
@@ -1582,7 +1585,7 @@ abstract interface class ChartConfiguration {
 /// extension [PointElementProperty] stays the property read of a
 /// [PointElement] here. A helper that must tell `undefined` from NaN tests
 /// the element against [ElementPropertyRead].
-abstract interface class Element implements Point {
+abstract interface class Element() implements Point {
   /// core.element.ts:11 `x: number`. The concrete classes give NaN, the
   /// `ToNumber` of JS `undefined`, before the first write (Chart.js ADR
   /// 0017, section 4).
@@ -1612,7 +1615,7 @@ abstract interface class Element implements Point {
 /// The run of markers of the point element class of `element.point.dart`
 /// (Chart.js ADR 0104), for `DatasetController.draw`: a controller imports no
 /// element module (Chart.js ADR 0028 §1).
-abstract interface class PointCircleRun {
+abstract interface class PointCircleRun() {
   /// See `PointElement.drawCircleRun` of `element.point.dart`.
   int drawCircleRun(
     CanvasRenderingContext2D ctx,
@@ -1636,7 +1639,7 @@ abstract interface class PointCircleRun {
 /// `cp2x` and `cp2y` are the members of [SplinePoint]: NaN stands for JS
 /// `undefined`, the value before `helpers.curve` writes them (Chart.js ADR
 /// 0017, section 3).
-abstract interface class PointElement implements Element, SplinePoint {
+abstract interface class PointElement() implements Element, SplinePoint {
   /// element.point.ts:25 `skip?: boolean`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   @override
@@ -1661,7 +1664,7 @@ abstract interface class PointElement implements Element, SplinePoint {
 /// The concrete `PointElement` of `element.point.dart` implements this
 /// interface. Its `angle` stays Dart `null` until the radar controller
 /// assigns it (Chart.js ADR 0017, sections 3 and 4).
-abstract interface class RadialPointElement implements PointElement {
+abstract interface class RadialPointElement() implements PointElement {
   /// controller.radar.js:96 `angle: pointPosition.angle`. Dart `null` stands
   /// for JS `undefined`, the value before the first update. JS `null` never
   /// reaches it.
@@ -1710,7 +1713,7 @@ extension PointElementProperty on PointElement {
 /// `undefined` from NaN tests a point against this interface. Thus it does
 /// not import `core.element.dart` (Chart.js ADR 0003). An example is
 /// `boundSegment` of `helpers.segment.dart`.
-abstract interface class ElementPropertyRead {
+abstract interface class ElementPropertyRead() {
   /// The JS property read `element[prop]`. It gives the `undefined`
   /// sentinel for a property in the `undefined` state and for an unknown
   /// name.
@@ -1727,7 +1730,7 @@ abstract interface class ElementPropertyRead {
 /// [PropertyAccess]. The concrete `Element` of
 /// `core.element.dart` implements it with its access by name (Chart.js ADR
 /// 0017, section 5).
-abstract interface class PropertyAccess implements ElementPropertyRead {
+abstract interface class PropertyAccess() implements ElementPropertyRead {
   /// The JS property write `target[prop] = value`.
   void operator []=(String prop, Object? value);
 }

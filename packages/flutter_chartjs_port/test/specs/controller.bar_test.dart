@@ -87,7 +87,7 @@ BarElement _bar(ChartMeta meta, int index) => meta.data[index] as BarElement;
 Object? _options(Object element) => (element as Element).options;
 
 /// The mock context of :1677-1678: `ctx.resetTransform = function() {}`.
-final class _ResetTransformContext extends MockContext {
+final class _ResetTransformContext() extends MockContext {
   @override
   void resetTransform() {}
 }

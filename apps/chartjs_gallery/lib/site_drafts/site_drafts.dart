@@ -18,18 +18,20 @@ const _descriptions = [
 ];
 
 /// Three runnable design directions for the flutter_ports official site.
-class SiteDraftsApp extends StatefulWidget {
-  /// Creates the local design preview.
-  const SiteDraftsApp({super.key, this.initialDirection = 0});
+class const SiteDraftsApp({
+  super.key,
 
   /// Direction to show first: Signal, Workbench, or Fieldnotes.
-  final int initialDirection;
+  final int initialDirection = 0,
+}) extends StatefulWidget {
+  /// Creates the local design preview.
+  this;
 
   @override
   State<SiteDraftsApp> createState() => _SiteDraftsAppState();
 }
 
-class _SiteDraftsAppState extends State<SiteDraftsApp> {
+class _SiteDraftsAppState() extends State<SiteDraftsApp> {
   late int _direction = widget.initialDirection;
 
   @override
@@ -75,20 +77,16 @@ class _SiteDraftsAppState extends State<SiteDraftsApp> {
   }
 }
 
-class _DraftPage extends StatefulWidget {
-  const _DraftPage({
-    required this.direction,
-    required this.onDirection,
-    super.key,
-  });
-  final int direction;
-  final ValueChanged<int> onDirection;
-
+class const _DraftPage({
+  required final int direction,
+  required final ValueChanged<int> onDirection,
+  super.key,
+}) extends StatefulWidget {
   @override
   State<_DraftPage> createState() => _DraftPageState();
 }
 
-class _DraftPageState extends State<_DraftPage> {
+class _DraftPageState() extends State<_DraftPage> {
   late final Future<PackageHealthSnapshot> _health =
       PackageHealthSnapshot.load();
   final GlobalKey _libraryKey = GlobalKey();
@@ -1029,23 +1027,17 @@ class _DraftPageState extends State<_DraftPage> {
   );
 }
 
-class _LiveChart extends StatefulWidget {
-  const _LiveChart({
-    required this.accent,
-    required this.dark,
-    this.framed = true,
-    this.initialType = 0,
-  });
-  final Color accent;
-  final bool dark;
-  final bool framed;
-  final int initialType;
-
+class const _LiveChart({
+  required final Color accent,
+  required final bool dark,
+  final bool framed = true,
+  final int initialType = 0,
+}) extends StatefulWidget {
   @override
   State<_LiveChart> createState() => _LiveChartState();
 }
 
-class _LiveChartState extends State<_LiveChart> {
+class _LiveChartState() extends State<_LiveChart> {
   late int _type = widget.initialType;
   int _revision = 0;
   List<double> _data = [24, 38, 31, 57, 45, 68, 76];

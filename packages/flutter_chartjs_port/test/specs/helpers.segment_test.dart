@@ -10,15 +10,8 @@ import 'package:test/test.dart';
 /// members that the literal does not set are `null`, which stands for JS
 /// `undefined` (index.dart). The control points are NaN, which stands for JS
 /// `undefined` (`SplinePoint`).
-final class _Point implements PointElement {
-  _Point(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _Point(@override final double x, @override final double y)
+    implements PointElement {
   @override
   bool? get skip => null;
 
@@ -53,18 +46,11 @@ final class _Point implements PointElement {
 
 /// A JavaScript object literal `{start, end, loop}`, passed as a [Segment].
 /// It has no `style`, which is JS `undefined`.
-final class _Segment implements Segment {
-  const _Segment({required this.start, required this.end, required this.loop});
-
-  @override
-  final double start;
-
-  @override
-  final double end;
-
-  @override
-  final bool loop;
-
+final class const _Segment({
+  @override required final double start,
+  @override required final double end,
+  @override required final bool loop,
+}) implements Segment {
   @override
   Object? get style => null;
 }

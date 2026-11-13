@@ -124,10 +124,8 @@ List<bool?> _stops(Chart chart) => [
 }
 
 /// A map item whose reads are user code: it logs each key that it gives.
-class _LoggedMap extends MapBase<String, Object?> {
-  _LoggedMap(this.fields, this.log);
-  final Map<String, Object?> fields;
-  final List<Object?> log;
+class _LoggedMap(final Map<String, Object?> fields, final List<Object?> log)
+    extends MapBase<String, Object?> {
   @override
   Object? operator [](Object? key) {
     log.add(key);
@@ -146,9 +144,7 @@ class _LoggedMap extends MapBase<String, Object?> {
 
 /// A linear scale of a user class: once [armed], at the pass of the index 2,
 /// its `getPixelForValue` writes the x 100 into the item 1 of [data].
-class _WritingScale extends LinearScale {
-  _WritingScale(super.cfg);
-
+class _WritingScale(super.cfg) extends LinearScale {
   static List<Object?> data = const [];
   static bool armed = false;
 
@@ -171,9 +167,7 @@ class _WritingScale extends LinearScale {
 
 /// A y value of a user class: its `ToNumber` (`toString`) is user code that
 /// writes the x 1 and 100 in turn into the item 1 of [data].
-class _WritingValue {
-  _WritingValue(this.data);
-  final List<Object?> data;
+class _WritingValue(final List<Object?> data) {
   var _calls = 0;
   @override
   String toString() {
@@ -185,9 +179,7 @@ class _WritingValue {
 
 /// A point of a user class: its writes go by name, and its write of `y`
 /// calls [onY], user code.
-class _UserPoint extends PointElement {
-  _UserPoint([this.onY]);
-  final void Function()? onY;
+class _UserPoint([final void Function()? onY]) extends PointElement {
   @override
   bool get typedWrites => false;
   @override
@@ -617,9 +609,7 @@ void main() {
 }
 
 /// A list of a user class: its reads are user code.
-class _UserList<T> extends ListBase<T> {
-  _UserList(this.items);
-  final List<T> items;
+class _UserList<T>(final List<T> items) extends ListBase<T> {
   @override
   int get length => items.length;
   @override

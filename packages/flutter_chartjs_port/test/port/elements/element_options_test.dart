@@ -87,42 +87,32 @@ final List<Object?> _values = [
 ];
 
 /// One class of element options with its element statics and getters.
-final class _Kind<T extends ElementOptions> {
-  _Kind({
-    required this.name,
-    required this.create,
-    required this.knownKeys,
-    required this.defaults,
-    required this.defaultRoutes,
-    required this.writtenKeys,
-    required this._getters,
-  });
-
+final class _Kind<T extends ElementOptions>({
   /// The class name.
-  final String name;
+  required final String name,
 
   /// The constructor of the class.
-  final T Function([AnyObject? source]) create;
+  required final T Function([AnyObject? source]) create,
 
   /// The static `knownKeys` of the class.
-  final List<String> knownKeys;
+  required final List<String> knownKeys,
 
   /// The `defaults` of the element class: a typed scope.
-  final JsObjectFace defaults;
+  required final JsObjectFace defaults,
 
   /// The `defaultRoutes` of the element class.
-  final AnyObject defaultRoutes;
+  required final AnyObject defaultRoutes,
 
   /// The known keys that other code writes into the options (Chart.js ADR
   /// 0018, section 2), after the defaults and the routes.
-  final List<String> writtenKeys;
+  required final List<String> writtenKeys,
 
   /// The typed getter of each known key.
   ///
   /// Only the members of this class read it: a read through `_Kind` with
   /// another type argument fails the covariance check of the function type.
-  final Map<String, Object? Function(T options)> _getters;
-
+  required final Map<String, Object? Function(T options)> _getters,
+}) {
   /// The keys that have a typed getter.
   List<String> get getterKeys => _getters.keys.toList();
 
@@ -553,23 +543,21 @@ void main() {
 }
 
 /// One options class of the tests of Chart.js ADR 0021.
-final class _Class {
-  const _Class(this.name, this.create, this.knownKeys, this.keyA, this.keyB);
-
+final class const _Class(
   /// The class name.
-  final String name;
+  final String name,
 
   /// The constructor of the class.
-  final ElementOptions Function([AnyObject? source]) create;
+  final ElementOptions Function([AnyObject? source]) create,
 
   /// The static `knownKeys` of the class. [GenericElementOptions] has none.
-  final List<String> knownKeys;
+  final List<String> knownKeys,
 
   /// Two keys that the options of the element type have: known keys of a
   /// typed class.
-  final String keyA;
-  final String keyB;
-}
+  final String keyA,
+  final String keyB,
+);
 
 const List<_Class> _classes = [
   _Class(
@@ -614,12 +602,10 @@ final Matcher _throwsTypeError = throwsA(isA<TypeError>());
 
 /// A resolver: its `get` trap gives the value of [_values] with a `!`
 /// suffix, and [objectKeys] gives the keys in the order of [_order].
-final class _Proxy implements JsProxyObject {
-  _Proxy(this._values, this._order);
-
-  final Map<String, Object?> _values;
-  final List<String> _order;
-
+final class _Proxy(
+  final Map<String, Object?> _values,
+  final List<String> _order,
+) implements JsProxyObject {
   @override
   Object? jsRead(String name) => '${_values[name]}!';
 

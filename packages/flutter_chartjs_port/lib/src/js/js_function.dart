@@ -89,12 +89,12 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 ///
 /// The first parameter of [function] receives `this`. The other parameters
 /// receive the arguments, with the rules of [jsCall].
-final class JsFunction {
-  /// Wraps [function], whose first parameter receives `this`.
-  const JsFunction(this.function);
-
+final class const JsFunction(
   /// The closure. Its first parameter is `this`.
-  final Function function;
+  final Function function,
+) {
+  /// Wraps [function], whose first parameter receives `this`.
+  this;
 }
 
 /// The largest count of positional parameters that [jsCall] tests: 8.

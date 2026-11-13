@@ -26,34 +26,19 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// A scale object literal `{axis, getUserBounds, getPixelForValue}` (or
 /// `{min, max}`), passed as a [Scale]. The other members are absent.
-final class _Scale implements Scale {
-  _Scale({
-    this.axis = const XAxis(),
-    this.min = 0,
-    this.max = 0,
-    this.bounds = (
-      min: double.negativeInfinity,
-      max: double.infinity,
-      minDefined: false,
-      maxDefined: false,
-    ),
-    this.pixel = _times10,
-  });
-
+final class _Scale({
+  @override final ScaleAxis axis = const XAxis(),
+  @override var double min = 0,
+  @override var double max = 0,
+  final ({double min, double max, bool minDefined, bool maxDefined}) bounds = (
+    min: double.negativeInfinity,
+    max: double.infinity,
+    minDefined: false,
+    maxDefined: false,
+  ),
+  final double Function(double value) pixel = _times10,
+}) implements Scale {
   static double _times10(double value) => value * 10;
-
-  @override
-  final ScaleAxis axis;
-
-  @override
-  double min;
-
-  @override
-  double max;
-
-  final ({double min, double max, bool minDefined, bool maxDefined}) bounds;
-
-  final double Function(double value) pixel;
 
   @override
   ({double min, double max, bool minDefined, bool maxDefined})
@@ -68,12 +53,8 @@ final class _Scale implements Scale {
 }
 
 /// A dataset element with an `options` object, passed as an [Element].
-final class _Dataset implements Element {
-  _Dataset(this.options);
-
-  @override
-  final Map<String, Object?>? options;
-
+final class _Dataset(@override final Map<String, Object?>? options)
+    implements Element {
   @override
   double get x => 0;
 
@@ -90,15 +71,8 @@ final class _Dataset implements Element {
 
 /// A point element `{x, y}`, passed as a [PointElement]. The control points
 /// are NaN, which stands for JS `undefined` (`SplinePoint`).
-final class _Point implements PointElement {
-  _Point(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _Point(@override final double x, @override final double y)
+    implements PointElement {
   @override
   Map<String, Object?>? get options => null;
 
@@ -132,38 +106,15 @@ final class _Point implements PointElement {
 }
 
 /// A dataset meta object literal, passed as a [ChartMeta].
-final class _Meta implements ChartMeta {
-  _Meta({
-    this.sorted = true,
-    this.iScale,
-    this.vScale,
-    this.parsed = const [],
-    this.dataset,
-    this.xScale,
-    this.yScale,
-  });
-
-  @override
-  final bool sorted;
-
-  @override
-  final Scale? iScale;
-
-  @override
-  final Scale? vScale;
-
-  @override
-  final List<Map<String, Object?>> parsed;
-
-  @override
-  final Element? dataset;
-
-  @override
-  final Scale? xScale;
-
-  @override
-  final Scale? yScale;
-
+final class _Meta({
+  @override final bool sorted = true,
+  @override final Scale? iScale,
+  @override final Scale? vScale,
+  @override final List<Map<String, Object?>> parsed = const [],
+  @override final Element? dataset,
+  @override final Scale? xScale,
+  @override final Scale? yScale,
+}) implements ChartMeta {
   @override
   ScaleRanges? scaleRanges;
 

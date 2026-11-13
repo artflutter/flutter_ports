@@ -49,7 +49,13 @@ const List<int> stressItemCounts = [100, 1000, 5000, 20000];
 ///
 /// Each mode draws N items and M labels in each frame. The chips
 /// `stress.mode.<name>` select the mode.
-enum StressMode {
+enum StressMode(
+  /// The scripted benchmark counts, independent of [stressItemCounts].
+  final List<int> counts,
+
+  /// The name of the N items in the title of the chart.
+  final String items,
+) {
   /// N points with `drawPoint` and a polyline through N points, with the
   /// canvas calls of `helpers.canvas`. This is the scene of
   /// `packages/flutter_chartjs_port/doc/performance.md`.
@@ -85,14 +91,6 @@ enum StressMode {
   /// ([StressPluginScene.calls]).
   plugins(chartBenchPluginCounts, 'points per dataset');
 
-  StressMode(this.counts, this.items);
-
-  /// The scripted benchmark counts, independent of [stressItemCounts].
-  final List<int> counts;
-
-  /// The name of the N items in the title of the chart.
-  final String items;
-
   /// Whether the mode runs a real `Chart` on a chart host of its own:
   /// [chart], [axes] and [plugins].
   bool get runsChart => this == chart || this == axes || this == plugins;
@@ -101,7 +99,7 @@ enum StressMode {
 /// The widget that hosts the chart of the modes [StressMode.chart],
 /// [StressMode.axes] and [StressMode.plugins] (the night series A-N1 of
 /// phase 9: the overhead of `ChartView`, Chart.js ADR 0049).
-enum StressHost {
+enum StressHost() {
   /// The gallery host `ChartCanvas` (`lib/demo/chart_canvas.dart`): it
   /// makes the chart in a post-frame callback after its first frame. The
   /// chart is a `_StressChart`, which times its draws itself.
@@ -123,7 +121,7 @@ enum StressHost {
 /// 8). [draw] and [update] of the modes chart and axes run with
 /// `animation: false`. The mode [StressMode.axes] has no [animate]. Only the
 /// mode [StressMode.plugins] has [frame] ([stressCallsOf]).
-enum StressChartCall {
+enum StressChartCall() {
   /// Case (a): `chart.draw()`. The points do not move.
   draw,
 
@@ -192,7 +190,16 @@ const List<StressChartCall> _drawAndUpdate = [
 /// The scenes of the legend, the title and the filler run with
 /// `animation: false` and `events: []`. The tooltip scenes listen to the
 /// default events: a pointer over the chart host also gives events.
-enum StressPluginScene {
+enum StressPluginScene(
+  /// The mode of the benchmark case, for example `tooltip`.
+  final String benchMode,
+
+  /// The name of the benchmark case in its mode, for example `hover`.
+  final String benchName,
+
+  /// The calls of the scene: the calls of its benchmark cases.
+  final List<StressChartCall> calls,
+) {
   /// `legend.line`: three datasets on the visible default scales, with the
   /// legend of the docs blocks, or without it (the base of the legend and
   /// the title; [StressPluginCase.legend]).
@@ -229,17 +236,6 @@ enum StressPluginScene {
   /// `fill.radar`: a radar with the fills `origin`, `-1` and `-1`.
   radar('fill', 'radar', _drawAndUpdate);
 
-  StressPluginScene(this.benchMode, this.benchName, this.calls);
-
-  /// The mode of the benchmark case, for example `tooltip`.
-  final String benchMode;
-
-  /// The name of the benchmark case in its mode, for example `hover`.
-  final String benchName;
-
-  /// The calls of the scene: the calls of its benchmark cases.
-  final List<StressChartCall> calls;
-
   /// The id of the benchmark case: `tooltip.hover`.
   String get benchId => '$benchMode.$benchName';
 
@@ -254,30 +250,25 @@ const List<int> stressPluginDatasets = [3, 10];
 /// One case of the mode [StressMode.plugins]: a scene and its keys. The keys
 /// select one case of the benchmark ([benchKeys]).
 @immutable
-final class StressPluginCase {
+final class const StressPluginCase(
+  /// The scene.
+  final StressPluginScene scene, {
+
+  /// Whether the scene [StressPluginScene.legend] shows the legend.
+  final bool legend = true,
+
+  /// Whether the scenes [StressPluginScene.hover] and
+  /// [StressPluginScene.still] have the tooltip plugin.
+  final bool tooltip = true,
+
+  /// The datasets of the tooltip scenes.
+  final int datasets = 10,
+}) {
   /// The case of [scene]. [legend] applies to the scene
   /// [StressPluginScene.legend], [tooltip] to the scenes
   /// [StressPluginScene.hover] and [StressPluginScene.still], and
   /// [datasets] (3 or 10) to the three tooltip scenes.
-  const StressPluginCase(
-    this.scene, {
-    this.legend = true,
-    this.tooltip = true,
-    this.datasets = 10,
-  });
-
-  /// The scene.
-  final StressPluginScene scene;
-
-  /// Whether the scene [StressPluginScene.legend] shows the legend.
-  final bool legend;
-
-  /// Whether the scenes [StressPluginScene.hover] and
-  /// [StressPluginScene.still] have the tooltip plugin.
-  final bool tooltip;
-
-  /// The datasets of the tooltip scenes.
-  final int datasets;
+  this;
 
   /// The keys of the benchmark case, as its BENCH line gives them.
   Map<String, Object?> get benchKeys => switch (scene) {
@@ -386,103 +377,79 @@ Map<String, Object?> stressHostConfig(Map<String, Object?> config) {
 /// 3.13.5) crashes on a record type with exactly 20 fields, because the
 /// generated `hashCode` calls `Object.hash` with 21 arguments.
 @immutable
-final class StressStats {
-  /// Creates the figures.
-  const StressStats({
-    required this.mode,
-    required this.points,
-    required this.labels,
-    required this.frames,
-    required this.fps,
-    required this.drawMs,
-    required this.updateMs,
-    required this.animatorMs,
-    required this.elementsMs,
-    required this.layoutMs,
-    required this.datasetsUpdateMs,
-    required this.datasetsDrawMs,
-    required this.ticks,
-    required this.rotation,
-    required this.sharing,
-    required this.buildMs,
-    required this.buildMaxMs,
-    required this.rasterMs,
-    required this.rasterMaxMs,
-    required this.timings,
-    this.tooltipDrawMs = 0,
-    this.lastDataUpdateFast = false,
-    this.canvasSize = '',
-  });
-
+final class const StressStats({
   /// The mode.
-  final StressMode mode;
+  required final StressMode mode,
 
   /// The item count N.
-  final int points;
+  required final int points,
 
   /// The label count M.
-  final int labels;
+  required final int labels,
 
   /// The frames since the loop started.
-  final int frames;
+  required final int frames,
 
   /// The frames per second.
-  final double fps;
+  required final double fps,
 
   /// The mean time of the draw calls of a frame.
-  final double drawMs;
+  required final double drawMs,
 
   /// The time of `chart.update()` without its draw.
-  final double updateMs;
+  required final double updateMs,
 
   /// The time of the animator tick without its draw.
-  final double animatorMs;
+  required final double animatorMs,
 
   /// The part `elements` of `StressChartTiming`.
-  final double elementsMs;
+  required final double elementsMs,
 
   /// The part `layout` of `StressChartTiming`.
-  final double layoutMs;
+  required final double layoutMs,
 
   /// The part `datasetsUpdate` of `StressChartTiming`.
-  final double datasetsUpdateMs;
+  required final double datasetsUpdateMs,
 
   /// The part `datasetsDraw` of `StressChartTiming`.
-  final double datasetsDrawMs;
+  required final double datasetsDrawMs,
 
   /// The tick count of the x axis after the auto skip.
-  final int ticks;
+  required final int ticks,
 
   /// The `labelRotation` of the x axis.
-  final double rotation;
+  required final double rotation,
 
   /// The `enableOptionSharing` of the controller of dataset 0.
-  final bool sharing;
+  required final bool sharing,
 
   /// The mean build time of the frame timings.
-  final double buildMs;
+  required final double buildMs,
 
   /// The longest build time of the frame timings.
-  final double buildMaxMs;
+  required final double buildMaxMs,
 
   /// The mean raster time of the frame timings.
-  final double rasterMs;
+  required final double rasterMs,
 
   /// The longest raster time of the frame timings.
-  final double rasterMaxMs;
+  required final double rasterMaxMs,
 
   /// The count of frame timings.
-  final int timings;
+  required final int timings,
 
   /// The part `tooltipDraw` of the tooltip scenes of the mode
   /// [StressMode.plugins].
-  final double tooltipDrawMs;
+  final double tooltipDrawMs = 0,
 
   /// Whether the last explicit data update used the incremental lifecycle.
-  final bool lastDataUpdateFast;
+  final bool lastDataUpdateFast = false,
 
   /// Logical canvas dimensions and device pixel ratio for comparable runs.
-  final String canvasSize;
+  final String canvasSize = '',
+}) {
+  /// Creates the figures.
+  this;
 
   @override
   bool operator ==(Object other) =>
@@ -604,7 +571,76 @@ const StressStats _noStats = StressStats(
 /// `stress.m.200`, `stress.start`, `stress.chart.call.update`,
 /// `stress.chart.type.bar`, `stress.axes.scale.time`,
 /// `stress.plugins.scene.fade`, …) so that automation can drive it.
-class StressDemo extends StatefulWidget {
+class const StressDemo({
+  /// The first mode.
+  final StressMode initialMode = StressMode.primitives,
+
+  /// The first item count, or 1000.
+  final int? initialN,
+
+  /// The first label count, or 0.
+  final int? initialM,
+
+  /// Whether the labels start with a new angle in each frame.
+  final bool initialSpin = false,
+
+  /// Whether the modes [StressMode.primitives] and [StressMode.elements]
+  /// start with their line (the layer `stress.layer.line`).
+  final bool initialLine = true,
+
+  /// The first call of each frame in the mode [StressMode.chart].
+  final StressChartCall initialCall = StressChartCall.draw,
+
+  /// The first chart type of the mode [StressMode.chart].
+  final StressChartType initialType = StressChartType.line,
+
+  /// Whether a `line` or `scatter` chart of the mode [StressMode.chart]
+  /// starts with its line (the dataset option `showLine`). The other types
+  /// have no line: they take false.
+  final bool initialShowLine = false,
+
+  /// Whether the chart items start with a scriptable `backgroundColor`.
+  final bool initialScriptable = false,
+
+  /// Whether chart items start with indexed colors.
+  /// Mutually exclusive with [initialScriptable].
+  final bool initialIndexed = false,
+
+  /// The first scale type of the x axis in the mode [StressMode.axes].
+  final StressAxisType initialScale = StressAxisType.linear,
+
+  /// The first scale type of the y axis in the mode [StressMode.axes]: one
+  /// of [stressAxesValueTypes].
+  final StressAxisType initialYScale = StressAxisType.linear,
+
+  /// The first option `ticks.autoSkip` of the x axis in the mode
+  /// [StressMode.axes].
+  final bool initialAutoSkip = true,
+
+  /// The first case of the mode [StressMode.plugins].
+  final StressPluginCase initialPluginCase = const StressPluginCase(
+    StressPluginScene.legend,
+  ),
+
+  /// Whether the loop starts as soon as the chart exists. Defaults to true.
+  final bool autoStart = true,
+
+  /// Receives the figures each time the readout updates.
+  final ValueChanged<StressStats>? onStats,
+
+  /// The widget that hosts the chart of the modes [StressMode.chart],
+  /// [StressMode.axes] and [StressMode.plugins]. The other modes draw on the
+  /// demo canvas.
+  final StressHost host = StressHost.canvas,
+
+  /// Whether the toolbar and the readout are out of the semantics tree
+  /// (`ExcludeSemantics`), so that only the chart and the static text give
+  /// semantics nodes. The stress entry sets it with the define `SEMANTICS`
+  /// (protocol B-N1 of phase 9): the readout changes twice a second, and its
+  /// semantics updates are not the cost of the chart node.
+  final bool chartSemanticsOnly = false,
+  super.key,
+}) extends StatefulWidget {
   /// Creates the stress tab.
   ///
   /// [initialMode], [initialN] and [initialM] set the first mode, item count
@@ -622,103 +658,21 @@ class StressDemo extends StatefulWidget {
   /// each published [StressStats]. They let a profiling entry point
   /// (`lib/main_stress.dart`) or a test drive the tab. [host] selects the
   /// widget of the chart of the modes with a chart ([StressHost]).
-  const StressDemo({
-    this.initialMode = StressMode.primitives,
-    this.initialN,
-    this.initialM,
-    this.initialSpin = false,
-    this.initialLine = true,
-    this.initialCall = StressChartCall.draw,
-    this.initialType = StressChartType.line,
-    this.initialShowLine = false,
-    this.initialScriptable = false,
-    this.initialIndexed = false,
-    this.initialScale = StressAxisType.linear,
-    this.initialYScale = StressAxisType.linear,
-    this.initialAutoSkip = true,
-    this.initialPluginCase = const StressPluginCase(StressPluginScene.legend),
-    this.autoStart = true,
-    this.onStats,
-    this.host = StressHost.canvas,
-    this.chartSemanticsOnly = false,
-    super.key,
-  }) : assert(
-         !(initialIndexed && initialScriptable),
-         'Choose indexed or scriptable colors, not both.',
-       );
-
-  /// The first mode.
-  final StressMode initialMode;
-
-  /// The first item count, or 1000.
-  final int? initialN;
-
-  /// The first label count, or 0.
-  final int? initialM;
-
-  /// Whether the labels start with a new angle in each frame.
-  final bool initialSpin;
-
-  /// Whether the modes [StressMode.primitives] and [StressMode.elements]
-  /// start with their line (the layer `stress.layer.line`).
-  final bool initialLine;
-
-  /// The first call of each frame in the mode [StressMode.chart].
-  final StressChartCall initialCall;
-
-  /// The first chart type of the mode [StressMode.chart].
-  final StressChartType initialType;
-
-  /// Whether a `line` or `scatter` chart of the mode [StressMode.chart]
-  /// starts with its line (the dataset option `showLine`). The other types
-  /// have no line: they take false.
-  final bool initialShowLine;
-
-  /// Whether the chart items start with a scriptable `backgroundColor`.
-  final bool initialScriptable;
-
-  /// Whether chart items start with indexed colors.
-  /// Mutually exclusive with [initialScriptable].
-  final bool initialIndexed;
-
-  /// The first scale type of the x axis in the mode [StressMode.axes].
-  final StressAxisType initialScale;
-
-  /// The first scale type of the y axis in the mode [StressMode.axes]: one
-  /// of [stressAxesValueTypes].
-  final StressAxisType initialYScale;
-
-  /// The first option `ticks.autoSkip` of the x axis in the mode
-  /// [StressMode.axes].
-  final bool initialAutoSkip;
-
-  /// The first case of the mode [StressMode.plugins].
-  final StressPluginCase initialPluginCase;
-
-  /// Whether the loop starts as soon as the chart exists. Defaults to true.
-  final bool autoStart;
-
-  /// Receives the figures each time the readout updates.
-  final ValueChanged<StressStats>? onStats;
-
-  /// The widget that hosts the chart of the modes [StressMode.chart],
-  /// [StressMode.axes] and [StressMode.plugins]. The other modes draw on the
-  /// demo canvas.
-  final StressHost host;
-
-  /// Whether the toolbar and the readout are out of the semantics tree
-  /// (`ExcludeSemantics`), so that only the chart and the static text give
-  /// semantics nodes. The stress entry sets it with the define `SEMANTICS`
-  /// (protocol B-N1 of phase 9): the readout changes twice a second, and its
-  /// semantics updates are not the cost of the chart node.
-  final bool chartSemanticsOnly;
+  this
+    : assert(
+        !(initialIndexed && initialScriptable),
+        'Choose indexed or scriptable colors, not both.',
+      );
 
   @override
   State<StressDemo> createState() => StressDemoState();
 }
 
 /// The state of a [StressDemo]: the loop, the scene and the figures.
-class StressDemoState extends State<StressDemo> {
+class StressDemoState() extends State<StressDemo> {
+  /// A new state of [StressDemo].
+  this;
+
   static final int _maxPoints = stressPointCounts.reduce(math.max);
 
   late StressMode _mode = widget.initialMode;
@@ -2705,7 +2659,7 @@ class StressDemoState extends State<StressDemo> {
 
 /// The draw meter of a stress chart: the time of each `draw()`, also the
 /// draw inside `update()`, and the animator tick before a draw.
-abstract interface class _StressMeter {
+abstract interface class _StressMeter() {
   /// The microseconds of the draws since the last reset.
   abstract int drawMicros;
 
@@ -2762,10 +2716,10 @@ mixin _TickMark {
 /// For [StressChartCall.animate], it also adds the time from the mark of
 /// [markTick] to the start of a draw in the same frame to [animatorMicros]:
 /// the tick of the animator before its draw.
-final class _StressChart extends Chart with _TickMark implements _StressMeter {
-  _StressChart(super.item, [super.userConfig]);
-
-  // This wrapper only records timings; data/config getters remain Chart's.
+final class _StressChart(super.item, [super.userConfig])
+    extends Chart
+    with _TickMark
+    implements _StressMeter {
   @override
   bool get supportsNativeCategoryLabels => true;
 
@@ -2799,7 +2753,7 @@ final class _StressChart extends Chart with _TickMark implements _StressMeter {
 /// host puts [first] before the inline plugins of the config and [last]
 /// after them. The `clear()` of `draw()` and the `beforeDraw` hooks of the
 /// registered plugins come before the mark (core.controller.js:715-735).
-final class _PluginMeter with _TickMark implements _StressMeter {
+final class _PluginMeter() with _TickMark implements _StressMeter {
   @override
   int drawMicros = 0;
 

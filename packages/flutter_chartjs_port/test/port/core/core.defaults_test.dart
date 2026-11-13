@@ -110,7 +110,7 @@ Defaults _defaults() => Defaults(<String, Object?>{}, const []);
 
 /// A platform whose device pixel ratio is 2. Only `getDevicePixelRatio` is
 /// read.
-final class _Platform implements types.BasePlatform {
+final class _Platform() implements types.BasePlatform {
   @override
   double getDevicePixelRatio() => 2;
 
@@ -119,7 +119,7 @@ final class _Platform implements types.BasePlatform {
 }
 
 /// A chart with a [_Platform]. Only `platform` is read.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   final types.BasePlatform platform = _Platform();
 

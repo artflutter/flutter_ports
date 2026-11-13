@@ -14,7 +14,7 @@ library;
 /// `borderSkipped` of a bar (index.d.ts:2158 `'start' | 'end' | 'left' |
 /// 'right' | 'bottom' | 'top' | 'middle'`, with `boolean`): the edge of the
 /// bar that draws no border.
-enum BorderSkippedEdge {
+enum BorderSkippedEdge() {
   /// `'start'`: the edge at the base of the bar, the default.
   start,
 

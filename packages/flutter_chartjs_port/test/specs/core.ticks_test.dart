@@ -36,12 +36,8 @@ List<Object?> _getLabels(core.Scale scale) => [
 /// The `chart` of the JavaScript object literal
 /// `{chart: {options: {locale}}, ...}`, passed as a [Chart]. The formatters
 /// read only its options.
-final class _Chart implements Chart {
-  _Chart(this.options);
-
-  @override
-  final Map<String, Object?> options;
-
+final class _Chart(@override final Map<String, Object?> options)
+    implements Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -49,26 +45,16 @@ final class _Chart implements Chart {
 /// The JavaScript object literal `{chart, options}` that the spec passes as
 /// `this`, passed as a [Scale]. The formatters read only `chart` and
 /// `options`.
-final class _Scale implements Scale {
-  _Scale(this.chart, this.options);
-
-  @override
-  final Chart chart;
-
-  @override
-  final Map<String, Object?> options;
-
+final class _Scale(
+  @override final Chart chart,
+  @override final Map<String, Object?> options,
+) implements Scale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A JavaScript object literal `{value}`, passed as a [Tick].
-final class _Tick implements Tick {
-  const _Tick(this.value);
-
-  @override
-  final double value;
-
+final class const _Tick(@override final double value) implements Tick {
   @override
   double? get significand => null;
 }

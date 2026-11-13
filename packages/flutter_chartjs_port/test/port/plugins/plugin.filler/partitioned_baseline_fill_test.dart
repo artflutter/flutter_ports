@@ -25,7 +25,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../canvas/pixel_compare.dart';
 
-class _CustomPoint extends PointElement {
+class _CustomPoint() extends PointElement {
   @override
   double get x => throw StateError('custom coordinate must not be probed');
 }

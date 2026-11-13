@@ -18,14 +18,13 @@ import 'package:flutter_test/flutter_test.dart';
 const red = Color(0xffff0000);
 const blue = Color(0xff0000ff);
 
-class _Reference extends Chart {
-  _Reference(super.item, super.userConfig);
+class _Reference(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativePointOptions => false;
 }
 
 // Explicit native opt-in; counters only, with ordinary property/context behavior.
-class _Probe extends PointElement {
+class _Probe() extends PointElement {
   int reads = 0;
   @override
   bool get supportsNativePointOptions {
@@ -37,10 +36,8 @@ class _Probe extends PointElement {
   bool get typedWrites => true;
 }
 
-class _ObservedList<T> extends ListBase<T> {
-  _ObservedList(this.values, this.trace);
-  final List<T> values;
-  final List<Object?> trace;
+class _ObservedList<T>(final List<T> values, final List<Object?> trace)
+    extends ListBase<T> {
   @override
   int get length {
     trace.add('length');

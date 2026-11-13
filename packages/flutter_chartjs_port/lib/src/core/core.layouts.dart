@@ -59,39 +59,29 @@ double _or(double a, double b) => a != 0 && !a.isNaN ? a : b;
 /// core.layouts.js:35-43 the wrapper `{index, box, pos, horizontal, weight,
 /// stack, stackWeight}` of a box, with the keys `width` and `height` of
 /// `setLayoutDims` (:75-79) and `size` of `updateDims` (:128).
-final class _LayoutWrap {
-  _LayoutWrap({
-    required this.index,
-    required this.box,
-    required this.pos,
-    required this.horizontal,
-    required this.weight,
-    required this.stack,
-    required this.stackWeight,
-  });
-
+final class _LayoutWrap({
   /// `index`, the index of the box in `chart.boxes`. A list index.
-  final int index;
+  required final int index,
 
   /// `box`.
-  final LayoutItem box;
+  required final LayoutItem box,
 
   /// `pos`, the [LayoutItem.position] of the box.
-  final Object? pos;
+  required final Object? pos,
 
   /// `horizontal`, the result of `box.isHorizontal()`.
-  final bool horizontal;
+  required final bool horizontal,
 
   /// `weight`, the [LayoutItem.weight] of the box: the raw value.
-  final Object? weight;
+  required final Object? weight,
 
   /// `stack && (pos + stack)` (:41): the key of the stack, a `String`, or
   /// the falsy `stack` option.
-  final Object? stack;
+  required final Object? stack,
 
   /// `stackWeight`, the option with the default 1 (:34).
-  final double stackWeight;
-
+  required final double stackWeight,
+}) {
   /// `width` (:75, :78). Upstream also stores `false`, and a wrapper that
   /// `setLayoutDims` does not see keeps `undefined`. The one reader tests
   /// the truthiness (`layout.width || chartArea.w`, :188). Thus 0 stands for
@@ -112,18 +102,16 @@ final class _LayoutWrap {
 /// `updateDims` (:126) and `placeBoxes` (:224) read a stack that does not
 /// exist as a new object with some of the keys. [size] is 0 for the absent
 /// `size` of :224: the reader tests the truthiness (:228, :242).
-final class _Stack {
-  _Stack({required this.count, required this.placed, required this.weight});
-
+final class _Stack({
   /// `count`, the count of the boxes in the stack.
-  double count;
+  required var double count,
 
   /// `placed`, the length that `placeBoxes` has placed.
-  double placed;
+  required var double placed,
 
   /// `weight`, the sum of the `stackWeight` of the boxes.
-  double weight;
-
+  required var double weight,
+}) {
   /// `size`, the largest size of a box in the stack. The stacks of
   /// `buildStacks` (:55) and of `updateDims` (:126) start at 0.
   double size = 0;
@@ -137,38 +125,28 @@ final class _Stack {
 ///
 /// The fields are final. Thus no write can reach the object, as no
 /// upstream code writes into it (Chart.js ADR 0021, section 5).
-final class _LayoutParams {
-  const _LayoutParams({
-    required this.outerWidth,
-    required this.outerHeight,
-    required this.padding,
-    required this.availableWidth,
-    required this.availableHeight,
-    required this.vBoxMaxWidth,
-    required this.hBoxMaxHeight,
-  });
-
+final class const _LayoutParams({
   /// `outerWidth`.
-  final double outerWidth;
+  required final double outerWidth,
 
   /// `outerHeight`.
-  final double outerHeight;
+  required final double outerHeight,
 
   /// The native `layout.padding` option.
-  final EdgeInsets padding;
+  required final EdgeInsets padding,
 
   /// `availableWidth`.
-  final double availableWidth;
+  required final double availableWidth,
 
   /// `availableHeight`.
-  final double availableHeight;
+  required final double availableHeight,
 
   /// `vBoxMaxWidth`.
-  final double vBoxMaxWidth;
+  required final double vBoxMaxWidth,
 
   /// `hBoxMaxHeight`.
-  final double hBoxMaxHeight;
-}
+  required final double hBoxMaxHeight,
+});
 
 /// The object `{left, top, right, bottom}` of an edge set: the `maxPadding`
 /// of `update` (:404), a margin of `getMargins` (:167) and the margins of
@@ -177,7 +155,7 @@ final class _LayoutParams {
 /// The access by name reads and writes the four edges. Upstream reads and
 /// writes them as `object[pos]` (:106, :153, :169).
 final class _Edges implements TRBL {
-  _Edges({
+  new({
     required this.left,
     required this.top,
     required this.right,
@@ -186,7 +164,7 @@ final class _Edges implements TRBL {
 
   /// `Object.assign({}, padding)` (:404). The copy also has the `width` and
   /// `height` of the padding. No reader reads them.
-  _Edges.copy(EdgeInsets padding)
+  new copy(EdgeInsets padding)
     : top = padding.top,
       right = padding.right,
       bottom = padding.bottom,
@@ -239,45 +217,34 @@ final class _Edges implements TRBL {
 /// read of an absent key gives NaN, the `ToNumber` of `undefined`. The
 /// copied `width` and `height` of the padding have no field: no code reads
 /// them.
-final class _LayoutArea {
-  _LayoutArea({
-    required this.maxPadding,
-    required this.w,
-    required this.h,
-    required this.x,
-    required this.y,
-    required EdgeInsets padding,
-  }) : top = padding.top,
-       right = padding.right,
-       bottom = padding.bottom,
-       left = padding.left;
-
+final class _LayoutArea({
   /// `maxPadding`.
-  final _Edges maxPadding;
+  required final _Edges maxPadding,
 
   /// `w`, the width of the area.
-  double w;
+  required var double w,
 
   /// `h`, the height of the area.
-  double h;
+  required var double h,
 
   /// `x`, the position of the next box on the x axis.
-  double x;
+  required var double x,
 
   /// `y`, the position of the next box on the y axis.
-  double y;
-
+  required var double y,
+  required EdgeInsets padding,
+}) {
   /// `top`.
-  double top;
+  double top = padding.top;
 
   /// `right`.
-  double right;
+  double right = padding.right;
 
   /// `bottom`.
-  double bottom;
+  double bottom = padding.bottom;
 
   /// `left`.
-  double left;
+  double left = padding.left;
 
   /// The keys of the positions that are not static (see [_LayoutArea]).
   final Map<Object?, double> _other = {};
@@ -310,43 +277,21 @@ final class _LayoutArea {
 
 /// core.layouts.js:439-446 the object literal `{left, top, right, bottom,
 /// height, width}` of `chart.chartArea`.
-final class _ChartArea implements ChartArea {
-  const _ChartArea({
-    required this.left,
-    required this.top,
-    required this.right,
-    required this.bottom,
-    required this.height,
-    required this.width,
-  });
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
-  @override
-  final double height;
-
-  @override
-  final double width;
-}
+final class const _ChartArea({
+  @override required final double left,
+  @override required final double top,
+  @override required final double right,
+  @override required final double bottom,
+  @override required final double height,
+  @override required final double width,
+}) implements ChartArea;
 
 /// core.layouts.js:302-307 the layer `{z: 0, draw(chartArea)}` of the
 /// default `_layers` of `addBox`. Its [draw] calls `item.draw(chartArea)`.
-final class _BoxLayer implements LayoutLayer {
-  _BoxLayer(this._item);
-
+final class _BoxLayer(
   /// `item`, the box of the layer.
-  final LayoutItem _item;
-
+  final LayoutItem _item,
+) implements LayoutLayer {
   @override
   final double z = 0;
 

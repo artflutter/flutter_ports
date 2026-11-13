@@ -497,7 +497,7 @@ List<ChartConfig> _configs() {
 }
 
 /// The result of the key check.
-final class _Check {
+final class _Check() {
   /// The lowered paths that are neither known nor on the allowlist.
   final List<String> unknown = [];
 

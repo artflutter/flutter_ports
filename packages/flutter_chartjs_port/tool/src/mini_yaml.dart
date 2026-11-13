@@ -12,13 +12,7 @@ library;
 /// `String` or null (an empty document or an empty value).
 Object? parseYamlSubset(String text) => _Parser(_lines(text)).document();
 
-final class _Line {
-  const _Line(this.number, this.indent, this.text);
-
-  final int number;
-  final int indent;
-  final String text;
-}
+final class const _Line(final int number, final int indent, final String text);
 
 List<_Line> _lines(String text) {
   final result = <_Line>[];
@@ -63,10 +57,7 @@ String _stripComment(String line) {
   return line;
 }
 
-final class _Parser {
-  _Parser(this.lines);
-
-  final List<_Line> lines;
+final class _Parser(final List<_Line> lines) {
   int index = 0;
 
   bool get _done => index >= lines.length;

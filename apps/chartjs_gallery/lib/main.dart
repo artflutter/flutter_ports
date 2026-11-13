@@ -52,9 +52,9 @@ final ChartThemeData galleryDarkChartTheme = const ChartThemeData.dark()
 /// of the brightness switches the theme of each chart once, at the middle
 /// of the theme animation of the app, where the brightness of the animated
 /// theme changes.
-class GalleryApp extends StatelessWidget {
+class const GalleryApp({super.key}) extends StatelessWidget {
   /// Creates the gallery.
-  const GalleryApp({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +75,9 @@ class GalleryApp extends StatelessWidget {
 
 /// The home page of the gallery: the two demos, the chart types, then the
 /// zoom plugin.
-class GalleryHome extends StatelessWidget {
+class const GalleryHome({super.key}) extends StatelessWidget {
   /// Creates the home page.
-  const GalleryHome({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -150,21 +150,13 @@ class GalleryHome extends StatelessWidget {
 }
 
 /// A highlighted entry of the home page that opens a demo page.
-class _DemoEntry extends StatelessWidget {
-  const _DemoEntry({
-    required this.entryKey,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.builder,
-  });
-
-  final Key entryKey;
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final WidgetBuilder builder;
-
+class const _DemoEntry({
+  required final Key entryKey,
+  required final IconData icon,
+  required final String title,
+  required final String subtitle,
+  required final WidgetBuilder builder,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;

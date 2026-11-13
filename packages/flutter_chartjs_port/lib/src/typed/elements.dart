@@ -49,28 +49,28 @@ import 'package:meta/meta.dart' show internal;
 /// bars, and a line, a scatter, a bubble and a radar chart draw points and
 /// lines.
 @immutable
-final class ChartElements with Diagnosticable {
-  /// The element options.
-  const ChartElements({this.point, this.line, this.bar, this.arc, this.extra});
-
+final class const ChartElements({
   /// The options of the points: `elements.point`.
-  final PointElementStyle? point;
+  final PointElementStyle? point,
 
   /// The options of the lines: `elements.line`.
-  final LineElementStyle? line;
+  final LineElementStyle? line,
 
   /// The options of the bars: `elements.bar`.
-  final BarElementStyle? bar;
+  final BarElementStyle? bar,
 
   /// The options of the arcs: `elements.arc`.
-  final ArcElementStyle? arc;
+  final ArcElementStyle? arc,
 
   /// The Chart.js element options that have no parameter, for example the
   /// options of a custom element type. The entries go into the `elements`
   /// Map last: an entry wins over a parameter with the same key. A Map
   /// value merges into the Map of the key, a List or another value replaces
   /// it.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The element options.
+  this;
 
   /// A copy of these element options with the given parameters. A
   /// parameter that is `null` keeps its value.
@@ -129,49 +129,40 @@ ElementOptionsByTypeScope lowerElements(ChartElements elements) {
 /// A dataset option with the prefix `point` wins over each option, for
 /// example `LineDataset.pointRadius` over [radius].
 @immutable
-final class PointElementStyle with Diagnosticable {
-  /// The point options.
-  const PointElementStyle({
-    this.radius,
-    this.pointStyle,
-    this.backgroundColor,
-    this.borderColor,
-    this.borderWidth,
-    this.hitRadius,
-    this.hoverRadius,
-    this.extra,
-  });
-
+final class const PointElementStyle({
   /// The radius of a point in pixels: `radius`. 0 draws no points. The
   /// default is 3.
-  final double? radius;
+  final double? radius,
 
   /// The style of a point: `pointStyle`, a [PointStyle] (row
   /// `adapt-point-style-objects`). The default is `CirclePointStyle`.
   /// `false`, no point, goes through [extra].
-  final PointStyle? pointStyle;
+  final PointStyle? pointStyle,
 
   /// The fill color of a point: `backgroundColor`.
-  final ChartPaint? backgroundColor;
+  final ChartPaint? backgroundColor,
 
   /// The border color of a point: `borderColor`.
-  final ChartPaint? borderColor;
+  final ChartPaint? borderColor,
 
   /// The border width of a point in pixels: `borderWidth`. The default is
   /// 1.
-  final double? borderWidth;
+  final double? borderWidth,
 
   /// The radius in pixels, added to [radius], in which a pointer hits a
   /// point: `hitRadius`. The default is 1.
-  final double? hitRadius;
+  final double? hitRadius,
 
   /// The radius of a point under the pointer, in pixels: `hoverRadius`. The
   /// default is 4.
-  final double? hoverRadius;
+  final double? hoverRadius,
 
   /// The Chart.js point options that have no parameter, for example
   /// `{'rotation': 45}`. The rules of [ChartElements.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The point options.
+  this;
 
   /// A copy of these point options with the given parameters. A parameter
   /// that is `null` keeps its value.
@@ -241,65 +232,53 @@ final class PointElementStyle with Diagnosticable {
 /// the same name wins over each option, for example `LineDataset.tension`
 /// over [tension].
 @immutable
-final class LineElementStyle with Diagnosticable {
-  /// The line options.
-  const LineElementStyle({
-    this.tension,
-    this.backgroundColor,
-    this.borderColor,
-    this.borderWidth,
-    this.borderDash,
-    this.borderCapStyle,
-    this.borderJoinStyle,
-    this.fill,
-    this.stepped,
-    this.cubicInterpolationMode,
-    this.extra,
-  });
-
+final class const LineElementStyle({
   /// The Bézier curve tension of a line, from 0 (straight lines) to 1:
   /// `tension`. The default is 0.
-  final double? tension;
+  final double? tension,
 
   /// The fill color under a line: `backgroundColor`.
-  final ChartPaint? backgroundColor;
+  final ChartPaint? backgroundColor,
 
   /// The color of a line: `borderColor`.
-  final ChartPaint? borderColor;
+  final ChartPaint? borderColor,
 
   /// The width of a line in pixels: `borderWidth`. The default is 3.
-  final double? borderWidth;
+  final double? borderWidth,
 
   /// The dash pattern of a line, lengths of dashes and gaps in pixels:
   /// `borderDash`. The default is a solid line.
-  final List<double>? borderDash;
+  final List<double>? borderDash,
 
   /// The shape of the ends of a line: `borderCapStyle`, a Flutter
   /// [StrokeCap]. The default is [StrokeCap.butt].
-  final StrokeCap? borderCapStyle;
+  final StrokeCap? borderCapStyle,
 
   /// The shape of the corners of a line: `borderJoinStyle`, a Flutter
   /// [StrokeJoin]. The default is [StrokeJoin.miter].
-  final StrokeJoin? borderJoinStyle;
+  final StrokeJoin? borderJoinStyle,
 
   /// The fill of the area under or between the lines: `fill`. The default
   /// is no fill.
-  final ChartFill? fill;
+  final ChartFill? fill,
 
   /// The form of a stepped line: `stepped`, a [SteppedLine] (row
   /// `adapt-stepped-line-enum`). Dart `null`, the default, draws no steps.
-  final SteppedLine? stepped;
+  final SteppedLine? stepped,
 
   /// The mode of the control points of a curved line:
   /// `cubicInterpolationMode`, a [CubicInterpolationMode] (row
   /// `adapt-cubic-interpolation-mode-objects`). Dart `null` keeps the
   /// default, [DefaultCubicInterpolationMode].
-  final CubicInterpolationMode? cubicInterpolationMode;
+  final CubicInterpolationMode? cubicInterpolationMode,
 
   /// The Chart.js line options that have no parameter, for example
   /// `{'capBezierPoints': false}`. The rules of
   /// [ChartElements.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The line options.
+  this;
 
   /// A copy of these line options with the given parameters. A parameter
   /// that is `null` keeps its value.
@@ -381,32 +360,26 @@ final class LineElementStyle with Diagnosticable {
 /// A dataset option of the same name wins over each option, for example
 /// `BarDataset.borderRadius` over [borderRadius].
 @immutable
-final class BarElementStyle with Diagnosticable {
-  /// The bar options.
-  const BarElementStyle({
-    this.backgroundColor,
-    this.borderColor,
-    this.borderWidth,
-    this.borderRadius,
-    this.extra,
-  });
-
+final class const BarElementStyle({
   /// The fill color of a bar: `backgroundColor`.
-  final ChartPaint? backgroundColor;
+  final ChartPaint? backgroundColor,
 
   /// The border color of a bar: `borderColor`.
-  final ChartPaint? borderColor;
+  final ChartPaint? borderColor,
 
   /// The border width of a bar in pixels: `borderWidth`. The default is 0.
-  final double? borderWidth;
+  final double? borderWidth,
 
   /// The radius of the corners of a bar in pixels: `borderRadius` as a
   /// number. The object form goes through [extra].
-  final double? borderRadius;
+  final double? borderRadius,
 
   /// The Chart.js bar options that have no parameter, for example
   /// `{'borderSkipped': false}`. The rules of [ChartElements.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The bar options.
+  this;
 
   /// A copy of these bar options with the given parameters. A parameter
   /// that is `null` keeps its value.
@@ -463,46 +436,37 @@ final class BarElementStyle with Diagnosticable {
 /// A dataset option of the same name wins over each option, for example
 /// `PieDataset.offset` over [offset].
 @immutable
-final class ArcElementStyle with Diagnosticable {
-  /// The arc options.
-  const ArcElementStyle({
-    this.backgroundColor,
-    this.borderColor,
-    this.borderWidth,
-    this.offset,
-    this.spacing,
-    this.borderAlign,
-    this.spacingMode,
-    this.extra,
-  });
-
+final class const ArcElementStyle({
   /// The fill color of an arc: `backgroundColor`.
-  final ChartPaint? backgroundColor;
+  final ChartPaint? backgroundColor,
 
   /// The border color of an arc: `borderColor`. The default is white.
-  final ChartPaint? borderColor;
+  final ChartPaint? borderColor,
 
   /// The border width of an arc in pixels: `borderWidth`. The default is
   /// 2.
-  final double? borderWidth;
+  final double? borderWidth,
 
   /// The offset of an arc from the center, in pixels: `offset`.
-  final double? offset;
+  final double? offset,
 
   /// The space between two arcs, in pixels: `spacing`.
-  final double? spacing;
+  final double? spacing,
 
   /// Where the border of an arc lies: `borderAlign`. The default is
   /// [ArcBorderAlign.center].
-  final ArcBorderAlign? borderAlign;
+  final ArcBorderAlign? borderAlign,
 
   /// The geometry of the space between two arcs: `spacingMode`. The default
   /// is [ArcSpacingMode.angular].
-  final ArcSpacingMode? spacingMode;
+  final ArcSpacingMode? spacingMode,
 
   /// The Chart.js arc options that have no parameter, for example
   /// `{'circular': false}`. The rules of [ChartElements.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The arc options.
+  this;
 
   /// A copy of these arc options with the given parameters. A parameter
   /// that is `null` keeps its value.

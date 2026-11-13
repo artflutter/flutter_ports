@@ -12,7 +12,10 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 /// global font are checked on every read; there is no cache of a scriptable
 /// result or a view tied to an old tick. A font is a `TextStyle` (Chart.js
 /// ADR 0116): immutable, so the cache can give the same object again.
-final class TickFontCache {
+final class TickFontCache() {
+  /// A new [TickFontCache].
+  this;
+
   StaticFontInputs? _inputs;
   ChartTextStyle? _font;
 

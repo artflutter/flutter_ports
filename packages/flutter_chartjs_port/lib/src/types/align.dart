@@ -16,7 +16,7 @@ library;
 /// `_toLeftRightCenter`, helpers.extras.ts:67-77). The port holds this enum,
 /// also in a raw config. The name of each value is the keyword. The layout
 /// code closes the set.
-enum ChartAlign {
+enum ChartAlign() {
   /// `'start'`: the left or the top end.
   start,
 
@@ -48,7 +48,7 @@ enum ChartAlign {
 /// Upstream holds the keyword and tests it as text (plugin.tooltip.js:223-
 /// 330, 397-460). The port holds this enum (row `adapt-tooltip-align-enums`).
 /// The name of each value is the keyword. The tooltip code closes the set.
-enum TooltipXAlign {
+enum TooltipXAlign() {
   /// `'left'`: the box is at the right of the caret.
   left,
 
@@ -74,7 +74,7 @@ enum TooltipXAlign {
 /// index.d.ts:2656 `TooltipYAlignment` (`'top' | 'center' | 'bottom'`):
 /// the place of the tooltip box beside its caret along y, as
 /// [TooltipXAlign] along x.
-enum TooltipYAlign {
+enum TooltipYAlign() {
   /// `'top'`: the box is below the caret.
   top,
 

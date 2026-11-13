@@ -69,11 +69,12 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.radar.js:4 `RadarController extends DatasetController`.
-class RadarController extends DatasetController {
+class RadarController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   /// `new RadarController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. [newTarget] is `new.target` (Chart.js ADR
+  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
   /// 0020, section 4).
-  RadarController(super.chart, super.datasetIndex, [super.newTarget]);
+  this;
 
   /// Native support for the explicit data-only lifecycle.
   @override
