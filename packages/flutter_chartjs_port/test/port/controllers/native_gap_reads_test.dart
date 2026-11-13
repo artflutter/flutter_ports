@@ -15,7 +15,6 @@ import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
     show NativeGapReads, nativeGapReadsEnabled, nativeGapReadsTaken;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show DataPoint;
 import 'package:flutter_test/flutter_test.dart';
 
