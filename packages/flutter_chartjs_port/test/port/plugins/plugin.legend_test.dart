@@ -142,9 +142,14 @@ Object? _observeLegend(Chart chart) {
     'lineWidths': box.lineWidths == null
         ? undefined
         : plainValue(box.lineWidths),
+    // A column size is a Flutter `Size`: the object `{width, height}` of the
+    // generator.
     'columnSizes': box.columnSizes == null
         ? undefined
-        : plainValue(box.columnSizes),
+        : [
+            for (final size in box.columnSizes!)
+              <String, Object?>{'width': size.width, 'height': size.height},
+          ],
     'log': [...?_logs[chart]],
     'labels': _withoutFunctions(plainValue(jsGet(box.options, 'labels'))),
   };

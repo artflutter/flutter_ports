@@ -26,7 +26,7 @@
 /// section 7).
 ///
 /// Legend entries and hit boxes use the native extensible [LegendItem] and
-/// [LegendHitBox] contracts. Column sizes retain their typed-record face.
+/// [LegendHitBox] contracts. A column size is a Flutter [ui.Size].
 ///
 /// A hidden legend of a built-in slice chart leaves its items pending, and
 /// the first read of `legendItems` that can run the build runs it (Chart.js
@@ -107,7 +107,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LegendLabelOptionsScope,
         LegendOptionsScope,
         LegendTitleOptionsScope;
-import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show LegendLabelOptions, LegendOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
@@ -298,9 +297,9 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   bool get legendItemsPending => _pendingOptions != null;
 
   /// plugin.legend.js:66 `columnSizes`: `{width, height}` of each column of
-  /// a vertical legend, a [LegendColumnSize]. Dart `null` stands for JS
+  /// a vertical legend, a Flutter [ui.Size]. Dart `null` stands for JS
   /// `undefined`.
-  List<LegendColumnSize>? columnSizes;
+  List<ui.Size>? columnSizes;
 
   /// plugin.legend.js:67 `lineWidths`: the width of each line of a
   /// horizontal legend. Dart `null` stands for JS `undefined`.
@@ -795,9 +794,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       if (i > 0 && currentColHeight + itemHeight + 2 * padding > heightLimit) {
         totalWidth += currentColWidth + padding;
         // previous column size
-        columnSizes.add(
-          LegendColumnSize(width: currentColWidth, height: currentColHeight),
-        );
+        columnSizes.add(ui.Size(currentColWidth, currentColHeight));
         left += currentColWidth + padding;
         col++;
         currentColWidth = currentColHeight = 0;
@@ -822,9 +819,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
     totalWidth += currentColWidth;
     // previous column size
-    columnSizes.add(
-      LegendColumnSize(width: currentColWidth, height: currentColHeight),
-    );
+    columnSizes.add(ui.Size(currentColWidth, currentColHeight));
 
     return totalWidth;
   }
@@ -907,13 +902,13 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// `this.columnSizes[col]`. Without column sizes, the read throws a
   /// [TypeError], as upstream. An absent column (`undefined`) throws the
   /// [TypeError] of the next property read, as upstream.
-  LegendColumnSize _columnAt(double col) {
-    final column = jsGetIndex(columnSizes ?? undefined, col);
-    if (column is! LegendColumnSize) {
+  ui.Size _columnAt(double col) {
+    final sizes = columnSizes;
+    if (sizes == null || !(col >= 0 && col < sizes.length)) {
       // A JavaScript TypeError: a property read of undefined.
       throw TypeError();
     }
-    return column;
+    return sizes[col.toInt()];
   }
 
   /// plugin.legend.js:265 `isHorizontal()`.
@@ -1963,80 +1958,3 @@ bool _scriptableDescriptor(String name) => !name.startsWith('on');
 /// plugin.legend.js:717 the `_scriptable` descriptor of `labels`.
 bool _labelsScriptableDescriptor(String name) =>
     !const ['generateLabels', 'filter', 'sort'].contains(name);
-
-/// The size `{width, height}` of a column of a vertical legend
-/// (plugin.legend.js:209 and :224). The fields are numbers, as in
-/// [LegendHitBox].
-final class LegendColumnSize extends TypedRecord {
-  /// The column size `{width, height}`.
-  LegendColumnSize({required double width, required double height}) {
-    this
-      ..width = width
-      ..height = height;
-  }
-
-  static const List<String> _fieldNames = [
-    'width',
-    'height',
-  ];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'width' => 0,
-    'height' => 1,
-    _ => -1,
-  };
-
-  double _width = double.nan;
-
-  double _height = double.nan;
-
-  /// `width`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  double get width => _width;
-
-  set width(double value) {
-    _width = value;
-    touchSlot(0);
-  }
-
-  /// `height`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  double get height => _height;
-
-  set height(double value) {
-    _height = value;
-    touchSlot(1);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _width,
-    _ => _height,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    final number = value is double ? value : jsToNumber(value);
-    switch (slot) {
-      case 0:
-        _width = number;
-      default:
-        _height = number;
-    }
-    return value is double;
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _width = double.nan;
-      default:
-        _height = double.nan;
-    }
-  }
-}
