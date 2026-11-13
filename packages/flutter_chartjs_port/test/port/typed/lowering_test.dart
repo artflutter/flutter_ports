@@ -409,6 +409,9 @@ String? _label(TooltipItem item) => 'L';
 /// An animation callback.
 void _onAnimation(AnimationEvent event) {}
 
+/// A point label callback (Chart.js ADR 0131).
+List<String> _pointLabel(Scale scale, List<String> label, int index) => label;
+
 /// A chart callback.
 void _onEvent(ChartEvent event, List<ActiveElement> hits, Chart chart) {}
 
@@ -579,6 +582,14 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
         const [(RadialLinearAxis(pointLabelsPadding: 8), 'radialLinear')],
         {
           'pointLabels': {'padding': 8},
+        },
+      ),
+      'pointLabelsCallback': (
+        const [
+          (RadialLinearAxis(pointLabelsCallback: _pointLabel), 'radialLinear'),
+        ],
+        {
+          'pointLabels': {'callback': _function},
         },
       ),
       'angleLinesDisplay': (

@@ -565,11 +565,11 @@ void main() {
       expect(
         _r(chart).pointLabels,
         jasmineEquals(<Object?>[
-          'label1',
-          'label2',
-          'label3',
-          'label4',
-          'label5',
+          ['label1'],
+          ['label2'],
+          ['label3'],
+          ['label4'],
+          ['label5'],
         ]),
       );
     });
@@ -591,7 +591,11 @@ void main() {
           'scales': <String, Object?>{
             'r': <String, Object?>{
               'pointLabels': <String, Object?>{
-                'callback': (Object? value, Object? index) => jsToString(index),
+                // Chart.js ADR 0131: the scale, the lines of the label and
+                // the index; the result is the lines.
+                'callback': (Scale scale, List<String> label, int index) => [
+                  '$index',
+                ],
               },
             },
           },
@@ -600,7 +604,13 @@ void main() {
 
       expect(
         _r(chart).pointLabels,
-        jasmineEquals(<Object?>['0', '1', '2', '3', '4']),
+        jasmineEquals(<Object?>[
+          ['0'],
+          ['1'],
+          ['2'],
+          ['3'],
+          ['4'],
+        ]),
       );
     });
 
@@ -619,7 +629,16 @@ void main() {
 
       expect(
         _r(chart).pointLabels,
-        jasmineEquals(<Object?>[0, '', '', '', '', '']),
+        // Chart.js ADR 0131: each point label is its lines; a value that
+        // Chart.js draws as '' is one empty line.
+        jasmineEquals(<Object?>[
+          ['0'],
+          [''],
+          [''],
+          [''],
+          [''],
+          [''],
+        ]),
       );
     });
 
@@ -643,7 +662,13 @@ void main() {
 
       expect(
         _r(chart).pointLabels,
-        jasmineEquals(<Object?>['a', 'b', 'c', 'e', 'f']),
+        jasmineEquals(<Object?>[
+          ['a'],
+          ['b'],
+          ['c'],
+          ['e'],
+          ['f'],
+        ]),
       );
     });
 
@@ -662,7 +687,11 @@ void main() {
           'scales': <String, Object?>{
             'r': <String, Object?>{
               'pointLabels': <String, Object?>{
-                'callback': (Object? value, Object? index) => jsToString(index),
+                // Chart.js ADR 0131: the scale, the lines of the label and
+                // the index; the result is the lines.
+                'callback': (Scale scale, List<String> label, int index) => [
+                  '$index',
+                ],
               },
             },
           },
@@ -691,7 +720,11 @@ void main() {
           'scales': <String, Object?>{
             'r': <String, Object?>{
               'pointLabels': <String, Object?>{
-                'callback': (Object? value, Object? index) => jsToString(index),
+                // Chart.js ADR 0131: the scale, the lines of the label and
+                // the index; the result is the lines.
+                'callback': (Scale scale, List<String> label, int index) => [
+                  '$index',
+                ],
               },
             },
           },
@@ -717,7 +750,11 @@ void main() {
           'scales': <String, Object?>{
             'r': <String, Object?>{
               'pointLabels': <String, Object?>{
-                'callback': (Object? value, Object? index) => jsToString(index),
+                // Chart.js ADR 0131: the scale, the lines of the label and
+                // the index; the result is the lines.
+                'callback': (Scale scale, List<String> label, int index) => [
+                  '$index',
+                ],
               },
             },
           },
@@ -761,8 +798,9 @@ void main() {
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'pointLabels': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
+                  'callback': (Scale scale, List<String> label, int index) => [
+                    '$index',
+                  ],
                 },
               },
             },
@@ -799,7 +837,11 @@ void main() {
             'r': <String, Object?>{
               'startAngle': 15,
               'pointLabels': <String, Object?>{
-                'callback': (Object? value, Object? index) => jsToString(index),
+                // Chart.js ADR 0131: the scale, the lines of the label and
+                // the index; the result is the lines.
+                'callback': (Scale scale, List<String> label, int index) => [
+                  '$index',
+                ],
               },
             },
           },
@@ -850,8 +892,9 @@ void main() {
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'pointLabels': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
+                  'callback': (Scale scale, List<String> label, int index) => [
+                    '$index',
+                  ],
                 },
                 'ticks': <String, Object?>{'display': false},
               },

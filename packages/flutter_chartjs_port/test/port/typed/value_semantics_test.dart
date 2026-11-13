@@ -742,6 +742,7 @@ void main() {
         'pointLabelsColor',
         'pointLabelsFont',
         'pointLabelsPadding',
+        'pointLabelsCallback',
         'angleLinesDisplay',
         'angleLinesColor',
         'angleLinesLineWidth',

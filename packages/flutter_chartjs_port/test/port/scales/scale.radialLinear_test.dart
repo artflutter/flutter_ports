@@ -55,20 +55,22 @@ import 'scale_radial_linear_reference.dart';
 
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'pointLabelCallback': (Object? label, int index) => switch (index) {
-    0 => 0.0,
-    1 => '',
-    2 => null,
-    3 => <Object?>[label, 'x$index'],
-    _ => '${jsToString(label)}!',
-  },
+  // Chart.js ADR 0131: the lines of the label in, the lines out. The upstream
+  // function gives 0, '', null, [label, 'x3'] and label + '!'.
+  'pointLabelCallback': (Scale scale, List<String> label, int index) =>
+      switch (index) {
+        0 => ['0'],
+        1 || 2 => [''],
+        3 => [...label, 'x$index'],
+        _ => ['${label.join()}!'],
+      },
   'pointLabelColor': (Object? ctx) => ChartPaint.solid(
     jsToNumber(jsGet(ctx, 'index')) % 2 != 0
         ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
         : const native_ui.Color.fromRGBO(0, 0, 255, 1),
   ),
   'angleLineColor': (Object? ctx) => ChartPaint.solid(
-    jsGet(ctx, 'label') == 'B'
+    (jsGet(ctx, 'label')! as List<String>).join() == 'B'
         ? const native_ui.Color.fromRGBO(0, 128, 0, 1)
         : const native_ui.Color.fromRGBO(128, 128, 128, 1),
   ),
@@ -108,6 +110,50 @@ List<double> _position(({double x, double y, double angle}) p) => [
   p.y,
   p.angle,
 ];
+
+/// The lines of an upstream point label [value] (Chart.js ADR 0131): a string
+/// is one line, an array is its lines, and another value is the line of its
+/// string form.
+List<String> _nativePointLabel(Object? value) => switch (value) {
+  final String line => [line],
+  final List<Object?> lines => [
+    for (final line in lines)
+      if (line != null) jsToString(line),
+  ],
+  _ => [jsToString(value)],
+};
+
+/// [cases] with the upstream point labels of each radial scale and of each
+/// point label context in their lines.
+List<ScaleChartCase> _nativePointLabels(List<ScaleChartCase> cases) => [
+  for (final c in cases)
+    (
+      name: c.name,
+      config: c.config,
+      options: c.options,
+      expected: {
+        ...c.expected,
+        'scales': {
+          for (final MapEntry(:key, :value)
+              in (c.expected['scales']! as Map<String, Object?>).entries)
+            key: _nativeScale(value! as Map<String, Object?>),
+        },
+      },
+    ),
+];
+
+/// [scale], the expected observations of one scale, with its point labels in
+/// their lines.
+Map<String, Object?> _nativeScale(Map<String, Object?> scale) => {
+  ...scale,
+  if (scale['pointLabels'] case final List<Object?> labels)
+    'pointLabels': [for (final label in labels) _nativePointLabel(label)],
+  if (scale['pointLabelContexts'] case final List<Object?> contexts)
+    'pointLabelContexts': [
+      for (final c in contexts)
+        if (c is List<Object?>) [c[0], c[1], _nativePointLabel(c[2])] else c,
+    ],
+};
 
 /// The observations of a radial linear scale: `radialObservations` of the
 /// generator, with the same keys and the same calls.
@@ -359,7 +405,7 @@ void main() {
 
   group('radial linear scale charts against upstream', () {
     testScaleChartCases(
-      scaleRadialLinearReference,
+      _nativePointLabels(scaleRadialLinearReference),
       functions: _functions,
       extra: _radialObservations,
     );
@@ -467,7 +513,7 @@ void main() {
       final context = r.getPointLabelContext(1)!;
       expect(context['type'], 'pointLabel');
       expect(context['index'], 1.0);
-      expect(context['label'], 'B');
+      expect(context['label'], ['B']);
       expect(context['scale'], same(r));
     });
 

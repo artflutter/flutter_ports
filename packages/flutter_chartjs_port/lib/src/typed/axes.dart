@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart'
-    show TickCallback;
+    show PointLabelCallback, TickCallback;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -680,6 +680,10 @@ final class const RadialLinearAxis({
   /// `pointLabels.padding`. The default is 5.
   final double? pointLabelsPadding,
 
+  /// The lines of each point label: `pointLabels.callback`. It gets the lines
+  /// of the item of `labels` and its index (Chart.js ADR 0131).
+  final PointLabelCallback? pointLabelsCallback,
+
   /// Whether the chart shows the lines from the center to the point labels:
   /// `angleLines.display`.
   final bool? angleLinesDisplay,
@@ -715,6 +719,7 @@ final class const RadialLinearAxis({
     ChartPaint? pointLabelsColor,
     TextStyle? pointLabelsFont,
     double? pointLabelsPadding,
+    PointLabelCallback? pointLabelsCallback,
     bool? angleLinesDisplay,
     ChartPaint? angleLinesColor,
     double? angleLinesLineWidth,
@@ -737,6 +742,7 @@ final class const RadialLinearAxis({
     pointLabelsColor: pointLabelsColor ?? this.pointLabelsColor,
     pointLabelsFont: pointLabelsFont ?? this.pointLabelsFont,
     pointLabelsPadding: pointLabelsPadding ?? this.pointLabelsPadding,
+    pointLabelsCallback: pointLabelsCallback ?? this.pointLabelsCallback,
     angleLinesDisplay: angleLinesDisplay ?? this.angleLinesDisplay,
     angleLinesColor: angleLinesColor ?? this.angleLinesColor,
     angleLinesLineWidth: angleLinesLineWidth ?? this.angleLinesLineWidth,
@@ -756,6 +762,7 @@ final class const RadialLinearAxis({
     put(pointLabels, OptionKey.color, pointLabelsColor);
     put(pointLabels, OptionKey.font, pointLabelsFont);
     put(pointLabels, OptionKey.padding, pointLabelsPadding);
+    put(pointLabels, OptionKey.callback, pointLabelsCallback);
     final angleLines = AngleLineOptionsScope();
     put(angleLines, OptionKey.display, angleLinesDisplay);
     put(angleLines, OptionKey.color, angleLinesColor);
@@ -783,6 +790,7 @@ final class const RadialLinearAxis({
     ('pointLabelsColor', pointLabelsColor),
     ('pointLabelsFont', pointLabelsFont),
     ('pointLabelsPadding', pointLabelsPadding),
+    ('pointLabelsCallback', pointLabelsCallback),
     ('angleLinesDisplay', angleLinesDisplay),
     ('angleLinesColor', angleLinesColor),
     ('angleLinesLineWidth', angleLinesLineWidth),
