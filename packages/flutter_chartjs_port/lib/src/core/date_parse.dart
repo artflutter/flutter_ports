@@ -18,10 +18,10 @@
 /// `package:flutter`.
 library;
 
+import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
 import 'package:flutter_chartjs_port/src/core/date_format.dart';
 import 'package:flutter_chartjs_port/src/core/date_zone.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// One minute in ms.
@@ -45,7 +45,7 @@ const int _maxTime = 8640000000000000;
 ///
 /// - A `double` or an `int`: TimeClip. NaN and ±Infinity are invalid.
 /// - A `DateTime`: its `millisecondsSinceEpoch`, as a JS `Date`.
-/// - [undefined]: `jsDateNow()`, as `moment(undefined)` reads the current
+/// - [undefined]: `clock.now()`, as `moment(undefined)` reads the current
 ///   time.
 /// - `null` and `''`: invalid.
 /// - Another `String`: [parseDateString].
@@ -66,7 +66,7 @@ double dateInput(Object? value, DateZone? zone) {
     case final DateTime date:
       return date.millisecondsSinceEpoch * 1.0;
     case Undefined():
-      return jsDateNow();
+      return clock.now().millisecondsSinceEpoch.toDouble();
     case null || bool():
       return double.nan;
   }
@@ -1017,7 +1017,7 @@ double? _rfc2822(String original) {
 /// the moment rule `create/from-array.js:79-81`. The date of the filled
 /// fields is the date of moment: in a leap current year, `'02/29'` with
 /// `'MM/dd'` gives February 29, and `'24:00'` with `'HH:mm'` gives 00:00 of
-/// the next day. The current date is the wall date of `jsDateNow()` in
+/// the next day. The current date is the wall date of `clock.now()` in
 /// [LocalZone], also when [zone] is UTC: moment `currentDateArray` reads the
 /// local date of the process, also under the default zone of
 /// `moment.tz.setDefault`. The day periods and the names of the months and
@@ -1049,13 +1049,13 @@ double parseWithFormat(
 }
 
 /// The day number of the current date of moment `currentDateArray`
-/// (moment.js:2574-2585): the wall date of `jsDateNow()` in [LocalZone].
+/// (moment.js:2574-2585): the wall date of `clock.now()` in [LocalZone].
 ///
 /// moment reads the local date of the process, also under a default zone
 /// of moment-timezone. Thus the current date is the date of the local zone,
 /// also when the default zone is UTC.
 int _today() {
-  final now = jsDateNow().toInt();
+  final now = clock.now().millisecondsSinceEpoch;
   final wall = now + LocalZone.instance.offsetAt(now);
   return (wall - wall % _dayMs) ~/ _dayMs;
 }

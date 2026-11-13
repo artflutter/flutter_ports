@@ -44,13 +44,13 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show color, isPatternOrGradient;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_promise.dart';
@@ -270,7 +270,8 @@ class Animation.typed(
     // DIVERGES(chartjs): adapt-property-animations, the item of the app.
     _easing = item?.easing ?? _cfgEasing(cfg);
     _start =
-        (jsDateNow() + (_milliseconds(item?.delay) ?? jsOrZero(_cfgDelay(cfg))))
+        (clock.now().millisecondsSinceEpoch +
+                (_milliseconds(item?.delay) ?? jsOrZero(_cfgDelay(cfg))))
             .floorToDouble();
     _duration = _total =
         (_milliseconds(item?.duration) ?? jsToNumber(_cfgDuration(cfg)))
@@ -460,7 +461,7 @@ class Animation.typed(
   void cancel() {
     if (_active) {
       // update current evaluated value, for smoother animations
-      tick(jsDateNow());
+      tick(clock.now().millisecondsSinceEpoch.toDouble());
       _active = false;
       _notify(false);
     }

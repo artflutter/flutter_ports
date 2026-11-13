@@ -10,6 +10,9 @@ environment:
 resolution: workspace
 
 dependencies:
+  # The benchmark reads the clock of the chart animations, clock.now()
+  # (Chart.js ADR 0143).
+  clock: ^1.1.2
   flutter:
     sdk: flutter
   # The chartjs-chart-sankey port, an add-on of the Chart.js port (ADR

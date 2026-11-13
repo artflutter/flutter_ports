@@ -3,8 +3,8 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -14,7 +14,7 @@ import 'package:test/test.dart';
 // reads and writes `_start`, `_from`, `_to` and `_duration`: the members
 // `start`, `from`, `to` and `duration` (Chart.js ADR 0019, section 1). The
 // cases read the real clock. Each date is relative to `anim.start`. Thus the
-// results do not depend on the clock. `Date.now()` is `jsDateNow()`.
+// results do not depend on the clock. `Date.now()` is `clock.now()`.
 
 void main() {
   setUpSpecs();
@@ -121,7 +121,7 @@ void main() {
         ..update(
           {'duration': 500},
           const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
-          jsDateNow(),
+          clock.now().millisecondsSinceEpoch.toDouble(),
         )
         ..tick(anim.start + 250);
       expect(
@@ -157,7 +157,7 @@ void main() {
       anim.update(
         {'duration': 500},
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
-        jsDateNow(),
+        clock.now().millisecondsSinceEpoch.toDouble(),
       );
       expect(anim.duration, 100);
       expect(anim.to, const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)));

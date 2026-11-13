@@ -4,6 +4,11 @@
   `jsObjectIsFrozen`: no library code called them. Read the frozen state with
   the `isFrozen` getter of a `JsFreezable`, and test a type with `is`.
 
+- `jsDateNow` is removed from `js_semantics.dart` and the app library. Read
+  the time with `clock.now()` of package:clock, as the port does
+  (`clock.now().millisecondsSinceEpoch`): the fake clock of `testWidgets` and
+  `withClock` moves it.
+
 - The scale option `border` holds one object, also in a raw configuration: an
   `AxisBorder` (`display`, `color`, `width`, `dash`, `dashOffset`, `z`) for a
   cartesian axis and a `RadialAxisBorder` (`dash`, `dashOffset`) for the radial

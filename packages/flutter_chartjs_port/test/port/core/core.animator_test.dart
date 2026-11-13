@@ -4,13 +4,13 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'package:clock/clock.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -230,11 +230,11 @@ void main() {
         final instant = Animations(chart, <String, Object?>{
           'option': <String, Object?>{'duration': 0},
         });
-        final t0 = jsDateNow();
+        final t0 = clock.now().millisecondsSinceEpoch;
         animator.start(chart);
         var fired = false;
         animator.listen(chart, 'progress', (event) {
-          if (fired || jsDateNow() - t0 < 200) return;
+          if (fired || clock.now().millisecondsSinceEpoch - t0 < 200) return;
           fired = true;
           instant.update(target, {'options': h2});
         });

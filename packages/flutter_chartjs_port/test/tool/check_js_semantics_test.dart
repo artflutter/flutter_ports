@@ -178,12 +178,12 @@ void main() {
     );
   });
 
-  test('flags DateTime.now( from phase 5 (Chart.js ADR 0045)', () {
+  test('flags DateTime.now( (Chart.js ADR 0143)', () {
     expect(
       _sites([
         'final a = DateTime.now();',
         'final b = DateTime . now ( ).millisecondsSinceEpoch;',
-        'final c = jsDateNow() + clock.now().millisecondsSinceEpoch;',
+        'final c = clock.now().millisecondsSinceEpoch;',
         "final d = 'DateTime.now()'; // DateTime.now()",
         'final e = MyDateTime.now() + DateTime.nowUtc + x.now();',
         'final f = DateTime.now(); // js-ok: a log time stamp only.',
@@ -192,10 +192,7 @@ void main() {
     );
     expect(
       _check(['final a = DateTime.now();']).single,
-      endsWith(
-        'Use jsDateNow, which reads clock.now() (Chart.js ADR 0045, '
-        'section 6).',
-      ),
+      endsWith('Use clock.now() of package:clock (Chart.js ADR 0143).'),
     );
   });
 

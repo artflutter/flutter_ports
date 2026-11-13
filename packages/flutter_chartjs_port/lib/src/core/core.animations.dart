@@ -32,6 +32,7 @@ library;
 
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -46,7 +47,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_promise.dart';
@@ -298,7 +298,7 @@ class Animations(
   /// (Chart.js ADR 0054 §10).
   List<Animation> _createAnimations(Object target, Object values) {
     final running = _runningOf(target);
-    final date = jsDateNow();
+    final date = clock.now().millisecondsSinceEpoch.toDouble();
     // DIVERGES(chartjs): platform-reduced-motion, no animation config.
     final reduced = isReducedMotion(_chart.canvas);
     if (values is TypedRecord) {

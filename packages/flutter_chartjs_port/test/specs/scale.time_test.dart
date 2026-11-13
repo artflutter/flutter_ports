@@ -8,6 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
+import 'package:clock/clock.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
@@ -17,7 +18,6 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, mergeIf;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -77,7 +77,7 @@ import '../support/tick_label.dart';
 // - A `beforeEach` of a `describe` that writes no chart is a `setUp`.
 //
 // - `moment(value)` is `_moment(value)`, the parse of the default adapter.
-//   `moment()` is `jsDateNow()`. `startOf`, `endOf` and `add` of a moment
+//   `moment()` is `clock.now()`. `startOf`, `endOf` and `add` of a moment
 //   are the members of the default adapter (`_startOf`, `_endOf`, `_add`).
 // - `scale._unit` is the field `unit` of `TimeScale`.
 // - `controller.getParsed(0)[xScale.id]` is
@@ -812,8 +812,12 @@ void main() {
                 'type': 'time',
                 'ticks': <String, Object?>{
                   // moment `subtract(1, 'months')`: the unit month.
-                  'min': _add(jsDateNow(), -1, TimeUnit.month),
-                  'max': jsDateNow(),
+                  'min': _add(
+                    clock.now().millisecondsSinceEpoch.toDouble(),
+                    -1,
+                    TimeUnit.month,
+                  ),
+                  'max': clock.now().millisecondsSinceEpoch.toDouble(),
                 },
               },
             },
@@ -892,11 +896,22 @@ void main() {
 
             expect(
               scale.min,
-              jasmineEquals(_startOf(jsDateNow(), TimeUnit.day)),
+              jasmineEquals(
+                _startOf(
+                  clock.now().millisecondsSinceEpoch.toDouble(),
+                  TimeUnit.day,
+                ),
+              ),
             );
             expect(
               scale.max,
-              jasmineEquals(_endOf(jsDateNow(), TimeUnit.day) + 1),
+              jasmineEquals(
+                _endOf(
+                      clock.now().millisecondsSinceEpoch.toDouble(),
+                      TimeUnit.day,
+                    ) +
+                    1,
+              ),
             );
             expect(_getLabels(scale), jasmineEquals(<Object?>[]));
           },
@@ -915,11 +930,22 @@ void main() {
 
             expect(
               scale.min,
-              jasmineEquals(_startOf(jsDateNow(), TimeUnit.year)),
+              jasmineEquals(
+                _startOf(
+                  clock.now().millisecondsSinceEpoch.toDouble(),
+                  TimeUnit.year,
+                ),
+              ),
             );
             expect(
               scale.max,
-              jasmineEquals(_endOf(jsDateNow(), TimeUnit.year) + 1),
+              jasmineEquals(
+                _endOf(
+                      clock.now().millisecondsSinceEpoch.toDouble(),
+                      TimeUnit.year,
+                    ) +
+                    1,
+              ),
             );
             expect(_getLabels(scale), jasmineEquals(<Object?>[]));
           },
@@ -1002,11 +1028,22 @@ void main() {
 
             expect(
               scale.min,
-              jasmineEquals(_startOf(jsDateNow(), TimeUnit.year)),
+              jasmineEquals(
+                _startOf(
+                  clock.now().millisecondsSinceEpoch.toDouble(),
+                  TimeUnit.year,
+                ),
+              ),
             );
             expect(
               scale.max,
-              jasmineEquals(_endOf(jsDateNow(), TimeUnit.year) + 1),
+              jasmineEquals(
+                _endOf(
+                      clock.now().millisecondsSinceEpoch.toDouble(),
+                      TimeUnit.year,
+                    ) +
+                    1,
+              ),
             );
             expect(_getLabels(scale), jasmineEquals(<Object?>[]));
           },

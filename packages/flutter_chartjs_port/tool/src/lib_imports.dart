@@ -51,8 +51,8 @@ const Set<String> pureDartLibraries = {
 
 /// The other libraries of pure layers. [collectionLibrary] gives
 /// `mergeSort` to `jsSort` from phase 2 (Chart.js ADR 0045, Sort).
-/// `package:clock/clock.dart` gives `clock.now()` to `jsDateNow` from phase 5
-/// (Chart.js ADR 0045, section 6).
+/// `package:clock/clock.dart` gives `clock.now()`, the time of ported code
+/// (Chart.js ADR 0143).
 const Set<String> purePackageLibraries = {
   collectionLibrary,
   'package:clock/clock.dart',
@@ -208,6 +208,8 @@ const Set<String> webTestLibraries = {
   paintingLibrary,
   // The NumberFormat of the tick option `format` (Chart.js ADR 0119).
   'package:intl/intl.dart',
+  // The time of the animations, clock.now() (Chart.js ADR 0143).
+  'package:clock/clock.dart',
 };
 
 /// The directory that ported files never import.
