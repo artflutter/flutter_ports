@@ -62,7 +62,7 @@ export 'package:flutter_chartjs_port/src/core/core.animation.dart'
 export 'package:flutter_chartjs_port/src/core/core.controller.dart'
     show AnimationEventHandler, ChartEventHandler, ChartResizeHandler;
 export 'package:flutter_chartjs_port/src/core/core.scale.dart'
-    show ScaleHook, TickCallback;
+    show PointLabelCallback, ScaleHook, TickCallback;
 export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show defaultDateZone, setDefaultDateZone;
 export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -119,8 +119,6 @@ export 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     show AverageTooltipPositioner, NearestTooltipPositioner;
 export 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPosition, TooltipPositioner;
-export 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart'
-    show PointLabelCallback;
 export 'package:flutter_chartjs_port/src/scales/scale.time.dart'
     show TimeParser;
 export 'package:flutter_chartjs_port/src/types.dart'

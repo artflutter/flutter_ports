@@ -168,6 +168,17 @@ typedef TickCallback = List<String>? Function(
   List<Tick> ticks,
 );
 
+/// The option `pointLabels.callback` (index.d.ts:3649,
+/// scale.radialLinear.js:458): the lines of the point label. [label] is the
+/// lines of the item of `data.labels` at [index]. `['']` is one empty line,
+/// and `[]` is no line. The radial linear scale is the first argument, where
+/// Chart.js gives it as `this` (Chart.js ADR 0131).
+typedef PointLabelCallback = List<String> Function(
+  Scale scale,
+  List<String> label,
+  int index,
+);
+
 /// The scale options `beforeUpdate`, `afterUpdate`, `beforeSetDimensions`,
 /// `afterSetDimensions`, `beforeDataLimits`, `afterDataLimits`,
 /// `beforeBuildTicks`, `afterBuildTicks`, `beforeTickToLabelConversion`,

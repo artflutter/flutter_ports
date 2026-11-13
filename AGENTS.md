@@ -1831,6 +1831,13 @@ call. The typed API takes the same types; `ChartEventDetails`, `ChartLegendEvent
 `ChartAnimationDetails` are removed. A test closure with `Object?` parameters stays valid. The recorder
 of the oracle O1 wraps the three legend label callbacks in typed closures.
 
+A point label of a radial linear scale is its lines (Chart.js ADR 0131, row `adapt-native-point-labels`):
+`RadialLinearScale.pointLabels` is a `List<List<String>>`, and `pointLabels.callback` holds a
+`PointLabelCallback` of `core.scale.dart`, `List<String> Function(Scale scale, List<String> label, int index)`.
+The scale turns each item of `data.labels` into lines first; `['']` is one empty line and `[]` no line. The typed
+API has `RadialLinearAxis.pointLabelsCallback`. The radial reference test maps each upstream point label to its
+lines (`_nativePointLabels`).
+
 Tooltip callbacks use the native `TooltipCallbacks` object in chart and dataset configs (Chart.js ADR 0125).
 Its 14 hooks are typed functions with an explicit tooltip argument. Text hooks return `List<String>?`: null invokes
 the built-in default, and an empty list emits no lines. Fields merge with `other.field ?? field`. A hook gets the

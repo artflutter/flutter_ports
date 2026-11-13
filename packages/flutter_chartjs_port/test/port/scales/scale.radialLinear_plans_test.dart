@@ -315,7 +315,8 @@ int _emptyTexts(List<ContextCall> calls) => calls
 
 /// The label of every fourth index, else `''`: most labels have no text, as in
 /// a dense radar.
-Object? _everyFourth(Object? label, num index) => index % 4 == 0 ? label : '';
+List<String> _everyFourth(Scale scale, List<String> label, int index) =>
+    index % 4 == 0 ? label : const [''];
 
 /// A radar or polar area config of [n] labels. [r] gives the options of the
 /// scale `r`, over labels with a [callback]. Each call gives new objects.
@@ -413,8 +414,14 @@ Object? _record(String name, Object? context, Object? value) {
 final List<_Case> _cases = [
   const _Case('labels with text', callback: null),
   const _Case('a few labels with text'),
-  _Case('all labels empty', callback: (Object? _, num _) => ''),
-  _Case('a falsy callback result', callback: (Object? _, num _) => null),
+  _Case(
+    'all labels empty',
+    callback: (Scale _, List<String> _, int _) => const [''],
+  ),
+  _Case(
+    'an empty List result',
+    callback: (Scale _, List<String> _, int _) => const <String>[],
+  ),
   const _Case(
     'a multi-line label in the middle',
     labels: [
@@ -959,16 +966,16 @@ void main() {
       tester,
     ) async {
       expectSameLabels(
-        (calls) => (Object? label, int index) {
+        (calls) => (Scale scale, List<String> label, int index) {
           calls.add('$label $index');
-          return index.isEven ? label : '';
+          return index.isEven ? label : const [''];
         },
       );
     });
 
     testWidgets('a closure with a num index, the lab shape', (tester) async {
       expectSameLabels(
-        (calls) => (Object? label, num index) {
+        (calls) => (Scale scale, List<String> label, num index) {
           calls.add('$label $index ${index.runtimeType}');
           return label;
         },
@@ -979,23 +986,36 @@ void main() {
       tester,
     ) async {
       expectSameLabels(
-        (calls) => (Object? label, int index, [Object? third = 'absent']) {
-          calls.add('$label $index $third');
-          return label;
-        },
+        (calls) =>
+            (
+              Scale scale,
+              List<String> label,
+              int index, [
+              Object? fourth = 'absent',
+            ]) {
+              calls.add('$label $index $fourth');
+              return label;
+            },
       );
     });
 
     // Chart.js ADR 0130: the option holds a PointLabelCallback, with no JS
     // arity and no `this`. Another value stops a debug build.
     for (final (name, callback) in <(String, Object)>[
-      ('a closure with one parameter', (Object? label) => label),
+      ('a closure with one parameter', (Object? label) => const ['x']),
       ('a closure with no parameter', () => 'x'),
       (
-        'a closure with a third required parameter',
-        (Object? label, int index, Object? third) => label,
+        'a closure with a fourth required parameter',
+        (Scale scale, List<String> label, int index, Object? fourth) => label,
       ),
-      ('a closure with a narrow parameter', (String label, int index) => label),
+      (
+        'a closure with an Object? result',
+        (Scale scale, List<String> label, int index) => label as Object?,
+      ),
+      (
+        'a closure with a narrow parameter',
+        (RadialLinearScale scale, List<String> label, int index) => label,
+      ),
       (
         'a JsFunction',
         JsFunction((Object? self, Object? label, Object? index) => label),
@@ -1018,27 +1038,31 @@ void main() {
       });
     }
 
-    testWidgets('falsy results and 0 keep the rule of the upstream line', (
+    testWidgets('the callback result is the lines of the label', (
       tester,
     ) async {
-      final results = <Object?>[0.0, 0, false, null, '', double.nan, 1.5, 'a'];
+      final results = <List<String>>[
+        ['0'],
+        [''],
+        <String>[],
+        ['a', 'b'],
+        ['1.5'],
+        ['c'],
+        [''],
+        ['d'],
+      ];
       expectSameLabels(
         (calls) =>
-            (Object? label, int index) => results[index],
+            (Scale scale, List<String> label, int index) => results[index],
       );
       final chart = acquireChart(
-        _config(n: 8, callback: (Object? label, int index) => results[index]),
+        _config(
+          n: 8,
+          callback: (Scale scale, List<String> label, int index) =>
+              results[index],
+        ),
       );
-      expect(_scaleOf(chart).pointLabels, <Object?>[
-        0.0,
-        0,
-        '',
-        '',
-        '',
-        '',
-        1.5,
-        'a',
-      ]);
+      expect(_scaleOf(chart).pointLabels, results);
     });
 
     testWidgets('a throw of a closure leaves the same way', (tester) async {
@@ -1048,7 +1072,7 @@ void main() {
           acquireChart(
             _config(
               scaleType: scaleType,
-              callback: (Object? label, int index) {
+              callback: (Scale scale, List<String> label, int index) {
                 if (++calls == 3) throw StateError('three');
                 return label;
               },
@@ -1071,13 +1095,13 @@ void main() {
     ) async {
       List<String> run(String? scaleType) {
         final calls = <String>[];
-        Object? second(Object? label, int index) {
+        List<String> second(Scale scale, List<String> label, int index) {
           calls.add('second $label $index');
-          return 'second';
+          return ['second'];
         }
 
         late Chart chart;
-        Object? first(Object? label, int index) {
+        List<String> first(Scale scale, List<String> label, int index) {
           calls.add('first $label $index');
           if (index == 2) {
             (_scaleOf(chart).options.pointLabels.raw! as JsObjectFace).jsWrite(
@@ -1085,7 +1109,7 @@ void main() {
               second,
             );
           }
-          return 'first';
+          return ['first'];
         }
 
         chart = acquireChart(_config(scaleType: scaleType, n: 5));
@@ -1101,7 +1125,7 @@ void main() {
 
       final exact = run(null);
       expect(exact, run('ordinaryRadial'));
-      expect(exact, contains('second Label 3 3'));
+      expect(exact, contains('second [Label 3] 3'));
     });
 
     testWidgets('a closure can hide a label: the filter reads after all '
@@ -1116,7 +1140,7 @@ void main() {
                   'pointLabels',
                 )!
                 as JsObjectFace)
-            .jsWrite('callback', (Object? label, int index) {
+            .jsWrite('callback', (Scale scale, List<String> label, int index) {
               if (index == 4) chart.toggleDataVisibility(1);
               return label;
             });
@@ -1153,14 +1177,14 @@ void main() {
         <Object?>['l'],
       ];
       final chart = acquireChart(_config(labels: labels, callback: null));
-      expect(_scaleOf(chart).pointLabels, <Object?>[
-        'a',
-        '',
-        0,
-        0.5,
-        '',
-        '',
-        <Object?>['l'],
+      expect(_scaleOf(chart).pointLabels, <List<String>>[
+        ['a'],
+        [''],
+        ['0'],
+        ['0.5'],
+        [''],
+        [''],
+        ['l'],
       ]);
       final twin = acquireChart(
         _config(labels: labels, callback: null, scaleType: 'ordinaryRadial'),
@@ -1174,7 +1198,7 @@ void main() {
       final chart = acquireChart(_config(n: 3));
       final labels = _scaleOf(chart).pointLabels;
       expect(labels, hasLength(3));
-      labels.add('more');
+      labels.add(['more']);
       expect(labels, hasLength(4));
     });
   });

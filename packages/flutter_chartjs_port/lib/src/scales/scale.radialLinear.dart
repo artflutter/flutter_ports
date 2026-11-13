@@ -63,7 +63,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, functionOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isFinite, isNullOrUndef, valueOrDefault;
+    show isFinite, isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, normalizeAngle, pi, tau, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -93,6 +93,7 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' as types;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
 import 'package:meta/meta.dart';
 
 /// The object `{w, h}` of `measureLabelSize` (scale.radialLinear.js:21-24):
@@ -161,11 +162,15 @@ final class _RoundedRect({
   @override required final types.TRBLCorners radius,
 }) implements types.RoundedRect;
 
-/// The option `pointLabels.callback` (index.d.ts:3649,
-/// scale.radialLinear.js:458): the text of the point label of [label], the
-/// label of the chart at [index]. A text, a List of lines or a number;
-/// another falsy value than `0` gives no text (Chart.js ADR 0130).
-typedef PointLabelCallback = Object? Function(Object? label, int index);
+/// The lines of the item [label] of `data.labels` (Chart.js ADR 0131): the
+/// lines of [labelLinesOf]. An item that Chart.js draws as `''` (the falsy
+/// result rule `label || label === 0 ? label : ''` of
+/// scale.radialLinear.js:461 over the default callback) is one empty line.
+List<String> _labelLines(Object? label) => switch (label) {
+  null || Undefined() || false => const [''],
+  final double value when value.isNaN => const [''],
+  _ => labelLinesOf(label) ?? const [''],
+};
 
 /// scale.radialLinear.js:9 `getTickBackdropHeight(opts)`.
 ///
@@ -205,17 +210,12 @@ double? _defaultFontSize() {
 
 /// scale.radialLinear.js:19 `measureLabelSize(ctx, font, label)`.
 ///
-/// [label] is a label of the callback: an array gives one line for each
-/// item.
+/// [lines] are the lines of a point label (Chart.js ADR 0131).
 _LabelSize _measureLabelSize(
   CanvasRenderingContext2D ctx,
   ChartTextStyle font,
-  Object? label,
-) {
-  // Upstream reassigns its parameter with the List of the lines.
-  final lines = isArray(label) ? label! as List<Object?> : <Object?>[label];
-  return (w: longestText(ctx, font, lines), h: lines.length * font.lineHeight!);
-}
+  List<String> lines,
+) => (w: longestText(ctx, font, lines), h: lines.length * font.lineHeight!);
 
 /// scale.radialLinear.js:27 `determineLimits(angle, pos, size, min, max)`.
 @pragma('vm:prefer-inline')
@@ -400,9 +400,13 @@ int _fitStaticPointLabels(
     ..font = font;
   var i = 1;
   for (; i < valueCount; i++) {
-    final label = labels[i];
-    if (label is! String) break;
-    final textSize = label.isEmpty
+    final lines = labels[i];
+    if (lines.length > 1) break;
+    // `[]`: no line, the size of the empty array of upstream.
+    final label = lines.isEmpty ? null : lines.single;
+    final textSize = label == null
+        ? (w: 0.0, h: 0.0)
+        : label.isEmpty
         ? emptySize ??= (w: widthOf(label), h: lineHeight)
         : (w: widthOf(label), h: lineHeight);
     padding[i] = staticPadding;
@@ -720,8 +724,10 @@ int _drawStaticPointLabels(
       // overlapping
       continue;
     }
-    final label = labels[i];
-    if (label is! String) return i;
+    final lines = labels[i];
+    if (lines.length > 1) return i;
+    if (lines.isEmpty) continue;
+    final label = lines.single;
     if (label.isEmpty) continue;
     renderText(
       ctx,
@@ -838,7 +844,7 @@ void _drawRadiusLine(
 ScriptableScalePointLabelContext _createPointLabelContext(
   Object parent,
   int index,
-  Object? label,
+  List<String> label,
 ) {
   // DIVERGES(chartjs): adapt-point-label-context-construction, no Map.
   return ScriptableScalePointLabelContext.pointLabel(parent, label, index);
@@ -999,7 +1005,11 @@ class RadialLinearScale(super.cfg)
 
   /// scale.radialLinear.js:388 the point label `callback(label)`, which
   /// returns `label`.
-  static Object? _pointLabelCallback(Object? label, int index) => label;
+  static List<String> _pointLabelCallback(
+    Scale scale,
+    List<String> label,
+    int index,
+  ) => label;
 
   /// scale.radialLinear.js:400 `static defaultRoutes`.
   static final AnyObject defaultRoutes = {
@@ -1060,10 +1070,11 @@ class RadialLinearScale(super.cfg)
   double drawingArea = double.nan;
 
   /// scale.radialLinear.js:422 `_pointLabels`. The spec reads it
-  /// (scale.radialLinear.tests.js:330, :355, :369, :385). A label is any value
-  /// of the callback (scale.radialLinear.js:458-462).
+  /// (scale.radialLinear.tests.js:330, :355, :369, :385). Each entry is the
+  /// lines of one point label (Chart.js ADR 0131).
+  // DIVERGES(chartjs): adapt-native-point-labels, the lines of each label.
   @internal
-  List<Object?> pointLabels = [];
+  List<List<String>> pointLabels = [];
 
   /// scale.radialLinear.js:423 `_pointLabelItems`. The spec reads it
   /// (scale.radialLinear.tests.js:630).
@@ -1115,8 +1126,8 @@ class RadialLinearScale(super.cfg)
   ///
   /// `LinearScaleBase.prototype.generateTickLabels.call(this, ticks)` is the
   /// `generateTickLabels` of [Scale]: [LinearScaleBase] does not override
-  /// it. The callback is a [PointLabelCallback], called directly with the
-  /// index as an `int` (Chart.js ADR 0130). The filter reads the data
+  /// it. The callback is a [PointLabelCallback]: it gets the lines of the
+  /// item and gives the lines (Chart.js ADR 0131). The filter reads the data
   /// visibility of the chart (`types.Chart.getDataVisibility`, Chart.js ADR
   /// 0025, section 4).
   ///
@@ -1133,14 +1144,14 @@ class RadialLinearScale(super.cfg)
     final labels = getLabels();
     final length = labels.length;
     // DIVERGES(chartjs): adapt-radial-label-dispatch, the same calls, in order.
-    final mapped = List<Object?>.filled(length, null, growable: true);
+    final mapped = List<List<String>>.filled(length, const [], growable: true);
     final exact = super.runtimeType == RadialLinearScale;
     final nativeLabels = exact && nativeDataUpdateList(labels);
     for (var index = 0; index < length; index++) {
       final fn = options.pointLabels.callback;
       if (nativeLabels && identical(fn, _pointLabelCallback)) {
         for (var i = index; i < length; i++) {
-          mapped[i] = _pointLabelOf(labels[i]);
+          mapped[i] = _labelLines(labels[i]);
         }
         break;
       }
@@ -1149,9 +1160,10 @@ class RadialLinearScale(super.cfg)
         fn,
         OptionKey.callback,
       );
-      mapped[index] = _pointLabelOf(
-        callback == null ? undefined : callback(labels[index], index),
-      );
+      // A value that is no callback gives the `''` of Chart.js.
+      mapped[index] = callback == null
+          ? const ['']
+          : callback(this, _labelLines(labels[index]), index);
     }
     final chart = this.chart;
     if (nativePointChart(chart)) {
@@ -1169,13 +1181,6 @@ class RadialLinearScale(super.cfg)
         if (chart.getDataVisibility(i)) mapped[i],
     ];
   }
-
-  /// `label || label === 0 ? label : ''` of scale.radialLinear.js:461. A string
-  /// gives itself: an empty one is the `''`.
-  static Object? _pointLabelOf(Object? label) =>
-      label is String || jsTruthy(label) || (label is num && label == 0)
-      ? label
-      : '';
 
   /// scale.radialLinear.js:466 `fit()`.
   @override
