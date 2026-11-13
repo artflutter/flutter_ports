@@ -15,9 +15,9 @@
 /// an arithmetic context makes the type argument `num`, which boxes on
 /// dart2wasm: write `math.max<double>(x, 0)`.
 ///
-/// [jsHypot] computes `Math.hypot` of two operands in the form of the V8
-/// builtin, with correctly rounded steps, so every target gives the V8 bits
-/// (Chart.js ADR 0108).
+/// `Math.hypot(a, b)` has no port here. Ported code writes
+/// `math.sqrt(a * a + b * b)`: only the last bit can differ (Chart.js ADR
+/// 0135).
 ///
 /// `Math.pow` has no port here. Ported code calls `dart:math` `pow` with
 /// double operands (Chart.js ADR 0045). `dart:math` `pow` gives 1 for
@@ -25,8 +25,6 @@
 /// `Math.sin` or `Math.cos` call whose result reaches only the canvas or an
 /// easing value calls `dart:math` with a `js-ok` comment (Chart.js ADR 0045).
 library;
-
-import 'dart:math' as math;
 
 /// `Number.EPSILON`: 2^-52, the gap between 1 and the next double.
 const double numberEpsilon = 2.220446049250313e-16;
@@ -75,27 +73,3 @@ double jsToInt32(double x) {
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
 double jsSquare(double x) => x * x;
-
-/// `Math.hypot(a, b)` for two doubles, as V8 13.6 computes it (Chart.js ADR
-/// 0108): +Infinity when an operand is infinite (also with a NaN operand),
-/// else NaN when an operand is NaN, +0 when both are zero, else the operands
-/// scaled by the larger magnitude.
-///
-/// The V8 builtin `MathHypot` divides each operand by the larger magnitude,
-/// adds the squares, and multiplies the square root by that magnitude. With
-/// two operands, its Kahan compensation adds nothing. Each step is a
-/// correctly rounded IEEE operation, so the VM, dart2js and dart2wasm give
-/// the V8 bits. `math.sqrt(a * a + b * b)` differs from V8 in the last bit
-/// for about one pair in three, gives +Infinity for `a = b = 1e200` and +0
-/// for `a = b = 1e-200`.
-double jsHypot(double a, double b) {
-  if (a.isInfinite || b.isInfinite) return double.infinity;
-  if (a.isNaN || b.isNaN) return double.nan;
-  final x = a.abs();
-  final y = b.abs();
-  final m = x > y ? x : y;
-  if (m == 0) return 0;
-  final p = x / m;
-  final q = y / m;
-  return math.sqrt(p * p + q * q) * m;
-}

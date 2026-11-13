@@ -15,9 +15,10 @@
 /// - `jsGet`: the property read `object[key]` of a Map, a typed object of
 ///   the port (`JsObjectFace`), a List or a String. An absent key gives
 ///   `undefined`.
-/// - `jsHypot` and `jsRound`: `Math.hypot` and `Math.round` with the V8
-///   results. `Math.max` and `Math.min` are `dart:math` `max` and `min`
-///   with `double` operands (Chart.js ADR 0134).
+/// - `jsRound`: `Math.round` with the V8 results. `Math.max` and
+///   `Math.min` are `dart:math` `max` and `min` with `double` operands
+///   (Chart.js ADR 0134), and `Math.hypot(a, b)` is
+///   `math.sqrt(a * a + b * b)` (Chart.js ADR 0135).
 /// - `jsToNumber`, `jsToString` and `jsTruthy`: the conversions `ToNumber`,
 ///   `ToString` and `ToBoolean`. `jsNumberToString`: the V8 text of a
 ///   number.
