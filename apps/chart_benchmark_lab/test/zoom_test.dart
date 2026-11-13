@@ -205,7 +205,8 @@ void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
 
   for (final library in ChartLibrary.values) {
-    for (final type in _zoomTypes) {
+    // Only the Chart.js port has the sankey chart (ChartLibrary.supports).
+    for (final type in _zoomTypes.where(library.supports)) {
       testWidgets('${library.name} ${type.name} builds with zoom on and off', (
         tester,
       ) async {
@@ -227,7 +228,11 @@ void main() {
               final view = tester.widget<cj.ChartView>(
                 find.byType(cj.ChartView),
               );
-              final plugins = view.config!.extra!['plugins'];
+              // The sankey chart is a ChartView.raw: its zoom options are in
+              // `options.plugins` of the raw config.
+              final plugins = view.rawConfig != null
+                  ? (view.rawConfig!['options']! as Map)['plugins']
+                  : view.config!.extra!['plugins'];
               expect(
                 plugins is Map && plugins['zoom'] is Map,
                 zoom,
@@ -502,12 +507,16 @@ void main() {
 
       expect(
         await changes(() => _trackpad(tester, scale: 2)),
-        library == ChartLibrary.flChart || library == ChartLibrary.graphic,
+        // The host of the Chart.js port gives a pinch as a ctrl wheel
+        // (Chart.js ADR 0137).
+        library == ChartLibrary.flChart ||
+            library == ChartLibrary.graphic ||
+            library == ChartLibrary.chartjs,
         reason: 'pinch',
       );
       expect(
         await changes(() => _trackpad(tester, pan: const Offset(0, 120))),
-        library == ChartLibrary.syncfusion,
+        library == ChartLibrary.syncfusion || library == ChartLibrary.chartjs,
         reason: 'scroll',
       );
       if (library == ChartLibrary.syncfusion) {

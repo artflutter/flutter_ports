@@ -134,8 +134,9 @@ Two tools measure this:
   item between nodes in three columns. Only the Chart.js port has it, through
   `flutter_chartjs_chart_sankey_port`. fl_chart 1.3.0, Graphic 2.7.0 and Syncfusion
   35.1.43 have no sankey chart, so they show a message for it. The sankey chart takes
-  the raw config of the port: each tick of new data is a full update. It has no axes,
-  no zoom and no shadow. The option `priority` gives each node a fixed place in its
+  the raw config of the port: each tick of new data is a full update. It has no
+  visible axes and no shadow. Zoom and pan act on its hidden x scale, the scale of the
+  node columns. The option `priority` gives each node a fixed place in its
   column. The default layout of the chart sorts the nodes by their sizes, so with
   live data the nodes change places on most ticks.
 - **Dataset slider:** 100–20,000 actual input items, with 100/1k/5k/20k presets.
@@ -149,8 +150,8 @@ Two tools measure this:
   excluded from the effective configuration exported with a result. A library
   that cannot draw the shadow of a chart type shows the reason, and a batch
   skips it.
-- **Zoom and pan** (line, bar, scatter and bubble; the settings hide it for the
-  other types): each library zooms and pans only the x axis, through its public
+- **Zoom and pan** (line, bar, scatter, bubble and sankey; the settings hide it for
+  the other types): each library zooms and pans only the x axis, through its public
   API. A touch pinch or the mouse wheel zooms, and a drag pans a zoomed chart.
   Each library stays inside the data and zooms at most 100 times
   (`chartMaxZoom`, the default of Syncfusion). The Chart.js port uses the port of
@@ -172,10 +173,9 @@ Two tools measure this:
     events, not as a wheel. A trackpad pinch zooms fl_chart and Graphic.
     Syncfusion reads each pan-zoom step as a wheel step by its vertical pan: a
     vertical two-finger scroll zooms it, and a pinch only zooms it out. The host
-    of the Chart.js port maps no pan-zoom event (Chart.js ADR 0108 Open 5), so
-    on the native macOS app a trackpad does not zoom or pan it. A trackpad
-    scroll over the chart also scrolls the page. The web build, where the
-    browser sends a trackpad scroll as a wheel, is not checked.
+    of the Chart.js port gives a trackpad scroll and pinch as `wheel` events, as
+    Chrome does (Chart.js ADR 0137): a scroll and a pinch zoom it. The setting
+    "Trackpad gestures" turns this off.
   - A pinch with one finger above the other zooms only fl_chart: the others
     read the horizontal spread of the fingers.
   - A Graphic pinch or wheel zoom grows the range on both sides alike, around
