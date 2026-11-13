@@ -303,7 +303,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
 
     if (scaleRangesChanged(meta)) {
       start = 0;
-      count = points.length.toDouble();
+      count = points.length;
     }
 
     // Update Line
@@ -377,8 +377,8 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final reset = mode == 'reset';
@@ -416,7 +416,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     Config? resolutionConfig;
     var resolutionDataset = index;
     var resolutionIndex = 0;
-    Object context() => getContext(resolutionIndex * 1.0, false, mode);
+    Object context() => getContext(resolutionIndex, false, mode);
     Object preparedContext() =>
         contextReader?.read(resolutionIndex) ?? context();
     bool resolutionOwnerValid() =>
@@ -457,7 +457,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     if (!tryColors) _coordinateCache.clear();
     for (var i = 0; i < pointsCount; ++i) {
       final point = points[i];
-      final index = i * 1.0;
+      final index = i;
 
       if (i < start || i >= end) {
         if (directUpdate) {
@@ -626,7 +626,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
       resolveDataElementOptions(0),
     );
     final lastPoint = (data[data.length - 1] as types.PointElement).size(
-      resolveDataElementOptions((data.length - 1).toDouble()),
+      resolveDataElementOptions(data.length - 1),
     );
     return jsMax(jsMax(jsToNumber(border), firstPoint), lastPoint) / 2;
   }

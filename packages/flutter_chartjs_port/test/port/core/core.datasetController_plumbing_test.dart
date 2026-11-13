@@ -49,7 +49,7 @@ final class _ObjectLinear(super.cfg) extends LinearScale {
 
   // An item value runs user code. The bounds of `Scale.init` have no index.
   @override
-  Object? parse(Object? raw, [double? index]) => index == null
+  Object? parse(Object? raw, [int? index]) => index == null
       ? super.parse(raw, index)
       : _Logged('$index', () => onRead?.call());
 }
@@ -65,7 +65,7 @@ final class _OrderLinear(super.cfg) extends LinearScale {
   );
 
   @override
-  Object? parse(Object? raw, [double? index]) {
+  Object? parse(Object? raw, [int? index]) {
     log.add('$id$index');
     return super.parse(raw, index);
   }
@@ -110,8 +110,8 @@ final class _ShortController(super.chart, super.datasetIndex, [super.newTarget])
   List<ParsedItem> parsePrimitiveData(
     covariant types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     final parsed = super.parsePrimitiveData(meta, data, start, count);
     final onRead = onItemRead;
@@ -279,7 +279,7 @@ Object _parsedOf(types.ChartMeta meta) => [
   [for (final item in meta.parsed) _plain(item)],
 ];
 
-DatasetController _controllerOf(Chart chart, [num index = 0]) =>
+DatasetController _controllerOf(Chart chart, [int index = 0]) =>
     chart.getDatasetMeta(index).controller!;
 
 void main() {
@@ -623,7 +623,7 @@ void main() {
     };
 
     /// `parse(0, count)` of [meta] into [parsed].
-    Object parseInto(Chart chart, List<Object?> parsed, double count) {
+    Object parseInto(Chart chart, List<Object?> parsed, int count) {
       final meta = chart.getDatasetMeta(0)..parsed = parsed;
       _controllerOf(chart).parse(0, count);
       return _parsedOf(meta);
@@ -793,18 +793,6 @@ void main() {
       expect(controller.parsePrimitiveData(meta, data, 0, -1), isEmpty);
       expect(controller.parseArrayData(meta, rows, 0, -1), isEmpty);
       expect(controller.parseObjectData(meta, objects, 0, -1), isEmpty);
-      expect(
-        () => controller.parsePrimitiveData(meta, data, 0, double.nan),
-        throwsA(isA<UnsupportedError>()),
-      );
-      expect(
-        () => controller.parseArrayData(meta, rows, 0, double.nan),
-        throwsA(isA<UnsupportedError>()),
-      );
-      expect(
-        () => controller.parseObjectData(meta, objects, 0, double.nan),
-        throwsA(isA<UnsupportedError>()),
-      );
     });
 
     test('the scales parse in the order of upstream', () {
@@ -819,7 +807,7 @@ void main() {
       final controller = _controllerOf(chart);
       _OrderLinear.log.clear();
       controller.parsePrimitiveData(meta, <Object?>[1.0, 2.0], 0, 2);
-      expect(_OrderLinear.log, ['x0.0', 'y0.0', 'x1.0', 'y1.0']);
+      expect(_OrderLinear.log, ['x0', 'y0', 'x1', 'y1']);
       _OrderLinear.log.clear();
       controller.parseArrayData(
         meta,
@@ -830,7 +818,7 @@ void main() {
         1,
         1,
       );
-      expect(_OrderLinear.log, ['x1.0', 'y1.0']);
+      expect(_OrderLinear.log, ['x1', 'y1']);
       _OrderLinear.log.clear();
       controller.parseObjectData(
         meta,
@@ -841,7 +829,7 @@ void main() {
         0,
         2,
       );
-      expect(_OrderLinear.log, ['x0.0', 'y0.0', 'x1.0', 'y1.0']);
+      expect(_OrderLinear.log, ['x0', 'y0', 'x1', 'y1']);
     });
 
     test('a key that is not a string throws in the loop', () {

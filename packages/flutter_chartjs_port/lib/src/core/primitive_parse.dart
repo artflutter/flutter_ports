@@ -40,8 +40,8 @@ List<ParsedItem>? tryParseNumericCategories(
   types.Scale? vScale,
   List<Object?> labels,
   List<Object?> data,
-  double start,
-  double count,
+  int start,
+  int count,
 ) {
   if (iScale is! NativeCategoryParseScale ||
       vScale is! NativeNumericParseScale ||
@@ -59,8 +59,8 @@ List<ParsedItem>? tryParseNumericCategories(
       start + count > data.length) {
     return null;
   }
-  final offset = start.toInt();
-  final end = offset + count.toInt();
+  final offset = start;
+  final end = offset + count;
   // Preflight the whole native range: a late object must not run conversions
   // or mutate labels after an earlier item has bypassed its ordinary reads.
   for (var i = offset; i < end; i++) {
@@ -97,8 +97,8 @@ List<ParsedItem>? tryParseNumericCategories(
 List<ParsedItem>? tryParseNumericSingleScale(
   types.Scale scale,
   List<Object?> data,
-  double start,
-  double count,
+  int start,
+  int count,
 ) {
   if (scale is! NativeNumericParseScale ||
       !(scale as NativeNumericParseScale).supportsNativeNumericParse ||
@@ -112,8 +112,8 @@ List<ParsedItem>? tryParseNumericSingleScale(
       start + count > data.length) {
     return null;
   }
-  final offset = start.toInt();
-  final length = count.toInt();
+  final offset = start;
+  final length = count;
   for (var i = offset, end = offset + length; i < end; i++) {
     final value = data[i];
     if (value is! num && value != null && !identical(value, undefined)) {

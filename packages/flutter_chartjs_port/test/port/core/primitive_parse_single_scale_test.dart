@@ -21,7 +21,7 @@ class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
   int parses = 0;
 
   @override
-  Object? parse(Object? raw, [double? index]) {
+  Object? parse(Object? raw, [int? index]) {
     parses++;
     return super.parse(raw, index);
   }
@@ -181,16 +181,7 @@ void main() {
         isNull,
       );
       // A range outside the data, or that is no range of indexes.
-      for (final (start, count) in const [
-        (0.0, 3.0),
-        (2.0, 1.0),
-        (-1.0, 1.0),
-        (0.5, 1.0),
-        (0.0, 0.5),
-        (0.0, 0.0),
-        (double.nan, 1.0),
-        (0.0, double.infinity),
-      ]) {
+      for (final (start, count) in const [(0, 3), (2, 1), (-1, 1), (0, 0)]) {
         expect(
           tryParseNumericSingleScale(scale, <Object?>[1.0, 2.0], start, count),
           isNull,

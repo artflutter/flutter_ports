@@ -426,7 +426,7 @@ class CategoryScale(super.cfg)
   /// (scale.category.js:4-12). `labels[index] === raw` is [_strictEquals]:
   /// a copy of a label Date is not the label.
   @override
-  double? parse(Object? raw, [double? index]) {
+  double? parse(Object? raw, [int? index]) {
     if (isNullOrUndef(raw)) {
       return null;
     }
@@ -519,7 +519,7 @@ class CategoryScale(super.cfg)
   /// [value] is any JS value. A value that is not a number gets the index of
   /// its label through [parse] (Chart.js ADR 0025).
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     if (value is double) {
       // Port-only fast path for a number (Chart.js ADR 0025, section 3).
       return getPixelForDecimal((value - _startValue) / _valueRange);

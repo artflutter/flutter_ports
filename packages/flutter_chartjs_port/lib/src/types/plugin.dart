@@ -20,8 +20,7 @@ library;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show jsCall, jsIsFunction;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsTruthy;
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
@@ -411,7 +410,7 @@ final class ResizeHookArgs({required Object? size}) extends PluginHookArgs {
 /// `afterDatasetUpdate` (U `core.controller.js:670-680`).
 final class DatasetUpdateHookArgs({
   required types.ChartMeta? meta,
-  required double index,
+  required int index,
   required Object? mode,
   bool? cancelable,
 }) extends PluginHookArgs {
@@ -445,7 +444,7 @@ final class DatasetUpdateHookArgs({
 
   types.ChartMeta? _meta;
 
-  double _index = double.nan;
+  int _index = -1;
 
   Object? _mode;
 
@@ -459,10 +458,10 @@ final class DatasetUpdateHookArgs({
     touchSlot(0);
   }
 
-  /// `index`: NaN when absent.
-  double get index => _index;
+  /// `index`: -1 when absent.
+  int get index => _index;
 
-  set index(double value) {
+  set index(int value) {
     _index = value;
     touchSlot(1);
   }
@@ -498,7 +497,7 @@ final class DatasetUpdateHookArgs({
         _meta = value is types.ChartMeta ? value : null;
         return value is types.ChartMeta?;
       case 1:
-        _index = value is num ? value.toDouble() : jsToNumber(value);
+        _index = value is num && value.isFinite ? value.toInt() : -1;
         return value is num;
       case 2:
         _mode = value;
@@ -515,7 +514,7 @@ final class DatasetUpdateHookArgs({
       case 0:
         _meta = null;
       case 1:
-        _index = double.nan;
+        _index = -1;
       case 2:
         _mode = null;
       default:
@@ -528,7 +527,7 @@ final class DatasetUpdateHookArgs({
 /// `afterDatasetDraw` (U `core.controller.js:786-808`).
 final class DatasetDrawHookArgs({
   required types.ChartMeta? meta,
-  required double index,
+  required int index,
   bool? cancelable,
 }) extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
@@ -554,7 +553,7 @@ final class DatasetDrawHookArgs({
 
   types.ChartMeta? _meta;
 
-  double _index = double.nan;
+  int _index = -1;
 
   bool _cancelable = false;
 
@@ -566,10 +565,10 @@ final class DatasetDrawHookArgs({
     touchSlot(0);
   }
 
-  /// `index`: NaN when absent.
-  double get index => _index;
+  /// `index`: -1 when absent.
+  int get index => _index;
 
-  set index(double value) {
+  set index(int value) {
     _index = value;
     touchSlot(1);
   }
@@ -596,7 +595,7 @@ final class DatasetDrawHookArgs({
         _meta = value is types.ChartMeta ? value : null;
         return value is types.ChartMeta?;
       case 1:
-        _index = value is num ? value.toDouble() : jsToNumber(value);
+        _index = value is num && value.isFinite ? value.toInt() : -1;
         return value is num;
       default:
         _cancelable = value is bool ? value : jsTruthy(value);
@@ -610,7 +609,7 @@ final class DatasetDrawHookArgs({
       case 0:
         _meta = null;
       case 1:
-        _index = double.nan;
+        _index = -1;
       default:
         _cancelable = false;
     }

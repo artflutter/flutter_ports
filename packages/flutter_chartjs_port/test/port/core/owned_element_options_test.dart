@@ -65,7 +65,7 @@ class _Fixture({bool ordinary = false, final bool point = true}) {
   final prefixes = <String>['point', ''];
   int contexts = 0;
   void Function()? beforeContext;
-  ElementOptions resolve([double index = 0]) =>
+  ElementOptions resolve([int index = 0]) =>
       config.resolveOwnedElementNamedOptions(
         scopes,
         keySource.nativeOwnKeySnapshot,
@@ -138,8 +138,8 @@ void main() {
         }
         final results = <ElementOptions>[];
         for (var i = 0; i < 4; i++) {
-          final x = a.resolve(i.toDouble());
-          final y = b.resolve(i.toDouble());
+          final x = a.resolve(i);
+          final y = b.resolve(i);
           expectSame(x, y);
           expect(x.isFrozen, isFalse);
           expect(point ? x is PointOptions : x is BarOptions, isTrue);

@@ -70,11 +70,7 @@ class Tick({
     final parent = _contextParent;
     if (parent != null) {
       _contextParent = null;
-      _context = ScriptableScaleContext.tick(
-        parent,
-        this,
-        _contextIndex.toDouble(),
-      );
+      _context = ScriptableScaleContext.tick(parent, this, _contextIndex);
     }
     return _context;
   }

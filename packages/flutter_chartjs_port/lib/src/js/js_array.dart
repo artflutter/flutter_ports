@@ -209,12 +209,12 @@ int? jsArrayIndex(String key) {
 /// it with the `start` of `_onDataPop`, which is -1 for an empty dataset.
 List<T> jsSplice<T>(
   List<T> list,
-  double start, [
-  double? deleteCount,
+  num start, [
+  num? deleteCount,
   List<T> items = const [],
 ]) {
   final length = list.length;
-  final relativeStart = _toIntegerOrInfinity(start);
+  final relativeStart = _toIntegerOrInfinity(start.toDouble());
   final int actualStart;
   if (relativeStart < 0) {
     final fromEnd = length + relativeStart;
@@ -226,7 +226,7 @@ List<T> jsSplice<T>(
   if (deleteCount == null) {
     actualDeleteCount = length - actualStart;
   } else {
-    final count = _toIntegerOrInfinity(deleteCount);
+    final count = _toIntegerOrInfinity(deleteCount.toDouble());
     final rest = length - actualStart;
     actualDeleteCount = count <= 0
         ? 0

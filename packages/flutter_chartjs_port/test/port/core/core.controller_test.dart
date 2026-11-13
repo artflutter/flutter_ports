@@ -144,14 +144,14 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void update(String mode) {
     final meta = cachedMeta;
-    updateElements(meta.data, 0, meta.data.length.toDouble(), mode);
+    updateElements(meta.data, 0, meta.data.length, mode);
   }
 
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final meta = cachedMeta;
@@ -159,7 +159,7 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
     final vScale = meta.vScale!;
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     for (var i = start; i < start + count; ++i) {
-      final point = points[i.toInt()] as Element;
+      final point = points[i] as Element;
       final parsed = getParsed(i);
       final properties = <String, Object?>{
         'x': iScale.getPixelForValue(jsGet(parsed, 'x'), i),
@@ -205,7 +205,7 @@ final class _TestScale(super.cfg) extends Scale {
   List<Tick>? buildTicks() => [Tick(value: 0), Tick(value: 5), Tick(value: 10)];
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 }
@@ -367,7 +367,7 @@ void _labelElements(Chart chart, Observations o) {
 }
 
 /// The `active` flags of the data elements of the datasets 0 and 1.
-String _activeFlags(Chart chart) => [0.0, 1.0]
+String _activeFlags(Chart chart) => [0, 1]
     .map(
       (d) => chart
           .getDatasetMeta(d)
@@ -1297,23 +1297,13 @@ void main() {
     // core.controller.js:885 `!this._hiddenIndices[index]`, with the
     // port-only early return for an empty `_hiddenIndices` (Chart.js ADR
     // 0028, section 4). The results are the upstream results in each state.
-    const indices = <double>[
-      0,
-      1,
-      1.5,
-      -1,
-      // The negative zero is not the int 0.
-      // ignore: prefer_int_literals
-      -0.0,
-      double.nan,
-      double.infinity,
-    ];
+    const indices = <int>[0, 1, -1, 1 << 40];
 
     testWidgets('a chart with no hidden index gives true for each index', (
       tester,
     ) async {
       final chart = acquireChart(_testConfig([_points('a')]));
-      for (final index in [...indices, 1e21]) {
+      for (final index in indices) {
         expect(chart.getDataVisibility(index), isTrue, reason: '$index');
       }
     });
@@ -1334,43 +1324,27 @@ void main() {
       }
     });
 
-    // core.controller.js:881-883 with an index that is not a number
-    // (Chart.js ADR 0028 §6). The key is `ToString(index)`.
-    // `_updateHiddenIndices` moves each key whose `+key` is a number
-    // (core.controller.js:72-84): '01' and '' move, 'null' and 'true' do
-    // not. An x64 Node.js probe on the build at the pin,
-    // a line chart with 4 items and the toggles '01', null, true and '':
-    // the visibility 1111; after an unshift 10011; after a shift 0011.
-    testWidgets('toggleDataVisibility takes the key ToString(index), and an '
-        'insert or a remove moves the numeric keys', (tester) async {
-      final chart = acquireChart(_testConfig([_points('a')]));
-      <Object?>['01', null, true, ''].forEach(chart.toggleDataVisibility);
+    // `_updateHiddenIndices` moves each hidden index at or after the start
+    // of a change (core.controller.js:72-84). An index is an `int` (row
+    // `adapt-int-indexes`): upstream takes any value as the key.
+    testWidgets('an insert or a remove moves the hidden indexes', (
+      tester,
+    ) async {
+      final chart = acquireChart(_testConfig([_points('a')]))
+        ..toggleDataVisibility(1);
       String visibilities(int count) => [
         for (var i = 0; i < count; i++)
           if (chart.getDataVisibility(i)) '1' else '0',
       ].join();
-      expect(visibilities(4), '1111');
+      expect(visibilities(4), '1011');
       chart
-        ..dataChanges.add([0.0, '_insertElements', 0.0, 1.0])
+        ..dataChanges.add([0, '_insertElements', 0, 1])
         ..update();
-      expect(visibilities(5), '10011');
+      expect(visibilities(5), '11011');
       chart
-        ..dataChanges.add([0.0, '_removeElements', 0.0, 1.0])
+        ..dataChanges.add([0, '_removeElements', 0, 1])
         ..update();
-      expect(visibilities(4), '0011');
-    });
-
-    testWidgets('a fraction and NaN are keys of their own', (tester) async {
-      final chart = acquireChart(_testConfig([_points('a')]))
-        ..toggleDataVisibility(1.5);
-      expect(chart.getDataVisibility(1.5), isFalse);
-      expect(chart.getDataVisibility(1), isTrue);
-      expect(chart.getDataVisibility(2), isTrue);
-      chart.toggleDataVisibility(double.nan);
-      expect(chart.getDataVisibility(double.nan), isFalse);
-      for (final index in [0.0, 1.0, 2.0]) {
-        expect(chart.getDataVisibility(index), isTrue, reason: '$index');
-      }
+      expect(visibilities(4), '1011');
     });
 
     testWidgets('the moves of _updateHiddenIndices '

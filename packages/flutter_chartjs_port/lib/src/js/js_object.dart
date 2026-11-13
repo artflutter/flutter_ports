@@ -213,7 +213,7 @@ Object? jsGetKey(Object? object, String key) {
 /// The `ToPropertyKey` of a number gives an array index only for a whole
 /// number in range. -0 gives the key `'0'`. NaN, a fraction, a negative
 /// number and a number past the end give [undefined].
-Object? jsGetIndex(Object? object, double index) {
+Object? jsGetIndex(Object? object, num index) {
   if (object is List<Object?>) {
     if (index >= 0 && index < object.length) {
       final i = index.toInt();

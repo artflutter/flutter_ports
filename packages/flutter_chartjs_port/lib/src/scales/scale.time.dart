@@ -541,7 +541,7 @@ class TimeScale(super.cfg) extends Scale {
   /// It gives the timestamp of [raw], or Dart `null` (JS `null`) for
   /// [undefined], `null` and a value that the adapter cannot parse.
   @override
-  double? parse(Object? raw, [double? index]) {
+  double? parse(Object? raw, [int? index]) {
     // eslint-disable-line no-unused-vars
     if (identical(raw, undefined)) {
       return null;
@@ -939,7 +939,7 @@ class TimeScale(super.cfg) extends Scale {
   /// [value] is any JS value (Chart.js ADR 0025). The method gives it
   /// unchanged to [getDecimalForValue].
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     final offsets = this.offsets;
     final pos = getDecimalForValue(value);
     return getPixelForDecimal((offsets.start + pos) * offsets.factor);

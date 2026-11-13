@@ -182,7 +182,7 @@ final class _Controller(@override final Map<String, Object?>? sharedOptions)
 
 /// A meta with the members that core.interaction.js reads.
 final class _Meta({
-  @override required final double index,
+  @override required final int index,
   @override required final bool sorted,
   @override required final List<types.Element> data,
   @override required final List<Map<String, Object?>> parsed,
@@ -235,11 +235,11 @@ final class _Event(
 /// records its calls in [trace].
 Element _element(
   InteractionReferenceElement e,
-  double datasetIndex,
+  int datasetIndex,
   int index,
   List<String> trace,
 ) {
-  final name = '${datasetIndex.toInt()}:$index';
+  final name = '$datasetIndex:$index';
   final cfg = AnyObject.of(e.cfg);
   final element = switch (e.type) {
     'point' => _SpyPoint(name, trace, cfg),
@@ -264,10 +264,11 @@ _Chart _chart(InteractionReferenceScene scene, List<String> trace) {
       m.sharedOptions ? <String, Object?>{} : null,
     );
     final meta = _Meta(
-      index: m.index,
+      index: m.index.toInt(),
       sorted: m.sorted,
       data: [
-        for (final (i, e) in m.data.indexed) _element(e, m.index, i, trace),
+        for (final (i, e) in m.data.indexed)
+          _element(e, m.index.toInt(), i, trace),
       ],
       parsed: m.parsed,
       dataset: identical(m.spanGaps, undefined)
@@ -420,7 +421,7 @@ void main() {
       final trace = <String>[];
       final scene = interactionReference.first;
       final chart = _chart(scene, trace);
-      final visits = <(String, double, double)>[];
+      final visits = <(String, int, int)>[];
       Interaction.evaluateInteractionItems(
         chart,
         InteractionAxis.xy,

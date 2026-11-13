@@ -215,8 +215,7 @@ void main() {
         expect(first, same(chartLabels[0]));
         expect(first, isA<List<Object?>>());
         expect([
-          for (var i = 1; i < 6; i++)
-            controller.getLabelAndValue(i.toDouble()).label,
+          for (var i = 1; i < 6; i++) controller.getLabelAndValue(i).label,
         ], expected);
       }
     });

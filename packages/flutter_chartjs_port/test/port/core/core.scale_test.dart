@@ -116,7 +116,7 @@ final class _Meta(Map<String, Object?> spec) implements types.ChartMeta {
 /// `getPixelForValue(v) = offset + ToNumber(v)`.
 final class _OtherScale(final double offset) implements types.Scale {
   @override
-  double getPixelForValue(Object? value, [double? index]) =>
+  double getPixelForValue(Object? value, [int? index]) =>
       offset + jsToNumber(value);
 
   @override
@@ -203,7 +203,7 @@ final class _TestScale(super.cfg, final AnyObject spec) extends Scale {
   }
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 
@@ -569,7 +569,7 @@ final class _RecordingScale() implements types.Scale {
   final List<Object?> values = [];
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     values.add(value);
     return 50;
   }
@@ -650,7 +650,7 @@ void main() {
     final context = tick.$context!;
     expect(context.jsKeys(), ['tick', 'index', 'type']);
     expect(context.tick, same(tick));
-    expect(context.index, isA<double>());
+    expect(context.index, isA<int>());
     expect(context.index, 0.0);
     expect(context.type, 'tick');
     expect(context.scale, same(scale));

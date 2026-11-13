@@ -106,7 +106,7 @@ class ChartTypePageState() extends State<ChartTypePage> {
 
   static String _hoverItem(Chart chart, int datasetIndex, int index) {
     final controller = chart.getDatasetMeta(datasetIndex).controller!;
-    final (:label, :value) = controller.getLabelAndValue(index.toDouble());
+    final (:label, :value) = controller.getLabelAndValue(index);
     // Display text: the label and the value that the tooltip item gets
     // (plugin.tooltip.js:127-137).
     return 'd$datasetIndex#$index $label: $value';

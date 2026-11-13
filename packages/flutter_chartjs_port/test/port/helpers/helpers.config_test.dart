@@ -58,7 +58,7 @@ typedef _Parsed = (Object?, double?);
 /// A scale whose `parse` returns its arguments.
 final class _Scale() implements Scale {
   @override
-  Object? parse(Object? raw, [double? index]) => (raw, index);
+  Object? parse(Object? raw, [int? index]) => (raw, index);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -937,8 +937,8 @@ void main() {
     List<Object?> parse(
       Object? parsing,
       List<Object?> data,
-      double start,
-      double count,
+      int start,
+      int count,
     ) {
       final parsed =
           jsCall(parseObjectDataRadialScale, [

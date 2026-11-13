@@ -137,14 +137,14 @@ final class _ThemeController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void update(String mode) {
     final meta = cachedMeta;
-    updateElements(meta.data, 0, meta.data.length.toDouble(), mode);
+    updateElements(meta.data, 0, meta.data.length, mode);
   }
 
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final meta = cachedMeta;
@@ -152,7 +152,7 @@ final class _ThemeController(super.chart, super.datasetIndex, [super.newTarget])
     final vScale = meta.vScale!;
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     for (var i = start; i < start + count; ++i) {
-      final point = points[i.toInt()] as Element;
+      final point = points[i] as Element;
       final parsed = getParsed(i);
       final properties = <String, Object?>{
         'x': iScale.getPixelForValue(jsGet(parsed, 'x'), i),
@@ -208,14 +208,14 @@ final class _RadialThemeController(
   @override
   void update(String mode) {
     final meta = cachedMeta;
-    updateElements(meta.data, 0, meta.data.length.toDouble(), mode);
+    updateElements(meta.data, 0, meta.data.length, mode);
   }
 
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final scale = cachedMeta.rScale! as RadialLinearScale;
@@ -224,7 +224,7 @@ final class _RadialThemeController(
         i,
         jsGet(getParsed(i), 'r'),
       );
-      updateElement(points[i.toInt()] as Element, i, {
+      updateElement(points[i] as Element, i, {
         'x': position.x,
         'y': position.y,
         'angle': position.angle,
@@ -272,7 +272,7 @@ final class _ThemeScale(super.cfg) extends Scale {
   List<Tick>? buildTicks() => [Tick(value: 0), Tick(value: 5), Tick(value: 10)];
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 }
@@ -1085,9 +1085,7 @@ List<String> _lightPalette(String type, Object? theme) {
       observe('element $d.$i', _colorPair((meta.data[i] as Element).options));
       observe(
         'element $d.$i active',
-        _colorPair(
-          meta.controller!.resolveDataElementOptions(i.toDouble(), 'active'),
-        ),
+        _colorPair(meta.controller!.resolveDataElementOptions(i, 'active')),
       );
     }
   }

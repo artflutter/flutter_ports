@@ -29,8 +29,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show limitValue;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
@@ -210,22 +208,21 @@ double textX(TextAlign? align, double left, double right, bool rtl) {
 /// Return start and count of visible points.
 /// @private
 ///
-/// `start` and `count` are JS numbers, thus `double` values (Chart.js ADR
-/// 0045). They are always integers: list positions and lengths. The `lo`
-/// and `hi` of [lookupByAxis] are `int` values, which the port converts.
+/// `start` and `count` are `int` values (Chart.js ADR 0129): list positions
+/// and lengths, as the `lo` and the `hi` of [lookupByAxis].
 /// `_parsed.slice(…)` is [_slice].
 ///
 /// Upstream reads the length and `_lookupByKey` of the points. Thus the
 /// parameter takes the data elements of the meta (Chart.js ADR 0028,
 /// section 3).
-({double start, double count}) getStartAndCountOfVisiblePoints(
+({int start, int count}) getStartAndCountOfVisiblePoints(
   ChartMeta meta,
   List<Element> points,
   bool animationsDisabled,
 ) {
-  final pointCount = points.length.toDouble();
+  final pointCount = points.length;
 
-  var start = 0.0;
+  var start = 0;
   var count = pointCount;
 
   if (meta.sorted) {
@@ -243,15 +240,11 @@ double textX(TextAlign? align, double left, double right, bool rtl) {
     final (:min, :max, :minDefined, :maxDefined) = iScale.getUserBounds();
 
     if (minDefined) {
-      start = jsMin(
-        lookupByAxis(parsed, axis, min).lo.toDouble(),
+      start = math.min(
+        lookupByAxis(parsed, axis, min).lo,
         animationsDisabled
             ? pointCount
-            : lookupByAxis(
-                points,
-                axis,
-                iScale.getPixelForValue(min),
-              ).lo.toDouble(),
+            : lookupByAxis(points, axis, iScale.getPixelForValue(min)).lo,
       );
       if (jsTruthy(spanGaps)) {
         final distanceToDefinedLo = _slice(parsed, 0, start + 1).reversed
@@ -261,20 +254,21 @@ double textX(TextAlign? align, double left, double right, bool rtl) {
             );
         start -= math.max<int>(0, distanceToDefinedLo);
       }
-      start = limitValue(start, 0, pointCount - 1);
+      // `_limitValue(start, 0, pointCount - 1)`.
+      start = math.max(0, math.min(pointCount - 1, start));
     }
     if (maxDefined) {
-      var end = jsMax(
-        lookupByAxis(parsed, iScale.axis, max, true).hi + 1.0,
+      var end = math.max(
+        lookupByAxis(parsed, iScale.axis, max, true).hi + 1,
         animationsDisabled
-            ? 0.0
+            ? 0
             : lookupByAxis(
                     points,
                     axis,
                     iScale.getPixelForValue(max),
                     true,
                   ).hi +
-                  1.0,
+                  1,
       );
       if (jsTruthy(spanGaps)) {
         final distanceToDefinedHi = _slice(parsed, end - 1).indexWhere(
@@ -282,7 +276,8 @@ double textX(TextAlign? align, double left, double right, bool rtl) {
         );
         end += math.max<int>(0, distanceToDefinedHi);
       }
-      count = limitValue(end, start, pointCount) - start;
+      // `_limitValue(end, start, pointCount) - start`.
+      count = math.max(start, math.min(pointCount, end)) - start;
     } else {
       count = pointCount - start;
     }
@@ -294,11 +289,10 @@ double textX(TextAlign? align, double left, double right, bool rtl) {
 /// `array.slice(begin, end)` (ECMAScript 23.1.3.28) for integer arguments:
 /// a negative bound counts from the end, and both bounds stay in the list.
 /// A null [end] is `undefined`: the length of [list].
-List<T> _slice<T>(List<T> list, double begin, [double? end]) {
+List<T> _slice<T>(List<T> list, int begin, [int? end]) {
   final length = list.length;
-  int bound(double value) => value < 0
-      ? math.max(length + value.toInt(), 0)
-      : math.min(value.toInt(), length);
+  int bound(int value) =>
+      value < 0 ? math.max(length + value, 0) : math.min(value, length);
   final from = bound(begin);
   final to = end == null ? length : bound(end);
   return from < to ? list.sublist(from, to) : <T>[];

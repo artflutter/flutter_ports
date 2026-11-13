@@ -166,12 +166,12 @@ void main() {
       ]);
     });
 
-    test('passes the index as a double', () {
+    test('passes the index as an int', () {
       final indices = <Object?>[];
       helpers.each(<Object?>['a'], (Object? value, Object? index) {
         indices.add(index);
       });
-      expect(indices.single, isA<double>());
+      expect(indices.single, isA<int>());
     });
 
     test('calls a function that takes only the item', () {

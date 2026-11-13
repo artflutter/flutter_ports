@@ -308,19 +308,7 @@ void main() {
     test('gives undefined for an index that is not an array index', () {
       final array = <Object?>[1.0, 2.0, 3.0];
       expect(resolve([array, 'f'], undefined, -1), 'f');
-      expect(resolve([array, 'f'], undefined, 0.5), 'f');
       expect(resolve([<Object?>[], 'f'], undefined, 0), 'f');
-      expect(
-        resolve(
-          [
-            <Object?>[1.0],
-            'f',
-          ],
-          undefined,
-          double.nan,
-        ),
-        'f',
-      );
       expect(resolve([array, 'f'], undefined, -0), 1);
     });
     test('returns null elements and undefined for no input', () {

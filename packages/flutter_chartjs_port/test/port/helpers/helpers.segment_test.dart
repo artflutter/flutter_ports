@@ -126,7 +126,7 @@ final class _Line(
   @override final Chart? chart,
   @override final bool? loop,
   @override final bool? fullLoop,
-  @override final double? datasetIndex,
+  @override final int? datasetIndex,
 }) implements LineElement {
   @override
   final Map<String, Object?> options = {'spanGaps': false, ...options};

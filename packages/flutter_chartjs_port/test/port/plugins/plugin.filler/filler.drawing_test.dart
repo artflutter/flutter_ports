@@ -41,7 +41,7 @@ final class _IndexScale({
   @override
   bool isHorizontal() => horizontal;
   @override
-  double getPixelForValue(Object? value, [double? index]) =>
+  double getPixelForValue(Object? value, [int? index]) =>
       10 * jsToNumber(value);
 
   @override

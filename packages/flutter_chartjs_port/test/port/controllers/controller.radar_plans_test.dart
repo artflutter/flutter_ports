@@ -62,7 +62,7 @@ final class _ObservedRadar(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElement(
     types.Element element,
-    double? index,
+    int? index,
     Object properties,
     String mode,
   ) {
@@ -435,7 +435,7 @@ void main() {
           dataset: () => {
             'pointRadius': (Object? ctx) {
               final context = ctx! as JsObjectFace;
-              final index = context.jsRead('index')! as double;
+              final index = (context.jsRead('index')! as num).toDouble();
               final scale = context.jsRead('chart')! as Chart;
               chart = scale;
               final r = chart.scales['r']!;
@@ -458,10 +458,10 @@ void main() {
       chart.update('none');
       expect(_ObservedRadar.updates, [
         'null none',
-        '0.0 none',
-        '1.0 none',
-        '2.0 none',
-        '3.0 none',
+        '0 none',
+        '1 none',
+        '2 none',
+        '3 none',
       ]);
     });
 

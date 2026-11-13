@@ -130,8 +130,8 @@ final class _SpyLine() extends LineElement implements _Tagged {
   void draw(
     CanvasRenderingContext2D ctx, [
     types.ChartArea? area,
-    double? start,
-    double? count,
+    int? start,
+    int? count,
   ]) {
     final from = jsToString(start ?? undefined);
     final to = jsToString(count ?? undefined);
@@ -259,14 +259,14 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
       final options = resolveDatasetElementOptions(mode);
       updateElement(line as Element, null, {'options': options}, mode);
     }
-    updateElements(points, 0, points.length.toDouble(), mode);
+    updateElements(points, 0, points.length, mode);
   }
 
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final meta = cachedMeta;
@@ -277,7 +277,7 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
     final iAxis = iScale.axis;
     final vAxis = vScale.axis;
     for (var i = start; i < start + count; ++i) {
-      final point = points[i.toInt()] as Element;
+      final point = points[i] as Element;
       final parsed = getParsed(i)!;
       final properties = <String, Object?>{};
       // `properties[iAxis]`: the key of the axis class.
@@ -349,7 +349,7 @@ final class _FakeScale(@override final types.Chart chart, AnyObject spec)
   final AnyObject? bounds = spec['bounds'] as AnyObject?;
 
   @override
-  Object? parse(Object? raw, [double? index]) {
+  Object? parse(Object? raw, [int? index]) {
     if (kind == 'raw') {
       return raw;
     }
@@ -421,7 +421,7 @@ final class _FakeScale(@override final types.Chart chart, AnyObject spec)
   }
 
   @override
-  double getPixelForValue(Object? value, [double? index]) =>
+  double getPixelForValue(Object? value, [int? index]) =>
       jsToNumber(value) * 10;
 
   @override
@@ -433,7 +433,7 @@ final class _FakeScale(@override final types.Chart chart, AnyObject spec)
 final class _Meta(
   /// `_dataset`.
   final Object? datasetObject,
-  @override var double index,
+  @override var int index,
 ) implements types.ChartMeta {
   // The members of Chart.js ADR 0028 that this test does not read.
   @override
@@ -579,7 +579,7 @@ final class _FakeChart(@override final Config config, AnyObject spec)
   // core.controller.js:829-853.
   @override
   types.ChartMeta getDatasetMeta(num index) {
-    final datasetIndex = index.toDouble();
+    final datasetIndex = index.toInt();
     final dataset = jsGet(jsGet(data, 'datasets'), datasetIndex);
     final metasets = _metasets;
     final meta = metasets
@@ -613,7 +613,7 @@ final class _FakeChart(@override final Config config, AnyObject spec)
   // core.controller.js:866-875.
   @override
   bool isDatasetVisible(num index) {
-    final datasetIndex = index.toDouble();
+    final datasetIndex = index.toInt();
     final dataset = jsGet(jsGet(data, 'datasets'), datasetIndex);
     if (!jsTruthy(dataset)) {
       return false;
@@ -778,7 +778,7 @@ final class _Run(final AnyObject spec) {
           controller(i).update_(args[0] as String?);
         }
       case 'updateIndex':
-        controller(args[0]).updateIndex(jsToNumber(args[1]));
+        controller(args[0]).updateIndex(jsToNumber(args[1]).toInt());
       case 'linkScales':
         controller(args[0]).linkScales();
       case 'configure':
@@ -789,8 +789,8 @@ final class _Run(final AnyObject spec) {
         controller(args[0]).draw();
       case 'drawRange':
         controller(args[0])
-          ..drawStart = (args[1] as num?)?.toDouble()
-          ..drawCount = (args[2] as num?)?.toDouble();
+          ..drawStart = (args[1] as num?)?.toInt()
+          ..drawCount = (args[2] as num?)?.toInt();
       case 'push':
         final data = _dataOf(args[0]);
         final items = _materialize(args.sublist(1))! as List<Object?>;
@@ -832,14 +832,14 @@ final class _Run(final AnyObject spec) {
       case 'hover':
         controller(args[0]).setHoverStyle(
           _element(args[0], args[1])! as Element,
-          jsToNumber(args[0]),
-          jsToNumber(args[1]),
+          jsToNumber(args[0]).toInt(),
+          jsToNumber(args[1]).toInt(),
         );
       case 'unhover':
         controller(args[0]).removeHoverStyle(
           _element(args[0], args[1])! as Element,
-          jsToNumber(args[0]),
-          jsToNumber(args[1]),
+          jsToNumber(args[0]).toInt(),
+          jsToNumber(args[1]).toInt(),
         );
       case 'hoverDataset':
         controller(args[0]).setDatasetHoverStyle();
@@ -879,7 +879,7 @@ final class _Run(final AnyObject spec) {
         final c = controller(args[0]);
         final value = c.applyStack(
           chart.scales[args[1]]!,
-          c.getParsed(jsToNumber(args[2])),
+          c.getParsed(jsToNumber(args[2]).toInt()),
           args[3],
         );
         out.add(
@@ -888,7 +888,7 @@ final class _Run(final AnyObject spec) {
         );
       case 'labelAndValue':
         final (:label, :value) = controller(args[0])
-            .getLabelAndValue(jsToNumber(args[1]));
+            .getLabelAndValue(jsToNumber(args[1]).toInt());
         out.add(
           'labelAndValue ${_s(args[0])} ${_s(args[1])}: '
           '${_enc({'label': label, 'value': value})}',
@@ -948,7 +948,7 @@ final class _Run(final AnyObject spec) {
         );
       case 'style':
         final options = controller(args[0])
-            .getStyle((args[1] as num?)?.toDouble(), args[2] as bool?);
+            .getStyle((args[1] as num?)?.toInt(), args[2] as bool?);
         out.add(
           'style ${_s(args[0])} ${_s(args[1])} ${_s(args[2])}: '
           '${_encOptions(options)}',
@@ -965,7 +965,7 @@ final class _Run(final AnyObject spec) {
         );
       case 'getSharedOptions':
         final (:sharedOptions, :includeOptions) = controller(args[0])
-            .getSharedOptions_(jsToNumber(args[1]), args[2]! as String);
+            .getSharedOptions_(jsToNumber(args[1]).toInt(), args[2]! as String);
         out.add(
           'getSharedOptions ${_s(args[0])} ${_s(args[1])} ${args[2]}: '
           '${_encOptions(sharedOptions)} include=$includeOptions',
@@ -980,7 +980,7 @@ final class _Run(final AnyObject spec) {
         out.add('includeOptions ${_s(args[0])} ${args[1]} ${args[2]}: $value');
       case 'context':
         final context = controller(args[0]).getContext(
-          (args[1] as num?)?.toDouble(),
+          (args[1] as num?)?.toInt(),
           args[2] as bool?,
           args[3] as String?,
         );
@@ -990,7 +990,7 @@ final class _Run(final AnyObject spec) {
         );
       case 'animations':
         final anims = controller(args[0]).resolveAnimations(
-          (args[1] as num?)?.toDouble(),
+          (args[1] as num?)?.toInt(),
           args[2] as String?,
           args[3] as bool?,
         );
@@ -1012,8 +1012,9 @@ final class _Run(final AnyObject spec) {
   JsObjectFace _options(Object? ds, Object? index, Object? mode) =>
       index == null
       ? controller(ds).resolveDatasetElementOptions(mode as String?)
-      : controller(ds)
-            .resolveDataElementOptions(jsToNumber(index), mode as String?);
+      : controller(
+          ds,
+        ).resolveDataElementOptions(jsToNumber(index).toInt(), mode as String?);
 
   // core.controller.js:415-451, without the registry.
   void _build() {
@@ -1028,13 +1029,13 @@ final class _Run(final AnyObject spec) {
         ..type = type as String
         ..indexAxis = datasetIndexAxis(dataset, type, chart.options)
         ..order = jsOrZero(jsGet(dataset, 'order'))
-        ..index = i.toDouble()
+        ..index = i
         ..label = jsToString(jsGet(dataset, 'label'))
         ..visible = chart.isDatasetVisible(i);
       final existing = meta.controllerValue;
       if (existing != null) {
         existing
-          ..updateIndex(i.toDouble())
+          ..updateIndex(i)
           ..linkScales();
       } else {
         final datasetElement = elements['dataset'];
@@ -1176,7 +1177,8 @@ void main() {
       final run = _runTo('parsePrimitiveData with labels', 0);
       final (:chart, :datasetIndex) = controllerArgs([run.chart]);
       expect(chart, same(run.chart));
-      expect(datasetIndex, isNaN);
+      // An absent dataset index is -1 (row `adapt-int-indexes`).
+      expect(datasetIndex, -1);
     });
 
     test('a data element class of another role throws at the cast', () {
@@ -1464,7 +1466,7 @@ void main() {
       expect(controller.applyStack(yScale, items[0]), same(undefined));
       // The Node.js probe gives the range NaN, NaN without a throw.
       final range = _MinMax(double.infinity, double.negativeInfinity);
-      final stack = DatasetStack(<double>[0], null);
+      final stack = DatasetStack(<int>[0], null);
       controller.updateRangeFromParsed(range, yScale, items[0], stack);
       expect(range.min, isNaN);
       expect(range.max, isNaN);
@@ -1791,7 +1793,6 @@ void main() {
       // A parsed item can be JS null. Thus a missing index gives the
       // undefined sentinel.
       expect(controller.getParsed(9), same(undefined));
-      expect(controller.getParsed(0.5), same(undefined));
       expect(controller.getParsed(-1), same(undefined));
       expect(controller.getDataElement(4), isA<PointElement>());
       expect(controller.getDataElement(5), isNull);

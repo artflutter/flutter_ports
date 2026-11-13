@@ -1553,7 +1553,7 @@ void main() {
       final context = <String, Object?>{'index': 1.0};
       final scriptable = [
         <String, Object?>{
-          'radius': (Object? c) => (jsGet(c, 'index')! as double) * 2,
+          'radius': (Object? c) => (jsGet(c, 'index')! as num) * 2,
           'other': 1.0,
           'borderColor': 'B',
           'hoverBorderColor': 'H',
@@ -1644,7 +1644,7 @@ void main() {
         [
           <String, Object?>{
             'font': <String, Object?>{
-              'size': (Object? c) => 10 + (jsGet(c, 'index')! as double) / 2,
+              'size': (Object? c) => 10 + (jsGet(c, 'index')! as num) / 2,
             },
           },
         ],

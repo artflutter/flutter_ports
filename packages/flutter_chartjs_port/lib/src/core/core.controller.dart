@@ -146,8 +146,8 @@ bool _positionIsHorizontal(Object? position, [ScaleAxis? axis]) {
 /// `a[l1] === b[l1]` of two numbers is `==`: NaN is not equal to NaN in
 /// both.
 num Function(T a, T b) _compare2Level<T>(
-  double Function(T item) l1,
-  double Function(T item) l2,
+  num Function(T item) l1,
+  num Function(T item) l2,
 ) {
   return (a, b) => l1(a) == l1(b) ? l2(a) - l2(b) : l1(a) - l1(b);
 }
@@ -252,7 +252,7 @@ Chart? _getChart(Object? key) {
 /// The keys are the `ToString` of the indices. `+key` is [jsToNumber]. The
 /// write `obj[intKey + move]` takes the key [jsNumberToString]. An absent
 /// key reads as Dart `null`, as `undefined`.
-void _moveNumericKeys(Map<String, Object?> obj, double start, double move) {
+void _moveNumericKeys(Map<String, Object?> obj, int start, int move) {
   final keys = jsObjectKeys(obj);
   for (final key in keys) {
     final intKey = jsToNumber(key);
@@ -311,7 +311,7 @@ final class ChartMeta._({
   required var double order,
 
   /// core.controller.js:844 `index: datasetIndex`.
-  @override required var double index,
+  @override required var int index,
 
   /// core.controller.js:845 `_dataset: dataset`, the dataset object of the
   /// meta. The name has a trailing underscore, because [dataset] has the
@@ -565,7 +565,7 @@ final class ChartMeta._({
       case 'order':
         order = jsToNumber(value);
       case 'index':
-        index = jsToNumber(value);
+        index = (value! as num).toInt();
       case 'indexAxis':
         indexAxis = value is Undefined ? null : value as ScaleAxis?;
       case 'stack':
@@ -1365,7 +1365,7 @@ class Chart(
       for (var i = numData; i < numMeta; ++i) {
         _destroyDatasetMeta(i);
       }
-      jsSplice(metasets, numData.toDouble(), (numMeta - numData).toDouble());
+      jsSplice(metasets, numData, numMeta - numData);
     }
     sortedMetasets = jsSort(
       List.of(metasets),
@@ -1408,27 +1408,27 @@ class Chart(
     _removeUnreferencedMetasets();
 
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
-      final dataset = jsGetIndex(datasets, i.toDouble());
-      var meta = getDatasetMeta(i.toDouble());
+      final dataset = jsGetIndex(datasets, i);
+      var meta = getDatasetMeta(i);
       final datasetType = readOption(dataset, OptionKey.type);
       final type = jsTruthy(datasetType) ? datasetType : config.type;
 
       if (jsTruthy(meta._type) && meta._type != type) {
         _destroyDatasetMeta(i);
-        meta = getDatasetMeta(i.toDouble());
+        meta = getDatasetMeta(i);
       }
       meta
         .._type = type
         ..indexAxis = datasetIndexAxis(dataset, type, options)
         ..order = jsOrZero(readOption(dataset, OptionKey.order))
-        ..index = i.toDouble()
+        ..index = i
         ..label = jsToString(readOption(dataset, OptionKey.label))
-        ..visible = isDatasetVisible(i.toDouble());
+        ..visible = isDatasetVisible(i);
 
       final controller = meta.controller;
       if (controller != null) {
         controller
-          ..updateIndex(i.toDouble())
+          ..updateIndex(i)
           ..linkScales();
       } else {
         final controllerClass = registry.getController(type);
@@ -1468,7 +1468,7 @@ class Chart(
   /// Reset the elements of all datasets
   /// @private
   void _resetElements() {
-    each(_datasets, (Object? dataset, double datasetIndex) {
+    each(_datasets, (Object? dataset, int datasetIndex) {
       getDatasetMeta(datasetIndex).controller!.reset();
     }, this);
   }
@@ -1538,7 +1538,7 @@ class Chart(
     // Make sure all dataset controllers have correct meta data counts
     var minPadding = 0.0;
     for (var i = 0, ilen = _datasets.length; i < ilen; i++) {
-      final controller = getDatasetMeta(i.toDouble()).controller;
+      final controller = getDatasetMeta(i).controller;
       final reset = !animsDisabled && !newControllers.contains(controller);
       // New controllers will be reset after the layout pass, so we only want
       // to modify elements added to new datasets
@@ -1731,7 +1731,7 @@ class Chart(
     }
     final controllers = <DatasetController>[];
     for (var i = 0; i < snapshot.datasets.length; i++) {
-      final meta = getDatasetMeta(i.toDouble());
+      final meta = getDatasetMeta(i);
       final controller = meta.controller;
       if (controller == null ||
           !controller.supportsDataUpdates ||
@@ -1937,7 +1937,7 @@ class Chart(
     final count = snapshot.datasets.length;
     if (_datasets.length != count) return false;
     for (var i = 0; i < count; i++) {
-      final controller = getDatasetMeta(i.toDouble()).controller;
+      final controller = getDatasetMeta(i).controller;
       if (controller == null || !controller.supportsDataUpdates) return false;
     }
     return true;
@@ -1979,7 +1979,7 @@ class Chart(
     // outside the options (`meta.hidden`) changes.
     final datasets = _datasets;
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
-      getDatasetMeta(i.toDouble()).visible = isDatasetVisible(i);
+      getDatasetMeta(i).visible = isDatasetVisible(i);
     }
 
     notifyPlugins('beforeElementsUpdate');
@@ -1988,7 +1988,7 @@ class Chart(
     // new.
     var minPadding = 0.0;
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
-      final controller = getDatasetMeta(i.toDouble()).controller!
+      final controller = getDatasetMeta(i).controller!
         ..buildOrUpdateElements(!animsDisabled);
       minPadding = jsMax(jsToNumber(controller.getMaxOverflow()), minPadding);
     }
@@ -2101,8 +2101,7 @@ class Chart(
   /// the change array `c`, as upstream. `join(',')` gives the `ToString` of
   /// each item. `+a[2]` is [jsToNumber]. The objects `{method, start,
   /// count}` are records.
-  List<({String method, double start, double count})>?
-  _getUniformDataChanges() {
+  List<({String method, int start, int count})>? _getUniformDataChanges() {
     final dataChanges = this.dataChanges;
     if (dataChanges.isEmpty) {
       return null;
@@ -2131,8 +2130,11 @@ class Chart(
     return changeSet
         .map((c) => c.split(','))
         .map(
-          (a) =>
-              (method: a[1], start: jsToNumber(a[2]), count: jsToNumber(a[3])),
+          (a) => (
+            method: a[1],
+            start: jsToNumber(a[2]).toInt(),
+            count: jsToNumber(a[3]).toInt(),
+          ),
         )
         .toList();
   }
@@ -2206,7 +2208,7 @@ class Chart(
     }
 
     for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
-      final controller = getDatasetMeta(i.toDouble()).controller!;
+      final controller = getDatasetMeta(i).controller!;
       if (keepResolvers) {
         // DIVERGES(chartjs): adapt-range-updates, the kept dataset resolver.
         controller.configureKeptResolver();
@@ -2246,10 +2248,10 @@ class Chart(
   /// `meta.controller._update(mode)` is `update_` (Chart.js ADR 0023). It
   /// takes a `String`: [_modeArg] gives the falsy modes as Dart `null`.
   bool _updateDataset(int index, Object? mode) {
-    final meta = getDatasetMeta(index.toDouble());
+    final meta = getDatasetMeta(index);
     final args = DatasetUpdateHookArgs(
       meta: meta,
-      index: index.toDouble(),
+      index: index,
       mode: mode,
       cancelable: true,
     );
@@ -2452,9 +2454,9 @@ class Chart(
   /// `filter(x => x && x._dataset === dataset).pop()` gives the last meta of
   /// the dataset object, by [identical].
   @override
-  ChartMeta getDatasetMeta(num datasetIndex) {
-    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
-    final index = datasetIndex.toDouble();
+  // DIVERGES(chartjs): adapt-int-indexes, an index is an int.
+  ChartMeta getDatasetMeta(int datasetIndex) {
+    final index = datasetIndex;
     final dataset = jsGetIndex(_datasets, index);
     final metasets = this.metasets;
     ChartMeta? meta;
@@ -2486,8 +2488,8 @@ class Chart(
   @override
   @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, a read with no write.
-  ChartMeta? existingDatasetMeta(num datasetIndex) {
-    final dataset = jsGetIndex(_datasets, datasetIndex.toDouble());
+  ChartMeta? existingDatasetMeta(int datasetIndex) {
+    final dataset = jsGetIndex(_datasets, datasetIndex);
     final metasets = this.metasets;
     for (var i = metasets.length - 1; i >= 0; i--) {
       final x = metasets[i];
@@ -2510,9 +2512,8 @@ class Chart(
 
   /// core.controller.js:863 `isDatasetVisible(datasetIndex)`.
   @override
-  bool isDatasetVisible(num datasetIndex) {
-    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
-    final dataset = jsGetIndex(_datasets, datasetIndex.toDouble());
+  bool isDatasetVisible(int datasetIndex) {
+    final dataset = jsGetIndex(_datasets, datasetIndex);
     if (!jsTruthy(dataset)) {
       return false;
     }
@@ -2529,13 +2530,9 @@ class Chart(
   }
 
   /// core.controller.js:876 `setDatasetVisibility(datasetIndex, visible)`.
-  void setDatasetVisibility(
-    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
-    num datasetIndex,
-    bool visible,
-  ) {
+  void setDatasetVisibility(int datasetIndex, bool visible) {
     _invalidateDataUpdate();
-    getDatasetMeta(datasetIndex.toDouble()).hidden = !visible;
+    getDatasetMeta(datasetIndex).hidden = !visible;
   }
 
   /// core.controller.js:881 `toggleDataVisibility(index)`.
@@ -2546,9 +2543,9 @@ class Chart(
   /// data index has these keys, but `_updateHiddenIndices` moves the key
   /// `'01'` after a data insert or remove, as upstream (core.controller.js:72).
   @override
-  void toggleDataVisibility(Object? index) {
+  void toggleDataVisibility(int index) {
     _invalidateDataUpdate();
-    final key = jsToString(index);
+    final key = '$index';
     _hiddenIndices[key] = !jsTruthy(_hiddenIndices[key]);
   }
 
@@ -2558,12 +2555,12 @@ class Chart(
   /// upstream line gives true. The early return skips the key string in that
   /// state (Chart.js ADR 0028, section 4).
   @override
-  bool getDataVisibility(num index) {
+  bool getDataVisibility(int index) {
     // Port-only fast path with the upstream result (Chart.js ADR 0028,
     // section 4).
     if (_hiddenIndices.isEmpty) return true;
-    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
-    return !jsTruthy(_hiddenIndices[jsNumberToString(index.toDouble())]);
+    final key = '$index';
+    return !jsTruthy(_hiddenIndices[key]);
   }
 
   /// core.controller.js:892 `_updateVisibility(datasetIndex, dataIndex,
@@ -2576,7 +2573,7 @@ class Chart(
   /// `resolveAnimations` (Chart.js ADR 0012). `meta.data[dataIndex].hidden`
   /// is a write of [Element.hidden]. An index without an element throws
   /// a [TypeError], as in JavaScript.
-  void _updateVisibility(double datasetIndex, double? dataIndex, bool visible) {
+  void _updateVisibility(int datasetIndex, int? dataIndex, bool visible) {
     final mode = visible ? 'show' : 'hide';
     final meta = getDatasetMeta(datasetIndex);
     final anims = meta.controller!.resolveAnimations(null, mode);
@@ -2600,18 +2597,16 @@ class Chart(
   ///
   /// Dart `null` for [dataIndex] stands for an absent argument.
   @override
-  void hide(num datasetIndex, [num? dataIndex]) {
-    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
-    _updateVisibility(datasetIndex.toDouble(), dataIndex?.toDouble(), false);
+  void hide(int datasetIndex, [int? dataIndex]) {
+    _updateVisibility(datasetIndex, dataIndex, false);
   }
 
   /// core.controller.js:912 `show(datasetIndex, dataIndex)`.
   ///
   /// Dart `null` for [dataIndex] stands for an absent argument.
   @override
-  void show(num datasetIndex, [num? dataIndex]) {
-    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
-    _updateVisibility(datasetIndex.toDouble(), dataIndex?.toDouble(), true);
+  void show(int datasetIndex, [int? dataIndex]) {
+    _updateVisibility(datasetIndex, dataIndex, true);
   }
 
   /// core.controller.js:919 `_destroyDatasetMeta(datasetIndex)`.
@@ -2838,17 +2833,9 @@ class Chart(
       if (controller != null) {
         final element = item.element! as Element;
         if (prefix == 'set') {
-          controller.setHoverStyle(
-            element,
-            item.datasetIndex.toDouble(),
-            item.index.toDouble(),
-          );
+          controller.setHoverStyle(element, item.datasetIndex, item.index);
         } else {
-          controller.removeHoverStyle(
-            element,
-            item.datasetIndex.toDouble(),
-            item.index.toDouble(),
-          );
+          controller.removeHoverStyle(element, item.datasetIndex, item.index);
         }
       }
     }
@@ -2881,7 +2868,7 @@ class Chart(
 
       return types.ActiveElement(
         datasetIndex: datasetIndex,
-        element: _elementAt(meta.data, index.toDouble()),
+        element: _elementAt(meta.data, index),
         index: index,
       );
     }).toList();
@@ -3205,11 +3192,8 @@ void _invalidatePlugins() {
 
 /// The read `meta.data[index]` of a data element: the element at a whole
 /// index below the length, else Dart `null` for JS `undefined`.
-types.Element? _elementAt(List<types.Element> data, double index) {
-  if (index >= 0 && index < data.length && index == index.truncateToDouble()) {
-    return data[index.toInt()];
-  }
-  return null;
+types.Element? _elementAt(List<types.Element> data, int index) {
+  return index >= 0 && index < data.length ? data[index] : null;
 }
 
 /// `object[key]` of an object of the typed defaults (Chart.js ADR 0054 §3):

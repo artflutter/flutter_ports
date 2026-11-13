@@ -138,7 +138,7 @@ void main() {
     addTearDown(() => elements.jsWrite('point', original));
     final controller = chart.getDatasetMeta(0).controller!;
     for (var i = 0; i < 4; i++) {
-      controller.resolveDataElementOptions(i.toDouble(), 'none');
+      controller.resolveDataElementOptions(i, 'none');
     }
     expect(observed.reads, 4);
   });
@@ -177,10 +177,7 @@ void main() {
         final controller = chart.getDatasetMeta(0).controller!;
         observations.add([
           for (var i = 0; i < 4; i++)
-            switch (controller.resolveDataElementOptions(
-              i.toDouble(),
-              'none',
-            )) {
+            switch (controller.resolveDataElementOptions(i, 'none')) {
               final ElementOptions options => [
                 options.jsKeys(),
                 {for (final key in options.jsKeys()) key: options.jsRead(key)},

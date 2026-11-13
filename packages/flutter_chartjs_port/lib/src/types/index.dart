@@ -115,7 +115,7 @@ abstract interface class ChartMeta() {
 
   /// index.d.ts:477 `index: number`, the dataset index. The interaction
   /// items copy it as `datasetIndex` (core.interaction.js:78, :289).
-  double get index;
+  int get index;
 
   /// index.d.ts:478 `visible: boolean`, the result of
   /// `isDatasetVisible` (core.controller.js:436). plugin.legend.js:687
@@ -437,8 +437,7 @@ abstract interface class Chart() {
   List<ChartMeta> getSortedVisibleDatasetMetas();
 
   /// index.d.ts:567 `getDatasetMeta(datasetIndex: number): ChartMeta`.
-  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
-  ChartMeta getDatasetMeta(num datasetIndex);
+  ChartMeta getDatasetMeta(int datasetIndex);
 
   /// core.controller.js:737 `_getSortedDatasetMetas(filterVisible)`: the
   /// metas in the drawing order, only the visible ones when [filterVisible]
@@ -448,8 +447,7 @@ abstract interface class Chart() {
 
   /// index.d.ts:572 `getDataVisibility(index: number): boolean`. The radial
   /// scale calls it (scale.radialLinear.js:463).
-  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
-  bool getDataVisibility(num index);
+  bool getDataVisibility(int index);
 
   /// index.d.ts:585 `notifyPlugins(hook: string, args?: AnyObject): boolean
   /// | void`. The scale hooks call it (core.scale.js:535).
@@ -504,8 +502,7 @@ abstract interface class Chart() {
 
   /// index.d.ts:569 `isDatasetVisible(datasetIndex)`.
   /// controller.doughnut.js:192 calls it.
-  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
-  bool isDatasetVisible(num datasetIndex);
+  bool isDatasetVisible(int datasetIndex);
 
   /// index.d.ts:571 `toggleDataVisibility(index)`.
   /// controller.doughnut.js:126 and controller.polarArea.js:66 call it.
@@ -513,24 +510,22 @@ abstract interface class Chart() {
   /// [index] is any JS value (the form of Chart.js ADR 0025, section 1):
   /// the legend item index of a user `generateLabels` can be a value that is
   /// not a number. The key is `ToString(index)` (core.controller.js:882).
-  void toggleDataVisibility(Object? index);
+  void toggleDataVisibility(int index);
 
   /// index.d.ts:573 `hide(datasetIndex, dataIndex?)`. plugin.legend.js:649
   /// calls it. Dart `null` for [dataIndex] stands for an absent argument.
-  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
-  void hide(num datasetIndex, [num? dataIndex]);
+  void hide(int datasetIndex, [int? dataIndex]);
 
   /// index.d.ts:574 `show(datasetIndex, dataIndex?)`. plugin.legend.js:652
   /// calls it. Dart `null` for [dataIndex] stands for an absent argument.
-  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
-  void show(num datasetIndex, [num? dataIndex]);
+  void show(int datasetIndex, [int? dataIndex]);
 }
 
 /// index.d.ts:622 `DatasetController`.
 abstract interface class DatasetController() {
   /// index.d.ts:631 `readonly index: number`, the dataset index.
   /// `clearStacks` reads it from the meta (core.datasetController.js:210).
-  double get index;
+  int get index;
 
   /// index.d.ts:632 `readonly _cachedMeta: ChartMeta`, the meta of the
   /// dataset (core.datasetController.js:260). `core.interaction.js:24` and
@@ -567,7 +562,7 @@ abstract interface class DatasetController() {
   /// declares a string label, but the controllers return the raw label:
   /// any JS value, Dart `null` for JS `null` or the `undefined` sentinel
   /// (Chart.js ADR 0028, section 2). The tooltip item keeps it.
-  ({Object? label, String value}) getLabelAndValue(double index);
+  ({Object? label, String value}) getLabelAndValue(int index);
 
   /// index.d.ts:648 `getDataset()`. plugin.tooltip.js:138 calls it.
   ///
@@ -588,15 +583,15 @@ abstract interface class DatasetController() {
   Object get options;
 
   /// index.d.ts:688 `getParsed(index)`. controller.bar.js:440 calls it.
-  Object? getParsed(double index);
+  Object? getParsed(int index);
 
   /// index.d.ts:656 `getStyle(index, active)`. controller.doughnut.js:101
   /// calls it.
-  Object getStyle(double? index, [bool? active]);
+  Object getStyle(int? index, [bool? active]);
 
   /// index.d.ts:658 `resolveDataElementOptions(index, mode)`.
   /// controller.doughnut.js:354 calls it.
-  Object resolveDataElementOptions(double index, [String? mode]);
+  Object resolveDataElementOptions(int index, [String? mode]);
 }
 
 /// index.d.ts:706 `Defaults`, the type of the `defaults` object of
@@ -697,10 +692,10 @@ abstract interface class Scale() implements Element, LayoutItem {
   /// Thus [value] is any JS value: Dart `null` is JS `null`, and the
   /// `undefined` sentinel is JS `undefined` (Chart.js ADR 0025). Dart `null`
   /// for [index] stands for JS `undefined`.
-  double getPixelForValue(Object? value, [double? index]);
+  double getPixelForValue(Object? value, [int? index]);
 
   /// index.d.ts:1385 `parse`.
-  Object? parse(Object? raw, [double? index]);
+  Object? parse(Object? raw, [int? index]);
 
   /// index.d.ts:1386 `getUserBounds`.
   ({double min, double max, bool minDefined, bool maxDefined}) getUserBounds();
@@ -769,7 +764,7 @@ abstract interface class RadialLinearScale() implements Scale {
   double? get yCenter;
 
   /// index.d.ts:3681. controller.polarArea.js:169 calls it.
-  double getIndexAngle(double index);
+  double getIndexAngle(num index);
 
   /// index.d.ts:3682. The value is any JS value (Chart.js ADR 0025 §1).
   /// controller.polarArea.js:182 calls it.
@@ -778,7 +773,7 @@ abstract interface class RadialLinearScale() implements Scale {
   /// index.d.ts:3685. The result is a record (Chart.js ADR 0003).
   /// controller.radar.js:88 calls it.
   ({double x, double y, double angle}) getPointPositionForValue(
-    double index,
+    num index,
     Object? value,
   );
 }
@@ -1080,7 +1075,7 @@ abstract interface class LineElement() implements Element {
   /// (helpers.segment.js:282, :315-321), where an own `undefined` key and an
   /// absent key are two states. The port copies `null` as the `undefined`
   /// sentinel of `lib/src/js/js_undefined.dart`.
-  double? get datasetIndex;
+  int? get datasetIndex;
 
   /// index.d.ts:2025 `updateControlPoints(chartArea, indexAxis)`.
   /// controller.line.js:140 calls it.
@@ -1197,9 +1192,9 @@ abstract interface class LineElementWrites() {
 
   /// element.line.js:292 `_datasetIndex`. Dart `null` stands for JS
   /// `undefined`.
-  double? get datasetIndex;
+  int? get datasetIndex;
 
-  set datasetIndex(double value);
+  set datasetIndex(int value);
 
   /// element.line.js:290 `_decimated`.
   abstract bool decimated;

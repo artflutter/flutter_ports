@@ -67,7 +67,7 @@ final class _HarnessLinearScale(super.cfg) extends Scale {
   ];
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 
@@ -148,7 +148,7 @@ final class _HarnessRadialScale(super.cfg) extends Scale {
   /// 9). The data of the cases are numbers. For a number, and also for
   /// null, undefined and a boolean, the JS `left + value` is the sum with
   /// ToNumber of [value].
-  RadialPointPosition getPointPositionForValue(double index, Object? value) =>
+  RadialPointPosition getPointPositionForValue(int index, Object? value) =>
       (x: left + jsToNumber(value), y: top + 10 * index, angle: index / 2);
 }
 

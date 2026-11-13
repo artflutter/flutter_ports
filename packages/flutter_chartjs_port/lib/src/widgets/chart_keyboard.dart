@@ -281,7 +281,7 @@ final class ChartKeyboard({
     return [
       if (_legendBoxes(chart) != null) _legendGroup,
       for (var i = 0; i < count; i++)
-        if (chart.isDatasetVisible(i.toDouble())) i,
+        if (chart.isDatasetVisible(i)) i,
     ];
   }
 
@@ -302,14 +302,14 @@ final class ChartKeyboard({
     final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List ||
         group >= datasets.length ||
-        !chart.isDatasetVisible(group.toDouble())) {
+        !chart.isDatasetVisible(group)) {
       return null;
     }
-    final elements = chart.getDatasetMeta(group.toDouble()).data;
+    final elements = chart.getDatasetMeta(group).data;
     final points = <_Point>[];
     for (var j = 0; j < elements.length; j++) {
       if (elements[j] case final types.VisualElement element
-          when chart.getDataVisibility(j.toDouble())) {
+          when chart.getDataVisibility(j)) {
         final center = element.getCenterPoint(true);
         final x = center.x;
         final y = center.y;

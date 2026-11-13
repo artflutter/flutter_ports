@@ -261,7 +261,7 @@ class LogarithmicScale(super.cfg) extends Scale {
   /// [undefined] sentinel. A positive finite number gives that number.
   /// Another value gives Dart `null` (JS `null`).
   @override
-  Object? parse(Object? raw, [double? index]) {
+  Object? parse(Object? raw, [int? index]) {
     final value = LinearScaleBase.prototypeParse(raw, index);
     if (value == 0) {
       _zero = true;
@@ -412,7 +412,7 @@ class LogarithmicScale(super.cfg) extends Scale {
   /// [value] is any JS value. `undefined` (the parse of a 0) and 0 give the
   /// pixel of [min]. `null` and NaN give NaN (Chart.js ADR 0025).
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     if (value is double) {
       // Port-only fast path for a number (Chart.js ADR 0025, section 3).
       final number = value == 0 ? min : value;

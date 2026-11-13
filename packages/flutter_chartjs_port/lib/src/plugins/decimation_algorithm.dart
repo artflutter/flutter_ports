@@ -54,8 +54,8 @@ abstract class const DecimationAlgorithm() {
   /// from them, and an algorithm of a program can have its own fields.
   List<Object?> decimate(
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
     double availableWidth,
     Object options,
   );

@@ -347,7 +347,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// cast `as String` (Chart.js ADR 0036, section 4): a key that is not a
   /// string throws a [TypeError] at the first item.
   @override
-  void parse(double start, double count) {
+  void parse(int start, int count) {
     // `this._cachedMeta`'s dataset: the dataset object of the user.
     final data = jsGet(getDataset(), 'data');
     final meta = cachedMeta;
@@ -359,7 +359,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
           ? JsStringList(data)
           : data! as List<Object?>;
     } else {
-      var getter = (double i) => jsToNumber(jsGetIndex(data, i));
+      var getter = (int i) => jsToNumber(jsGetIndex(data, i));
 
       if (isObject(jsGetIndex(data, start))) {
         final key = valueOrDefault(readOption(parsing, OptionKey.key), 'value');
@@ -370,7 +370,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       // DIVERGES(chartjs): adapt-parse-presize, one growth for numbers.
       presizeParsedNumbers(meta.parsed, data, start, count);
       for (var i = start, ilen = start + count; i < ilen; ++i) {
-        jsSetIndex<Object?>(meta.parsed, i.toInt(), getter(i));
+        jsSetIndex<Object?>(meta.parsed, i, getter(i));
       }
     }
   }
@@ -405,7 +405,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     var min = tau;
     var max = -tau;
 
-    for (var i = 0.0; i < _datasetCount(); ++i) {
+    for (var i = 0; i < _datasetCount(); ++i) {
       if (chart.isDatasetVisible(i) && chart.getDatasetMeta(i).type == type) {
         final controller =
             chart.getDatasetMeta(i).controller! as DoughnutController;
@@ -422,8 +422,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 
   /// `this.chart.data.datasets.length`, read again at each call as the loop
   /// conditions of upstream read it. The data object of the user.
-  double _datasetCount() =>
-      jsToNumber(_lengthOf(jsGet(chart.data, 'datasets')));
+  int _datasetCount() =>
+      jsToNumber(_lengthOf(jsGet(chart.data, 'datasets'))).toInt();
 
   /// controller.doughnut.js:211 `update(mode)`.
   ///
@@ -488,7 +488,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     this.outerRadius = outerRadius - radiusLength * _getRingWeightOffset(index);
     this.innerRadius = jsMax(this.outerRadius! - radiusLength * chartWeight, 0);
 
-    updateElements(arcs, 0, arcs.length.toDouble(), mode);
+    updateElements(arcs, 0, arcs.length, mode);
   }
 
   /// controller.doughnut.js:246 `_circumference(i, reset)`.
@@ -496,7 +496,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// `meta._parsed[i] === null` is Dart `== null`: the [undefined] sentinel
   /// is not `null`. `meta._parsed[i] * circumference` applies `ToNumber`.
-  double _circumference(double i, bool reset) {
+  double _circumference(int i, bool reset) {
     final opts = options;
     final meta = cachedMeta;
     // DIVERGES(chartjs): adapt-arc-native-options, one read for a native loop.
@@ -510,7 +510,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
             )) ||
         !chart.getDataVisibility(i) ||
         jsGetIndex(meta.parsed, i) == null ||
-        jsTruthy(meta.data[i.toInt()].hidden)) {
+        jsTruthy(meta.data[i].hidden)) {
       return 0;
     }
     return calculateCircumference(
@@ -527,8 +527,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElements(
     List<types.Element> arcs,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final reset = mode == 'reset';
@@ -545,7 +545,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     final outerRadius = animateScale ? 0.0 : this.outerRadius;
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     var startAngle = _getRotation();
-    double i;
+    int i;
     // DIVERGES(chartjs): adapt-direct-element-writes, `updateElement` of the
     // exact controller only assigns in these modes, with its options.
     final direct = supportsDataUpdates && (reset || mode == 'none');
@@ -572,7 +572,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 
     for (i = start; i < start + count; ++i) {
       if (nativeLoop) {
-        final next = arcs[i.toInt()];
+        final next = arcs[i];
         if (!nativeArcElement(next) || (colors != null && next.active)) {
           nativeLoop = false;
           colors = null;
@@ -580,7 +580,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
         }
       }
       final circumference = _circumference(i, reset);
-      final arc = arcs[i.toInt()];
+      final arc = arcs[i];
       // The literal of :278-286, in locals: the options run user code after it.
       final x = centerX + (offsetX ?? double.nan);
       final y = centerY + (offsetY ?? double.nan);
@@ -593,7 +593,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
         final prepared = colors;
         if (prepared != null) {
           getContext(i, false, mode);
-          elementOptions = prepared(i.toInt());
+          elementOptions = prepared(i);
         } else {
           // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
           // shared options.
@@ -720,7 +720,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       final value = jsGetIndex(meta.parsed, i * 1.0);
       if (value != null &&
           !jsIsNaN(value) &&
-          chart.getDataVisibility(i * 1.0) &&
+          chart.getDataVisibility(i) &&
           !jsTruthy(metaData[i].hidden)) {
         total += jsToNumber(value).abs();
       }
@@ -746,7 +746,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// The label is `labels[index] || ''`: any value (Chart.js ADR 0028,
   /// section 2). `formatNumber` applies `ToNumber` to the parsed item.
   @override
-  ({Object? label, String value}) getLabelAndValue(double index) {
+  ({Object? label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final chart = this.chart;
     // `chart.data.labels || []`
@@ -775,7 +775,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 
     if (arcs == null) {
       // Find the outmost visible dataset
-      for (var i = 0.0, ilen = _datasetCount(); i < ilen; ++i) {
+      for (var i = 0, ilen = _datasetCount(); i < ilen; ++i) {
         if (chart.isDatasetVisible(i)) {
           final meta = chart.getDatasetMeta(i);
           // `arcs = meta.data`: the upstream write of the parameter.
@@ -791,7 +791,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       return 0;
     }
 
-    for (var i = 0.0, ilen = arcs.length.toDouble(); i < ilen; ++i) {
+    for (var i = 0, ilen = arcs.length; i < ilen; ++i) {
       final options = controller!.resolveDataElementOptions(i);
       // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
       if (ArcBorderAlign.of(readOption(options, OptionKey.borderAlign)) !=
@@ -814,7 +814,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   double getMaxOffset(List<types.Element> arcs) {
     var max = 0.0;
 
-    for (var i = 0.0, ilen = arcs.length.toDouble(); i < ilen; ++i) {
+    for (var i = 0, ilen = arcs.length; i < ilen; ++i) {
       final options = resolveDataElementOptions(i);
       max = jsMax(
         jsMax(max, jsOrZero(options.valueOf(OptionKey.offset))),
@@ -832,10 +832,10 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// datasets weights. This allows determining the inner and outer radius
   /// correctly
   /// @private
-  double _getRingWeightOffset(double datasetIndex) {
+  double _getRingWeightOffset(int datasetIndex) {
     var ringWeightOffset = 0.0;
 
-    for (var i = 0.0; i < datasetIndex; ++i) {
+    for (var i = 0; i < datasetIndex; ++i) {
       if (chart.isDatasetVisible(i)) {
         ringWeightOffset += _getRingWeight(i);
       }
@@ -850,7 +850,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// `Math.max(valueOrDefault(weight, 1), 0)` applies `ToNumber` to the raw
   /// `weight`. An absent dataset throws a [TypeError], as the property read
   /// of `undefined` does.
-  double _getRingWeight(double datasetIndex) {
+  double _getRingWeight(int datasetIndex) {
     return jsMax(
       jsToNumber(
         valueOrDefault(
@@ -907,7 +907,7 @@ List<LegendItem> _generateLabels(types.Chart chart) {
         _labelItem(
           chart,
           label,
-          i.toDouble(),
+          i,
           pointStyle,
           textAlign,
           color,
@@ -925,12 +925,12 @@ List<LegendItem> _generateLabels(types.Chart chart) {
 ///
 /// Each style value is a raw read of the [ElementOptions] of the style
 /// ([readOption]): an absent key gives [undefined], for example `lineJoin`
-/// of the default `borderJoinStyle`. `index` is a number (Chart.js ADR
-/// 0045). The native item stores the integer index.
+/// of the default `borderJoinStyle`. `index` is an `int` (Chart.js ADR
+/// 0129), and the native item stores it.
 LegendItem _labelItem(
   types.Chart chart,
   Object? label,
-  double i,
+  int i,
   Object? pointStyle,
   Object? textAlign,
   Object? color,
@@ -959,7 +959,7 @@ LegendItem _labelItem(
               : readOption(style, OptionKey.borderRadius))
         : useBorderRadius,
     // Extra data used for toggling the correct item
-    index: i.toInt(),
+    index: i,
   );
 }
 

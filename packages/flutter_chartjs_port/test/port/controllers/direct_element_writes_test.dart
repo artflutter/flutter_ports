@@ -102,7 +102,7 @@ class _CountingPie(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElement(
     types.Element element,
-    double? index,
+    int? index,
     Object properties,
     String mode,
   ) {
@@ -341,7 +341,7 @@ Object? _observeElement(Object? value) {
 Object _observe(Chart chart, Map<String, Object?> cfg) {
   final datasets = _datasets(cfg).length;
   return [
-    for (var d = 0.0; d < datasets; d++)
+    for (var d = 0; d < datasets; d++)
       [
         _plain(chart.getDatasetMeta(d).total),
         for (final element in chart.getDatasetMeta(d).data)
@@ -1860,7 +1860,7 @@ void main() {
           final chart = _chart(cfg);
           final meta = chart.getDatasetMeta(0);
           final controller = meta.controller!;
-          void loop(double start, double count) {
+          void loop(int start, int count) {
             controller.updateElements(meta.data, start, count, 'none');
             results.add(_observe(chart, cfg));
           }

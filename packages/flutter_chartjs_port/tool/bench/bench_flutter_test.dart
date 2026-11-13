@@ -30,8 +30,7 @@ final class _Scale(
   getUserBounds() => bounds;
 
   @override
-  double getPixelForValue(Object? value, [double? index]) =>
-      jsToNumber(value) * 3;
+  double getPixelForValue(Object? value, [int? index]) => jsToNumber(value) * 3;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -116,11 +115,7 @@ List<BenchCase> _extrasCases() => [
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        acc += getStartAndCountOfVisiblePoints(
-          meta,
-          points,
-          false,
-        ).count.toInt();
+        acc += getStartAndCountOfVisiblePoints(meta, points, false).count;
       }
       return acc;
     };

@@ -99,8 +99,7 @@ void main() {
         for (var i = 0; i < 3; i++) {
           final expected = i.isEven ? _red : _gradient;
           for (final active in [false, true]) {
-            final style =
-                controller.getStyle(i.toDouble(), active) as JsObjectFace;
+            final style = controller.getStyle(i, active) as JsObjectFace;
             expect(style['backgroundColor'], same(expected));
             expect(style['borderColor'], same(expected));
           }

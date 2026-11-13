@@ -359,10 +359,7 @@ void main() {
       });
       final controller = chart.getDatasetMeta(0).controller!;
       expect(
-        [
-          for (var i = 0; i < 6; i++)
-            controller.getLabelAndValue(i.toDouble()).label,
-        ],
+        [for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label],
         ['line 1,line 2', '5', '0', 'd', 'undefined', 'undefined'],
       );
     });

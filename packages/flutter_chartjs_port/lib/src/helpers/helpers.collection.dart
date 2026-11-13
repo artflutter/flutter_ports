@@ -244,7 +244,7 @@ abstract mixin class ArrayListener<T>() {
   /// helpers.collection.ts:106 `_onDataSplice?(index, deleteCount,
   /// ...items)`.
   @internal
-  void onDataSplice(double index, double deleteCount, List<T> items) {}
+  void onDataSplice(int index, int deleteCount, List<T> items) {}
 
   /// helpers.collection.ts:107 `_onDataUnshift?(...item: T[])`.
   @internal
@@ -303,8 +303,8 @@ void _callListener<T>(
       object.onDataShift();
     case 'onDataSplice':
       object.onDataSplice(
-        jsToNumber(args[0]),
-        jsToNumber(args[1]),
+        _spliceArg(args[0]),
+        _spliceArg(args[1]),
         items(args.skip(2)),
       );
     case 'onDataUnshift':
@@ -458,4 +458,11 @@ int _sameValueZeroHash(Object? value) {
     return value.hashCode;
   }
   return identityHashCode(value);
+}
+
+/// An index or a count argument of `splice` as an `int`: the
+/// `ToIntegerOrInfinity` of its `ToNumber`, with 0 for NaN and an infinity.
+int _spliceArg(Object? value) {
+  final number = jsToNumber(value);
+  return number.isFinite ? number.toInt() : 0;
 }

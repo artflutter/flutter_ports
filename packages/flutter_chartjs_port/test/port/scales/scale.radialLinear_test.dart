@@ -394,10 +394,10 @@ void main() {
       // The parse of null, NaN and undefined is null: the point is at NaN,
       // not at the position of the value 0.
       for (final i in [1, 2, 3]) {
-        expect(jsGet(meta.controller!.getParsed(i.toDouble()), 'r'), isNull);
+        expect(jsGet(meta.controller!.getParsed(i), 'r'), isNull);
         expect(points[i].x, isNaN, reason: 'x of $i');
         expect(points[i].y, isNaN, reason: 'y of $i');
-        expect(r.getPointPositionForValue(i.toDouble(), 0).x, isNot(isNaN));
+        expect(r.getPointPositionForValue(i, 0).x, isNot(isNaN));
       }
       final p = r.getPointPositionForValue(4, 70);
       expect([points[4].x, points[4].y], [p.x, p.y]);

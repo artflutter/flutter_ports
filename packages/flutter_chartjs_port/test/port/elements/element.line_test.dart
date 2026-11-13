@@ -193,7 +193,7 @@ void _run(LineReferenceCase c, Object Function(AnyObject) form) {
 
     switch (step.action) {
       case 'draw':
-        line.draw(ctx, null, _arg(args, 0), _arg(args, 1));
+        line.draw(ctx, null, _arg(args, 0)?.toInt(), _arg(args, 1)?.toInt());
       case 'updateControlPoints':
         line.updateControlPoints(
           _Area(_arg(args, 0)!, _arg(args, 1)!, _arg(args, 2)!, _arg(args, 3)!),
@@ -208,7 +208,7 @@ void _run(LineReferenceCase c, Object Function(AnyObject) form) {
         final current = line.points;
         line.points = current;
       case 'path':
-        result = line.path(ctx, _arg(args, 0), _arg(args, 1));
+        result = line.path(ctx, _arg(args, 0)?.toInt(), _arg(args, 1)?.toInt());
       case 'pathSegment':
         result = line.pathSegment(
           ctx,
@@ -522,7 +522,7 @@ void main() {
       expect(line.decimated, isTrue);
       expect(line['_pointsUpdated'], isTrue);
       expect(line.datasetIndex, 2.0);
-      expect(line['_datasetIndex'], isA<double>());
+      expect(line['_datasetIndex'], isA<int>());
     });
 
     test('writes undefined to the properties of the undefined state', () {

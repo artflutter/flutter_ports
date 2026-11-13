@@ -41,6 +41,8 @@
 /// `core.animator.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
@@ -189,8 +191,8 @@ final class _Clip({
 }) implements types.ChartMetaClip;
 
 /// core.datasetController.js:59 `getSortedDatasetIndices`.
-List<double> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
-  final keys = <double>[];
+List<int> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
+  final keys = <int>[];
   final metasets = chart.getSortedDatasetMetas(filterVisible);
 
   for (var i = 0, ilen = metasets.length; i < ilen; ++i) {
@@ -212,13 +214,13 @@ List<double> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
 Object? _applyStack(
   DatasetStack stack,
   Object? value,
-  double dsIndex, {
+  int dsIndex, {
   Object? mode,
   bool all = false,
 }) {
   final keys = stack.keys;
   final singleMode = mode == 'single';
-  double datasetIndex;
+  int datasetIndex;
   Object? otherValue;
 
   if (value == null) {
@@ -340,7 +342,7 @@ StackEntry _getOrCreateStack(
     _ => stacks[stackKey] = <String, StackEntry>{},
   };
   final key = indexValue is double
-      ? _indexKey(indexValue)
+      ? _numberKey(indexValue)
       : jsToString(indexValue);
   return subStack[key] ??= StackEntry();
 }
@@ -350,7 +352,7 @@ StackEntry _getOrCreateStack(
 /// `value > 0` and `value < 0` compare the `ToNumber` of the stack value
 /// with 0, as the JavaScript relational operators do for a number operand.
 /// Dart `null` stands for the JS `null` result.
-double? _getLastIndexInStack(
+int? _getLastIndexInStack(
   StackEntry stack,
   types.Scale vScale,
   bool positive,
@@ -369,20 +371,17 @@ double? _getLastIndexInStack(
 /// The array index of the dataset index [index], or -1 for a number that is
 /// not an array index (Chart.js ADR 0054 §8: [IndexValues] keeps the
 /// values by array index).
-int _arrayIndex(double index) =>
-    index >= 0 && index < 4294967295 && index == index.truncateToDouble()
-    ? index.toInt()
-    : -1;
+int _arrayIndex(int index) => index >= 0 ? index : -1;
 
 /// `values[index]` of the values by dataset index [values]: [undefined]
 /// for an absent index.
-Object? _indexValueOf(IndexValues values, double index) {
+Object? _indexValueOf(IndexValues values, int index) {
   final i = _arrayIndex(index);
   return i >= 0 ? values.valueAt(i) : values.jsRead(_indexKey(index));
 }
 
 /// `values[index] = value` of the values by dataset index [values].
-void _setIndexValue(IndexValues values, double index, Object? value) {
+void _setIndexValue(IndexValues values, int index, Object? value) {
   final i = _arrayIndex(index);
   if (i >= 0) {
     values.setAt(i, value);
@@ -392,7 +391,7 @@ void _setIndexValue(IndexValues values, double index, Object? value) {
 }
 
 /// `delete values[index]` of the values by dataset index [values].
-void _deleteIndexValue(IndexValues values, double index) {
+void _deleteIndexValue(IndexValues values, int index) {
   final i = _arrayIndex(index);
   if (i >= 0) {
     values.removeAt(i);
@@ -407,7 +406,7 @@ void _deleteIndexValue(IndexValues values, double index) {
 /// A [StackEntry] and an [IndexValues] read typed. Another value is a
 /// `_stacks` object that user code gave a data item of `parsing: false`:
 /// it reads by name, and Dart `null` and [undefined] throw a [TypeError].
-Object? _stackValueOf(Object? stack, double datasetIndex) => switch (stack) {
+Object? _stackValueOf(Object? stack, int datasetIndex) => switch (stack) {
   final StackEntry entry => _indexValueOf(entry.datasetValues, datasetIndex),
   final IndexValues values => _indexValueOf(values, datasetIndex),
   _ => jsGetKey(stack, _indexKey(datasetIndex)),
@@ -418,7 +417,7 @@ Object? _stackValueOf(Object? stack, double datasetIndex) => switch (stack) {
 /// object of a user data item: a Map, else the cast throws a [TypeError],
 /// as the JS write into a primitive does.
 @internal
-void setStackValue(Object? stack, double datasetIndex, Object? value) {
+void setStackValue(Object? stack, int datasetIndex, Object? value) {
   switch (stack) {
     case final StackEntry entry:
       _setIndexValue(entry.datasetValues, datasetIndex, value);
@@ -432,7 +431,7 @@ void setStackValue(Object? stack, double datasetIndex, Object? value) {
 /// `delete stack[datasetIndex]` (core.datasetController.js:221, :223) of a
 /// stack object or of its `_visualValues`. Another value is a `_stacks`
 /// object of a user data item: a Map, else the cast throws a [TypeError].
-void _deleteStackValue(Object? stack, double datasetIndex) {
+void _deleteStackValue(Object? stack, int datasetIndex) {
   switch (stack) {
     case final StackEntry entry:
       _deleteIndexValue(entry.datasetValues, datasetIndex);
@@ -587,7 +586,7 @@ String? _getFirstScaleId(types.Chart chart, ScaleAxis axis) {
 /// type})` is the typed context of the type `dataset`, with the keys of the
 /// literal in their order (Chart.js ADR 0054 §11).
 // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
-ScriptableContext _createDatasetContext(Object parent, double index) {
+ScriptableContext _createDatasetContext(Object parent, int index) {
   return ScriptableContext.dataset(parent, index);
 }
 
@@ -599,7 +598,7 @@ ScriptableContext _createDatasetContext(Object parent, double index) {
 // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
 ScriptableContext _createDataContext(
   Object parent,
-  double index,
+  int index,
   Element element,
 ) {
   return ScriptableContext.data(parent, index, element);
@@ -675,7 +674,7 @@ DatasetStack? _createStack(
 final class DatasetStack(
   /// `keys`: the indices of the visible datasets in the drawing order
   /// (`getSortedDatasetIndices`).
-  final List<double> keys,
+  final List<int> keys,
 
   /// `values`: the values of the stack by dataset index: a [StackEntry]
   /// (`updateRangeFromParsed`, :612), its [IndexValues] `_visualValues`
@@ -699,35 +698,22 @@ final Element _hole = Element();
 
 /// The JS read `list[index]` of a list of objects: Dart `null` for an index
 /// that names no item, JS `undefined`.
-T? _at<T extends Object>(List<T> list, double index) {
-  if (index >= 0 && index < list.length) {
-    final i = index.toInt();
-    if (i == index) return list[i];
-  }
-  return null;
-}
+T? _at<T extends Object>(List<T> list, int index) =>
+    index >= 0 && index < list.length ? list[index] : null;
 
 /// [jsGetIndex] of a receiver that is a List by its static type: the same
 /// result, with no type test (Chart.js ADR 0096).
-Object? _itemAt(List<Object?> list, double index) {
-  if (index >= 0 && index < list.length) {
-    final i = index.toInt();
-    if (i == index) return list[i];
-  }
-  return undefined;
-}
+Object? _itemAt(List<Object?> list, int index) =>
+    index >= 0 && index < list.length ? list[index] : undefined;
 
 /// `dataset.data[index]` of `getContext`, the data of the dataset object of
 /// the user.
-Object? _rawOf(Object? dataset, double index) =>
+Object? _rawOf(Object? dataset, int index) =>
     jsGetIndex(readOption(dataset, OptionKey.data), index);
 
 /// `new Array(count)` of the parse functions, as the bound of their loop:
 /// a count below 0 is an empty range.
-int _itemCount(double count) {
-  final ilen = count.toInt();
-  return ilen < 0 ? 0 : ilen;
-}
+int _itemCount(int count) => count < 0 ? 0 : count;
 
 /// The class of the plain List that `_dataCheck` gives `meta._parsed`.
 final Type _plainParsedList = <Object?>[].runtimeType;
@@ -744,8 +730,8 @@ final Type _plainParsedList = <Object?>[].runtimeType;
 // DIVERGES(chartjs): adapt-parse-presize, one growth of the plain List.
 bool _presizeParsed(
   List<Object?> items,
-  double start,
-  double count,
+  int start,
+  int count,
   List<Object?> source,
 ) {
   if (start == 0 &&
@@ -754,7 +740,7 @@ bool _presizeParsed(
       items.isEmpty &&
       nativeDataUpdateList(source) &&
       count <= source.length) {
-    items.length = count.toInt();
+    items.length = count;
     return true;
   }
   return false;
@@ -767,8 +753,8 @@ bool _presizeParsed(
 void presizeParsedNumbers(
   List<Object?> items,
   Object? data,
-  double start,
-  double count,
+  int start,
+  int count,
 ) {
   if (data is List<num?>) _presizeParsed(items, start, count, data);
 }
@@ -781,12 +767,17 @@ final List<String> _indexKeys = [
 /// The property key of the number [index], the `ToPropertyKey` of
 /// `object[index]`: a cached key for a small dataset index, else
 /// [jsNumberToString].
-String _indexKey(double index) {
-  if (index >= 0 && index < _indexKeys.length) {
-    final i = index.toInt();
-    if (i == index) return _indexKeys[i];
+String _indexKey(int index) =>
+    index >= 0 && index < _indexKeys.length ? _indexKeys[index] : '$index';
+
+/// The property key of the index value [value] of a stack, its `ToString`:
+/// a cached key for a small whole number, else [jsNumberToString].
+String _numberKey(double value) {
+  if (value >= 0 && value < _indexKeys.length) {
+    final i = value.toInt();
+    if (i == value) return _indexKeys[i];
   }
-  return jsNumberToString(index);
+  return jsNumberToString(value);
 }
 
 /// The JS read `item[axis]` of a parsed item: the hot read of Chart.js ADR
@@ -918,13 +909,16 @@ void _consoleWarn(String message) {
 /// The second argument gives its `ToNumber`, NaN for an absent argument.
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
 @internal
-({types.Chart chart, double datasetIndex}) controllerArgs(List<Object?> args) {
+({types.Chart chart, int datasetIndex}) controllerArgs(List<Object?> args) {
   final chart = args.isEmpty ? undefined : args[0];
   final datasetIndex = args.length < 2 ? undefined : args[1];
   return switch (chart) {
     final types.Chart value => (
       chart: value,
-      datasetIndex: jsToNumber(datasetIndex),
+      // An absent or another argument is no dataset index, -1.
+      datasetIndex: datasetIndex is num && datasetIndex.isFinite
+          ? datasetIndex.toInt()
+          : -1,
     ),
     // A JavaScript TypeError: a property read of a value without the
     // members of a chart.
@@ -936,7 +930,7 @@ void _consoleWarn(String message) {
 class DatasetController(
   /// core.datasetController.js:256 `chart` (index.d.ts:630).
   final types.Chart chart,
-  double datasetIndex, [
+  int datasetIndex, [
   JsClass? newTarget,
 ]) with ArrayListener<Object?> implements types.DatasetController {
   /// core.datasetController.js:255 `constructor(chart, datasetIndex)`.
@@ -1002,7 +996,7 @@ class DatasetController(
   /// core.datasetController.js:258 `index`, the dataset index
   /// (index.d.ts:631). [updateIndex] writes it.
   @override
-  double index = datasetIndex;
+  int index = datasetIndex;
 
   /// core.datasetController.js:259 `_cachedDataOpts`, the part of the
   /// element options: the frozen options of `_resolveElementOptions` by the
@@ -1079,13 +1073,13 @@ class DatasetController(
   /// [draw]. controller.line.js:48 writes it. Dart `null` stands for JS
   /// `undefined`.
   @internal
-  double? drawStart;
+  int? drawStart;
 
   /// core.datasetController.js:269 `_drawCount`: the count of data elements
   /// of [draw]. controller.line.js:49 writes it. Dart `null` stands for JS
   /// `undefined`.
   @internal
-  double? drawCount;
+  int? drawCount;
 
   /// core.datasetController.js:270 `enableOptionSharing`.
   bool enableOptionSharing = false;
@@ -1163,7 +1157,7 @@ class DatasetController(
       return false;
     }
     return config.hasStaticIndexedElementOptions(
-      index.toInt(),
+      index,
       controllerType: type,
       elementType: elementType,
     );
@@ -1255,7 +1249,7 @@ class DatasetController(
   }
 
   /// core.datasetController.js:292 `updateIndex(datasetIndex)`.
-  void updateIndex(double datasetIndex) {
+  void updateIndex(int datasetIndex) {
     if (index != datasetIndex) {
       _clearStacks(cachedMeta);
     }
@@ -1508,7 +1502,7 @@ class DatasetController(
   ///
   /// [start] and [count] are integers: [start] is at most the count of the
   /// parsed items.
-  void parse(double start, double count) {
+  void parse(int start, int count) {
     final meta = cachedMeta;
     final data = _data!;
     final iScale = meta.iScale!;
@@ -1545,7 +1539,7 @@ class DatasetController(
                 parsedValueOf(prev, iAxis),
               ));
       final parsedItems = meta.parsed;
-      final offset = start.toInt();
+      final offset = start;
       // DIVERGES(chartjs): adapt-parse-presize, one growth of the plain List.
       var presized = _presizeParsed(parsedItems, start, count, parsed);
       for (i = 0; i < count; ++i) {
@@ -1590,8 +1584,8 @@ class DatasetController(
   List<ParsedItem> parsePrimitiveData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     final iScale = meta.iScale!;
     final vScale = meta.vScale!;
@@ -1645,8 +1639,8 @@ class DatasetController(
   List<ParsedItem> parseArrayData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     final xScale = meta.xScale!;
     final yScale = meta.yScale!;
@@ -1687,8 +1681,8 @@ class DatasetController(
   List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     final xScale = meta.xScale!;
     final yScale = meta.yScale!;
@@ -1723,7 +1717,7 @@ class DatasetController(
   /// An index that names no parsed item gives [undefined]. Dart `null` is a
   /// JS `null` item.
   @override
-  Object? getParsed(double index) {
+  Object? getParsed(int index) {
     return _itemAt(cachedMeta.parsed, index);
   }
 
@@ -1732,7 +1726,7 @@ class DatasetController(
   ///
   /// Dart `null` stands for the JS `undefined` of an index that names no
   /// element.
-  types.Element? getDataElement(double index) {
+  types.Element? getDataElement(int index) {
     return _at(cachedMeta.data, index);
   }
 
@@ -1878,7 +1872,7 @@ class DatasetController(
   /// sentinel (Chart.js ADR 0028, section 2). The `value` is always a
   /// string.
   @override
-  ({Object? label, String value}) getLabelAndValue(double index) {
+  ({Object? label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final iScale = meta.iScale;
     final vScale = meta.vScale;
@@ -1944,12 +1938,15 @@ class DatasetController(
     final elements = meta.data;
     final area = chart.chartArea;
     final active = <Element>[];
-    final start = jsOrZero(drawStart);
-    final count = jsTruthy(drawCount) ? drawCount! : elements.length - start;
+    final start = drawStart ?? 0;
+    final drawCount = this.drawCount;
+    final count = drawCount != null && drawCount != 0
+        ? drawCount
+        : elements.length - start;
     final drawActiveElementsOnTop = jsTruthy(
       options.readKey(OptionKey.drawActiveElementsOnTop),
     );
-    double i;
+    int i;
 
     final dataset = meta.dataset;
     if (dataset != null) {
@@ -1964,22 +1961,18 @@ class DatasetController(
         ctx != null &&
         start >= 0 &&
         start < last &&
-        last <= elements.length &&
-        start == start.truncateToDouble() &&
-        last == last.truncateToDouble()) {
-      final head = elements[start.toInt()];
+        last <= elements.length) {
+      final head = elements[start];
       if (head is types.PointCircleRun) {
-        i = (head as types.PointCircleRun)
-            .drawCircleRun(
-              ctx,
-              area,
-              elements,
-              start.toInt(),
-              last.toInt(),
-              active,
-              activeOnTop: drawActiveElementsOnTop,
-            )
-            .toDouble();
+        i = (head as types.PointCircleRun).drawCircleRun(
+          ctx,
+          area,
+          elements,
+          start,
+          last,
+          active,
+          activeOnTop: drawActiveElementsOnTop,
+        );
       }
     }
 
@@ -2010,7 +2003,7 @@ class DatasetController(
   ///
   /// Dart `null` for [index] and [active] stands for JS `undefined`.
   @override
-  ElementOptions getStyle(double? index, [bool? active]) {
+  ElementOptions getStyle(int? index, [bool? active]) {
     // DIVERGES(chartjs): adapt-hidden-legend-items, a later build, no writes.
     final legend = legendStyles;
     if (legend != null) {
@@ -2019,7 +2012,7 @@ class DatasetController(
     final mode = jsTruthy(active) ? 'active' : 'default';
     return index == null && cachedMeta.dataset != null
         ? resolveDatasetElementOptions(mode)
-        : resolveDataElementOptions(jsOrZero(index), mode);
+        : resolveDataElementOptions(index ?? 0, mode);
   }
 
   /// core.datasetController.js:762 `getContext(index, active, mode)`.
@@ -2037,7 +2030,7 @@ class DatasetController(
   /// not a context, or for a built-in element class a context that is not a
   /// [ScriptableContext]) reads as Dart `null`, and a new data context takes
   /// its place (row `adapt-typed-contexts`).
-  ContextObject getContext([double? index, bool? active, String? mode]) {
+  ContextObject getContext([int? index, bool? active, String? mode]) {
     final dataset = getDataset();
     if (index != null && index >= 0 && index < cachedMeta.data.length) {
       final element = _at(cachedMeta.data, index)! as Element;
@@ -2094,7 +2087,7 @@ class DatasetController(
   ///
   /// Dart `null` for [mode] stands for JS `undefined`.
   @override
-  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+  ElementOptions resolveDataElementOptions(int index, [String? mode]) {
     return _resolveElementOptions(_idOf(dataElementType), mode, index);
   }
 
@@ -2165,7 +2158,7 @@ class DatasetController(
   ElementOptions _resolveElementOptions(
     Object? elementType, [
     String? mode,
-    double? index,
+    int? index,
   ]) {
     final resolvedMode = mode ?? 'default';
     final cache = _cachedElementOptions;
@@ -2194,7 +2187,7 @@ class DatasetController(
     Object? elementType,
     String typeName,
     String resolvedMode,
-    double? index,
+    int? index,
     String cacheKey,
     bool sharing,
   ) {
@@ -2324,11 +2317,7 @@ class DatasetController(
   /// leaves an `Animations` as it is (differences.md
   /// `js-semantics-object-freeze`).
   @internal
-  Animations resolveAnimations([
-    double? index,
-    String? transition,
-    bool? active,
-  ]) {
+  Animations resolveAnimations([int? index, String? transition, bool? active]) {
     final chart = this.chart;
     final cache = _cachedAnimations;
     // The transition of the key `animation-${transition}`.
@@ -2416,7 +2405,7 @@ class DatasetController(
   /// includeOptions}`.
   @internal
   ({ElementOptions? sharedOptions, bool includeOptions}) getSharedOptions_(
-    double start,
+    int start,
     String mode,
   ) {
     final firstOpts = resolveDataElementOptions(start, mode);
@@ -2444,7 +2433,7 @@ class DatasetController(
   /// without a cast (Chart.js ADR 0028, section 1).
   void updateElement(
     types.Element element,
-    double? index,
+    int? index,
     Object properties,
     String mode,
   ) {
@@ -2481,7 +2470,7 @@ class DatasetController(
   ///
   /// The element is of any class. Thus the object `{options}` stays a Map
   /// of one key, the key of each props class of Chart.js ADR 0054 §9.
-  void _setStyle(Element element, double? index, String mode, bool active) {
+  void _setStyle(Element element, int? index, String mode, bool active) {
     element.active = active;
     final options = getStyle(index, active);
     resolveAnimations(index, mode, active).update(element, <String, Object?>{
@@ -2493,14 +2482,14 @@ class DatasetController(
   }
 
   /// core.datasetController.js:929 `removeHoverStyle(element, datasetIndex,
-  /// index)`.
-  void removeHoverStyle(Element element, double datasetIndex, double index) {
+  /// index)`. Dart `null` stands for an absent argument, JS `undefined`.
+  void removeHoverStyle(Element element, [int? datasetIndex, int? index]) {
     _setStyle(element, index, 'active', false);
   }
 
   /// core.datasetController.js:933 `setHoverStyle(element, datasetIndex,
-  /// index)`.
-  void setHoverStyle(Element element, double datasetIndex, double index) {
+  /// index)`. Dart `null` stands for an absent argument, JS `undefined`.
+  void setHoverStyle(Element element, [int? datasetIndex, int? index]) {
     _setStyle(element, index, 'active', true);
   }
 
@@ -2546,7 +2535,7 @@ class DatasetController(
 
     final numMeta = elements.length;
     final numData = data.length;
-    final count = jsMin(numData.toDouble(), numMeta.toDouble());
+    final count = math.min(numData, numMeta);
 
     if (count != 0) {
       // It is not optimal to always parse the old data
@@ -2557,13 +2546,9 @@ class DatasetController(
     }
 
     if (numData > numMeta) {
-      _insertElements(
-        numMeta.toDouble(),
-        (numData - numMeta).toDouble(),
-        resetNewElements,
-      );
+      _insertElements(numMeta, numData - numMeta, resetNewElements);
     } else if (numData < numMeta) {
-      _removeElements(numData.toDouble(), (numMeta - numData).toDouble());
+      _removeElements(numData, numMeta - numData);
     }
   }
 
@@ -2576,11 +2561,11 @@ class DatasetController(
   /// the other callers compute [start] from the lengths. A [start] past the
   /// length throws a [RangeError] at the move, where upstream leaves holes
   /// (differences.md row `platform-array-events`).
-  void _insertElements(double start, double count, [bool? resetNewElements]) {
+  void _insertElements(int start, int count, [bool? resetNewElements]) {
     final meta = cachedMeta;
     final data = meta.data;
     final end = start + count;
-    double i;
+    int i;
 
     // `arr.length += count` and the loop of :1001-1003: the items from
     // `start` move to `end`, and the indexes in `start..end` keep their old
@@ -2589,12 +2574,12 @@ class DatasetController(
     // reads the old parsed item of an index below the old length through
     // the context of an option, as upstream does.
     void move<T>(List<T> arr, T filler) {
-      final from = start.toInt();
+      final from = start;
       final oldLength = arr.length;
       arr.insertAll(
         from,
         List<T>.generate(
-          count.toInt(),
+          count,
           (k) => from + k < oldLength ? arr[from + k] : filler,
         ),
       );
@@ -2604,7 +2589,7 @@ class DatasetController(
 
     for (i = start; i < end; ++i) {
       // DIVERGES(chartjs): adapt-component-class-role, the cast throws earlier.
-      data[i.toInt()] = jsConstruct(dataElementType, const []) as Element;
+      data[i] = jsConstruct(dataElementType, const []) as Element;
     }
 
     if (jsTruthy(parsing)) {
@@ -2622,14 +2607,14 @@ class DatasetController(
   /// mode)`.
   void updateElements(
     List<types.Element> elements,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {} // eslint-disable-line no-unused-vars
 
   /// core.datasetController.js:1027 `_removeElements(start, count)`.
   /// @private
-  void _removeElements(double start, double count) {
+  void _removeElements(int start, int count) {
     final meta = cachedMeta;
     if (jsTruthy(parsing)) {
       final removed = jsSplice(meta.parsed, start, count);
@@ -2662,9 +2647,9 @@ class DatasetController(
     // and takes the default branch, as before.
     switch (method is String ? method : null) {
       case '_insertElements':
-        _insertElements(jsToNumber(arg1), jsToNumber(arg2));
+        _insertElements((arg1! as num).toInt(), (arg2! as num).toInt());
       case '_removeElements':
-        _removeElements(jsToNumber(arg1), jsToNumber(arg2));
+        _removeElements((arg1! as num).toInt(), (arg2! as num).toInt());
       default:
         // A JavaScript TypeError: this[method] is not a function.
         throw TypeError();
@@ -2676,10 +2661,10 @@ class DatasetController(
   @internal
   @override
   void onDataPush(List<Object?> items) {
-    final count = items.length.toDouble();
+    final count = items.length;
     _sync([
       '_insertElements',
-      jsToNumber(jsGet(jsGet(getDataset(), 'data'), 'length')) - count,
+      jsToNumber(jsGet(jsGet(getDataset(), 'data'), 'length')).toInt() - count,
       count,
     ]);
   }
@@ -2688,14 +2673,14 @@ class DatasetController(
   @internal
   @override
   void onDataPop() {
-    _sync(['_removeElements', cachedMeta.data.length - 1.0, 1.0]);
+    _sync(['_removeElements', cachedMeta.data.length - 1, 1]);
   }
 
   /// core.datasetController.js:1060 `_onDataShift()`.
   @internal
   @override
   void onDataShift() {
-    _sync(['_removeElements', 0.0, 1.0]);
+    _sync(['_removeElements', 0, 1]);
   }
 
   /// core.datasetController.js:1064 `_onDataSplice(start, count)`.
@@ -2704,13 +2689,13 @@ class DatasetController(
   /// 2` is the count of [items].
   @internal
   @override
-  void onDataSplice(double index, double deleteCount, List<Object?> items) {
-    if (jsTruthy(deleteCount)) {
+  void onDataSplice(int index, int deleteCount, List<Object?> items) {
+    if (deleteCount != 0) {
       _sync(['_removeElements', index, deleteCount]);
     }
     final newCount = items.length;
     if (newCount != 0) {
-      _sync(['_insertElements', index, newCount.toDouble()]);
+      _sync(['_insertElements', index, newCount]);
     }
   }
 
@@ -2719,6 +2704,6 @@ class DatasetController(
   @internal
   @override
   void onDataUnshift(List<Object?> items) {
-    _sync(['_insertElements', 0.0, items.length.toDouble()]);
+    _sync(['_insertElements', 0, items.length]);
   }
 }

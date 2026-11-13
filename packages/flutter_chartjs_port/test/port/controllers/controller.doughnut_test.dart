@@ -432,8 +432,7 @@ void main() {
       });
       final controller = chart.getDatasetMeta(0).controller!;
       final labels = [
-        for (var i = 0; i < 6; i++)
-          controller.getLabelAndValue(i.toDouble()).label,
+        for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label,
       ];
       expect(identical(labels[0], label0), isTrue);
       expect(labels.sublist(1), [5.0, '', 'd', '', '']);

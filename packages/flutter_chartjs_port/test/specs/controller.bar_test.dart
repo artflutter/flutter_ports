@@ -1447,7 +1447,7 @@ void main() {
         ),
       );
       expect(jsGet(bar.options, 'borderWidth'), 3.14);
-      meta.controller!.removeHoverStyle(bar, double.nan, double.nan);
+      meta.controller!.removeHoverStyle(bar);
       expect(
         jsGet(bar.options, 'backgroundColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1)),
@@ -1493,7 +1493,7 @@ void main() {
         ),
       );
       expect(jsGet(bar.options, 'borderWidth'), 2.5);
-      meta.controller!.removeHoverStyle(bar, double.nan, double.nan);
+      meta.controller!.removeHoverStyle(bar);
       expect(
         jsGet(bar.options, 'backgroundColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),

@@ -84,7 +84,7 @@ types.LineElement buildStackLine(FillerSource source) {
 /// The items are the `dataset` elements of the metas: Dart `null` for the
 /// JS `null` of a meta without one. The boundary line of
 /// filler.target.stack.js:21 can be Dart `null` too.
-List<types.Element?> _getLinesBelow(types.Scale scale, double index) {
+List<types.Element?> _getLinesBelow(types.Scale scale, int index) {
   final below = <types.Element?>[];
   final metas = scale.getMatchingVisibleMetas('line');
 

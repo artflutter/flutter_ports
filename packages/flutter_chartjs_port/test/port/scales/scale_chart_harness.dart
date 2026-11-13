@@ -109,14 +109,14 @@ final class ScaleTestController(
   @override
   void update(String mode) {
     final meta = cachedMeta;
-    updateElements(meta.data, 0, meta.data.length.toDouble(), mode);
+    updateElements(meta.data, 0, meta.data.length, mode);
   }
 
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final meta = cachedMeta;
@@ -126,7 +126,7 @@ final class ScaleTestController(
     final vAxis = vScale.axis;
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     for (var i = start; i < start + count; ++i) {
-      final point = points[i.toInt()] as Element;
+      final point = points[i] as Element;
       final parsed = getParsed(i);
       // `properties[iAxis]`: the key of the axis class.
       final properties = <String, Object?>{
@@ -195,7 +195,7 @@ typedef RadialPointPosition = ({double x, double y, double angle});
 /// 0025, section 9).
 typedef RadialPointPositionOf = RadialPointPosition Function(
   types.Scale scale,
-  double index,
+  int index,
   Object? value,
 );
 
@@ -222,20 +222,20 @@ final class RadialTestController(
   @override
   void update(String mode) {
     final meta = cachedMeta;
-    updateElements(meta.data, 0, meta.data.length.toDouble(), mode);
+    updateElements(meta.data, 0, meta.data.length, mode);
   }
 
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final scale = cachedMeta.rScale!;
     for (var i = start; i < start + count; i++) {
       final position = pointPosition(scale, i, jsGet(getParsed(i), 'r'));
-      updateElement(points[i.toInt()] as Element, i, {
+      updateElement(points[i] as Element, i, {
         'x': position.x,
         'y': position.y,
         'angle': position.angle,

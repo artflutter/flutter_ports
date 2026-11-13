@@ -74,7 +74,7 @@ class _CustomLinear(super.cfg) extends LinearScale {
     construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
   );
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     projections++;
     return super.getPixelForValue(value, index);
   }
@@ -95,7 +95,7 @@ class _CustomController(super.chart, super.datasetIndex, super.newTarget)
   @override
   void updateElement(
     types.Element element,
-    double? index,
+    int? index,
     Object properties,
     String mode,
   ) {

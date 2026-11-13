@@ -133,7 +133,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   /// `null` label, and a number or a `List` as it is (Chart.js ADR 0028,
   /// section 2). `'' + value` is [jsToString].
   @override
-  ({Object? label, String value}) getLabelAndValue(double index) {
+  ({Object? label, String value}) getLabelAndValue(int index) {
     final vScale = cachedMeta.vScale;
     final parsed = getParsed(index);
     final label = jsGetIndex(vScale!.getLabels(), index);
@@ -156,8 +156,8 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     return parseObjectDataRadialScaleOf(
       meta.iScale,
@@ -209,7 +209,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
     }
 
     // Update Points
-    updateElements(points, 0, points.length.toDouble(), mode);
+    updateElements(points, 0, points.length, mode);
   }
 
   /// controller.radar.js:81 `updateElements(points, start, count, mode)`.
@@ -237,8 +237,8 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final scale = cachedMeta.rScale;
@@ -248,7 +248,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
         (reset || mode == 'none') && super.runtimeType == RadarController;
 
     for (var i = start; i < start + count; i++) {
-      final point = points[i.toInt()];
+      final point = points[i];
       final options = resolveDataElementOptions(
         i,
         point.active ? 'active' : mode,
@@ -314,10 +314,10 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// It returns the first index that it did not treat: the ordinary loop
   /// continues there.
-  double _updateStaticPoints(
+  int _updateStaticPoints(
     List<types.Element> points,
-    double next,
-    double end,
+    int next,
+    int end,
     types.RadialLinearScale radial,
   ) {
     final cached = cachedPointNoneOptions;
@@ -335,8 +335,8 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
         .prepareRadialPositions();
     if (positions == null) return next;
     final sharing = enableOptionSharing;
-    final stop = end.toInt();
-    var i = next.toInt();
+    final stop = end;
+    var i = next;
     for (; i < stop; i++) {
       final point = points[i];
       if (point case final types.PointElementWrites writes
@@ -362,7 +362,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
         break;
       }
     }
-    return i.toDouble();
+    return i;
   }
 }
 

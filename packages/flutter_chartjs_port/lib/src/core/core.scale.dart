@@ -323,7 +323,7 @@ ScriptableScaleContext _createScaleContext(Object parent, Scale scale) {
 /// 0054 §11).
 ScriptableScaleContext _createTickContext(Object parent, int index, Tick tick) {
   // DIVERGES(chartjs): adapt-tick-context-construction, no temporary Map.
-  return ScriptableScaleContext.tick(parent, tick, index.toDouble());
+  return ScriptableScaleContext.tick(parent, tick, index);
 }
 
 /// core.scale.js:122 `titleAlign`.
@@ -925,7 +925,7 @@ class Scale(AnyObject cfg)
   /// @param {number} [index]
   /// @since 3.0
   @override
-  Object? parse(Object? raw, [double? index]) {
+  Object? parse(Object? raw, [int? index]) {
     // eslint-disable-line no-unused-vars
     return raw;
   }
@@ -1871,7 +1871,7 @@ class Scale(AnyObject cfg)
   ///
   /// [value] is any JS value (Chart.js ADR 0025).
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     // eslint-disable-line no-unused-vars
     return double.nan;
   }

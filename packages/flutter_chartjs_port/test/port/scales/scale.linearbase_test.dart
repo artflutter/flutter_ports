@@ -63,7 +63,7 @@ class _TestLinearBaseScale(super.cfg) extends LinearScaleBase {
   }
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     return value == null
         ? double.nan
         : getPixelForDecimal((jsToNumber(value) - startValue) / valueRange);

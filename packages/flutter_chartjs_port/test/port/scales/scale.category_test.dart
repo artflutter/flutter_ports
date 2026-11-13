@@ -73,7 +73,7 @@ final class _TestLinearScale(super.cfg) extends Scale {
   ];
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 
@@ -636,7 +636,7 @@ void main() {
       <Object?>['a'],
       'b',
     ];
-    final indexes = <double?>[null, 0, 1, 2, 7, double.nan];
+    final indexes = <int?>[null, 0, 1, 2, 7, -1];
 
     /// The results of `parse(raw, index)` for each of [raws] and [indexes],
     /// as text (NaN and -0 are visible), and the labels after.

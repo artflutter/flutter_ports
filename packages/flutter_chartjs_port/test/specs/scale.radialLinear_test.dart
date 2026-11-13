@@ -814,7 +814,7 @@ void main() {
 
       for (var i = 0; i < 5; i++) {
         expect(
-          radToNearestDegree(_r(chart).getIndexAngle(i.toDouble())),
+          radToNearestDegree(_r(chart).getIndexAngle(i)),
           15 + (slice * i),
         );
       }
@@ -823,10 +823,7 @@ void main() {
       chart.update();
 
       for (var x = 0; x < 5; x++) {
-        expect(
-          radToNearestDegree(_r(chart).getIndexAngle(x.toDouble())),
-          slice * x,
-        );
+        expect(radToNearestDegree(_r(chart).getIndexAngle(x)), slice * x);
       }
     });
 
@@ -959,11 +956,9 @@ void main() {
       for (var i = 0; i < 5; i++) {
         final extra = i == 0 ? tickBackdropHeight / 2 : 0;
         final pointLabelItem = pointLabelItems[i];
-        final pointPosition = _r(chart).getPointPosition(
-          i.toDouble(),
-          outerDistance + extra + padding,
-          additionalAngle,
-        );
+        final pointPosition = _r(
+          chart,
+        ).getPointPosition(i, outerDistance + extra + padding, additionalAngle);
         expect(pointLabelItem.x, pointPosition.x);
         expect(
           pointLabelItem.y,

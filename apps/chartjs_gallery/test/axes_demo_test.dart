@@ -143,9 +143,9 @@ void _expectOnScales(Chart chart) {
     expect(identical(meta.vScale, y), isTrue);
     for (var i = 0; i < meta.data.length; i++) {
       final point = meta.data[i] as PointElement;
-      final parsed = meta.controller!.getParsed(i.toDouble());
-      expect(point.x, x.getPixelForValue(jsGet(parsed, 'x'), i.toDouble()));
-      expect(point.y, y.getPixelForValue(jsGet(parsed, 'y'), i.toDouble()));
+      final parsed = meta.controller!.getParsed(i);
+      expect(point.x, x.getPixelForValue(jsGet(parsed, 'x'), i));
+      expect(point.y, y.getPixelForValue(jsGet(parsed, 'y'), i));
     }
   }
 }

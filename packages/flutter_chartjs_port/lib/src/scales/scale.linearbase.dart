@@ -358,7 +358,7 @@ class LinearScaleBase(super.cfg) extends Scale {
   ///
   /// The body is [prototypeParse].
   @override
-  Object? parse(Object? raw, [double? index]) {
+  Object? parse(Object? raw, [int? index]) {
     // eslint-disable-line no-unused-vars
     return prototypeParse(raw, index);
   }
@@ -373,7 +373,7 @@ class LinearScaleBase(super.cfg) extends Scale {
   /// no `Number` wrapper objects, so `raw instanceof Number` has no
   /// counterpart.
   @internal
-  static Object? prototypeParse(Object? raw, [double? index]) {
+  static Object? prototypeParse(Object? raw, [int? index]) {
     if (isNullOrUndef(raw)) {
       return null;
     }

@@ -27,7 +27,7 @@ import 'package:test/test.dart';
 /// [undefined]) and whose `backgroundColor` is [backgroundColor].
 Object _decode(
   Object? fill, {
-  double index = 1,
+  int index = 1,
   double count = 4,
   Object? backgroundColor = undefined,
 }) => decodeFill(
@@ -53,7 +53,7 @@ List<FillerSource?> _sources(List<Object> fills, List<bool> visible) => [
   for (var i = 0; i < fills.length; i++)
     FillerSource(
       visible: visible[i],
-      index: i.toDouble(),
+      index: i,
       fill: fills[i],
       chart: _Chart(),
       axis: const XAxis(),

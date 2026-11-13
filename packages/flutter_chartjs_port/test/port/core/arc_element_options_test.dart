@@ -69,18 +69,17 @@ class _Fixture({required bool ordinary}) {
   int contexts = 0;
   void Function()? beforeContext;
 
-  ElementOptions resolve([double index = 0]) =>
-      config.resolveOwnedArcNamedOptions(
-        scopes,
-        keySource.nativeOwnKeySnapshot,
-        () {
-          contexts++;
-          beforeContext?.call();
-          return ScriptableContext.data(null, index, null);
-        },
-        prefixes,
-        immutableKeys: true,
-      );
+  ElementOptions resolve([int index = 0]) => config.resolveOwnedArcNamedOptions(
+    scopes,
+    keySource.nativeOwnKeySnapshot,
+    () {
+      contexts++;
+      beforeContext?.call();
+      return ScriptableContext.data(null, index, null);
+    },
+    prefixes,
+    immutableKeys: true,
+  );
 
   helpers.OptionResolver get resolver =>
       config.createResolver(scopes, null, prefixes) as helpers.OptionResolver;
@@ -120,8 +119,8 @@ void _expectTwins(
     for (final f in fixtures) {
       before?.call(f, i);
     }
-    final a = fixtures[0].resolve(i.toDouble());
-    final b = fixtures[1].resolve(i.toDouble());
+    final a = fixtures[0].resolve(i);
+    final b = fixtures[1].resolve(i);
     _expectSame(a, b, 'step $i');
     expect(a, isA<ArcOptions>());
     expect(a.isFrozen, isFalse);
@@ -189,7 +188,7 @@ void main() {
       }
       for (var i = 0; i < 4; i++) {
         for (final f in fixtures) {
-          final result = f.resolve(i.toDouble());
+          final result = f.resolve(i);
           expect(result.jsRead('borderDash'), same(dash));
           expect(result.valueOf(OptionKey.borderDash), same(dash));
         }
@@ -223,7 +222,7 @@ void main() {
           if (i == 3) {
             dash.add(<String, Object?>{'inner': 1.0});
           }
-          out.add(plain(f.resolve(i.toDouble()).jsRead('borderDash')));
+          out.add(plain(f.resolve(i).jsRead('borderDash')));
         }
         results.add(out);
       }
@@ -295,14 +294,7 @@ void main() {
           const ChartPaint.solid(green),
         ];
       }
-      for (final index in [
-        0.0,
-        1.0,
-        9007199254740990.0,
-        9007199254740992.0,
-        9007199254740994.0,
-        1e300,
-      ]) {
+      for (final index in [0, 1, 9007199254740990]) {
         _expectSame(
           fixtures[0].resolve(index),
           fixtures[1].resolve(index),
@@ -343,7 +335,7 @@ void main() {
           const ChartPaint.solid(blue),
         ];
         for (var i = 0; i < 4; i++) {
-          expect(f.resolve(i.toDouble()).jsRead('backgroundColor'), same(fn));
+          expect(f.resolve(i).jsRead('backgroundColor'), same(fn));
         }
       }
     });
@@ -367,7 +359,7 @@ void main() {
           f.scope[key] = color;
           final out = <Object?>[];
           for (var i = 0; i < 5; i++) {
-            out.add(plain(f.resolve(i.toDouble()).jsRead('borderDash')));
+            out.add(plain(f.resolve(i).jsRead('borderDash')));
           }
           out.add(calls);
           results.add(out);
@@ -396,7 +388,7 @@ void main() {
           if (i == 4) {
             f.beforeContext = () => f.resolver.jsWrite('borderWidth', 7.0);
           }
-          out.add(plain(f.resolve(i.toDouble())));
+          out.add(plain(f.resolve(i)));
         }
         out.add(f.contexts);
         results.add(out);
@@ -419,7 +411,7 @@ void main() {
             f.scope['offset'] = 3.0;
             f.config.clearCache();
           }
-          out.add(plain(f.resolve(i.toDouble())));
+          out.add(plain(f.resolve(i)));
         }
         results.add(out);
       }
@@ -442,7 +434,7 @@ void main() {
               f.config.resolveOwnedArcNamedOptions(
                 f.scopes,
                 f.keySource.nativeOwnKeySnapshot,
-                () => ScriptableContext.data(null, i.toDouble(), null),
+                () => ScriptableContext.data(null, i, null),
                 const <String>['arcHover', 'hover', 'arc', ''],
               ),
             ),

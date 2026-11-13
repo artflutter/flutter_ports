@@ -96,7 +96,7 @@ class _Fixture({bool ordinary = false, Object? colors = const [_red, _blue]}) {
   final prefixes = <String>['point', ''];
   int contexts = 0;
   Object Function()? makeContext;
-  PointOptions resolve([double index = 0]) =>
+  PointOptions resolve([int index = 0]) =>
       config.resolveNativeElementNamedOptions(
         scopes,
         keys,
@@ -113,7 +113,7 @@ class _Fixture({bool ordinary = false, Object? colors = const [_red, _blue]}) {
   helpers.OptionResolver get resolver =>
       config.createResolver(scopes, null, prefixes) as helpers.OptionResolver;
 
-  bool probe([double index = 0]) =>
+  bool probe([int index = 0]) =>
       resolver
           .resolveIndexedElementOptions(
             keys,
@@ -236,7 +236,7 @@ void main() {
   test('bar prepared options match ordinary with both colors indexed', () {
     final fast = _Fixture();
     final full = _Fixture(ordinary: true);
-    ElementOptions resolve(_Fixture f, double index) =>
+    ElementOptions resolve(_Fixture f, int index) =>
         f.config.resolveNativeElementNamedOptions(
           f.scopes,
           f.keys,
@@ -255,7 +255,7 @@ void main() {
         ..['inflateAmount'] = 'auto';
     }
     for (var i = 0; i < 4; i++) {
-      _same(resolve(fast, i.toDouble()), resolve(full, i.toDouble()));
+      _same(resolve(fast, i), resolve(full, i));
     }
   });
 
@@ -289,7 +289,7 @@ void main() {
     BarOptions resolve(int index) => config.resolveNativeElementNamedOptions(
       scopes,
       bar.jsOwnKeys(),
-      () => ScriptableContext.data(null, index.toDouble(), null),
+      () => ScriptableContext.data(null, index, null),
       const ['bar', ''],
       BarOptions(),
       allowReplacement: true,
@@ -325,7 +325,7 @@ void main() {
       final fast = _Fixture(colors: colors);
       final full = _Fixture(ordinary: true, colors: colors);
       for (var i = 0; i < 8; i++) {
-        _same(fast.resolve(i.toDouble()), full.resolve(i.toDouble()));
+        _same(fast.resolve(i), full.resolve(i));
       }
       expect(fast.probe(), isTrue);
     });
@@ -413,7 +413,7 @@ void main() {
     for (var i = 0; i < 3; i++) {
       a.reads.clear();
       b.reads.clear();
-      _same(fast.resolve(i.toDouble()), full.resolve(i.toDouble()));
+      _same(fast.resolve(i), full.resolve(i));
       expect(a.reads, b.reads);
     }
     expect(fast.probe(), isFalse);
@@ -448,7 +448,7 @@ void main() {
       for (var i = 0; i < 3; i++) {
         a.clear();
         b.clear();
-        _same(fast.resolve(i.toDouble()), full.resolve(i.toDouble()));
+        _same(fast.resolve(i), full.resolve(i));
         expect(a, b);
       }
       expect(fast.probe(), isFalse);

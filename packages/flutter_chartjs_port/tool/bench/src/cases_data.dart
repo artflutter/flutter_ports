@@ -115,7 +115,7 @@ final class _Line(
   bool? get fullLoop => false;
 
   @override
-  double? get datasetIndex => 0;
+  int? get datasetIndex => 0;
 
   @override
   List<Segment> segments = const [];

@@ -33,12 +33,12 @@
 /// helpers, the JS runtime and the type interfaces.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show lookupByAxis;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show limitValue;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show resolve;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -72,11 +72,17 @@ final class const LttbDecimationAlgorithm() extends DecimationAlgorithm {
   @override
   List<Object?> decimate(
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
     double availableWidth,
     Object options,
-  ) => lttbDecimation(data, start, count, availableWidth, options);
+  ) => lttbDecimation(
+    data,
+    start.toDouble(),
+    count.toDouble(),
+    availableWidth,
+    options,
+  );
 }
 
 /// plugin.decimation.js:273 `case 'min-max'`: the min and max items of each
@@ -90,11 +96,16 @@ final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
   @override
   List<Object?> decimate(
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
     double availableWidth,
     Object options,
-  ) => minMaxDecimation(data, start, count, availableWidth);
+  ) => minMaxDecimation(
+    data,
+    start.toDouble(),
+    count.toDouble(),
+    availableWidth,
+  );
 }
 
 /// plugin.decimation.js:3 `lttbDecimation(data, start, count,
@@ -489,36 +500,36 @@ List<Object?> _datasets(types.Chart chart) =>
 /// plugin.decimation.js:176 `getStartAndCountOfVisiblePointsSimplified(meta,
 /// points)`.
 ///
-/// `start` and `count` are JS numbers: `double` values. The `lo` and `hi`
-/// of [lookupByAxis] are `int` values, which the port converts. [points] is
+/// `start` and `count` are `int` values (Chart.js ADR 0129), as the `lo` and
+/// the `hi` of [lookupByAxis]. [points] is
 /// the raw data of the dataset. Data that is not an array throws a
 /// [TypeError] here (differences.md row `js-semantics-decimation-data`).
-({double start, double count}) _getStartAndCountOfVisiblePointsSimplified(
+({int start, int count}) _getStartAndCountOfVisiblePointsSimplified(
   types.ChartMeta meta,
   Object? points,
 ) {
   final table = points! as List<Object?>;
-  final pointCount = table.length.toDouble();
+  final pointCount = table.length;
 
-  var start = 0.0;
-  double count;
+  var start = 0;
+  int count;
 
   final iScale = meta.iScale!;
   final (:min, :max, :minDefined, :maxDefined) = iScale.getUserBounds();
 
   if (minDefined) {
-    start = limitValue(
-      lookupByAxis(table, iScale.axis, min).lo.toDouble(),
+    // `_limitValue(lo, 0, pointCount - 1)`.
+    start = math.max(
       0,
-      pointCount - 1,
+      math.min(pointCount - 1, lookupByAxis(table, iScale.axis, min).lo),
     );
   }
   if (maxDefined) {
+    // `_limitValue(hi + 1, start, pointCount) - start`.
     count =
-        limitValue(
-          lookupByAxis(table, iScale.axis, max).hi + 1.0,
+        math.max(
           start,
-          pointCount,
+          math.min(pointCount, lookupByAxis(table, iScale.axis, max).hi + 1),
         ) -
         start;
   } else {
@@ -558,7 +569,7 @@ void _beforeElementsUpdate(types.Chart chart, Object args, Object options) {
     final target = _Dataset(dataset);
     final dataOwn = target.read(OptionKey.descData);
     final indexAxis = target.read(OptionKey.indexAxis);
-    final meta = chart.getDatasetMeta(datasetIndex.toDouble());
+    final meta = chart.getDatasetMeta(datasetIndex);
     final data = jsTruthy(dataOwn) ? dataOwn : target.read(OptionKey.data);
 
     // `resolve([indexAxis, chart.options.indexAxis]) === 'y'`.

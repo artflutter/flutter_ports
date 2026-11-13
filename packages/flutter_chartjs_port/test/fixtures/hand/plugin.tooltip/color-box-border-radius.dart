@@ -9,7 +9,6 @@ import 'package:flutter_chartjs_port/chartjs.dart'
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -60,10 +59,10 @@ Map<String, Object?> fixture() => <String, Object?>{
             labelColor: (tooltip, tooltipItem) {
               final meta = (jsGet(tooltipItem, 'chart')! as types.Chart)
                   .getDatasetMeta(
-                    jsToNumber(jsGet(tooltipItem, 'datasetIndex')),
+                    (jsGet(tooltipItem, 'datasetIndex')! as num).toInt(),
                   );
               final options = meta.controller!.getStyle(
-                jsToNumber(jsGet(tooltipItem, 'dataIndex')),
+                (jsGet(tooltipItem, 'dataIndex')! as num).toInt(),
               );
               return TooltipLabelStyle(
                 borderColor: jsGet(options, 'borderColor')! as ChartPaint,
