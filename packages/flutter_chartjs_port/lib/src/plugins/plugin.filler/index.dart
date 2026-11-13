@@ -31,6 +31,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show FillerOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show DatasetFill, FillTarget, NoFill, ValueFill, fillTargetTruthy;
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart'
@@ -59,10 +61,12 @@ final class FillerSource({
   /// index.js:28 `index: i`, the dataset index.
   required final int index,
 
-  /// index.js:29 `fill: _decodeFill(line, i, count)`: `false`, a `double`
-  /// dataset index, a `String` mode or the option object `{value}`
-  /// (filler.options.js:46-73). `_resolveTarget` writes it (index.js:47).
-  required var Object fill,
+  /// index.js:29 `fill: _decodeFill(line, i, count)`: [FillTarget.none]
+  /// for `false`, a [DatasetFill] for a dataset index, a boundary or a
+  /// [ValueFill] for the option object `{value}` (filler.options.js:46-73,
+  /// row `adapt-fill-target-objects`). `_resolveTarget` writes it
+  /// (index.js:47).
+  required var FillTarget fill,
 
   /// index.js:30 `chart`.
   required final types.Chart chart,
@@ -129,7 +133,7 @@ void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
 
   for (var i = 0; i < count; ++i) {
     final source = sources[i];
-    if (source == null || source.fill == false) {
+    if (source == null || source.fill is NoFill) {
       continue;
     }
 
@@ -154,7 +158,7 @@ void _beforeDraw(types.Chart chart, Object _, Object options) {
     }
 
     source.line.updateControlPoints(area, _axisArgument(source.axis));
-    if (draw && jsTruthy(source.fill)) {
+    if (draw && fillTargetTruthy(source.fill)) {
       drawfill(chart.ctx!, source, area);
     }
   }

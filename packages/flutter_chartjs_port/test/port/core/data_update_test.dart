@@ -894,7 +894,7 @@ void main() {
         'filler': true,
         'decimation': <String, Object?>{'enabled': false},
       });
-      dataset(cfg)['fill'] = true;
+      dataset(cfg)['fill'] = FillTarget.toOrigin;
     }
     final a = chart(ca);
     final b = chart(cb);

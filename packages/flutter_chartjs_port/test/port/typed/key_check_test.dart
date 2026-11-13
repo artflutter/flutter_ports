@@ -152,7 +152,7 @@ const AxisTitle _axisTitle = AxisTitle(
 
 /// The line style parameters, for [LineDataset], [ScatterDataset] and
 /// [RadarDataset].
-const ChartFill _fill = .origin;
+const FillTarget _fill = .toOrigin;
 
 /// Configs with each typed parameter: the chart types bar (with a line, a
 /// scatter and a bubble dataset), doughnut (with a pie dataset), polar

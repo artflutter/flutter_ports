@@ -78,6 +78,7 @@ import 'hand/controller.bar/stacking/remove-dataset.dart'
     as controller_bar_stacking_remove_dataset;
 import 'hand/controller.bar/stacking/replace-data.dart'
     as controller_bar_stacking_replace_data;
+import 'hand/controller.bubble/clip.dart' as controller_bubble_clip;
 import 'hand/controller.bubble/hover-radius-zero.dart'
     as controller_bubble_hover_radius_zero;
 import 'hand/controller.bubble/padding-update.dart'
@@ -184,25 +185,42 @@ import 'hand/controller.line/fill/scriptable.dart'
     as controller_line_fill_scriptable;
 import 'hand/controller.line/fill/value.dart' as controller_line_fill_value;
 import 'hand/controller.line/issue-8902.dart' as controller_line_issue_8902;
+import 'hand/controller.line/non-numeric-y.dart'
+    as controller_line_non_numeric_y;
 import 'hand/controller.line/point-style-offscreen-canvas.dart'
     as controller_line_point_style_offscreen_canvas;
 import 'hand/controller.line/point-style.dart' as controller_line_point_style;
+import 'hand/controller.line/pointBackgroundColor/indexable.dart'
+    as controller_line_pointbackgroundcolor_indexable;
 import 'hand/controller.line/pointBackgroundColor/scriptable.dart'
     as controller_line_pointbackgroundcolor_scriptable;
+import 'hand/controller.line/pointBackgroundColor/value.dart'
+    as controller_line_pointbackgroundcolor_value;
+import 'hand/controller.line/pointBorderColor/indexable.dart'
+    as controller_line_pointbordercolor_indexable;
 import 'hand/controller.line/pointBorderColor/scriptable.dart'
     as controller_line_pointbordercolor_scriptable;
+import 'hand/controller.line/pointBorderColor/value.dart'
+    as controller_line_pointbordercolor_value;
+import 'hand/controller.line/pointBorderWidth/indexable.dart'
+    as controller_line_pointborderwidth_indexable;
 import 'hand/controller.line/pointBorderWidth/scriptable.dart'
     as controller_line_pointborderwidth_scriptable;
+import 'hand/controller.line/pointBorderWidth/value.dart'
+    as controller_line_pointborderwidth_value;
 import 'hand/controller.line/pointStyle/indexable.dart'
     as controller_line_pointstyle_indexable;
 import 'hand/controller.line/pointStyle/scriptable.dart'
     as controller_line_pointstyle_scriptable;
 import 'hand/controller.line/pointStyle/value.dart'
     as controller_line_pointstyle_value;
+import 'hand/controller.line/radius/indexable.dart'
+    as controller_line_radius_indexable;
 import 'hand/controller.line/radius/scriptable-to-value.dart'
     as controller_line_radius_scriptable_to_value;
 import 'hand/controller.line/radius/scriptable.dart'
     as controller_line_radius_scriptable;
+import 'hand/controller.line/radius/value.dart' as controller_line_radius_value;
 import 'hand/controller.line/rotation/indexable.dart'
     as controller_line_rotation_indexable;
 import 'hand/controller.line/rotation/scriptable.dart'
@@ -218,6 +236,10 @@ import 'hand/controller.line/segments/slope.dart'
     as controller_line_segments_slope;
 import 'hand/controller.line/segments/spanGaps.dart'
     as controller_line_segments_spangaps;
+import 'hand/controller.line/showLine/dataset.dart'
+    as controller_line_showline_dataset;
+import 'hand/controller.line/showLine/false.dart'
+    as controller_line_showline_false;
 import 'hand/controller.line/stacking/order-default.dart'
     as controller_line_stacking_order_default;
 import 'hand/controller.line/stacking/order-specified.dart'
@@ -256,14 +278,20 @@ import 'hand/controller.polarArea/polar-area-animation-scale.dart'
     as controller_polararea_polar_area_animation_scale;
 import 'hand/controller.radar/backgroundColor/scriptable.dart'
     as controller_radar_backgroundcolor_scriptable;
+import 'hand/controller.radar/backgroundColor/value.dart'
+    as controller_radar_backgroundcolor_value;
 import 'hand/controller.radar/borderCapStyle/scriptable.dart'
     as controller_radar_bordercapstyle_scriptable;
 import 'hand/controller.radar/borderCapStyle/value.dart'
     as controller_radar_bordercapstyle_value;
 import 'hand/controller.radar/borderColor/scriptable.dart'
     as controller_radar_bordercolor_scriptable;
+import 'hand/controller.radar/borderColor/value.dart'
+    as controller_radar_bordercolor_value;
 import 'hand/controller.radar/borderDash/scriptable.dart'
     as controller_radar_borderdash_scriptable;
+import 'hand/controller.radar/borderDash/value.dart'
+    as controller_radar_borderdash_value;
 import 'hand/controller.radar/borderDashOffset/scriptable.dart'
     as controller_radar_borderdashoffset_scriptable;
 import 'hand/controller.radar/borderDashOffset/value.dart'
@@ -274,29 +302,52 @@ import 'hand/controller.radar/borderJoinStyle/value.dart'
     as controller_radar_borderjoinstyle_value;
 import 'hand/controller.radar/borderWidth/scriptable.dart'
     as controller_radar_borderwidth_scriptable;
+import 'hand/controller.radar/borderWidth/value.dart'
+    as controller_radar_borderwidth_value;
+import 'hand/controller.radar/borderWidth/zero.dart'
+    as controller_radar_borderwidth_zero;
 import 'hand/controller.radar/fill/scriptable.dart'
     as controller_radar_fill_scriptable;
+import 'hand/controller.radar/fill/value.dart' as controller_radar_fill_value;
 import 'hand/controller.radar/point-style.dart' as controller_radar_point_style;
+import 'hand/controller.radar/pointBackgroundColor/indexable.dart'
+    as controller_radar_pointbackgroundcolor_indexable;
 import 'hand/controller.radar/pointBackgroundColor/scriptable.dart'
     as controller_radar_pointbackgroundcolor_scriptable;
+import 'hand/controller.radar/pointBackgroundColor/value.dart'
+    as controller_radar_pointbackgroundcolor_value;
+import 'hand/controller.radar/pointBorderColor/indexable.dart'
+    as controller_radar_pointbordercolor_indexable;
 import 'hand/controller.radar/pointBorderColor/scriptable.dart'
     as controller_radar_pointbordercolor_scriptable;
+import 'hand/controller.radar/pointBorderColor/value.dart'
+    as controller_radar_pointbordercolor_value;
+import 'hand/controller.radar/pointBorderWidth/indexable.dart'
+    as controller_radar_pointborderwidth_indexable;
 import 'hand/controller.radar/pointBorderWidth/scriptable.dart'
     as controller_radar_pointborderwidth_scriptable;
+import 'hand/controller.radar/pointBorderWidth/value.dart'
+    as controller_radar_pointborderwidth_value;
 import 'hand/controller.radar/pointStyle/indexable.dart'
     as controller_radar_pointstyle_indexable;
 import 'hand/controller.radar/pointStyle/scriptable.dart'
     as controller_radar_pointstyle_scriptable;
 import 'hand/controller.radar/pointStyle/value.dart'
     as controller_radar_pointstyle_value;
+import 'hand/controller.radar/radius/indexable.dart'
+    as controller_radar_radius_indexable;
 import 'hand/controller.radar/radius/scriptable.dart'
     as controller_radar_radius_scriptable;
+import 'hand/controller.radar/radius/value.dart'
+    as controller_radar_radius_value;
 import 'hand/controller.radar/rotation/indexable.dart'
     as controller_radar_rotation_indexable;
 import 'hand/controller.radar/rotation/scriptable.dart'
     as controller_radar_rotation_scriptable;
 import 'hand/controller.radar/rotation/value.dart'
     as controller_radar_rotation_value;
+import 'hand/controller.radar/showLine/value.dart'
+    as controller_radar_showline_value;
 import 'hand/controller.scatter/showLine/changed.dart'
     as controller_scatter_showline_changed;
 import 'hand/core.interaction/drawActiveElementsOnTop-false.dart'
@@ -373,7 +424,16 @@ import 'hand/element.line/skip/first-span.dart' as element_line_skip_first_span;
 import 'hand/element.line/skip/first.dart' as element_line_skip_first;
 import 'hand/element.line/skip/last-span.dart' as element_line_skip_last_span;
 import 'hand/element.line/skip/last.dart' as element_line_skip_last;
+import 'hand/element.line/skip/middle-span.dart'
+    as element_line_skip_middle_span;
 import 'hand/element.line/skip/middle.dart' as element_line_skip_middle;
+import 'hand/element.line/stepped/after.dart' as element_line_stepped_after;
+import 'hand/element.line/stepped/before.dart' as element_line_stepped_before;
+import 'hand/element.line/stepped/default.dart' as element_line_stepped_default;
+import 'hand/element.line/stepped/middle.dart' as element_line_stepped_middle;
+import 'hand/element.line/tension/default.dart' as element_line_tension_default;
+import 'hand/element.line/tension/one.dart' as element_line_tension_one;
+import 'hand/element.line/tension/zero.dart' as element_line_tension_zero;
 import 'hand/element.point/point-style-circle.dart'
     as element_point_point_style_circle;
 import 'hand/element.point/point-style-cross-rot.dart'
@@ -413,6 +473,14 @@ import 'hand/plugin.filler/line/boundary/above-below-line-null-start.dart'
     as plugin_filler_line_boundary_above_below_line_null_start;
 import 'hand/plugin.filler/line/boundary/above-below-line-null.dart'
     as plugin_filler_line_boundary_above_below_line_null;
+import 'hand/plugin.filler/line/boundary/end-span.dart'
+    as plugin_filler_line_boundary_end_span;
+import 'hand/plugin.filler/line/boundary/end.dart'
+    as plugin_filler_line_boundary_end;
+import 'hand/plugin.filler/line/boundary/origin-span-dual.dart'
+    as plugin_filler_line_boundary_origin_span_dual;
+import 'hand/plugin.filler/line/boundary/origin-span.dart'
+    as plugin_filler_line_boundary_origin_span;
 import 'hand/plugin.filler/line/boundary/origin-spline-above.dart'
     as plugin_filler_line_boundary_origin_spline_above;
 import 'hand/plugin.filler/line/boundary/origin-spline-span.dart'
@@ -423,6 +491,12 @@ import 'hand/plugin.filler/line/boundary/origin-stepped-span.dart'
     as plugin_filler_line_boundary_origin_stepped_span;
 import 'hand/plugin.filler/line/boundary/origin-stepped.dart'
     as plugin_filler_line_boundary_origin_stepped;
+import 'hand/plugin.filler/line/boundary/origin.dart'
+    as plugin_filler_line_boundary_origin;
+import 'hand/plugin.filler/line/boundary/start-span.dart'
+    as plugin_filler_line_boundary_start_span;
+import 'hand/plugin.filler/line/boundary/start.dart'
+    as plugin_filler_line_boundary_start;
 import 'hand/plugin.filler/line/dataset/border.dart'
     as plugin_filler_line_dataset_border;
 import 'hand/plugin.filler/line/dataset/clip-bounds-x-off.dart'
@@ -453,6 +527,16 @@ import 'hand/plugin.filler/line/dataset/spline.dart'
     as plugin_filler_line_dataset_spline;
 import 'hand/plugin.filler/line/dataset/stepped.dart'
     as plugin_filler_line_dataset_stepped;
+import 'hand/plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.dart'
+    as plugin_filler_line_drawtimefillfalse_beforedatasetdraw;
+import 'hand/plugin.filler/line/drawTimeFillFalse/beforeDatasetsDraw.dart'
+    as plugin_filler_line_drawtimefillfalse_beforedatasetsdraw;
+import 'hand/plugin.filler/line/drawTimeFillFalse/beforeDraw.dart'
+    as plugin_filler_line_drawtimefillfalse_beforedraw;
+import 'hand/plugin.filler/line/offset-scale-minmax.dart'
+    as plugin_filler_line_offset_scale_minmax;
+import 'hand/plugin.filler/line/points-outside-canvas-initial.dart'
+    as plugin_filler_line_points_outside_canvas_initial;
 import 'hand/plugin.filler/line/points-outside-canvas-update.dart'
     as plugin_filler_line_points_outside_canvas_update;
 import 'hand/plugin.filler/line/segments/alignToPixels.dart'
@@ -461,9 +545,36 @@ import 'hand/plugin.filler/line/segments/gap.dart'
     as plugin_filler_line_segments_gap;
 import 'hand/plugin.filler/line/segments/slope.dart'
     as plugin_filler_line_segments_slope;
+import 'hand/plugin.filler/line/shape.dart' as plugin_filler_line_shape;
+import 'hand/plugin.filler/line/stack-multiple-scales.dart'
+    as plugin_filler_line_stack_multiple_scales;
+import 'hand/plugin.filler/line/stack.dart' as plugin_filler_line_stack;
+import 'hand/plugin.filler/line/value.dart' as plugin_filler_line_value;
 import 'hand/plugin.filler/line/vertical.dart' as plugin_filler_line_vertical;
 import 'hand/plugin.filler/radar/beforeDraw.dart'
     as plugin_filler_radar_beforedraw;
+import 'hand/plugin.filler/radar/boundary/end-circular.dart'
+    as plugin_filler_radar_boundary_end_circular;
+import 'hand/plugin.filler/radar/boundary/end-span.dart'
+    as plugin_filler_radar_boundary_end_span;
+import 'hand/plugin.filler/radar/boundary/end.dart'
+    as plugin_filler_radar_boundary_end;
+import 'hand/plugin.filler/radar/boundary/origin-circular.dart'
+    as plugin_filler_radar_boundary_origin_circular;
+import 'hand/plugin.filler/radar/boundary/origin-span.dart'
+    as plugin_filler_radar_boundary_origin_span;
+import 'hand/plugin.filler/radar/boundary/origin-spline-span.dart'
+    as plugin_filler_radar_boundary_origin_spline_span;
+import 'hand/plugin.filler/radar/boundary/origin-spline.dart'
+    as plugin_filler_radar_boundary_origin_spline;
+import 'hand/plugin.filler/radar/boundary/origin.dart'
+    as plugin_filler_radar_boundary_origin;
+import 'hand/plugin.filler/radar/boundary/start-circular.dart'
+    as plugin_filler_radar_boundary_start_circular;
+import 'hand/plugin.filler/radar/boundary/start-span.dart'
+    as plugin_filler_radar_boundary_start_span;
+import 'hand/plugin.filler/radar/boundary/start.dart'
+    as plugin_filler_radar_boundary_start;
 import 'hand/plugin.filler/radar/dataset/border.dart'
     as plugin_filler_radar_dataset_border;
 import 'hand/plugin.filler/radar/dataset/default.dart'
@@ -472,6 +583,7 @@ import 'hand/plugin.filler/radar/dataset/span.dart'
     as plugin_filler_radar_dataset_span;
 import 'hand/plugin.filler/radar/dataset/spline.dart'
     as plugin_filler_radar_dataset_spline;
+import 'hand/plugin.filler/radar/value.dart' as plugin_filler_radar_value;
 import 'hand/plugin.legend/borderRadius/legend-border-radius.dart'
     as plugin_legend_borderradius_legend_border_radius;
 import 'hand/plugin.legend/horizontal-rtl-hitbox.dart'
@@ -521,6 +633,16 @@ import 'hand/scale.linear/grace/issue-8912.dart'
     as scale_linear_grace_issue_8912;
 import 'hand/scale.linear/tick-count-data-limits.dart'
     as scale_linear_tick_count_data_limits;
+import 'hand/scale.logarithmic/large-range.dart'
+    as scale_logarithmic_large_range;
+import 'hand/scale.logarithmic/large-values-small-range.dart'
+    as scale_logarithmic_large_values_small_range;
+import 'hand/scale.logarithmic/med-range.dart' as scale_logarithmic_med_range;
+import 'hand/scale.logarithmic/min-max.dart' as scale_logarithmic_min_max;
+import 'hand/scale.logarithmic/null-values.dart'
+    as scale_logarithmic_null_values;
+import 'hand/scale.logarithmic/small-range.dart'
+    as scale_logarithmic_small_range;
 import 'hand/scale.radialLinear/anglelines-scriptable.dart'
     as scale_radiallinear_anglelines_scriptable;
 import 'hand/scale.radialLinear/gridlines-scriptable.dart'
@@ -540,10 +662,13 @@ import 'hand/scale.time/custom-parser.dart' as scale_time_custom_parser;
 import 'hand/scale.time/data-ty.dart' as scale_time_data_ty;
 import 'hand/scale.time/data-xy.dart' as scale_time_data_xy;
 import 'hand/scale.time/labels-date.dart' as scale_time_labels_date;
+import 'hand/scale.time/negative-times.dart' as scale_time_negative_times;
 import 'hand/scale.time/offset-auto-skip-ticks.dart'
     as scale_time_offset_auto_skip_ticks;
 import 'hand/scale.time/offset-with-no-ticks.dart'
     as scale_time_offset_with_no_ticks;
+import 'hand/scale.timeseries/data-timestamps.dart'
+    as scale_timeseries_data_timestamps;
 import 'hand/scale.timeseries/financial-daily.dart'
     as scale_timeseries_financial_daily;
 
@@ -1693,6 +1818,290 @@ final Map<String, HandFixture> handFixtures = {
   'scale.timeseries/financial-daily.js': (
     load: scale_timeseries_financial_daily.fixture,
     sha256: 'cd96e74c519b',
+  ),
+  'controller.bubble/clip.js': (
+    load: controller_bubble_clip.fixture,
+    sha256: 'c41c15bc92c3',
+  ),
+  'controller.line/non-numeric-y.json': (
+    load: controller_line_non_numeric_y.fixture,
+    sha256: '98d3079a8f72',
+  ),
+  'controller.line/pointBackgroundColor/indexable.js': (
+    load: controller_line_pointbackgroundcolor_indexable.fixture,
+    sha256: '4e6165c671f4',
+  ),
+  'controller.line/pointBackgroundColor/value.js': (
+    load: controller_line_pointbackgroundcolor_value.fixture,
+    sha256: '172cce47e400',
+  ),
+  'controller.line/pointBorderColor/indexable.js': (
+    load: controller_line_pointbordercolor_indexable.fixture,
+    sha256: 'e035eaae8d79',
+  ),
+  'controller.line/pointBorderColor/value.js': (
+    load: controller_line_pointbordercolor_value.fixture,
+    sha256: '0b6c7b638f62',
+  ),
+  'controller.line/pointBorderWidth/indexable.js': (
+    load: controller_line_pointborderwidth_indexable.fixture,
+    sha256: 'db079757f7cf',
+  ),
+  'controller.line/pointBorderWidth/value.js': (
+    load: controller_line_pointborderwidth_value.fixture,
+    sha256: '0d634475c832',
+  ),
+  'controller.line/radius/indexable.js': (
+    load: controller_line_radius_indexable.fixture,
+    sha256: 'a99264fb9ba2',
+  ),
+  'controller.line/radius/value.js': (
+    load: controller_line_radius_value.fixture,
+    sha256: '3c6a12ca99e0',
+  ),
+  'controller.line/showLine/dataset.js': (
+    load: controller_line_showline_dataset.fixture,
+    sha256: 'c862fa5f1bed',
+  ),
+  'controller.line/showLine/false.js': (
+    load: controller_line_showline_false.fixture,
+    sha256: 'cb7b1512cfcc',
+  ),
+  'controller.radar/backgroundColor/value.js': (
+    load: controller_radar_backgroundcolor_value.fixture,
+    sha256: 'a811a3838ef7',
+  ),
+  'controller.radar/borderColor/value.js': (
+    load: controller_radar_bordercolor_value.fixture,
+    sha256: '3a09140dbed0',
+  ),
+  'controller.radar/borderDash/value.js': (
+    load: controller_radar_borderdash_value.fixture,
+    sha256: '0508684d06e9',
+  ),
+  'controller.radar/borderWidth/value.js': (
+    load: controller_radar_borderwidth_value.fixture,
+    sha256: 'fbbcd39a64ed',
+  ),
+  'controller.radar/borderWidth/zero.js': (
+    load: controller_radar_borderwidth_zero.fixture,
+    sha256: '5e733e2d4e66',
+  ),
+  'controller.radar/fill/value.js': (
+    load: controller_radar_fill_value.fixture,
+    sha256: 'abe43fe26e56',
+  ),
+  'controller.radar/pointBackgroundColor/indexable.js': (
+    load: controller_radar_pointbackgroundcolor_indexable.fixture,
+    sha256: 'ab9b4df9fe3c',
+  ),
+  'controller.radar/pointBackgroundColor/value.js': (
+    load: controller_radar_pointbackgroundcolor_value.fixture,
+    sha256: 'a31e04268653',
+  ),
+  'controller.radar/pointBorderColor/indexable.js': (
+    load: controller_radar_pointbordercolor_indexable.fixture,
+    sha256: 'c3d832027132',
+  ),
+  'controller.radar/pointBorderColor/value.js': (
+    load: controller_radar_pointbordercolor_value.fixture,
+    sha256: 'e43b2e05b356',
+  ),
+  'controller.radar/pointBorderWidth/indexable.js': (
+    load: controller_radar_pointborderwidth_indexable.fixture,
+    sha256: '475d60b260a4',
+  ),
+  'controller.radar/pointBorderWidth/value.js': (
+    load: controller_radar_pointborderwidth_value.fixture,
+    sha256: 'b7b6ebbc3e28',
+  ),
+  'controller.radar/radius/indexable.js': (
+    load: controller_radar_radius_indexable.fixture,
+    sha256: 'ab44e9e099c8',
+  ),
+  'controller.radar/radius/value.js': (
+    load: controller_radar_radius_value.fixture,
+    sha256: 'b4068839907a',
+  ),
+  'controller.radar/showLine/value.js': (
+    load: controller_radar_showline_value.fixture,
+    sha256: '9cb757de6148',
+  ),
+  'element.line/skip/middle-span.js': (
+    load: element_line_skip_middle_span.fixture,
+    sha256: '286b611bb77a',
+  ),
+  'element.line/stepped/after.js': (
+    load: element_line_stepped_after.fixture,
+    sha256: '4814c2dd8861',
+  ),
+  'element.line/stepped/before.js': (
+    load: element_line_stepped_before.fixture,
+    sha256: '53f54cd7cead',
+  ),
+  'element.line/stepped/default.js': (
+    load: element_line_stepped_default.fixture,
+    sha256: '19c155a10d08',
+  ),
+  'element.line/stepped/middle.js': (
+    load: element_line_stepped_middle.fixture,
+    sha256: '6278d250c29b',
+  ),
+  'element.line/tension/default.js': (
+    load: element_line_tension_default.fixture,
+    sha256: '3c43071e0eb7',
+  ),
+  'element.line/tension/one.js': (
+    load: element_line_tension_one.fixture,
+    sha256: '9299be5059f9',
+  ),
+  'element.line/tension/zero.js': (
+    load: element_line_tension_zero.fixture,
+    sha256: '42c2b3b64ad4',
+  ),
+  'plugin.filler/line/boundary/end-span.json': (
+    load: plugin_filler_line_boundary_end_span.fixture,
+    sha256: 'b8d82d21bbed',
+  ),
+  'plugin.filler/line/boundary/end.json': (
+    load: plugin_filler_line_boundary_end.fixture,
+    sha256: '8e9560da3312',
+  ),
+  'plugin.filler/line/boundary/origin-span-dual.json': (
+    load: plugin_filler_line_boundary_origin_span_dual.fixture,
+    sha256: 'dd7cb6f60abe',
+  ),
+  'plugin.filler/line/boundary/origin-span.json': (
+    load: plugin_filler_line_boundary_origin_span.fixture,
+    sha256: '70e44ba3f128',
+  ),
+  'plugin.filler/line/boundary/origin.json': (
+    load: plugin_filler_line_boundary_origin.fixture,
+    sha256: 'f543e133289d',
+  ),
+  'plugin.filler/line/boundary/start-span.json': (
+    load: plugin_filler_line_boundary_start_span.fixture,
+    sha256: '2eeca87ccb38',
+  ),
+  'plugin.filler/line/boundary/start.json': (
+    load: plugin_filler_line_boundary_start.fixture,
+    sha256: '799aeeee22de',
+  ),
+  'plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.js': (
+    load: plugin_filler_line_drawtimefillfalse_beforedatasetdraw.fixture,
+    sha256: 'cdfb18aeb044',
+  ),
+  'plugin.filler/line/drawTimeFillFalse/beforeDatasetsDraw.js': (
+    load: plugin_filler_line_drawtimefillfalse_beforedatasetsdraw.fixture,
+    sha256: '63411777b6d5',
+  ),
+  'plugin.filler/line/drawTimeFillFalse/beforeDraw.js': (
+    load: plugin_filler_line_drawtimefillfalse_beforedraw.fixture,
+    sha256: '38b68a18e4a4',
+  ),
+  'plugin.filler/line/offset-scale-minmax.js': (
+    load: plugin_filler_line_offset_scale_minmax.fixture,
+    sha256: 'd54cf10ad44e',
+  ),
+  'plugin.filler/line/points-outside-canvas-initial.js': (
+    load: plugin_filler_line_points_outside_canvas_initial.fixture,
+    sha256: '009594cd8979',
+  ),
+  'plugin.filler/line/shape.js': (
+    load: plugin_filler_line_shape.fixture,
+    sha256: '8a625d91544e',
+  ),
+  'plugin.filler/line/stack-multiple-scales.js': (
+    load: plugin_filler_line_stack_multiple_scales.fixture,
+    sha256: '635970d68aad',
+  ),
+  'plugin.filler/line/stack.json': (
+    load: plugin_filler_line_stack.fixture,
+    sha256: '9c2707f9dd4a',
+  ),
+  'plugin.filler/line/value.json': (
+    load: plugin_filler_line_value.fixture,
+    sha256: '434c45f78dea',
+  ),
+  'plugin.filler/radar/boundary/end-circular.json': (
+    load: plugin_filler_radar_boundary_end_circular.fixture,
+    sha256: '6e55c212112e',
+  ),
+  'plugin.filler/radar/boundary/end-span.json': (
+    load: plugin_filler_radar_boundary_end_span.fixture,
+    sha256: '0cc9ee209f89',
+  ),
+  'plugin.filler/radar/boundary/end.json': (
+    load: plugin_filler_radar_boundary_end.fixture,
+    sha256: '38dad6e1b60c',
+  ),
+  'plugin.filler/radar/boundary/origin-circular.json': (
+    load: plugin_filler_radar_boundary_origin_circular.fixture,
+    sha256: '6aa5b7a79095',
+  ),
+  'plugin.filler/radar/boundary/origin-span.json': (
+    load: plugin_filler_radar_boundary_origin_span.fixture,
+    sha256: '3004e271547a',
+  ),
+  'plugin.filler/radar/boundary/origin-spline-span.json': (
+    load: plugin_filler_radar_boundary_origin_spline_span.fixture,
+    sha256: '5915a985a7ba',
+  ),
+  'plugin.filler/radar/boundary/origin-spline.json': (
+    load: plugin_filler_radar_boundary_origin_spline.fixture,
+    sha256: '2189102509a3',
+  ),
+  'plugin.filler/radar/boundary/origin.json': (
+    load: plugin_filler_radar_boundary_origin.fixture,
+    sha256: '10c3b90a279f',
+  ),
+  'plugin.filler/radar/boundary/start-circular.json': (
+    load: plugin_filler_radar_boundary_start_circular.fixture,
+    sha256: '19cf0bd096a1',
+  ),
+  'plugin.filler/radar/boundary/start-span.json': (
+    load: plugin_filler_radar_boundary_start_span.fixture,
+    sha256: '6f6639b6e9f0',
+  ),
+  'plugin.filler/radar/boundary/start.json': (
+    load: plugin_filler_radar_boundary_start.fixture,
+    sha256: 'f8744ee79db8',
+  ),
+  'plugin.filler/radar/value.json': (
+    load: plugin_filler_radar_value.fixture,
+    sha256: 'aaa76214d47d',
+  ),
+  'scale.logarithmic/large-range.js': (
+    load: scale_logarithmic_large_range.fixture,
+    sha256: '81c7e3f9081c',
+  ),
+  'scale.logarithmic/large-values-small-range.js': (
+    load: scale_logarithmic_large_values_small_range.fixture,
+    sha256: '04df6ffa055d',
+  ),
+  'scale.logarithmic/med-range.js': (
+    load: scale_logarithmic_med_range.fixture,
+    sha256: '5bd687bac1bc',
+  ),
+  'scale.logarithmic/min-max.js': (
+    load: scale_logarithmic_min_max.fixture,
+    sha256: 'fe9a17c75851',
+  ),
+  'scale.logarithmic/null-values.js': (
+    load: scale_logarithmic_null_values.fixture,
+    sha256: '2005172acbb5',
+  ),
+  'scale.logarithmic/small-range.js': (
+    load: scale_logarithmic_small_range.fixture,
+    sha256: '3aae77bb8618',
+  ),
+  'scale.time/negative-times.js': (
+    load: scale_time_negative_times.fixture,
+    sha256: '86c7641fd3d9',
+  ),
+  'scale.timeseries/data-timestamps.js': (
+    load: scale_timeseries_data_timestamps.fixture,
+    sha256: '6f5160d4e038',
   ),
 };
 

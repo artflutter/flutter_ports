@@ -4,8 +4,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, FillBoundary, JsObjectFace;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show FillTarget;
 
 /// The area chart of `docs/samples/area/line-boundaries.md:3-120` at the
 /// fill `'origin'`: the action `Fill: origin` of `:48-56`.
@@ -28,26 +27,28 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 /// The options are those of `:95-113`. The gallery registers
 /// `registerables`, with the filler and the title: the chart fills the
 /// area to the origin, and the title is `Fill: origin`.
-Map<String, Object?> areaOriginConfig() => _config(FillBoundary.origin);
+Map<String, Object?> areaOriginConfig() =>
+    _config(FillTarget.toOrigin, 'origin');
 
 /// The config of the action `Fill: start` (`line-boundaries.md:57-65`):
 /// the chart fills the area to the bottom of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:82-83`).
-Map<String, Object?> areaStartConfig() => _config(FillBoundary.start);
+Map<String, Object?> areaStartConfig() => _config(FillTarget.toStart, 'start');
 
 /// The config of the action `Fill: end` (`line-boundaries.md:66-74`): the
 /// chart fills the area to the top of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:84-85`).
-Map<String, Object?> areaEndConfig() => _config(FillBoundary.end);
+Map<String, Object?> areaEndConfig() => _config(FillTarget.toEnd, 'end');
 
 /// The config of the action `Fill: false (default)`
 /// (`line-boundaries.md:39-47`), the first state of the sample (`:29`):
 /// the chart draws the line with no fill.
-Map<String, Object?> areaFalseConfig() => _config(false);
+Map<String, Object?> areaFalseConfig() => _config(FillTarget.none, 'false');
 
 /// The config of `line-boundaries.md:95-113` with the data of `:20-33`,
-/// where the dataset has the fill value [fill] of an action.
-Map<String, Object?> _config(Object fill) => <String, Object?>{
+/// where the dataset has the fill value [fill] of an action, and [name] is
+/// the text of the fill of the action in the title.
+Map<String, Object?> _config(FillTarget fill, String name) => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>[
@@ -86,28 +87,18 @@ Map<String, Object?> _config(Object fill) => <String, Object?>{
   'options': <String, Object?>{
     'plugins': <String, Object?>{
       'filler': <String, Object?>{'propagate': false},
-      'title': <String, Object?>{'display': true, 'text': _titleText},
+      'title': <String, Object?>{
+        'display': true,
+        'text': (Object? ctx) => _titleText(name),
+      },
     },
     'interaction': <String, Object?>{'intersect': false},
   },
 };
 
 /// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
-/// (`line-boundaries.md:106`). The context is a typed object, read by name
-/// through its face (`JsObjectFace`), and the fill of each variant is a
-/// `FillBoundary` or `false`: the text of a boundary is its name, the
-/// keyword of the JS `+`.
-Object _titleText(Object? ctx) {
-  final chart = (ctx! as JsObjectFace)['chart']! as Chart;
-  final datasets = _byName(chart.data, 'datasets')! as List<Object?>;
-  final fill = _byName(datasets.first, 'fill');
-  return 'Fill: ${fill is FillBoundary ? fill.name : fill}';
-}
-
-/// `object[key]` of an object of the chart: a Map of the app, or a typed
-/// object through its face.
-Object? _byName(Object? object, String key) => switch (object) {
-  final Map<Object?, Object?> map => map[key],
-  final JsObjectFace face => face[key],
-  _ => null,
-};
+/// (`line-boundaries.md:106`). The fill of each variant is a `FillTarget`
+/// (Chart.js ADR 0140), which has no text: the title takes the [name] of the
+/// fill of the action, the text of the JS `+` of the upstream value.
+// DIVERGES(chartjs): adapt-fill-target-objects, the title takes the name.
+Object _titleText(String name) => 'Fill: $name';

@@ -78,7 +78,7 @@ class _Sample5State() extends State<Sample5> {
           tension: 0.35,
           borderWidth: 4,
           pointRadius: 0,
-          fill: .origin,
+          fill: .toOrigin,
           extra: {
             'borderColor': horizontalGradient(_colors, _stops),
             'backgroundColor': horizontalGradient([

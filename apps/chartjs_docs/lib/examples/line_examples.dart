@@ -164,7 +164,7 @@ const filledLine = LineDataset(
   data: values,
   borderColor: .constant(.solid(teal)),
   backgroundColor: .constant(.solid(tealFill)),
-  fill: .origin,
+  fill: .toOrigin,
   tension: 0.3,
 );
 // #enddocregion line-filled
@@ -379,21 +379,21 @@ const stackedLines = ChartConfig(
       data: [30, 35, 28, 40, 45, 42, 50],
       borderColor: .constant(.solid(teal)),
       backgroundColor: .constant(.solid(tealFill)),
-      fill: .stack,
+      fill: .toStacked,
     ),
     LineDataset(
       label: 'Desktop',
       data: [20, 25, 22, 18, 24, 30, 26],
       borderColor: .constant(.solid(blue)),
       backgroundColor: .constant(.solid(blueFill)),
-      fill: .stack,
+      fill: .toStacked,
     ),
     LineDataset(
       label: 'Tablet',
       data: [10, 8, 12, 14, 9, 11, 15],
       borderColor: .constant(.solid(red)),
       backgroundColor: .constant(.solid(redFill)),
-      fill: .stack,
+      fill: .toStacked,
     ),
   ],
   scales: {'y': LinearAxis(stacked: true, beginAtZero: true)},

@@ -11,7 +11,7 @@ LineDataset _line(
   List<DataPoint> points, {
   double tension = 0.35,
   bool dots = false,
-  ChartFill? fill,
+  FillTarget? fill,
   Color? fillColor,
 }) => LineDataset(
   points: points,
@@ -56,7 +56,7 @@ final List<LineDataset> _second = [
     Fl.pink.withValues(alpha: 0.5),
     4,
     _p([(1, 1), (3, 2.8), (7, 1.2), (10, 2.8), (12, 2.6), (13, 3.9)]),
-    fill: .origin,
+    fill: .toOrigin,
     fillColor: Fl.pink.withValues(alpha: 0.2),
   ),
   _line(

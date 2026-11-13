@@ -150,7 +150,7 @@ ChartConfig(
       data: visitors,
       borderColor: .constant(.solid(Colors.blue)),
       backgroundColor: .constant(.solid(Colors.blue.withValues(alpha: 0.2))),
-      fill: .origin,
+      fill: .toOrigin,
       tension: 0.3,
       pointStyle: const RectRotPointStyle(),
     ),
@@ -199,12 +199,14 @@ The values of the options are Dart and Flutter values:
 - A pie or doughnut `cutout` or `radius` is a `RadiusLength`: `const PercentRadius(50)` or
   `const PixelRadius(80)`. A scale `grace` is a `GraceLength`: `const PercentGrace(5)` or
   `const ValueGrace(0.3)`, through `extra`.
-- Names are dot shorthands: `position: .bottom`, `fill: .origin`.
+- Names are dot shorthands: `position: .bottom`, `fill: .toOrigin`.
 - A point style is a class: `pointStyle: const StarPointStyle()`. An app or a plugin can add its
   own style as a subclass of `PathPointStyle`. The cubic interpolation mode of a line is a class
   too: `cubicInterpolationMode: const MonotoneCubicInterpolationMode()`.
-  `ChartFill.dataset(0)`, `ChartFill.relative(-1)` and `ChartFill.value(10)` give the other fill
-  targets.
+- A fill is a `FillTarget`, in the typed API and in a raw config: `.none`, `.toOrigin`,
+  `.toStart`, `.toEnd`, `.toStacked`, `.shape`, `.toPrevious`, `.toNext`, `.toDataset(0)`,
+  `.toRelative(-2)` and `.toValue(10)`. `FillTarget.toOrigin.split(above: green, below: red)`
+  gives the fill its own colors above and below the target.
 - The `easing` of an animation is a Flutter `Curve`: a constant of `Curves`, or a curve class of
   your app.
 - `animations` sets the animation of single properties. Each property has its class:

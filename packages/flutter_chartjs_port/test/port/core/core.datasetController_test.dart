@@ -41,6 +41,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -52,6 +53,7 @@ import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/fill_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/point_style_json.dart';
@@ -558,8 +560,8 @@ final Map<Object?, Object?> _functions = {
   'colorByIndex': (Object? ctx) => jsGet(ctx, 'dataIndex') == 1
       ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-  'typeIsDataset': (Object? ctx) =>
-      jsGet(ctx, 'type') == 'dataset' ? 75.0 : 0.0,
+  'fillIsDataset': (Object? ctx) =>
+      FillTarget.toValue(jsGet(ctx, 'type') == 'dataset' ? 75 : 0),
 };
 
 /// A new value from a spec value: `{$fn: name}` gives a function,
@@ -595,6 +597,7 @@ String _enc(Object? v) => switch (v) {
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
   ScaleAxis() => axisJson,
+  FillTarget() => fillJson,
   final Animations a => _idOf('anims', a),
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
   final Map<String, Object?> m => _encMap(m),
@@ -1064,9 +1067,11 @@ void main() {
         final run = _Run(spec);
         expect(
           run.runAll().map(referenceColorTokens).toList(),
-          withAxisMarkers(
-            withPointStyleMarkers(
-              withCubicModeMarkers(withCurveMarkers(observations)),
+          withFillMarkers(
+            withAxisMarkers(
+              withPointStyleMarkers(
+                withCubicModeMarkers(withCurveMarkers(observations)),
+              ),
             ),
           ).split('\n').map(referenceColorTokens).toList(),
         );

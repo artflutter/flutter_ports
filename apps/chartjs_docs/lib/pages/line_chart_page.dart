@@ -94,9 +94,9 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'fill',
     section: 'line-styling',
-    type: 'ChartFill',
+    type: 'FillTarget',
     scriptable: true,
-    fallback: 'false',
+    fallback: 'FillTarget.none',
   ),
   DocProperty(
     'hoverBackgroundColor',

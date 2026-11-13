@@ -4,6 +4,7 @@ library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -33,7 +34,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{
-          'fill': true,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin,
           'backgroundColor': (Object? ctx) {
             final index = jsGet(ctx, 'index');
             return index == 0

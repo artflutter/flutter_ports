@@ -117,10 +117,6 @@ enum ScopeKind(
   /// ArcBorderRadius (arc), the radius of each corner.
   borderRadius('BorderRadius'),
 
-  /// index.d.ts:2302 ComplexFillTarget and the object `{value}` of
-  /// index.d.ts:2300 FillTarget, the object form of `fill`.
-  fillTarget('FillTarget'),
-
   /// Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable
   /// styles of a line segment.
   segmentOptions('SegmentOptions'),
@@ -305,8 +301,6 @@ enum ScopeKind(
         return GenericElementOptionsScope();
       case ScopeKind.borderRadius:
         return BorderRadiusScope();
-      case ScopeKind.fillTarget:
-        return FillTargetScope();
       case ScopeKind.segmentOptions:
         return SegmentOptionsScope();
       case ScopeKind.barControllerDatasetOptions:
@@ -418,8 +412,6 @@ enum ScopeKind(
         return GenericElementOptionsScope;
       case ScopeKind.borderRadius:
         return BorderRadiusScope;
-      case ScopeKind.fillTarget:
-        return FillTargetScope;
       case ScopeKind.segmentOptions:
         return SegmentOptionsScope;
       case ScopeKind.barControllerDatasetOptions:
@@ -799,13 +791,6 @@ enum ScopeKind(
           OptionKey.outerEnd,
           OptionKey.innerStart,
           OptionKey.innerEnd,
-        ];
-      case ScopeKind.fillTarget:
-        return const [
-          OptionKey.target,
-          OptionKey.above,
-          OptionKey.below,
-          OptionKey.value,
         ];
       case ScopeKind.segmentOptions:
         return const [
@@ -1641,7 +1626,7 @@ enum ScopeKind(
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.datasetElementType:
             return 6;
           case OptionKey.dataElementType:
@@ -1965,7 +1950,7 @@ enum ScopeKind(
           case OptionKey.stepped:
             return 2818;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
@@ -2096,19 +2081,6 @@ enum ScopeKind(
           default:
             return 0;
         }
-      case ScopeKind.fillTarget:
-        switch (key) {
-          case OptionKey.target:
-            return 3363;
-          case OptionKey.above:
-            return 4864;
-          case OptionKey.below:
-            return 4864;
-          case OptionKey.value:
-            return 1;
-          default:
-            return 0;
-        }
       case ScopeKind.segmentOptions:
         switch (key) {
           case OptionKey.backgroundColor:
@@ -2205,7 +2177,7 @@ enum ScopeKind(
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.elements:
@@ -2280,7 +2252,7 @@ enum ScopeKind(
           case OptionKey.stepped:
             return 2818;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
@@ -2403,7 +2375,7 @@ enum ScopeKind(
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.elements:
             return 32;
           case OptionKey.datasetElementType:
@@ -2504,7 +2476,7 @@ enum ScopeKind(
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.elements:
@@ -2609,7 +2581,7 @@ enum ScopeKind(
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.elements:
@@ -2706,7 +2678,7 @@ enum ScopeKind(
           case OptionKey.stepped:
             return 2818;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
@@ -2785,7 +2757,7 @@ enum ScopeKind(
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
-            return 3363;
+            return 3328;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.animation:
@@ -3458,8 +3430,6 @@ enum ScopeKind(
             return ScopeKind.tooltipDatasetOptions;
           case OptionKey.hoverBorderRadius:
             return ScopeKind.borderRadius;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.segment:
             return ScopeKind.segmentOptions;
           default:
@@ -3592,8 +3562,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.lineOptions:
         switch (key) {
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.segment:
             return ScopeKind.segmentOptions;
           default:
@@ -3621,13 +3589,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.borderRadius:
         return null;
-      case ScopeKind.fillTarget:
-        switch (key) {
-          case OptionKey.target:
-            return ScopeKind.fillTarget;
-          default:
-            return null;
-        }
       case ScopeKind.segmentOptions:
         return null;
       case ScopeKind.barControllerDatasetOptions:
@@ -3648,8 +3609,6 @@ enum ScopeKind(
             return ScopeKind.tooltipDatasetOptions;
           case OptionKey.hoverBorderRadius:
             return ScopeKind.borderRadius;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.elements:
             return ScopeKind.elementOptionsByType;
           default:
@@ -3659,8 +3618,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.segment:
             return ScopeKind.segmentOptions;
           case OptionKey.animation:
@@ -3688,8 +3645,6 @@ enum ScopeKind(
             return ScopeKind.animationsSpec;
           case OptionKey.transitions:
             return ScopeKind.transitionsSpec;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.elements:
             return ScopeKind.elementOptionsByType;
           default:
@@ -3709,8 +3664,6 @@ enum ScopeKind(
             return ScopeKind.transitionsSpec;
           case OptionKey.tooltip:
             return ScopeKind.tooltipDatasetOptions;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.elements:
             return ScopeKind.elementOptionsByType;
           default:
@@ -3730,8 +3683,6 @@ enum ScopeKind(
             return ScopeKind.transitionsSpec;
           case OptionKey.tooltip:
             return ScopeKind.tooltipDatasetOptions;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.elements:
             return ScopeKind.elementOptionsByType;
           default:
@@ -3741,8 +3692,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.segment:
             return ScopeKind.segmentOptions;
           case OptionKey.animation:
@@ -3764,8 +3713,6 @@ enum ScopeKind(
             return ScopeKind.parsingOptions;
           case OptionKey.tooltip:
             return ScopeKind.tooltipDatasetOptions;
-          case OptionKey.fill:
-            return ScopeKind.fillTarget;
           case OptionKey.animation:
             return ScopeKind.animationOptions;
           case OptionKey.animations:
@@ -3922,8 +3869,6 @@ enum ScopeKind(
         return 64;
       case ScopeKind.borderRadius:
         return 64;
-      case ScopeKind.fillTarget:
-        return 64;
       case ScopeKind.segmentOptions:
         return 64;
       case ScopeKind.barControllerDatasetOptions:
@@ -4035,8 +3980,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.borderRadius:
         return null;
-      case ScopeKind.fillTarget:
-        return null;
       case ScopeKind.segmentOptions:
         return null;
       case ScopeKind.barControllerDatasetOptions:
@@ -4147,8 +4090,6 @@ enum ScopeKind(
       case ScopeKind.genericElementOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.borderRadius:
-        return classifyUnion(raw, 64);
-      case ScopeKind.fillTarget:
         return classifyUnion(raw, 64);
       case ScopeKind.segmentOptions:
         return classifyUnion(raw, 64);

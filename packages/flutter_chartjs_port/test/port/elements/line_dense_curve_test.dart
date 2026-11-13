@@ -24,6 +24,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show MonotoneCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/typed/typed.dart';
@@ -95,7 +96,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
   LineDataset line(
     String key,
     List<DataPoint> points, {
-    ChartFill fill = ChartFill.none,
+    FillTarget fill = FillTarget.none,
     Map<String, Object?>? extra,
   }) => LineDataset(
     key: ValueKey(key),
@@ -129,7 +130,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
       line('a', points),
       line('b', [
         for (var i = 0; i < count; i++) DataPoint(x(i), a[i] + 8),
-      ], fill: ChartFill.relative(-1)),
+      ], fill: FillTarget.toPrevious),
     ],
     'segment' => [
       line(
@@ -147,7 +148,9 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
         },
       ),
     ],
-    _ => [line('a', points, fill: filled ? ChartFill.origin : ChartFill.none)],
+    _ => [
+      line('a', points, fill: filled ? FillTarget.toOrigin : FillTarget.none),
+    ],
   };
   return ChartConfig(
     type: ChartKind.line,

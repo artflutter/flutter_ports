@@ -6,6 +6,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 // `ctx.p0` and `ctx.p1` are point elements. `ctx.p0.skip` is the access by
 // name of the element (Chart.js ADR 0017, section 5): `jsGet` gives
@@ -22,7 +23,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'data': <Object?>[1, 3, double.nan, double.nan, 2, 1],
           'borderColor': 'transparent',
           'backgroundColor': 'black',
-          'fill': true,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin,
           'segment': <String, Object?>{
             'backgroundColor': (Object? ctx) =>
                 jsTruthy((jsGet(ctx, 'p0')! as Element)['skip']) ||

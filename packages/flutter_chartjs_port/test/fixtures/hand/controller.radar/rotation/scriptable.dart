@@ -6,6 +6,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show LinePointStyle;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -40,7 +41,7 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'elements': <String, Object?>{
-        'line': <String, Object?>{'fill': false},
+        'line': <String, Object?>{'fill': FillTarget.none},
         'point': <String, Object?>{
           'borderColor': '#ff0000',
           'rotation': (Object? ctx) {

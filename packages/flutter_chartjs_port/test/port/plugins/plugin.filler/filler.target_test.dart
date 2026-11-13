@@ -13,12 +13,15 @@
 // uses package:test, and test:web runs it too. It builds no chart, so it
 // registers no plugin (Chart.js ADR 0041, section 7).
 
+import 'dart:ui' show Color;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart';
@@ -26,6 +29,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dar
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
@@ -236,7 +240,7 @@ types.Element _makeLine(Map<String, Object?> d) {
     source: FillerSource(
       visible: chart.isDatasetVisible(index),
       index: index,
-      fill: source['fill']!,
+      fill: source['fill']! as FillTarget,
       chart: chart,
       axis: source['axis'],
       scale: scale,
@@ -362,7 +366,7 @@ Object? _run(FillerTargetReferenceCase c) {
             FillerSource(
               visible: source['visible']! as bool,
               index: i,
-              fill: source['fill']!,
+              fill: source['fill']! as FillTarget,
               chart: chart,
               axis: null,
               scale: null,
@@ -380,11 +384,17 @@ Object? _run(FillerTargetReferenceCase c) {
       );
     case 'targetPixel':
       final scale = _makeScale(input['scale'], _FakeChart(const [], null));
-      return _attempt(() => getTargetPixel(input['fill']!, scale));
+      return _attempt(
+        () => getTargetPixel(input['fill']! as FillTarget, scale),
+      );
     case 'targetValue':
       final scale = _makeScale(input['scale'], _FakeChart(const [], null));
       return _attempt(
-        () => getTargetValue(input['fill']!, scale!, _n(input['startValue'])),
+        () => getTargetValue(
+          input['fill']! as FillTarget,
+          scale!,
+          _n(input['startValue']),
+        ),
       );
     case 'target':
       final (chart: _, :source) = _makeChart(input);
@@ -473,6 +483,14 @@ void _expectValue(Object? actual, Object? expected, String path) {
       }
     case Undefined():
       expect(actual, same(undefined), reason: path);
+    // A color of a split fill is a native paint (Chart.js ADR 0140): the
+    // mock records its Color, where the data have the upstream text.
+    case final String e when actual is Color:
+      expect(
+        actual,
+        (nativeFixturePaint(e) as SolidChartPaint).color,
+        reason: path,
+      );
     default:
       expect(actual, expected, reason: path);
   }

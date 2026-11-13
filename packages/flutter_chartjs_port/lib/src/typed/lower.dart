@@ -22,10 +22,9 @@
 ///    [millisecondsOf], and an `EdgeInsets` stays a native value.
 ///    A name type lowers to its name or its `optionValue`.
 ///    An axis class (`XAxis`, `YAxis`) and a font (`TextStyle`, Chart.js ADR
-///    0116) stay themselves. An object option value
-///    of a name type (the
-///    `{value}` of `ChartFill.value`) becomes a typed scope of the kind of
-///    its key ([put]).
+///    0116) stay themselves, and so does a `FillTarget` (Chart.js ADR
+///    0140). An object option value becomes a typed scope of the kind of its
+///    key ([put]).
 /// 4. A plain value never lowers to a closure. Only a function parameter
 ///    does: a ChartValue bridge for dataset colors, a `JsFunction` for the
 ///    tick format, and a trampoline for each event and text callback.
@@ -550,10 +549,9 @@ List<Object?>? numberList(List<double>? list) =>
 /// Dart `null` (Chart.js ADR 0054 §7): the cell of the shape of the key in
 /// the kind of [scope]. A key that the kind does not declare is an extra.
 ///
-/// An object value of the conversions (a Map, for example the `{value}` of
-/// `ChartFill.value`) becomes a typed scope of the kind of the key when the
-/// key has one, else a new `<String, Object?>` Map. A typed scope, a List and
-/// a function go by reference.
+/// An object value of the conversions (a Map) becomes a typed scope of the
+/// kind of the key when the key has one, else a new `<String, Object?>` Map.
+/// A typed scope, a List and a function go by reference.
 void put(OptionScope scope, OptionKey key, Object? value) {
   if (value == null) return;
   _store(scope, key.jsName, value);

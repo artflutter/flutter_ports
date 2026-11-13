@@ -81,7 +81,7 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
         borderColor: color ?? const ChartValue.constant(.solid(_blue)),
         pointRadius: 3,
         tension: .3,
-        fill: ChartFill.origin,
+        fill: FillTarget.toOrigin,
       ),
       ChartKind.scatter => ScatterDataset(
         label: 'd',
@@ -121,7 +121,7 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
         data: _values(step),
         borderColor: color ?? const ChartValue.constant(.solid(_blue)),
         pointRadius: 3,
-        fill: ChartFill.start,
+        fill: FillTarget.toStart,
       ),
     };
 

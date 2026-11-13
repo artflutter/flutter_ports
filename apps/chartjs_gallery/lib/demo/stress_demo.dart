@@ -227,10 +227,10 @@ enum StressPluginScene(
   fade('tooltip', 'fade', [StressChartCall.frame]),
 
   /// `fill.gaps` (Chart.js ADR 0040, Open 2): a gap every 12 points and the
-  /// fill `{target: FillBoundary.origin, above, below}` (the path clips).
+  /// fill `FillTarget.toOrigin.split(above:, below:)` (the path clips).
   gaps('fill', 'gaps', _drawAndUpdate),
 
-  /// `fill.stack`: stacked y values and `fill: FillBoundary.stack`.
+  /// `fill.stack`: stacked y values and `fill: FillTarget.toStacked`.
   stack('fill', 'stack', _drawAndUpdate),
 
   /// `fill.radar`: a radar with the fills `origin`, `-1` and `-1`.

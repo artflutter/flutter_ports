@@ -25,7 +25,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary;
+    show DatasetFill, ShapeFill, StackFill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
     show createBoundaryLine;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart'
@@ -50,19 +50,16 @@ Object? getTarget(FillerSource source) {
   final fill = source.fill;
   final line = source.line;
 
-  if (isFinite(fill)) {
-    // A fill index that is not a whole number names no dataset.
-    final index = fill as num;
-    return index == index.truncateToDouble()
-        ? _getLineByIndex(chart, index.toInt())
-        : null;
+  // DIVERGES(chartjs): adapt-fill-target-objects, a dataset index is a class.
+  if (fill case DatasetFill(:final index)) {
+    return _getLineByIndex(chart, index);
   }
 
-  if (fill == FillBoundary.stack) {
+  if (fill is StackFill) {
     return buildStackLine(source);
   }
 
-  if (fill == FillBoundary.shape) {
+  if (fill is ShapeFill) {
     return true;
   }
 

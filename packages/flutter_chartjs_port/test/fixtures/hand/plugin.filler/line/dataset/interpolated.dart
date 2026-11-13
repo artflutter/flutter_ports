@@ -4,6 +4,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
 /// The module loop makes the data with `Math.sin` and `Math.cos`. The smoke
@@ -41,19 +43,22 @@ Map<String, Object?> fixture() {
             'borderColor': 'rgba(255, 0, 0, 0.5)',
             'backgroundColor': 'rgba(255, 0, 0, 0.25)',
             'data': data1,
-            'fill': false,
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            'fill': FillTarget.none,
           },
           <String, Object?>{
             'borderColor': 'rgba(0, 0, 255, 0.5)',
             'backgroundColor': 'rgba(0, 0, 255, 0.25)',
             'data': data2,
-            'fill': 0,
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            'fill': const FillTarget.toDataset(0),
           },
           <String, Object?>{
             'borderColor': 'rgba(0, 255, 0, 0.5)',
             'backgroundColor': 'rgba(0, 255, 0, 0.25)',
             'data': data3,
-            'fill': 1,
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            'fill': const FillTarget.toDataset(1),
           },
         ],
       },

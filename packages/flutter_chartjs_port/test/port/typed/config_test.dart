@@ -239,7 +239,7 @@ void main() {
               'borderColor': const ChartPaint.solid(
                 native_ui.Color.fromRGBO(54, 162, 235, 1),
               ),
-              'fill': false,
+              'fill': FillTarget.none,
             },
           ],
         },

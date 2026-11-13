@@ -3,6 +3,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -40,7 +41,8 @@ Map<String, Object?> fixture() => <String, Object?>{
                 ? '#00ff00'
                 : '#ff00ff';
           },
-          'fill': true,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin,
         },
         'point': <String, Object?>{'backgroundColor': '#0000ff', 'radius': 10},
       },

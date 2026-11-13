@@ -4,7 +4,9 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
@@ -24,11 +26,11 @@ Map<String, Object?> fixture() => <String, Object?>{
           'spanGaps': true,
           'borderColor': 'blue',
           'pointRadius': 0,
-          'fill': <String, Object?>{
-            'target': 1,
-            'below': 'rgba(255, 0, 0, 0.4)',
-            'above': 'rgba(53, 221, 53, 0.4)',
-          },
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': const FillTarget.toDataset(1).split(
+            above: nativeFixturePaint('rgba(53, 221, 53, 0.4)'),
+            below: nativeFixturePaint('rgba(255, 0, 0, 0.4)'),
+          ),
         },
         <String, Object?>{
           'data': <Object?>[400, 200, 400, 200],

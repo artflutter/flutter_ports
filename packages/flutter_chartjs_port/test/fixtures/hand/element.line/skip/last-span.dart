@@ -3,6 +3,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
@@ -17,7 +19,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': double.nan, 'y': -5},
           ],
           'borderColor': 'red',
-          'fill': true,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin,
           'spanGaps': true,
           'tension': 0,
         },

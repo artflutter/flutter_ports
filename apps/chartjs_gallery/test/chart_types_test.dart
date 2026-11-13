@@ -432,7 +432,7 @@ void main() {
     final dataset =
         (readByName(chart.data, 'datasets')! as List<Object?>).single!
             as Map<Object?, Object?>;
-    expect(dataset['fill'], FillBoundary.origin);
+    expect(dataset['fill'], FillTarget.toOrigin);
     expect(dataset['data'], [
       97.81,
       -42.3,
@@ -461,11 +461,11 @@ void main() {
     // the x64 Node.js (the config of line-boundaries.md:95-113 with each fill
     // value) gave the title `Fill: <value>` and `meta.$filler.fill` `<value>`
     // for `origin`, `start`, `end` and `false`.
-    const fills = <String, Object>{
-      'origin': FillBoundary.origin,
-      'start': FillBoundary.start,
-      'end': FillBoundary.end,
-      'false': false,
+    const fills = <String, FillTarget>{
+      'origin': FillTarget.toOrigin,
+      'start': FillTarget.toStart,
+      'end': FillTarget.toEnd,
+      'false': FillTarget.none,
     };
     expect([for (final v in area.variants) v.key], fills.keys.toList());
     late ChartTypePageState state;

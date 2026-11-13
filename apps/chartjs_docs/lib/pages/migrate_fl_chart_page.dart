@@ -56,7 +56,7 @@ DocPageContent flChartMigrationPage() => migrationPage(
     ('isStepLineChart', '`stepped`'),
     ('dotData', '`pointRadius`, `pointStyle`, the point colors'),
     ('belowBarData, aboveBarData', '`fill` and `backgroundColor`'),
-    ('betweenBarsData', '`fill: ChartFill.dataset(i)`'),
+    ('betweenBarsData', '`fill: FillTarget.toDataset(i)`'),
     ('shadow', '`shadow: ChartShadow(...)`'),
     ('dashArray', '`borderDash`'),
     ('minX, maxX, minY, maxY', '`min` and `max` of `LinearAxis`'),
@@ -133,7 +133,7 @@ const List<(List<String>, Widget)> _samples = [
   (
     [
       'The fill between two lines of `betweenBarsData` is '
-          '`fill: ChartFill.dataset(i)`.',
+          '`fill: FillTarget.toDataset(i)`.',
     ],
     Sample7(),
   ),

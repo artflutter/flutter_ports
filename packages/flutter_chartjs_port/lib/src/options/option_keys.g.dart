@@ -47,9 +47,6 @@ enum OptionKey(
   /// The key `_scriptable`.
   descScriptable('_scriptable'),
 
-  /// The key `above`.
-  above('above'),
-
   /// The key `active`.
   active('active'),
 
@@ -169,9 +166,6 @@ enum OptionKey(
 
   /// The key `beginAtZero`.
   beginAtZero('beginAtZero'),
-
-  /// The key `below`.
-  below('below'),
 
   /// The key `bodyAlign`.
   bodyAlign('bodyAlign'),
@@ -839,9 +833,6 @@ enum OptionKey(
   /// The key `suggestedMin`.
   suggestedMin('suggestedMin'),
 
-  /// The key `target`.
-  target('target'),
-
   /// The key `tension`.
   tension('tension'),
 
@@ -934,9 +925,6 @@ enum OptionKey(
 
   /// The key `usePointStyle`.
   usePointStyle('usePointStyle'),
-
-  /// The key `value`.
-  value('value'),
 
   /// The key `visible`.
   visible('visible'),

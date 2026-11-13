@@ -32,9 +32,10 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ElementOptionsByTypeScope,
         LineOptionsScope,
         PointOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
@@ -260,7 +261,7 @@ final class const LineElementStyle({
 
   /// The fill of the area under or between the lines: `fill`. The default
   /// is no fill.
-  final ChartFill? fill,
+  final FillTarget? fill,
 
   /// The form of a stepped line: `stepped`, a [SteppedLine] (row
   /// `adapt-stepped-line-enum`). Dart `null`, the default, draws no steps.
@@ -290,7 +291,7 @@ final class const LineElementStyle({
     List<double>? borderDash,
     StrokeCap? borderCapStyle,
     StrokeJoin? borderJoinStyle,
-    ChartFill? fill,
+    FillTarget? fill,
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
     Map<String, Object?>? extra,
@@ -319,7 +320,7 @@ final class const LineElementStyle({
     put(scope, OptionKey.borderDash, numberList(borderDash));
     put(scope, OptionKey.borderCapStyle, borderCapStyle);
     put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
-    put(scope, OptionKey.fill, fill?.optionValue);
+    put(scope, OptionKey.fill, fill);
     put(scope, OptionKey.stepped, stepped);
     put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
     return mergeExtra(scope, extra);

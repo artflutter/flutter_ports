@@ -22,7 +22,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'y': 9, 'x': 18},
           ],
           'borderColor': 'red',
-          'fill': false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
         },
         <String, Object?>{
           'data': <Object?>[
@@ -34,7 +35,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           ],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target
           // value.
-          'fill': const RelativeFill(-1),
+          'fill': FillTarget.toPrevious,
           'borderColor': 'blue',
           'backgroundColor': 'rgba(255, 200, 0, 0.5)',
         },

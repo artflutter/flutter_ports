@@ -2,12 +2,15 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' show Color;
+
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// Chart.js ADR 0052, section 7: the constants and the option value of each
-// value type of lib/src/typed/values.dart, `==` of equal values and the dot
-// shorthands. An interaction mode is an `InteractionMode` object of the core.
+// Chart.js ADR 0052, section 7: the constants of the value types of the core
+// in the typed API, `==` of equal values and the dot shorthands. An
+// interaction mode is an `InteractionMode` object of the core, and a fill a
+// `FillTarget` (Chart.js ADR 0140).
 //
 // VM only: the test imports the app library, which imports dart:ui.
 
@@ -56,41 +59,59 @@ void main() {
     });
   });
 
-  group('ChartFill', () {
-    test('the boundaries and none', () {
-      const fills = <ChartFill>[.origin, .start, .end, .stack, .shape, .none];
-      expect(
-        [for (final f in fills) f.optionValue],
-        [...FillBoundary.values, false],
-      );
-    });
-
-    test('an absolute dataset index is the number', () {
-      expect(const ChartFill.dataset(0).optionValue, 0);
-      expect(const ChartFill.dataset(2).optionValue, 2);
-    });
-
-    test('a relative index is a RelativeFill', () {
-      expect(ChartFill.relative(1).optionValue, const RelativeFill(1));
-      expect(ChartFill.relative(-1).optionValue, const RelativeFill(-1));
-      expect(ChartFill.relative(-12).optionValue, const RelativeFill(-12));
-    });
-
-    test('a value is a new Map {value: n} at each read', () {
-      const fill = ChartFill.value(25);
-      final first = fill.optionValue;
-      expect(first, <String, Object?>{'value': 25});
-      expect(first, isA<Map<String, Object?>>());
-      expect(fill.optionValue, isNot(same(first)));
+  group('FillTarget', () {
+    // Chart.js ADR 0140: each value of `fill` is a FillTarget, and the dot
+    // shorthands give the members.
+    test('the members give the forms of the option', () {
+      const fills = <FillTarget>[
+        .none,
+        .toOrigin,
+        .toStart,
+        .toEnd,
+        .toStacked,
+        .shape,
+        .toPrevious,
+        .toNext,
+      ];
+      expect(fills.map((f) => f.runtimeType), [
+        NoFill,
+        OriginFill,
+        StartFill,
+        EndFill,
+        StackFill,
+        ShapeFill,
+        RelativeFill,
+        RelativeFill,
+      ]);
+      expect(FillTarget.toPrevious, FillTarget.toRelative(_runtime(-1)));
+      expect(FillTarget.toNext, FillTarget.toRelative(_runtime(1)));
+      expect(const FillTarget.toDataset(2), const DatasetFill(2));
+      expect(const FillTarget.toValue(25), const ValueFill(25));
     });
 
     test('equal fills are ==, others are not', () {
-      final value = ChartFill.value(_runtime(25));
-      expect(value, const ChartFill.value(25));
-      expect(value.hashCode, const ChartFill.value(25).hashCode);
-      expect(value, isNot(const ChartFill.value(26)));
-      expect(ChartFill.relative(_runtime(1)), ChartFill.relative(1));
-      expect(ChartFill.dataset(_runtime(1)), isNot(ChartFill.relative(1)));
+      final value = FillTarget.toValue(_runtime(25));
+      expect(value, const FillTarget.toValue(25));
+      expect(value.hashCode, const FillTarget.toValue(25).hashCode);
+      expect(value, isNot(const FillTarget.toValue(26)));
+      expect(FillTarget.toRelative(_runtime(1)), FillTarget.toNext);
+      expect(FillTarget.toDataset(_runtime(1)), isNot(FillTarget.toNext));
+    });
+
+    test('a split keeps its target and its colors', () {
+      const red = ChartPaint.solid(Color(0xFFFF0000));
+      final split = FillTarget.toOrigin.split(above: red);
+      expect(split, isA<SplitFill>());
+      split as SplitFill;
+      expect(split.target, FillTarget.toOrigin);
+      expect(split.above, red);
+      expect(split.below, isNull);
+      expect(split, FillTarget.toOrigin.split(above: red));
+      // A split of a split keeps the target: it never holds a split.
+      final again = split.split(below: red) as SplitFill;
+      expect(again.target, FillTarget.toOrigin);
+      expect(again.above, isNull);
+      expect(again.below, red);
     });
   });
 

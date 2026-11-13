@@ -2,7 +2,7 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, FillTarget;
 
 /// The radar chart of `docs/charts/radar.md:7-61`, with each key and value
 /// of the docs block.
@@ -27,7 +27,7 @@ Map<String, Object?> radarConfig() => <String, Object?>{
       <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0, 55.0, 40.0],
-        'fill': true,
+        'fill': FillTarget.toOrigin,
         'backgroundColor': const ChartPaint.solid(
           ui.Color.fromRGBO(255, 99, 132, 0.2),
         ),
@@ -48,7 +48,7 @@ Map<String, Object?> radarConfig() => <String, Object?>{
       <String, Object?>{
         'label': 'My Second Dataset',
         'data': <Object?>[28.0, 48.0, 40.0, 19.0, 96.0, 27.0, 100.0],
-        'fill': true,
+        'fill': FillTarget.toOrigin,
         'backgroundColor': const ChartPaint.solid(
           ui.Color.fromRGBO(54, 162, 235, 0.2),
         ),

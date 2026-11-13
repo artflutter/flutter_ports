@@ -867,7 +867,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       the legend title, hold the enum `ChartAlign` (`start`, `center`, `end`) of the pure
       `lib/src/types/align.dart` (row `adapt-chart-align-enum`), also in a raw config. The
       helpers `alignStartEnd` and `toLeftRightCenter` take a `ChartAlign?`. The typed API takes
-      the same enum; `values.dart` has no `ChartAlign`. The text align of the legend labels is
+      the same enum. The text align of the legend labels is
       the Flutter `TextAlign`, as each text align (below).
     - The `xAlign` and `yAlign` of the tooltip (the options, the model and `TooltipPosition`) hold
       the enums `TooltipXAlign` and `TooltipYAlign` of `lib/src/types/align.dart` (row
@@ -915,11 +915,22 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `x`, `y` or `r` still gives its axis. An axis letter stops a debug build. A compare with
       upstream JSON text puts a marker on both sides (`withAxisMarkers` of
       `test/support/axis_json.dart`).
-    - The option `fill` holds a number, a boolean, an object `{value}`, a `FillBoundary`
-      (`origin`, `start`, `end`, `stack`, `shape`) or a `RelativeFill(offset)` of the pure
-      `lib/src/plugins/fill_target.dart` (row `adapt-fill-target-objects`), also in a raw
-      config: `_decodeFill` parses no text, and a text stops a debug build. The typed
-      `ChartFill` holds these values (`ChartFill.relative` is not `const`).
+    - The option `fill` holds a `FillTarget` of the pure `lib/src/plugins/fill_target.dart`
+      (Chart.js ADR 0140, row `adapt-fill-target-objects`), also in a raw config:
+      `FillTarget.none` (`false`), `toOrigin` (`true` and `'origin'`), `toStart`, `toEnd`,
+      `toStacked`, `shape`, `toDataset(i)` (a number), `toRelative(n)`, `toPrevious` and
+      `toNext` (`'+n'` and `'-n'`), `toValue(v)` (`{value}`) and `target.split(above:,
+      below:)` (`{target, above, below}`, the class `SplitFill`; a split never holds a split).
+      `lib/chartjs.dart` exports the class and its subclasses. The decoded fill of a
+      `FillerSource` is a `FillTarget` too, and the filler matches the subclasses; a boolean,
+      a number, a Map or a text stops a debug build (`FillTarget.of`), and Dart `null` is no
+      fill. `fillTargetTruthy` is the JS truthiness (`none` and `toDataset(0)` are falsy). The
+      typed API takes the same object (`ChartFill` and `values.dart` are gone). In the tests,
+      the generators write the `FillTarget` of each fill (`tool/reference/fill_target.mjs`), a
+      split fill takes its colors from `nativeFixturePaint` of `chartjs_test_utils` (`pure.dart`),
+      a JSON text compare puts a marker on both sides (`withFillMarkers` of
+      `test/support/fill_json.dart`), and the 18 data fixtures of the moment skips take
+      `FillTarget.none` for their `fill: false` (`nativeFixtureFalseFills`).
     - The option `pointStyle` holds a `PointStyle` or `false` (row `adapt-point-style-objects`),
       also in a raw config: an object with the method `draw(ctx, x:, y:, radius:, rad:,
       rotated:, width:, borderWidth:)`. The base classes `PointStyle` and `PathPointStyle` (the
@@ -1179,7 +1190,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 70 names. 26 of them are the classes of
+    `typed.dart` is its export list of 69 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1210,8 +1221,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `AxisTicks`, `AxisGrid` and `AxisTitle`.
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element
-    styles. `values.dart` has the name types: extension types with `const` constants, for the dot
-    shorthands. `callbacks.dart` has `ChartScript` and the views with `int` indexes;
+    styles. `callbacks.dart` has `ChartScript` and the views with `int` indexes;
     `ChartContext` is a view over the typed contexts. The event callbacks take the function types
     of the core (Chart.js ADR 0130). Each
     config class is `@immutable` and `final`, with a `const` constructor, `copyWith`, and `==`
@@ -1317,12 +1327,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (248 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (355 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
-    `cubicInterpolationMode`, the 25 with `pointStyle`, the 11 with a relative `fill` as text,
-    the 8 with a length and the 35 with an axis letter) also has a hand port, of `<path>.js` or
+    `cubicInterpolationMode`, the 25 with `pointStyle`, the 142 with a `fill` (Chart.js ADR 0140;
+    the other 18 are moment skips), the 8 with a length and the 35 with an axis letter) also has
+    a hand port, of `<path>.js` or
     `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.
@@ -1345,7 +1356,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0126. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0140. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1456,6 +1467,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0139 (the dataset option `shadow` holds a `ChartShadow`) is accepted (2026-11-13):
       its code passes the tests. It supersedes items 2-5 of Chart.js ADR 0107 and its rejected
       alternatives of a nested `shadow` object and of new schema keys.
+      Chart.js ADR 0140 (the option `fill` holds a `FillTarget`) is accepted (2026-11-13): its code
+      passes the tests. It supersedes the `ChartFill` parts of Chart.js ADR 0052 §1 and the type of
+      `FillerSource.fill` and the `source.fill != false` test of Chart.js ADR 0040 §6.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of

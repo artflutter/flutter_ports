@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart'
     show LineElement;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget, NoFill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart'
     show pointsFromSegments;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
@@ -56,6 +58,7 @@ types.LineElement? createBoundaryLine(
 ///
 /// `source && source.fill !== false`: the port writes only Dart `null` and
 /// a [FillerSource] into `meta.$filler`, and an absent property reads
-/// `undefined` (Chart.js ADR 0040, section 6).
+/// `undefined` (Chart.js ADR 0040, section 6). The `false` of a decoded fill
+/// is [FillTarget.none] (row `adapt-fill-target-objects`).
 bool shouldApplyFill(Object? source) =>
-    source is FillerSource && source.fill != false;
+    source is FillerSource && source.fill is! NoFill;

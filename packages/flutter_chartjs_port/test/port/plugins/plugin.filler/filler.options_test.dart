@@ -4,10 +4,10 @@
 // lib/src/plugins/plugin.filler/filler.options.dart without a chart. The
 // expected values are the values of the spec (plugin.filler.tests.js:51-297)
 // and of the Node.js run of the pinned source files of
-// tool/reference/filler_target_reference.mjs (Node.js v24.12.0 on x64, the
-// cases `decodeFill ...` of filler_target_reference.dart): `'-0'`, `[]`,
-// NaN, Infinity, `'+1'`, `{value: NaN}` and `{target: 'origin'}`, with the
-// target values of the port for the texts (row adapt-fill-target-objects).
+// tool/reference/filler_target_reference.mjs (the cases `decodeFill ...` of
+// filler_target_reference.dart): `'-0'`, `'+1'`, `{value: NaN}` and
+// `{target: 'origin'}`, with the FillTarget of the port for each value
+// (Chart.js ADR 0140, row adapt-fill-target-objects).
 // filler.target_test.dart compares all the cases of that run. The file is
 // a pure layer test: test:web runs it too.
 
@@ -15,8 +15,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary, RelativeFill;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
@@ -25,7 +24,7 @@ import 'package:test/test.dart';
 
 /// `_decodeFill` of a line whose `fill` option is [fill] (absent for
 /// [undefined]) and whose `backgroundColor` is [backgroundColor].
-Object _decode(
+FillTarget _decode(
   Object? fill, {
   int index = 1,
   double count = 4,
@@ -49,7 +48,7 @@ final class _Chart() implements types.Chart {
 }
 
 /// The sources of the fills [fills] with the visibility [visible].
-List<FillerSource?> _sources(List<Object> fills, List<bool> visible) => [
+List<FillerSource?> _sources(List<FillTarget> fills, List<bool> visible) => [
   for (var i = 0; i < fills.length; i++)
     FillerSource(
       visible: visible[i],
@@ -62,80 +61,92 @@ List<FillerSource?> _sources(List<Object> fills, List<bool> visible) => [
     ),
 ];
 
+/// The fill to the dataset at [index].
+FillTarget _dataset(int index) => FillTarget.toDataset(index);
+
 void main() {
   group('decodeFill', () {
     test('the boundaries (plugin.filler.tests.js:51)', () {
-      expect(_decode(FillBoundary.origin), FillBoundary.origin);
-      expect(_decode(FillBoundary.start), FillBoundary.start);
-      expect(_decode(FillBoundary.end), FillBoundary.end);
+      expect(_decode(FillTarget.toOrigin), FillTarget.toOrigin);
+      expect(_decode(FillTarget.toStart), FillTarget.toStart);
+      expect(_decode(FillTarget.toEnd), FillTarget.toEnd);
     });
 
     test('the absolute dataset index (:66)', () {
-      expect(_decode(1, index: 0), 1);
-      expect(_decode(3), 3);
-      expect(_decode(0, index: 2), 0);
-      expect(_decode(2, index: 3), 2);
+      expect(_decode(_dataset(1), index: 0), _dataset(1));
+      expect(_decode(_dataset(3)), _dataset(3));
+      expect(_decode(_dataset(0), index: 2), _dataset(0));
+      expect(_decode(_dataset(2), index: 3), _dataset(2));
     });
 
     test('the relative dataset index (:82)', () {
-      expect(_decode(const RelativeFill(3), index: 0), 3);
-      expect(_decode(const RelativeFill(-1)), 0);
-      expect(_decode(const RelativeFill(1), index: 2), 3);
-      expect(_decode(const RelativeFill(-2), index: 3), 1);
+      expect(_decode(const FillTarget.toRelative(3), index: 0), _dataset(3));
+      expect(_decode(FillTarget.toPrevious), _dataset(0));
+      expect(_decode(FillTarget.toNext, index: 2), _dataset(3));
+      expect(_decode(const FillTarget.toRelative(-2), index: 3), _dataset(1));
     });
 
     test('true and false (:103)', () {
-      expect(_decode(true, index: 0), FillBoundary.origin);
-      expect(_decode(false), false);
+      expect(_decode(FillTarget.toOrigin, index: 0), FillTarget.toOrigin);
+      expect(_decode(FillTarget.none), FillTarget.none);
     });
 
     test('the self dataset index (:117)', () {
-      expect(_decode(0, index: 0), false);
-      expect(_decode(const RelativeFill(0)), false);
-      expect(_decode(const RelativeFill(0), index: 2), false);
-      expect(_decode(3, index: 3), false);
+      expect(_decode(_dataset(0), index: 0), FillTarget.none);
+      expect(_decode(const FillTarget.toRelative(0)), FillTarget.none);
+      expect(
+        _decode(const FillTarget.toRelative(0), index: 2),
+        FillTarget.none,
+      );
+      expect(_decode(_dataset(3), index: 3), FillTarget.none);
     });
 
     test('the out of bounds dataset index (:138)', () {
-      expect(_decode(-2, index: 0), false);
-      expect(_decode(4), false);
-      expect(_decode(const RelativeFill(-3), index: 2), false);
-      expect(_decode(const RelativeFill(1), index: 3), false);
+      expect(_decode(_dataset(-2), index: 0), FillTarget.none);
+      expect(_decode(_dataset(4)), FillTarget.none);
+      expect(
+        _decode(const FillTarget.toRelative(-3), index: 2),
+        FillTarget.none,
+      );
+      expect(_decode(FillTarget.toNext, index: 3), FillTarget.none);
     });
 
     test('the invalid values (:159)', () {
-      // A text is no fill target in the port (row adapt-fill-target-objects):
-      // the invalid texts of the spec are not here.
-      for (final fill in <Object?>[
-        3.3,
-        -4.4,
-        double.nan,
-        double.infinity,
-        null,
-        <Object?>[],
-      ]) {
-        expect(_decode(fill), false, reason: '$fill');
-      }
+      // The texts, the floats, the infinities and the array of the spec are
+      // no FillTarget (Chart.js ADR 0140): a debug build stops on them. A
+      // NaN value and `null` stay.
+      expect(_decode(const FillTarget.toValue(double.nan)), FillTarget.none);
+      expect(_decode(null), FillTarget.none);
     });
 
     test('the values of the Node.js run', () {
-      expect(_decode(const RelativeFill(0)), false);
-      expect(_decode(<Object?>[]), false);
-      expect(_decode(double.nan), false);
-      expect(_decode(double.infinity), false);
-      expect(_decode(const RelativeFill(1)), 2);
-      expect(_decode(<String, Object?>{'value': double.nan}), false);
+      expect(_decode(const FillTarget.toRelative(0)), FillTarget.none);
+      expect(_decode(FillTarget.toNext), _dataset(2));
       expect(
-        _decode(<String, Object?>{'target': FillBoundary.origin}),
-        FillBoundary.origin,
+        _decode(const FillTarget.toValue(double.nan).split()),
+        FillTarget.none,
       );
+      expect(_decode(FillTarget.toOrigin.split()), FillTarget.toOrigin);
     });
 
-    test('an option object with a value is the object itself', () {
-      final fill = <String, Object?>{'value': 2};
+    test('a value fill is the target itself', () {
+      const fill = FillTarget.toValue(2);
       expect(_decode(fill), same(fill));
-      final target = <String, Object?>{'value': 3};
-      expect(_decode(<String, Object?>{'target': target}), same(target));
+      const target = FillTarget.toValue(3);
+      expect(_decode(target.split()), same(target));
+    });
+
+    test('a split fill keeps its target and gives no split', () {
+      final split = FillTarget.toNext.split();
+      expect(split.split(), isA<SplitFill>());
+      expect((split.split() as SplitFill).target, FillTarget.toNext);
+      expect(_decode(split, index: 0), _dataset(1));
+    });
+
+    test('a value that is no FillTarget stops a debug build', () {
+      for (final fill in <Object>[true, false, 1, 1.5, 'origin', <Object?>[]]) {
+        expect(() => _decode(fill), throwsA(isA<AssertionError>()));
+      }
     });
 
     test('no fill gives the backgroundColor test (filler.options.js:125)', () {
@@ -144,24 +155,24 @@ void main() {
           undefined,
           backgroundColor: const ui.Color.fromRGBO(255, 0, 0, 1),
         ),
-        FillBoundary.origin,
+        FillTarget.toOrigin,
       );
-      expect(_decode(undefined), false);
-      expect(_decode(undefined, backgroundColor: ''), false);
+      expect(_decode(undefined), FillTarget.none);
+      expect(_decode(undefined, backgroundColor: ''), FillTarget.none);
     });
   });
 
   group('resolveTarget', () {
     // plugin.filler.tests.js:197-269: the decoded fills of the spec chart.
-    const fills = <Object>[
-      FillBoundary.start,
-      0.0,
-      1.0,
-      1.0,
-      5.0,
-      7.0,
-      5.0,
-      FillBoundary.end,
+    final fills = <FillTarget>[
+      FillTarget.toStart,
+      _dataset(0),
+      _dataset(1),
+      _dataset(1),
+      _dataset(5),
+      _dataset(7),
+      _dataset(5),
+      FillTarget.toEnd,
     ];
     const visible = [false, false, false, false, true, true, true, false];
 
@@ -173,14 +184,14 @@ void main() {
             resolveTarget(sources, i, true),
         ],
         [
-          FillBoundary.start,
-          FillBoundary.start,
-          FillBoundary.start,
-          FillBoundary.start,
-          5,
-          FillBoundary.end,
-          5,
-          FillBoundary.end,
+          FillTarget.toStart,
+          FillTarget.toStart,
+          FillTarget.toStart,
+          FillTarget.toStart,
+          _dataset(5),
+          FillTarget.toEnd,
+          _dataset(5),
+          FillTarget.toEnd,
         ],
       );
     });
@@ -194,21 +205,22 @@ void main() {
 
     test('the recursive propagation (:271)', () {
       final sources = _sources(
-        const [2.0, 0.0, 1.0, 1.0],
+        [_dataset(2), _dataset(0), _dataset(1), _dataset(1)],
         const [false, false, false, true],
       );
-      expect(
-        [for (var i = 0; i < 4; i++) resolveTarget(sources, i, true)],
-        [false, false, false, false],
-      );
+      expect([
+        for (var i = 0; i < 4; i++) resolveTarget(sources, i, true),
+      ], List.filled(4, FillTarget.none));
     });
 
     test('a null source or an index past the end gives false', () {
       // Dataset 1 fills to the null source 0, dataset 2 to the index 5.
-      final sources = _sources(const [0.0, 0.0, 5.0], const [true, true, true])
-        ..[0] = null;
-      expect(resolveTarget(sources, 1, true), false);
-      expect(resolveTarget(sources, 2, true), false);
+      final sources = _sources(
+        [_dataset(0), _dataset(0), _dataset(5)],
+        const [true, true, true],
+      )..[0] = null;
+      expect(resolveTarget(sources, 1, true), FillTarget.none);
+      expect(resolveTarget(sources, 2, true), FillTarget.none);
     });
   });
 }

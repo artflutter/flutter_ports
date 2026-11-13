@@ -2,7 +2,7 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, FillTarget;
 
 /// The mixed chart of `docs/charts/mixed.md:27-70`: a `scatter` chart with
 /// a `bar` and a `line` dataset, with each key and value of the docs block.
@@ -26,7 +26,7 @@ Map<String, Object?> mixedConfig() => <String, Object?>{
         'type': 'line',
         'label': 'Line Dataset',
         'data': <Object?>[50.0, 50.0, 50.0, 50.0],
-        'fill': false,
+        'fill': FillTarget.none,
         'borderColor': const ChartPaint.solid(
           ui.Color.fromRGBO(54, 162, 235, 1),
         ),

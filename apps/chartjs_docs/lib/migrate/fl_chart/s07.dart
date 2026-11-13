@@ -32,7 +32,7 @@ final ChartConfig _config = fills(
         pointRadius: 0,
         borderColor: const .constant(.solid(Fl.green)),
         backgroundColor: .constant(.solid(Fl.red.withValues(alpha: 0.5))),
-        fill: const ChartFill.dataset(1),
+        fill: const FillTarget.toDataset(1),
       ),
       const LineDataset(
         data: [7, 3, 4, 2, 3, 4, 5, 3, 1, 8, 1, 3],

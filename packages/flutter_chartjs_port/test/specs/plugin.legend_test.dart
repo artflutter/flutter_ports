@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -127,7 +128,7 @@ List<Object?> _lineDatasets() => <Object?>[
     ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     'pointStyle': const CrossRotPointStyle(),
-    'fill': false,
+    'fill': FillTarget.none,
     'data': <Object?>[],
   },
 ];

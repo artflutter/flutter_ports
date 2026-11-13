@@ -64,7 +64,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary;
+    show FillTarget;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
@@ -100,8 +100,8 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
         ..indexAxis = const RAxis()
         ..showLine = true
         ..elements = (ElementOptionsByTypeScope()
-          // DIVERGES(chartjs): adapt-fill-target-objects, the enum value.
-          ..line = (LineOptionsScope()..fill = FillBoundary.start));
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          ..line = (LineOptionsScope()..fill = FillTarget.toStart));
 
   /// controller.radar.js:26 `static overrides`, a typed scope of the kind
   /// `ChartOptions` (Chart.js ADR 0054 §3).

@@ -71,7 +71,7 @@ class _Sample3State() extends State<Sample3> {
           data: _values,
           borderColor: const .constant(.solid(Fl.red)),
           borderWidth: 4,
-          fill: .origin,
+          fill: .toOrigin,
           pointBackgroundColor: const .constant(.solid(Colors.white)),
           pointBorderColor: .constant(.solid(_dotStroke)),
           pointBorderWidth: 3,

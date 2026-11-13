@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -25,7 +26,7 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'elements': <String, Object?>{
-        'line': <String, Object?>{'fill': false},
+        'line': <String, Object?>{'fill': FillTarget.none},
         'point': <String, Object?>{
           'borderColor': '#00ff00',
           // DIVERGES(chartjs): adapt-point-style-objects, the style

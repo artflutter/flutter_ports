@@ -432,7 +432,7 @@ class FakeChart {
 /** The functions of the `{$fn: name}` markers. */
 const FUNCTIONS = {
   colorByIndex: (ctx) => (ctx.dataIndex === 1 ? 'red' : 'blue'),
-  typeIsDataset: (ctx) => (ctx.type === 'dataset' ? 75 : 0),
+  fillIsDataset: (ctx) => ({value: ctx.type === 'dataset' ? 75 : 0}),
 };
 
 /**
@@ -1265,7 +1265,7 @@ const SCENARIOS = [
     name: 'scriptable options',
     labels: ['a', 'b'],
     scales: [CATEGORY_X, LINEAR_Y],
-    datasets: [{data: [1, 2], backgroundColor: {$fn: 'colorByIndex'}, fill: {value: {$fn: 'typeIsDataset'}}}],
+    datasets: [{data: [1, 2], backgroundColor: {$fn: 'colorByIndex'}, fill: {$fn: 'fillIsDataset'}}],
     steps: [
       ['build'],
       ['elements', false],

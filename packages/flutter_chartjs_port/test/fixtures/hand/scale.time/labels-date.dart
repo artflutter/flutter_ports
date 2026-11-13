@@ -3,6 +3,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   DateTime newDateFromRef(int days) {
@@ -26,7 +28,8 @@ Map<String, Object?> fixture() {
           newDateFromRef(7),
           newDateFromRef(9),
         ],
-        'fill': false,
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        'fill': FillTarget.none,
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{

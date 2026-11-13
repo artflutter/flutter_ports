@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show fixtureSkips;
+import '../../support/fill_json.dart';
 
 /// The 36 pure data configs of FR Appendix C (Chart.js ADR 0029, section 9
 /// item 4), in manifest order. Each one skips in the `auto` group of its
@@ -216,6 +217,9 @@ Set<double> _named(Object? node) {
 /// Throws a [StateError] when the fixture has a `run` hook.
 Map<String, Object?> _load(FixtureSource source, String path) {
   final json = _toIcu(source.dataConfig(path));
+  // The fill of a twin is `false` or absent: its FillTarget (Chart.js ADR
+  // 0140).
+  nativeFixtureFalseFills(json);
   final config = json['config']! as Map<String, Object?>;
   final data = config['data']! as Map<String, Object?>;
   final datasets = (data['datasets'] as List<Object?>?)?.length ?? 0;

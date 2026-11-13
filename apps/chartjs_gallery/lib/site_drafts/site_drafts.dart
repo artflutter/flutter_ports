@@ -1086,7 +1086,7 @@ class _LiveChartState() extends State<_LiveChart> {
             backgroundColor: ChartValue.constant(
               ChartPaint.solid(widget.accent.withValues(alpha: 0.10)),
             ),
-            fill: ChartFill.origin,
+            fill: FillTarget.toOrigin,
             tension: 0.38,
             pointRadius: 3,
             borderWidth: 3,

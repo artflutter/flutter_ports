@@ -121,7 +121,18 @@ export 'package:flutter_chartjs_port/src/platform/native_event.dart'
 export 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
 export 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary, FillTarget, RelativeFill;
+    show
+        DatasetFill,
+        EndFill,
+        FillTarget,
+        NoFill,
+        OriginFill,
+        RelativeFill,
+        ShapeFill,
+        SplitFill,
+        StackFill,
+        StartFill,
+        ValueFill;
 export 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 export 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'

@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
@@ -18,6 +17,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -900,7 +900,7 @@ void main() {
           'data': <String, Object?>{
             'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
             'datasets': <Object?>[
-              <String, Object?>{'data': data, 'fill': true},
+              <String, Object?>{'data': data, 'fill': FillTarget.toOrigin},
             ],
           },
         });
@@ -933,7 +933,7 @@ void main() {
           'data': <String, Object?>{
             'labels': <Object?>['a', 'b', 'c'],
             'datasets': <Object?>[
-              <String, Object?>{'data': data, 'fill': true},
+              <String, Object?>{'data': data, 'fill': FillTarget.toOrigin},
             ],
           },
         });
@@ -1451,59 +1451,21 @@ void main() {
         expect(jsObjectIsFrozen(opts0), isFalse);
       });
 
-      testWidgets('should support nested scriptable options', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[100, 120, 130],
-                'fill': <String, Object?>{
-                  'value': (Object? ctx) =>
-                      jsGet(ctx, 'type') == 'dataset' ? 75 : 0,
-                },
-              },
-            ],
-          },
-        });
+      // The fill is a FillTarget (Chart.js ADR 0140): the object `{value}`
+      // with a function in it has no FillTarget, and a value fill holds a
+      // number. A scriptable fill returns its FillTarget, as
+      // test/fixtures/hand/controller.line/fill/scriptable.dart does.
+      test(
+        'should support nested scriptable options',
+        () {},
+        skip: 'diverges: adapt-fill-target-objects',
+      );
 
-        final controller = chart.getDatasetMeta(0).controller!;
-        final opts = controller.resolveDatasetElementOptions();
-        expect(
-          opts,
-          toEqualOptions(<String, Object?>{
-            'fill': <String, Object?>{'value': 75},
-          }),
-        );
-      });
-
-      testWidgets('should support nested scriptable defaults', (tester) async {
-        final line =
-            jsGet(jsGet(Chart.defaults, 'datasets'), 'line')! as JsObjectFace;
-        line['fill'] = <String, Object?>{
-          'value': (Object? ctx) => jsGet(ctx, 'type') == 'dataset' ? 75 : 0,
-        };
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[100, 120, 130],
-              },
-            ],
-          },
-        });
-
-        final controller = chart.getDatasetMeta(0).controller!;
-        final opts = controller.resolveDatasetElementOptions();
-        expect(
-          opts,
-          toEqualOptions(<String, Object?>{
-            'fill': <String, Object?>{'value': 75},
-          }),
-        );
-        line.jsDelete('fill');
-      });
+      test(
+        'should support nested scriptable defaults',
+        () {},
+        skip: 'diverges: adapt-fill-target-objects',
+      );
     });
 
     group('_resolveAnimations', () {

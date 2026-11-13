@@ -36,12 +36,13 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         PolarAreaControllerDatasetOptionsScope,
         RadarControllerDatasetOptionsScope,
         TooltipDatasetOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget;
 import 'package:flutter_chartjs_port/src/typed/chart_value.dart'
     show ChartValue;
 import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartKind;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis;
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
@@ -512,7 +513,7 @@ final class const BarDataset({
 ///
 /// A mixin of the library: each of the three classes declares the fields.
 base mixin _LineStyle on Dataset {
-  ChartFill? get fill;
+  FillTarget? get fill;
   double? get tension;
   List<double>? get borderDash;
   StrokeCap? get borderCapStyle;
@@ -532,7 +533,7 @@ base mixin _LineStyle on Dataset {
 
   /// Writes the keys of the line style into [scope].
   void _lowerLine(OptionScope scope) {
-    put(scope, OptionKey.fill, fill?.optionValue);
+    put(scope, OptionKey.fill, fill);
     put(scope, OptionKey.tension, tension);
     put(scope, OptionKey.borderDash, numberList(borderDash));
     put(scope, OptionKey.borderCapStyle, borderCapStyle);
@@ -624,7 +625,7 @@ final class const LineDataset({
   /// (`docs/charts/area.md`). The default is no fill. The colors plugin of
   /// Chart.js and the filler plugin read it.
   /// {@endtemplate}
-  @override final ChartFill? fill,
+  @override final FillTarget? fill,
 
   /// {@template flutter_chartjs_port.typed.tension}
   /// The Bézier curve tension of the line, from 0 (straight lines) to 1:
@@ -744,7 +745,7 @@ final class const LineDataset({
     String? yAxisID,
     String? stack,
     CartesianAxis? indexAxis,
-    ChartFill? fill,
+    FillTarget? fill,
     double? tension,
     List<double>? borderDash,
     StrokeCap? borderCapStyle,
@@ -871,7 +872,7 @@ final class const ScatterDataset({
   final String? stack,
 
   /// {@macro flutter_chartjs_port.typed.fill}
-  @override final ChartFill? fill,
+  @override final FillTarget? fill,
 
   /// {@macro flutter_chartjs_port.typed.tension}
   @override final double? tension,
@@ -947,7 +948,7 @@ final class const ScatterDataset({
     String? xAxisID,
     String? yAxisID,
     String? stack,
-    ChartFill? fill,
+    FillTarget? fill,
     double? tension,
     List<double>? borderDash,
     StrokeCap? borderCapStyle,
@@ -1599,7 +1600,7 @@ final class const RadarDataset({
   super.tooltipCallbacks,
 
   /// {@macro flutter_chartjs_port.typed.fill}
-  @override final ChartFill? fill,
+  @override final FillTarget? fill,
 
   /// {@macro flutter_chartjs_port.typed.tension}
   @override final double? tension,
@@ -1669,7 +1670,7 @@ final class const RadarDataset({
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
-    ChartFill? fill,
+    FillTarget? fill,
     double? tension,
     List<double>? borderDash,
     StrokeCap? borderCapStyle,

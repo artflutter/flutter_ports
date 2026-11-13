@@ -94,6 +94,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         BarOptionsScope,
         GenericDatasetOptionsScope,
         PointOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget, fillTargetTruthy;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
@@ -1221,7 +1223,8 @@ class DatasetController(
     meta.stacked = _isStacked(meta.vScale, meta);
     addElements();
 
-    if (jsTruthy(options.readKey(OptionKey.fill)) &&
+    // DIVERGES(chartjs): adapt-fill-target-objects, the truthiness of a class.
+    if (_fillTruthy(options.readKey(OptionKey.fill)) &&
         !chart.isPluginEnabled('filler')) {
       _consoleWarn(
         "Tried to use the 'fill' option without the 'Filler' plugin enabled. "
@@ -2699,3 +2702,11 @@ class DatasetController(
     _sync(['_insertElements', 0, items.length]);
   }
 }
+
+/// `!!options.fill` (core.datasetController.js:287): the JS truthiness of
+/// the value of the option `fill`, a [FillTarget] (row
+/// `adapt-fill-target-objects`). `undefined` and `null` are falsy.
+bool _fillTruthy(Object? fill) => switch (FillTarget.of(fill)) {
+  final FillTarget target => fillTargetTruthy(target),
+  null => false,
+};

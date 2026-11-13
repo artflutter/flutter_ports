@@ -300,8 +300,8 @@ abstract final class ShapeBits() {
   /// `pointStyle`: a `PointStyle`, the value of `pointStyle`.
   static const int pointStyle = 3200;
 
-  /// `fillTarget`: a `FillTarget` (a `FillBoundary` or a `RelativeFill`),
-  /// the text forms of `fill`.
+  /// `fillTarget`: a `FillTarget`, the value of `fill` (Chart.js ADR
+  /// 0140).
   static const int fillTarget = 3328;
 
   /// `radiusLength`: a `RadiusLength`, the doughnut `cutout` and `radius`.

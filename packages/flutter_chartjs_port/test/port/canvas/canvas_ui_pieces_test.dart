@@ -12,8 +12,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -1080,7 +1079,7 @@ void main() {
               ],
               'borderColor': const ChartPaint.solid(_blue),
               'backgroundColor': const ChartPaint.solid(_soft),
-              'fill': FillBoundary.origin,
+              'fill': FillTarget.toOrigin,
               'pointRadius': 0.0,
             },
           ],
@@ -1143,7 +1142,7 @@ void main() {
       // area ends on a whole pixel.
       const count = 2000;
       Chart chartOf({
-        Object fill = FillBoundary.origin,
+        Object fill = FillTarget.toOrigin,
         bool ticks = true,
         bool legend = false,
         bool gap = false,
@@ -1207,8 +1206,8 @@ void main() {
           in <(String, Chart Function(), int, bool)>[
             // The stroke and the fill.
             ('origin', chartOf, 2, true),
-            ('start', () => chartOf(fill: FillBoundary.start), 2, true),
-            ('end', () => chartOf(fill: FillBoundary.end), 2, true),
+            ('start', () => chartOf(fill: FillTarget.toStart), 2, true),
+            ('end', () => chartOf(fill: FillTarget.toEnd), 2, true),
             ('legend', () => chartOf(ticks: false, legend: true), 2, true),
             // The stroke and the fill of each of the two parts.
             ('gap', () => chartOf(gap: true), 3, true),

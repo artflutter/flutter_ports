@@ -69,17 +69,17 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
           <String, Object?>{
             'label': 'd0',
             'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
           <String, Object?>{
             'label': 'd1',
             'data': <Object?>[2.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': false,
+            'fill': FillTarget.none,
           },
           <String, Object?>{
             'label': 'd2',
             'data': <Object?>[3.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': false,
+            'fill': FillTarget.none,
           },
         ],
       },
@@ -531,17 +531,17 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
           <String, Object?>{
             'label': 'd0',
             'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
           <String, Object?>{
             'label': 'd1',
             'data': <Object?>[2.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': false,
+            'fill': FillTarget.none,
           },
           <String, Object?>{
             'label': 'd2',
             'data': <Object?>[3.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': false,
+            'fill': FillTarget.none,
           },
         ],
       },

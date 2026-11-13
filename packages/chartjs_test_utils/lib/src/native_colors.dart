@@ -16,8 +16,6 @@ import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary;
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
@@ -91,17 +89,7 @@ void nativeFixtureColors(Object? config) {
     if (value == false) return null;
     if (value is String) {
       if (value.isEmpty) return null;
-      final parsed = referenceColor(value);
-      if (!parsed.valid) return value;
-      final rgb = parsed.rgbaBytes!;
-      return ChartPaint.solid(
-        ui.Color.fromRGBO(
-          rgb.r.round(),
-          rgb.g.round(),
-          rgb.b.round(),
-          rgb.a / 255,
-        ),
-      );
+      return paintOfCss(value) ?? value;
     }
     if (value is List) return <Object?>[for (final item in value) color(item)];
     if (value is JsFunction || value is Function) {
@@ -191,12 +179,6 @@ void nativeFixtureColors(Object? config) {
       } else if (key == 'borderSkipped') {
         // The keyword form takes its enum (row adapt-border-skipped-enum).
         value[key] = _enumValue(BorderSkippedEdge.values, value[key]);
-      } else if ((key == 'fill' || (key == 'target' && owner == 'fill')) &&
-          value[key] is String) {
-        // A fill keyword takes its enum (row adapt-fill-target-objects). A
-        // relative index as text is no name: such a fixture is a hand port
-        // (Chart.js ADR 0115).
-        value[key] = _enumValue(FillBoundary.values, value[key]);
       } else if (key == 'drawTime' && owner == 'filler') {
         // The filler draw time takes its enum (row
         // adapt-filler-draw-time-enum).

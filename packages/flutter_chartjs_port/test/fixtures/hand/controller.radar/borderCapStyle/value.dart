@@ -5,6 +5,7 @@ library;
 import 'dart:ui' show StrokeCap;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The upstream config, with native padding values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.
@@ -33,7 +34,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderCapStyle': StrokeCap.butt,
           'borderColor': '#00ff00',
           'borderWidth': 32.0,
-          'fill': false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
         },
         'point': <String, Object?>{'radius': 10.0},
       },

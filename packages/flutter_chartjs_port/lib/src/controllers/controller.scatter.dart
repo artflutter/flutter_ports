@@ -77,6 +77,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LineControllerDatasetOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
@@ -252,7 +254,8 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         ..datasetElementType = false
         ..dataElementType = 'point'
         ..showLine = false
-        ..fill = false;
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        ..fill = FillTarget.none;
 
   /// controller.scatter.js:23 `static overrides`, a typed scope of the kind
   /// `ChartOptions` (Chart.js ADR 0054 §3).
