@@ -35,26 +35,7 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart'
-    show DoughnutController;
-import 'package:flutter_chartjs_port/src/controllers/controller.polarArea.dart'
-    show PolarAreaController;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show chartThemeOf;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsIsObjectLike, jsSet;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ColorsOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show ColorsPluginOptions, optionOf;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/internal.dart';
 import 'package:meta/meta.dart';
 
 /// plugin.colors.ts:14 `BORDER_COLORS`.
@@ -224,9 +205,7 @@ int _colorizePolarAreaDataset(Object? dataset, int i) {
 ///
 /// `instanceof DoughnutController` is the Dart type test. `PieController`
 /// extends [DoughnutController], as upstream.
-void Function(Object? dataset, int datasetIndex) _getColorizer(
-  types.Chart chart,
-) {
+void Function(Object? dataset, int datasetIndex) _getColorizer(Chart chart) {
   var i = 0;
 
   return (dataset, datasetIndex) {
@@ -321,7 +300,7 @@ bool _isDefaultColor(Object? input) {
 /// `chart.config.data.datasets` is a read of the data of the user, by name.
 /// The options of the config are read through their typed keys
 /// ([optionOf]), by name for a Map of the user.
-void _beforeLayout(types.Chart chart, Object _, Object options) {
+void _beforeLayout(Chart chart, Object _, Object options) {
   final opts = ColorsPluginOptions(options);
   if (!opts.enabled) {
     return;
