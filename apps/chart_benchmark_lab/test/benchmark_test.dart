@@ -110,11 +110,13 @@ void main() {
   });
   test('zoom applies to the types with an x axis, on each library', () {
     for (final type in ChartType.values) {
+      // The sankey chart zooms its hidden x scale, the node columns.
       final xAxis = switch (type) {
         ChartType.line ||
         ChartType.bar ||
         ChartType.scatter ||
-        ChartType.bubble => true,
+        ChartType.bubble ||
+        ChartType.sankey => true,
         _ => false,
       };
       expect(type.hasZoom, xAxis, reason: type.name);

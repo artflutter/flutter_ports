@@ -69,6 +69,9 @@ enum ChartLibrary(
   /// - Syncfusion through `ZoomPanBehavior` of `SfCartesianChart`, with
   ///   `ZoomMode.x`.
   ///
+  /// The sankey chart of the Chart.js port zooms and pans its hidden x
+  /// scale, the scale of the node columns, in the same way.
+  ///
   /// A pie, a doughnut, a polar area and a radar have no x axis, and the
   /// settings hide the toggle for them.
   ///
@@ -78,8 +81,9 @@ enum ChartLibrary(
   /// - a trackpad pinch zooms fl_chart and Graphic;
   /// - Syncfusion reads each pan-zoom step as a wheel step by its vertical
   ///   pan: a two-finger vertical scroll zooms, and a pinch only zooms out;
-  /// - the host of the Chart.js port maps no pan-zoom event (Chart.js ADR
-  ///   0108 Open 5): a trackpad does not zoom or pan it.
+  /// - the host of the Chart.js port gives a trackpad scroll and pinch as
+  ///   `wheel` events, as Chrome does (Chart.js ADR 0137), while
+  ///   [BenchmarkConfig.trackpad] is on: a scroll and a pinch zoom it.
   bool zoomsWith(ChartType type) => type.hasZoom;
 
   /// Whether this library can run [config] with its public API.
@@ -166,9 +170,14 @@ enum ChartType(
   /// option of its typed datasets, and a sankey chart has no typed dataset.
   bool get hasShadow => this != sankey;
 
-  /// Whether zoom and pan apply: the types with an x axis.
+  /// Whether zoom and pan apply: the types with an x axis, and the sankey
+  /// chart, whose hidden x scale places the node columns.
   bool get hasZoom =>
-      this == line || this == bar || this == scatter || this == bubble;
+      this == line ||
+      this == bar ||
+      this == scatter ||
+      this == bubble ||
+      this == sankey;
 }
 
 /// Public-widget workload; these are not internal renderer draw-only calls.
@@ -249,6 +258,12 @@ class const BenchmarkConfig({
   /// ([zooms]). Each test starts with a new chart at the full range.
   final bool zoom = false,
 
+  /// Whether the trackpad of the Chart.js port gives `wheel` events
+  /// (`ChartView.trackpadGestures`, Chart.js ADR 0137): a two-finger scroll
+  /// and a pinch then zoom it. The other libraries read the trackpad in
+  /// their own way.
+  final bool trackpad = true,
+
   /// Common overlay text count, outside each library's renderer.
   final int overlayLabels = 0,
 
@@ -276,6 +291,7 @@ class const BenchmarkConfig({
     bool? shadow,
     bool? shadowBlur,
     bool? zoom,
+    bool? trackpad,
     int? overlayLabels,
     bool? rotateLabels,
     int? seed,
@@ -293,6 +309,7 @@ class const BenchmarkConfig({
     shadow: shadow ?? this.shadow,
     shadowBlur: shadowBlur ?? this.shadowBlur,
     zoom: zoom ?? this.zoom,
+    trackpad: trackpad ?? this.trackpad,
     overlayLabels: overlayLabels ?? this.overlayLabels,
     rotateLabels: rotateLabels ?? this.rotateLabels,
     seed: seed ?? this.seed,
@@ -314,6 +331,7 @@ class const BenchmarkConfig({
       other.shadow == shadow &&
       other.shadowBlur == shadowBlur &&
       other.zoom == zoom &&
+      other.trackpad == trackpad &&
       other.overlayLabels == overlayLabels &&
       other.rotateLabels == rotateLabels &&
       other.seed == seed;
@@ -333,6 +351,7 @@ class const BenchmarkConfig({
     shadow,
     shadowBlur,
     zoom,
+    trackpad,
     overlayLabels,
     rotateLabels,
     seed,
@@ -362,6 +381,7 @@ class const BenchmarkConfig({
     if (shadows) 'shadow': shadowBlur ? 'blurred' : 'sharp',
     // The same rule for zoom.
     if (zooms) 'zoom': true,
+    if (zooms && !trackpad) 'trackpad': false,
     'overlayLabels': overlayLabels,
     'rotateLabels': overlayLabels > 0 && rotateLabels,
     'nativeTransitions': false,

@@ -753,6 +753,15 @@ class _BenchmarkPageState()
               (v) => controller.configure(config.copyWith(zoom: v)),
               hint: _zoomHint(config),
             ),
+          if (config.zooms)
+            _toggle(
+              'Trackpad gestures',
+              'trackpad',
+              config.trackpad,
+              !locked,
+              (v) => controller.configure(config.copyWith(trackpad: v)),
+              hint: 'Chart.js port: a two-finger scroll and a pinch zoom',
+            ),
           if (config.type.hasShadow)
             _toggle(
               'Shadow',

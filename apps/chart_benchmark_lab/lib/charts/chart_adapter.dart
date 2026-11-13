@@ -105,10 +105,10 @@ class const BenchmarkChart({
   // - Syncfusion: its behavior reads each pan-zoom update as a wheel step by
   //   the sign of the vertical pan (zooming.dart:429, :666): a vertical scroll
   //   zooms, and a pinch, which has no vertical pan, only zooms out;
-  // - the Chart.js port: its host maps no pan-zoom event to a DOM event
-  //   (Chart.js ADR 0108 Open 5, seam H27 of the zoom port), so a trackpad
-  //   does not zoom or pan it.
-  // A trackpad scroll over the chart also scrolls the page, as anywhere else.
+  // - the Chart.js port: its host gives a trackpad scroll and pinch as
+  //   `wheel` events, as Chrome does (Chart.js ADR 0137), while
+  //   BenchmarkConfig.trackpad is on: a scroll and a pinch zoom it, and the
+  //   zoom plugin keeps the page from scrolling.
   //
   // Each test starts with a new chart, at the full range: the key of the
   // chart has the revision of the controller.
@@ -143,9 +143,15 @@ class const BenchmarkChart({
       'x': <String, Object?>{
         'min': 'original',
         'max': 'original',
-        // A category axis counts the bars from 0, a linear axis goes to 100.
+        // A category axis counts the bars from 0, a linear axis goes to 100,
+        // and the hidden x scale of the sankey chart has its three columns
+        // at 0, 1 and 2.
         'minRange':
-            (config.type == ChartType.bar ? config.count - 1 : 100) /
+            switch (config.type) {
+              ChartType.bar => config.count - 1,
+              ChartType.sankey => 2,
+              _ => 100,
+            } /
             chartMaxZoom,
       },
     },
@@ -273,7 +279,7 @@ class const BenchmarkChart({
     _registerSankey();
     const blue = ChartPaint.solid(chartBlue);
     final flows = sankeyFlows(frame.values);
-    return cj.ChartView.raw(
+    final view = cj.ChartView.raw(
       config: <String, Object?>{
         'type': sk.SankeyController.id,
         'data': <String, Object?>{
@@ -299,6 +305,7 @@ class const BenchmarkChart({
           'maintainAspectRatio': false,
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{'enabled': config.tooltips},
+            if (config.zooms) 'zoom': _chartJsZoom,
           },
           'events': config.tooltips
               ? <String>[
@@ -314,7 +321,9 @@ class const BenchmarkChart({
       updateMode: 'none',
       theme: const cj.ChartThemeData(),
       excludeFromSemantics: true,
+      trackpadGestures: config.trackpad,
     );
+    return config.zooms ? _ChartJsZoomPlugin(child: view) : view;
   }
 
   /// A sankey chart runs only on the Chart.js port, through
@@ -557,6 +566,7 @@ class const BenchmarkChart({
       dataOnlyUpdates: chartJsDataOnlyUpdates,
       theme: const cj.ChartThemeData(),
       excludeFromSemantics: true,
+      trackpadGestures: config.trackpad,
     );
     // A chart without zoom is the bare view, as before the toggle. A change
     // of the toggle changes the widget above the view, so it mounts a new
