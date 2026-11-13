@@ -130,6 +130,10 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
     (d) => d.copyWith(clip: const ChartClip.all(5)),
     {'clip': const ChartClip.all(5)},
   ),
+  'shadow': (
+    (d) => d.copyWith(shadow: const ChartShadow(color: _red, blur: 4)),
+    {'shadow': const ChartShadow(color: _red, blur: 4)},
+  ),
   'extra': (
     (d) => d.copyWith(extra: {'normalized': true}),
     {'normalized': true},

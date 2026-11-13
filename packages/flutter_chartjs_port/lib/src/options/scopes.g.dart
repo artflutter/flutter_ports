@@ -52,6 +52,8 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
+import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
+    show ChartShadow;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -7967,6 +7969,24 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
   set clip(ChartClip value) =>
       store(OptionKey.clip, OptValue<ChartClip>(value));
 
+  Opt<ChartShadow>? _shadow;
+
+  /// The cell of `shadow`, or Dart `null` when absent.
+  Opt<ChartShadow>? get shadowCell => _shadow;
+
+  /// Stores the cell of `shadow`. Dart `null` deletes the key.
+  set shadowCell(Opt<ChartShadow>? cell) {
+    if (cell == null) {
+      delete(OptionKey.shadow);
+    } else {
+      store(OptionKey.shadow, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `shadow`.
+  set shadow(ChartShadow value) =>
+      store(OptionKey.shadow, OptValue<ChartShadow>(value));
+
   Opt<String>? _label;
 
   /// The cell of `label`, or Dart `null` when absent.
@@ -8678,6 +8698,8 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
         return _indexAxis;
       case OptionKey.clip:
         return _clip;
+      case OptionKey.shadow:
+        return _shadow;
       case OptionKey.label:
         return _label;
       case OptionKey.order:
@@ -8772,6 +8794,8 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
         _indexAxis = fitCell(cell, classifyTyped<CartesianAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, classifyTyped<ChartClip>);
+      case OptionKey.shadow:
+        _shadow = fitCell(cell, classifyTyped<ChartShadow>);
       case OptionKey.label:
         _label = fitCell(cell, classifyString);
       case OptionKey.order:
@@ -8866,6 +8890,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.normalized:
       case OptionKey.indexAxis:
       case OptionKey.clip:
+      case OptionKey.shadow:
       case OptionKey.label:
       case OptionKey.order:
       case OptionKey.stack:
@@ -8922,6 +8947,8 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
         return classifyTyped<CartesianAxis>(raw);
       case OptionKey.clip:
         return classifyTyped<ChartClip>(raw);
+      case OptionKey.shadow:
+        return classifyTyped<ChartShadow>(raw);
       case OptionKey.label:
         return classifyString(raw);
       case OptionKey.order:
@@ -9090,6 +9117,24 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   /// Stores the plain value [value] of `clip`.
   set clip(ChartClip value) =>
       store(OptionKey.clip, OptValue<ChartClip>(value));
+
+  Opt<ChartShadow>? _shadow;
+
+  /// The cell of `shadow`, or Dart `null` when absent.
+  Opt<ChartShadow>? get shadowCell => _shadow;
+
+  /// Stores the cell of `shadow`. Dart `null` deletes the key.
+  set shadowCell(Opt<ChartShadow>? cell) {
+    if (cell == null) {
+      delete(OptionKey.shadow);
+    } else {
+      store(OptionKey.shadow, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `shadow`.
+  set shadow(ChartShadow value) =>
+      store(OptionKey.shadow, OptValue<ChartShadow>(value));
 
   Opt<String>? _label;
 
@@ -10042,6 +10087,8 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
         return _indexAxis;
       case OptionKey.clip:
         return _clip;
+      case OptionKey.shadow:
+        return _shadow;
       case OptionKey.label:
         return _label;
       case OptionKey.order:
@@ -10162,6 +10209,8 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
         _indexAxis = fitCell(cell, classifyTyped<CartesianAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, classifyTyped<ChartClip>);
+      case OptionKey.shadow:
+        _shadow = fitCell(cell, classifyTyped<ChartShadow>);
       case OptionKey.label:
         _label = fitCell(cell, classifyString);
       case OptionKey.order:
@@ -10285,6 +10334,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.normalized:
       case OptionKey.indexAxis:
       case OptionKey.clip:
+      case OptionKey.shadow:
       case OptionKey.label:
       case OptionKey.order:
       case OptionKey.stack:
@@ -10354,6 +10404,8 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
         return classifyTyped<CartesianAxis>(raw);
       case OptionKey.clip:
         return classifyTyped<ChartClip>(raw);
+      case OptionKey.shadow:
+        return classifyTyped<ChartShadow>(raw);
       case OptionKey.label:
         return classifyString(raw);
       case OptionKey.order:
@@ -10545,6 +10597,24 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
   /// Stores the plain value [value] of `clip`.
   set clip(ChartClip value) =>
       store(OptionKey.clip, OptValue<ChartClip>(value));
+
+  Opt<ChartShadow>? _shadow;
+
+  /// The cell of `shadow`, or Dart `null` when absent.
+  Opt<ChartShadow>? get shadowCell => _shadow;
+
+  /// Stores the cell of `shadow`. Dart `null` deletes the key.
+  set shadowCell(Opt<ChartShadow>? cell) {
+    if (cell == null) {
+      delete(OptionKey.shadow);
+    } else {
+      store(OptionKey.shadow, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `shadow`.
+  set shadow(ChartShadow value) =>
+      store(OptionKey.shadow, OptValue<ChartShadow>(value));
 
   Opt<String>? _label;
 
@@ -11113,6 +11183,8 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
         return _indexAxis;
       case OptionKey.clip:
         return _clip;
+      case OptionKey.shadow:
+        return _shadow;
       case OptionKey.label:
         return _label;
       case OptionKey.order:
@@ -11191,6 +11263,8 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
         _indexAxis = fitCell(cell, classifyTyped<CartesianAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, classifyTyped<ChartClip>);
+      case OptionKey.shadow:
+        _shadow = fitCell(cell, classifyTyped<ChartShadow>);
       case OptionKey.label:
         _label = fitCell(cell, classifyString);
       case OptionKey.order:
@@ -11269,6 +11343,7 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.normalized:
       case OptionKey.indexAxis:
       case OptionKey.clip:
+      case OptionKey.shadow:
       case OptionKey.label:
       case OptionKey.order:
       case OptionKey.stack:
@@ -11317,6 +11392,8 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
         return classifyTyped<CartesianAxis>(raw);
       case OptionKey.clip:
         return classifyTyped<ChartClip>(raw);
+      case OptionKey.shadow:
+        return classifyTyped<ChartShadow>(raw);
       case OptionKey.label:
         return classifyString(raw);
       case OptionKey.order:
@@ -11467,6 +11544,24 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
   /// Stores the plain value [value] of `clip`.
   set clip(ChartClip value) =>
       store(OptionKey.clip, OptValue<ChartClip>(value));
+
+  Opt<ChartShadow>? _shadow;
+
+  /// The cell of `shadow`, or Dart `null` when absent.
+  Opt<ChartShadow>? get shadowCell => _shadow;
+
+  /// Stores the cell of `shadow`. Dart `null` deletes the key.
+  set shadowCell(Opt<ChartShadow>? cell) {
+    if (cell == null) {
+      delete(OptionKey.shadow);
+    } else {
+      store(OptionKey.shadow, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `shadow`.
+  set shadow(ChartShadow value) =>
+      store(OptionKey.shadow, OptValue<ChartShadow>(value));
 
   Opt<String>? _label;
 
@@ -12268,6 +12363,8 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
         return _indexAxis;
       case OptionKey.clip:
         return _clip;
+      case OptionKey.shadow:
+        return _shadow;
       case OptionKey.label:
         return _label;
       case OptionKey.order:
@@ -12372,6 +12469,8 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
         _indexAxis = fitCell(cell, classifyTyped<RAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, classifyTyped<ChartClip>);
+      case OptionKey.shadow:
+        _shadow = fitCell(cell, classifyTyped<ChartShadow>);
       case OptionKey.label:
         _label = fitCell(cell, classifyString);
       case OptionKey.order:
@@ -12476,6 +12575,7 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.normalized:
       case OptionKey.indexAxis:
       case OptionKey.clip:
+      case OptionKey.shadow:
       case OptionKey.label:
       case OptionKey.order:
       case OptionKey.stack:
@@ -12537,6 +12637,8 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
         return classifyTyped<RAxis>(raw);
       case OptionKey.clip:
         return classifyTyped<ChartClip>(raw);
+      case OptionKey.shadow:
+        return classifyTyped<ChartShadow>(raw);
       case OptionKey.label:
         return classifyString(raw);
       case OptionKey.order:
@@ -12713,6 +12815,24 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
   /// Stores the plain value [value] of `clip`.
   set clip(ChartClip value) =>
       store(OptionKey.clip, OptValue<ChartClip>(value));
+
+  Opt<ChartShadow>? _shadow;
+
+  /// The cell of `shadow`, or Dart `null` when absent.
+  Opt<ChartShadow>? get shadowCell => _shadow;
+
+  /// Stores the cell of `shadow`. Dart `null` deletes the key.
+  set shadowCell(Opt<ChartShadow>? cell) {
+    if (cell == null) {
+      delete(OptionKey.shadow);
+    } else {
+      store(OptionKey.shadow, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `shadow`.
+  set shadow(ChartShadow value) =>
+      store(OptionKey.shadow, OptValue<ChartShadow>(value));
 
   Opt<String>? _label;
 
@@ -13531,6 +13651,8 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
         return _indexAxis;
       case OptionKey.clip:
         return _clip;
+      case OptionKey.shadow:
+        return _shadow;
       case OptionKey.label:
         return _label;
       case OptionKey.order:
@@ -13637,6 +13759,8 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
         _indexAxis = fitCell(cell, classifyTyped<RAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, classifyTyped<ChartClip>);
+      case OptionKey.shadow:
+        _shadow = fitCell(cell, classifyTyped<ChartShadow>);
       case OptionKey.label:
         _label = fitCell(cell, classifyString);
       case OptionKey.order:
@@ -13743,6 +13867,7 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.normalized:
       case OptionKey.indexAxis:
       case OptionKey.clip:
+      case OptionKey.shadow:
       case OptionKey.label:
       case OptionKey.order:
       case OptionKey.stack:
@@ -13805,6 +13930,8 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
         return classifyTyped<RAxis>(raw);
       case OptionKey.clip:
         return classifyTyped<ChartClip>(raw);
+      case OptionKey.shadow:
+        return classifyTyped<ChartShadow>(raw);
       case OptionKey.label:
         return classifyString(raw);
       case OptionKey.order:
@@ -13983,6 +14110,24 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   /// Stores the plain value [value] of `clip`.
   set clip(ChartClip value) =>
       store(OptionKey.clip, OptValue<ChartClip>(value));
+
+  Opt<ChartShadow>? _shadow;
+
+  /// The cell of `shadow`, or Dart `null` when absent.
+  Opt<ChartShadow>? get shadowCell => _shadow;
+
+  /// Stores the cell of `shadow`. Dart `null` deletes the key.
+  set shadowCell(Opt<ChartShadow>? cell) {
+    if (cell == null) {
+      delete(OptionKey.shadow);
+    } else {
+      store(OptionKey.shadow, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `shadow`.
+  set shadow(ChartShadow value) =>
+      store(OptionKey.shadow, OptValue<ChartShadow>(value));
 
   Opt<String>? _label;
 
@@ -15006,6 +15151,8 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
         return _indexAxis;
       case OptionKey.clip:
         return _clip;
+      case OptionKey.shadow:
+        return _shadow;
       case OptionKey.label:
         return _label;
       case OptionKey.order:
@@ -15134,6 +15281,8 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
         _indexAxis = fitCell(cell, classifyTyped<RAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, classifyTyped<ChartClip>);
+      case OptionKey.shadow:
+        _shadow = fitCell(cell, classifyTyped<ChartShadow>);
       case OptionKey.label:
         _label = fitCell(cell, classifyString);
       case OptionKey.order:
@@ -15265,6 +15414,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.normalized:
       case OptionKey.indexAxis:
       case OptionKey.clip:
+      case OptionKey.shadow:
       case OptionKey.label:
       case OptionKey.order:
       case OptionKey.stack:
@@ -15338,6 +15488,8 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
         return classifyTyped<RAxis>(raw);
       case OptionKey.clip:
         return classifyTyped<ChartClip>(raw);
+      case OptionKey.shadow:
+        return classifyTyped<ChartShadow>(raw);
       case OptionKey.label:
         return classifyString(raw);
       case OptionKey.order:
@@ -15537,6 +15689,24 @@ base class GenericDatasetOptionsScope() extends OptionScope {
   /// Stores the plain value [value] of `clip`.
   set clip(ChartClip value) =>
       store(OptionKey.clip, OptValue<ChartClip>(value));
+
+  Opt<ChartShadow>? _shadow;
+
+  /// The cell of `shadow`, or Dart `null` when absent.
+  Opt<ChartShadow>? get shadowCell => _shadow;
+
+  /// Stores the cell of `shadow`. Dart `null` deletes the key.
+  set shadowCell(Opt<ChartShadow>? cell) {
+    if (cell == null) {
+      delete(OptionKey.shadow);
+    } else {
+      store(OptionKey.shadow, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `shadow`.
+  set shadow(ChartShadow value) =>
+      store(OptionKey.shadow, OptValue<ChartShadow>(value));
 
   Opt<String>? _label;
 
@@ -15908,6 +16078,8 @@ base class GenericDatasetOptionsScope() extends OptionScope {
         return _indexAxis;
       case OptionKey.clip:
         return _clip;
+      case OptionKey.shadow:
+        return _shadow;
       case OptionKey.label:
         return _label;
       case OptionKey.order:
@@ -15964,6 +16136,8 @@ base class GenericDatasetOptionsScope() extends OptionScope {
         _indexAxis = fitCell(cell, classifyTyped<ScaleAxis>);
       case OptionKey.clip:
         _clip = fitCell(cell, classifyTyped<ChartClip>);
+      case OptionKey.shadow:
+        _shadow = fitCell(cell, classifyTyped<ChartShadow>);
       case OptionKey.label:
         _label = fitCell(cell, classifyString);
       case OptionKey.order:
@@ -16020,6 +16194,7 @@ base class GenericDatasetOptionsScope() extends OptionScope {
       case OptionKey.normalized:
       case OptionKey.indexAxis:
       case OptionKey.clip:
+      case OptionKey.shadow:
       case OptionKey.label:
       case OptionKey.order:
       case OptionKey.stack:
@@ -16057,6 +16232,8 @@ base class GenericDatasetOptionsScope() extends OptionScope {
         return classifyTyped<ScaleAxis>(raw);
       case OptionKey.clip:
         return classifyTyped<ChartClip>(raw);
+      case OptionKey.shadow:
+        return classifyTyped<ChartShadow>(raw);
       case OptionKey.label:
         return classifyString(raw);
       case OptionKey.order:

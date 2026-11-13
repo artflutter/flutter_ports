@@ -39,6 +39,7 @@ ChartPattern
 ChartPosition
 ChartResizeHandler
 ChartShaderPaint
+ChartShadow
 ChartTextStyle
 CirclePointStyle
 CrossPointStyle

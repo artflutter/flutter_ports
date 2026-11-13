@@ -1,5 +1,0 @@
-# Allowlist (Chart.js ADR 0107): jsGet 4: the keys shadowColor, shadowBlur,
-# shadowOffsetX and shadowOffsetY of a dataset, a Map of the user or the
-# typed scope of a typed dataset, where these keys are extras: no OptionKey
-# names them.
-jsGet 4

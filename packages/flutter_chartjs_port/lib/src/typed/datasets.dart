@@ -9,16 +9,10 @@
 /// [DataPoint].
 library;
 
-import 'dart:ui' show Color, Offset, StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
-    show
-        DiagnosticPropertiesBuilder,
-        Diagnosticable,
-        DiagnosticsProperty,
-        DoubleProperty,
-        Key,
-        immutable;
+    show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show registerDataUpdateTypes;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
@@ -52,6 +46,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis;
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/chart_shadow.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -138,13 +133,12 @@ abstract final class const Dataset({
   /// `hoverBorderWidth`.
   final double? hoverBorderWidth,
 
-  /// The shadow of the dataset (Chart.js ADR 0107). It is not a Chart.js
-  /// option.
+  /// The shadow of the dataset: `shadow` (Chart.js ADRs 0107 and 0139). It
+  /// is not a Chart.js option.
   ///
   /// The shadow falls under the lines, the points, the bars and the arcs of
-  /// the dataset. The area fill of a line has no shadow. The keys
-  /// `shadowColor`, `shadowBlur`, `shadowOffsetX` and `shadowOffsetY` of the
-  /// dataset carry it, so a `ChartView.raw` dataset can set them too.
+  /// the dataset. The area fill of a line has no shadow. A `ChartView.raw`
+  /// dataset sets the same [ChartShadow] in its key `shadow`.
   final ChartShadow? shadow,
 
   /// Native per-item tooltip callback overrides for this dataset.
@@ -281,15 +275,7 @@ OptionScope lowerDataset(
   }
   put(scope, OptionKey.hoverBorderWidth, dataset.hoverBorderWidth);
   dataset._lowerOwn(scope);
-  if (dataset.shadow case final shadow?) {
-    // Plain values keep the data-only path of Chart.js ADR 0100.
-    mergeExtra(scope, {
-      'shadowColor': shadow.color,
-      'shadowBlur': shadow.blur,
-      'shadowOffsetX': shadow.offset.dx,
-      'shadowOffsetY': shadow.offset.dy,
-    });
-  }
+  put(scope, OptionKey.shadow, dataset.shadow);
   if (dataset.tooltipCallbacks case final callbacks?) {
     scope.store(
       OptionKey.tooltip,
@@ -303,55 +289,6 @@ OptionScope lowerDataset(
     );
   }
   return mergeExtra(scope, dataset.extra);
-}
-
-/// The shadow of a dataset ([Dataset.shadow], Chart.js ADR 0107): the
-/// canvas shadow around the draw of the dataset.
-///
-/// The values are those of the Canvas 2D shadow: [blur] is `shadowBlur`, so
-/// the Gaussian sigma of the blur is `blur / 2`, and [offset] is in logical
-/// pixels and does not follow the transform of the canvas.
-@immutable
-final class const ChartShadow({
-  /// The color of the shadow: `shadowColor`. A transparent color draws no
-  /// shadow.
-  required final Color color,
-
-  /// The blur of the shadow: `shadowBlur`. 0 gives a sharp shadow.
-  final double blur = 0,
-
-  /// The move of the shadow: `shadowOffsetX` and `shadowOffsetY`.
-  final Offset offset = Offset.zero,
-}) with Diagnosticable {
-  /// A shadow of [color], blurred by [blur] and moved by [offset].
-  this : assert(blur >= 0, 'The blur is not negative.');
-
-  /// A copy of this shadow with the given values.
-  ChartShadow copyWith({Color? color, double? blur, Offset? offset}) =>
-      ChartShadow(
-        color: color ?? this.color,
-        blur: blur ?? this.blur,
-        offset: offset ?? this.offset,
-      );
-
-  @override
-  bool operator ==(Object other) =>
-      other is ChartShadow &&
-      other.color == color &&
-      other.blur == blur &&
-      other.offset == offset;
-
-  @override
-  int get hashCode => Object.hash(color, blur, offset);
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty<Color>('color', color))
-      ..add(DoubleProperty('blur', blur))
-      ..add(DiagnosticsProperty<Offset>('offset', offset));
-  }
 }
 
 bool _dataUpdateTypesRegistered = false;

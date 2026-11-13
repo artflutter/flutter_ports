@@ -52,9 +52,8 @@
 
 - Add `shadow: ChartShadow(...)` to each typed dataset. `ChartView` draws the
   shadow under the lines, points, bars and arcs of the dataset, but not under
-  the area fill. A raw dataset sets `shadowColor`, `shadowBlur`,
-  `shadowOffsetX` and `shadowOffsetY`. The canvas also has these four
-  attributes for plugins.
+  the area fill. A raw dataset sets the key `shadow` to the same
+  `ChartShadow`. The canvas also has the four shadow attributes for plugins.
 
 - Use sealed `ChartValue<ChartPaint>` for typed dataset `backgroundColor` and
   `borderColor`. Migrate plain colors to `.constant(...)`, the plural color

@@ -109,10 +109,7 @@ void validateChartColors(Object? config) {
         color(
           child,
           '$path.$key',
-          solidOnly:
-              key == 'shadowColor' ||
-              key == r'$borderColors' ||
-              key == r'$backgroundColors',
+          solidOnly: key == r'$borderColors' || key == r'$backgroundColors',
         );
       } else if (const [
         'scale',

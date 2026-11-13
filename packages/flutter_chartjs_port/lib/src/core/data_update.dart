@@ -20,6 +20,8 @@ import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
+    show ChartShadow;
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:meta/meta.dart';
 
@@ -166,6 +168,9 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         // The chart locale is a value (row adapt-intl-number-format).
         node is Locale ||
         node.runtimeType == EdgeInsets ||
+        // The dataset shadow is an immutable value (Chart.js ADR 0139).
+        (node.runtimeType == ChartShadow &&
+            (node as ChartShadow).color.runtimeType == Color) ||
         (node is SolidChartPaint && node.color.runtimeType == Color) ||
         node.runtimeType == Color) {
       return true;

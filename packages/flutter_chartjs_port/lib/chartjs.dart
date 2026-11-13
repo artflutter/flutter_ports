@@ -163,6 +163,8 @@ export 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis, XAxis, YAxis;
 export 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     hide chartPaintOf;
+export 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
+    show ChartShadow;
 export 'package:flutter_chartjs_port/src/types/chart_text_style.dart'
     show ChartTextStyle;
 export 'package:flutter_chartjs_port/src/types/geometric.dart'

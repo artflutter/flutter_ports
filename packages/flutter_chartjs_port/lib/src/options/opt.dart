@@ -64,6 +64,8 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis;
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
+    show ChartShadow;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
@@ -344,6 +346,10 @@ abstract final class ShapeBits() {
   /// `chartClip`: a [ChartClip], the dataset `clip`.
   static const int chartClip = 4992;
 
+  /// `chartShadow`: a [ChartShadow], the port-only dataset `shadow`
+  /// (Chart.js ADR 0139).
+  static const int chartShadow = 5120;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -453,6 +459,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.tooltipCallbacks => classifyTyped<TooltipCallbacks>(raw),
   ShapeBits.textDirection => classifyTyped<TextDirection>(raw),
   ShapeBits.chartClip => classifyTyped<ChartClip>(raw),
+  ShapeBits.chartShadow => classifyTyped<ChartShadow>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

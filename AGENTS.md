@@ -1044,10 +1044,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     for plugins: no ported caller reads them. `_castShadow` of `canvas_ui.dart` draws the shape with
     a blur mask filter before the shape. Each fast path declines while `_State.shadowOn` is true.
     See `test/port/canvas/canvas_ui_shadow_test.dart`, which the CI job `test-impeller` also runs.
-    Chart.js ADR 0107: each typed dataset has `shadow`, a `ChartShadow`. The lowering writes the plain
-    extras `shadowColor`, `shadowBlur`, `shadowOffsetX` and `shadowOffsetY`, so the data-only path
-    stays. The `$chartView` plugin of `ChartView` sets them on the canvas around the draw of the
-    dataset. The area fill has no shadow. See `test/port/widgets/chart_view_shadow_test.dart`.
+    Chart.js ADRs 0107 and 0139: each typed dataset has `shadow`, a `ChartShadow` of the core file
+    `lib/src/types/chart_shadow.dart` (exported by `chartjs.dart`). The dataset option `shadow` (the
+    typed atom `chartShadow` of the schema, port-only) holds the `ChartShadow` itself, in typed and raw
+    configs; the native option plans and the data-only check accept it, so the data-only path stays.
+    The `$chartView` plugin of `ChartView` reads it with `readOption` and sets the four canvas
+    attributes around the draw of the dataset; another value stops a debug build. The area fill has
+    no shadow, and the shadow does not cascade. See `test/port/widgets/chart_view_shadow_test.dart`.
     Chart.js ADR 0113 (it supersedes Chart.js ADR 0105): on the web only, a stroke of a `Path2D` and
     a line fill to `origin`, `start` or `end` with one color draw in pieces with small bounds
     (`UiPathPieces`, `UiPathBuilder.tryFillColumns`). Skia on WebGL is slow for one large path, and
@@ -1450,6 +1453,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       passes the tests. It closes Open 5 of Chart.js ADR 0108.
       Chart.js ADR 0138 (`Math.round` is `roundToDouble()`) is accepted (2026-11-13): its code passes
       the tests. It supersedes the `jsRound` parts of Chart.js ADR 0045.
+      Chart.js ADR 0139 (the dataset option `shadow` holds a `ChartShadow`) is accepted (2026-11-13):
+      its code passes the tests. It supersedes items 2-5 of Chart.js ADR 0107 and its rejected
+      alternatives of a nested `shadow` object and of new schema keys.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
