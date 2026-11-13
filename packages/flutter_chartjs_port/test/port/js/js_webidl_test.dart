@@ -1,8 +1,9 @@
 // Original code, not ported from Chart.js: tests of lib/src/js/js_webidl.dart.
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui' show Color, Offset, StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:test/test.dart';
 
 // The conversions follow the WebIDL types of the DOM setters: ToNumber for
@@ -12,12 +13,16 @@ import 'package:test/test.dart';
 
 void main() {
   group('canvasStyle', () {
-    test('gives null for undefined, else the value', () {
-      final gradient = Object();
+    test('keeps paints and leaves foreign validation to the canvas', () {
+      const gradient = ChartGradient.linear(Offset.zero, Offset(1, 1), []);
+      const solid = ChartPaint.solid(Color(0xffff0000));
       expect(canvasStyle(undefined), isNull);
       expect(canvasStyle(null), isNull);
-      expect(canvasStyle('red'), 'red');
+      expect(canvasStyle(solid), same(solid));
       expect(canvasStyle(gradient), same(gradient));
+      for (final value in ['red', const Color(0xffff0000), Object(), false]) {
+        expect(canvasStyle(value), same(value));
+      }
     });
   });
 

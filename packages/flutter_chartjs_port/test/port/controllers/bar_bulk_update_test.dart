@@ -168,7 +168,7 @@ Map<String, Object?> _config({
     'datasets': <Object?>[
       <String, Object?>{
         'data': values ?? <Object?>[1.0, 0.0, -0.0, -2.0, 3.0, 4.0],
-        'backgroundColor': const ui.Color(0x803366AA),
+        'backgroundColor': const ChartPaint.solid(ui.Color(0x803366AA)),
         'borderWidth': 1.0,
         ...extra,
       },
@@ -280,11 +280,13 @@ void main() {
           horizontal: horizontal,
           visible: true,
           extra: {
-            'backgroundColor': <ui.Color>[
-              const ui.Color(0xffff0000),
-              const ui.Color(0xff0000ff),
+            'backgroundColor': <ChartPaint>[
+              const ChartPaint.solid(ui.Color(0xffff0000)),
+              const ChartPaint.solid(ui.Color(0xff0000ff)),
             ],
-            'borderColor': <ui.Color>[const ui.Color(0xff00ff00)],
+            'borderColor': <ChartPaint>[
+              const ChartPaint.solid(ui.Color(0xff00ff00)),
+            ],
           },
         );
         final ca = config();
@@ -296,9 +298,8 @@ void main() {
           for (final cfg in [ca, cb]) {
             final dataset = _dataset(cfg);
             (dataset['data']! as List<Object?>)[2] = step.toDouble();
-            (dataset['backgroundColor']! as List<ui.Color>)[0] = ui.Color(
-              0xff556600 + step,
-            );
+            (dataset['backgroundColor']! as List<ChartPaint>)[0] =
+                ChartPaint.solid(ui.Color(0xff556600 + step));
           }
           if (step == 1) {
             a.toggleDataVisibility(3);
@@ -328,9 +329,9 @@ void main() {
       for (final active in [false, true]) {
         Map<String, Object?> config() => _config(
           extra: {
-            'backgroundColor': <ui.Color>[
-              const ui.Color(0xffff0000),
-              const ui.Color(0xff0000ff),
+            'backgroundColor': <ChartPaint>[
+              const ChartPaint.solid(ui.Color(0xffff0000)),
+              const ChartPaint.solid(ui.Color(0xff0000ff)),
             ],
             if (!active) 'inflateAmount': <double>[0, 0.4],
           },
@@ -359,9 +360,9 @@ void main() {
       Map<String, Object?> config(List<Object?> data) => _config(
         values: data,
         extra: {
-          'backgroundColor': <ui.Color>[
-            const ui.Color(0xffff0000),
-            const ui.Color(0xff0000ff),
+          'backgroundColor': <ChartPaint>[
+            const ChartPaint.solid(ui.Color(0xffff0000)),
+            const ChartPaint.solid(ui.Color(0xff0000ff)),
           ],
         },
       );
@@ -413,7 +414,9 @@ void main() {
   test('indexed bulk does not skip a custom element class id getter', () {
     Map<String, Object?> config() => _config(
       extra: {
-        'backgroundColor': <ui.Color>[const ui.Color(0xffff0000)],
+        'backgroundColor': <ChartPaint>[
+          const ChartPaint.solid(ui.Color(0xffff0000)),
+        ],
       },
     );
     final a = _chart(config());
@@ -528,9 +531,9 @@ void main() {
         final cfg = _config(visible: grid);
         final calls = <Object?>[];
         if (grid) {
-          _dataset(cfg)['backgroundColor'] = <ui.Color>[
-            const ui.Color(0xffff0000),
-            const ui.Color(0xff0000ff),
+          _dataset(cfg)['backgroundColor'] = <ChartPaint>[
+            const ChartPaint.solid(ui.Color(0xffff0000)),
+            const ChartPaint.solid(ui.Color(0xff0000ff)),
           ];
           double lineWidth(Object? context) {
             calls.add(jsGet(context, 'index'));
@@ -539,9 +542,9 @@ void main() {
 
           _axis(cfg, 'y')['grid'] = <String, Object?>{'lineWidth': lineWidth};
         } else {
-          ui.Color color(Object? context) {
+          ChartPaint color(Object? context) {
             calls.add(jsGet(context, 'dataIndex'));
-            return const ui.Color(0xFF3366AA);
+            return const ChartPaint.solid(ui.Color(0xFF3366AA));
           }
 
           _dataset(cfg)['backgroundColor'] = color;

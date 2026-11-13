@@ -31,11 +31,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 const Color _red = Color(0xFFFF6384);
 const Color _blue = Color(0xFF36A2EB);
-const native_ui.Color _redValue = native_ui.Color.fromRGBO(255, 99, 132, 1);
-const native_ui.Color _blueValue = native_ui.Color.fromRGBO(54, 162, 235, 1);
+const ChartPaint _redValue = ChartPaint.solid(
+  native_ui.Color.fromRGBO(255, 99, 132, 1),
+);
+const ChartPaint _blueValue = ChartPaint.solid(
+  native_ui.Color.fromRGBO(54, 162, 235, 1),
+);
 
 /// A scriptable color: blue at the data index 1, else red.
-Color _colorFor(ChartContext context) => context.dataIndex == 1 ? _blue : _red;
+ChartPaint _colorFor(ChartContext context) =>
+    ChartPaint.solid(context.dataIndex == 1 ? _blue : _red);
 
 /// A chart of [type] with the dataset Maps [datasets] and three labels,
 /// with no animation.
@@ -248,7 +253,7 @@ void main() {
           lowerDataset(
             const BarDataset(
               data: [1, 2, 3],
-              backgroundColor: ChartValue.constant(_red),
+              backgroundColor: ChartValue.constant(.solid(_red)),
             ),
             .bar,
           ),
@@ -278,7 +283,10 @@ void main() {
           lowerDataset(
             const BarDataset(
               data: [1, 2, 3],
-              backgroundColor: ChartValue.indexed([_red, _blue]),
+              backgroundColor: ChartValue.indexed([
+                ChartPaint.solid(_red),
+                ChartPaint.solid(_blue),
+              ]),
             ),
             .bar,
           ),
@@ -288,7 +296,10 @@ void main() {
         _chartOf('bar', <Object?>[
           <String, Object?>{
             'data': <Object?>[1, 2, 3],
-            'backgroundColor': <Object?>[_redValue, _blueValue],
+            'backgroundColor': <Object?>[
+              _redValue,
+              _blueValue,
+            ],
           },
         ]),
       );

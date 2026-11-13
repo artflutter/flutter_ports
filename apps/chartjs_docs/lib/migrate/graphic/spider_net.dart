@@ -69,7 +69,7 @@ final ChartConfig _config = ChartConfig(
       RadarDataset(
         label: type,
         data: _values(type),
-        borderColor: .constant(Gx.colors10[i]),
+        borderColor: .constant(.solid(Gx.colors10[i])),
         borderWidth: 2,
         fill: ChartFill.none,
         pointRadius: 0,
@@ -83,9 +83,12 @@ final ChartConfig _config = ChartConfig(
       // An ordinal scale of Graphic puts each index in the middle of a band
       // of 360 / 7 degrees.
       startAngle: 360 / 7 / 2,
-      grid: const AxisGrid(color: Gx.stroke, extra: {'circular': true}),
-      angleLinesColor: Gx.stroke,
-      pointLabelsColor: Gx.text,
+      grid: const AxisGrid(
+        color: ChartPaint.solid(Gx.stroke),
+        extra: {'circular': true},
+      ),
+      angleLinesColor: const ChartPaint.solid(Gx.stroke),
+      pointLabelsColor: const ChartPaint.solid(Gx.text),
       pointLabelsFont: const TextStyle(fontSize: 10),
       pointLabelsPadding: 4,
       // The ticks at the round values give the circles of the grid, and

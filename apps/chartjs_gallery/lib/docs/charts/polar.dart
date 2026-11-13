@@ -2,6 +2,8 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+
 /// The polar area chart of `docs/charts/polar.md:7-43`, with each key and
 /// value of the docs block.
 Map<String, Object?> polarAreaConfig() => <String, Object?>{
@@ -13,11 +15,11 @@ Map<String, Object?> polarAreaConfig() => <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[11.0, 16.0, 7.0, 3.0, 14.0],
         'backgroundColor': <Object?>[
-          const ui.Color.fromRGBO(255, 99, 132, 1),
-          const ui.Color.fromRGBO(75, 192, 192, 1),
-          const ui.Color.fromRGBO(255, 205, 86, 1),
-          const ui.Color.fromRGBO(201, 203, 207, 1),
-          const ui.Color.fromRGBO(54, 162, 235, 1),
+          const ChartPaint.solid(ui.Color.fromRGBO(255, 99, 132, 1)),
+          const ChartPaint.solid(ui.Color.fromRGBO(75, 192, 192, 1)),
+          const ChartPaint.solid(ui.Color.fromRGBO(255, 205, 86, 1)),
+          const ChartPaint.solid(ui.Color.fromRGBO(201, 203, 207, 1)),
+          const ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 1)),
         ],
       },
     ],

@@ -64,6 +64,7 @@ import 'package:flutter_chartjs_port/src/options/property_animation.dart'
     show AnimationSettings, PropertyAnimation;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -89,7 +90,7 @@ Object? _boolean(Object? from, Object? to, double factor) {
 /// @param {string} to
 /// @param {number} factor
 ///
-/// `helpers.color` returns a `CanvasGradient` or a `CanvasPattern`
+/// `helpers.color` returns a `ChartGradient` or a `ChartPattern`
 /// unchanged. Such an object has no `valid` property in JavaScript. Thus
 /// `c0.valid` is `c0 is Color && c0.valid`.
 Object? _color(Object? from, Object? to, double factor) {
@@ -102,14 +103,16 @@ Object? _color(Object? from, Object? to, double factor) {
 
 Object _mixedColor(Color to, Color from, double factor) {
   final rgb = to.mix(from, factor).rgbaBytes!;
-  return ui.Color.fromRGBO(
-    // js-ok: color arithmetic produces finite non-negative byte channels.
-    rgb.r.round(),
-    // js-ok: color arithmetic produces finite non-negative byte channels.
-    rgb.g.round(),
-    // js-ok: color arithmetic produces finite non-negative byte channels.
-    rgb.b.round(),
-    rgb.a / 255,
+  return ChartPaint.solid(
+    ui.Color.fromRGBO(
+      // js-ok: color arithmetic produces finite non-negative byte channels.
+      rgb.r.round(),
+      // js-ok: color arithmetic produces finite non-negative byte channels.
+      rgb.g.round(),
+      // js-ok: color arithmetic produces finite non-negative byte channels.
+      rgb.b.round(),
+      rgb.a / 255,
+    ),
   );
 }
 
@@ -144,7 +147,7 @@ Interpolator? _interpolatorOf(Object? from) => switch (from) {
   num() => _number,
   bool() => _boolean,
   // DIVERGES(chartjs): adapt-color-animation-by-value, a native color.
-  ui.Color() => _color,
+  SolidChartPaint() => _color,
   _ => null,
 };
 

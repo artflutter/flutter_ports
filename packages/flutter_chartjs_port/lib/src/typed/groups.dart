@@ -11,7 +11,7 @@
 /// chart.
 library;
 
-import 'dart:ui' show Color, TextDirection;
+import 'dart:ui' show TextDirection;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
@@ -46,6 +46,7 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
@@ -93,7 +94,7 @@ final class ChartLegend with Diagnosticable {
   final bool? reverse;
 
   /// The color of the item text: `labels.color`.
-  final Color? labelColor;
+  final ChartPaint? labelColor;
 
   /// The font of the item text: `labels.font`. The color of the font is
   /// not read: set [labelColor].
@@ -144,7 +145,7 @@ final class ChartLegend with Diagnosticable {
     ChartPosition? position,
     ChartAlign? align,
     bool? reverse,
-    Color? labelColor,
+    ChartPaint? labelColor,
     TextStyle? labelFont,
     double? boxWidth,
     double? boxHeight,
@@ -215,7 +216,7 @@ LegendOptionsScope lowerLegend(
   ChartConfigLowering lowering,
 ) {
   final labels = LegendLabelOptionsScope();
-  put(labels, OptionKey.color, colorValue(legend.labelColor));
+  put(labels, OptionKey.color, legend.labelColor);
   put(labels, OptionKey.font, legend.labelFont);
   put(labels, OptionKey.boxWidth, legend.boxWidth);
   put(labels, OptionKey.boxHeight, legend.boxHeight);
@@ -268,7 +269,7 @@ final class ChartTitle with Diagnosticable {
   final String? text;
 
   /// The color of the text: `color`.
-  final Color? color;
+  final ChartPaint? color;
 
   /// The font of the text: `font`. The color of the font is not read: set
   /// [color].
@@ -299,7 +300,7 @@ final class ChartTitle with Diagnosticable {
   ChartTitle copyWith({
     bool? display,
     String? text,
-    Color? color,
+    ChartPaint? color,
     TextStyle? font,
     ChartAlign? align,
     ChartPosition? position,
@@ -351,7 +352,7 @@ TitleOptionsScope lowerTitle(ChartTitle title) {
   final scope = TitleOptionsScope();
   put(scope, OptionKey.display, title.display);
   put(scope, OptionKey.text, title.text);
-  put(scope, OptionKey.color, colorValue(title.color));
+  put(scope, OptionKey.color, title.color);
   put(scope, OptionKey.font, title.font);
   put(scope, OptionKey.align, title.align);
   put(scope, OptionKey.position, title.position);
@@ -422,24 +423,24 @@ final class ChartTooltip with Diagnosticable {
   final TooltipYAlign? yAlign;
 
   /// The color of the tooltip box: `backgroundColor`.
-  final Color? backgroundColor;
+  final ChartPaint? backgroundColor;
 
   /// The color of the title text: `titleColor`.
-  final Color? titleColor;
+  final ChartPaint? titleColor;
 
   /// The font of the title text: `titleFont`. The color of the font is not
   /// read: set [titleColor].
   final TextStyle? titleFont;
 
   /// The color of the label text: `bodyColor`.
-  final Color? bodyColor;
+  final ChartPaint? bodyColor;
 
   /// The font of the label text: `bodyFont`. The color of the font is not
   /// read: set [bodyColor].
   final TextStyle? bodyFont;
 
   /// The color of the footer text: `footerColor`.
-  final Color? footerColor;
+  final ChartPaint? footerColor;
 
   /// The font of the footer text: `footerFont`. The color of the font is
   /// not read: set [footerColor].
@@ -476,12 +477,12 @@ final class ChartTooltip with Diagnosticable {
     TooltipPositioner? position,
     TooltipXAlign? xAlign,
     TooltipYAlign? yAlign,
-    Color? backgroundColor,
-    Color? titleColor,
+    ChartPaint? backgroundColor,
+    ChartPaint? titleColor,
     TextStyle? titleFont,
-    Color? bodyColor,
+    ChartPaint? bodyColor,
     TextStyle? bodyFont,
-    Color? footerColor,
+    ChartPaint? footerColor,
     TextStyle? footerFont,
     EdgeInsets? padding,
     double? cornerRadius,
@@ -565,12 +566,12 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.position, tooltip.position);
   put(scope, OptionKey.xAlign, tooltip.xAlign);
   put(scope, OptionKey.yAlign, tooltip.yAlign);
-  put(scope, OptionKey.backgroundColor, colorValue(tooltip.backgroundColor));
-  put(scope, OptionKey.titleColor, colorValue(tooltip.titleColor));
+  put(scope, OptionKey.backgroundColor, tooltip.backgroundColor);
+  put(scope, OptionKey.titleColor, tooltip.titleColor);
   put(scope, OptionKey.titleFont, tooltip.titleFont);
-  put(scope, OptionKey.bodyColor, colorValue(tooltip.bodyColor));
+  put(scope, OptionKey.bodyColor, tooltip.bodyColor);
   put(scope, OptionKey.bodyFont, tooltip.bodyFont);
-  put(scope, OptionKey.footerColor, colorValue(tooltip.footerColor));
+  put(scope, OptionKey.footerColor, tooltip.footerColor);
   put(scope, OptionKey.footerFont, tooltip.footerFont);
   put(scope, OptionKey.padding, tooltip.padding);
   put(scope, OptionKey.cornerRadius, tooltip.cornerRadius);

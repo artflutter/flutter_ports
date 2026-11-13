@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -690,19 +692,34 @@ void main() {
     /// the mock context), and the box reads the singleton `defaults.color`
     /// (plugin.legend.js:286, :314 and :319), not the chart option.
     const expected = [
-      ['setStrokeStyle', native_ui.Color.fromRGBO(0, 128, 0, 1)],
-      ['setFillStyle', native_ui.Color.fromRGBO(0, 128, 0, 1)],
-      ['setFillStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
-      ['setStrokeStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
+      [
+        'setStrokeStyle',
+        native_ui.Color.fromRGBO(0, 128, 0, 1),
+      ],
+      [
+        'setFillStyle',
+        native_ui.Color.fromRGBO(0, 128, 0, 1),
+      ],
+      [
+        'setFillStyle',
+        native_ui.Color.fromRGBO(102, 102, 102, 1),
+      ],
+      [
+        'setStrokeStyle',
+        native_ui.Color.fromRGBO(102, 102, 102, 1),
+      ],
     ];
 
     testWidgets('the box reads defaults.color, not the chart color', (
       tester,
     ) async {
       final (color, calls) = styles(
-        color: const native_ui.Color.fromRGBO(0, 128, 0, 1),
+        color: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
-      expect(color, const native_ui.Color.fromRGBO(0, 128, 0, 1));
+      expect(
+        color,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+      );
       expect(calls, expected);
     });
 
@@ -715,7 +732,10 @@ void main() {
           color: const native_ui.Color.fromRGBO(0, 128, 0, 1),
         ),
       );
-      expect(color, const native_ui.Color.fromRGBO(0, 128, 0, 1));
+      expect(
+        color,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+      );
       expect(calls, expected);
     });
   });

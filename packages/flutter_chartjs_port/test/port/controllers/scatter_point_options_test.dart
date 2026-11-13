@@ -13,9 +13,9 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const red = ui.Color(0xffff0000);
-const blue = ui.Color(0xff0000ff);
-const green = ui.Color(0xff00ff00);
+const red = ChartPaint.solid(ui.Color(0xffff0000));
+const blue = ChartPaint.solid(ui.Color(0xff0000ff));
+const green = ChartPaint.solid(ui.Color(0xff00ff00));
 
 class _ReferenceChart extends Chart {
   _ReferenceChart(super.item, super.userConfig);
@@ -96,7 +96,10 @@ Map<String, Object?> _config({bool line = false, int datasets = 1}) => {
             for (var i = 0; i < 8; i++)
               <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
           ],
-          'backgroundColor': <ui.Color>[if (d == 0) red else green, blue],
+          'backgroundColor': <ChartPaint>[
+            if (d == 0) red else green,
+            blue,
+          ],
           'borderColor': blue,
           'radius': 3.0,
           'borderWidth': 1.0,
@@ -198,9 +201,8 @@ void main() {
           for (final cfg in [ca, cb]) {
             for (var d = 0; d < 2; d++) {
               final ds = _dataset(cfg, d);
-              (ds['backgroundColor']! as List<ui.Color>)[0] = ui.Color(
-                0xff001100 + step + d,
-              );
+              (ds['backgroundColor']! as List<ChartPaint>)[0] =
+                  ChartPaint.solid(ui.Color(0xff001100 + step + d));
               ((ds['data']! as List<Object?>)[3]!
                   as Map<String, Object?>)['y'] = step
                   .toDouble();
@@ -236,7 +238,7 @@ void main() {
       final custom = _CustomSize()
         ..afterSize = () {
           _dataset(cfg)['radius'] = 7.0;
-          (_dataset(cfg)['backgroundColor']! as List<ui.Color>)[0] = green;
+          (_dataset(cfg)['backgroundColor']! as List<ChartPaint>)[0] = green;
           chart.config.clearCache();
         };
       chart.getDatasetMeta(0).data[4] = custom;
@@ -265,7 +267,7 @@ void main() {
         if (key == 'y' && !changed) {
           changed = true;
           _dataset(cfg)['radius'] = 7.0;
-          (_dataset(cfg)['backgroundColor']! as List<ui.Color>)[0] = green;
+          (_dataset(cfg)['backgroundColor']! as List<ChartPaint>)[0] = green;
           chart.config.clearCache();
         }
       };
@@ -289,7 +291,7 @@ void main() {
     for (final reference in [false, true]) {
       final cfg = _config();
       final calls = <Object?>[];
-      ui.Color hover(Object? ctx) {
+      ChartPaint hover(Object? ctx) {
         final e = jsGet(ctx, 'element')! as PointElement;
         calls.add([jsGet(ctx, 'dataIndex'), e.x, e.y]);
         return green;

@@ -19,7 +19,6 @@ import 'package:flutter/foundation.dart'
         DoubleProperty,
         Key,
         immutable;
-import 'package:flutter/painting.dart' show ColorProperty;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show registerDataUpdateTypes;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
@@ -51,6 +50,7 @@ import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -126,21 +126,21 @@ abstract final class Dataset with Diagnosticable {
 
   /// The data-item fill: a constant, indexed list or typed callback.
   /// A null parameter inherits the default. This lowers to `backgroundColor`.
-  final ChartValue<Color>? backgroundColor;
+  final ChartValue<ChartPaint>? backgroundColor;
 
   /// The data-item border: a constant, indexed list or typed callback.
   /// A null parameter inherits the default. This lowers to `borderColor`.
-  final ChartValue<Color>? borderColor;
+  final ChartValue<ChartPaint>? borderColor;
 
   /// The border width in pixels: `borderWidth`.
   final double? borderWidth;
 
   /// The fill color of a data item under the pointer:
   /// `hoverBackgroundColor`.
-  final Color? hoverBackgroundColor;
+  final ChartValue<ChartPaint>? hoverBackgroundColor;
 
   /// The border color of a data item under the pointer: `hoverBorderColor`.
-  final Color? hoverBorderColor;
+  final ChartValue<ChartPaint>? hoverBorderColor;
 
   /// The border width of a data item under the pointer, in pixels:
   /// `hoverBorderWidth`.
@@ -177,11 +177,11 @@ abstract final class Dataset with Diagnosticable {
     String? label,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -275,18 +275,18 @@ OptionScope lowerDataset(
     scope.store(OptionKey.borderColor, value.toOptionCell());
   }
   put(scope, OptionKey.borderWidth, dataset.borderWidth);
-  put(
-    scope,
-    OptionKey.hoverBackgroundColor,
-    colorValue(dataset.hoverBackgroundColor),
-  );
-  put(scope, OptionKey.hoverBorderColor, colorValue(dataset.hoverBorderColor));
+  if (dataset.hoverBackgroundColor case final value?) {
+    scope.store(OptionKey.hoverBackgroundColor, value.toOptionCell());
+  }
+  if (dataset.hoverBorderColor case final value?) {
+    scope.store(OptionKey.hoverBorderColor, value.toOptionCell());
+  }
   put(scope, OptionKey.hoverBorderWidth, dataset.hoverBorderWidth);
   dataset._lowerOwn(scope);
   if (dataset.shadow case final shadow?) {
     // Plain values keep the data-only path of Chart.js ADR 0100.
     mergeExtra(scope, {
-      'shadowColor': colorValue(shadow.color),
+      'shadowColor': shadow.color,
       'shadowBlur': shadow.blur,
       'shadowOffsetX': shadow.offset.dx,
       'shadowOffsetY': shadow.offset.dy,
@@ -354,7 +354,7 @@ final class ChartShadow with Diagnosticable {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(ColorProperty('color', color))
+      ..add(DiagnosticsProperty<Color>('color', color))
       ..add(DoubleProperty('blur', blur))
       ..add(DiagnosticsProperty<Offset>('offset', offset));
   }
@@ -494,11 +494,11 @@ final class BarDataset extends Dataset {
     List<DataPoint>? points,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -603,11 +603,11 @@ base mixin _LineStyle on Dataset {
   double? get pointRadius;
   double? get pointHoverRadius;
   PointStyle? get pointStyle;
-  Color? get pointBackgroundColor;
-  Color? get pointBorderColor;
+  ChartValue<ChartPaint>? get pointBackgroundColor;
+  ChartValue<ChartPaint>? get pointBorderColor;
   double? get pointBorderWidth;
-  Color? get pointHoverBackgroundColor;
-  Color? get pointHoverBorderColor;
+  ChartValue<ChartPaint>? get pointHoverBackgroundColor;
+  ChartValue<ChartPaint>? get pointHoverBorderColor;
 
   /// Writes the keys of the line style into [scope].
   void _lowerLine(OptionScope scope) {
@@ -623,23 +623,19 @@ base mixin _LineStyle on Dataset {
     put(scope, OptionKey.pointRadius, pointRadius);
     put(scope, OptionKey.pointHoverRadius, pointHoverRadius);
     put(scope, OptionKey.pointStyle, pointStyle);
-    put(
-      scope,
-      OptionKey.pointBackgroundColor,
-      colorValue(pointBackgroundColor),
-    );
-    put(scope, OptionKey.pointBorderColor, colorValue(pointBorderColor));
+    if (pointBackgroundColor case final value?) {
+      scope.store(OptionKey.pointBackgroundColor, value.toOptionCell());
+    }
+    if (pointBorderColor case final value?) {
+      scope.store(OptionKey.pointBorderColor, value.toOptionCell());
+    }
     put(scope, OptionKey.pointBorderWidth, pointBorderWidth);
-    put(
-      scope,
-      OptionKey.pointHoverBackgroundColor,
-      colorValue(pointHoverBackgroundColor),
-    );
-    put(
-      scope,
-      OptionKey.pointHoverBorderColor,
-      colorValue(pointHoverBorderColor),
-    );
+    if (pointHoverBackgroundColor case final value?) {
+      scope.store(OptionKey.pointHoverBackgroundColor, value.toOptionCell());
+    }
+    if (pointHoverBorderColor case final value?) {
+      scope.store(OptionKey.pointHoverBorderColor, value.toOptionCell());
+    }
   }
 
   /// The properties of the line style, in parameter order.
@@ -818,13 +814,13 @@ final class LineDataset extends Dataset with _LineStyle {
   /// The fill color of the points: `pointBackgroundColor`.
   /// {@endtemplate}
   @override
-  final Color? pointBackgroundColor;
+  final ChartValue<ChartPaint>? pointBackgroundColor;
 
   /// {@template flutter_chartjs_port.typed.pointBorderColor}
   /// The border color of the points: `pointBorderColor`.
   /// {@endtemplate}
   @override
-  final Color? pointBorderColor;
+  final ChartValue<ChartPaint>? pointBorderColor;
 
   /// {@template flutter_chartjs_port.typed.pointBorderWidth}
   /// The border width of the points in pixels: `pointBorderWidth`.
@@ -837,13 +833,13 @@ final class LineDataset extends Dataset with _LineStyle {
   /// `pointHoverBackgroundColor`.
   /// {@endtemplate}
   @override
-  final Color? pointHoverBackgroundColor;
+  final ChartValue<ChartPaint>? pointHoverBackgroundColor;
 
   /// {@template flutter_chartjs_port.typed.pointHoverBorderColor}
   /// The border color of a point under the pointer: `pointHoverBorderColor`.
   /// {@endtemplate}
   @override
-  final Color? pointHoverBorderColor;
+  final ChartValue<ChartPaint>? pointHoverBorderColor;
 
   @override
   LineDataset copyWith({
@@ -853,11 +849,11 @@ final class LineDataset extends Dataset with _LineStyle {
     List<DataPoint>? points,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -877,11 +873,11 @@ final class LineDataset extends Dataset with _LineStyle {
     double? pointRadius,
     double? pointHoverRadius,
     PointStyle? pointStyle,
-    Color? pointBackgroundColor,
-    Color? pointBorderColor,
+    ChartValue<ChartPaint>? pointBackgroundColor,
+    ChartValue<ChartPaint>? pointBorderColor,
     double? pointBorderWidth,
-    Color? pointHoverBackgroundColor,
-    Color? pointHoverBorderColor,
+    ChartValue<ChartPaint>? pointHoverBackgroundColor,
+    ChartValue<ChartPaint>? pointHoverBorderColor,
     Map<String, Object?>? extra,
   }) => LineDataset(
     key: key ?? this.key,
@@ -1067,11 +1063,11 @@ final class ScatterDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
   @override
-  final Color? pointBackgroundColor;
+  final ChartValue<ChartPaint>? pointBackgroundColor;
 
   /// {@macro flutter_chartjs_port.typed.pointBorderColor}
   @override
-  final Color? pointBorderColor;
+  final ChartValue<ChartPaint>? pointBorderColor;
 
   /// {@macro flutter_chartjs_port.typed.pointBorderWidth}
   @override
@@ -1079,11 +1075,11 @@ final class ScatterDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBackgroundColor}
   @override
-  final Color? pointHoverBackgroundColor;
+  final ChartValue<ChartPaint>? pointHoverBackgroundColor;
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
   @override
-  final Color? pointHoverBorderColor;
+  final ChartValue<ChartPaint>? pointHoverBorderColor;
 
   @override
   ScatterDataset copyWith({
@@ -1093,11 +1089,11 @@ final class ScatterDataset extends Dataset with _LineStyle {
     List<DataPoint>? points,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -1116,11 +1112,11 @@ final class ScatterDataset extends Dataset with _LineStyle {
     double? pointRadius,
     double? pointHoverRadius,
     PointStyle? pointStyle,
-    Color? pointBackgroundColor,
-    Color? pointBorderColor,
+    ChartValue<ChartPaint>? pointBackgroundColor,
+    ChartValue<ChartPaint>? pointBorderColor,
     double? pointBorderWidth,
-    Color? pointHoverBackgroundColor,
-    Color? pointHoverBorderColor,
+    ChartValue<ChartPaint>? pointHoverBackgroundColor,
+    ChartValue<ChartPaint>? pointHoverBorderColor,
     Map<String, Object?>? extra,
   }) => ScatterDataset(
     key: key ?? this.key,
@@ -1249,11 +1245,11 @@ final class BubbleDataset extends Dataset {
     List<DataPoint>? points,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -1459,11 +1455,11 @@ final class PieDataset extends Dataset with _ArcStyle {
     List<num?>? data,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -1597,11 +1593,11 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     List<num?>? data,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -1705,11 +1701,11 @@ final class PolarAreaDataset extends Dataset {
     List<num?>? data,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -1857,11 +1853,11 @@ final class RadarDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
   @override
-  final Color? pointBackgroundColor;
+  final ChartValue<ChartPaint>? pointBackgroundColor;
 
   /// {@macro flutter_chartjs_port.typed.pointBorderColor}
   @override
-  final Color? pointBorderColor;
+  final ChartValue<ChartPaint>? pointBorderColor;
 
   /// {@macro flutter_chartjs_port.typed.pointBorderWidth}
   @override
@@ -1869,11 +1865,11 @@ final class RadarDataset extends Dataset with _LineStyle {
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBackgroundColor}
   @override
-  final Color? pointHoverBackgroundColor;
+  final ChartValue<ChartPaint>? pointHoverBackgroundColor;
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
   @override
-  final Color? pointHoverBorderColor;
+  final ChartValue<ChartPaint>? pointHoverBorderColor;
 
   @override
   RadarDataset copyWith({
@@ -1882,11 +1878,11 @@ final class RadarDataset extends Dataset with _LineStyle {
     List<num?>? data,
     bool? hidden,
     int? order,
-    ChartValue<Color>? backgroundColor,
-    ChartValue<Color>? borderColor,
+    ChartValue<ChartPaint>? backgroundColor,
+    ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
-    Color? hoverBackgroundColor,
-    Color? hoverBorderColor,
+    ChartValue<ChartPaint>? hoverBackgroundColor,
+    ChartValue<ChartPaint>? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
@@ -1902,11 +1898,11 @@ final class RadarDataset extends Dataset with _LineStyle {
     double? pointRadius,
     double? pointHoverRadius,
     PointStyle? pointStyle,
-    Color? pointBackgroundColor,
-    Color? pointBorderColor,
+    ChartValue<ChartPaint>? pointBackgroundColor,
+    ChartValue<ChartPaint>? pointBorderColor,
     double? pointBorderWidth,
-    Color? pointHoverBackgroundColor,
-    Color? pointHoverBorderColor,
+    ChartValue<ChartPaint>? pointHoverBackgroundColor,
+    ChartValue<ChartPaint>? pointHoverBorderColor,
     Map<String, Object?>? extra,
   }) => RadarDataset(
     key: key ?? this.key,

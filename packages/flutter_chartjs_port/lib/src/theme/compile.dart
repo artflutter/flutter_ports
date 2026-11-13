@@ -37,6 +37,7 @@ import 'package:flutter_chartjs_port/src/options/opt.dart' show OptScope;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// The background alpha of the palette when the theme gives none: the 0.5
@@ -112,12 +113,12 @@ ChartOptionsScope? compileChartTheme({
   // `angleLines.color`. `scales.radialLinear.ticks.color` needs no key: H1
   // fills it from `scale.ticks.color` first.
   if (color != null) {
-    t.root.color = color;
-    t.ticks.color = color;
-    t.scaleTitle.color = color;
-    t.pointLabels.color = color;
-    t.title.color = color;
-    t.subtitle.color = color;
+    t.root.color = ChartPaint.solid(color);
+    t.ticks.color = ChartPaint.solid(color);
+    t.scaleTitle.color = ChartPaint.solid(color);
+    t.pointLabels.color = ChartPaint.solid(color);
+    t.title.color = ChartPaint.solid(color);
+    t.subtitle.color = ChartPaint.solid(color);
   }
   // `borderColor` replaces `Defaults.borderColor` (`core.defaults.js:42`).
   // The scale routes (`core.scale.defaults.js:87-88`), the route of the
@@ -125,27 +126,29 @@ ChartOptionsScope? compileChartTheme({
   // (`element.point.ts:44-47`, `element.line.js:267-270`,
   // `element.bar.js:159-162`) read it.
   if (borderColor != null) {
-    t.grid.color = borderColor;
-    t.border.color = borderColor;
-    t.angleLines.color = borderColor;
-    t.point.borderColor = borderColor;
-    t.line.borderColor = borderColor;
-    t.bar.borderColor = borderColor;
+    t.grid.color = ChartPaint.solid(borderColor);
+    t.border.color = ChartPaint.solid(borderColor);
+    t.angleLines.color = ChartPaint.solid(borderColor);
+    t.point.borderColor = ChartPaint.solid(borderColor);
+    t.line.borderColor = ChartPaint.solid(borderColor);
+    t.bar.borderColor = ChartPaint.solid(borderColor);
   }
   // `backgroundColor` replaces `Defaults.backgroundColor`
   // (`core.defaults.js:41`) for the routes of the four elements
   // (`element.arc.ts:393-395`).
   if (backgroundColor != null) {
-    t.point.backgroundColor = backgroundColor;
-    t.line.backgroundColor = backgroundColor;
-    t.bar.backgroundColor = backgroundColor;
-    t.arc.backgroundColor = backgroundColor;
+    t.point.backgroundColor = ChartPaint.solid(backgroundColor);
+    t.line.backgroundColor = ChartPaint.solid(backgroundColor);
+    t.bar.backgroundColor = ChartPaint.solid(backgroundColor);
+    t.arc.backgroundColor = ChartPaint.solid(backgroundColor);
   }
   // `surface` replaces the arc `borderColor` `'#fff'` (`element.arc.ts:379`)
   // and, at alpha 0.75, the tick backdrop.
   if (surface != null) {
-    t.arc.borderColor = surface;
-    t.ticks.backdropColor = surface.withValues(alpha: _backdropAlpha);
+    t.arc.borderColor = ChartPaint.solid(surface);
+    t.ticks.backdropColor = ChartPaint.solid(
+      surface.withValues(alpha: _backdropAlpha),
+    );
   }
 
   // The scale slots of the font token. `toFont` fills an absent field from
@@ -206,13 +209,15 @@ ChartOptionsScope? compileChartTheme({
   // replaces the `'#fff'` of the tooltip `titleColor`, `bodyColor`,
   // `footerColor` and `multiKeyBackground`
   // (`plugin.tooltip.js:1280, 1287, 1292, 1305`).
-  if (inverseSurface != null) t.tooltip.backgroundColor = inverseSurface;
+  if (inverseSurface != null) {
+    t.tooltip.backgroundColor = ChartPaint.solid(inverseSurface);
+  }
   if (onInverseSurface != null) {
     t.tooltip
-      ..titleColor = onInverseSurface
-      ..bodyColor = onInverseSurface
-      ..footerColor = onInverseSurface
-      ..multiKeyBackground = onInverseSurface;
+      ..titleColor = ChartPaint.solid(onInverseSurface)
+      ..bodyColor = ChartPaint.solid(onInverseSurface)
+      ..footerColor = ChartPaint.solid(onInverseSurface)
+      ..multiKeyBackground = ChartPaint.solid(onInverseSurface);
   }
   // The three tooltip fonts in the order of the tooltip defaults
   // (`plugin.tooltip.js:1281-1297`). They route to the global `font`

@@ -51,11 +51,13 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show ChartArea, Point, TRBL;
@@ -844,70 +846,111 @@ abstract interface class LabelItem {
 /// (helpers.canvas.ts:449).
 ///
 /// Every member is optional. Dart `null` stands for an absent key, JS
-/// `undefined`. The readers treat JS `null` alike: `renderText` tests the
-/// members for truthiness, with `isNullOrUndef`, or with `>`, which makes
-/// `null` and `undefined` both fail.
-abstract interface class RenderTextOpts {
-  /// index.d.ts:1439 `color?: Color`: a CSS color `String`, a
-  /// `CanvasGradient` or a `CanvasPattern` (color.d.ts:1). An empty String
-  /// is falsy, so `setRenderOpts` leaves the fill style unchanged.
-  Object? get color;
+/// `undefined`, and [ChartPaint.unchanged] for an absent paint. The readers
+/// treat JS `null` alike: `renderText` tests the members for truthiness,
+/// with `isNullOrUndef`, or with `>`, which makes `null` and `undefined`
+/// both fail.
+///
+/// A caller makes the options with the constructor, as upstream makes the
+/// object literal:
+///
+/// ```dart
+/// renderText(
+///   ctx,
+///   'Total',
+///   0,
+///   0,
+///   font,
+///   const RenderTextOpts(
+///     color: ChartPaint.solid(Color(0xFF666666)),
+///     textAlign: TextAlign.center,
+///     textBaseline: CanvasTextBaseline.middle,
+///   ),
+/// );
+/// ```
+@immutable
+class const RenderTextOpts({
+  /// index.d.ts:1439 `color?: Color`: the fill paint of the text, a
+  /// Flutter color, a [ChartGradient] or a [ChartPattern]. With
+  /// [ChartPaint.unchanged], the value of an absent key, `setRenderOpts`
+  /// leaves the fill style of the canvas unchanged.
+  final ChartPaint color = const ChartPaint.unchanged(),
 
   /// index.d.ts:1445 `decorationWidth?: number`. A falsy value gives 2.
-  double? get decorationWidth;
+  final double? decorationWidth,
 
   /// index.d.ts:1450 `maxWidth?: number`.
-  double? get maxWidth;
+  final double? maxWidth,
 
   /// index.d.ts:1456 `rotation?: number`, in radians.
-  double? get rotation;
+  final double? rotation,
 
   /// index.d.ts:1461 `strikethrough?: boolean`.
-  bool? get strikethrough;
+  final bool? strikethrough,
 
-  /// index.d.ts:1467 `strokeColor?: Color`, as [color].
-  Object? get strokeColor;
+  /// index.d.ts:1467 `strokeColor?: Color`, as [color]: with
+  /// [ChartPaint.unchanged], the stroke of the text takes the stroke style
+  /// of the canvas.
+  final ChartPaint strokeColor = const ChartPaint.unchanged(),
 
   /// index.d.ts:1473 `strokeWidth?: number`.
-  double? get strokeWidth;
+  final double? strokeWidth,
 
   /// index.d.ts:1479 `textAlign?: CanvasTextAlign`.
-  TextAlign? get textAlign;
+  final TextAlign? textAlign,
 
   /// index.d.ts:1485 `textBaseline?: CanvasTextBaseline`.
-  CanvasTextBaseline? get textBaseline;
+  final CanvasTextBaseline? textBaseline,
 
   /// index.d.ts:1490 `translation?: [number, number]`. The tuple is a
   /// record.
-  (double, double)? get translation;
+  final (double, double)? translation,
 
   /// index.d.ts:1495 `underline?: boolean`.
-  bool? get underline;
+  final bool? underline,
 
   /// index.d.ts:1500 `backdrop?: BackdropOptions`.
-  BackdropOptions? get backdrop;
+  final BackdropOptions? backdrop,
+}) {
+  /// The options of `renderText`. An absent parameter is an absent key.
+  this;
 }
 
 /// index.d.ts:1503 `BackdropOptions`, the label backdrop of
 /// [RenderTextOpts.backdrop].
-abstract interface class BackdropOptions {
+///
+/// ```dart
+/// const backdrop = BackdropOptions(
+///   left: 4,
+///   top: 2,
+///   width: 40,
+///   height: 16,
+///   color: ChartPaint.solid(Color(0xBFFFFFFF)),
+/// );
+/// ```
+@immutable
+class const BackdropOptions({
   /// index.d.ts:1507 `left: number`.
-  double get left;
+  required final double left,
 
   /// index.d.ts:1512 `top: number`.
-  double get top;
+  required final double top,
 
   /// index.d.ts:1517 `width: number`.
-  double get width;
+  required final double width,
 
   /// index.d.ts:1522 `height: number`.
-  double get height;
+  required final double height,
 
-  /// index.d.ts:1527 `color: Scriptable<Color, ScriptableScaleContext>`.
-  /// `drawBackdrop` assigns it to `fillStyle` as it is
-  /// (helpers.canvas.ts:441): the caller resolves a scriptable value first
-  /// (`core.scale.js:1307`).
-  Object? get color;
+  /// index.d.ts:1527 `color: Scriptable<Color, ScriptableScaleContext>`:
+  /// the fill paint of the rectangle. `drawBackdrop` assigns it to
+  /// `fillStyle` (helpers.canvas.ts:441): the caller resolves a scriptable
+  /// value first (`core.scale.js:1307`). With [ChartPaint.unchanged], the
+  /// rectangle takes the fill style of the canvas.
+  required final ChartPaint color,
+}) {
+  /// The backdrop rectangle and its [color].
+  this;
 }
 
 /// index.d.ts:1574 `ChartEvent`.

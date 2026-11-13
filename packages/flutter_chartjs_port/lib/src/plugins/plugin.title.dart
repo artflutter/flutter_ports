@@ -24,7 +24,7 @@
 /// Not a pure layer: it imports `helpers.extras`.
 library;
 
-import 'dart:ui' show FontWeight, TextAlign;
+import 'dart:ui' show FontWeight;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -260,7 +260,7 @@ class Title extends Element implements LayoutItem {
 
     // The arguments of renderText, in the upstream order of their reads.
     final text = opts.text;
-    final textOpts = _TitleTextOpts(
+    final textOpts = types.RenderTextOpts(
       color: opts.color,
       maxWidth: maxWidth,
       rotation: rotation,
@@ -271,56 +271,6 @@ class Title extends Element implements LayoutItem {
     );
     renderText(ctx!, text, 0, 0, fontOpts, textOpts);
   }
-}
-
-/// The text options of the title (plugin.title.js:97-104), the object
-/// literal of the `renderText` call. The members that the literal leaves
-/// out are Dart `null`, JS `undefined`.
-final class _TitleTextOpts implements types.RenderTextOpts {
-  _TitleTextOpts({
-    required this.color,
-    required this.maxWidth,
-    required this.rotation,
-    required this.textAlign,
-    required this.textBaseline,
-    required this.translation,
-  });
-
-  @override
-  final Object? color;
-
-  @override
-  final double? maxWidth;
-
-  @override
-  final double? rotation;
-
-  @override
-  final TextAlign? textAlign;
-
-  @override
-  final CanvasTextBaseline? textBaseline;
-
-  @override
-  final (double, double)? translation;
-
-  @override
-  types.BackdropOptions? get backdrop => null;
-
-  @override
-  double? get decorationWidth => null;
-
-  @override
-  bool? get strikethrough => null;
-
-  @override
-  Object? get strokeColor => null;
-
-  @override
-  double? get strokeWidth => null;
-
-  @override
-  bool? get underline => null;
 }
 
 /// The `config` of `new Title(config)` from the arguments [args] of the

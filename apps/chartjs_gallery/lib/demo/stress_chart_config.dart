@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show CirclePointStyle;
 // Not public: jsToNumber of case (c), kept for the series before phase 9.
@@ -21,14 +22,18 @@ const int stressAnimateMs = 1000;
 
 /// The background color of the chart points, as in the stress mode
 /// `elements`.
-const ui.Color stressChartBackground = ui.Color.fromRGBO(54, 162, 235, 0.45);
+const ChartPaint stressChartBackground = ChartPaint.solid(
+  ui.Color.fromRGBO(54, 162, 235, 0.45),
+);
 
 /// The background color of the odd chart points of the scriptable
 /// `backgroundColor`.
-const ui.Color stressChartBackgroundOdd = ui.Color.fromRGBO(255, 99, 132, 0.45);
+const ChartPaint stressChartBackgroundOdd = ChartPaint.solid(
+  ui.Color.fromRGBO(255, 99, 132, 0.45),
+);
 
 /// Alternating native colors, matching the scriptable point colors.
-const List<ui.Color> stressIndexedBackground = [
+const List<ChartPaint> stressIndexedBackground = [
   stressChartBackground,
   stressChartBackgroundOdd,
 ];
@@ -40,7 +45,7 @@ const List<ui.Color> stressIndexedBackground = [
 /// dataset context has no `dataIndex`: `ToNumber(undefined) % 2` is NaN,
 /// and the dataset gets the odd color. The JS reads stay, so that the
 /// figures of case (c) stay comparable with the series before phase 9.
-Object? stressScriptableBackground(Object? context) =>
+ChartPaint stressScriptableBackground(Object? context) =>
     jsToNumber(jsGet(context, 'dataIndex')) % 2 == 0
     ? stressChartBackground
     : stressChartBackgroundOdd;
@@ -387,7 +392,7 @@ Map<String, Object?> stressChartConfig({
               : scriptable
               ? stressScriptableBackground
               : stressChartBackground,
-          'borderColor': const ui.Color(0xFF36A2EB),
+          'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
           'borderWidth': 1.0,
           if (type.points) ...{
             'pointStyle': const CirclePointStyle(),

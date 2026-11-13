@@ -15,6 +15,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -242,19 +244,19 @@ void main() {
       );
       expect(
         _dataset(chart, 0)['borderColor'],
-        const native_ui.Color(0xff000001),
+        const ChartPaint.solid(native_ui.Color(0xff000001)),
       );
       expect(
         _dataset(chart, 1)['borderColor'],
-        const native_ui.Color(0xff000002),
+        const ChartPaint.solid(native_ui.Color(0xff000002)),
       );
       expect(
         _dataset(chart, 2)['borderColor'],
-        const native_ui.Color(0xff000001),
+        const ChartPaint.solid(native_ui.Color(0xff000001)),
       );
       expect(
         _dataset(chart, 2)['backgroundColor'],
-        const native_ui.Color(0xff000003),
+        const ChartPaint.solid(native_ui.Color(0xff000003)),
       );
     });
 
@@ -274,14 +276,14 @@ void main() {
         ),
       );
       expect(_dataset(doughnut, 0)['backgroundColor'], [
-        const native_ui.Color(0xff000001),
-        const native_ui.Color(0xff000002),
-        const native_ui.Color(0xff000001),
+        const ChartPaint.solid(native_ui.Color(0xff000001)),
+        const ChartPaint.solid(native_ui.Color(0xff000002)),
+        const ChartPaint.solid(native_ui.Color(0xff000001)),
       ]);
       expect(_dataset(doughnut, 1)['backgroundColor'], [
-        const native_ui.Color(0xff000002),
-        const native_ui.Color(0xff000001),
-        const native_ui.Color(0xff000002),
+        const ChartPaint.solid(native_ui.Color(0xff000002)),
+        const ChartPaint.solid(native_ui.Color(0xff000001)),
+        const ChartPaint.solid(native_ui.Color(0xff000002)),
       ]);
       final polar = acquireChart(
         _config(
@@ -296,14 +298,14 @@ void main() {
         ),
       );
       expect(_dataset(polar, 0)['backgroundColor'], [
-        const native_ui.Color(0xff000003),
-        const native_ui.Color(0xff000004),
-        const native_ui.Color(0xff000003),
+        const ChartPaint.solid(native_ui.Color(0xff000003)),
+        const ChartPaint.solid(native_ui.Color(0xff000004)),
+        const ChartPaint.solid(native_ui.Color(0xff000003)),
       ]);
       expect(_dataset(polar, 1)['backgroundColor'], [
-        const native_ui.Color(0xff000004),
-        const native_ui.Color(0xff000003),
-        const native_ui.Color(0xff000004),
+        const ChartPaint.solid(native_ui.Color(0xff000004)),
+        const ChartPaint.solid(native_ui.Color(0xff000003)),
+        const ChartPaint.solid(native_ui.Color(0xff000004)),
       ]);
     });
 
@@ -321,15 +323,15 @@ void main() {
       final chart = acquireChart(_config('bar'));
       expect(
         _dataset(chart, 0)['borderColor'],
-        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
         _dataset(chart, 1)['borderColor'],
-        const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
       );
       expect(
         _dataset(chart, 1)['backgroundColor'],
-        const native_ui.Color.fromRGBO(255, 99, 132, 0.5),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.5)),
       );
     });
 
@@ -341,11 +343,11 @@ void main() {
         );
         expect(
           _dataset(chart, 0)['borderColor'],
-          const native_ui.Color.fromRGBO(54, 162, 235, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
         );
         expect(
           _dataset(chart, 0)['backgroundColor'],
-          const native_ui.Color.fromRGBO(54, 162, 235, 0.5),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 0.5)),
         );
       }
     });
@@ -357,12 +359,14 @@ void main() {
       ((config['options']! as AnyObject)['plugins']!
           as AnyObject)['colors'] = <String, Object?>{
         'enabled': true,
-        themeBorderColorsKey: <Object?>[const native_ui.Color(0xff000005)],
+        themeBorderColorsKey: <Object?>[
+          const native_ui.Color(0xff000005),
+        ],
       };
       final chart = acquireChart(config);
       expect(
         _dataset(chart, 0)['borderColor'],
-        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
     });
   });
@@ -428,11 +432,11 @@ void main() {
       );
       expect(
         _dataset(chart, 0)['borderColor'],
-        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
         _dataset(chart, 0)['backgroundColor'],
-        const native_ui.Color.fromRGBO(54, 162, 235, 0.5),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 0.5)),
       );
     });
   });
@@ -449,7 +453,9 @@ void main() {
     testWidgets('a changed defaults.borderColor stops the colorize', (
       tester,
     ) async {
-      defaults['borderColor'] = const native_ui.Color.fromRGBO(255, 0, 0, 1);
+      defaults['borderColor'] = const ChartPaint.solid(
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+      );
       final chart = acquireChart(_config('bar'));
       expect(jsGet(_dataset(chart, 1), 'borderColor'), same(undefined));
       expect(jsGet(_dataset(chart, 1), 'backgroundColor'), same(undefined));
@@ -457,29 +463,31 @@ void main() {
           (chart.getDatasetMeta(1).data[0] as Element).options! as JsObjectFace;
       expect(
         options['borderColor'],
-        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       expect(
         options['backgroundColor'],
-        const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
     });
 
     testWidgets('forceOverride colorizes over a changed defaults.borderColor', (
       tester,
     ) async {
-      defaults['borderColor'] = const native_ui.Color.fromRGBO(255, 0, 0, 1);
+      defaults['borderColor'] = const ChartPaint.solid(
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+      );
       final config = _config('bar');
       ((config['options']! as AnyObject)['plugins']! as AnyObject)['colors'] =
           <String, Object?>{'enabled': true, 'forceOverride': true};
       final chart = acquireChart(config);
       expect(
         _dataset(chart, 1)['borderColor'],
-        const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
       );
       expect(
         _dataset(chart, 1)['backgroundColor'],
-        const native_ui.Color.fromRGBO(255, 99, 132, 0.5),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.5)),
       );
     });
   });

@@ -142,24 +142,22 @@ AnyObject _twoDatasets({
     <String, Object?>{
       'label': 'Dataset 1',
       'data': <Object?>[10, 20, 30],
-      'pointHoverBorderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-      'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-        0,
-        255,
-        0,
-        1,
+      'pointHoverBorderColor': const ChartPaint.solid(
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+      ),
+      'pointHoverBackgroundColor': const ChartPaint.solid(
+        native_ui.Color.fromRGBO(0, 255, 0, 1),
       ),
       ...extra1,
     },
     <String, Object?>{
       'label': 'Dataset 2',
       'data': <Object?>[40, 40, 40],
-      'pointHoverBorderColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
-      'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-        0,
-        255,
-        255,
-        1,
+      'pointHoverBorderColor': const ChartPaint.solid(
+        native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ),
+      'pointHoverBackgroundColor': const ChartPaint.solid(
+        native_ui.Color.fromRGBO(0, 255, 255, 1),
       ),
       ...extra2,
     },
@@ -173,12 +171,11 @@ AnyObject _oneDataset() => <String, Object?>{
     <String, Object?>{
       'label': 'Dataset 1',
       'data': <Object?>[10, 20, 30],
-      'pointHoverBorderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-      'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-        0,
-        255,
-        0,
-        1,
+      'pointHoverBorderColor': const ChartPaint.solid(
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+      ),
+      'pointHoverBackgroundColor': const ChartPaint.solid(
+        native_ui.Color.fromRGBO(0, 255, 0, 1),
       ),
     },
   ],
@@ -200,12 +197,8 @@ AnyObject _tooltipOptions(AnyObject tooltip) => <String, Object?>{
 /// The label color of the default `labelColor` for a line point with the
 /// default colors (:157-163).
 TooltipLabelStyle _defaultLabelColor() => TooltipLabelStyle(
-  borderColor: ChartPaint.solid(
-    jsGet(_defaults(), 'borderColor')! as native_ui.Color,
-  ),
-  backgroundColor: ChartPaint.solid(
-    jsGet(_defaults(), 'backgroundColor')! as native_ui.Color,
-  ),
+  borderColor: jsGet(_defaults(), 'borderColor')! as ChartPaint,
+  backgroundColor: jsGet(_defaults(), 'backgroundColor')! as ChartPaint,
 );
 
 /// The body item `{before: [], lines: [line], after: []}`.
@@ -294,17 +287,11 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'data': <Object?>[10, 20, 30],
-                'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-                  255,
-                  0,
-                  0,
-                  1,
+                'pointHoverBorderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
                 ),
-                'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-                  0,
-                  255,
-                  0,
-                  1,
+                'pointHoverBackgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(0, 255, 0, 1),
                 ),
               },
             ],
@@ -388,7 +375,7 @@ void main() {
         expect(tooltip.yAlign, TooltipYAlign.center);
         expect(
           jsGet(options, 'bodyColor'),
-          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         );
 
         expect(
@@ -406,7 +393,7 @@ void main() {
 
         expect(
           jsGet(options, 'titleColor'),
-          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         );
         expect(
           jsGet(options, 'titleFont'),
@@ -424,7 +411,7 @@ void main() {
 
         expect(
           jsGet(options, 'footerColor'),
-          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         );
         expect(
           jsGet(options, 'footerFont'),
@@ -447,12 +434,11 @@ void main() {
             'caretSize': 5,
             'caretPadding': 2,
             'cornerRadius': 6,
-            'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-            'multiKeyBackground': const native_ui.Color.fromRGBO(
-              255,
-              255,
-              255,
-              1,
+            'backgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+            ),
+            'multiKeyBackground': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 255, 255, 1),
             ),
             'displayColors': true,
           }),
@@ -580,12 +566,11 @@ void main() {
           'caretSize': 5,
           'caretPadding': 2,
           'cornerRadius': 6,
-          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-          'multiKeyBackground': const native_ui.Color.fromRGBO(
-            255,
-            255,
-            255,
-            1,
+          'backgroundColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+          ),
+          'multiKeyBackground': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(255, 255, 255, 1),
           ),
           'displayColors': true,
         }),
@@ -708,12 +693,11 @@ void main() {
           'caretSize': 5,
           'caretPadding': 2,
           'cornerRadius': 6,
-          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-          'multiKeyBackground': const native_ui.Color.fromRGBO(
-            255,
-            255,
-            255,
-            1,
+          'backgroundColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+          ),
+          'multiKeyBackground': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(255, 255, 255, 1),
           ),
         }),
       );
@@ -1219,51 +1203,33 @@ void main() {
                 <String, Object?>{
                   'label': 'Dataset 1',
                   'data': <Object?>[10, 20, 30],
-                  'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-                    255,
-                    0,
-                    0,
-                    1,
+                  'pointHoverBorderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(255, 0, 0, 1),
                   ),
-                  'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-                    0,
-                    255,
-                    0,
-                    1,
+                  'pointHoverBackgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(0, 255, 0, 1),
                   ),
                   'stack': 'stack1',
                 },
                 <String, Object?>{
                   'label': 'Dataset 2',
                   'data': <Object?>[40, 40, 40],
-                  'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-                    0,
-                    0,
-                    255,
-                    1,
+                  'pointHoverBorderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(0, 0, 255, 1),
                   ),
-                  'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-                    0,
-                    255,
-                    255,
-                    1,
+                  'pointHoverBackgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(0, 255, 255, 1),
                   ),
                   'stack': 'stack1',
                 },
                 <String, Object?>{
                   'label': 'Dataset 3',
                   'data': <Object?>[90, 100, 110],
-                  'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-                    0,
-                    0,
-                    255,
-                    1,
+                  'pointHoverBorderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(0, 0, 255, 1),
                   ),
-                  'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-                    0,
-                    255,
-                    255,
-                    1,
+                  'pointHoverBackgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(0, 255, 255, 1),
                   ),
                 },
               ],
@@ -1338,8 +1304,12 @@ void main() {
               <String, Object?>{
                 'data': <Object?>[50, 50],
                 'backgroundColor': <Object?>[
-                  const native_ui.Color.fromRGBO(255, 0, 0, 1),
-                  const native_ui.Color.fromRGBO(0, 255, 0, 1),
+                  const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                  const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(0, 255, 0, 1),
+                  ),
                 ],
                 'label': 'Dataset 1',
               },
@@ -1496,12 +1466,11 @@ void main() {
           'caretSize': 5,
           'caretPadding': 2,
           'cornerRadius': 6,
-          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-          'multiKeyBackground': const native_ui.Color.fromRGBO(
-            255,
-            255,
-            255,
-            1,
+          'backgroundColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+          ),
+          'multiKeyBackground': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(255, 255, 255, 1),
           ),
         }),
       );
@@ -1566,20 +1535,26 @@ void main() {
 
             // Body
             'bodyFont': _modelFont(),
-            'bodyColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
+            'bodyColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 255, 255, 1),
+            ),
             'bodyAlign': body,
             'bodySpacing': 2,
 
             // Title
             'titleFont': _modelFont(bold: true),
-            'titleColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
+            'titleColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 255, 255, 1),
+            ),
             'titleAlign': title,
             'titleSpacing': 2,
             'titleMarginBottom': 6,
 
             // Footer
             'footerFont': _modelFont(bold: true),
-            'footerColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
+            'footerColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 255, 255, 1),
+            ),
             'footerAlign': footer,
             'footerSpacing': 2,
             'footerMarginTop': 6,
@@ -1588,14 +1563,15 @@ void main() {
             'caretSize': 5,
             'cornerRadius': 6,
             'caretPadding': 2,
-            'borderColor': const native_ui.Color.fromRGBO(170, 170, 170, 1),
+            'borderColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(170, 170, 170, 1),
+            ),
             'borderWidth': 1,
-            'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-            'multiKeyBackground': const native_ui.Color.fromRGBO(
-              255,
-              255,
-              255,
-              1,
+            'backgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+            ),
+            'multiKeyBackground': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 255, 255, 1),
             ),
             'displayColors': false,
           },
@@ -1638,11 +1614,15 @@ void main() {
         <String, Object?>{'name': 'save', 'args': <Object?>[]},
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[const native_ui.Color.fromRGBO(0, 0, 0, 0.8)],
+          'args': <Object?>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.8)),
+          ],
         },
         <String, Object?>{
           'name': 'setStrokeStyle',
-          'args': <Object?>[const native_ui.Color.fromRGBO(170, 170, 170, 1)],
+          'args': <Object?>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(170, 170, 170, 1)),
+          ],
         },
         <String, Object?>{
           'name': 'setLineWidth',
@@ -1729,7 +1709,9 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
+          'args': <Object?>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
+          ],
         },
         <String, Object?>{
           'name': 'setFont',
@@ -1753,11 +1735,15 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
+          'args': <Object?>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
+          ],
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
+          'args': <Object?>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
+          ],
         },
         <String, Object?>{
           'name': 'fillText',
@@ -1773,7 +1759,9 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
+          'args': <Object?>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
+          ],
         },
         <String, Object?>{
           'name': 'setFont',
@@ -1993,17 +1981,11 @@ void main() {
           final dataset = <String, Object?>{
             'label': 'Dataset 1',
             'data': <Object?>[10, 20, 30],
-            'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-              255,
-              0,
-              0,
-              1,
+            'pointHoverBorderColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
             ),
-            'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-              0,
-              255,
-              0,
-              1,
+            'pointHoverBackgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 255, 0, 1),
             ),
           };
           final chart = acquireChart(

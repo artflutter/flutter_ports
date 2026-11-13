@@ -32,6 +32,8 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -628,6 +630,7 @@ String _throwText(Object e) => switch (e) {
 ///   is `<list>`, `<object>` or `<map>`.
 String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
   if (identical(value, undefined)) return 'undefined';
+  if (value is SolidChartPaint) return _canon(value.color, depth, maxDepth);
   switch (value) {
     case final native_ui.Color color:
       return 'Color(${color.colorSpace.name}; '
@@ -1027,7 +1030,9 @@ Map<String, Object?> _benchConfig(
         <String, Object?>{
           'data': data,
           'backgroundColor': backgroundColor,
-          'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
+          'borderColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(54, 162, 235, 1),
+          ),
           'borderWidth': 1.0,
           if (points) ...<String, Object?>{
             'pointStyle': const CirclePointStyle(),
@@ -1201,7 +1206,7 @@ _Case _animationDefaultsCase() {
 
 /// A scriptable option with a constant result.
 Object? _constantBackground(Object? ctx) =>
-    const native_ui.Color.fromRGBO(0, 0, 0, 0.1);
+    const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1));
 
 double _index(Object? ctx) => switch (_dataIndex(ctx)) {
   final double i => i,
@@ -1215,10 +1220,11 @@ final List<_Case> _focusedCases = [
       <String, Object?>{
         'data': _values(6),
         'pointRadius': (Object? ctx) => 2 + _index(ctx) % 3,
-        'borderColor': (Object? ctx, Object? options) =>
-            jsGet(ctx, 'type') == 'dataset'
-            ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-            : const native_ui.Color.fromRGBO(0, 255, 0, 1),
+        'borderColor': (Object? ctx, Object? options) => ChartPaint.solid(
+          jsGet(ctx, 'type') == 'dataset'
+              ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+              : const native_ui.Color.fromRGBO(0, 255, 0, 1),
+        ),
       },
     ]),
   ),
@@ -1231,9 +1237,11 @@ final List<_Case> _focusedCases = [
       options: <String, Object?>{
         'datasets': <String, Object?>{
           'line': <String, Object?>{
-            'pointBackgroundColor': (Object? ctx) => _index(ctx) > 2
-                ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-                : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+            'pointBackgroundColor': (Object? ctx) => ChartPaint.solid(
+              _index(ctx) > 2
+                  ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+                  : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+            ),
           },
         },
       },
@@ -1277,9 +1285,9 @@ final List<_Case> _focusedCases = [
         'data': _values(6),
         'pointRadius': <Object?>[2.0, 4.0, 6.0],
         'pointBackgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(255, 0, 0, 1),
-          const native_ui.Color.fromRGBO(0, 128, 0, 1),
-          const native_ui.Color.fromRGBO(0, 0, 255, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
         ],
         'borderDash': <Object?>[4.0, 2.0],
       },
@@ -1291,9 +1299,11 @@ final List<_Case> _focusedCases = [
       <String, Object?>{
         'data': _values(6),
         'pointHoverRadius': 7.0,
-        'hoverBackgroundColor': (Object? ctx) => jsGet(ctx, 'active') == true
-            ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-            : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        'hoverBackgroundColor': (Object? ctx) => ChartPaint.solid(
+          jsGet(ctx, 'active') == true
+              ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+              : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ),
         'pointHoverBorderWidth': (Object? ctx) => 1 + _index(ctx),
       },
     ]),
@@ -1349,14 +1359,15 @@ final List<_Case> _focusedCases = [
         'plugins': <String, Object?>{
           'tooltip': <String, Object?>{
             'backgroundColor': (Object? ctx) =>
-                const native_ui.Color.fromRGBO(1, 2, 3, 0.5),
+                const ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 0.5)),
             'callbacks': TooltipCallbacks(label: (tooltip, item) => ['item']),
           },
           'legend': <String, Object?>{
             'labels': <String, Object?>{
               'font': (Object? ctx) => const ChartTextStyle(fontSize: 11),
-              'color': (Object? ctx) =>
-                  const native_ui.Color.fromRGBO(51, 51, 51, 1),
+              'color': (Object? ctx) => const ChartPaint.solid(
+                native_ui.Color.fromRGBO(51, 51, 51, 1),
+              ),
             },
           },
         },
@@ -1562,9 +1573,11 @@ final List<_Case> _focusedCases = [
       [
         <String, Object?>{
           'data': _values(6, 1),
-          'backgroundColor': (Object? ctx) => _index(ctx).toInt().isEven
-              ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-              : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+          'backgroundColor': (Object? ctx) => ChartPaint.solid(
+            _index(ctx).toInt().isEven
+                ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+                : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+          ),
         },
       ],
       type: 'polarArea',

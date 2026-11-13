@@ -169,16 +169,7 @@ final class _JasmineEquals extends Matcher {
       return switch ((a, b)) {
         (SolidChartPaint(:final color), SolidChartPaint(color: final other)) =>
           equalColorValues(color, other) ?? color == other,
-        (
-          GradientChartPaint(:final gradient),
-          GradientChartPaint(gradient: final other),
-        ) =>
-          identical(gradient, other),
-        (
-          PatternChartPaint(:final pattern),
-          PatternChartPaint(pattern: final other),
-        ) =>
-          identical(pattern, other),
+        (ChartShaderPaint(), ChartShaderPaint()) => identical(a, b),
         (UnchangedChartPaint(), UnchangedChartPaint()) => true,
         _ => false,
       };

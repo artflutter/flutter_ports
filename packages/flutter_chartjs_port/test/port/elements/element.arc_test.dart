@@ -12,10 +12,13 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import 'arc_reference.dart';
 
 // The spec element.arc.tests.js tests inRange, getCenterPoint and two draw
@@ -109,7 +112,9 @@ const Map<String, Object Function(AnyObject options)> _optionsForms = {
 /// [cfg] with its `options` Map in the form [form].
 AnyObject _withOptions(AnyObject cfg, Object Function(AnyObject) form) => {
   for (final MapEntry(:key, :value) in cfg.entries)
-    key: key == 'options' && value is AnyObject ? form(value) : value,
+    key: key == 'options' && value is AnyObject
+        ? form(referencePaintOptions(value))
+        : value,
 };
 
 /// `new ArcElement(cfg)` with the animations of a reference case as
@@ -137,6 +142,8 @@ ArcElement _arc(
 /// other engines (Chart.js ADR 0045).
 void _expectValue(Object? actual, Object? expected, String where) {
   switch (expected) {
+    case final String text:
+      expect(actual, referenceColorOrString(text), reason: where);
     case final num n when n.isNaN:
       expect(actual, isA<double>().having((v) => v.isNaN, 'isNaN', isTrue));
     case final num n when n.isInfinite:
@@ -173,8 +180,8 @@ void _expectCalls(
 
 /// The options of every draw test that does not come from the reference.
 Map<String, Object?> _options([Map<String, Object?> extra = const {}]) => {
-  'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-  'borderColor': const ui.Color.fromRGBO(0, 0, 255, 1),
+  'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
+  'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
   'borderWidth': 2,
   ...extra,
 };
@@ -457,7 +464,9 @@ void main() {
         },
         {
           'borderAlign': ArcBorderAlign.center,
-          'borderColor': const ui.Color.fromRGBO(255, 255, 255, 1),
+          'borderColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 255, 255, 1),
+          ),
           'borderDash': isEmpty,
           'borderDashOffset': 0.0,
           'borderJoinStyle': _isUndefined,

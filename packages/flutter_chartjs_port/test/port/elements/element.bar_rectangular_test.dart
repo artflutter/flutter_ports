@@ -11,6 +11,8 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/options/props.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meta/meta.dart';
 
@@ -86,8 +88,12 @@ Map<String, Object?> _config({
   'options': BarOptions({
     'borderWidth': borderWidth,
     'borderRadius': radius,
-    'borderColor': ui.Color(transparent ? 0x804488CC : 0xFF4488CC),
-    'backgroundColor': ui.Color(transparent ? 0x60DD8855 : 0xFFDD8855),
+    'borderColor': ChartPaint.solid(
+      ui.Color(transparent ? 0x804488CC : 0xFF4488CC),
+    ),
+    'backgroundColor': ChartPaint.solid(
+      ui.Color(transparent ? 0x60DD8855 : 0xFFDD8855),
+    ),
   }),
 };
 
@@ -242,8 +248,8 @@ void main() {
           final cfg = _config();
           if (customOptions) {
             cfg['options'] = _ReadMap({
-              'borderColor': const ui.Color(0xFF4488CC),
-              'backgroundColor': const ui.Color(0xFFDD8855),
+              'borderColor': const ChartPaint.solid(ui.Color(0xFF4488CC)),
+              'backgroundColor': const ChartPaint.solid(ui.Color(0xFFDD8855)),
               'borderWidth': 1.0,
               'borderRadius': 0.0,
             }, reads);

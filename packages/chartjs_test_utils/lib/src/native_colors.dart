@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, ScaleValuePosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -86,6 +88,7 @@ List<Enum>? _scaleEnumValues(String key, String? owner) => switch ((
 void nativeFixtureColors(Object? config) {
   final seen = Set<Object>.identity();
   Object? color(Object? value) {
+    if (value is ui.Color) return ChartPaint.solid(value);
     // Upstream uses false/empty colors to suppress a stroke.
     if (value == false) return null;
     if (value is String) {
@@ -93,11 +96,13 @@ void nativeFixtureColors(Object? config) {
       final parsed = referenceColor(value);
       if (!parsed.valid) return value;
       final rgb = parsed.rgbaBytes!;
-      return ui.Color.fromRGBO(
-        rgb.r.round(),
-        rgb.g.round(),
-        rgb.b.round(),
-        rgb.a / 255,
+      return ChartPaint.solid(
+        ui.Color.fromRGBO(
+          rgb.r.round(),
+          rgb.g.round(),
+          rgb.b.round(),
+          rgb.a / 255,
+        ),
       );
     }
     if (value is List) return <Object?>[for (final item in value) color(item)];

@@ -7,21 +7,23 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 // A picture observer makes the native canvas decline its fused draws, so one
 // chart config gives the two paths. Each slice has a color of its own, so no
 // two sectors join.
 
-const _colors = <ui.Color>[
-  ui.Color(0xFF3366CC),
-  ui.Color(0xFFDC3912),
-  ui.Color(0xFFFF9900),
-  ui.Color(0xFF109618),
-  ui.Color(0xFF990099),
-  ui.Color(0xFF0099C6),
-  ui.Color(0xFFDD4477),
-  ui.Color(0xFF66AA00),
+const _colors = <ChartPaint>[
+  ChartPaint.solid(ui.Color(0xFF3366CC)),
+  ChartPaint.solid(ui.Color(0xFFDC3912)),
+  ChartPaint.solid(ui.Color(0xFFFF9900)),
+  ChartPaint.solid(ui.Color(0xFF109618)),
+  ChartPaint.solid(ui.Color(0xFF990099)),
+  ChartPaint.solid(ui.Color(0xFF0099C6)),
+  ChartPaint.solid(ui.Color(0xFFDD4477)),
+  ChartPaint.solid(ui.Color(0xFF66AA00)),
 ];
 
 Map<String, Object?> _config(String type, {required double borderWidth}) => {

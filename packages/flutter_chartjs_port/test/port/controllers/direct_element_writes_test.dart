@@ -598,21 +598,28 @@ void main() {
   _twins(
     'constants',
     (type, _) => _config(type, {
-      'backgroundColor': red,
-      'borderColor': blue,
+      'backgroundColor': const ChartPaint.solid(red),
+      'borderColor': const ChartPaint.solid(blue),
       'borderWidth': 2.0,
     }),
   );
 
   _twins(
     'no border, the fused sector',
-    (type, _) => _config(type, {'backgroundColor': red, 'borderWidth': 0.0}),
+    (type, _) => _config(type, {
+      'backgroundColor': const ChartPaint.solid(red),
+      'borderWidth': 0.0,
+    }),
   );
 
   _twins(
     'indexed colors',
     (type, _) => _config(type, {
-      'backgroundColor': <ui.Color>[red, blue, green],
+      'backgroundColor': <ChartPaint>[
+        const ChartPaint.solid(red),
+        const ChartPaint.solid(blue),
+        const ChartPaint.solid(green),
+      ],
       'borderWidth': 0.0,
     }),
   );
@@ -620,7 +627,7 @@ void main() {
   _twins(
     'dataset spacing and offset',
     (type, _) => _config(type, {
-      'backgroundColor': red,
+      'backgroundColor': const ChartPaint.solid(red),
       'spacing': 3.0,
       'spacingMode': ArcSpacingMode.parallel,
       'offset': 2.0,
@@ -632,7 +639,7 @@ void main() {
     'the spacing of the polar area under the arc defaults',
     (type, _) => _config(
       type,
-      {'backgroundColor': red},
+      {'backgroundColor': const ChartPaint.solid(red)},
       options: _maskedSpacing(),
     ),
     types: const ['polarArea'],
@@ -640,7 +647,10 @@ void main() {
 
   _twins(
     'a string spacing',
-    (type, _) => _config(type, {'backgroundColor': red, 'spacing': '3'}),
+    (type, _) => _config(type, {
+      'backgroundColor': const ChartPaint.solid(red),
+      'spacing': '3',
+    }),
     types: _arcTypes,
   );
 
@@ -657,7 +667,7 @@ void main() {
             _plain(element[name]),
           _plain(element.options),
         ]);
-        return context.index == 1 ? blue : red;
+        return ChartPaint.solid(context.index == 1 ? blue : red);
       },
     }),
   );
@@ -665,7 +675,7 @@ void main() {
   _twins(
     'a scriptable dataset option',
     (type, trace) => _config(type, {
-      'backgroundColor': red,
+      'backgroundColor': const ChartPaint.solid(red),
       'spacing': (Object? ctx) {
         trace.add('spacing');
         return 2.0;
@@ -678,7 +688,7 @@ void main() {
     'a polar area at a start angle of the scale',
     (type, _) => _config(
       type,
-      {'backgroundColor': red, 'angle': 40.0},
+      {'backgroundColor': const ChartPaint.solid(red), 'angle': 40.0},
       options: {
         'scales': <String, Object?>{
           'r': <String, Object?>{'startAngle': 30.0, 'display': false},
@@ -692,7 +702,7 @@ void main() {
     'a polar area on a user scale',
     (type, _) => _config(
       type,
-      {'backgroundColor': red},
+      {'backgroundColor': const ChartPaint.solid(red)},
       options: {
         'scales': <String, Object?>{
           'r': <String, Object?>{
@@ -710,7 +720,7 @@ void main() {
     (type, _) => _config(
       type,
       {
-        'backgroundColor': red,
+        'backgroundColor': const ChartPaint.solid(red),
       },
       options: {'parsing': false},
     ),
@@ -721,7 +731,7 @@ void main() {
     'a bubble chart with a horizontal index axis',
     (type, _) => _config(
       type,
-      {'backgroundColor': red},
+      {'backgroundColor': const ChartPaint.solid(red)},
       options: {'indexAxis': const YAxis()},
     ),
     types: const ['bubble'],
@@ -730,10 +740,12 @@ void main() {
   _twins(
     'two datasets',
     (type, _) {
-      final cfg = _config(type, {'backgroundColor': red});
+      final cfg = _config(type, {
+        'backgroundColor': const ChartPaint.solid(red),
+      });
       _datasets(cfg).add(<String, Object?>{
         'data': _data(type, 2),
-        'backgroundColor': blue,
+        'backgroundColor': const ChartPaint.solid(blue),
       });
       return cfg;
     },
@@ -750,7 +762,7 @@ void main() {
               if (armed && (ctx! as ScriptableContext).index == 3) {
                 throw StateError('stop');
               }
-              return red;
+              return const ChartPaint.solid(red);
             },
           });
           final chart = _chart(cfg);
@@ -770,7 +782,9 @@ void main() {
       test('an extra key stays: $type', () {
         final results = <Object?>[];
         for (final kind in [type, _refType(type)]) {
-          final cfg = _config(kind, {'backgroundColor': red});
+          final cfg = _config(kind, {
+            'backgroundColor': const ChartPaint.solid(red),
+          });
           final chart = _chart(cfg);
           final data = chart.getDatasetMeta(0).data;
           (data[2] as Element)['extra'] = 7.0;
@@ -787,7 +801,9 @@ void main() {
         var now = DateTime.utc(2026);
         withClock(Clock(() => now), () {
           final configs = [type, _refType(type)].map((kind) {
-            final cfg = _config(kind, {'backgroundColor': red});
+            final cfg = _config(kind, {
+              'backgroundColor': const ChartPaint.solid(red),
+            });
             (cfg['options']! as Map)['animation'] = <String, Object?>{
               'duration': 1000.0,
             };
@@ -829,7 +845,9 @@ void main() {
     test('the undefined center of a polar area stays undefined', () {
       final results = <Object?>[];
       for (final kind in ['polarArea', _refType('polarArea')]) {
-        final cfg = _config(kind, {'backgroundColor': red});
+        final cfg = _config(kind, {
+          'backgroundColor': const ChartPaint.solid(red),
+        });
         final chart = _chart(cfg);
         final meta = chart.getDatasetMeta(0);
         (meta.rScale! as RadialLinearScale)
@@ -849,7 +867,9 @@ void main() {
       test('the undefined radii of a $type stay undefined', () {
         final results = <Object?>[];
         for (final kind in [type, _refType(type)]) {
-          final cfg = _config(kind, {'backgroundColor': red});
+          final cfg = _config(kind, {
+            'backgroundColor': const ChartPaint.solid(red),
+          });
           final chart = _chart(cfg);
           final meta = chart.getDatasetMeta(0);
           (meta.controller! as DoughnutController)
@@ -868,7 +888,9 @@ void main() {
       test('an undefined offset of a $type gives a NaN center', () {
         final results = <Object?>[];
         for (final kind in [type, _refType(type)]) {
-          final cfg = _config(kind, {'backgroundColor': red});
+          final cfg = _config(kind, {
+            'backgroundColor': const ChartPaint.solid(red),
+          });
           final chart = _chart(cfg);
           final meta = chart.getDatasetMeta(0);
           (meta.controller! as DoughnutController)
@@ -887,7 +909,9 @@ void main() {
     test('a partial loop of new arcs after the start', () {
       final results = <Object?>[];
       for (final kind in ['doughnut', _refType('doughnut')]) {
-        final cfg = _config(kind, {'backgroundColor': red});
+        final cfg = _config(kind, {
+          'backgroundColor': const ChartPaint.solid(red),
+        });
         final chart = _chart(cfg);
         final meta = chart.getDatasetMeta(0);
         meta.controller!.updateElements(meta.data, 3, 2, 'reset');
@@ -903,7 +927,10 @@ void main() {
   group('the guards', () {
     for (final type in _arcTypes) {
       Chart probed(String kind, List<_ProbeArc> probes) => _withElements(
-        _config(kind, {'backgroundColor': red, 'borderWidth': 0.0}),
+        _config(kind, {
+          'backgroundColor': const ChartPaint.solid(red),
+          'borderWidth': 0.0,
+        }),
         (_) {
           final probe = _ProbeArc();
           probes.add(probe);
@@ -969,7 +996,7 @@ void main() {
         for (final kind in [type, _refType(type)]) {
           final writes = <String>[];
           final chart = _withElements(
-            _config(kind, {'backgroundColor': red}),
+            _config(kind, {'backgroundColor': const ChartPaint.solid(red)}),
             (index) => index == 4 ? _UserArc(writes) : ArcElement(),
           );
           writes.clear();
@@ -984,7 +1011,9 @@ void main() {
     test('a user override of updateElement sees each arc of a loop', () {
       _CountingPie.updates = 0;
       final chart = _chart(
-        _config('writes-counting-pie', {'backgroundColor': red}),
+        _config('writes-counting-pie', {
+          'backgroundColor': const ChartPaint.solid(red),
+        }),
       );
       final before = _CountingPie.updates;
       chart.update('none');
@@ -993,13 +1022,16 @@ void main() {
 
     test('bubble writes with the typed setters in the mode none', () {
       final probes = <_ProbePoint>[];
-      final chart = _withElements(_config('bubble', {'backgroundColor': red}), (
-        _,
-      ) {
-        final probe = _ProbePoint();
-        probes.add(probe);
-        return probe;
-      })..update('none');
+      final chart = _withElements(
+        _config('bubble', {'backgroundColor': const ChartPaint.solid(red)}),
+        (
+          _,
+        ) {
+          final probe = _ProbePoint();
+          probes.add(probe);
+          return probe;
+        },
+      )..update('none');
       for (final probe in probes) {
         expect(probe.assigns, 0);
         expect(probe.skipWrites, 1);
@@ -1013,11 +1045,16 @@ void main() {
 
     test('a user subclass of bubble takes updateElement', () {
       final probes = <_ProbePoint>[];
-      _withElements(_config(_refType('bubble'), {'backgroundColor': red}), (_) {
-        final probe = _ProbePoint();
-        probes.add(probe);
-        return probe;
-      }).update('none');
+      _withElements(
+        _config(_refType('bubble'), {
+          'backgroundColor': const ChartPaint.solid(red),
+        }),
+        (_) {
+          final probe = _ProbePoint();
+          probes.add(probe);
+          return probe;
+        },
+      ).update('none');
       for (final probe in probes) {
         expect(probe.assigns, 1);
       }
@@ -1028,7 +1065,7 @@ void main() {
       for (final kind in ['bubble', _refType('bubble')]) {
         final writes = <String>[];
         final chart = _withElements(
-          _config(kind, {'backgroundColor': red}),
+          _config(kind, {'backgroundColor': const ChartPaint.solid(red)}),
           (index) => index == 4 ? _UserPoint(writes) : PointElement(),
         );
         writes.clear();
@@ -1042,7 +1079,9 @@ void main() {
     test('a bubble axis of another class takes the ordinary path', () {
       final results = <Object?>[];
       for (final kind in ['bubble', _refType('bubble')]) {
-        final cfg = _config(kind, {'backgroundColor': red});
+        final cfg = _config(kind, {
+          'backgroundColor': const ChartPaint.solid(red),
+        });
         final chart = _chart(cfg);
         final meta = chart.getDatasetMeta(0);
         final writes = <String>[];
@@ -1111,7 +1150,11 @@ void main() {
 
     test('takes the plan', () {
       expect(
-        planProbe(_config('polarArea', {'backgroundColor': red})),
+        planProbe(
+          _config('polarArea', {
+            'backgroundColor': const ChartPaint.solid(red),
+          }),
+        ),
         planned,
       );
     });
@@ -1123,7 +1166,7 @@ void main() {
         datasets: [
           PolarAreaDataset(
             data: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
-            backgroundColor: ChartValue.constant(red),
+            backgroundColor: ChartValue.constant(.solid(red)),
             borderWidth: 0,
           ),
         ],
@@ -1164,7 +1207,9 @@ void main() {
     test('a user subclass declines it', () {
       expect(
         planProbe(
-          _config(_refType('polarArea'), {'backgroundColor': red}),
+          _config(_refType('polarArea'), {
+            'backgroundColor': const ChartPaint.solid(red),
+          }),
         ),
         ordinary,
       );
@@ -1173,7 +1218,9 @@ void main() {
     test('a user chart declines it', () {
       expect(
         planProbe(
-          _config('polarArea', {'backgroundColor': red}),
+          _config('polarArea', {
+            'backgroundColor': const ChartPaint.solid(red),
+          }),
           create: (cfg) {
             final chart = _ReferenceChart(
               UiCanvasElement(width: 480, height: 320),
@@ -1192,7 +1239,7 @@ void main() {
         planProbe(
           _config(
             'polarArea',
-            {'backgroundColor': red},
+            {'backgroundColor': const ChartPaint.solid(red)},
             options: {
               'scales': <String, Object?>{
                 'r': <String, Object?>{
@@ -1208,7 +1255,9 @@ void main() {
     });
 
     test('a custom list of arcs declines it', () async {
-      final chart = _chart(_config('polarArea', {'backgroundColor': red}));
+      final chart = _chart(
+        _config('polarArea', {'backgroundColor': const ChartPaint.solid(red)}),
+      );
       final meta = chart.getDatasetMeta(0);
       final probe = _ProbeArc();
       var armed = false;
@@ -1228,7 +1277,9 @@ void main() {
     });
 
     test('a native list that is not the list of the meta declines it', () {
-      final chart = _chart(_config('polarArea', {'backgroundColor': red}));
+      final chart = _chart(
+        _config('polarArea', {'backgroundColor': const ChartPaint.solid(red)}),
+      );
       final meta = chart.getDatasetMeta(0);
       final probe = _ProbeArc();
       var armed = false;
@@ -1246,7 +1297,9 @@ void main() {
 
     test('a shared result declines it: its fix-up throws, as upstream', () {
       for (final kind in ['polarArea', _refType('polarArea')]) {
-        final chart = _chart(_config(kind, {'backgroundColor': red}));
+        final chart = _chart(
+          _config(kind, {'backgroundColor': const ChartPaint.solid(red)}),
+        );
         chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
         expect(() => chart.update('none'), throwsA(isA<TypeError>()));
       }
@@ -1258,7 +1311,7 @@ void main() {
         final calls = <Object?>[];
         final chart = _chart(
           _config(kind, {
-            'backgroundColor': red,
+            'backgroundColor': const ChartPaint.solid(red),
             'spacing': (Object? ctx) {
               calls.add((ctx! as ScriptableContext).index);
               return 0.0;
@@ -1278,7 +1331,10 @@ void main() {
       for (final kind in ['polarArea', _refType('polarArea')]) {
         final calls = <Object?>[];
         final chart = _chart(
-          _config(kind, {'backgroundColor': red, 'angle': _Counted(calls)}),
+          _config(kind, {
+            'backgroundColor': const ChartPaint.solid(red),
+            'angle': _Counted(calls),
+          }),
         );
         calls.clear();
         chart.update('none');
@@ -1292,7 +1348,7 @@ void main() {
       final results = <Object?>[];
       for (final kind in ['polarArea', _refType('polarArea')]) {
         final cfg = _config(kind, {
-          'backgroundColor': red,
+          'backgroundColor': const ChartPaint.solid(red),
           'hoverBorderWidth': 5.0,
         });
         final chart = _chart(cfg)
@@ -1311,7 +1367,7 @@ void main() {
         final cfg = _config(
           kind,
           {
-            'backgroundColor': red,
+            'backgroundColor': const ChartPaint.solid(red),
             'data': <Object?>[
               for (var i = 0; i < 8; i++) <String, Object?>{'r': i + 1.0},
             ],
@@ -1327,7 +1383,9 @@ void main() {
     test('the template has the fix-ups of each arc', () {
       for (final kind in ['polarArea', _refType('polarArea')]) {
         final chart = _chart(
-          _config(kind, {'backgroundColor': red}, options: _maskedSpacing()),
+          _config(kind, {
+            'backgroundColor': const ChartPaint.solid(red),
+          }, options: _maskedSpacing()),
         )..update('none');
         final arcs = chart.getDatasetMeta(0).data.cast<ArcElement>();
         for (final arc in arcs) {
@@ -1356,7 +1414,7 @@ void main() {
       final results = <Object?>[];
       for (final kind in ['polarArea', _refType('polarArea')]) {
         final cfg = _config(kind, {
-          'backgroundColor': red,
+          'backgroundColor': const ChartPaint.solid(red),
           'spacing': 3.0,
           'spacingMode': ArcSpacingMode.parallel,
         });
@@ -1379,7 +1437,7 @@ void main() {
             planProbe(
               _config(
                 kind,
-                {'backgroundColor': red},
+                {'backgroundColor': const ChartPaint.solid(red)},
                 options: {
                   'spacing': (Object? ctx) {
                     calls.add('spacing');
@@ -1407,7 +1465,7 @@ void main() {
           planProbe(
             _config(
               kind,
-              {'backgroundColor': red, 'spacing': 3.0},
+              {'backgroundColor': const ChartPaint.solid(red), 'spacing': 3.0},
               options: {
                 'spacingMode': (Object? ctx) {
                   calls.add('spacingMode');
@@ -1446,7 +1504,7 @@ void main() {
         final values = planProbe(
           _config(
             kind,
-            {'backgroundColor': red},
+            {'backgroundColor': const ChartPaint.solid(red)},
             options: {
               'datasets': <String, Object?>{
                 kind: _CountingScope(<String, Object?>{}, reads),
@@ -1472,7 +1530,7 @@ void main() {
 
         final options = <String, Object?>{'spacing': call, 'spacingMode': call};
         final own = <String, Object?>{
-          'backgroundColor': red,
+          'backgroundColor': const ChartPaint.solid(red),
           'spacing': 3.0,
           'spacingMode': ArcSpacingMode.parallel,
         };
@@ -1496,7 +1554,9 @@ void main() {
     );
 
     test('a custom parsed list declines it', () {
-      final chart = _chart(_config('polarArea', {'backgroundColor': red}));
+      final chart = _chart(
+        _config('polarArea', {'backgroundColor': const ChartPaint.solid(red)}),
+      );
       final meta = chart.getDatasetMeta(0);
       meta.parsed = _CustomParsed([...meta.parsed]);
       final probe = _ProbeArc();
@@ -1527,7 +1587,7 @@ void main() {
         var armed = false;
         late final Map<String, Object?> cfg;
         cfg = _config(kind, {
-          'backgroundColor': red,
+          'backgroundColor': const ChartPaint.solid(red),
           // The active arcs have their own spacing: no fix-up of the first two
           // arcs reads the spacing of the polar area.
           'hoverSpacing': 5.0,
@@ -1583,7 +1643,10 @@ void main() {
           for (final kind in ['polarArea', _refType('polarArea')]) {
             var value = 10.0;
             final trace = <Object?>[];
-            final cfg = _config(kind, {'backgroundColor': red, ...own});
+            final cfg = _config(kind, {
+              'backgroundColor': const ChartPaint.solid(red),
+              ...own,
+            });
             final dataset = _first(cfg);
             cfg['plugins'] = <Object?>[
               <String, Object?>{
@@ -1653,7 +1716,9 @@ void main() {
       }
 
       test('a data-only tick takes the plan', () {
-        final cfg = _liveConfig('polarArea', {'backgroundColor': red});
+        final cfg = _liveConfig('polarArea', {
+          'backgroundColor': const ChartPaint.solid(red),
+        });
         final chart = _chart(cfg);
         final arm = armedProbes(chart);
         // A plan has the value of the last tick: it stays in the options.
@@ -1679,7 +1744,7 @@ void main() {
           datasets: [
             PolarAreaDataset(
               data: values,
-              backgroundColor: const ChartValue.constant(red),
+              backgroundColor: const ChartValue.constant(.solid(red)),
               borderWidth: 0,
             ),
           ],
@@ -1714,7 +1779,7 @@ void main() {
 
       test('a user subclass ticks through the full update', () {
         final cfg = _liveConfig(_refType('polarArea'), {
-          'backgroundColor': red,
+          'backgroundColor': const ChartPaint.solid(red),
         });
         final chart = _chart(cfg);
         final arm = armedProbes(chart);
@@ -1769,24 +1834,33 @@ void main() {
       }
 
       dataOnlyTwin('constants', {
-        'backgroundColor': red,
-        'borderColor': blue,
+        'backgroundColor': const ChartPaint.solid(red),
+        'borderColor': const ChartPaint.solid(blue),
         'borderWidth': 2.0,
       });
-      dataOnlyTwin('no border', {'backgroundColor': red, 'borderWidth': 0.0});
+      dataOnlyTwin('no border', {
+        'backgroundColor': const ChartPaint.solid(red),
+        'borderWidth': 0.0,
+      });
       dataOnlyTwin('an own spacing', {
-        'backgroundColor': red,
+        'backgroundColor': const ChartPaint.solid(red),
         'spacing': 3.0,
         'spacingMode': ArcSpacingMode.parallel,
         'offset': 2.0,
       });
-      dataOnlyTwin('a static angle', {'backgroundColor': red, 'angle': 40.0});
+      dataOnlyTwin('a static angle', {
+        'backgroundColor': const ChartPaint.solid(red),
+        'angle': 40.0,
+      });
       dataOnlyTwin('the fix-ups', {
-        'backgroundColor': red,
+        'backgroundColor': const ChartPaint.solid(red),
       }, options: _maskedSpacing());
       dataOnlyTwin(
         'an active arc',
-        {'backgroundColor': red, 'hoverBorderWidth': 5.0},
+        {
+          'backgroundColor': const ChartPaint.solid(red),
+          'hoverBorderWidth': 5.0,
+        },
         prepare: (chart) => chart
           ..setActiveElements([
             {'datasetIndex': 0.0, 'index': 4.0},
@@ -1796,7 +1870,7 @@ void main() {
       dataOnlyTwin(
         'a shared result',
         {
-          'backgroundColor': red,
+          'backgroundColor': const ChartPaint.solid(red),
           'spacing': 3.0,
           'spacingMode': ArcSpacingMode.parallel,
         },
@@ -1812,7 +1886,7 @@ void main() {
         for (final kind in ['polarArea', _refType('polarArea')]) {
           final cfg = _config(
             kind,
-            {'backgroundColor': red},
+            {'backgroundColor': const ChartPaint.solid(red)},
             options: _maskedSpacing(),
           );
           final chart = _chart(cfg);
@@ -1842,7 +1916,9 @@ void main() {
     test('each arc has its own options, and a write stays in one arc', () {
       final results = <Object?>[];
       for (final kind in ['polarArea', _refType('polarArea')]) {
-        final cfg = _config(kind, {'backgroundColor': red});
+        final cfg = _config(kind, {
+          'backgroundColor': const ChartPaint.solid(red),
+        });
         final chart = _chart(cfg)..update('none');
         final data = chart.getDatasetMeta(0).data.cast<ArcElement>();
         final seen = <Object?>{};
@@ -1909,8 +1985,8 @@ void main() {
     _twins(
       'an inner border, a join style, a dash and a corner',
       (type, _) => _config(type, {
-        'backgroundColor': red,
-        'borderColor': blue,
+        'backgroundColor': const ChartPaint.solid(red),
+        'borderColor': const ChartPaint.solid(blue),
         'borderWidth': 3.0,
         'borderAlign': ArcBorderAlign.inner,
         'borderJoinStyle': ui.StrokeJoin.round,
@@ -1923,9 +1999,12 @@ void main() {
     test('the raw options of a drawn arc keep their pixels', () async {
       final bytes = <Uint8List>[];
       for (final fields in [
-        <String, Object?>{'backgroundColor': red, 'borderWidth': 0.0},
         <String, Object?>{
-          'backgroundColor': red,
+          'backgroundColor': const ChartPaint.solid(red),
+          'borderWidth': 0.0,
+        },
+        <String, Object?>{
+          'backgroundColor': const ChartPaint.solid(red),
           'borderWidth': 2.0,
           'borderRadius': <String, Object?>{'outerStart': 3.0},
         },

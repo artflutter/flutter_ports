@@ -46,7 +46,7 @@ final ChartConfig _config = ChartConfig(
         for (final sale in timeSeriesSales)
           DataPoint.time(sale.time, sale.sales),
       ],
-      borderColor: const .constant(Gx.primary),
+      borderColor: const .constant(.solid(Gx.primary)),
       borderWidth: 2,
       borderDash: const [5, 2],
       pointRadius: 0,

@@ -2,9 +2,6 @@
 @TestOn('vm')
 library;
 
-// Keep mutations and their subsequent verification as separate test steps.
-// ignore_for_file: cascade_invocations
-
 import 'dart:collection';
 import 'dart:ui' as ui;
 
@@ -19,6 +16,11 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
+// Keep mutations and their subsequent verification as separate test steps.
+// ignore_for_file: cascade_invocations
+
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -115,7 +117,7 @@ Map<String, Object?> _config() => {
           (i) => {'x': i.toDouble(), 'y': (i % 100 + 1).toDouble()},
         ),
         'showLine': false,
-        'backgroundColor': const ui.Color(0xFF36A2EB),
+        'backgroundColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
       },
     ],
   },

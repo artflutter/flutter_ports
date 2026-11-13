@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -177,14 +179,14 @@ void main() {
       final options = _resolve(_chart(compileLightTheme()));
       const gray = native_ui.Color.fromRGBO(102, 102, 102, 1);
       const white = native_ui.Color.fromRGBO(255, 255, 255, 1);
-      expect(options['title.color'], gray);
-      expect(options['subtitle.color'], gray);
+      expect(options['title.color'], const ChartPaint.solid(gray));
+      expect(options['subtitle.color'], const ChartPaint.solid(gray));
       // plugin.legend.js:661, 707 read chart.options.color.
-      expect(options['legend.labels.color'], gray);
-      expect(options['legend.title.color'], gray);
+      expect(options['legend.labels.color'], const ChartPaint.solid(gray));
+      expect(options['legend.title.color'], const ChartPaint.solid(gray));
       expect(
         options['tooltip.backgroundColor'],
-        const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.8)),
       );
       for (final key in [
         'titleColor',
@@ -192,12 +194,16 @@ void main() {
         'footerColor',
         'multiKeyBackground',
       ]) {
-        expect(options['tooltip.$key'], white, reason: key);
+        expect(
+          options['tooltip.$key'],
+          const ChartPaint.solid(white),
+          reason: key,
+        );
       }
       // No token for the tooltip border (plugin.tooltip.js:1308).
       expect(
         options['tooltip.borderColor'],
-        const native_ui.Color.fromRGBO(0, 0, 0, 0),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0)),
       );
     });
 
@@ -224,11 +230,11 @@ void main() {
       );
       expect(
         options['tooltip.backgroundColor'],
-        const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
       );
       expect(
         options['tooltip.bodyColor'],
-        const native_ui.Color.fromRGBO(255, 255, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 0, 1)),
       );
       // A weight is the value of a FontWeight (font_record.dart).
       for (final (path, weight) in [
@@ -250,11 +256,11 @@ void main() {
       // The upstream colors without a token stay.
       expect(
         options['title.color'],
-        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
         options['tooltip.borderColor'],
-        const native_ui.Color.fromRGBO(0, 0, 0, 0),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0)),
       );
     });
   });

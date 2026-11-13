@@ -8,11 +8,11 @@ import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     show Color;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The spec reads `color` and `getHoverColor` from Chart.helpers. Here they
@@ -48,7 +48,9 @@ void main() {
 
     test('should return a color when called with a color', () {
       expect(
-        isColorInstance(color(const native_ui.Color.fromRGBO(1, 2, 3, 1))),
+        isColorInstance(
+          color(const ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 1))),
+        ),
         isTrue,
       );
     });
@@ -58,10 +60,14 @@ void main() {
     test(
       'should return a modified version of color when called with a color',
       () {
-        const originalColorRGB = native_ui.Color.fromRGBO(70, 191, 189, 1);
+        const originalColorRGB = ChartPaint.solid(
+          native_ui.Color.fromRGBO(70, 191, 189, 1),
+        );
 
         expect(
-          getHoverColor(const native_ui.Color.fromRGBO(70, 191, 189, 1)),
+          getHoverColor(
+            const ChartPaint.solid(native_ui.Color.fromRGBO(70, 191, 189, 1)),
+          ),
           isNot(originalColorRGB),
         );
       },
@@ -77,31 +83,30 @@ void main() {
         final dots = await _loadImage(
           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAAD1BMVEUAAAD///////////////+PQt5oAAAABXRSTlMAHlFhZsfk/BEAAAAqSURBVHgBY2BgZGJmYmSAAUYWEIDzmcBcJhiXGcxlRpPFrhdmMiqgvX0AcGIBEUAo6UAAAAAASUVORK5CYII=',
         );
-        final chartContext = _createContext();
         final patternCanvas = UiCanvasElement();
         final patternContext = _createContext(patternCanvas);
-        final pattern = patternContext.createPattern(dots, 'repeat');
+        final pattern = ChartPattern(dots.image);
         patternContext.fillStyle = pattern;
         // The DOM reads the canvas element itself; the canvas layer takes
         // a snapshot of its bitmap (UiCanvasElement.toImageSource).
-        final chartPattern = chartContext.createPattern(
-          patternCanvas.toImageSource(),
-          'repeat',
-        );
+        final chartPattern = ChartPattern(patternCanvas.toImageSource().image);
 
-        expect(color(chartPattern) is CanvasPattern, isTrue);
-        expect(getHoverColor(chartPattern) is CanvasPattern, isTrue);
+        expect(color(chartPattern) is ChartPattern, isTrue);
+        expect(getHoverColor(chartPattern) is ChartPattern, isTrue);
       },
     );
 
     test(
       'should return a CanvasGradient when called with a CanvasGradient',
       () {
-        final context = _createContext();
-        final gradient = context.createLinearGradient(0, 1, 2, 3);
+        const gradient = ChartGradient.linear(
+          ui.Offset(0, 1),
+          ui.Offset(2, 3),
+          [],
+        );
 
-        expect(color(gradient) is CanvasGradient, isTrue);
-        expect(getHoverColor(gradient) is CanvasGradient, isTrue);
+        expect(color(gradient) is ChartGradient, isTrue);
+        expect(getHoverColor(gradient) is ChartGradient, isTrue);
       },
     );
   });

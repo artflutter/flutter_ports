@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/options/props.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
@@ -169,9 +170,10 @@ void main() {
       ..rect(1, 2, 3, 4);
     addTearDown(ctx.dispose);
     final path = ctx.debugPath.singleRect;
-    final gradient = ctx.createLinearGradient(0, 0, 30, 0)
-      ..addColorStop(0, _border)
-      ..addColorStop(1, _background);
+    const gradient = ChartGradient.linear(ui.Offset.zero, ui.Offset(30, 0), [
+      _border,
+      _background,
+    ]);
     expect(_direct(ctx, fill: gradient), isFalse);
     expect(_direct(ctx, fill: 'invalid'), isFalse);
     expect(ctx.debugPath.singleRect, path);
@@ -195,9 +197,11 @@ void main() {
     () async {
       for (final reflected in [false, true]) {
         Future<Render> draw(BarElement bar) => renderContext((ctx) {
-          final gradient = ctx.createLinearGradient(0, 0, 120, 0)
-            ..addColorStop(0, _border)
-            ..addColorStop(1, _background);
+          const gradient = ChartGradient.linear(
+            Offset.zero,
+            ui.Offset(120, 0),
+            [_border, _background],
+          );
           ctx.fillStyle = gradient;
           ctx.setTransform(
             reflected ? -1.0 : 1.0,

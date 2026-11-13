@@ -9,6 +9,7 @@ import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasCompositeOperation;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _bounds = ui.Rect.fromLTWH(0, 0, 96, 64);
@@ -208,9 +209,11 @@ void main() {
           context.restore();
         }
 
-        final gradient = context.createLinearGradient(0, 0, 80, 0)
-          ..addColorStop(0, _red)
-          ..addColorStop(1, _blue);
+        const gradient = ChartGradient.linear(
+          Offset.zero,
+          ui.Offset(80, 0),
+          [_red, _blue],
+        );
         context
           ..fillStyle = gradient
           ..fillRect(0, 0, 96, 64)
@@ -222,7 +225,7 @@ void main() {
           ..clip();
         boundary();
         context
-          ..fillStyle = context.createPattern(source, 'repeat')
+          ..fillStyle = ChartPattern(source.image)
           ..fillRect(4, 6, 30, 36);
         boundary();
         context

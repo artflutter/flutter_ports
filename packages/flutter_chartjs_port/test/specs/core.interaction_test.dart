@@ -15,6 +15,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -98,19 +100,22 @@ List<Object?> _datasets(
     'label': 'Dataset 1',
     'data': data1,
     'pointRadius': ?radius1,
-    'pointHoverBorderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-    'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
+    'pointHoverBorderColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 0, 0, 1),
+    ),
+    'pointHoverBackgroundColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(0, 255, 0, 1),
+    ),
   },
   <String, Object?>{
     'label': 'Dataset 2',
     'data': data2,
     'pointRadius': ?radius2,
-    'pointHoverBorderColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
-    'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-      0,
-      255,
-      255,
-      1,
+    'pointHoverBorderColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(0, 0, 255, 1),
+    ),
+    'pointHoverBackgroundColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(0, 255, 255, 1),
     ),
   },
 ];

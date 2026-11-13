@@ -100,7 +100,8 @@ Map<String, Object?> config() => {
           for (var i = 0; i < 8; i++)
             <String, Object?>{'x': i.toDouble(), 'y': i.toDouble()},
         ],
-        'backgroundColor': (Object? ctx) => const Color(0xff0000ff),
+        'backgroundColor': (Object? ctx) =>
+            const ChartPaint.solid(Color(0xff0000ff)),
       },
     ],
   },
@@ -156,7 +157,7 @@ void main() {
       final cfg = config();
       var mutate = false;
       final trace = <Object?>[];
-      Color color(Object? context) {
+      ChartPaint color(Object? context) {
         final index = (context! as ScriptableContext).index;
         if (mutate) trace.add(index);
         if (mutate && index == 1.0) {
@@ -164,7 +165,7 @@ void main() {
             ..jsDelete('radius')
             ..jsWrite('lateOption', 7.0);
         }
-        return const Color(0xff0000ff);
+        return const ChartPaint.solid(Color(0xff0000ff));
       }
 
       final datasets =

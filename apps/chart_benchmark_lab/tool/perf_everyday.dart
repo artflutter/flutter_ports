@@ -17,6 +17,7 @@ import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/benchmark/metrics.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:material_ui/material_ui.dart';
 
@@ -67,7 +68,7 @@ cj.Dataset _dataset(
   String? stack,
 }) {
   final color = _colors[series % _colors.length];
-  final fill = cj.ChartValue<Color>.constant(color);
+  final fill = cj.ChartValue<ChartPaint>.constant(.solid(color));
   final key = ValueKey('series$series');
   final label = 'Series $series';
   return switch (type) {
@@ -102,19 +103,25 @@ cj.Dataset _dataset(
       key: key,
       label: label,
       data: [for (final p in values) p.y],
-      backgroundColor: cj.ChartValue<Color>.indexed(_palette(values.length)),
+      backgroundColor: cj.ChartValue<ChartPaint>.indexed(
+        _palette(values.length).map(ChartPaint.solid).toList(),
+      ),
     ),
     ChartType.doughnut => cj.DoughnutDataset(
       key: key,
       label: label,
       data: [for (final p in values) p.y],
-      backgroundColor: cj.ChartValue<Color>.indexed(_palette(values.length)),
+      backgroundColor: cj.ChartValue<ChartPaint>.indexed(
+        _palette(values.length).map(ChartPaint.solid).toList(),
+      ),
     ),
     ChartType.polarArea => cj.PolarAreaDataset(
       key: key,
       label: label,
       data: [for (final p in values) p.y],
-      backgroundColor: cj.ChartValue<Color>.indexed(_palette(values.length)),
+      backgroundColor: cj.ChartValue<ChartPaint>.indexed(
+        _palette(values.length).map(ChartPaint.solid).toList(),
+      ),
     ),
     ChartType.radar => cj.RadarDataset(
       key: key,
@@ -166,8 +173,10 @@ cj.ChartConfig _config({
               for (final p in values)
                 cj.DataPoint(base + p.index * 60000, p.y - s * 4),
             ],
-            borderColor: cj.ChartValue<Color>.constant(_colors[s]),
-            backgroundColor: cj.ChartValue<Color>.constant(_colors[s]),
+            borderColor: cj.ChartValue<ChartPaint>.constant(.solid(_colors[s])),
+            backgroundColor: cj.ChartValue<ChartPaint>.constant(
+              .solid(_colors[s]),
+            ),
           )
         else
           _dataset(

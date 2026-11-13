@@ -140,10 +140,12 @@ void main() {
               label: 'My First Dataset',
               data: data,
               backgroundColor: ChartValue.indexed([
-                for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 0.2),
+                for (final (r, g, b) in _rainbow)
+                  ChartPaint.solid(Color.fromRGBO(r, g, b, 0.2)),
               ]),
               borderColor: ChartValue.indexed([
-                for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 1),
+                for (final (r, g, b) in _rainbow)
+                  ChartPaint.solid(Color.fromRGBO(r, g, b, 1)),
               ]),
               borderWidth: 1,
             ),
@@ -161,10 +163,12 @@ void main() {
               'label': 'My First Dataset',
               'data': data,
               'backgroundColor': <Object?>[
-                for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 0.2),
+                for (final (r, g, b) in _rainbow)
+                  ChartPaint.solid(Color.fromRGBO(r, g, b, 0.2)),
               ],
               'borderColor': <Object?>[
-                for (final (r, g, b) in _rainbow) Color.fromRGBO(r, g, b, 1),
+                for (final (r, g, b) in _rainbow)
+                  ChartPaint.solid(Color.fromRGBO(r, g, b, 1)),
               ],
               'borderWidth': 1,
             },
@@ -192,15 +196,19 @@ void main() {
             BarDataset(
               label: 'Bar Dataset',
               data: [10, 20, 30, 40],
-              borderColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 1)),
+              borderColor: ChartValue.constant(
+                .solid(Color.fromRGBO(255, 99, 132, 1)),
+              ),
               backgroundColor: ChartValue.constant(
-                Color.fromRGBO(255, 99, 132, 0.2),
+                ChartPaint.solid(Color.fromRGBO(255, 99, 132, 0.2)),
               ),
             ),
             LineDataset(
               label: 'Line Dataset',
               data: [50, 50, 50, 50],
-              borderColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 1)),
+              borderColor: ChartValue.constant(
+                .solid(Color.fromRGBO(54, 162, 235, 1)),
+              ),
               fill: .none,
             ),
           ],
@@ -217,19 +225,20 @@ void main() {
               'type': 'bar',
               'label': 'Bar Dataset',
               'data': <Object?>[10, 20, 30, 40],
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                255,
-                99,
-                132,
-                0.2,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 99, 132, 0.2),
               ),
-              'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
+              'borderColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 99, 132, 1),
+              ),
             },
             <String, Object?>{
               'type': 'line',
               'label': 'Line Dataset',
               'data': <Object?>[50, 50, 50, 50],
-              'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
+              'borderColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(54, 162, 235, 1),
+              ),
               'fill': false,
             },
           ],
@@ -265,7 +274,7 @@ void main() {
               label: 'Scatter Dataset',
               points: points,
               backgroundColor: const ChartValue.constant(
-                Color.fromRGBO(255, 99, 132, 1),
+                ChartPaint.solid(Color.fromRGBO(255, 99, 132, 1)),
               ),
             ),
           ],
@@ -292,11 +301,8 @@ void main() {
             <String, Object?>{
               'label': 'Scatter Dataset',
               'data': points,
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                255,
-                99,
-                132,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 99, 132, 1),
               ),
             },
           ],

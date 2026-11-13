@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -22,17 +24,17 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'data': <Object?>[1, 1, 1],
           'stack': 's1',
-          'borderColor': const ui.Color(0xFFFF0000),
+          'borderColor': const ChartPaint.solid(ui.Color(0xFFFF0000)),
         },
         <String, Object?>{
           'data': <Object?>[2, 2, 2],
           'stack': 's1',
-          'borderColor': const ui.Color(0xFF00FF00),
+          'borderColor': const ChartPaint.solid(ui.Color(0xFF00FF00)),
         },
         <String, Object?>{
           'data': <Object?>[3, 3, 3],
           'stack': 's1',
-          'borderColor': const ui.Color(0xFF0000FF),
+          'borderColor': const ChartPaint.solid(ui.Color(0xFF0000FF)),
         },
       ],
     },
@@ -54,7 +56,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       final dataset = <String, Object?>{
         'data': <Object?>[1.5, 1.5, 1.5],
         'stack': 's2',
-        'borderColor': const ui.Color(0xFF000000),
+        'borderColor': const ChartPaint.solid(ui.Color(0xFF000000)),
       };
       jsSplice(datasets, 1, 0, <Object?>[dataset]);
       notifyArrayListeners(datasets, 'splice', <Object?>[1, 0, dataset]);

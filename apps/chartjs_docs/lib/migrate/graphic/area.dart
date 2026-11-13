@@ -31,9 +31,9 @@ final ChartConfig _config = ChartConfig(
     LineDataset(
       data: [for (var i = 0; i < invalidData.length; i++) _close(i)],
       // The `LineMark` of 0.5 px over the `AreaMark` in the first color.
-      borderColor: const .constant(Gx.primary),
+      borderColor: const .constant(.solid(Gx.primary)),
       borderWidth: 0.5,
-      backgroundColor: .constant(Gx.colors10.first.withAlpha(80)),
+      backgroundColor: .constant(.solid(Gx.colors10.first.withAlpha(80))),
       fill: .start,
       pointRadius: 0,
       pointHoverRadius: 0,

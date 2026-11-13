@@ -86,16 +86,7 @@ Matcher _paintEquals(ChartPaint expected) => switch (expected) {
     'color',
     nativeColorBytes(color),
   ),
-  GradientChartPaint(:final gradient) => isA<GradientChartPaint>().having(
-    (paint) => paint.gradient,
-    'gradient',
-    same(gradient),
-  ),
-  PatternChartPaint(:final pattern) => isA<PatternChartPaint>().having(
-    (paint) => paint.pattern,
-    'pattern',
-    same(pattern),
-  ),
+  final ChartShaderPaint paint => same(paint),
   UnchangedChartPaint() => isA<UnchangedChartPaint>(),
 };
 

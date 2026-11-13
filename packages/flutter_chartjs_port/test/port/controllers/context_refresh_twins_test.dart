@@ -370,8 +370,15 @@ Map<String, Object?> _config(
         for (var d = 0; d < datasets; d++)
           <String, Object?>{
             'data': _items(type, d, length),
-            'backgroundColor': <ui.Color>[red, blue, green],
-            'borderColor': <ui.Color>[blue, red],
+            'backgroundColor': <ChartPaint>[
+              const ChartPaint.solid(red),
+              const ChartPaint.solid(blue),
+              const ChartPaint.solid(green),
+            ],
+            'borderColor': <ChartPaint>[
+              const ChartPaint.solid(blue),
+              const ChartPaint.solid(red),
+            ],
             ...dataset,
           },
       ],
@@ -853,7 +860,7 @@ void main() {
               dataset: {
                 'hoverBackgroundColor': (Object? context) {
                   if (ready) seen.add(_state(chart));
-                  return red;
+                  return const ChartPaint.solid(red);
                 },
               },
             );

@@ -25,8 +25,10 @@ final List<_Scope> _scopes = [
     scope: <String, Object?>{'borderColor': undefined},
   ),
   (
-    label: '{borderColor: Color(0xFF36A2EB)}',
-    scope: <String, Object?>{'borderColor': const ui.Color(0xFF36A2EB)},
+    label: '{borderColor: ChartPaint.solid(Color(0xFF36A2EB))}',
+    scope: <String, Object?>{
+      'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
+    },
   ),
 ];
 
@@ -151,7 +153,7 @@ class OptionsDemo extends StatelessWidget {
 
   Widget _nested(BuildContext context) {
     final dataset = <String, Object?>{
-      'backgroundColor': const ui.Color(0xFF36A2EB),
+      'backgroundColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
       'font': const ChartTextStyle(fontSize: 20, fontWeight: FontWeight.bold),
     };
     final resolver = createResolver([dataset, defaults]);
@@ -190,7 +192,7 @@ class OptionsDemo extends StatelessWidget {
             const ColorSwatchBox(color: ui.Color(0xFF36A2EB), size: 28),
             const Text('backgroundColor'),
             const SizedBox(width: 10),
-            ColorSwatchBox(color: hover as ui.Color?, size: 28),
+            ColorSwatchBox(color: (hover as SolidChartPaint?)?.color, size: 28),
             const Text('hover'),
           ],
         ),

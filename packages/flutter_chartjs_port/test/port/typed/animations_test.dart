@@ -44,7 +44,7 @@ Widget _line(Color color, List<PropertyAnimation> animations) => _box(
         LineDataset(
           key: const ValueKey('line'),
           data: const [1, 2, 3],
-          borderColor: ChartValue.constant(color),
+          borderColor: ChartValue.constant(.solid(color)),
         ),
       ],
       animations: animations,
@@ -82,7 +82,9 @@ JsObjectFace _optionsOf(Object? element) =>
 
 /// The border color of the line of dataset 0.
 Color _borderColor(Chart chart) =>
-    _optionsOf(chart.getDatasetMeta(0).dataset)['borderColor']! as Color;
+    (_optionsOf(chart.getDatasetMeta(0).dataset)['borderColor']!
+            as SolidChartPaint)
+        .color;
 
 /// The border width of bar 0 of dataset 0.
 double _borderWidth(Chart chart) =>
@@ -155,7 +157,7 @@ void main() {
             LineDataset(
               key: const ValueKey('line'),
               data: const [1, 2, 3],
-              borderColor: ChartValue.constant(color),
+              borderColor: ChartValue.constant(.solid(color)),
             ),
           ],
           animation: animation,
@@ -214,7 +216,7 @@ void main() {
               LineDataset(
                 key: const ValueKey('line'),
                 data: const [1, 2, 3],
-                borderColor: ChartValue.constant(color),
+                borderColor: ChartValue.constant(.solid(color)),
               ),
             ],
             animation: const ChartAnimation(
@@ -357,7 +359,7 @@ void main() {
             LineDataset(
               key: const ValueKey('line'),
               data: const [1, 2, 3],
-              borderColor: ChartValue.constant(color),
+              borderColor: ChartValue.constant(.solid(color)),
             ),
           ],
           animation: animation,

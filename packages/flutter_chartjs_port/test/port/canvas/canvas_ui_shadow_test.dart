@@ -175,9 +175,11 @@ void main() {
     test('a transparent part of a gradient casts no shadow', () async {
       final r = await renderContext((ctx) {
         _red20(ctx, y: 30);
-        final gradient = ctx.createLinearGradient(20, 0, 140, 0)
-          ..addColorStop(0, const ui.Color(0x00000000))
-          ..addColorStop(1, _black);
+        const gradient = ChartGradient.linear(
+          ui.Offset(20, 0),
+          ui.Offset(140, 0),
+          [ui.Color(0x00000000), _black],
+        );
         ctx
           ..strokeStyle = gradient
           ..lineWidth = 6
@@ -322,7 +324,7 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'data': <Object?>[1.0, 3.0, 2.0],
-              'borderColor': _black,
+              'borderColor': const ChartPaint.solid(_black),
               'pointRadius': 0.0,
             },
           ],

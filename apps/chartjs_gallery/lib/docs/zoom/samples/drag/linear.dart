@@ -6,6 +6,7 @@ import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, ModifierKey, ZoomChart;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show ChartPosition;
 
@@ -38,9 +39,11 @@ ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
   // it as the upstream handlers do.
   final drag = <String, Object?>{
     'enabled': true,
-    'borderColor': const ui.Color.fromRGBO(54, 162, 235, 1),
+    'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 1)),
     'borderWidth': 1.0,
-    'backgroundColor': const ui.Color.fromRGBO(54, 162, 235, 0.3),
+    'backgroundColor': const ChartPaint.solid(
+      ui.Color.fromRGBO(54, 162, 235, 0.3),
+    ),
   };
   final zoomOptions = <String, Object?>{
     'pan': <String, Object?>{

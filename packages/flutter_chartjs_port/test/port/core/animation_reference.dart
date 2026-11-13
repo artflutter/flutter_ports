@@ -6,8 +6,10 @@
 // 1066 steps, 566 color pairs, 120 color steps and
 // 15 cancel cases with 23 steps.
 
+import 'dart:ui' show Offset;
+
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/color.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 
 /// The Node.js version that generated this file.
 const String animationReferenceNode = 'v24.22.1';
@@ -28,15 +30,11 @@ final class AnimationAbsent {
 const AnimationAbsent animationAbsent = AnimationAbsent._();
 
 /// The test gradient of the data. `helpers.color` returns it unchanged.
-final class AnimationGradient implements CanvasGradient {
-  const AnimationGradient._();
-
-  @override
-  void addColorStop(double offset, Object color) {}
-}
-
-/// The gradient of [animationColorReference] and [animationColorSequence].
-const AnimationGradient animationGradient = AnimationGradient._();
+const ChartGradient animationGradient = ChartGradient.linear(
+  Offset.zero,
+  Offset(1, 1),
+  [],
+);
 
 /// One step of a scenario, `(op, offset, value, cfg)`: `tick` at
 /// `_start + offset`, a write of `_from` or `_to` with `value` (`from`,

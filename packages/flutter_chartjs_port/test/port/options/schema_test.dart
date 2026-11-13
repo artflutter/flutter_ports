@@ -191,6 +191,8 @@ bool _fits(String kind, int shape) {
     // enum or a class of the port (`ShapeBits.typed`).
     'String' => shape & (ShapeBits.string | ShapeBits.typed) != 0,
     // Upstream data hold an image where the port has an `ImagePointStyle`.
+    'obj:UiCanvasGradient' ||
+    'obj:UiCanvasPattern' => shape & ShapeBits.typed == ShapeBits.chartPaint,
     'obj:UiImageSource' => shape & ShapeBits.typed == ShapeBits.pointStyle,
     // A font is a `ChartTextStyle` (Chart.js ADR 0116).
     'obj:TooltipCallbacks' =>

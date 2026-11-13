@@ -20,6 +20,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -83,7 +85,9 @@ List<Object?> _textCalls(List<Object?> translate, double rotate) => [
   },
   <String, Object?>{
     'name': 'setFillStyle',
-    'args': <Object?>[const native_ui.Color.fromRGBO(102, 102, 102, 1)],
+    'args': <Object?>[
+      const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
+    ],
   },
   <String, Object?>{
     'name': 'setTextAlign',

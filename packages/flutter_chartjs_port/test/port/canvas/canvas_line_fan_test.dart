@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasCompositeOperation;
 import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'line_fan_engine.dart';
@@ -702,9 +703,11 @@ void main() {
     declines(
       'a gradient',
       setUp: (c) {
-        c.strokeStyle = c.createLinearGradient(0, 0, 160, 0)
-          ..addColorStop(0, const ui.Color(0xFFFF0000))
-          ..addColorStop(1, const ui.Color(0xFF0000FF));
+        c.strokeStyle = const ChartGradient.linear(
+          ui.Offset.zero,
+          ui.Offset(160, 0),
+          [ui.Color(0xFFFF0000), ui.Color(0xFF0000FF)],
+        );
       },
     );
     declines('another transform', setUp: (c) => c.scale(2, 1));

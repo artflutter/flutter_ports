@@ -2,7 +2,7 @@
 // ignore_for_file: implementation_imports
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show JsObjectFace, Undefined;
+    show JsObjectFace, SolidChartPaint, Undefined;
 // Not public: jsNumberToString, the JS text of a number in the readouts.
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
@@ -17,6 +17,7 @@ String jsNumberText(double value) => jsNumberToString(value);
 /// The JavaScript source form of an option value, for display: `undefined`,
 /// `null`, a quoted string, a JS number string, or `{…}` and `[…]`.
 String showJs(Object? value) => switch (value) {
+  SolidChartPaint(:final color) => 'ChartPaint.solid(${showJs(color)})',
   final Color color => 'Color(0x${_argbText(color)})',
   Undefined() => 'undefined',
   null => 'null',

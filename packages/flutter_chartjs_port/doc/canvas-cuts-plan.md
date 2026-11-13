@@ -2710,3 +2710,22 @@ changes. No trigger occurred.
   `platform-umd-dom-platform` becomes `platform-dom-platform-class`) and `test/specs/platform.dom_test.dart`, which
   takes `FlutterPlatform.jsClass` as `DomPlatform`. This plan cites no line of these files, and no canvas file changes.
   The tests of §2.6 and §3.5 and the estimates do not change. No deferred cut changes. No trigger occurred.
+
+## ChartPaint migration, 2026-11-13
+
+[ADR 0128](adr/0128-chart-paint-options.md) replaces the mutable
+`UiCanvasGradient`/`UiCanvasPattern` inventory with `ChartGradient`,
+`ChartPattern` and the renderer function `shaderFor` in `canvas_ui_paint.dart`.
+The canvas interface no longer owns gradient/pattern factories. Style setters
+interpret solid paints at the renderer boundary; the rectangular-bar and arc
+sector guards inspect their contained native color. The existing primitive,
+batching, shadow and path algorithms remain the subjects of the cuts above.
+
+For the current tree, use the named anchors `shaderFor`, `_gradientShader`,
+`fillStyle`, `strokeStyle` and `_rectBarColor` instead of the former gradient
+class/factory line references. Historical line counts and measurements above
+remain tied to their recorded revisions. This migration supplies no new timing
+claim and does not change the deferred work-package estimates. The pinning
+checks remain the canvas/element pixel twins; `canvas_ui_test.dart` additionally
+checks native paint identity, gradient stop validation, cache retry after a
+failed build and invalidation after a gradient-list change.

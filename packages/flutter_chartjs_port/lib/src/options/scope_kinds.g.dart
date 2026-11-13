@@ -1531,15 +1531,15 @@ enum ScopeKind {
           case OptionKey.clip:
             return 35;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.font:
             return 4096;
           case OptionKey.responsive:
@@ -1599,7 +1599,7 @@ enum ScopeKind {
           case OptionKey.scale:
             return 32;
           case OptionKey.hoverColor:
-            return 64;
+            return 4864;
           case OptionKey.drawActiveElementsOnTop:
             return 2;
           case OptionKey.label:
@@ -1657,9 +1657,9 @@ enum ScopeKind {
           case OptionKey.dataElementType:
             return 6;
           case OptionKey.pointBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.pointBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.pointBorderWidth:
             return 1;
           case OptionKey.pointHitRadius:
@@ -1669,9 +1669,9 @@ enum ScopeKind {
           case OptionKey.pointRotation:
             return 1;
           case OptionKey.pointHoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.pointHoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.pointHoverBorderWidth:
             return 1;
           case OptionKey.pointHoverRadius:
@@ -1935,9 +1935,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.radius:
             return 1;
           case OptionKey.hitRadius:
@@ -1951,9 +1951,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverRadius:
             return 1;
           case OptionKey.dollarShared:
@@ -1968,9 +1968,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.borderCapStyle:
             return 512;
           case OptionKey.borderDash:
@@ -1996,9 +1996,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
@@ -2017,9 +2017,9 @@ enum ScopeKind {
       case ScopeKind.barOptions:
         switch (key) {
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
@@ -2033,9 +2033,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBorderRadius:
             return 33;
           case OptionKey.pointStyle:
@@ -2052,9 +2052,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
@@ -2078,9 +2078,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
@@ -2124,9 +2124,9 @@ enum ScopeKind {
           case OptionKey.target:
             return 3363;
           case OptionKey.above:
-            return 64;
+            return 4864;
           case OptionKey.below:
-            return 64;
+            return 4864;
           case OptionKey.value:
             return 1;
           default:
@@ -2135,9 +2135,9 @@ enum ScopeKind {
       case ScopeKind.segmentOptions:
         switch (key) {
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.borderCapStyle:
             return 512;
           case OptionKey.borderDash:
@@ -2170,9 +2170,9 @@ enum ScopeKind {
           case OptionKey.hidden:
             return 2;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.base:
             return 1;
           case OptionKey.borderSkipped:
@@ -2186,9 +2186,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.animation:
             return 34;
           case OptionKey.animations:
@@ -2261,9 +2261,9 @@ enum ScopeKind {
           case OptionKey.hidden:
             return 2;
           case OptionKey.pointBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.pointBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.pointBorderWidth:
             return 1;
           case OptionKey.pointHitRadius:
@@ -2275,9 +2275,9 @@ enum ScopeKind {
           case OptionKey.pointStyle:
             return 3202;
           case OptionKey.pointHoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.pointHoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.pointHoverBorderWidth:
             return 1;
           case OptionKey.pointHoverRadius:
@@ -2307,9 +2307,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
@@ -2321,9 +2321,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.animation:
             return 34;
           case OptionKey.animations:
@@ -2380,9 +2380,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.radius:
             return 1;
           case OptionKey.hitRadius:
@@ -2396,9 +2396,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverRadius:
             return 1;
           case OptionKey.xAxisID:
@@ -2455,9 +2455,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
@@ -2481,9 +2481,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
@@ -2556,9 +2556,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.selfJoin:
             return 2;
           case OptionKey.borderAlign:
@@ -2582,9 +2582,9 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBorderDash:
             return 16;
           case OptionKey.hoverBorderDashOffset:
@@ -2659,9 +2659,9 @@ enum ScopeKind {
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.radius:
             return 1;
           case OptionKey.hitRadius:
@@ -2675,15 +2675,15 @@ enum ScopeKind {
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.hoverRadius:
             return 1;
           case OptionKey.pointBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.pointBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.pointBorderWidth:
             return 1;
           case OptionKey.pointHitRadius:
@@ -2693,9 +2693,9 @@ enum ScopeKind {
           case OptionKey.pointRotation:
             return 1;
           case OptionKey.pointHoverBackgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.pointHoverBorderColor:
-            return 64;
+            return 4864;
           case OptionKey.pointHoverBorderWidth:
             return 1;
           case OptionKey.pointHoverRadius:
@@ -2823,7 +2823,7 @@ enum ScopeKind {
           case OptionKey.alignToPixels:
             return 2;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.reverse:
             return 2;
           case OptionKey.clip:
@@ -2920,7 +2920,7 @@ enum ScopeKind {
       case ScopeKind.tickOptions:
         switch (key) {
           case OptionKey.backdropColor:
-            return 64;
+            return 4864;
           case OptionKey.backdropPadding:
             return 4480;
           case OptionKey.callback:
@@ -2928,7 +2928,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.font:
             return 4096;
           case OptionKey.padding:
@@ -2936,7 +2936,7 @@ enum ScopeKind {
           case OptionKey.showLabelBackdrop:
             return 2;
           case OptionKey.textStrokeColor:
-            return 64;
+            return 4864;
           case OptionKey.textStrokeWidth:
             return 1;
           case OptionKey.z:
@@ -2996,7 +2996,7 @@ enum ScopeKind {
           case OptionKey.circular:
             return 2;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.lineWidth:
             return 1;
           case OptionKey.drawOnChartArea:
@@ -3008,7 +3008,7 @@ enum ScopeKind {
           case OptionKey.tickBorderDashOffset:
             return 1;
           case OptionKey.tickColor:
-            return 64;
+            return 4864;
           case OptionKey.tickLength:
             return 1;
           case OptionKey.tickWidth:
@@ -3029,7 +3029,7 @@ enum ScopeKind {
           case OptionKey.dashOffset:
             return 1;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.width:
             return 1;
           case OptionKey.z:
@@ -3046,9 +3046,9 @@ enum ScopeKind {
           case OptionKey.text:
             return 20;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.strokeColor:
-            return 64;
+            return 4864;
           case OptionKey.strokeWidth:
             return 1;
           case OptionKey.font:
@@ -3107,7 +3107,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.lineWidth:
             return 1;
           case OptionKey.borderDash:
@@ -3120,7 +3120,7 @@ enum ScopeKind {
       case ScopeKind.pointLabelOptions:
         switch (key) {
           case OptionKey.backdropColor:
-            return 64;
+            return 4864;
           case OptionKey.backdropPadding:
             return 4480;
           case OptionKey.borderRadius:
@@ -3128,7 +3128,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 6;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.font:
             return 4096;
           case OptionKey.callback:
@@ -3184,7 +3184,7 @@ enum ScopeKind {
           case OptionKey.boxHeight:
             return 1;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.font:
             return 4096;
           case OptionKey.padding:
@@ -3215,7 +3215,7 @@ enum ScopeKind {
           case OptionKey.display:
             return 2;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.font:
             return 4096;
           case OptionKey.position:
@@ -3236,7 +3236,7 @@ enum ScopeKind {
           case OptionKey.position:
             return 2432;
           case OptionKey.color:
-            return 64;
+            return 4864;
           case OptionKey.font:
             return 4096;
           case OptionKey.fullSize:
@@ -3277,11 +3277,11 @@ enum ScopeKind {
           case OptionKey.filter:
             return 8;
           case OptionKey.backgroundColor:
-            return 64;
+            return 4864;
           case OptionKey.boxPadding:
             return 1;
           case OptionKey.titleColor:
-            return 64;
+            return 4864;
           case OptionKey.titleFont:
             return 4096;
           case OptionKey.titleSpacing:
@@ -3293,7 +3293,7 @@ enum ScopeKind {
           case OptionKey.bodySpacing:
             return 1;
           case OptionKey.bodyColor:
-            return 64;
+            return 4864;
           case OptionKey.bodyFont:
             return 4096;
           case OptionKey.bodyAlign:
@@ -3303,7 +3303,7 @@ enum ScopeKind {
           case OptionKey.footerMarginTop:
             return 1;
           case OptionKey.footerColor:
-            return 64;
+            return 4864;
           case OptionKey.footerFont:
             return 4096;
           case OptionKey.footerAlign:
@@ -3317,7 +3317,7 @@ enum ScopeKind {
           case OptionKey.cornerRadius:
             return 33;
           case OptionKey.multiKeyBackground:
-            return 64;
+            return 4864;
           case OptionKey.displayColors:
             return 2;
           case OptionKey.boxWidth:
@@ -3327,7 +3327,7 @@ enum ScopeKind {
           case OptionKey.usePointStyle:
             return 2;
           case OptionKey.borderColor:
-            return 64;
+            return 4864;
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.rtl:

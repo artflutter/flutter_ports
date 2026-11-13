@@ -23,10 +23,10 @@ const Color _red = Color(0xFFFF6384);
 const Color _blue = Color(0xFF36A2EB);
 
 /// A scriptable color.
-Color _colorFor(ChartContext context) => _red;
+ChartPaint _colorFor(ChartContext context) => const ChartPaint.solid(_red);
 
 /// Another scriptable color.
-Color _otherFor(ChartContext context) => _blue;
+ChartPaint _otherFor(ChartContext context) => const ChartPaint.solid(_blue);
 
 /// A tick format.
 String? _format(AxisTickInfo tick) => null;
@@ -196,7 +196,7 @@ void main() {
           key: const ValueKey('a'),
           label: 'A',
           data: data,
-          backgroundColor: const ChartValue.constant(_red),
+          backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
           extra: const {'clip': 5},
         ),
@@ -204,7 +204,7 @@ void main() {
           key: const ValueKey('a'),
           label: 'A',
           data: data,
-          backgroundColor: const ChartValue.constant(_red),
+          backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
           extra: const {'clip': 5},
         ),
@@ -229,19 +229,33 @@ void main() {
     test('a style List compares by its items', () {
       _expectEqual(
         BarDataset(
-          backgroundColor: ChartValue.indexed(_runtime([_red, _blue])),
+          backgroundColor: ChartValue.indexed(
+            _runtime([
+              const ChartPaint.solid(_red),
+              const ChartPaint.solid(_blue),
+            ]),
+          ),
         ),
         BarDataset(
-          backgroundColor: ChartValue.indexed(_runtime([_red, _blue])),
+          backgroundColor: ChartValue.indexed(
+            _runtime([
+              const ChartPaint.solid(_red),
+              const ChartPaint.solid(_blue),
+            ]),
+          ),
         ),
       );
       _expectEqual(
         LineDataset(
-          borderColor: ChartValue.indexed(_runtime([_red])),
+          borderColor: ChartValue.indexed(
+            _runtime([const ChartPaint.solid(_red)]),
+          ),
           borderDash: _runtime([4, 2]),
         ),
         LineDataset(
-          borderColor: ChartValue.indexed(_runtime([_red])),
+          borderColor: ChartValue.indexed(
+            _runtime([const ChartPaint.solid(_red)]),
+          ),
           borderDash: _runtime([4, 2]),
         ),
       );
@@ -263,9 +277,17 @@ void main() {
         ),
       );
       expect(
-        BarDataset(backgroundColor: ChartValue.resolver((context) => _red)),
+        BarDataset(
+          backgroundColor: ChartValue.resolver(
+            (context) => const ChartPaint.solid(_red),
+          ),
+        ),
         isNot(
-          BarDataset(backgroundColor: ChartValue.resolver((context) => _red)),
+          BarDataset(
+            backgroundColor: ChartValue.resolver(
+              (context) => const ChartPaint.solid(_red),
+            ),
+          ),
         ),
       );
     });
@@ -358,7 +380,7 @@ void main() {
     test('the diagnostics show the parameters that are set', () {
       const dataset = BarDataset(
         label: 'A',
-        backgroundColor: ChartValue.indexed([_red]),
+        backgroundColor: ChartValue.indexed([ChartPaint.solid(_red)]),
         borderColor: ChartValue.resolver(_colorFor),
       );
       final shown = [
@@ -367,9 +389,12 @@ void main() {
       ];
       expect(shown, ['label', 'backgroundColor', 'borderColor']);
       expect(dataset.toString(), startsWith('BarDataset#'));
+      const paintStart = 'ChartPaint.solid(Color(';
       expect(
         dataset.toString(),
-        contains('(label: A, backgroundColor: ChartValue.indexed([Color('),
+        contains(
+          '(label: A, backgroundColor: ChartValue.indexed([$paintStart',
+        ),
       );
     });
 
@@ -415,7 +440,9 @@ void main() {
         datasets: [
           BarDataset(
             data: data,
-            backgroundColor: ChartValue.indexed(_runtime([_red])),
+            backgroundColor: ChartValue.indexed(
+              _runtime([const ChartPaint.solid(_red)]),
+            ),
           ),
         ],
         scales: {

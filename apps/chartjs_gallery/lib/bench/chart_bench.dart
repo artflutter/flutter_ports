@@ -481,8 +481,8 @@ Map<String, Object?> _benchDataset(
 ]) => <String, Object?>{
   'label': 'Dataset ${k + 1}',
   'data': data,
-  'borderColor': _benchBorders[k % _benchBorders.length],
-  'backgroundColor': _benchFills[k % _benchFills.length],
+  'borderColor': ChartPaint.solid(_benchBorders[k % _benchBorders.length]),
+  'backgroundColor': ChartPaint.solid(_benchFills[k % _benchFills.length]),
   'borderWidth': 1.0,
   ...?more,
 };
@@ -915,8 +915,8 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
           for (var k = 0; k < 3; k++)
             <String, Object?>{
               'target': FillBoundary.origin,
-              'above': _benchFills[1],
-              'below': _benchFills[0],
+              'above': ChartPaint.solid(_benchFills[1]),
+              'below': ChartPaint.solid(_benchFills[0]),
             },
         ];
       case 'stack':
@@ -1214,7 +1214,7 @@ ChartBenchCase _primitiveCase() => ChartBenchCase(
           <String, Object?>{
             'data': data,
             'backgroundColor': stressChartBackground,
-            'borderColor': const ui.Color(0xFF36A2EB),
+            'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
             'borderWidth': 1.0,
             'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
@@ -1799,7 +1799,7 @@ Map<String, Object?> _zoomConfig(
       <String, Object?>{
         'label': 'Dataset 1',
         'data': scene.data,
-        'borderColor': const ui.Color(0xFF36A2EB),
+        'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
         'backgroundColor': stressChartBackground,
         'borderWidth': 1.0,
       },

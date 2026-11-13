@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -1128,9 +1130,13 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-x',
-                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  'color': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  ),
                   'strokeWidth': 1,
-                  'strokeColor': const native_ui.Color.fromRGBO(51, 51, 51, 1),
+                  'strokeColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(51, 51, 51, 1),
+                  ),
                 },
               },
               'y': <String, Object?>{
@@ -1138,9 +1144,13 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-y',
-                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  'color': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  ),
                   'strokeWidth': 2,
-                  'strokeColor': const native_ui.Color.fromRGBO(34, 34, 34, 1),
+                  'strokeColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(34, 34, 34, 1),
+                  ),
                 },
               },
             },
@@ -1159,7 +1169,9 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-x',
-                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  'color': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  ),
                 },
               },
               'y': <String, Object?>{
@@ -1167,7 +1179,9 @@ void main() {
                 'title': <String, Object?>{
                   'display': true,
                   'text': 'title-y',
-                  'color': const native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  'color': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(221, 221, 221, 1),
+                  ),
                 },
               },
             },
@@ -1182,7 +1196,7 @@ void main() {
         final scale = chart.scales['x']!;
         expect(
           _member(scale.options['title'], 'strokeColor'),
-          const native_ui.Color.fromRGBO(51, 51, 51, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(51, 51, 51, 1)),
         );
         expect(_member(scale.options['title'], 'strokeWidth'), 1);
       });
@@ -1194,7 +1208,7 @@ void main() {
         final scale = chart.scales['y']!;
         expect(
           _member(scale.options['title'], 'strokeColor'),
-          const native_ui.Color.fromRGBO(34, 34, 34, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(34, 34, 34, 1)),
         );
         expect(_member(scale.options['title'], 'strokeWidth'), 2);
       });

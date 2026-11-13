@@ -92,6 +92,8 @@ import 'package:flutter_chartjs_port/src/options/typed_record.dart'
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -945,7 +947,7 @@ class ArcElement extends Element
   static final ArcOptionsScope defaults = ArcOptionsScope()
     // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
     ..borderAlign = ArcBorderAlign.center
-    ..borderColor = const ui.Color.fromRGBO(255, 255, 255, 1)
+    ..borderColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
     ..borderDash = <Object?>[]
     ..borderDashOffset = 0.0
     ..borderJoinStyleCell = optUndefined

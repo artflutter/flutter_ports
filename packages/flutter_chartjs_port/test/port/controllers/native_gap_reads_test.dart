@@ -209,9 +209,9 @@ void main() {
 
   // Indexed colors: the options of the prepared native plan.
   final indexedColors = <String, Object?>{
-    'backgroundColor': <ui.Color>[
-      const ui.Color(0xffff0000),
-      const ui.Color(0xff0000ff),
+    'backgroundColor': <ChartPaint>[
+      const ChartPaint.solid(ui.Color(0xffff0000)),
+      const ChartPaint.solid(ui.Color(0xff0000ff)),
     ],
   };
 

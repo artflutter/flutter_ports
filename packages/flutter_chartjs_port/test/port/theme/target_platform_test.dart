@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -54,7 +56,7 @@ void main() {
             config.chartOptionScopes(),
             <String, Object?>{},
           )['color'],
-          const native_ui.Color.fromRGBO(102, 102, 102, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
           reason: '$platform',
         );
       } finally {

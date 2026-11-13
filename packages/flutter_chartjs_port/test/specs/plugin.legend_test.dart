@@ -23,6 +23,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -73,7 +75,9 @@ AnyObject _center(LegendHitBox hb) => <String, Object?>{
 List<Object?> _barDatasets() => <Object?>[
   <String, Object?>{
     'label': 'dataset1',
-    'backgroundColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    'backgroundColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    ),
     'borderCapStyle': native_ui.StrokeCap.butt,
     'borderDash': <Object?>[2, 2],
     'borderDashOffset': 5.5,
@@ -88,7 +92,9 @@ List<Object?> _barDatasets() => <Object?>[
   <String, Object?>{
     'label': 'dataset3',
     'borderWidth': 10,
-    'borderColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
+    'borderColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(0, 128, 0, 1),
+    ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     'pointStyle': const CrossRotPointStyle(),
     'data': <Object?>[],
@@ -99,7 +105,9 @@ List<Object?> _barDatasets() => <Object?>[
 List<Object?> _lineDatasets() => <Object?>[
   <String, Object?>{
     'label': 'dataset1',
-    'backgroundColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    'backgroundColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    ),
     'borderCapStyle': native_ui.StrokeCap.round,
     'borderDash': <Object?>[2, 2],
     'borderDashOffset': 5.5,
@@ -114,7 +122,9 @@ List<Object?> _lineDatasets() => <Object?>[
   <String, Object?>{
     'label': 'dataset3',
     'borderWidth': 10,
-    'borderColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
+    'borderColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(0, 128, 0, 1),
+    ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     'pointStyle': const CrossRotPointStyle(),
     'fill': false,
@@ -141,7 +151,9 @@ AnyObject _item({
   'text': text,
   'borderRadius': borderRadius,
   'fillStyle': fillStyle,
-  'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+  'fontColor': const ChartPaint.solid(
+    native_ui.Color.fromRGBO(102, 102, 102, 1),
+  ),
   'hidden': hidden,
   'lineCap': lineCap,
   'lineDash': lineDash,
@@ -158,40 +170,40 @@ AnyObject _item({
 /// The items of the line cases, dataset 1 to 3 (:141-189).
 AnyObject _lineItem1() => _item(
   text: 'dataset1',
-  fillStyle: const native_ui.Color.fromRGBO(255, 51, 17, 1),
+  fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
   hidden: false,
   lineCap: native_ui.StrokeCap.round,
   lineDash: <Object?>[2, 2],
   lineDashOffset: 5.5,
   lineJoin: native_ui.StrokeJoin.miter,
   lineWidth: 3,
-  strokeStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+  strokeStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
   datasetIndex: 0,
 );
 
 AnyObject _lineItem2() => _item(
   text: 'dataset2',
-  fillStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+  fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
   hidden: true,
   lineCap: native_ui.StrokeCap.butt,
   lineDash: <Object?>[],
   lineDashOffset: 0,
   lineJoin: native_ui.StrokeJoin.round,
   lineWidth: 3,
-  strokeStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+  strokeStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
   datasetIndex: 1,
 );
 
 AnyObject _lineItem3() => _item(
   text: 'dataset3',
-  fillStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+  fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
   hidden: false,
   lineCap: native_ui.StrokeCap.butt,
   lineDash: <Object?>[],
   lineDashOffset: 0,
   lineJoin: native_ui.StrokeJoin.miter,
   lineWidth: 10,
-  strokeStyle: const native_ui.Color.fromRGBO(0, 128, 0, 1),
+  strokeStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
   datasetIndex: 2,
 );
 
@@ -273,26 +285,38 @@ void main() {
         jasmineEquals(<Object?>[
           _item(
             text: 'dataset1',
-            fillStyle: const native_ui.Color.fromRGBO(255, 51, 17, 1),
+            fillStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 51, 17, 1),
+            ),
             hidden: false,
             lineWidth: 0,
-            strokeStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            strokeStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
             datasetIndex: 0,
           ),
           _item(
             text: 'dataset2',
-            fillStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            fillStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
             hidden: true,
             lineWidth: 0,
-            strokeStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            strokeStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
             datasetIndex: 1,
           ),
           _item(
             text: 'dataset3',
-            fillStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            fillStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
             hidden: false,
             lineWidth: 10,
-            strokeStyle: const native_ui.Color.fromRGBO(0, 128, 0, 1),
+            strokeStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 128, 0, 1),
+            ),
             // DIVERGES(chartjs): adapt-point-style-objects, the style class.
             pointStyle: const CrossRotPointStyle(),
             datasetIndex: 2,
@@ -365,18 +389,26 @@ void main() {
         jasmineEquals(<Object?>[
           _item(
             text: 'dataset1',
-            fillStyle: const native_ui.Color.fromRGBO(255, 51, 17, 1),
+            fillStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 51, 17, 1),
+            ),
             hidden: false,
             lineWidth: 0,
-            strokeStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            strokeStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
             datasetIndex: 0,
           ),
           _item(
             text: 'dataset3',
-            fillStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            fillStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
             hidden: false,
             lineWidth: 10,
-            strokeStyle: const native_ui.Color.fromRGBO(0, 128, 0, 1),
+            strokeStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 128, 0, 1),
+            ),
             // DIVERGES(chartjs): adapt-point-style-objects, the style class.
             pointStyle: const CrossRotPointStyle(),
             datasetIndex: 2,
@@ -423,11 +455,8 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'label': 'dataset1',
-                'backgroundColor': const native_ui.Color.fromRGBO(
-                  255,
-                  51,
-                  17,
-                  1,
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 51, 17, 1),
                 ),
                 'borderCapStyle': native_ui.StrokeCap.butt,
                 'borderDash': <Object?>[2, 2],
@@ -500,12 +529,24 @@ void main() {
               'label': 'test',
               'data': <Object?>[73.42, 18.13, 7.54, 0.9, 0.0025, 1.8e-5],
               'backgroundColor': <Object?>[
-                const native_ui.Color.fromRGBO(0, 120, 194, 1),
-                const native_ui.Color.fromRGBO(86, 202, 245, 1),
-                const native_ui.Color.fromRGBO(177, 227, 249, 1),
-                const native_ui.Color.fromRGBO(251, 188, 141, 1),
-                const native_ui.Color.fromRGBO(246, 163, 190, 1),
-                const native_ui.Color.fromRGBO(78, 194, 193, 1),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(0, 120, 194, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(86, 202, 245, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(177, 227, 249, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(251, 188, 141, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(246, 163, 190, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(78, 194, 193, 1),
+                ),
               ],
             },
           ],
@@ -577,15 +618,21 @@ void main() {
             <String, Object?>{
               'label': 'dataset1',
               'backgroundColor': <Object?>[
-                const native_ui.Color.fromRGBO(255, 51, 17, 1),
-                const native_ui.Color.fromRGBO(102, 102, 102, 1),
-                const native_ui.Color.fromRGBO(17, 68, 238, 1),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 51, 17, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(102, 102, 102, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(17, 68, 238, 1),
+                ),
               ],
               'borderWidth': <Object?>[5, 10, 15],
               'borderColor': <Object?>[
-                const native_ui.Color.fromRGBO(255, 0, 0, 1),
-                const native_ui.Color.fromRGBO(0, 128, 0, 1),
-                const native_ui.Color.fromRGBO(0, 0, 255, 1),
+                const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
               ],
               'data': <Object?>[],
             },
@@ -599,10 +646,14 @@ void main() {
         jasmineEquals(<Object?>[
           _item(
             text: 'dataset1',
-            fillStyle: const native_ui.Color.fromRGBO(255, 51, 17, 1),
+            fillStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 51, 17, 1),
+            ),
             hidden: false,
             lineWidth: 5,
-            strokeStyle: const native_ui.Color.fromRGBO(255, 0, 0, 1),
+            strokeStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
             datasetIndex: 0,
           ),
         ]),
@@ -617,15 +668,21 @@ void main() {
             <String, Object?>{
               'label': 'dataset1',
               'backgroundColor': <Object?>[
-                const native_ui.Color.fromRGBO(255, 51, 17, 1),
-                const native_ui.Color.fromRGBO(102, 102, 102, 1),
-                const native_ui.Color.fromRGBO(17, 68, 238, 1),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 51, 17, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(102, 102, 102, 1),
+                ),
+                const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(17, 68, 238, 1),
+                ),
               ],
               'borderWidth': <Object?>[5, 10, 15],
               'borderColor': <Object?>[
-                const native_ui.Color.fromRGBO(255, 0, 0, 1),
-                const native_ui.Color.fromRGBO(0, 128, 0, 1),
-                const native_ui.Color.fromRGBO(0, 0, 255, 1),
+                const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
               ],
               'borderRadius': 10,
               'data': <Object?>[],
@@ -648,10 +705,14 @@ void main() {
           _item(
             text: 'dataset1',
             borderRadius: 10,
-            fillStyle: const native_ui.Color.fromRGBO(255, 51, 17, 1),
+            fillStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 51, 17, 1),
+            ),
             hidden: false,
             lineWidth: 5,
-            strokeStyle: const native_ui.Color.fromRGBO(255, 0, 0, 1),
+            strokeStyle: const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
             datasetIndex: 0,
           ),
         ]),
@@ -669,23 +730,27 @@ void main() {
                 'label': 'dataset1',
                 'backgroundColor': (Object? ctx) {
                   final value = _dataValue(ctx);
-                  return native_ui.Color.fromRGBO(
-                    // js-ok: finite channel with ordered integer bounds.
-                    (value * 10).toInt().clamp(0, 255),
-                    0,
-                    0,
-                    1,
+                  return ChartPaint.solid(
+                    native_ui.Color.fromRGBO(
+                      // js-ok: finite channel with ordered integer bounds.
+                      (value * 10).toInt().clamp(0, 255),
+                      0,
+                      0,
+                      1,
+                    ),
                   );
                 },
                 'borderWidth': _dataValue,
                 'borderColor': (Object? ctx) {
                   final value = _dataValue(ctx);
-                  return native_ui.Color.fromRGBO(
-                    // js-ok: finite channel with ordered integer bounds.
-                    (255 - value * 10).toInt().clamp(0, 255),
-                    0,
-                    0,
-                    1,
+                  return ChartPaint.solid(
+                    native_ui.Color.fromRGBO(
+                      // js-ok: finite channel with ordered integer bounds.
+                      (255 - value * 10).toInt().clamp(0, 255),
+                      0,
+                      0,
+                      1,
+                    ),
                   );
                 },
                 'data': <Object?>[5, 10, 15, 20],
@@ -700,10 +765,14 @@ void main() {
           jasmineEquals(<Object?>[
             _item(
               text: 'dataset1',
-              fillStyle: const native_ui.Color.fromRGBO(50, 0, 0, 1),
+              fillStyle: const ChartPaint.solid(
+                native_ui.Color.fromRGBO(50, 0, 0, 1),
+              ),
               hidden: false,
               lineWidth: 5,
-              strokeStyle: const native_ui.Color.fromRGBO(205, 0, 0, 1),
+              strokeStyle: const ChartPaint.solid(
+                native_ui.Color.fromRGBO(205, 0, 0, 1),
+              ),
               datasetIndex: 0,
             ),
           ]),
@@ -802,8 +871,12 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset',
-              'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-              'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              ),
+              'borderColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              ),
               'data': <Object?>[120, 23, 24, 45, 51],
             },
           ],
@@ -830,15 +903,21 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset',
-              'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-              'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              ),
+              'borderColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              ),
               'data': <Object?>[120, 23, 24, 45, 51],
             },
           ],
         },
         'options': <String, Object?>{
           'responsive': true,
-          'color': const native_ui.Color.fromRGBO(0, 128, 0, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 128, 0, 1),
+          ),
           'plugins': <String, Object?>{
             'legend': <String, Object?>{'display': true},
           },
@@ -846,11 +925,11 @@ void main() {
       });
       expect(
         jsGet(jsGet(chart.legend!.options, 'labels'), 'color'),
-        const native_ui.Color.fromRGBO(0, 128, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
       expect(
         jsGet(jsGet(chart.legend!.options, 'title'), 'color'),
-        const native_ui.Color.fromRGBO(0, 128, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
     });
 
@@ -1060,25 +1139,37 @@ num _dataValue(Object? ctx) {
 List<Object?> _pointStyleDatasets() => <Object?>[
   <String, Object?>{
     'label': 'dataset1',
-    'backgroundColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    'backgroundColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    ),
     'borderCapStyle': native_ui.StrokeCap.butt,
     'borderDash': <Object?>[2, 2],
     'borderDashOffset': 5.5,
     'borderWidth': 0,
-    'borderColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    'borderColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     'pointStyle': const CrossRotPointStyle(),
-    'pointBackgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+    'pointBackgroundColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+    ),
     'pointBorderWidth': 5,
-    'pointBorderColor': const native_ui.Color.fromRGBO(0, 128, 0, 1),
+    'pointBorderColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(0, 128, 0, 1),
+    ),
     'data': <Object?>[],
   },
   <String, Object?>{
     'label': 'dataset2',
-    'backgroundColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    'backgroundColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    ),
     'borderJoinStyle': native_ui.StrokeJoin.miter,
     'borderWidth': 2,
-    'borderColor': const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    'borderColor': const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     'pointStyle': const CrossRotPointStyle(),
     'pointRotation': 15,
@@ -1091,20 +1182,22 @@ List<Object?> _pointStyleDatasets() => <Object?>[
 List<Object?> _pointStyleItems(PointStyle pointStyle) => <Object?>[
   _item(
     text: 'dataset1',
-    fillStyle: const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+    fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
     hidden: false,
     lineWidth: 5,
-    strokeStyle: const native_ui.Color.fromRGBO(0, 128, 0, 1),
+    strokeStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
     pointStyle: pointStyle,
     rotation: 0,
     datasetIndex: 0,
   ),
   _item(
     text: 'dataset2',
-    fillStyle: const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     hidden: false,
     lineWidth: 2,
-    strokeStyle: const native_ui.Color.fromRGBO(255, 51, 17, 1),
+    strokeStyle: const ChartPaint.solid(
+      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    ),
     pointStyle: pointStyle,
     rotation: 15,
     datasetIndex: 1,

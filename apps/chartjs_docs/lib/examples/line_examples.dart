@@ -65,7 +65,7 @@ const basicLine = ChartConfig(
       label: 'My First Dataset',
       data: [65, 59, 80, 81, 56, 55, 40],
       fill: .none,
-      borderColor: .constant(Color.fromRGBO(75, 192, 192, 1)),
+      borderColor: .constant(.solid(Color.fromRGBO(75, 192, 192, 1))),
       tension: 0.1,
     ),
   ],
@@ -78,7 +78,11 @@ const scopedLine = ChartConfig(
   labels: months,
   // For this dataset only.
   datasets: [
-    LineDataset(label: 'Sales', data: values, borderColor: .constant(teal)),
+    LineDataset(
+      label: 'Sales',
+      data: values,
+      borderColor: .constant(.solid(teal)),
+    ),
   ],
   // For all line elements and all point elements.
   elements: ChartElements(
@@ -98,7 +102,7 @@ const scopedLine = ChartConfig(
 const scriptableLine = LineDataset(
   label: 'Score',
   data: values,
-  borderColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
   // A typed function for a color.
   backgroundColor: .resolver(pointFill),
   // A list by data index, through extra.
@@ -107,9 +111,9 @@ const scriptableLine = LineDataset(
   },
 );
 
-Color pointFill(ChartContext context) {
+ChartPaint pointFill(ChartContext context) {
   final index = context.dataIndex;
-  return index != null && values[index]! >= 60 ? teal : red;
+  return ChartPaint.solid(index != null && values[index]! >= 60 ? teal : red);
 }
 // #enddocregion scriptable
 
@@ -122,12 +126,12 @@ ChartConfig pointStyling(PointStyle style) => ChartConfig(
     LineDataset(
       label: 'Visitors',
       data: values,
-      borderColor: const .constant(teal),
+      borderColor: const .constant(.solid(teal)),
       pointStyle: style,
       pointRadius: 9,
       pointBorderWidth: 2,
-      pointBackgroundColor: tealFill,
-      pointBorderColor: teal,
+      pointBackgroundColor: const .constant(.solid(tealFill)),
+      pointBorderColor: const .constant(.solid(teal)),
       extra: const {'pointHitRadius': 14},
     ),
   ],
@@ -138,7 +142,7 @@ ChartConfig pointStyling(PointStyle style) => ChartConfig(
 const solidLine = LineDataset(
   label: 'Solid',
   data: values,
-  borderColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
   borderWidth: 3,
 );
 // #enddocregion line-solid
@@ -147,7 +151,7 @@ const solidLine = LineDataset(
 const dashedLine = LineDataset(
   label: 'Dashed',
   data: values,
-  borderColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
   borderDash: [10, 6],
   borderCapStyle: StrokeCap.round,
   extra: {'borderDashOffset': 2},
@@ -158,8 +162,8 @@ const dashedLine = LineDataset(
 const filledLine = LineDataset(
   label: 'Filled',
   data: values,
-  borderColor: .constant(teal),
-  backgroundColor: .constant(tealFill),
+  borderColor: .constant(.solid(teal)),
+  backgroundColor: .constant(.solid(tealFill)),
   fill: .origin,
   tension: 0.3,
 );
@@ -169,8 +173,8 @@ const filledLine = LineDataset(
 const pointsOnlyLine = LineDataset(
   label: 'Points only',
   data: values,
-  borderColor: .constant(teal),
-  backgroundColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
+  backgroundColor: .constant(.solid(teal)),
   showLine: false,
 );
 // #enddocregion line-points-only
@@ -179,7 +183,7 @@ const pointsOnlyLine = LineDataset(
 const shadowLine = LineDataset(
   label: 'Shadow',
   data: values,
-  borderColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
   borderWidth: 3,
   shadow: ChartShadow(
     color: Color(0x66000000),
@@ -196,7 +200,7 @@ const List<num?> gapValues = [65, 59, null, 81, 56, null, 40];
 const brokenLine = LineDataset(
   label: 'With gaps',
   data: [65, 59, null, 81, 56, null, 40],
-  borderColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
 );
 // #enddocregion gaps-break
 
@@ -204,7 +208,7 @@ const brokenLine = LineDataset(
 const spannedLine = LineDataset(
   label: 'Spanned gaps',
   data: [65, 59, null, 81, 56, null, 40],
-  borderColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
   spanGaps: true,
 );
 // #enddocregion gaps-span
@@ -213,11 +217,11 @@ const spannedLine = LineDataset(
 const hoverLine = LineDataset(
   label: 'Move the pointer over a point',
   data: values,
-  borderColor: .constant(teal),
+  borderColor: .constant(.solid(teal)),
   pointRadius: 5,
   pointHoverRadius: 11,
-  pointHoverBackgroundColor: red,
-  pointHoverBorderColor: redFill,
+  pointHoverBackgroundColor: .constant(.solid(red)),
+  pointHoverBorderColor: .constant(.solid(redFill)),
   extra: {'pointHoverBorderWidth': 6},
 );
 // #enddocregion interactions
@@ -230,13 +234,13 @@ const cubicLines = ChartConfig(
     LineDataset(
       label: 'default',
       data: [0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170],
-      borderColor: .constant(red),
+      borderColor: .constant(.solid(red)),
       tension: 0.4,
     ),
     LineDataset(
       label: 'monotone',
       data: [0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170],
-      borderColor: .constant(blue),
+      borderColor: .constant(.solid(blue)),
       tension: 0.4,
       cubicInterpolationMode: MonotoneCubicInterpolationMode(),
     ),
@@ -254,7 +258,7 @@ const segmentLine = ChartConfig(
     LineDataset(
       label: 'Trend',
       data: trend,
-      borderColor: .constant(teal),
+      borderColor: .constant(.solid(teal)),
       spanGaps: true,
       extra: {
         'segment': {'borderColor': segmentColor, 'borderDash': segmentDash},
@@ -269,8 +273,10 @@ num? trendAt(JsObjectFace context, String key) =>
 Object? segmentColor(JsObjectFace context) {
   final from = trendAt(context, 'p0DataIndex');
   final to = trendAt(context, 'p1DataIndex');
-  if (from == null || to == null) return const Color.fromRGBO(0, 0, 0, 0.2);
-  return from > to ? red : undefined;
+  if (from == null || to == null) {
+    return const ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.2));
+  }
+  return from > to ? const ChartPaint.solid(red) : undefined;
 }
 
 Object? segmentDash(JsObjectFace context) =>
@@ -287,7 +293,7 @@ const List<num?> stepValues = [10, 40, 25, 60, 45, 80, 70];
 const noStep = LineDataset(
   label: 'stepped: false',
   data: stepValues,
-  borderColor: .constant(blue),
+  borderColor: .constant(.solid(blue)),
 );
 // #enddocregion stepped-false
 
@@ -295,7 +301,7 @@ const noStep = LineDataset(
 const stepTrue = LineDataset(
   label: 'stepped: true',
   data: stepValues,
-  borderColor: .constant(blue),
+  borderColor: .constant(.solid(blue)),
   extra: {'stepped': true},
 );
 // #enddocregion stepped-true
@@ -304,7 +310,7 @@ const stepTrue = LineDataset(
 const stepBefore = LineDataset(
   label: 'stepped: .before',
   data: stepValues,
-  borderColor: .constant(blue),
+  borderColor: .constant(.solid(blue)),
   stepped: SteppedLine.before,
 );
 // #enddocregion stepped-before
@@ -313,7 +319,7 @@ const stepBefore = LineDataset(
 const stepAfter = LineDataset(
   label: 'stepped: .after',
   data: stepValues,
-  borderColor: .constant(blue),
+  borderColor: .constant(.solid(blue)),
   stepped: SteppedLine.after,
 );
 // #enddocregion stepped-after
@@ -322,7 +328,7 @@ const stepAfter = LineDataset(
 const stepMiddle = LineDataset(
   label: 'stepped: .middle',
   data: stepValues,
-  borderColor: .constant(blue),
+  borderColor: .constant(.solid(blue)),
   stepped: SteppedLine.middle,
 );
 // #enddocregion stepped-middle
@@ -342,7 +348,7 @@ const valuesLine = ChartConfig(
     LineDataset(
       label: 'One value for each label',
       data: [20, 10, 30, 25],
-      borderColor: .constant(teal),
+      borderColor: .constant(.solid(teal)),
     ),
   ],
 );
@@ -360,7 +366,7 @@ final pointsLine = ChartConfig(
         DataPoint(40, 30),
         DataPoint(45, 25),
       ],
-      borderColor: const .constant(teal),
+      borderColor: const .constant(.solid(teal)),
     ),
   ],
   scales: const {'x': LinearAxis()},
@@ -375,22 +381,22 @@ const stackedLines = ChartConfig(
     LineDataset(
       label: 'Mobile',
       data: [30, 35, 28, 40, 45, 42, 50],
-      borderColor: .constant(teal),
-      backgroundColor: .constant(tealFill),
+      borderColor: .constant(.solid(teal)),
+      backgroundColor: .constant(.solid(tealFill)),
       fill: .stack,
     ),
     LineDataset(
       label: 'Desktop',
       data: [20, 25, 22, 18, 24, 30, 26],
-      borderColor: .constant(blue),
-      backgroundColor: .constant(blueFill),
+      borderColor: .constant(.solid(blue)),
+      backgroundColor: .constant(.solid(blueFill)),
       fill: .stack,
     ),
     LineDataset(
       label: 'Tablet',
       data: [10, 8, 12, 14, 9, 11, 15],
-      borderColor: .constant(red),
-      backgroundColor: .constant(redFill),
+      borderColor: .constant(.solid(red)),
+      backgroundColor: .constant(.solid(redFill)),
       fill: .stack,
     ),
   ],
@@ -409,22 +415,22 @@ const verticalLine = ChartConfig(
       data: [65, 59, 80, 81, 56, 55, 40],
       fill: .none,
       backgroundColor: .indexed([
-        Color.fromRGBO(255, 99, 132, 0.2),
-        Color.fromRGBO(255, 159, 64, 0.2),
-        Color.fromRGBO(255, 205, 86, 0.2),
-        Color.fromRGBO(75, 192, 192, 0.2),
-        Color.fromRGBO(54, 162, 235, 0.2),
-        Color.fromRGBO(153, 102, 255, 0.2),
-        Color.fromRGBO(201, 203, 207, 0.2),
+        .solid(Color.fromRGBO(255, 99, 132, 0.2)),
+        .solid(Color.fromRGBO(255, 159, 64, 0.2)),
+        .solid(Color.fromRGBO(255, 205, 86, 0.2)),
+        .solid(Color.fromRGBO(75, 192, 192, 0.2)),
+        .solid(Color.fromRGBO(54, 162, 235, 0.2)),
+        .solid(Color.fromRGBO(153, 102, 255, 0.2)),
+        .solid(Color.fromRGBO(201, 203, 207, 0.2)),
       ]),
       borderColor: .indexed([
-        Color.fromRGBO(255, 99, 132, 1),
-        Color.fromRGBO(255, 159, 64, 1),
-        Color.fromRGBO(255, 205, 86, 1),
-        Color.fromRGBO(75, 192, 192, 1),
-        Color.fromRGBO(54, 162, 235, 1),
-        Color.fromRGBO(153, 102, 255, 1),
-        Color.fromRGBO(201, 203, 207, 1),
+        .solid(Color.fromRGBO(255, 99, 132, 1)),
+        .solid(Color.fromRGBO(255, 159, 64, 1)),
+        .solid(Color.fromRGBO(255, 205, 86, 1)),
+        .solid(Color.fromRGBO(75, 192, 192, 1)),
+        .solid(Color.fromRGBO(54, 162, 235, 1)),
+        .solid(Color.fromRGBO(153, 102, 255, 1)),
+        .solid(Color.fromRGBO(201, 203, 207, 1)),
       ]),
       borderWidth: 1,
       extra: {'axis': YAxis()},
@@ -449,7 +455,7 @@ ChartConfig liveLine(List<DataPoint> points) => ChartConfig(
     LineDataset(
       label: 'Signal',
       points: points,
-      borderColor: const .constant(teal),
+      borderColor: const .constant(.solid(teal)),
       borderWidth: 1.5,
       pointRadius: 0,
     ),

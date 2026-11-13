@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -132,11 +134,15 @@ void main() {
       };
       final hover = <String, Object?>{
         r'$shared': true,
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 0, 0, 1),
+        ),
       };
       final normal = <String, Object?>{
         r'$shared': true,
-        'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ),
       };
       final target = <String, Object?>{'options': hover};
       // The un-hover.
@@ -164,7 +170,7 @@ void main() {
       await _frames(tester, 25);
       expect(
         copy['backgroundColor'],
-        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       expect(target['options'], same(hover));
       expect(animator.running(chart), isFalse);

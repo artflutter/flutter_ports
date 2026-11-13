@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 import '../../fixture_events.dart';
@@ -43,12 +44,11 @@ Map<String, Object?> fixture() {
     ..fillStyle = const native_ui.Color(0xffffff00)
     ..fillRect(0, 0, 4, 4);
 
-  final pattern = patternContext.createPattern(
-    (patternCanvas as UiCanvasElement).toImageSource(),
-    'repeat',
+  final pattern = ChartPattern(
+    (patternCanvas as UiCanvasElement).toImageSource().image,
   );
 
-  CanvasGradient? gradient;
+  ChartGradient? gradient;
 
   return <String, Object?>{
     'config': <String, Object?>{
@@ -101,13 +101,11 @@ Map<String, Object?> fixture() {
       'plugins': <Object?>[
         <String, Object?>{
           'beforeDatasetsUpdate': (types.Chart chart) {
-            if (gradient == null) {
-              final created = chart.ctx!.createLinearGradient(0, 0, 512, 256);
-              gradient = created;
-              created
-                ..addColorStop(0, const native_ui.Color(0xffff0000))
-                ..addColorStop(1, const native_ui.Color(0xff0000ff));
-            }
+            gradient ??= const ChartGradient.linear(
+              native_ui.Offset.zero,
+              native_ui.Offset(512, 256),
+              [native_ui.Color(0xffff0000), native_ui.Color(0xff0000ff)],
+            );
             final datasets =
                 (chart.config.data as AnyObject)['datasets']! as List<Object?>;
             (datasets[2]! as AnyObject)

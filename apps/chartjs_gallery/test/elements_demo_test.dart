@@ -149,7 +149,7 @@ void main() {
     expect((line.options! as JsObjectFace)['capBezierPoints'], isTrue);
     expect(
       (state.arcs.first.options! as JsObjectFace)['borderColor'],
-      const native_ui.Color.fromRGBO(255, 255, 255, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
     );
     // Each element has typed options (Chart.js ADR 0018).
     expect(state.bars.first.options, isA<BarOptions>());
@@ -282,11 +282,11 @@ void main() {
     );
     expect(
       (bar.options! as JsObjectFace)['borderColor'],
-      isNot(const native_ui.Color.fromRGBO(54, 162, 235, 1)),
+      isNot(const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1))),
     );
     expect(
       (state.bars[0].options! as JsObjectFace)['borderColor'],
-      const native_ui.Color.fromRGBO(54, 162, 235, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
     );
 
     // A move inside the same bar does not draw again.
@@ -305,7 +305,7 @@ void main() {
     expect(bar.active, isFalse);
     expect(
       (bar.options! as JsObjectFace)['borderColor'],
-      const native_ui.Color.fromRGBO(54, 162, 235, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
     );
     final point = state.points[2];
     expect(point.active, isTrue);

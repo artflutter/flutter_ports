@@ -18,6 +18,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, CirclePointStyle;
 
@@ -164,7 +165,7 @@ Map<String, Object?> stressAxesConfig({
       <String, Object?>{
         'data': scene.data,
         'backgroundColor': stressChartBackground,
-        'borderColor': const ui.Color(0xFF36A2EB),
+        'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
         'borderWidth': 1.0,
         'pointStyle': const CirclePointStyle(),
         'radius': 3.0,

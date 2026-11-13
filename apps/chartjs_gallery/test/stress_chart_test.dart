@@ -257,7 +257,9 @@ void main() {
           expect((options! as JsObjectFace)['radius'], 3);
           expect(
             (options as JsObjectFace)['backgroundColor'],
-            const native_ui.Color.fromRGBO(54, 162, 235, 0.45),
+            const ChartPaint.solid(
+              native_ui.Color.fromRGBO(54, 162, 235, 0.45),
+            ),
           );
 
           // Stopping publishes the figures.
@@ -586,11 +588,11 @@ void main() {
     expect(identical(points[2].options, options), isFalse);
     expect(
       (options as JsObjectFace)['backgroundColor'],
-      const native_ui.Color.fromRGBO(54, 162, 235, 0.45),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 0.45)),
     );
     expect(
       (points[1].options! as JsObjectFace)['backgroundColor'],
-      const native_ui.Color.fromRGBO(255, 99, 132, 0.45),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.45)),
     );
     final before = points[1].options;
     await _frames(tester, 3);
@@ -762,7 +764,7 @@ void main() {
     expect(identical(_chart(tester), third), isFalse);
     expect(
       (_points(tester)[1].options! as JsObjectFace)['backgroundColor'],
-      const native_ui.Color.fromRGBO(255, 99, 132, 0.45),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.45)),
     );
     expect(tester.takeException(), isNull);
   });

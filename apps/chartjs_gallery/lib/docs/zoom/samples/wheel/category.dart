@@ -6,6 +6,7 @@ import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, ZoomChart;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 
 /// The sample `Category Scale` of `docs/samples/wheel/category.md:3-93`: a
 /// bar chart of 20 months that shows the months 5 to 11 first, zooms with
@@ -52,8 +53,8 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
     'datasets': <Object?>[
       <String, Object?>{
         'label': 'Dataset 1',
-        'borderColor': _color(_red, 0.7),
-        'backgroundColor': _color(_red, 0.5),
+        'borderColor': ChartPaint.solid(_color(_red, 0.7)),
+        'backgroundColor': ChartPaint.solid(_color(_red, 0.5)),
         'data': <Object?>[
           97.80778464,
           -42.30366941,
@@ -79,8 +80,8 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
       },
       <String, Object?>{
         'label': 'Dataset 2',
-        'borderColor': _color(_blue, 0.7),
-        'backgroundColor': _color(_blue, 0.5),
+        'borderColor': ChartPaint.solid(_color(_blue, 0.7)),
+        'backgroundColor': ChartPaint.solid(_color(_blue, 0.5)),
         'data': <Object?>[
           26.85442387,
           -18.60682442,
@@ -106,8 +107,8 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
       },
       <String, Object?>{
         'label': 'Dataset 3',
-        'borderColor': _color(_teal, 0.7),
-        'backgroundColor': _color(_teal, 0.5),
+        'borderColor': ChartPaint.solid(_color(_teal, 0.7)),
+        'backgroundColor': ChartPaint.solid(_color(_teal, 0.5)),
         'data': <Object?>[
           -49.86025377,
           -57.46141975,
@@ -138,8 +139,8 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
   // <block:scales:2>
   final scaleOpts = <String, Object?>{
     'grid': <String, Object?>{
-      'borderColor': _color(_grey, 1),
-      'color': const ui.Color.fromRGBO(0, 0, 0, 0.1),
+      'borderColor': ChartPaint.solid(_color(_grey, 1)),
+      'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
     },
     'title': <String, Object?>{'display': true, 'text': zoomAxisTitle},
   };

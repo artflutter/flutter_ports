@@ -22,6 +22,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
@@ -293,13 +295,10 @@ void main() {
       const white = ui.Color.fromRGBO(255, 255, 255, 1);
       final leaves = _leaves(compileLightTheme());
       expect(leaves, {
-        'color': gray,
-        'scale.ticks.color': gray,
-        'scale.ticks.backdropColor': const ui.Color.fromRGBO(
-          255,
-          255,
-          255,
-          0.75,
+        'color': const ChartPaint.solid(gray),
+        'scale.ticks.color': const ChartPaint.solid(gray),
+        'scale.ticks.backdropColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(255, 255, 255, 0.75),
         ),
         'scale.ticks.font': const ChartTextStyle(
           fontFamily: 'Helvetica Neue',
@@ -308,7 +307,7 @@ void main() {
           fontStyle: ui.FontStyle.normal,
           height: 1.2,
         ),
-        'scale.title.color': gray,
+        'scale.title.color': const ChartPaint.solid(gray),
         'scale.title.font': const ChartTextStyle(
           fontFamily: 'Helvetica Neue',
           fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
@@ -316,9 +315,9 @@ void main() {
           fontStyle: ui.FontStyle.normal,
           height: 1.2,
         ),
-        'scale.grid.color': tenth,
-        'scale.border.color': tenth,
-        'scales.radialLinear.pointLabels.color': gray,
+        'scale.grid.color': const ChartPaint.solid(tenth),
+        'scale.border.color': const ChartPaint.solid(tenth),
+        'scales.radialLinear.pointLabels.color': const ChartPaint.solid(gray),
         'scales.radialLinear.pointLabels.font': const ChartTextStyle(
           fontFamily: 'Helvetica Neue',
           fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
@@ -326,8 +325,8 @@ void main() {
           height: 1.2,
           fontSize: 10,
         ),
-        'scales.radialLinear.angleLines.color': tenth,
-        'plugins.title.color': gray,
+        'scales.radialLinear.angleLines.color': const ChartPaint.solid(tenth),
+        'plugins.title.color': const ChartPaint.solid(gray),
         'plugins.title.font': const ChartTextStyle(
           fontFamily: 'Helvetica Neue',
           fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
@@ -335,7 +334,7 @@ void main() {
           fontStyle: ui.FontStyle.normal,
           height: 1.2,
         ),
-        'plugins.subtitle.color': gray,
+        'plugins.subtitle.color': const ChartPaint.solid(gray),
         'plugins.subtitle.font': const ChartTextStyle(
           fontFamily: 'Helvetica Neue',
           fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
@@ -357,16 +356,13 @@ void main() {
           fontStyle: ui.FontStyle.normal,
           height: 1.2,
         ),
-        'plugins.tooltip.backgroundColor': const ui.Color.fromRGBO(
-          0,
-          0,
-          0,
-          0.8,
+        'plugins.tooltip.backgroundColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(0, 0, 0, 0.8),
         ),
-        'plugins.tooltip.titleColor': white,
-        'plugins.tooltip.bodyColor': white,
-        'plugins.tooltip.footerColor': white,
-        'plugins.tooltip.multiKeyBackground': white,
+        'plugins.tooltip.titleColor': const ChartPaint.solid(white),
+        'plugins.tooltip.bodyColor': const ChartPaint.solid(white),
+        'plugins.tooltip.footerColor': const ChartPaint.solid(white),
+        'plugins.tooltip.multiKeyBackground': const ChartPaint.solid(white),
         'plugins.tooltip.titleFont': const ChartTextStyle(
           fontFamily: 'Helvetica Neue',
           fontFamilyFallback: ['Helvetica', 'Arial', 'sans-serif'],
@@ -398,18 +394,15 @@ void main() {
           const ui.Color.fromRGBO(201, 203, 207, 1),
         ],
         r'plugins.colors.$backgroundColors': _upstreamBackgroundColors,
-        'elements.point.borderColor': tenth,
-        'elements.point.backgroundColor': tenth,
-        'elements.line.borderColor': tenth,
-        'elements.line.backgroundColor': tenth,
-        'elements.bar.borderColor': tenth,
-        'elements.bar.backgroundColor': tenth,
-        'elements.arc.backgroundColor': tenth,
-        'elements.arc.borderColor': const ui.Color.fromRGBO(
-          255,
-          255,
-          255,
-          1,
+        'elements.point.borderColor': const ChartPaint.solid(tenth),
+        'elements.point.backgroundColor': const ChartPaint.solid(tenth),
+        'elements.line.borderColor': const ChartPaint.solid(tenth),
+        'elements.line.backgroundColor': const ChartPaint.solid(tenth),
+        'elements.bar.borderColor': const ChartPaint.solid(tenth),
+        'elements.bar.backgroundColor': const ChartPaint.solid(tenth),
+        'elements.arc.backgroundColor': const ChartPaint.solid(tenth),
+        'elements.arc.borderColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(255, 255, 255, 1),
         ),
         ..._transitionLeaves,
       });
@@ -457,46 +450,45 @@ void main() {
       const red = ui.Color.fromRGBO(200, 0, 0, 1);
       final expected = <String, Map<String, Object?>>{
         'color': {
-          'color': red,
-          'scale.ticks.color': red,
-          'scale.title.color': red,
-          'scales.radialLinear.pointLabels.color': red,
+          'color': const ChartPaint.solid(red),
+          'scale.ticks.color': const ChartPaint.solid(red),
+          'scale.title.color': const ChartPaint.solid(red),
+          'scales.radialLinear.pointLabels.color': const ChartPaint.solid(red),
           // The routes of the title color (plugin.title.js:158-160) and of
           // the subtitle color (plugin.subtitle.js:45-47).
-          'plugins.title.color': red,
-          'plugins.subtitle.color': red,
+          'plugins.title.color': const ChartPaint.solid(red),
+          'plugins.subtitle.color': const ChartPaint.solid(red),
         },
         'borderColor': {
-          'scale.grid.color': red,
-          'scale.border.color': red,
-          'scales.radialLinear.angleLines.color': red,
-          'elements.point.borderColor': red,
-          'elements.line.borderColor': red,
-          'elements.bar.borderColor': red,
+          'scale.grid.color': const ChartPaint.solid(red),
+          'scale.border.color': const ChartPaint.solid(red),
+          'scales.radialLinear.angleLines.color': const ChartPaint.solid(red),
+          'elements.point.borderColor': const ChartPaint.solid(red),
+          'elements.line.borderColor': const ChartPaint.solid(red),
+          'elements.bar.borderColor': const ChartPaint.solid(red),
         },
         'backgroundColor': {
-          'elements.point.backgroundColor': red,
-          'elements.line.backgroundColor': red,
-          'elements.bar.backgroundColor': red,
-          'elements.arc.backgroundColor': red,
+          'elements.point.backgroundColor': const ChartPaint.solid(red),
+          'elements.line.backgroundColor': const ChartPaint.solid(red),
+          'elements.bar.backgroundColor': const ChartPaint.solid(red),
+          'elements.arc.backgroundColor': const ChartPaint.solid(red),
         },
         'surface': {
-          'elements.arc.borderColor': red,
-          'scale.ticks.backdropColor': const ui.Color.fromRGBO(
-            200,
-            0,
-            0,
-            0.75,
+          'elements.arc.borderColor': const ChartPaint.solid(red),
+          'scale.ticks.backdropColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(200, 0, 0, 0.75),
           ),
         },
         // The tooltip colors (plugin.tooltip.js:1279, 1280, 1287, 1292,
         // 1305).
-        'inverseSurface': {'plugins.tooltip.backgroundColor': red},
+        'inverseSurface': {
+          'plugins.tooltip.backgroundColor': const ChartPaint.solid(red),
+        },
         'onInverseSurface': {
-          'plugins.tooltip.titleColor': red,
-          'plugins.tooltip.bodyColor': red,
-          'plugins.tooltip.footerColor': red,
-          'plugins.tooltip.multiKeyBackground': red,
+          'plugins.tooltip.titleColor': const ChartPaint.solid(red),
+          'plugins.tooltip.bodyColor': const ChartPaint.solid(red),
+          'plugins.tooltip.footerColor': const ChartPaint.solid(red),
+          'plugins.tooltip.multiKeyBackground': const ChartPaint.solid(red),
         },
       };
       for (final (token, compile) in _colorTokens) {
@@ -514,11 +506,11 @@ void main() {
       );
       expect(
         leaves['elements.arc.borderColor'],
-        const ui.Color.fromRGBO(0, 0, 255, 0.5),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 0.5)),
       );
       expect(
         leaves['scale.ticks.backdropColor'],
-        const ui.Color.fromRGBO(0, 0, 255, 0.75),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 0.75)),
       );
     });
 
@@ -938,7 +930,7 @@ void main() {
       final compiled = compileChartTheme(color: _blue);
       expect(
         _at(compiled, 'plugins.title.color'),
-        const ui.Color.fromRGBO(0, 0, 255, 0.8),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 0.8)),
       );
       expect(
         _keys(_at(compiled, 'plugins.title')),
@@ -970,7 +962,7 @@ void main() {
       final compiled = compileChartTheme(color: _blue);
       expect(
         _at(compiled, 'plugins.subtitle.color'),
-        const ui.Color.fromRGBO(0, 0, 255, 0.8),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 0.8)),
       );
       expect(
         _keys(_at(compiled, 'plugins.subtitle')),
@@ -1090,11 +1082,8 @@ void main() {
       // plugin.tooltip.js:1279.
       final compiled = compileChartTheme(inverseSurface: _blue);
       expect(_leaves(compiled), {
-        'plugins.tooltip.backgroundColor': const ui.Color.fromRGBO(
-          0,
-          0,
-          255,
-          0.8,
+        'plugins.tooltip.backgroundColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(0, 0, 255, 0.8),
         ),
         ..._transitionLeaves,
       });
@@ -1105,29 +1094,17 @@ void main() {
       // plugin.tooltip.js:1280, 1287, 1292, 1305.
       final compiled = compileChartTheme(onInverseSurface: _blue);
       expect(_leaves(compiled), {
-        'plugins.tooltip.titleColor': const ui.Color.fromRGBO(
-          0,
-          0,
-          255,
-          0.8,
+        'plugins.tooltip.titleColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(0, 0, 255, 0.8),
         ),
-        'plugins.tooltip.bodyColor': const ui.Color.fromRGBO(
-          0,
-          0,
-          255,
-          0.8,
+        'plugins.tooltip.bodyColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(0, 0, 255, 0.8),
         ),
-        'plugins.tooltip.footerColor': const ui.Color.fromRGBO(
-          0,
-          0,
-          255,
-          0.8,
+        'plugins.tooltip.footerColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(0, 0, 255, 0.8),
         ),
-        'plugins.tooltip.multiKeyBackground': const ui.Color.fromRGBO(
-          0,
-          0,
-          255,
-          0.8,
+        'plugins.tooltip.multiKeyBackground': const ChartPaint.solid(
+          ui.Color.fromRGBO(0, 0, 255, 0.8),
         ),
         ..._transitionLeaves,
       });
@@ -1150,7 +1127,7 @@ void main() {
       final compiled = compileLightTheme();
       expect(
         _at(compiled, 'plugins.tooltip.backgroundColor'),
-        const ui.Color.fromRGBO(0, 0, 0, 0.8),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.8)),
       );
       expect(
         referenceParsedColor(_at(compiled, 'plugins.tooltip.backgroundColor'))
@@ -1272,7 +1249,7 @@ void main() {
       expect(ticks.jsDelete('absent'), isFalse);
       expect(
         _at(compiled, 'scale.ticks.color'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
 
       final palette =
@@ -1300,7 +1277,7 @@ void main() {
       final resolver = config.createResolver(scopes, <String, Object?>{});
       expect(
         resolver['backgroundColor'],
-        const ui.Color.fromRGBO(0, 0, 0, 0.8),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.8)),
       );
       expect(
         () => resolver['backgroundColor'] = 'x',

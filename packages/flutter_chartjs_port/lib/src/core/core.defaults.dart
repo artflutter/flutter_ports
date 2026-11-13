@@ -46,6 +46,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
@@ -159,9 +161,9 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
   /// [descriptorValues] is `_descriptors`. [appliers] is `_appliers`.
   Defaults(Object? descriptorValues, List<void Function(Defaults)> appliers) {
     animationCell = optUndefined;
-    backgroundColor = const ui.Color.fromRGBO(0, 0, 0, 0.1);
-    borderColor = const ui.Color.fromRGBO(0, 0, 0, 0.1);
-    this.color = const ui.Color.fromRGBO(102, 102, 102, 1);
+    backgroundColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1));
+    borderColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1));
+    this.color = const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1));
     datasets = DatasetOptionsByTypeScope();
     devicePixelRatioCell = OptFunction<double>(
       _fn1(
@@ -188,16 +190,22 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
     hover = InteractionOptionsScope();
     // getHoverColor gives Dart null for the JavaScript undefined of a color
     // that does not parse. `?? undefined` gives the sentinel back.
-    hoverBackgroundColor = _fn2(
-      (ctx, options) =>
-          getHoverColor(jsGet(options, 'backgroundColor')) ?? undefined,
+    hoverBackgroundColorCell = OptFunction(
+      _fn2(
+        (ctx, options) =>
+            getHoverColor(jsGet(options, 'backgroundColor')) ?? undefined,
+      ),
     );
-    hoverBorderColor = _fn2(
-      (ctx, options) =>
-          getHoverColor(jsGet(options, 'borderColor')) ?? undefined,
+    hoverBorderColorCell = OptFunction(
+      _fn2(
+        (ctx, options) =>
+            getHoverColor(jsGet(options, 'borderColor')) ?? undefined,
+      ),
     );
-    hoverColor = _fn2(
-      (ctx, options) => getHoverColor(jsGet(options, 'color')) ?? undefined,
+    hoverColorCell = OptFunction(
+      _fn2(
+        (ctx, options) => getHoverColor(jsGet(options, 'color')) ?? undefined,
+      ),
     );
     // DIVERGES(chartjs): adapt-axis-objects, the axis class.
     indexAxis = const XAxis();

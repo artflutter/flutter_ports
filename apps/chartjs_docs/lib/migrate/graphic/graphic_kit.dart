@@ -43,7 +43,7 @@ AxisTicks graphicTicks({
   TickSource? source,
   Map<String, Object?> extra = const {},
 }) => AxisTicks(
-  color: Gx.text,
+  color: const ChartPaint.solid(Gx.text),
   font: const TextStyle(fontSize: 10),
   padding: 7.5,
   maxRotation: 0,
@@ -61,7 +61,7 @@ String? numberLabel(AxisTickInfo tick) => tick.value.toString();
 
 /// The horizontal axis of Graphic: a line, no grid, 20 px below the region.
 const Map<String, Object?> bottomAxis = {
-  'border': {'color': Gx.stroke},
+  'border': {'color': ChartPaint.solid(Gx.stroke)},
   'afterFit': _fitBottom,
 };
 
@@ -84,7 +84,10 @@ void _fitLeft(Scale scale) => scale
 
 const AxisGrid noGrid = AxisGrid(display: false, drawTicks: false);
 
-const AxisGrid lineGrid = AxisGrid(color: Gx.stroke, drawTicks: false);
+const AxisGrid lineGrid = AxisGrid(
+  color: ChartPaint.solid(Gx.stroke),
+  drawTicks: false,
+);
 
 /// The region of Graphic sits 5 px below the top and 10 px left of the
 /// right edge.
@@ -118,10 +121,10 @@ ChartTooltip graphicTooltip({
   String? Function(ChartTooltipItem item)? label,
   Map<String, Object?> extra = const {},
 }) => ChartTooltip(
-  backgroundColor: Gx.tooltipBackground,
-  titleColor: Gx.tooltipText,
+  backgroundColor: const ChartPaint.solid(Gx.tooltipBackground),
+  titleColor: const ChartPaint.solid(Gx.tooltipText),
   titleFont: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-  bodyColor: Gx.tooltipText,
+  bodyColor: const ChartPaint.solid(Gx.tooltipText),
   bodyFont: const TextStyle(fontSize: 12),
   padding: const EdgeInsets.all(5),
   cornerRadius: _radius,

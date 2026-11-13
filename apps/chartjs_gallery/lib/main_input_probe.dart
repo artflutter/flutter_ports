@@ -350,7 +350,7 @@ Map<String, Object?> inputProbeConfig(
       <String, Object?>{
         'label': 'Probe',
         'data': inputProbeData(points),
-        'borderColor': const Color(0xFF36A2EB),
+        'borderColor': const ChartPaint.solid(Color(0xFF36A2EB)),
         'borderWidth': 1.0,
       },
     ],

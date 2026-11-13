@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart' show TestOn, addTearDown;
 
 /// The kind of the second argument of a user function: `'absent'` for the
@@ -159,8 +161,12 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
       final datasets =
           jsGet((chart! as Chart).data, 'datasets')! as List<Object?>;
       (datasets[0]! as AnyObject)
-        ..['backgroundColor'] = const native_ui.Color.fromRGBO(0, 128, 0, 1)
-        ..['borderColor'] = const native_ui.Color.fromRGBO(0, 0, 255, 1);
+        ..['backgroundColor'] = const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 128, 0, 1),
+        )
+        ..['borderColor'] = const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+        );
       return undefined;
     },
   };

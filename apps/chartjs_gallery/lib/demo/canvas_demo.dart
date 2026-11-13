@@ -53,8 +53,8 @@ void drawCaption(
     x,
     y,
     toFont(const ChartTextStyle(fontSize: 12)),
-    const TextOpts(
-      color: labelColor,
+    const RenderTextOpts(
+      color: ChartPaint.solid(labelColor),
       textAlign: TextAlign.center,
       textBaseline: CanvasTextBaseline.bottom,
     ),
@@ -126,9 +126,13 @@ class _PointStylesCardState extends State<_PointStylesCard> {
   static UiImageSource _makeIcon() {
     final canvas = UiCanvasElement(width: 32, height: 32);
     final ctx = canvas.getContext2d();
-    final gradient = ctx.createRadialGradient(11, 10, 2, 16, 16, 16)
-      ..addColorStop(0, const ui.Color(0xFFFFE29A))
-      ..addColorStop(1, const ui.Color(0xFFFF6384));
+    const gradient = ChartGradient.radial(
+      ui.Offset(16, 16),
+      16,
+      [ui.Color(0xFFFFE29A), ui.Color(0xFFFF6384)],
+      focal: ui.Offset(11, 10),
+      focalRadius: 2,
+    );
     ctx
       ..fillStyle = gradient
       ..beginPath()
@@ -361,25 +365,29 @@ class _RenderTextCardState extends State<_RenderTextCard> {
       0,
       firstY - y,
       font,
-      TextOpts(
+      RenderTextOpts(
         translation: (x, y),
         rotation: rotation,
-        color: const ui.Color(0xFF36A2EB),
+        color: const ChartPaint.solid(ui.Color(0xFF36A2EB)),
         textAlign: TextAlign.center,
         textBaseline: CanvasTextBaseline.middle,
         underline: _underline,
         strikethrough: _strikethrough,
         decorationWidth: 3,
-        strokeColor: _stroke ? const ui.Color(0xFFFFFFFF) : null,
+        strokeColor: _stroke
+            ? const ChartPaint.solid(ui.Color(0xFFFFFFFF))
+            : const ChartPaint.unchanged(),
         strokeWidth: _stroke ? 6 : null,
         maxWidth: _maxWidth ? _maxWidthValue : null,
         backdrop: _backdrop
-            ? Backdrop(
-                -widest / 2 - 8,
-                backdropTop,
-                widest + 16,
-                lines.length * lineHeight + 8,
-                const ui.Color.fromRGBO(255, 206, 86, 0.35),
+            ? BackdropOptions(
+                left: -widest / 2 - 8,
+                top: backdropTop,
+                width: widest + 16,
+                height: lines.length * lineHeight + 8,
+                color: const ChartPaint.solid(
+                  ui.Color.fromRGBO(255, 206, 86, 0.35),
+                ),
               )
             : null,
       ),
@@ -638,7 +646,10 @@ class _LinesCardState extends State<_LinesCard> {
         12,
         top + 4,
         toFont(const ChartTextStyle(fontSize: 12)),
-        const TextOpts(color: labelColor, textBaseline: CanvasTextBaseline.top),
+        const RenderTextOpts(
+          color: ChartPaint.solid(labelColor),
+          textBaseline: CanvasTextBaseline.top,
+        ),
       );
     }
   }
@@ -781,10 +792,10 @@ class _PaintCardState extends State<_PaintCard>
   double _offset = 0;
 
   static const List<String> _panels = [
-    'createLinearGradient',
-    'createRadialGradient',
-    'createConicGradient',
-    'createPattern',
+    'ChartGradient.linear',
+    'ChartGradient.radial',
+    'ChartGradient.sweep',
+    'ChartPattern',
     'setLineDash',
   ];
 
@@ -850,46 +861,50 @@ class _PaintCardState extends State<_PaintCard>
       final left = cx - size / 2;
       final cy = top + size / 2;
       switch (_panels[i]) {
-        case 'createLinearGradient':
-          final g = ctx.createLinearGradient(left, top, left + size, top + size)
-            ..addColorStop(0, const ui.Color(0xFF36A2EB))
-            ..addColorStop(0.5, const ui.Color(0xFF9966FF))
-            ..addColorStop(1, const ui.Color(0xFFFF6384));
+        case 'ChartGradient.linear':
+          final g = ChartGradient.linear(
+            ui.Offset(left, top),
+            ui.Offset(left + size, top + size),
+            const [
+              ui.Color(0xFF36A2EB),
+              ui.Color(0xFF9966FF),
+              ui.Color(0xFFFF6384),
+            ],
+          );
           ctx
             ..fillStyle = g
             ..fillRect(left, top, size, size);
-        case 'createRadialGradient':
-          final g =
-              ctx.createRadialGradient(
-                  cx - size * 0.15,
-                  cy - size * 0.15,
-                  size * 0.05,
-                  cx,
-                  cy,
-                  size / 2,
-                )
-                ..addColorStop(0, const ui.Color(0xFFFFFFFF))
-                ..addColorStop(0.4, const ui.Color(0xFFFFCD56))
-                ..addColorStop(1, const ui.Color(0xFFFF9F40));
+        case 'ChartGradient.radial':
+          final g = ChartGradient.radial(
+            ui.Offset(cx, cy),
+            size / 2,
+            const [
+              ui.Color(0xFFFFFFFF),
+              ui.Color(0xFFFFCD56),
+              ui.Color(0xFFFF9F40),
+            ],
+            stops: const [0, 0.4, 1],
+            focal: ui.Offset(cx - size * 0.15, cy - size * 0.15),
+            focalRadius: size * 0.05,
+          );
           ctx
             ..fillStyle = g
             ..beginPath()
             ..arc(cx, cy, size / 2, 0, 2 * math.pi)
             ..fill();
-        case 'createConicGradient':
-          final g = ctx.createConicGradient(-math.pi / 2, cx, cy);
-          for (var c = 0; c < 6; c++) {
-            g.addColorStop(c / 6, chartColors[c]);
-          }
-          g.addColorStop(1, chartColors[0]);
+        case 'ChartGradient.sweep':
+          final g = ChartGradient.sweep(ui.Offset(cx, cy), [
+            for (var c = 0; c < 6; c++) chartColors[c],
+            chartColors[0],
+          ], startAngle: -math.pi / 2);
           ctx
             ..fillStyle = g
             ..beginPath()
             ..arc(cx, cy, size / 2, 0, 2 * math.pi)
             ..fill();
-        case 'createPattern':
+        case 'ChartPattern':
           ctx
-            ..fillStyle = ctx.createPattern(_tile, 'repeat')
+            ..fillStyle = ChartPattern(_tile.image)
             ..strokeStyle = const ui.Color(0xFFFF9F40)
             ..lineWidth = 2
             ..beginPath();
@@ -938,8 +953,8 @@ class _PaintCardState extends State<_PaintCard>
     return DemoCard(
       title: 'Gradients, patterns and line dashes',
       source:
-          'UiCanvasContext: createLinearGradient · createRadialGradient · '
-          'createConicGradient · addColorStop · createPattern(image, '
+          'ChartGradient.linear · ChartGradient.radial · '
+          'ChartGradient.sweep · ChartPattern(image, '
           "'repeat') · setLineDash · lineDashOffset (animated)",
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

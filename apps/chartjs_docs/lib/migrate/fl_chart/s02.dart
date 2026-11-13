@@ -59,14 +59,14 @@ ChartConfig _config(List<num> ys, {required bool average}) {
           min: 0,
           max: 11,
           grid: AxisGrid(
-            color: average ? _gridColor : Fl.white10,
+            color: ChartPaint.solid(average ? _gridColor : Fl.white10),
             drawTicks: false,
           ),
           ticks: const AxisTicks(
             stepSize: 1,
             autoSkip: false,
             maxRotation: 0,
-            color: Colors.white,
+            color: ChartPaint.solid(Colors.white),
             font: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             format: _bottom,
           ),
@@ -75,13 +75,13 @@ ChartConfig _config(List<num> ys, {required bool average}) {
           min: 0,
           max: 6,
           grid: AxisGrid(
-            color: average ? _gridColor : Fl.white10,
+            color: ChartPaint.solid(average ? _gridColor : Fl.white10),
             drawTicks: false,
           ),
           ticks: const AxisTicks(
             stepSize: 1,
             autoSkip: false,
-            color: Colors.white,
+            color: ChartPaint.solid(Colors.white),
             font: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             format: _left,
           ),

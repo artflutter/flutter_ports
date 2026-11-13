@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasCompositeOperation;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
@@ -617,9 +618,11 @@ void main() {
       final ctx = context();
       fill(ctx, 3);
       fill(ctx, 4);
-      ctx.fillStyle = ctx.createLinearGradient(0, 0, 10, 0)
-        ..addColorStop(0, const ui.Color(0xFFFF0000))
-        ..addColorStop(1, const ui.Color(0xFF0000FF));
+      ctx.fillStyle = const ChartGradient.linear(
+        Offset.zero,
+        ui.Offset(10, 0),
+        [ui.Color(0xFFFF0000), ui.Color(0xFF0000FF)],
+      );
       fill(ctx, 5);
       expect(ctx.debugPendingCircles, 0);
       ctx.fillStyle = _white;

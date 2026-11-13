@@ -27,7 +27,7 @@ const List<(int, Color)> _rainfall = [
 
 // A segment from point i - 1 to point i takes the color of point i.
 Object? _segmentColor(JsObjectFace segment) =>
-    _rainfall[(segment['p1DataIndex']! as num).toInt()].$2;
+    ChartPaint.solid(_rainfall[(segment['p1DataIndex']! as num).toInt()].$2);
 
 // The marker in the tooltip takes the color of the point.
 TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, ChartTooltipItem item) =>
@@ -83,7 +83,7 @@ final ChartConfig _config = ChartConfig(
   title: const ChartTitle(
     display: true,
     text: 'Annual rainfall of Paris',
-    color: _text,
+    color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
   legend: const ChartLegend(display: false),
@@ -94,7 +94,7 @@ final ChartConfig _config = ChartConfig(
     axis: .x,
   ),
   tooltip: ChartTooltip(
-    backgroundColor: _tooltip,
+    backgroundColor: const ChartPaint.solid(_tooltip),
     yAlign: .bottom,
     extra: const {
       'usePointStyle': true,
@@ -121,33 +121,37 @@ final ChartConfig _config = ChartConfig(
       tooltipFormat: 'yyyy',
       grid: AxisGrid(
         drawOnChartArea: false,
-        color: _axisLine,
+        color: ChartPaint.solid(_axisLine),
         extra: {'tickLength': 6},
       ),
       ticks: AxisTicks(
         stepSize: 5,
         maxRotation: 0,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
       ),
       title: AxisTitle(
         display: true,
         text: 'Year',
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 15),
       ),
       extra: {
-        'border': {'color': _axisLine},
+        'border': {'color': ChartPaint.solid(_axisLine)},
       },
     ),
     'y': LinearAxis(
       min: 200,
       max: 600,
-      grid: AxisGrid(color: _grid, lineWidth: 0.7, drawTicks: false),
+      grid: AxisGrid(
+        color: ChartPaint.solid(_grid),
+        lineWidth: 0.7,
+        drawTicks: false,
+      ),
       ticks: AxisTicks(
         stepSize: 100,
         padding: 8,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
         format: _mm,
       ),

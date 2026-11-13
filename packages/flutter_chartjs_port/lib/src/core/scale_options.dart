@@ -55,6 +55,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
     show numberFormatOf;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint, chartPaintOf;
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// `options.setContext(context)` of a nested option object: a view of the
@@ -285,8 +287,10 @@ extension type const TickOptions(Object? raw) {
   TickOptions setContext(Object context) =>
       TickOptions(_setContext(raw, context));
 
-  /// index.d.ts:3120 `backdropColor`.
-  Object? get backdropColor => readOption(raw, OptionKey.backdropColor);
+  /// index.d.ts:3120 `backdropColor`: the paint of the option value, or
+  /// [ChartPaint.unchanged] without one.
+  ChartPaint get backdropColor =>
+      chartPaintOf(readOption(raw, OptionKey.backdropColor));
 
   /// index.d.ts:3125 `backdropPadding: number | ChartArea`.
   EdgeInsets get backdropPadding =>
@@ -299,8 +303,9 @@ extension type const TickOptions(Object? raw) {
   bool get display =>
       boolOption(readOption(raw, OptionKey.display), OptionKey.display);
 
-  /// index.d.ts:3140 `color`.
-  Object? get color => readOption(raw, OptionKey.color);
+  /// index.d.ts:3140 `color`: the paint of the option value, or
+  /// [ChartPaint.unchanged] without one.
+  ChartPaint get color => chartPaintOf(readOption(raw, OptionKey.color));
 
   /// index.d.ts:3144 `font`.
   Object? get font => readOption(raw, OptionKey.font);
@@ -314,8 +319,10 @@ extension type const TickOptions(Object? raw) {
     OptionKey.showLabelBackdrop,
   );
 
-  /// index.d.ts:3158 `textStrokeColor`.
-  Object? get textStrokeColor => readOption(raw, OptionKey.textStrokeColor);
+  /// index.d.ts:3158 `textStrokeColor`: the paint of the option value, or
+  /// [ChartPaint.unchanged] without one.
+  ChartPaint get textStrokeColor =>
+      chartPaintOf(readOption(raw, OptionKey.textStrokeColor));
 
   /// index.d.ts:3163 `textStrokeWidth`.
   Object? get textStrokeWidth => readOption(raw, OptionKey.textStrokeWidth);
@@ -493,11 +500,13 @@ extension type const ScaleTitleOptions(Object? raw) {
   /// index.d.ts:3315 `text: string | string[]`.
   Object? get text => readOption(raw, OptionKey.text);
 
-  /// index.d.ts:3317 `color: Color`.
-  Object? get color => readOption(raw, OptionKey.color);
+  /// index.d.ts:3317 `color: Color`: the paint of the option value, or
+  /// [ChartPaint.unchanged] without one.
+  ChartPaint get color => chartPaintOf(readOption(raw, OptionKey.color));
 
-  /// index.d.ts:3319 `strokeColor?: Color`.
-  Object? get strokeColor => readOption(raw, OptionKey.strokeColor);
+  /// index.d.ts:3319 `strokeColor?: Color`, as [color].
+  ChartPaint get strokeColor =>
+      chartPaintOf(readOption(raw, OptionKey.strokeColor));
 
   /// index.d.ts:3321 `strokeWidth?: number`.
   Object? get strokeWidth => readOption(raw, OptionKey.strokeWidth);
@@ -601,8 +610,9 @@ extension type const PointLabelOptions(Object? raw) {
   /// index.d.ts:3636 `display: boolean | 'auto'`.
   Object? get display => readOption(raw, OptionKey.display);
 
-  /// index.d.ts:3641 `color`.
-  Object? get color => readOption(raw, OptionKey.color);
+  /// index.d.ts:3641 `color`: the paint of the option value, or
+  /// [ChartPaint.unchanged] without one.
+  ChartPaint get color => chartPaintOf(readOption(raw, OptionKey.color));
 
   /// index.d.ts:3644 `font`.
   Object? get font => readOption(raw, OptionKey.font);

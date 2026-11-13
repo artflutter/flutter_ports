@@ -17,10 +17,13 @@ import 'package:flutter_chartjs_port/src/options/props.dart'
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import 'point_reference.dart';
 
 // Upstream behavior that test/specs/element.point.tests.js does not check
@@ -138,6 +141,7 @@ List<Object?> _calls(List<(String, List<Object?>)> calls) => [
           switch (arg) {
             final num n when n.isNaN => isNaN,
             final num n => closeTo(n, 1e-9),
+            final String s => referenceColorOrString(s),
             _ => _fromReference(arg),
           },
       ],
@@ -158,7 +162,9 @@ const Map<String, Object Function(AnyObject options)> _optionsForms = {
 /// [cfg] with its `options` Map in the form [form].
 AnyObject _withOptions(AnyObject cfg, Object Function(AnyObject) form) => {
   for (final MapEntry(:key, :value) in cfg.entries)
-    key: key == 'options' && value is AnyObject ? form(value) : value,
+    key: key == 'options' && value is AnyObject
+        ? form(referencePaintOptions(value))
+        : value,
 };
 
 /// The point element of an inRange case, with its `$animations`, and its
@@ -182,8 +188,8 @@ PointElement _inRangePoint(
 Map<String, Object?> _options({double radius = 5}) => {
   'radius': radius,
   'borderWidth': 2,
-  'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-  'backgroundColor': const ui.Color.fromRGBO(0, 0, 255, 1),
+  'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
+  'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
   'pointStyle': const CirclePointStyle(),
 };
 

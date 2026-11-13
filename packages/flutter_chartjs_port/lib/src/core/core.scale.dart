@@ -567,84 +567,6 @@ final class _GridLineItem extends _LineStyle {
   final Object? tickBorderDashOffset;
 }
 
-/// The `backdrop` object of a label item (core.scale.js:1301-1308).
-final class _LabelBackdrop implements types.BackdropOptions {
-  _LabelBackdrop(this.left, this.top, this.width, this.height, this.color);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double width;
-
-  @override
-  final double height;
-
-  @override
-  final Object? color;
-}
-
-/// The text options of a label item (core.scale.js:1315-1324) and of the
-/// title (core.scale.js:1611-1620). The members that the object literal
-/// leaves out are Dart `null`, JS `undefined`.
-///
-/// [strokeWidth] is the [canvasNumber] of the option value. `renderText`
-/// compares the value with 0 and gives it to the setter `lineWidth`. Both
-/// apply `ToNumber`, and the [undefined] of an absent option gives Dart
-/// `null`.
-final class _RenderTextOpts implements types.RenderTextOpts {
-  _RenderTextOpts({
-    this.rotation,
-    this.color,
-    this.strokeColor,
-    this.strokeWidth,
-    this.textAlign,
-    this.textBaseline,
-    this.translation,
-    this.backdrop,
-    this.maxWidth,
-  });
-
-  @override
-  final double? rotation;
-
-  @override
-  final Object? color;
-
-  @override
-  final Object? strokeColor;
-
-  @override
-  final double? strokeWidth;
-
-  @override
-  final TextAlign? textAlign;
-
-  @override
-  final CanvasTextBaseline? textBaseline;
-
-  @override
-  final (double, double)? translation;
-
-  @override
-  final types.BackdropOptions? backdrop;
-
-  @override
-  final double? maxWidth;
-
-  @override
-  double? get decorationWidth => null;
-
-  @override
-  bool? get strikethrough => null;
-
-  @override
-  bool? get underline => null;
-}
-
 /// A label item of `_computeLabelItems` (core.scale.js:1311-1325), the
 /// object literal `{label, font, textOffset, options}`.
 final class _LabelItem implements types.LabelItem {
@@ -2586,7 +2508,7 @@ class Scale extends _ScalePrototype
         textOffset = (1 - lineCount) * lineHeight / 2;
       }
 
-      _LabelBackdrop? backdrop;
+      types.BackdropOptions? backdrop;
 
       if (optsAtIndex.showLabelBackdrop) {
         final labelPadding = optsAtIndex.backdropPadding;
@@ -2624,12 +2546,12 @@ class Scale extends _ScalePrototype
             break;
         }
 
-        backdrop = _LabelBackdrop(
-          left,
-          top,
-          width + labelPadding.horizontal,
-          height + labelPadding.vertical,
-          optsAtIndex.backdropColor,
+        backdrop = types.BackdropOptions(
+          left: left,
+          top: top,
+          width: width + labelPadding.horizontal,
+          height: height + labelPadding.vertical,
+          color: optsAtIndex.backdropColor,
         );
       }
 
@@ -2638,7 +2560,9 @@ class Scale extends _ScalePrototype
           label,
           font,
           textOffset,
-          _RenderTextOpts(
+          // `strokeWidth` is the `canvasNumber` of the option value:
+          // `renderText` compares it with 0 and gives it to `lineWidth`.
+          types.RenderTextOpts(
             rotation: rotation,
             color: color,
             strokeColor: strokeColor,
@@ -3009,7 +2933,7 @@ class Scale extends _ScalePrototype
       0,
       0,
       font,
-      _RenderTextOpts(
+      types.RenderTextOpts(
         color: title.color,
         maxWidth: maxWidth,
         rotation: rotation,

@@ -23,6 +23,8 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -63,7 +65,7 @@ const String _otherLineCase = 'interfaces: a dataset element of another class';
 final Map<String, Object?> _functions = {
   // (ctx) => (ctx.p0DataIndex === 1 ? 'red' : undefined)
   'segColor': (Object? ctx) => jsGet(ctx, 'p0DataIndex') == 1
-      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+      ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
       : undefined,
   // (ctx) => (ctx.p1DataIndex === 3 ? 5 : undefined)
   'segWidth': (Object? ctx) => jsGet(ctx, 'p1DataIndex') == 3 ? 5.0 : undefined,

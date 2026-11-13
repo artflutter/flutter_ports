@@ -11,7 +11,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/color.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
 
@@ -187,10 +187,11 @@ final class _Segment implements Segment {
 }
 
 /// A gradient object. Its JS `toString()` tag is `[object CanvasGradient]`.
-final class _Gradient implements CanvasGradient {
-  @override
-  void addColorStop(double offset, Object color) {}
-}
+ChartGradient _gradient() => ChartGradient.linear(
+  ui.Offset.zero,
+  const ui.Offset(1, 1),
+  List<ui.Color>.empty(growable: true),
+);
 
 /// An object of a class, which `JSON.stringify` writes with its own
 /// enumerable properties.
@@ -224,7 +225,7 @@ Object? _plainStyle(Object? style) => style is JsObjectFace
 
 /// The base options of the style cases.
 const AnyObject _base = {
-  'borderColor': ui.Color.fromRGBO(0, 0, 255, 1),
+  'borderColor': ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
   'borderWidth': 3.0,
 };
 
@@ -236,13 +237,17 @@ Matcher _style({
   Object? borderWidth = 3.0,
   Object? borderColor = const ui.Color.fromRGBO(0, 0, 255, 1),
 }) => equals(<String, Object?>{
-  'backgroundColor': backgroundColor,
+  'backgroundColor': backgroundColor is ui.Color
+      ? ChartPaint.solid(backgroundColor)
+      : backgroundColor,
   'borderCapStyle': undefined,
   'borderDash': borderDash,
   'borderDashOffset': undefined,
   'borderJoinStyle': undefined,
   'borderWidth': borderWidth,
-  'borderColor': borderColor,
+  'borderColor': borderColor is ui.Color
+      ? ChartPaint.solid(borderColor)
+      : borderColor,
 });
 
 /// The point of a segment context: `ctx.p0`.
@@ -562,9 +567,11 @@ void main() {
           contexts.add(ctx);
           return {
             ..._base,
-            'borderColor': _p0(ctx).y >= 2
-                ? const ui.Color.fromRGBO(255, 0, 0, 1)
-                : const ui.Color.fromRGBO(0, 0, 255, 1),
+            'borderColor': ChartPaint.solid(
+              _p0(ctx).y >= 2
+                  ? const ui.Color.fromRGBO(255, 0, 0, 1)
+                  : const ui.Color.fromRGBO(0, 0, 255, 1),
+            ),
           };
         },
       };
@@ -637,9 +644,11 @@ void main() {
       final redAt2 = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,
-          'borderColor': _p0DataIndex(ctx) == 2
-              ? const ui.Color.fromRGBO(255, 0, 0, 1)
-              : const ui.Color.fromRGBO(0, 0, 255, 1),
+          'borderColor': ChartPaint.solid(
+            _p0DataIndex(ctx) == 2
+                ? const ui.Color.fromRGBO(255, 0, 0, 1)
+                : const ui.Color.fromRGBO(0, 0, 255, 1),
+          ),
         },
       };
       expect(
@@ -674,9 +683,11 @@ void main() {
       final redTo3 = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,
-          'borderColor': (ctx! as JsObjectFace)['p1DataIndex'] == 3
-              ? const ui.Color.fromRGBO(255, 0, 0, 1)
-              : const ui.Color.fromRGBO(0, 0, 255, 1),
+          'borderColor': ChartPaint.solid(
+            (ctx! as JsObjectFace)['p1DataIndex'] == 3
+                ? const ui.Color.fromRGBO(255, 0, 0, 1)
+                : const ui.Color.fromRGBO(0, 0, 255, 1),
+          ),
         },
       };
       expect(
@@ -707,9 +718,11 @@ void main() {
       final redAt2 = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,
-          'borderColor': _p0DataIndex(ctx) == 2
-              ? const ui.Color.fromRGBO(255, 0, 0, 1)
-              : const ui.Color.fromRGBO(0, 0, 255, 1),
+          'borderColor': ChartPaint.solid(
+            _p0DataIndex(ctx) == 2
+                ? const ui.Color.fromRGBO(255, 0, 0, 1)
+                : const ui.Color.fromRGBO(0, 0, 255, 1),
+          ),
         },
       };
       expect(
@@ -801,8 +814,8 @@ void main() {
     });
 
     test('compares gradients by identity', () {
-      final g1 = _Gradient();
-      final g2 = _Gradient();
+      final g1 = _gradient();
+      final g2 = _gradient();
       final gradients = <String, Object?>{
         'setContext': (Object? ctx) => {
           ..._base,

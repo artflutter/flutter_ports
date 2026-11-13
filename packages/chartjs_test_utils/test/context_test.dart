@@ -390,10 +390,6 @@ void main() {
         throwsUnsupportedError,
       );
       expect(ctx.resetTransform, throwsUnsupportedError);
-      expect(
-        () => ctx.createLinearGradient(0, 0, 1, 1),
-        throwsUnsupportedError,
-      );
       expect(ctx.getLineDash, throwsUnsupportedError);
       ctx
         ..globalAlpha = 0.5

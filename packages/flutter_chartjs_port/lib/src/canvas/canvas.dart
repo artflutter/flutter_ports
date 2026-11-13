@@ -27,11 +27,7 @@ import 'dart:typed_data';
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:meta/meta.dart';
-
-export 'package:flutter_chartjs_port/src/types/color.dart'
-    show CanvasGradient, CanvasPattern;
 
 /// Optional internal capability for a context with deterministic text metrics.
 /// A generation changes whenever existing font/text measurements become stale.
@@ -378,8 +374,7 @@ double _limitScale(double scale, double length, double sum) =>
 typedef CanvasFillRule = String;
 
 /// lib.dom.d.ts `CanvasImageSource`: an image that
-/// [CanvasRenderingContext2D.drawImage] and
-/// [CanvasRenderingContext2D.createPattern] take.
+/// [CanvasRenderingContext2D.drawImage] takes.
 ///
 /// The type is opaque, so this library stays free of `dart:ui`. The
 /// `dart:ui` implementation wraps a `ui.Image`. A point style that is an
@@ -572,8 +567,10 @@ abstract interface class CanvasContainer {
 /// The 24 methods and 9 setters of the mock context (`src/context.js`)
 /// are here, plus the members that upstream source calls and the mock
 /// context lacks: [ellipse], [resetTransform], [drawImage], [scale],
-/// [globalAlpha], [createLinearGradient], [createRadialGradient],
-/// [createConicGradient], [createPattern] and [direction]. The port also
+/// [globalAlpha] and [direction]. The port has no `createLinearGradient`,
+/// `createRadialGradient`, `createConicGradient` and `createPattern`: a
+/// `ChartGradient` or a `ChartPattern` is the value of a style (row
+/// `adapt-chart-paint-objects`). The port also
 /// calls [roundRect], which upstream source does not call
 /// (differences.md `adapt-rounded-rect-path`).
 abstract interface class CanvasRenderingContext2D implements CanvasPath {
@@ -646,39 +643,13 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
 
   // Fill and stroke styles.
 
-  /// `fillStyle`: a CSS color `String`, a [CanvasGradient] or a
-  /// [CanvasPattern]. The DOM default is `'#000000'`.
+  /// `fillStyle`: a Flutter `Color` or a `ChartPaint` (a solid paint, a
+  /// `ChartGradient` or a `ChartPattern`). Dart `null` and
+  /// `ChartPaint.unchanged` keep the style. The default is black.
   abstract Object? fillStyle;
 
-  /// `strokeStyle`: a CSS color `String`, a [CanvasGradient] or a
-  /// [CanvasPattern]. The DOM default is `'#000000'`.
+  /// `strokeStyle`: as [fillStyle]. The default is black.
   abstract Object? strokeStyle;
-
-  /// `createLinearGradient(x0, y0, x1, y1)`.
-  CanvasGradient createLinearGradient(
-    double x0,
-    double y0,
-    double x1,
-    double y1,
-  );
-
-  /// `createRadialGradient(x0, y0, r0, x1, y1, r1)`.
-  CanvasGradient createRadialGradient(
-    double x0,
-    double y0,
-    double r0,
-    double x1,
-    double y1,
-    double r1,
-  );
-
-  /// `createConicGradient(startAngle, x, y)`.
-  CanvasGradient createConicGradient(double startAngle, double x, double y);
-
-  /// `createPattern(image, repetition)`. [repetition] is `'repeat'`,
-  /// `'repeat-x'`, `'repeat-y'` or `'no-repeat'`. A `null` or empty
-  /// [repetition] is `'repeat'`.
-  CanvasPattern? createPattern(CanvasImageSource image, String? repetition);
 
   // Rectangles.
 

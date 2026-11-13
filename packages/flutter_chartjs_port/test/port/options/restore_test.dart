@@ -15,6 +15,8 @@ import 'dart:ui' as native_ui;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
@@ -46,7 +48,7 @@ void main() {
     // The route of `backgroundColor` reads the root.
     expect(
       point.jsRead('backgroundColor'),
-      const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
     );
     expect(point.routeOf('backgroundColor'), isNotNull);
   }
@@ -59,10 +61,12 @@ void main() {
     expect(point.jsKeys().last, 'extraKey');
     defaults
       ..font = const ChartTextStyle(fontSize: 30)
-      ..backgroundColor = const native_ui.Color.fromRGBO(255, 0, 0, 1);
+      ..backgroundColor = const ChartPaint.solid(
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+      );
     expect(
       point.jsRead('backgroundColor'),
-      const native_ui.Color.fromRGBO(255, 0, 0, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
     );
     descriptors.jsWrite('leak', DescriptorsScope());
   }

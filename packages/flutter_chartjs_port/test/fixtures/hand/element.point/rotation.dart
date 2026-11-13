@@ -6,8 +6,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show
         CirclePointStyle,
@@ -20,11 +18,11 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
         RectRoundedPointStyle,
         StarPointStyle,
         TrianglePointStyle;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
-  CanvasGradient? gradient;
+  ChartGradient? gradient;
 
   // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
   final datasets =
@@ -69,15 +67,11 @@ Map<String, Object?> fixture() {
             'rotation': angles,
             'radius': 10,
             'backgroundColor': (Object? context) {
-              if (gradient == null) {
-                final created = (jsGet(context, 'chart')! as Chart).ctx!
-                    .createLinearGradient(0, 0, 512, 256);
-                gradient = created;
-                created
-                  ..addColorStop(0, const native_ui.Color(0xffff0000))
-                  ..addColorStop(1, const native_ui.Color(0xff0000ff));
-              }
-              return gradient;
+              return gradient ??= const ChartGradient.linear(
+                native_ui.Offset.zero,
+                native_ui.Offset(512, 256),
+                [native_ui.Color(0xffff0000), native_ui.Color(0xff0000ff)],
+              );
             },
             'borderColor': '#cccccc',
           },

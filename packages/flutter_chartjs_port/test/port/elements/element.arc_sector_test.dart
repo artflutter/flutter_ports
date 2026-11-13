@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';
@@ -570,9 +571,11 @@ void main() {
       () async {
         for (final background in <Object Function(UiCanvasContext)>[
           (_) => const _OtherColor(0xFF118822),
-          (c) => c.createLinearGradient(0, 0, 160, 0)
-            ..addColorStop(0, const ui.Color(0xFFFF0000))
-            ..addColorStop(1, const ui.Color(0xFF0000FF)),
+          (c) => const ChartGradient.linear(
+            ui.Offset.zero,
+            ui.Offset(160, 0),
+            [ui.Color(0xFFFF0000), ui.Color(0xFF0000FF)],
+          ),
         ]) {
           Future<Render> render({required bool native}) => renderContext((ctx) {
             final cfg = _cfg(

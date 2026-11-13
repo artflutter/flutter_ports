@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart'
     show maxAtlasInstances;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
@@ -1034,9 +1035,14 @@ void main() {
       await expectSectorPixels(
         'a gradient',
         (ctx) {
-          final gradient = ctx.createLinearGradient(20, 0, 140, 0)
-            ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-            ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
+          const gradient = ChartGradient.linear(
+            native_ui.Offset(20, 0),
+            native_ui.Offset(140, 0),
+            [
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+              native_ui.Color.fromRGBO(0, 0, 255, 1),
+            ],
+          );
           ctx
             ..scale(2, 2)
             ..fillStyle = gradient;
@@ -1146,13 +1152,12 @@ void main() {
           'outerRadius': 60,
           'circumference': 1.75,
           'options': <String, Object?>{
-            'backgroundColor': const native_ui.Color.fromRGBO(
-              54,
-              162,
-              235,
-              0.45,
+            'backgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(54, 162, 235, 0.45),
             ),
-            'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
+            'borderColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(54, 162, 235, 1),
+            ),
             'borderWidth': 0,
             'circular': true,
           },

@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_se
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
@@ -60,7 +62,7 @@ void main() {
             ],
             'fill': 0,
             'pointRadius': 0,
-            'backgroundColor': const Color(0x88334455),
+            'backgroundColor': const ChartPaint.solid(Color(0x88334455)),
           },
         ],
       },
@@ -108,13 +110,13 @@ void main() {
                       ],
                       'fill': {
                         'target': fill,
-                        'above': const Color(0x88334455),
-                        'below': const Color(0x88778899),
+                        'above': const ChartPaint.solid(Color(0x88334455)),
+                        'below': const ChartPaint.solid(Color(0x88778899)),
                       },
                       'pointRadius': 0,
                       if (k == 1) 'tension': 0.4,
                       if (k == 2) 'stepped': SteppedLine.middle,
-                      'borderColor': const Color(0xff123456),
+                      'borderColor': const ChartPaint.solid(Color(0xff123456)),
                     },
                 ],
               },

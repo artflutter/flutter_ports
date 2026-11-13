@@ -24,14 +24,14 @@ LineDataset _group(int index, String name) {
     label: name,
     data: [for (final date in _dates) _points[(date, name)]],
     spanGaps: true,
-    borderColor: .constant(color),
+    borderColor: .constant(.solid(color)),
     borderWidth: 0.5,
     // The `PointMark`.
     pointRadius: 2.5,
     pointBorderWidth: 0,
-    pointBackgroundColor: color,
+    pointBackgroundColor: .constant(.solid(color)),
     pointHoverRadius: 2.5,
-    pointHoverBackgroundColor: color,
+    pointHoverBackgroundColor: .constant(.solid(color)),
     extra: const {'pointHoverBorderWidth': 0},
   );
 }

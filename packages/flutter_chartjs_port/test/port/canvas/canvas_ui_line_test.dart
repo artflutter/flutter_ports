@@ -10,6 +10,7 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasCompositeOperation;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
@@ -99,9 +100,11 @@ void main() {
       _expectSame(a, b);
       final (g0, g1) = await _twin(
         setUp: (c) {
-          c.strokeStyle = c.createLinearGradient(0, 0, 160, 0)
-            ..addColorStop(0, const ui.Color(0xFFFF0000))
-            ..addColorStop(1, const ui.Color(0xFF0000FF));
+          c.strokeStyle = const ChartGradient.linear(
+            Offset.zero,
+            ui.Offset(160, 0),
+            [ui.Color(0xFFFF0000), ui.Color(0xFF0000FF)],
+          );
         },
       );
       _expectSame(g0, g1);

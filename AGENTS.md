@@ -21,7 +21,7 @@ classes (`Curve`, `Curves`), the value of the option `easing` (row `adapt-flutte
 A second exception: a core layer can import `package:flutter/painting.dart` with `show` of
 `EdgeInsets`, `TextStyle` and `TextOverflow`, for padding and fonts (Chart.js ADRs 0123 and 0116).
 The chart core and harness run through Flutter; standalone Dart execution is no
-longer supported. No global color installer or intermediate option color exists.
+longer supported. No global color installer exists. Paint options carry `ChartPaint` end to end (ADR 0128); solid paints contain Flutter `Color`. Theme tokens, palette entries, shadow colors and gradient stops remain `Color`.
 
 - `flutter pub get`: resolve the whole workspace (single root `pubspec.lock`).
 - `dart run melos run format` / `format:check`
@@ -1168,9 +1168,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `indexAxis` takes a `CartesianAxis` of the core. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver
-    variants. `Dataset.backgroundColor` and `Dataset.borderColor` use it (ADR 0077);
-    lowering writes the corresponding `Opt` cell directly. Hover, point-specific,
-    element and raw color APIs retain their existing types. `axes.dart` has the 6 axes,
+    variants. All dataset background/border, hover and point-specific paint fields
+    use `ChartValue<ChartPaint>?` (ADR 0128); lowering writes the corresponding
+    `Opt` cell directly. Scalar element/text/scale fields use `ChartPaint`; raw
+    configs keep value/list/function forms with paint leaves. `axes.dart` has the 6 axes,
     `AxisTicks`, `AxisGrid` and `AxisTitle`.
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element
@@ -1181,7 +1182,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     from its `_props` list (`props.dart`). Each class has `extra`, the Chart.js options with no
     parameter. `lower.dart` (internal) gives the typed option scopes of the chart for a config
     (`ChartConfigLowering`: a `ChartConfigurationScope` root, `put`, the typed `mergeExtra`). A
-    color and a font go to the chart as the `Color` and the `TextStyle` themselves (Chart.js ADRs
+    paint and a font go to the chart as the `ChartPaint` and the `TextStyle` themselves (Chart.js ADRs
     0116 and 0117). Ported files never import
     `lib/src/typed/`, and no file of it imports
     a component (`check:lib-imports`).

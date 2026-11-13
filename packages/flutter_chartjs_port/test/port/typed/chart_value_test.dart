@@ -2,7 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -13,20 +13,17 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 
-const _red = Color(0xffff0000);
-const _blue = Color(0xff0000ff);
+const _red = ChartPaint.solid(ui.Color(0xffff0000));
+const _blue = ChartPaint.solid(ui.Color(0xff0000ff));
 
-Color _colorFor(ChartContext context) => context.dataIndex == 0 ? _red : _blue;
+ChartPaint _colorFor(ChartContext context) =>
+    context.dataIndex == 0 ? _red : _blue;
 
-class _DerivedColor extends Color {
-  const _DerivedColor(super.value);
-}
-
-const _derived = _DerivedColor(0xff00ff00);
-_DerivedColor _derivedFor(ChartContext context) => _derived;
+const _derived = SolidChartPaint(ui.Color(0xff00ff00));
+SolidChartPaint _derivedFor(ChartContext context) => _derived;
 
 class _Provider {
-  Color choose(ChartContext context) => _red;
+  ChartPaint choose(ChartContext context) => _red;
 }
 
 List<Dataset> _datasets() => const [
@@ -48,7 +45,7 @@ void _equal(Object a, Object b) {
 
 void main() {
   test('factories expose a closed set of typed variants', () {
-    const values = <ChartValue<Color>>[
+    const values = <ChartValue<ChartPaint>>[
       ChartValue.constant(_red),
       ChartValue.indexed([_red, _blue]),
       ChartValue.resolver(_colorFor),
@@ -56,15 +53,15 @@ void main() {
     final kinds = [
       for (final value in values)
         switch (value) {
-          ChartConstant<Color>() => 'constant',
-          ChartIndexed<Color>() => 'indexed',
-          ChartResolver<Color>() => 'resolver',
+          ChartConstant<ChartPaint>() => 'constant',
+          ChartIndexed<ChartPaint>() => 'indexed',
+          ChartResolver<ChartPaint>() => 'resolver',
         },
     ];
     expect(kinds, ['constant', 'indexed', 'resolver']);
-    expect((values[0] as ChartConstant<Color>).value, same(_red));
-    expect((values[1] as ChartIndexed<Color>).values, [_red, _blue]);
-    expect((values[2] as ChartResolver<Color>).callback, _colorFor);
+    expect((values[0] as ChartConstant<ChartPaint>).value, same(_red));
+    expect((values[1] as ChartIndexed<ChartPaint>).values, [_red, _blue]);
+    expect((values[2] as ChartResolver<ChartPaint>).callback, _colorFor);
   });
 
   test('variant identity remains distinct even for the same output', () {
@@ -78,8 +75,8 @@ void main() {
 
   test('constant equality is symmetric across generic instantiations', () {
     _equal(
-      const ChartValue<Color>.constant(_derived),
-      const ChartValue<_DerivedColor>.constant(_derived),
+      const ChartValue<ChartPaint>.constant(_derived),
+      const ChartValue<SolidChartPaint>.constant(_derived),
     );
     expect(
       const ChartValue.constant(_red),
@@ -89,12 +86,12 @@ void main() {
 
   test('indexed equality compares items and ignores generic instantiation', () {
     _equal(
-      const ChartValue<Color>.indexed(<Color>[_derived]),
-      const ChartValue<_DerivedColor>.indexed(<_DerivedColor>[_derived]),
+      const ChartValue<ChartPaint>.indexed(<ChartPaint>[_derived]),
+      const ChartValue<SolidChartPaint>.indexed(<SolidChartPaint>[_derived]),
     );
     _equal(
-      ChartValue<Color>.indexed(List<Color>.of([_red, _blue])),
-      ChartValue<Color>.indexed(List<Color>.of([_red, _blue])),
+      ChartValue<ChartPaint>.indexed(List<ChartPaint>.of([_red, _blue])),
+      ChartValue<ChartPaint>.indexed(List<ChartPaint>.of([_red, _blue])),
     );
     expect(
       const ChartValue.indexed([_red, _blue]),
@@ -115,50 +112,54 @@ void main() {
         isNot(ChartValue.resolver(_Provider().choose)),
       );
       _equal(
-        const ChartValue<Color>.resolver(_derivedFor),
-        const ChartValue<_DerivedColor>.resolver(_derivedFor),
+        const ChartValue<ChartPaint>.resolver(_derivedFor),
+        const ChartValue<SolidChartPaint>.resolver(_derivedFor),
       );
       expect(
-        ChartValue<Color>.resolver((context) => _red),
-        isNot(ChartValue<Color>.resolver((context) => _red)),
+        ChartValue<ChartPaint>.resolver((context) => _red),
+        isNot(ChartValue<ChartPaint>.resolver((context) => _red)),
       );
     },
   );
 
-  test('constant lowering retains a typed cell and native Color identity', () {
-    final scope = lowerDataset(
-      const BarDataset(backgroundColor: ChartValue.constant(_red)),
-      ChartKind.bar,
-    );
-    final cell = scope.ownCell(OptionKey.backgroundColor);
-    expect(cell, isA<OptValue<Color>>());
-    expect(cell!.raw, same(_red));
-  });
+  test(
+    'constant lowering retains a typed cell and native ChartPaint identity',
+    () {
+      final scope = lowerDataset(
+        const BarDataset(backgroundColor: ChartValue.constant(_red)),
+        ChartKind.bar,
+      );
+      final cell = scope.ownCell(OptionKey.backgroundColor);
+      expect(cell, isA<OptValue<ChartPaint>>());
+      expect(cell!.raw, same(_red));
+    },
+  );
 
   test('indexed lowering copies to a mutable engine list', () {
-    final colors = <Color>[_red, _blue];
+    final colors = <ChartPaint>[_red, _blue];
     final value = ChartValue.indexed(colors);
     final scope = lowerDataset(
       BarDataset(backgroundColor: value),
       ChartKind.bar,
     );
     final cell = scope.ownCell(OptionKey.backgroundColor);
-    expect(cell, isA<OptList<Color>>());
-    final items = (cell! as OptList<Color>).items;
+    expect(cell, isA<OptList<ChartPaint>>());
+    final items = (cell! as OptList<ChartPaint>).items;
     expect(items, [_red, _blue]);
     expect(identical(items, colors), isFalse);
     items[0] = _blue;
     items.add(_red);
     expect(colors, [_red, _blue]);
-    expect((value as ChartIndexed<Color>).values, same(colors));
+    expect((value as ChartIndexed<ChartPaint>).values, same(colors));
   });
 
   test('an empty indexed list retains existing empty-list behavior', () {
     final scope = lowerDataset(
-      const BarDataset(backgroundColor: ChartValue<Color>.indexed([])),
+      const BarDataset(backgroundColor: ChartValue<ChartPaint>.indexed([])),
       ChartKind.bar,
     );
-    final cell = scope.ownCell(OptionKey.backgroundColor)! as OptList<Color>;
+    final cell =
+        scope.ownCell(OptionKey.backgroundColor)! as OptList<ChartPaint>;
     expect(cell.items, isEmpty);
     cell.items.add(_red);
     expect(cell.raw, [_red]);
@@ -166,7 +167,7 @@ void main() {
 
   test('resolver lowering is lazy and adapts the typed context', () {
     final calls = <int?>[];
-    final value = ChartValue<Color>.resolver((context) {
+    final value = ChartValue<ChartPaint>.resolver((context) {
       calls.add(context.dataIndex);
       return context.dataIndex == 0 ? _red : _blue;
     });
@@ -175,9 +176,9 @@ void main() {
       ChartKind.bar,
     );
     final cell = scope.ownCell(OptionKey.backgroundColor);
-    expect(cell, isA<OptFunction<Color>>());
+    expect(cell, isA<OptFunction<ChartPaint>>());
     expect(calls, isEmpty);
-    final function = (cell! as OptFunction<Color>).function;
+    final function = (cell! as OptFunction<ChartPaint>).function;
     for (final index in [0.0, 1.0]) {
       final context = createContext(null, {'type': 'data', 'dataIndex': index});
       expect(jsCall(function, [context, null]), index == 0 ? _red : _blue);
@@ -232,9 +233,9 @@ void main() {
       final resolver = constant.copyWith(
         backgroundColor: const ChartValue.resolver(_colorFor),
       );
-      expect(indexed.backgroundColor, isA<ChartIndexed<Color>>());
-      expect(constant.backgroundColor, isA<ChartConstant<Color>>());
-      expect(resolver.backgroundColor, isA<ChartResolver<Color>>());
+      expect(indexed.backgroundColor, isA<ChartIndexed<ChartPaint>>());
+      expect(constant.backgroundColor, isA<ChartConstant<ChartPaint>>());
+      expect(resolver.backgroundColor, isA<ChartResolver<ChartPaint>>());
       expect(
         resolver.copyWith().backgroundColor,
         same(resolver.backgroundColor),
@@ -247,21 +248,21 @@ void main() {
       );
       expect(
         lowerDataset(indexed, ChartKind.bar).ownCell(OptionKey.backgroundColor),
-        isA<OptList<Color>>(),
+        isA<OptList<ChartPaint>>(),
       );
       expect(
         lowerDataset(
           constant,
           ChartKind.bar,
         ).ownCell(OptionKey.backgroundColor),
-        isA<OptValue<Color>>(),
+        isA<OptValue<ChartPaint>>(),
       );
       expect(
         lowerDataset(
           resolver,
           ChartKind.bar,
         ).ownCell(OptionKey.backgroundColor),
-        isA<OptFunction<Color>>(),
+        isA<OptFunction<ChartPaint>>(),
       );
     });
   }
@@ -279,9 +280,9 @@ void main() {
         final resolver = constant.copyWith(
           borderColor: const ChartValue.resolver(_colorFor),
         );
-        expect(indexed.borderColor, isA<ChartIndexed<Color>>());
-        expect(constant.borderColor, isA<ChartConstant<Color>>());
-        expect(resolver.borderColor, isA<ChartResolver<Color>>());
+        expect(indexed.borderColor, isA<ChartIndexed<ChartPaint>>());
+        expect(constant.borderColor, isA<ChartConstant<ChartPaint>>());
+        expect(resolver.borderColor, isA<ChartResolver<ChartPaint>>());
         expect(
           resolver.copyWith().borderColor,
           same(resolver.borderColor),
@@ -294,28 +295,28 @@ void main() {
         );
         expect(
           lowerDataset(indexed, ChartKind.bar).ownCell(OptionKey.borderColor),
-          isA<OptList<Color>>(),
+          isA<OptList<ChartPaint>>(),
         );
         expect(
           lowerDataset(
             constant,
             ChartKind.bar,
           ).ownCell(OptionKey.borderColor),
-          isA<OptValue<Color>>(),
+          isA<OptValue<ChartPaint>>(),
         );
         expect(
           lowerDataset(
             resolver,
             ChartKind.bar,
           ).ownCell(OptionKey.borderColor),
-          isA<OptFunction<Color>>(),
+          isA<OptFunction<ChartPaint>>(),
         );
       },
     );
   }
 
   test('border indexed values copy independently and allow an empty list', () {
-    final colors = <Color>[_red, _blue];
+    final colors = <ChartPaint>[_red, _blue];
     final scope = lowerDataset(
       BarDataset(
         backgroundColor: const ChartValue.constant(_red),
@@ -323,7 +324,7 @@ void main() {
       ),
       ChartKind.bar,
     );
-    final cell = scope.ownCell(OptionKey.borderColor)! as OptList<Color>;
+    final cell = scope.ownCell(OptionKey.borderColor)! as OptList<ChartPaint>;
     expect(identical(cell.items, colors), isFalse);
     cell.items
       ..clear()
@@ -332,10 +333,10 @@ void main() {
     expect(scope.ownCell(OptionKey.backgroundColor)!.raw, _red);
     final empty =
         lowerDataset(
-              const BarDataset(borderColor: ChartValue<Color>.indexed([])),
+              const BarDataset(borderColor: ChartValue<ChartPaint>.indexed([])),
               ChartKind.bar,
             ).ownCell(OptionKey.borderColor)!
-            as OptList<Color>;
+            as OptList<ChartPaint>;
     expect(empty.items, isEmpty);
     empty.items.add(_red);
     expect(empty.items, [_red]);
@@ -354,7 +355,8 @@ void main() {
         }),
       );
       final scope = lowerDataset(dataset, ChartKind.bar);
-      final cell = scope.ownCell(OptionKey.borderColor)! as OptFunction<Color>;
+      final cell =
+          scope.ownCell(OptionKey.borderColor)! as OptFunction<ChartPaint>;
       expect(calls, isEmpty);
       final context = createContext(null, {'type': 'data', 'dataIndex': 1.0});
       expect(jsCall(cell.function, [context, null]), _blue);
@@ -394,11 +396,11 @@ void main() {
     final data = <num?>[1, 2];
     final a = BarDataset(
       data: data,
-      backgroundColor: ChartValue.indexed(List<Color>.of([_red, _blue])),
+      backgroundColor: ChartValue.indexed(List<ChartPaint>.of([_red, _blue])),
     );
     final b = BarDataset(
       data: data,
-      backgroundColor: ChartValue.indexed(List<Color>.of([_red, _blue])),
+      backgroundColor: ChartValue.indexed(List<ChartPaint>.of([_red, _blue])),
     );
     _equal(a, b);
     _equal(

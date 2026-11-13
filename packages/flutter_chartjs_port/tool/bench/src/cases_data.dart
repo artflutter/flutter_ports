@@ -7,6 +7,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
@@ -14,6 +15,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
@@ -173,13 +176,13 @@ List<PointElement> _linePoints(int count) => [
 /// The line style options of `element.line.js` defaults.
 Map<String, Object?> _lineStyle() => <String, Object?>{
   'spanGaps': false,
-  'backgroundColor': 'rgba(0,0,0,0.1)',
+  'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
   'borderCapStyle': StrokeCap.butt,
   'borderDash': <Object?>[],
   'borderDashOffset': 0.0,
   'borderJoinStyle': StrokeJoin.miter,
   'borderWidth': 3.0,
-  'borderColor': 'rgb(75, 192, 192)',
+  'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(75, 192, 192, 1)),
 };
 
 BenchCase _curve(int count, String mode) => BenchCase(
@@ -240,7 +243,10 @@ List<BenchCase> dataCases() => [
     'segment/compute_1k_styled',
     () {
       final style = _lineStyle();
-      final red = <String, Object?>{...style, 'borderColor': 'red'};
+      final red = <String, Object?>{
+        ...style,
+        'borderColor': const ChartPaint.solid(ui.Color(0xffff0000)),
+      };
       final segmentOptions = <String, Object?>{
         'setContext': (Object? ctx) {
           final p0 = (ctx! as Map<String, Object?>)['p0']! as PointElement;

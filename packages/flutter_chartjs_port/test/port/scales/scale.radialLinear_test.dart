@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -60,20 +62,26 @@ final Map<String, Object?> _functions = {
     3.0 => <Object?>[label, 'x${jsNumberToString(index)}'],
     _ => '${jsToString(label)}!',
   },
-  'pointLabelColor': (Object? ctx) => jsToNumber(jsGet(ctx, 'index')) % 2 != 0
-      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
-  'angleLineColor': (Object? ctx) => jsGet(ctx, 'label') == 'B'
-      ? const native_ui.Color.fromRGBO(0, 128, 0, 1)
-      : const native_ui.Color.fromRGBO(128, 128, 128, 1),
-  'gridColor': (Object? ctx) => jsToNumber(jsGet(ctx, 'index')) > 2
-      ? const native_ui.Color.fromRGBO(255, 165, 0, 1)
-      : const native_ui.Color.fromRGBO(128, 0, 128, 1),
+  'pointLabelColor': (Object? ctx) => ChartPaint.solid(
+    jsToNumber(jsGet(ctx, 'index')) % 2 != 0
+        ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+        : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+  ),
+  'angleLineColor': (Object? ctx) => ChartPaint.solid(
+    jsGet(ctx, 'label') == 'B'
+        ? const native_ui.Color.fromRGBO(0, 128, 0, 1)
+        : const native_ui.Color.fromRGBO(128, 128, 128, 1),
+  ),
+  'gridColor': (Object? ctx) => ChartPaint.solid(
+    jsToNumber(jsGet(ctx, 'index')) > 2
+        ? const native_ui.Color.fromRGBO(255, 165, 0, 1)
+        : const native_ui.Color.fromRGBO(128, 0, 128, 1),
+  ),
   'pointLabelPadding': (Object? ctx) => 2 + 3 * jsToNumber(jsGet(ctx, 'index')),
   'angleLineWidth': (Object? ctx) => jsGet(ctx, 'index') == 0 ? 0.0 : 1.0,
   'angleLineEmptyColor': (Object? ctx) => jsGet(ctx, 'index') == 1
       ? ''
-      : const native_ui.Color.fromRGBO(0, 0, 0, 1),
+      : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 1)),
   'tickUnit': (Object? value) => '${jsToString(value)} u',
   'hideOneAndThree': (Object? chart) {
     (chart! as Chart)

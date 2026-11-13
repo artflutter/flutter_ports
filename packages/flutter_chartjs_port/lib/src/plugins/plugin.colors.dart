@@ -52,6 +52,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ColorsOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show ColorsPluginOptions, optionOf;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
@@ -111,10 +112,10 @@ Object? _getBorderColor(int i) {
   final themeColors = _themeBorderColors;
   if (themeColors != null) {
     // js-ok: i is an int and never negative, so Dart % equals JS %.
-    return themeColors[i % themeColors.length];
+    return ChartPaint.solid(themeColors[i % themeColors.length]! as ui.Color);
   }
   // js-ok: i is an int and never negative, so Dart % equals JS %.
-  return _borderColors[i % _borderColors.length];
+  return ChartPaint.solid(_borderColors[i % _borderColors.length]);
 }
 
 /// plugin.colors.ts:31 `getBackgroundColor(i)`.
@@ -123,10 +124,10 @@ Object? _getBackgroundColor(int i) {
   final themeColors = _themeBackgroundColors;
   if (themeColors != null) {
     // js-ok: i is an int and never negative, so Dart % equals JS %.
-    return themeColors[i % themeColors.length];
+    return ChartPaint.solid(themeColors[i % themeColors.length]! as ui.Color);
   }
   // js-ok: i is an int and never negative, so Dart % equals JS %.
-  return _backgroundColors[i % _backgroundColors.length];
+  return ChartPaint.solid(_backgroundColors[i % _backgroundColors.length]);
 }
 
 /// The write `dataset[key] = value` of a colorizer into the dataset
@@ -302,7 +303,8 @@ bool _containsDefaultColorsDefenitions() {
 }
 
 // DIVERGES(chartjs): adapt-direct-colors, compare native default channels.
-bool _isDefaultColor(Object? value) {
+bool _isDefaultColor(Object? input) {
+  final value = input is SolidChartPaint ? input.color : input;
   if (value is! ui.Color) return false;
   final color = value.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
   // js-ok: byte rounding is the native-color normalization of ADR 0057.

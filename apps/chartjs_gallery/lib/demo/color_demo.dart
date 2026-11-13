@@ -1,6 +1,8 @@
 import 'package:chartjs_gallery/demo/demo_common.dart';
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
-// Numerical color operations; chart inputs are Flutter Color values.
+// Numerical color operations; solid paints contain Flutter Color values.
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
 import 'package:material_ui/material_ui.dart';
@@ -76,7 +78,10 @@ class _ColorDemoState extends State<ColorDemo> {
                       const Text('hover'),
                       const SizedBox(width: 8),
                       ColorSwatchBox(
-                        color: helpers.getHoverColor(color)! as Color,
+                        color:
+                            (helpers.getHoverColor(ChartPaint.solid(color))!
+                                    as SolidChartPaint)
+                                .color,
                       ),
                     ],
                   ),

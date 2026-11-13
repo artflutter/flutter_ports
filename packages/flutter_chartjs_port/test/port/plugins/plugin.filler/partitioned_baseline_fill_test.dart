@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show DefaultCubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/partitioned_baseline_fill.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -285,9 +286,10 @@ void main() {
     addTearDown(ctx.dispose);
     final line = _line();
     final boundary = _boundary(line);
-    final gradient = ctx.createLinearGradient(0, 0, 160, 0)
-      ..addColorStop(0, const ui.Color(0xff000000))
-      ..addColorStop(1, const ui.Color(0xffffffff));
+    const gradient = ChartGradient.linear(ui.Offset.zero, ui.Offset(160, 0), [
+      ui.Color(0xff000000),
+      ui.Color(0xffffffff),
+    ]);
     ctx.fillStyle = gradient;
     expect(_try(ctx, line, boundary), isFalse);
     ctx.fillStyle = const ui.Color(0xff000000);

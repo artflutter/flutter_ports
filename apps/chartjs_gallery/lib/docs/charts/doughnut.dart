@@ -2,6 +2,8 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+
 /// The doughnut chart of `docs/charts/doughnut.md:15-47`, with each key and
 /// value of the docs block.
 Map<String, Object?> doughnutConfig() => <String, Object?>{
@@ -25,9 +27,9 @@ Map<String, Object?> _data() => <String, Object?>{
       'label': 'My First Dataset',
       'data': <Object?>[300.0, 50.0, 100.0],
       'backgroundColor': <Object?>[
-        const ui.Color.fromRGBO(255, 99, 132, 1),
-        const ui.Color.fromRGBO(54, 162, 235, 1),
-        const ui.Color.fromRGBO(255, 205, 86, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 99, 132, 1)),
+        const ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 1)),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 205, 86, 1)),
       ],
       'hoverOffset': 4.0,
     },

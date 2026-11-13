@@ -168,7 +168,10 @@ class _EventsDemoState extends State<EventsDemo> {
       8,
       8,
       small,
-      const TextOpts(color: labelColor, textBaseline: CanvasTextBaseline.top),
+      const RenderTextOpts(
+        color: ChartPaint.solid(labelColor),
+        textBaseline: CanvasTextBaseline.top,
+      ),
     );
 
     // The last coalesced mousemove positions.
@@ -232,8 +235,8 @@ class _EventsDemoState extends State<EventsDemo> {
       hit.dx + (right ? -16 : 16),
       hit.dy - 12,
       toFont(const ChartTextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-      TextOpts(
-        color: chartColors[1],
+      RenderTextOpts(
+        color: ChartPaint.solid(chartColors[1]),
         textAlign: right ? TextAlign.right : TextAlign.left,
         textBaseline: CanvasTextBaseline.bottom,
       ),

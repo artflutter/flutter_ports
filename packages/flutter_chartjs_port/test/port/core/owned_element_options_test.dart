@@ -11,10 +11,12 @@ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
-const red = Color(0xffff0000);
-const blue = Color(0xff0000ff);
+const red = ChartPaint.solid(Color(0xffff0000));
+const blue = ChartPaint.solid(Color(0xff0000ff));
 
 class _ObservedId {
   int calls = 0;
@@ -119,13 +121,13 @@ void main() {
         final counts = <int>[0, 0];
         for (var j = 0; j < 2; j++) {
           final f = [a, b][j];
-          Color color(Object? ctx) {
+          ChartPaint color(Object? ctx) {
             counts[j]++;
             return (ctx! as ScriptableContext).index == 1 ? blue : red;
           }
 
           if (style == 'indexed') {
-            f.scope['backgroundColor'] = <Color>[red, blue];
+            f.scope['backgroundColor'] = <ChartPaint>[red, blue];
           }
           if (style == 'scriptable') {
             f.scope['backgroundColor'] = color;
@@ -211,7 +213,7 @@ void main() {
   test('nested resolution never exposes or corrupts a shared type token', () {
     final f = _Fixture();
     ElementOptions? inner;
-    Color color(Object? ctx) {
+    ChartPaint color(Object? ctx) {
       final index = (ctx! as ScriptableContext).index;
       if (index == 1) inner = f.resolve(2);
       return index == 1 ? red : blue;
@@ -248,7 +250,7 @@ void main() {
       '_scriptable': true,
       '_indexable': true,
       'borderWidth': 1.0,
-      'backgroundColor': <Color>[red, blue],
+      'backgroundColor': <ChartPaint>[red, blue],
     };
     final scopes = <Object?>[scope];
     final keys = <Object>[OptionKey.borderWidth, OptionKey.backgroundColor];

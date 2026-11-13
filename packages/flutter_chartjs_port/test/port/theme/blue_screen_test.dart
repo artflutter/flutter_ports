@@ -20,6 +20,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -147,8 +149,8 @@ final Object? _hoverBlue = getHoverColor(
 /// (element.bar.js:191-192), so it has `setFillStyle` only. The test fails
 /// when a set changes in either direction.
 Set<String> knownActiveSetters(String type) => {
-  'setFillStyle $_hoverBlue',
-  if (type != 'bar') 'setStrokeStyle $_hoverBlue',
+  'setFillStyle ${(_hoverBlue! as SolidChartPaint).color}',
+  if (type != 'bar') 'setStrokeStyle ${(_hoverBlue! as SolidChartPaint).color}',
 };
 
 /// The largest distance from the segment of the blue to the hover color
@@ -581,7 +583,10 @@ void main() {
 
   test('the hover color of the blue is #003CCA', () {
     // The value of the probes F-P2 and Pf-B7 of Chart.js ADR 0050.
-    expect(_hoverBlue, const native_ui.Color.fromRGBO(0, 60, 202, 1));
+    expect(
+      _hoverBlue,
+      const ChartPaint.solid(native_ui.Color.fromRGBO(0, 60, 202, 1)),
+    );
   });
 
   for (final colors in [true, false]) {

@@ -767,8 +767,14 @@ TooltipLabelStyle _defaultLabelColor(
   final width = optionOf(options, OptionKey.borderWidth);
   final dash = optionOf(options, OptionKey.borderDash);
   return TooltipLabelStyle(
-    borderColor: chartPaintOf(optionOf(options, OptionKey.borderColor)),
-    backgroundColor: chartPaintOf(optionOf(options, OptionKey.backgroundColor)),
+    borderColor: chartPaintOf(
+      optionOf(options, OptionKey.borderColor),
+      strict: false,
+    ),
+    backgroundColor: chartPaintOf(
+      optionOf(options, OptionKey.backgroundColor),
+      strict: false,
+    ),
     borderWidth: isObject(width)
         ? Tooltip._maxOfValues(width!)
         : jsToNumber(jsTruthy(width) ? width : 1.0),
@@ -780,7 +786,7 @@ TooltipLabelStyle _defaultLabelColor(
 ChartPaint _defaultLabelTextColor(
   types.TooltipModel tooltip,
   ChartTooltipItem item,
-) => chartPaintOf(TooltipOptions(tooltip.options).bodyColor);
+) => chartPaintOf(TooltipOptions(tooltip.options).bodyColor, strict: false);
 
 TooltipLabelPointStyle _defaultLabelPointStyle(
   types.TooltipModel tooltip,
@@ -1653,15 +1659,15 @@ class Tooltip extends Element implements types.TooltipModel {
 
       // Draw the point
       ctx
-        ..strokeStyle = chartPaintValue(labelColor.borderColor)
-        ..fillStyle = chartPaintValue(labelColor.backgroundColor);
+        ..strokeStyle = labelColor.borderColor
+        ..fillStyle = labelColor.backgroundColor;
       drawPoint(ctx, drawOptions, centerX, centerY);
     } else {
       // Border
       final borderWidth = labelColor.borderWidth;
       ctx
         ..lineWidth = borderWidth
-        ..strokeStyle = chartPaintValue(labelColor.borderColor);
+        ..strokeStyle = labelColor.borderColor;
       final borderDash = labelColor.borderDash;
       ctx.setLineDash(borderDash);
       final borderDashOffset = labelColor.borderDashOffset;
@@ -1697,7 +1703,7 @@ class Tooltip extends Element implements types.TooltipModel {
         if (borderWidth != 0) ctx.stroke();
         ctx
           // Inner square
-          ..fillStyle = chartPaintValue(labelColor.backgroundColor)
+          ..fillStyle = labelColor.backgroundColor
           ..beginPath();
         addRoundedRectPath(
           ctx,
@@ -1720,13 +1726,13 @@ class Tooltip extends Element implements types.TooltipModel {
         }
         ctx
           // Inner square
-          ..fillStyle = chartPaintValue(labelColor.backgroundColor)
+          ..fillStyle = labelColor.backgroundColor
           ..fillRect(innerX, colorY + 1, boxWidth - 2, boxHeight - 2);
       }
     }
 
     // restore fillStyle
-    ctx.fillStyle = chartPaintValue(_labelTextColors![i]! as ChartPaint);
+    ctx.fillStyle = _labelTextColors![i]! as ChartPaint;
   }
 
   /// `Math.max(...Object.values(object))` (plugin.tooltip.js:822): the
@@ -1798,7 +1804,7 @@ class Tooltip extends Element implements types.TooltipModel {
       bodyItem = _BodyItem(body[i]);
       textColor = jsGetIndex(_labelTextColors ?? undefined, i.toDouble());
 
-      ctx.fillStyle = chartPaintValue(textColor! as ChartPaint);
+      ctx.fillStyle = textColor! as ChartPaint;
       each(bodyItem.before, fillLineOfText);
 
       lines = bodyItem.lines! as List<Object?>;
@@ -2458,21 +2464,21 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
     ..externalCell = optNull
     // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the positioner.
     ..position = const AverageTooltipPositioner()
-    ..backgroundColor = const ui.Color.fromRGBO(0, 0, 0, 0.8)
-    ..titleColor = const ui.Color.fromRGBO(255, 255, 255, 1)
+    ..backgroundColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.8))
+    ..titleColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
     // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
     ..titleFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
     ..titleSpacing = 2.0
     ..titleMarginBottom = 6.0
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
     ..titleAlign = TextAlign.left
-    ..bodyColor = const ui.Color.fromRGBO(255, 255, 255, 1)
+    ..bodyColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
     ..bodySpacing = 2.0
     // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
     ..bodyFont = const ChartTextStyle()
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
     ..bodyAlign = TextAlign.left
-    ..footerColor = const ui.Color.fromRGBO(255, 255, 255, 1)
+    ..footerColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
     ..footerSpacing = 2.0
     ..footerMarginTop = 6.0
     // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
@@ -2485,10 +2491,12 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
     ..cornerRadius = 6.0
     ..boxHeightCell = const OptFunction<double>(_bodyFontSize)
     ..boxWidthCell = const OptFunction<double>(_bodyFontSize)
-    ..multiKeyBackground = const ui.Color.fromRGBO(255, 255, 255, 1)
+    ..multiKeyBackground = const ChartPaint.solid(
+      ui.Color.fromRGBO(255, 255, 255, 1),
+    )
     ..displayColors = true
     ..boxPadding = 0.0
-    ..borderColor = const ui.Color.fromRGBO(0, 0, 0, 0)
+    ..borderColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0))
     ..borderWidth = 0.0
     ..animation = (AnimationOptionsScope()
       ..duration = 400.0

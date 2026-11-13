@@ -37,8 +37,8 @@ LegendItem legendItemFromOptions({
   text: text is List
       ? [for (final line in text) jsToString(line)]
       : [jsToString(text)],
-  fillStyle: chartPaintOf(fillStyle),
-  fontColor: chartPaintOf(fontColor),
+  fillStyle: chartPaintOf(fillStyle, strict: false),
+  fontColor: chartPaintOf(fontColor, strict: false),
   hidden: hidden,
   lineCap: canvasLineCap(lineCap),
   lineDash: lineDash == null || lineDash is Undefined
@@ -47,7 +47,7 @@ LegendItem legendItemFromOptions({
   lineDashOffset: _number(lineDashOffset),
   lineJoin: canvasLineJoin(lineJoin),
   lineWidth: _number(lineWidth),
-  strokeStyle: chartPaintOf(strokeStyle),
+  strokeStyle: chartPaintOf(strokeStyle, strict: false),
   pointStyle: PointStyle.of(pointStyle),
   rotation: _number(rotation),
   textAlign: canvasTextAlign(textAlign),

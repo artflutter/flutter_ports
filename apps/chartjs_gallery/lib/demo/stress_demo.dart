@@ -1030,8 +1030,10 @@ class StressDemoState extends State<StressDemo> {
   static final element_options.PointOptions _pointElementOptions =
       element_options.PointOptions({
         ..._plainDefaults(PointElement.defaults),
-        'backgroundColor': const ui.Color.fromRGBO(54, 162, 235, 0.45),
-        'borderColor': const ui.Color(0xFF36A2EB),
+        'backgroundColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(54, 162, 235, 0.45),
+        ),
+        'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
         'borderWidth': 1.0,
         'pointStyle': const CirclePointStyle(),
         'radius': 3.0,
@@ -1044,7 +1046,7 @@ class StressDemoState extends State<StressDemo> {
   static final element_options.LineOptions _lineElementOptions =
       element_options.LineOptions({
         ..._plainDefaults(LineElement.defaults),
-        'borderColor': const ui.Color(0xFFFF6384),
+        'borderColor': const ChartPaint.solid(ui.Color(0xFFFF6384)),
         'borderDash': const <double>[],
         'borderWidth': 1.5,
         'tension': 0.0,
@@ -1056,8 +1058,10 @@ class StressDemoState extends State<StressDemo> {
   static final element_options.BarOptions _barOptions =
       element_options.BarOptions({
         ..._plainDefaults(BarElement.defaults),
-        'backgroundColor': const ui.Color.fromRGBO(54, 162, 235, 0.45),
-        'borderColor': const ui.Color(0xFF36A2EB),
+        'backgroundColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(54, 162, 235, 0.45),
+        ),
+        'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
         'borderWidth': 1.0,
         'borderRadius': 4.0,
       });
@@ -1087,7 +1091,7 @@ class StressDemoState extends State<StressDemo> {
     ])
       element_options.ArcOptions({
         ..._plainDefaults(ArcElement.defaults),
-        'backgroundColor': color,
+        'backgroundColor': ChartPaint.solid(color),
         'borderDash': const <double>[],
         'borderRadius': 4.0,
         'borderWidth': 2.0,
@@ -1866,7 +1870,7 @@ class StressDemoState extends State<StressDemo> {
           0,
           0,
           _labelFont,
-          TextOpts(
+          RenderTextOpts(
             translation: (x, y),
             // A chart rotates its tick labels by one fixed angle. 'spin
             // labels' gives each label a new angle in every frame: the
@@ -1875,7 +1879,7 @@ class StressDemoState extends State<StressDemo> {
             rotation: _spin
                 ? math.sin(_t + j * 0.3) * math.pi / 3
                 : -math.pi / 4,
-            color: labelColor,
+            color: const ChartPaint.solid(labelColor),
             textAlign: TextAlign.center,
             textBaseline: CanvasTextBaseline.middle,
           ),
@@ -1895,15 +1899,17 @@ class StressDemoState extends State<StressDemo> {
       8,
       8,
       _titleFont,
-      TextOpts(
-        color: const ui.Color(0xFF333333),
+      RenderTextOpts(
+        color: const ChartPaint.solid(ui.Color(0xFF333333)),
         textBaseline: CanvasTextBaseline.top,
-        backdrop: Backdrop(
-          4,
-          4,
-          titleWidth + 8,
-          _titleFont.lineHeight! + 4,
-          const ui.Color.fromRGBO(255, 255, 255, 0.85),
+        backdrop: BackdropOptions(
+          left: 4,
+          top: 4,
+          width: titleWidth + 8,
+          height: _titleFont.lineHeight! + 4,
+          color: const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 255, 255, 0.85),
+          ),
         ),
       ),
     );

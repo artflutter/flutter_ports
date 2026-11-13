@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 const red = Color(0xffff0000);
@@ -28,7 +30,7 @@ class _OrdinaryConfig extends Config {}
 /// The own keys of `defaults.elements.arc`, with its route in the last place.
 ArcOptionsScope _keySource() => ArcOptionsScope()
   ..borderAlign = ArcBorderAlign.center
-  ..borderColor = blue
+  ..borderColor = const ChartPaint.solid(blue)
   ..borderDash = <Object?>[]
   ..borderDashOffset = 0.0
   ..borderJoinStyleCell = optUndefined
@@ -40,7 +42,7 @@ ArcOptionsScope _keySource() => ArcOptionsScope()
   ..angleCell = optUndefined
   ..circular = true
   ..selfJoin = false
-  ..backgroundColor = red;
+  ..backgroundColor = const ChartPaint.solid(red);
 
 class _Fixture {
   _Fixture({required bool ordinary})
@@ -51,7 +53,7 @@ class _Fixture {
     '_indexable': ArcElement.descriptors.jsRead('_indexable'),
     '_allKeys': false,
     'borderAlign': ArcBorderAlign.center,
-    'borderColor': blue,
+    'borderColor': const ChartPaint.solid(blue),
     'borderDash': <Object?>[],
     'borderDashOffset': 0.0,
     'borderRadius': 0.0,
@@ -61,7 +63,7 @@ class _Fixture {
     'spacingMode': ArcSpacingMode.angular,
     'circular': true,
     'selfJoin': false,
-    'backgroundColor': red,
+    'backgroundColor': const ChartPaint.solid(red),
   };
   late final scopes = <Object?>[scope];
   final ArcOptionsScope keySource = _keySource();
@@ -147,14 +149,24 @@ void main() {
 
     test('indexed colors', () {
       _expectTwins((f, _) {
-        f.scope['backgroundColor'] = <Color>[red, blue, green];
-        f.scope['borderColor'] = const <Color>[blue, red];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+          const ChartPaint.solid(green),
+        ];
+        f.scope['borderColor'] = const <ChartPaint>[
+          ChartPaint.solid(blue),
+          ChartPaint.solid(red),
+        ];
       });
     });
 
     test('an indexed borderWidth and offset', () {
       _expectTwins((f, _) {
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         f.scope['borderWidth'] = <double>[1, 2, 3];
         f.scope['offset'] = <int>[4, 5];
       });
@@ -172,7 +184,10 @@ void main() {
       final fixtures = [_Fixture(ordinary: false), _Fixture(ordinary: true)];
       for (final f in fixtures) {
         f.scope['borderDash'] = dash;
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
       }
       for (var i = 0; i < 4; i++) {
         for (final f in fixtures) {
@@ -185,7 +200,10 @@ void main() {
 
     test('a list of objects in a non-indexable key gives its resolvers', () {
       _expectTwins((f, _) {
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         f.scope['borderDash'] = <Object?>[
           <String, Object?>{'inner': 1.0},
         ];
@@ -198,7 +216,10 @@ void main() {
         final f = _Fixture(ordinary: ordinary);
         final dash = <Object?>[];
         f.scope['borderDash'] = dash;
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         final out = <Object?>[];
         for (var i = 0; i < 6; i++) {
           if (i == 3) {
@@ -217,13 +238,19 @@ void main() {
         bool indexable(String name) => name != 'spacing';
         f.scope['_indexable'] = indexable;
         f.scope['spacing'] = <double>[1, 2];
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
       });
     });
 
     test('foreign static values keep the ordinary path', () {
       _expectTwins((f, _) {
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         f.scope['borderWidth'] = '4';
         f.scope['borderAlign'] = 5.0;
         f.scope['circular'] = 1.0;
@@ -234,9 +261,9 @@ void main() {
       _expectTwins((f, _) => f.scope['backgroundColor'] = <Color>[]);
       _expectTwins((f, _) {
         f.scope['backgroundColor'] = <Object?>[
-          red,
+          const ChartPaint.solid(red),
           <String, Object?>{'a': 1.0},
-          blue,
+          const ChartPaint.solid(blue),
         ];
       });
     });
@@ -264,7 +291,11 @@ void main() {
     test('an index above 2^53 takes the double remainder', () {
       final fixtures = [_Fixture(ordinary: false), _Fixture(ordinary: true)];
       for (final f in fixtures) {
-        f.scope['backgroundColor'] = <Color>[red, blue, green];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+          const ChartPaint.solid(green),
+        ];
       }
       for (final index in [
         0.0,
@@ -284,17 +315,19 @@ void main() {
 
     test('a scriptable color with one and two parameters', () {
       _expectTwins((f, trace) {
-        Color color(Object? ctx) {
+        ChartPaint color(Object? ctx) {
           trace.add((ctx! as ScriptableContext).index);
-          return (ctx as ScriptableContext).index == 1 ? blue : red;
+          return ChartPaint.solid(
+            (ctx as ScriptableContext).index == 1 ? blue : red,
+          );
         }
 
         f.scope['backgroundColor'] = color;
       });
       _expectTwins((f, trace) {
-        Color color(Object? ctx, Object? options) {
+        ChartPaint color(Object? ctx, Object? options) {
           trace.add((options! as helpers.OptionView).readKey(OptionKey.offset));
-          return green;
+          return const ChartPaint.solid(green);
         }
 
         f.scope['borderColor'] = color;
@@ -307,7 +340,10 @@ void main() {
         final f = _Fixture(ordinary: ordinary);
         f.scope['_scriptable'] = false;
         f.scope['backgroundColor'] = fn;
-        f.scope['borderColor'] = <Color>[red, blue];
+        f.scope['borderColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         for (var i = 0; i < 4; i++) {
           expect(f.resolve(i.toDouble()).jsRead('backgroundColor'), same(fn));
         }
@@ -322,12 +358,12 @@ void main() {
           final dash = <Object?>[];
           f.scope['borderDash'] = dash;
           var calls = 0;
-          Color color(Object? ctx) {
+          ChartPaint color(Object? ctx) {
             calls++;
             if ((ctx! as ScriptableContext).index == 2 && dash.isEmpty) {
               dash.add(<String, Object?>{'inner': 1.0});
             }
-            return red;
+            return const ChartPaint.solid(red);
           }
 
           f.scope[key] = color;
@@ -348,7 +384,10 @@ void main() {
         final f = _Fixture(ordinary: ordinary);
         final dash = <Object?>[];
         f.scope['borderDash'] = dash;
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         final out = <Object?>[];
         for (var i = 0; i < 6; i++) {
           if (i == 2) {
@@ -371,7 +410,10 @@ void main() {
       final results = <List<Object?>>[];
       for (final ordinary in [false, true]) {
         final f = _Fixture(ordinary: ordinary);
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         final out = <Object?>[];
         for (var i = 0; i < 6; i++) {
           if (i == 2) f.resolver.jsWrite('borderWidth', 7.0);
@@ -390,8 +432,11 @@ void main() {
       final results = <Object?>[];
       for (final ordinary in [false, true]) {
         final f = _Fixture(ordinary: ordinary);
-        f.scope['backgroundColor'] = <Color>[red, blue];
-        f.scope['hoverBackgroundColor'] = green;
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
+        f.scope['hoverBackgroundColor'] = const ChartPaint.solid(green);
         final out = <Object?>[];
         for (var i = 0; i < 4; i++) {
           out.add(
@@ -412,7 +457,7 @@ void main() {
 
     test('the private arc token is never written or returned', () {
       final f = _Fixture(ordinary: false);
-      Color color(Object? ctx) => red;
+      ChartPaint color(Object? ctx) => const ChartPaint.solid(red);
       f.scope['backgroundColor'] = color;
       final a = f.resolve();
       final b = f.resolve(1);
@@ -450,9 +495,12 @@ void main() {
         Defaults.nativeElementPredicate(counted);
         final f = _Fixture(ordinary: false);
         f.scope['_indexable'] = counted;
-        Color color(Object? ctx) => green;
+        ChartPaint color(Object? ctx) => const ChartPaint.solid(green);
         f.scope['backgroundColor'] = style == 'indexed colors'
-            ? <Color>[red, blue]
+            ? <ChartPaint>[
+                const ChartPaint.solid(red),
+                const ChartPaint.solid(blue),
+              ]
             : color;
         f
           ..resolve()
@@ -476,7 +524,10 @@ void main() {
       Defaults.nativeElementPredicate(counted);
       final f = _Fixture(ordinary: true);
       f.scope['_indexable'] = counted;
-      f.scope['backgroundColor'] = <Color>[red, blue];
+      f.scope['backgroundColor'] = <ChartPaint>[
+        const ChartPaint.solid(red),
+        const ChartPaint.solid(blue),
+      ];
       f
         ..resolve()
         ..resolve(1);
@@ -487,7 +538,10 @@ void main() {
 
     test('a user predicate keeps each ordinary call', () {
       _expectTwins((f, trace) {
-        f.scope['backgroundColor'] = <Color>[red, blue];
+        f.scope['backgroundColor'] = <ChartPaint>[
+          const ChartPaint.solid(red),
+          const ChartPaint.solid(blue),
+        ];
         bool indexable(String name) {
           trace.add(name);
           return name != 'borderDash';
@@ -500,7 +554,10 @@ void main() {
 
   test('an undefined key of a template stays undefined and foreign', () {
     final f = _Fixture(ordinary: false);
-    f.scope['backgroundColor'] = <Color>[red, blue];
+    f.scope['backgroundColor'] = <ChartPaint>[
+      const ChartPaint.solid(red),
+      const ChartPaint.solid(blue),
+    ];
     f
       ..resolve()
       ..resolve(1);

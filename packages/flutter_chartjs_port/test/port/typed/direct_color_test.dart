@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: Color-only chart input contract.
+// Original code, not ported from Chart.js: ChartPaint chart input contract.
 // Keep setup and assertions separate in contract tests.
 // ignore_for_file: cascade_invocations
 @TestOn('vm')
@@ -23,7 +23,7 @@ import 'package:flutter_test/flutter_test.dart';
 const _blue = ui.Color(0xFF2050C0);
 const _red = ui.Color(0x80FF0000);
 
-Map<String, Object?> _raw([Object? color = _blue]) => {
+Map<String, Object?> _raw([Object? color = const ChartPaint.solid(_blue)]) => {
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>['red', 'blue', 'green'],
@@ -51,7 +51,7 @@ void main() {
     final before = core_defaults.defaults
         .lookup(OptionKey.backgroundColor)!
         .raw;
-    expect(before, const ui.Color.fromRGBO(0, 0, 0, 0.1));
+    expect(before, const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)));
     expect(core_defaults.defaults['backgroundColor'], same(before));
     final canvas = UiCanvasElement(width: 120, height: 80);
     final chart = Chart(canvas, _raw());
@@ -62,9 +62,12 @@ void main() {
     expect(core_defaults.defaults['backgroundColor'], same(before));
     _destroy(chart, canvas);
   });
-  test('public defaults expose native Color before chart construction', () {
-    expect(Chart.defaults['color'], isA<ui.Color>());
-  });
+  test(
+    'public defaults expose native ChartPaint before chart construction',
+    () {
+      expect(Chart.defaults['color'], isA<SolidChartPaint>());
+    },
+  );
   test('native canvas retains Color identity and rejects strings', () {
     final canvas = UiCanvasElement(width: 120, height: 80);
     final context = canvas.getContext2d();
@@ -85,9 +88,10 @@ void main() {
     context.dispose();
   });
 
-  test('raw CSS colors fail before acquiring the canvas', () {
+  test('raw bare colors and CSS colors fail before acquiring the canvas', () {
     final canvas = UiCanvasElement(width: 120, height: 80);
     for (final value in [
+      _blue,
       'red',
       '#2050c0',
       <Object?>[_blue, 'blue'],
@@ -99,24 +103,42 @@ void main() {
     expect(
       (chart.getDatasetMeta(0).data.first.options! as PointOptions)
           .backgroundColor,
-      _blue,
+      const ChartPaint.solid(_blue),
     );
     _destroy(chart, canvas);
   });
 
-  test('typed scalars, lists and callbacks keep native Color values', () {
+  test('a shared palette list is also checked as a paint option', () {
+    final palette = <ui.Color>[_blue];
+    final config = _raw(palette);
+    (config['options']! as Map<String, Object?>)['plugins'] = <String, Object?>{
+      'colors': <String, Object?>{r'$borderColors': palette},
+    };
+    final canvas = UiCanvasElement(width: 120, height: 80);
+    expect(() => Chart(canvas, config), throwsArgumentError);
+    expect(Chart.getChart(canvas), isNull);
+    canvas.getContext2d().dispose();
+  });
+
+  test('typed scalars, lists and callbacks keep their ChartPaint values', () {
     for (final dataset in [
       const LineDataset(
         data: [1, 3, 2],
-        backgroundColor: ChartValue.constant(_blue),
+        backgroundColor: ChartValue.constant(.solid(_blue)),
       ),
       const LineDataset(
         data: [1, 3, 2],
-        backgroundColor: ChartValue.indexed([_blue, _red, _blue]),
+        backgroundColor: ChartValue.indexed([
+          ChartPaint.solid(_blue),
+          ChartPaint.solid(_red),
+          ChartPaint.solid(_blue),
+        ]),
       ),
       LineDataset(
         data: const [1, 3, 2],
-        backgroundColor: ChartValue.resolver((_) => _blue),
+        backgroundColor: ChartValue.resolver(
+          (_) => const ChartPaint.solid(_blue),
+        ),
       ),
     ]) {
       final canvas = UiCanvasElement(width: 120, height: 80);
@@ -129,7 +151,7 @@ void main() {
       expect(
         (chart.getDatasetMeta(0).data.first.options! as PointOptions)
             .backgroundColor,
-        _blue,
+        const ChartPaint.solid(_blue),
       );
       _destroy(chart, canvas);
     }
@@ -147,21 +169,26 @@ void main() {
     _destroy(chart, canvas);
   });
 
-  test('hover and animation produce Color, never strings', () {
-    expect(helpers.getHoverColor(_blue), const ui.Color(0xFF003CCA));
+  test('hover and animation produce ChartPaint, never strings', () {
+    expect(
+      helpers.getHoverColor(const ChartPaint.solid(_blue)),
+      const ChartPaint.solid(ui.Color(0xFF003CCA)),
+    );
     expect(() => helpers.getHoverColor('#2050c0'), throwsArgumentError);
-    final target = PointOptions({'backgroundColor': _red});
+    final target = PointOptions({
+      'backgroundColor': const ChartPaint.solid(_red),
+    });
     final animation = core.Animation(
       <String, Object?>{'duration': 1000, 'type': 'color'},
       target,
       'backgroundColor',
-      _blue,
+      const ChartPaint.solid(_blue),
     );
     for (final offset in [0, 250, 500, 750, 1000]) {
       animation.tick(animation.start + offset);
-      expect(target.backgroundColor, isA<ui.Color>());
+      expect(target.backgroundColor, isA<SolidChartPaint>());
     }
-    expect(target.backgroundColor, _blue);
+    expect(target.backgroundColor, const ChartPaint.solid(_blue));
   });
 
   test('color animation groups are configurations, not color values', () {
@@ -171,8 +198,8 @@ void main() {
     options['animations'] = <String, Object?>{
       'backgroundColor': <String, Object?>{
         'type': 'color',
-        'from': _red,
-        'to': _blue,
+        'from': const ChartPaint.solid(_red),
+        'to': const ChartPaint.solid(_blue),
       },
     };
     final chart = Chart(canvas, config);
@@ -185,16 +212,18 @@ void main() {
     }
   });
 
-  test('gradient stops require Color', () {
+  test('gradient stops are Color values', () {
     final canvas = UiCanvasElement(width: 120, height: 80);
     final context = canvas.getContext2d();
-    final gradient = context.createLinearGradient(0, 0, 100, 0);
-    gradient.addColorStop(0, _blue);
-    gradient.addColorStop(1, _red);
-    expect(() => gradient.addColorStop(0.5, 'red'), throwsArgumentError);
+    // The type of the List rejects a CSS string at compile time.
+    const gradient = ChartGradient.linear(Offset.zero, Offset(100, 0), [
+      _blue,
+      _red,
+    ]);
     context
       ..fillStyle = gradient
       ..fillRect(0, 0, 100, 50);
+    expect(context.fillStyle, same(gradient));
     context.dispose();
   });
 }

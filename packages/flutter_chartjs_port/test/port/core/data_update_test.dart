@@ -169,8 +169,8 @@ Map<String, Object?> config(
               else
                 i + 1.0,
           ],
-          'backgroundColor': const ui.Color(0x803366aa),
-          'borderColor': const ui.Color(0xff3366aa),
+          'backgroundColor': const ChartPaint.solid(ui.Color(0x803366aa)),
+          'borderColor': const ChartPaint.solid(ui.Color(0xff3366aa)),
           'borderWidth': 1.0,
           if (prepared) 'parsing': false,
         },
@@ -363,17 +363,18 @@ void main() {
   });
   test('scriptable styles fall back and see new parsed values', () {
     final cfg = config('bar');
-    ui.Color background(Object? context) =>
-        (jsGet(jsGet(context, 'parsed'), 'y')! as num) > 5
-        ? const ui.Color(0xffff0000)
-        : const ui.Color(0xff0000ff);
+    ChartPaint background(Object? context) => ChartPaint.solid(
+      (jsGet(jsGet(context, 'parsed'), 'y')! as num) > 5
+          ? const ui.Color(0xffff0000)
+          : const ui.Color(0xff0000ff),
+    );
     dataset(cfg)['backgroundColor'] = background;
     final a = chart(cfg);
     change(cfg, 0);
     expect(a.updateData(), isFalse);
     expect(
       jsGet(a.getDatasetMeta(0).data.first.options, 'backgroundColor'),
-      const ui.Color(0xffff0000),
+      const ChartPaint.solid(ui.Color(0xffff0000)),
     );
   });
   test(
@@ -1015,9 +1016,9 @@ void main() {
     expect(a.updateData(), isFalse);
   });
   group('native indexed styles (Chart.js ADR 0100)', () {
-    const red = ui.Color(0xffff0000);
-    const green = ui.Color(0xff00ff00);
-    const blue = ui.Color(0xff0000ff);
+    const red = ChartPaint.solid(ui.Color(0xffff0000));
+    const green = ChartPaint.solid(ui.Color(0xff00ff00));
+    const blue = ChartPaint.solid(ui.Color(0xff0000ff));
     const types = ['bar', 'scatter', 'bubble', 'pie', 'doughnut', 'polarArea'];
 
     /// The defaults key of the data element of a chart type.
@@ -1361,7 +1362,10 @@ void main() {
           final cfg = indexed(type);
           ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
             ...dataset(config(type)),
-            'backgroundColor': <Object?>[green, blue],
+            'backgroundColor': <Object?>[
+              green,
+              blue,
+            ],
             'hidden': true,
           });
           return cfg;
@@ -1422,9 +1426,15 @@ void main() {
       final forms = <String, Object? Function()>{
         'Object?': () => <Object?>[red, green],
         'Object': () => <Object>[red, green],
-        'Color': () => <ui.Color>[red, green],
-        'Color?': () => <ui.Color?>[red, null, green],
-        'const Color': () => const <ui.Color>[red, green],
+        'Color': () => <ChartPaint>[
+          red,
+          green,
+        ],
+        'Color?': () => <ChartPaint?>[red, null, green],
+        'const Color': () => const <ChartPaint>[
+          red,
+          green,
+        ],
         'const Object': () => const <Object>[red, green],
       };
       for (final MapEntry(key: name, value: form) in forms.entries) {
@@ -1462,7 +1472,8 @@ void main() {
         'a map': () => <String, Object?>{'a': 1.0},
         'an object': Object.new,
         'a nested list': () => <Object?>[red],
-        'a subclass of a color': () => const _UserColor(0xff112233),
+        'a subclass of a color': () =>
+            const ChartPaint.solid(_UserColor(0xff112233)),
       };
 
       // The controls of the groups below: the same list with a native item.
@@ -1534,7 +1545,10 @@ void main() {
               (Object? _) => red,
         ),
         ('a nested list', () => <Object?>[red]),
-        ('a subclass of a color', () => const _UserColor(0xff112233)),
+        (
+          'a subclass of a color',
+          () => const ChartPaint.solid(_UserColor(0xff112233)),
+        ),
       ]) {
         test('a color list of the dataset with $name', () {
           for (final type in types) {
@@ -1956,7 +1970,10 @@ void main() {
           datasets: [
             typed.PieDataset(
               data: [1, 2, 3],
-              backgroundColor: typed.ChartValue.indexed([red, blue]),
+              backgroundColor: typed.ChartValue.indexed([
+                red,
+                blue,
+              ]),
             ),
           ],
           responsive: false,
@@ -2013,7 +2030,7 @@ void main() {
         jsSet(
           jsGet(jsGet(defaults, 'elements'), 'arc'),
           'borderColor',
-          const _UserColor(0xff112233),
+          const ChartPaint.solid(_UserColor(0xff112233)),
         );
         expectTwin(
           () {
@@ -2137,7 +2154,7 @@ void main() {
     test('the typed lowering of an equal indexed color reaches the path', () {
       typed.ChartConfig cfg(
         List<double> values,
-        typed.ChartValue<ui.Color> c,
+        typed.ChartValue<ChartPaint> c,
       ) => typed.ChartConfig(
         type: typed.ChartKind.pie,
         labels: const <Object>['a', 'b', 'c'],
@@ -2149,13 +2166,21 @@ void main() {
         },
       );
       final lowering = ChartConfigLowering(
-        cfg(const [1, 2, 3], const typed.ChartValue.indexed([red, blue])),
+        cfg(
+          const [1, 2, 3],
+          const typed.ChartValue.indexed([
+            red,
+            blue,
+          ]),
+        ),
       );
       final a = chart(lowering.lower());
       lowering.apply(
         cfg(
           const [3, 2, 1],
-          typed.ChartValue.indexed(List<ui.Color>.of(const [red, blue])),
+          typed.ChartValue.indexed(
+            List<ChartPaint>.of(const [red, blue]),
+          ),
         ),
       );
       expect(lowering.lastApplyDataOnly, isTrue);
@@ -2165,7 +2190,13 @@ void main() {
         blue,
       );
       lowering.apply(
-        cfg(const [2, 2, 2], const typed.ChartValue.indexed([green, blue])),
+        cfg(
+          const [2, 2, 2],
+          const typed.ChartValue.indexed([
+            green,
+            blue,
+          ]),
+        ),
       );
       expect(lowering.lastApplyDataOnly, isFalse);
     });

@@ -113,7 +113,7 @@ Map<String, Object?> _config({
       <String, Object?>{
         'data': <double>[1, 2, 3, 4],
         'skipNull': skipNull,
-        'backgroundColor': const ui.Color(0x803366AA),
+        'backgroundColor': const ChartPaint.solid(ui.Color(0x803366AA)),
         'borderWidth': 1.0,
       },
     ],

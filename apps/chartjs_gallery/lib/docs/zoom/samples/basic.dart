@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, ZoomChart, ZoomChartContext;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsNumberToString;
@@ -157,10 +158,10 @@ Map<String, Object?> zoomSampleData() => <String, Object?>{
   'datasets': <Object?>[
     <String, Object?>{
       'label': 'My First dataset',
-      'borderColor': _red(0.4),
-      'backgroundColor': _red(0.1),
-      'pointBorderColor': _red(0.7),
-      'pointBackgroundColor': _red(0.5),
+      'borderColor': ChartPaint.solid(_red(0.4)),
+      'backgroundColor': ChartPaint.solid(_red(0.1)),
+      'pointBorderColor': ChartPaint.solid(_red(0.7)),
+      'pointBackgroundColor': ChartPaint.solid(_red(0.5)),
       'pointBorderWidth': 1.0,
       'data': <Object?>[
         _p(97.80778464, 26.85442387),
@@ -187,10 +188,10 @@ Map<String, Object?> zoomSampleData() => <String, Object?>{
     },
     <String, Object?>{
       'label': 'My Second dataset',
-      'borderColor': _blue(0.4),
-      'backgroundColor': _blue(0.1),
-      'pointBorderColor': _blue(0.7),
-      'pointBackgroundColor': _blue(0.5),
+      'borderColor': ChartPaint.solid(_blue(0.4)),
+      'backgroundColor': ChartPaint.solid(_blue(0.1)),
+      'pointBorderColor': ChartPaint.solid(_blue(0.7)),
+      'pointBackgroundColor': ChartPaint.solid(_blue(0.5)),
       'pointBorderWidth': 1.0,
       'data': <Object?>[
         _p(-49.86025377, -8.87945816),
@@ -236,8 +237,8 @@ Map<String, Object?> zoomSampleScales() {
           : val,
     },
     'grid': <String, Object?>{
-      'borderColor': _grey(1),
-      'color': const ui.Color.fromRGBO(0, 0, 0, 0.1),
+      'borderColor': ChartPaint.solid(_grey(1)),
+      'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
     },
     'title': <String, Object?>{'display': true, 'text': zoomAxisTitle},
   };

@@ -8,10 +8,11 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
-
 import 'recording_defaults.dart';
 
 // core.scale.defaults.js has no spec. The expected values come from Node.js
@@ -87,10 +88,10 @@ void main() {
         jsCall(grid['tickColor'], [
           context,
           <String, Object?>{
-            'color': const ui.Color.fromRGBO(255, 0, 0, 1),
+            'color': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
           },
         ]),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
       );
     });
 

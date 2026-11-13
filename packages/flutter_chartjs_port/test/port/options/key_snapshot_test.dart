@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: immutable native key snapshots.
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -15,7 +16,7 @@ void main() {
       scope.radius = 8;
       expect(scope.nativeOwnKeySnapshot, same(first));
       expect(first.clear, throwsUnsupportedError);
-      scope.backgroundColor = 'red';
+      scope.backgroundColor = const ChartPaint.unchanged();
       final next = scope.nativeOwnKeySnapshot;
       expect(next, isNot(same(first)));
       expect(first, [OptionKey.radius, OptionKey.borderWidth]);

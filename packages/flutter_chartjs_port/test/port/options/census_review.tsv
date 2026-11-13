@@ -130,3 +130,4 @@ write	r2
 write	test
 write	write
 foreign	options.plugins.a	double
+foreign	options.scales.*.grid.color[]	bool	Upstream false suppresses a stroke; nativeFixtureColors converts it to null for ChartPaint (ADR 0128).

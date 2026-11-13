@@ -21,6 +21,10 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
 import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
@@ -215,8 +219,10 @@ AnyObject _formConfig() => <String, Object?>{
 String _formState(Chart chart) {
   final x = chart.scales['x']!.options;
   final title = jsGet(jsGet(chart.options, 'plugins'), 'title');
-  final tickColor = jsGet(jsGet(x, 'ticks'), 'color')! as Color;
-  final borderColor = _dataset(chart, 0)['borderColor']! as Color;
+  final tickColor =
+      (jsGet(jsGet(x, 'ticks'), 'color')! as SolidChartPaint).color;
+  final borderColor =
+      (_dataset(chart, 0)['borderColor']! as SolidChartPaint).color;
   return 'x.ticks.color=${_rgbaText(tickColor)} '
       'x.min=${jsGet(x, 'min')} '
       'ds0.borderColor=${_rgbaText(borderColor)} '
@@ -426,38 +432,38 @@ void main() {
           final reason = '$type, $theme';
           expect(
             _dataset(chart, 0)['borderColor'],
-            _rgba(palette),
+            ChartPaint.solid(_rgba(palette)),
             reason: reason,
           );
           expect(
             _elementOption(chart, 'borderColor'),
-            _rgba(palette),
+            ChartPaint.solid(_rgba(palette)),
             reason: reason,
           );
           expect(
             _elementOption(chart, 'backgroundColor'),
-            _rgba(palette, 0.5),
+            ChartPaint.solid(_rgba(palette, 0.5)),
             reason: reason,
           );
           expect(
             _scaleOption(chart, scale, ['grid', 'color']),
-            line,
+            ChartPaint.solid(line),
             reason: reason,
           );
           expect(
             _scaleOption(chart, scale, ['ticks', 'color']),
-            line,
+            ChartPaint.solid(line),
             reason: reason,
           );
           if (type == 'radar') {
             expect(
               _scaleOption(chart, scale, ['pointLabels', 'color']),
-              line,
+              ChartPaint.solid(line),
               reason: reason,
             );
             expect(
               _scaleOption(chart, scale, ['angleLines', 'color']),
-              line,
+              ChartPaint.solid(line),
               reason: reason,
             );
           }
@@ -488,7 +494,7 @@ void main() {
           same(controllers[i]),
         );
       }
-      expect(_dataset(chart, 0)['borderColor'], _rgba(_blue));
+      expect(_dataset(chart, 0)['borderColor'], ChartPaint.solid(_rgba(_blue)));
     });
 
     for (final (name, algorithm) in <(String, AnyObject)>[
@@ -538,7 +544,10 @@ void main() {
         expect(items(chart), before);
         expect(jsGet(_dataset(chart, 0), '_data'), same(input));
         expect(chart.getDatasetMeta(0).data, hasLength(before.length));
-        expect(_dataset(chart, 0)['borderColor'], _rgba(_blue));
+        expect(
+          _dataset(chart, 0)['borderColor'],
+          ChartPaint.solid(_rgba(_blue)),
+        );
       });
     }
 
@@ -556,19 +565,19 @@ void main() {
       // The first color of BORDER_COLORS (plugin.colors.ts:14-22).
       expect(
         _dataset(chart, 0)['borderColor'],
-        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
         _elementOption(chart, 'borderColor'),
-        const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
         _scaleOption(chart, 'y', ['ticks', 'color']),
-        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
         _scaleOption(chart, 'y', ['grid', 'color']),
-        const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
     });
 
@@ -583,7 +592,7 @@ void main() {
       await tester.pump();
       expect(animator.running(chart), isFalse);
       final from = _elementOption(chart, 'backgroundColor');
-      expect(from, _rgba(_green, 0.5));
+      expect(from, ChartPaint.solid(_rgba(_green, 0.5)));
 
       await tester.pumpWidget(_view(config, theme: _themeB));
       expect(modes.last, 'theme');
@@ -599,10 +608,10 @@ void main() {
         channels.a / 255,
       );
       await tester.pump(const Duration(milliseconds: 100));
-      expect(_elementOption(chart, 'backgroundColor'), half);
+      expect(_elementOption(chart, 'backgroundColor'), ChartPaint.solid(half));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump();
-      expect(_elementOption(chart, 'backgroundColor'), to);
+      expect(_elementOption(chart, 'backgroundColor'), ChartPaint.solid(to));
       expect(animator.running(chart), isFalse);
     });
 
@@ -645,7 +654,10 @@ void main() {
       final config = _config();
       await tester.pumpWidget(_view(config, theme: _palette3A));
       final chart = _chart(tester);
-      expect(_dataset(chart, 1)['borderColor'], _rgba(_green));
+      expect(
+        _dataset(chart, 1)['borderColor'],
+        ChartPaint.solid(_rgba(_green)),
+      );
       _datasets(chart).add(<String, Object?>{
         'label': 'd2',
         'data': <Object?>[2, 2, 2],
@@ -655,10 +667,19 @@ void main() {
       // (plugin.colors.ts:113-121).
       expect(_dataset(chart, 2).containsKey('borderColor'), isFalse);
       await tester.pumpWidget(_view(config, theme: _palette3B));
-      expect(_dataset(chart, 0)['borderColor'], _rgba(_yellow));
-      expect(_dataset(chart, 1)['borderColor'], _rgba(_cyan));
-      expect(_dataset(chart, 2)['borderColor'], _rgba(_magenta));
-      expect(_dataset(chart, 2)['backgroundColor'], _rgba(_magenta, 0.5));
+      expect(
+        _dataset(chart, 0)['borderColor'],
+        ChartPaint.solid(_rgba(_yellow)),
+      );
+      expect(_dataset(chart, 1)['borderColor'], ChartPaint.solid(_rgba(_cyan)));
+      expect(
+        _dataset(chart, 2)['borderColor'],
+        ChartPaint.solid(_rgba(_magenta)),
+      );
+      expect(
+        _dataset(chart, 2)['backgroundColor'],
+        ChartPaint.solid(_rgba(_magenta, 0.5)),
+      );
     });
 
     testWidgets('an app edit of a dataset color stays, and the other '
@@ -666,17 +687,14 @@ void main() {
       final config = _config();
       await tester.pumpWidget(_view(config, theme: _palette3A));
       final chart = _chart(tester);
-      _dataset(chart, 0)['borderColor'] = const native_ui.Color.fromRGBO(
-        1,
-        2,
-        3,
-        1,
+      _dataset(chart, 0)['borderColor'] = const ChartPaint.solid(
+        native_ui.Color.fromRGBO(1, 2, 3, 1),
       );
       chart.update();
       await tester.pumpWidget(_view(config, theme: _palette3B));
       expect(
         _dataset(chart, 0)['borderColor'],
-        const native_ui.Color.fromRGBO(1, 2, 3, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 1)),
       );
       expect(_dataset(chart, 0).containsKey('backgroundColor'), isFalse);
       expect(_dataset(chart, 1).containsKey('borderColor'), isFalse);
@@ -690,7 +708,7 @@ void main() {
       // A new chart of the theme B with that dataset color.
       final fresh = _config();
       (_datasetsOf(fresh)[0]! as AnyObject)['borderColor'] =
-          const native_ui.Color.fromRGBO(1, 2, 3, 1);
+          const ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 1));
       await tester.pumpWidget(
         _view(fresh, theme: _palette3B, key: const ValueKey('fresh')),
       );
@@ -713,23 +731,29 @@ void main() {
               as AnyObject;
       colors['forceOverride'] = true;
       (_datasetsOf(config)[1]! as AnyObject)['borderColor'] =
-          const native_ui.Color.fromRGBO(9, 9, 9, 1);
+          const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1));
       await tester.pumpWidget(_view(config, theme: _palette3A));
       final chart = _chart(tester);
       // forceOverride writes over the dataset color in each update.
-      expect(_dataset(chart, 1)['borderColor'], _rgba(_green));
+      expect(
+        _dataset(chart, 1)['borderColor'],
+        ChartPaint.solid(_rgba(_green)),
+      );
       chart
         ..update()
         ..update();
-      expect(_dataset(chart, 1)['borderColor'], _rgba(_green));
+      expect(
+        _dataset(chart, 1)['borderColor'],
+        ChartPaint.solid(_rgba(_green)),
+      );
       await tester.pumpWidget(_view(config, theme: _palette3B));
-      expect(_dataset(chart, 1)['borderColor'], _rgba(_cyan));
+      expect(_dataset(chart, 1)['borderColor'], ChartPaint.solid(_rgba(_cyan)));
       // A removal restores the value of the app before the first write, and
       // the colors plugin writes the upstream palette over it.
       await tester.pumpWidget(_view(config));
       expect(
         _dataset(chart, 1)['borderColor'],
-        const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
       );
       // With the plugin off, a switch shows the restored values: the value
       // of the app, and no key where the app had none.
@@ -737,7 +761,7 @@ void main() {
       await tester.pumpWidget(_view(config, theme: _palette3A));
       expect(
         _dataset(chart, 1)['borderColor'],
-        const native_ui.Color.fromRGBO(9, 9, 9, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1)),
       );
       expect(_dataset(chart, 1).containsKey('backgroundColor'), isFalse);
       expect(_dataset(chart, 0).containsKey('borderColor'), isFalse);
@@ -766,7 +790,7 @@ void main() {
       await tester.pump();
       expect(modes, [undefined, 'theme']);
       expect(chart.data, same(next['data']));
-      expect(_dataset(chart, 0)['borderColor'], _rgba(_blue));
+      expect(_dataset(chart, 0)['borderColor'], ChartPaint.solid(_rgba(_blue)));
       // A config change alone takes updateMode.
       host.show({...next}, _themeB, mode: 'none');
       await tester.pump();
@@ -782,15 +806,24 @@ void main() {
       );
       await tester.pumpWidget(build(_themeA));
       final chart = _chart(tester);
-      expect(_scaleOption(chart, 'y', ['ticks', 'color']), _rgba(_red));
+      expect(
+        _scaleOption(chart, 'y', ['ticks', 'color']),
+        ChartPaint.solid(_rgba(_red)),
+      );
       await tester.pumpWidget(build(_themeB));
-      expect(_scaleOption(chart, 'y', ['ticks', 'color']), _rgba(_blue));
+      expect(
+        _scaleOption(chart, 'y', ['ticks', 'color']),
+        ChartPaint.solid(_rgba(_blue)),
+      );
       await tester.pumpWidget(build(_themeB, own: _themeA));
-      expect(_scaleOption(chart, 'y', ['ticks', 'color']), _rgba(_red));
+      expect(
+        _scaleOption(chart, 'y', ['ticks', 'color']),
+        ChartPaint.solid(_rgba(_red)),
+      );
       await tester.pumpWidget(build(_themeB, own: const ChartThemeData()));
       expect(
         _scaleOption(chart, 'y', ['ticks', 'color']),
-        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(chartThemeOf(chart.config), isNull);
       expect(_chart(tester), same(chart));
@@ -892,7 +925,10 @@ void main() {
       expect(animator.has(chart), isFalse);
       await tester.pump();
       expect(animator.running(chart), isFalse);
-      expect(_scaleOption(chart, 'y', ['ticks', 'color']), _rgba(_blue));
+      expect(
+        _scaleOption(chart, 'y', ['ticks', 'color']),
+        ChartPaint.solid(_rgba(_blue)),
+      );
     });
 
     group('under MediaQuery(disableAnimations: true)', () {

@@ -16,15 +16,15 @@ LineDataset _line(List<num> ys, Color from, Color to, Color text) =>
       borderWidth: 10,
       pointRadius: 12,
       pointHoverRadius: 12,
-      pointBorderColor: Colors.white,
+      pointBorderColor: const .constant(.solid(Colors.white)),
       pointBorderWidth: 1,
       borderCapStyle: StrokeCap.round,
+      pointBackgroundColor: .indexed([
+        for (var i = 0; i < ys.length; i++)
+          .solid(Color.lerp(from, to, i / (ys.length - 1))!),
+      ]),
       extra: {
         'borderColor': horizontalGradient([from, to]),
-        'pointBackgroundColor': [
-          for (var i = 0; i < ys.length; i++)
-            Color.lerp(from, to, i / (ys.length - 1)),
-        ],
         'pointHitRadius': 12,
         'clip': false,
       },
@@ -34,7 +34,7 @@ const Map<String, Map<String, Object>> _visibleBorder = {
   'border': {
     'dash': [8.0, 4.0],
     'display': true,
-    'color': Fl.white54,
+    'color': ChartPaint.solid(Fl.white54),
   },
 };
 
@@ -52,7 +52,7 @@ final ChartConfig _config = fills(
       intersect: true,
     ),
     tooltip: ChartTooltip(
-      backgroundColor: Colors.white,
+      backgroundColor: const ChartPaint.solid(Colors.white),
       cornerRadius: 0,
       displayColors: false,
       bodyFont: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -72,7 +72,7 @@ final ChartConfig _config = fills(
         extra: _visibleBorder,
         ticks: const AxisTicks(
           stepSize: 1,
-          color: Fl.white70,
+          color: ChartPaint.solid(Fl.white70),
           maxRotation: 0,
           font: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -85,7 +85,7 @@ final ChartConfig _config = fills(
         extra: _visibleBorder,
         ticks: const AxisTicks(
           stepSize: 1,
-          color: _orange,
+          color: ChartPaint.solid(_orange),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           format: _hideBottom,
         ),
@@ -99,7 +99,7 @@ final ChartConfig _config = fills(
         extra: Fl.noBorder,
         ticks: AxisTicks(
           stepSize: 1,
-          color: Fl.blue,
+          color: ChartPaint.solid(Fl.blue),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           format: _hideBottom,
         ),

@@ -759,7 +759,7 @@ void main() {
       const fill = native_ui.Color(0xff123456);
       const border = native_ui.Color(0xffabcdef);
       final config = _probeChart({
-        'bodyColor': fill,
+        'bodyColor': const ChartPaint.solid(fill),
         'callbacks': TooltipCallbacks(
           labelColor: (tooltip, item) => TooltipLabelStyle(),
           labelTextColor: (tooltip, item) => const ChartPaint.unchanged(),
@@ -769,8 +769,8 @@ void main() {
           (config['data']! as Map<String, Object?>)['datasets']!
               as List<Object?>;
       (datasets[0]! as Map<String, Object?>).addAll({
-        'backgroundColor': fill,
-        'borderColor': border,
+        'backgroundColor': const ChartPaint.solid(fill),
+        'borderColor': const ChartPaint.solid(border),
       });
       final chart = acquireChart(config);
       _activate(chart);

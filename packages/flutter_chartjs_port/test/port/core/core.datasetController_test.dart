@@ -43,6 +43,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -656,8 +658,8 @@ final class _FakeChart implements types.Chart {
 /// The functions of the `{$fn: name}` markers.
 final Map<Object?, Object?> _functions = {
   'colorByIndex': (Object? ctx) => jsGet(ctx, 'dataIndex') == 1
-      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
+      : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
   'typeIsDataset': (Object? ctx) =>
       jsGet(ctx, 'type') == 'dataset' ? 75.0 : 0.0,
 };
@@ -1701,7 +1703,7 @@ void main() {
       expect(jsObjectIsFrozen(opts0), isFalse);
       expect(
         opts1['backgroundColor'],
-        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
       );
     });
 

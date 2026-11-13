@@ -39,20 +39,13 @@ Scriptable horizontalGradient(List<Color> colors, [List<double>? stops]) =>
     (context) {
       final chart = chartOf(context);
       final area = chart.chartArea;
-      if (area == null) return colors.last;
-      final gradient = chart.ctx!.createLinearGradient(
-        area.left,
-        0,
-        area.right,
-        0,
+      if (area == null) return ChartPaint.solid(colors.last);
+      return ChartGradient.linear(
+        Offset(area.left, 0),
+        Offset(area.right, 0),
+        colors,
+        stops: stops,
       );
-      for (final (i, color) in colors.indexed) {
-        gradient.addColorStop(
-          stops?[i] ?? (colors.length == 1 ? 0 : i / (colors.length - 1)),
-          color,
-        );
-      }
-      return gradient;
     };
 
 /// A gradient over the chart area, from top to bottom.
@@ -60,17 +53,13 @@ Scriptable verticalGradient(List<Color> colors, List<double> stops) =>
     (context) {
       final chart = chartOf(context);
       final area = chart.chartArea;
-      if (area == null) return colors.last;
-      final gradient = chart.ctx!.createLinearGradient(
-        0,
-        area.top,
-        0,
-        area.bottom,
+      if (area == null) return ChartPaint.solid(colors.last);
+      return ChartGradient.linear(
+        Offset(0, area.top),
+        Offset(0, area.bottom),
+        colors,
+        stops: stops,
       );
-      for (final (i, color) in colors.indexed) {
-        gradient.addColorStop(stops[i], color);
-      }
-      return gradient;
     };
 
 /// The value of the tick of a scale context. The context of the axis line
@@ -92,8 +81,9 @@ AxisGrid flGrid({bool Function(double value)? show}) => AxisGrid(
   drawTicks: false,
   lineWidth: 0.4,
   extra: {
-    'color': (JsObjectFace c) =>
-        show == null || show(tickOf(c)) ? Fl.blueGrey : Colors.transparent,
+    'color': (JsObjectFace c) => ChartPaint.solid(
+      show == null || show(tickOf(c)) ? Fl.blueGrey : Colors.transparent,
+    ),
   },
 );
 

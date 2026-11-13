@@ -36,6 +36,8 @@ import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint, chartPaintOf;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
 /// The option [key] of the options object [options]: `options[key]`, the
@@ -58,8 +60,9 @@ extension type const TitleOptions(Object? object) {
   /// `align`, a [ChartAlign] (row `adapt-chart-align-enum`).
   ChartAlign? get align => ChartAlign.of(optionOf(object, OptionKey.align));
 
-  /// `color`.
-  Object? get color => optionOf(object, OptionKey.color);
+  /// `color`: the paint of the option value, or [ChartPaint.unchanged]
+  /// without one.
+  ChartPaint get color => chartPaintOf(optionOf(object, OptionKey.color));
 
   /// `display`.
   bool get display =>

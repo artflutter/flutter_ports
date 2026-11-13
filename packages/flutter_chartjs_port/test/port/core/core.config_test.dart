@@ -33,6 +33,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:test/test.dart';
@@ -948,7 +950,9 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'grid': <String, Object?>{
-                'color': const ui.Color.fromRGBO(255, 0, 0, 1),
+                'color': const ChartPaint.solid(
+                  ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
               },
             },
           },
@@ -2508,7 +2512,10 @@ void main() {
       expect(run(all.sublist(2)), 'L3-overrides');
       expect(run(all.sublist(3)), 'L4-theme');
       expect(run(all.sublist(4)), 'L5-defaults');
-      expect(run(const []), const ui.Color.fromRGBO(0, 0, 0, 0.1));
+      expect(
+        run(const []),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
+      );
       // Without the theme level, each run equals the upstream run.
       expect(run(['overrides', 'defaults']), 'L3-overrides');
       expect(run(['defaults']), 'L5-defaults');
@@ -2558,11 +2565,8 @@ void main() {
         themeConfigKey: <String, Object?>{
           'elements': <String, Object?>{
             'tbar': <String, Object?>{
-              'backgroundColor': const ui.Color.fromRGBO(
-                200,
-                0,
-                0,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                ui.Color.fromRGBO(200, 0, 0, 1),
               ),
             },
           },

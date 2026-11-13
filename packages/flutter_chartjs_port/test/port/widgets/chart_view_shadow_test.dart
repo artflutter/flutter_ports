@@ -36,7 +36,7 @@ ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
   datasets: [
     LineDataset(
       data: data,
-      borderColor: const ChartValue.constant(_black),
+      borderColor: const ChartValue.constant(.solid(_black)),
       pointRadius: 0,
       shadow: shadow,
     ),
@@ -53,7 +53,7 @@ Map<String, Object?> _rawLine({required bool shadow}) => <String, Object?>{
     'datasets': <Object?>[
       <String, Object?>{
         'data': <Object?>[1.0, 3.0, 2.0],
-        'borderColor': _black,
+        'borderColor': const ChartPaint.solid(_black),
         'pointRadius': 0.0,
         if (shadow) ...<String, Object?>{
           'shadowColor': _red,

@@ -1,8 +1,6 @@
 // Original code, not ported from Chart.js: helpers.canvas cases with no spec.
 import 'dart:ui' as ui;
 
-import 'dart:ui' show TextAlign;
-
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
@@ -10,6 +8,7 @@ import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -301,77 +300,6 @@ ChartTextStyle _xFont(double lineHeight) => ChartTextStyle(
 /// The fonts `f` and `g` of the longestText cases.
 const _f = ChartTextStyle(fontFamily: 'f');
 const _g = ChartTextStyle(fontFamily: 'g');
-
-/// A JavaScript object literal of render options, passed as a
-/// [RenderTextOpts]. A null member is an absent key.
-final class _Opts implements RenderTextOpts {
-  const _Opts({
-    this.color,
-    this.decorationWidth,
-    this.rotation,
-    this.strokeColor,
-    this.strokeWidth,
-    this.underline,
-    this.backdrop,
-  });
-
-  @override
-  final Object? color;
-
-  @override
-  final double? decorationWidth;
-
-  @override
-  double? get maxWidth => null;
-
-  @override
-  final double? rotation;
-
-  @override
-  bool? get strikethrough => null;
-
-  @override
-  final Object? strokeColor;
-
-  @override
-  final double? strokeWidth;
-
-  @override
-  TextAlign? get textAlign => null;
-
-  @override
-  CanvasTextBaseline? get textBaseline => null;
-
-  @override
-  (double, double)? get translation => null;
-
-  @override
-  final bool? underline;
-
-  @override
-  final BackdropOptions? backdrop;
-}
-
-/// The JavaScript object literal `{left, top, width, height, color}`, passed
-/// as [BackdropOptions].
-final class _Backdrop implements BackdropOptions {
-  const _Backdrop(this.left, this.top, this.width, this.height, this.color);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double width;
-
-  @override
-  final double height;
-
-  @override
-  final Object? color;
-}
 
 /// The expected calls as matchers: the names exactly, numbers with
 /// [closeTo], other values with `==`.
@@ -963,19 +891,16 @@ void main() {
         1,
         2,
         _xFont(15),
-        const _Opts(
-          backdrop: _Backdrop(
-            1,
-            2,
-            3,
-            4,
-            ui.Color.fromRGBO(255, 0, 0, 1),
+        const RenderTextOpts(
+          backdrop: BackdropOptions(
+            left: 1,
+            top: 2,
+            width: 3,
+            height: 4,
+            color: ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
-          // An empty stroke color stops the stroke, and an empty color
-          // leaves the fill style.
-          strokeColor: '',
-          strokeWidth: 2,
-          color: '',
+          // No stroke width stops the stroke, and no color leaves the fill
+          // style.
           rotation: 0,
           decorationWidth: 0,
           underline: true,
@@ -1062,7 +987,7 @@ void main() {
         1,
         2,
         _xFont(20),
-        const _Opts(strokeWidth: 3),
+        const RenderTextOpts(strokeWidth: 3),
       );
       expect(ctx.getCalls().map((call) => call['name']), [
         'save',
@@ -1083,8 +1008,10 @@ void main() {
           1,
           2,
           _xFont(20),
-          _Opts(
-            strokeColor: const ui.Color.fromRGBO(255, 0, 0, 1),
+          RenderTextOpts(
+            strokeColor: const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
             strokeWidth: width,
           ),
         );
