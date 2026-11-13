@@ -375,7 +375,10 @@ class _VotesPageState extends State<VotesPage> {
 - `onClick` and `onHover` get `ChartEventDetails`: the chart event, the elements under the
   pointer (`hits`, each with `datasetIndex`, `index` and `element`) and the chart.
 - The legend `onClick`, `onHover` and `onLeave` get `ChartLegendEventDetails`. A legend `onClick`
-  replaces the default click, which hides or shows the dataset.
+  replaces the default click, which hides or shows the dataset. `details.item` is the same mutable
+  `LegendItem` used by rendering, with `List<String>` text, native `ChartPaint` styles and nullable
+  integer indexes. Custom label generators return `LegendItem` objects; plugins can extend or
+  implement the class. Its `copyWith` and `merge` methods are overridable.
 - `ChartTooltip.callbacks` takes a `TooltipCallbacks` object, also in a raw config. Its text
   hooks return a list of lines: `null` requests the built-in default and `[]` emits no text.
   Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`

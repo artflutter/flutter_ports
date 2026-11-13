@@ -85,6 +85,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
+import '../../support/legend_item.dart';
 import '../canvas/path2d_record.dart';
 import '../helpers/rounded_rect_upstream.dart';
 
@@ -510,6 +511,14 @@ double referenceAbsoluteTolerance = 1e-9;
 /// - Lists and maps: item by item. A font: [fontFieldsMatcher]. Other
 ///   values: `==`.
 Object? referenceMatcher(Object? expected) => switch (expected) {
+  final Map<String, Object?> m when isLegendItemReference(m) =>
+    legendItemEquals(legendItemFromReference(m)),
+  // Own-key enumeration is outside the native item contract. Keep comparing
+  // the item values and hit boxes of these frozen controller observations.
+  final Map<String, Object?> m when m['items'] is List && m['keys'] is List => {
+    for (final e in m.entries)
+      if (e.key != 'keys') e.key: referenceMatcher(e.value),
+  },
   final SolidChartPaint p => isA<SolidChartPaint>().having(
     (v) => nativeColorBytes(v.color),
     'color',

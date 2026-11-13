@@ -86,7 +86,7 @@ const List<String> _typedNames = [
   // Callbacks and views.
   'ChartEventDetails', 'ChartLegendEventDetails', 'ChartAnimationDetails',
   'AxisTickInfo', 'ChartHit', 'ChartContext',
-  'ChartLegendItem', 'ChartScript',
+  'ChartScript',
 ];
 
 /// The Flutter libraries of rule 2.
@@ -145,8 +145,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 74 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(74));
+  test('the list has 73 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(73));
   });
 
   test(

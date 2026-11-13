@@ -25,15 +25,8 @@
 /// `position` and `weight`, and `false` for `fullSize` (Chart.js ADR 0038,
 /// section 7).
 ///
-/// The legend items of the built-in `generateLabels`, the hit boxes and the
-/// column sizes are typed classes with the upstream keys in the upstream
-/// order: [LegendItem], [LegendHitBox] and [LegendColumnSize] (Chart.js ADR
-/// 0054 §12). Each has the face, so a user callback, a spec and a fixture
-/// read them by name (`plugin.legend.tests.js:502-507`,
-/// `test/fixtures/plugin.legend/horizontal-rtl-hitbox.js:37-38`), and the
-/// extras of a key that user code adds. An item of a `generateLabels` of
-/// user code (or of a controller) can be any object: the legend reads a
-/// [LegendItem] through its fields and another item by name ([_Item]).
+/// Legend items use the native extensible [LegendItem] contract. Hit boxes
+/// and column sizes retain their typed-record faces (Chart.js ADR 0054).
 ///
 /// A hidden legend of a built-in slice chart leaves its items pending, and
 /// the first read of `legendItems` that can run the build runs it (Chart.js
@@ -43,7 +36,6 @@
 library;
 
 import 'dart:ui' as ui;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -59,6 +51,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show dataUpdateField, nativeDataUpdateList, nativeDataUpdateObject;
+import 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
     show
         DatasetMetaSource,
@@ -76,7 +69,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show IndexedElementStyles, OptionResolver, OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, isFunction, isObject, valueOrDefault;
+    show callback, isFunction, isObject;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, textX, toLeftRightCenter;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -119,15 +112,20 @@ import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
     show LegendLabelOptions, LegendOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show EventHookArgs, Plugin, UpdateHookArgs;
 import 'package:meta/meta.dart';
 
+export 'package:flutter_chartjs_port/src/types/legend_item.dart';
+
 /// `Math.SQRT2`.
+// DIVERGES(chartjs): adapt-native-legend-item, native item fields and identity.
 const double _sqrt2 = 1.4142135623730951;
 
 /// plugin.legend.js:24 `getBoxSize(labelOpts, fontSize)`.
@@ -169,13 +167,12 @@ const double _sqrt2 = 1.4142135623730951;
 /// plugin.legend.js:39 `itemsEqual(a, b)`: `a !== null && b !== null &&
 /// a.datasetIndex === b.datasetIndex && a.index === b.index`.
 ///
-/// An item that is [undefined] throws the [TypeError] of the property read,
-/// as upstream.
-bool _itemsEqual(Object? a, Object? b) =>
+/// Both indexes are nullable native integers.
+bool _itemsEqual(LegendItem? a, LegendItem? b) =>
     a != null &&
     b != null &&
-    _strictEquals(_Item(a).datasetIndex, _Item(b).datasetIndex) &&
-    _strictEquals(_Item(a).index, _Item(b).index);
+    a.datasetIndex == b.datasetIndex &&
+    a.index == b.index;
 
 /// The `padding` label option (`options.labels.padding`, :161, :192, :235,
 /// :289) as a number. index.d.ts types it as a number. A string joins in
@@ -242,7 +239,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   List<LegendHitBox> legendHitBoxes = [];
 
   /// plugin.legend.js:57 `_hoveredItem`. Dart `null` stands for JS `null`.
-  Object? _hoveredItem;
+  LegendItem? _hoveredItem;
 
   /// plugin.legend.js:60 `doughnutMode`: are we in doughnut mode which has
   /// a different data type. Upstream writes it and never reads it.
@@ -260,9 +257,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:65 `legendItems`. Dart `null` stands for JS
   /// `undefined`, the value before the first [buildLabels].
   ///
-  /// The items are the values of `generateLabels`, as upstream: a
-  /// [LegendItem] of the built-in `generateLabels`, or any object of user
-  /// code, read through [_Item].
+  /// The items are native entries, including plugin subclasses.
   ///
   /// [update] and the `afterUpdate` hook can leave the items pending
   /// ([_itemsCanWait], Chart.js ADR 0092). Then the first read that can run
@@ -271,20 +266,20 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// items, and the build still waits. A direct [buildLabels] and a write take
   /// the place of a pending build.
   @override
-  List<Object?>? get legendItems {
+  List<LegendItem>? get legendItems {
     // DIVERGES(chartjs): adapt-hidden-legend-items, the first read builds.
     _buildPendingItems();
     return _legendItems;
   }
 
-  set legendItems(List<Object?>? value) {
+  set legendItems(List<LegendItem>? value) {
     // DIVERGES(chartjs): adapt-hidden-legend-items, a write ends the wait.
     _pendingOptions = null;
     _pendingStyles = null;
     _legendItems = value;
   }
 
-  List<Object?>? _legendItems;
+  List<LegendItem>? _legendItems;
 
   /// The options at the mark of a pending build, or Dart `null` when no build
   /// waits. `beforeUpdate` of a next update replaces [options].
@@ -607,9 +602,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// value and throws only at its first array read (differences.md
   /// `adapt-legend-items-list`). `filter` and `sort` get the labels options
   /// as `this`, as the method calls of :109 and :113 do. `sort` is the
-  /// stable sort of `Array.prototype.sort` ([jsSort]). An `undefined` item
-  /// goes to the end and never reaches `sort`, as in
-  /// `Array.prototype.sort`. `reverse` reverses the List in place.
+  /// stable sort of `Array.prototype.sort` ([jsSort]). Every item must
+  /// implement [LegendItem]; `reverse` reverses the List in place.
   void buildLabels() {
     final opts = LegendOptions(options);
     final labels = opts.labelsValue;
@@ -619,8 +613,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     ], this);
     // DIVERGES(chartjs): adapt-legend-items-list, the items are a List.
     var legendItems = jsTruthy(generated)
-        ? generated! as List<Object?>
-        : <Object?>[];
+        ? (generated is List<LegendItem>
+              ? generated
+              : List<LegendItem>.from(generated! as List))
+        : <LegendItem>[];
 
     final filter = LegendLabelOptions(labelOpts).filter;
     if (jsTruthy(filter)) {
@@ -636,11 +632,6 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final sort = LegendLabelOptions(labelOpts).sort;
     if (jsTruthy(sort)) {
       legendItems = jsSort(legendItems, (a, b) {
-        // SortCompare of Array.prototype.sort: an undefined element goes
-        // after each other element, and the comparator never gets it. JS
-        // null reaches the comparator.
-        if (identical(a, undefined)) return identical(b, undefined) ? 0 : 1;
-        if (identical(b, undefined)) return -1;
         return jsToNumber(
           jsCall(sort, [a, b, chart.data], thisArg: labelOpts),
         );
@@ -736,7 +727,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       final itemWidth =
           boxWidth +
           (fontSize / 2) +
-          ctx.measureText(jsToString(_Item(legendItem).text)).width;
+          ctx.measureText(jsToString(legendItem.text)).width;
 
       if (i == 0 || lineWidths.last + itemWidth + 2 * padding > maxWidth) {
         totalHeight += lineHeight;
@@ -981,7 +972,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     );
 
     // current position
-    void drawLegendBox(double x, double y, _Item legendItem) {
+    void drawLegendBox(double x, double y, LegendItem legendItem) {
       if (boxWidth.isNaN || boxWidth <= 0 || boxHeight.isNaN || boxHeight < 0) {
         return;
       }
@@ -989,27 +980,27 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       // Set the ctx for the box
       ctx.save();
 
-      final lineWidth = valueOrDefault(legendItem.lineWidth, 1);
+      final lineWidth = legendItem.lineWidth ?? 1;
       ctx
         ..fillStyle = canvasStyle(
-          valueOrDefault(legendItem.fillStyle, defaultColor),
+          chartPaintValue(legendItem.fillStyle) ?? defaultColor,
         )
         // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enums.
         ..lineCap = canvasLineCap(
-          valueOrDefault(legendItem.lineCap, ui.StrokeCap.butt),
+          legendItem.lineCap ?? ui.StrokeCap.butt,
         )
         ..lineDashOffset = canvasNumber(
-          valueOrDefault(legendItem.lineDashOffset, 0),
+          legendItem.lineDashOffset ?? 0,
         )
         ..lineJoin = canvasLineJoin(
-          valueOrDefault(legendItem.lineJoin, ui.StrokeJoin.miter),
+          legendItem.lineJoin ?? ui.StrokeJoin.miter,
         )
         ..lineWidth = canvasNumber(lineWidth)
         ..strokeStyle = canvasStyle(
-          valueOrDefault(legendItem.strokeStyle, defaultColor),
+          chartPaintValue(legendItem.strokeStyle) ?? defaultColor,
         )
         ..setLineDash(
-          canvasLineDash(valueOrDefault(legendItem.lineDash, <Object?>[])),
+          canvasLineDash(legendItem.lineDash ?? <double>[]),
         );
 
       if (labelOpts.usePointStyle) {
@@ -1039,7 +1030,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         // Adjust position when boxHeight < fontSize (want it centered)
         final yBoxTop = y + jsMax((fontSize - boxHeight) / 2, 0);
         final xBoxLeft = rtlHelper.leftForLtr(x, boxWidth);
-        final borderRadius = toTRBLCorners(legendItem.borderRadius);
+        final borderRadius = legendItem.borderRadius ?? toTRBLCorners(0);
 
         ctx.beginPath();
 
@@ -1072,7 +1063,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       ctx.restore();
     }
 
-    void fillText(double x, double y, _Item legendItem) {
+    void fillText(double x, double y, LegendItem legendItem) {
       renderText(
         ctx,
         legendItem.text,
@@ -1120,8 +1111,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       final lineHeight = itemHeight + padding;
       final legendItems = this.legendItems!;
       for (var i = 0; i < legendItems.length; i++) {
-        final legendItem = _Item(legendItems[i]);
-        final fontColor = canvasStyle(legendItem.fontColor);
+        final legendItem = legendItems[i];
+        final fontColor = canvasStyle(
+          chartPaintValue(legendItem.fontColor) ?? labelOpts.color,
+        );
         ctx
           ..strokeStyle =
               fontColor // for strikethrough effect
@@ -1130,7 +1123,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         final textWidth = ctx.measureText(jsToString(legendItem.text)).width;
         var itemAlign = legendItem.textAlign;
         if (!jsTruthy(itemAlign)) {
-          itemAlign = labelOpts.textAlign;
+          itemAlign = canvasTextAlign(labelOpts.textAlign);
           legendItem.textAlign = itemAlign;
         }
         // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
@@ -1183,13 +1176,13 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
             y: cursor.y,
             line: cursor.line,
           );
-        } else if (legendItem.text is! String) {
+        } else if (legendItem.text.length != 1) {
           final fontLineHeight = labelFont.lineHeight!;
           cursor = (
             x: cursor.x,
             y:
                 cursor.y +
-                (_calculateLegendItemHeight(legendItem.item, fontLineHeight) +
+                (_calculateLegendItemHeight(legendItem, fontLineHeight) +
                     padding),
             line: cursor.line,
           );
@@ -1284,8 +1277,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// `_isBetween` applies `ToNumber` to its value: a JS `null` coordinate
   /// reads as 0, as Dart `null` does here. A NaN coordinate (a `touchend`)
   /// hits no item (Chart.js ADR 0037, section 14 item 3). A hit gives
-  /// `this.legendItems[i]`: [undefined] for an index past the items.
-  Object? _getLegendItemAt(double? x, double? y) {
+  /// `this.legendItems[i]`: null when the hit box has no corresponding item.
+  LegendItem? _getLegendItemAt(double? x, double? y) {
     final px = x ?? 0;
     final py = y ?? 0;
 
@@ -1300,7 +1293,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         if (isBetween(px, hitLeft, hitLeft + hitBox.width) &&
             isBetween(py, hitTop, hitTop + hitBox.height)) {
           // Touching an element
-          return jsGetIndex(legendItems ?? undefined, i.toDouble());
+          final items = legendItems;
+          return items != null && i < items.length ? items[i] : null;
         }
       }
     }
@@ -1340,7 +1334,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 }
 
 /// `legendItems.reverse()`: reverses [list] in place.
-void _reverseInPlace(List<Object?> list) {
+void _reverseInPlace(List<LegendItem> list) {
   for (var i = 0, j = list.length - 1; i < j; i++, j--) {
     final item = list[i];
     list[i] = list[j];
@@ -1546,7 +1540,7 @@ double? _rotationOf(Object? rotation) => switch (rotation) {
   double boxWidth,
   ChartTextStyle labelFont,
   CanvasRenderingContext2D ctx,
-  Object? legendItem,
+  LegendItem legendItem,
   double itemHeight0,
 ) {
   final itemWidth = _calculateItemWidth(legendItem, boxWidth, labelFont, ctx);
@@ -1561,30 +1555,17 @@ double? _rotationOf(Object? rotation) => switch (rotation) {
 /// plugin.legend.js:561 `calculateItemWidth(legendItem, boxWidth,
 /// labelFont, ctx)`.
 ///
-/// The text of a truthy value that is not a `String` is an array: the
-/// longest line by `length`. A value that is not a `List` throws the
-/// [TypeError] of `reduce` at the List cast, and an empty `List` throws the
-/// [TypeError] of `reduce` with no initial value. `measureText` applies
-/// `ToString` to its argument.
+/// Uses the longest line by length, with the upstream tie order. An empty
+/// list retains the upstream TypeError of vertical label measurement.
 double _calculateItemWidth(
-  Object? legendItem,
+  LegendItem legendItem,
   double boxWidth,
   ChartTextStyle labelFont,
   CanvasRenderingContext2D ctx,
 ) {
-  var legendItemText = _Item(legendItem).text;
-  if (jsTruthy(legendItemText) && legendItemText is! String) {
-    final list = legendItemText! as List<Object?>;
-    // plugin.legend.js:564 `[].reduce(fn)` with no initial value throws a
-    // TypeError. Dart `List.reduce` throws a StateError.
-    if (list.isEmpty) {
-      throw TypeError();
-    }
-    // The lines of the text of the user: any value, read by name.
-    legendItemText = list.reduce(
-      (a, b) => jsLessThan(jsGet(b, 'length'), jsGet(a, 'length')) ? a : b,
-    );
-  }
+  final lines = legendItem.text;
+  if (lines.isEmpty) throw TypeError();
+  final legendItemText = lines.reduce((a, b) => a.length > b.length ? a : b);
   return boxWidth +
       (labelFont.fontSize! / 2) +
       ctx.measureText(jsToString(legendItemText)).width;
@@ -1594,11 +1575,11 @@ double _calculateItemWidth(
 /// fontLineHeight)`.
 double _calculateItemHeight(
   double itemHeight0,
-  Object? legendItem,
+  LegendItem legendItem,
   double fontLineHeight,
 ) {
   var itemHeight = itemHeight0;
-  if (_Item(legendItem).text is! String) {
+  if (legendItem.text.length != 1) {
     itemHeight = _calculateLegendItemHeight(legendItem, fontLineHeight);
   }
   return itemHeight;
@@ -1606,10 +1587,13 @@ double _calculateItemHeight(
 
 /// plugin.legend.js:577 `calculateLegendItemHeight(legendItem,
 /// fontLineHeight)`.
-double _calculateLegendItemHeight(Object? legendItem, double fontLineHeight) {
-  final text = _Item(legendItem).text;
-  // The text of the user: an array or another value, read by name.
-  final labelHeight = jsTruthy(text) ? jsToNumber(jsGet(text, 'length')) : 0;
+double _calculateLegendItemHeight(
+  LegendItem legendItem,
+  double fontLineHeight,
+) {
+  final text = legendItem.text;
+  // Native labels carry their lines directly.
+  final labelHeight = text.length;
   return fontLineHeight * labelHeight;
 }
 
@@ -1745,40 +1729,19 @@ Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 /// plugin.legend.js:645 the default `onClick(e, legendItem, legend)`: a
 /// callback that will handle.
 ///
-/// `hide` and `show` take a `double`. The raw `legendItem.datasetIndex`
-/// goes through [_datasetIndexKey]: the number of its property key. For a
-/// number index, this is the upstream result. The `hidden` write into a
-/// narrow or unmodifiable Map throws after `hide` or `show` (differences.md
-/// `js-semantics-legend-items`).
-// DIVERGES(chartjs): adapt-legend-dataset-index, the index is a number.
-void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
-  final item = _Item(legendItem);
-  final index = _datasetIndexKey(item.datasetIndex);
+/// The native integer index selects the dataset. Descriptive entries have
+/// no index and leave visibility unchanged.
+void _onClick(Object? e, LegendItem item, types.LegendElement legend) {
+  final index = item.datasetIndex;
+  if (index == null) return;
   final ci = legend.chart;
-  if (ci.isDatasetVisible(index)) {
-    ci.hide(index);
+  if (ci.isDatasetVisible(index.toDouble())) {
+    ci.hide(index.toDouble());
     item.hidden = true;
   } else {
-    ci.show(index);
+    ci.show(index.toDouble());
     item.hidden = false;
   }
-}
-
-/// The number index of the read `this.data.datasets[index]` with the raw
-/// legend item index [value] (core.controller.js:864 and :830).
-///
-/// The read uses the property key `ToString(value)` ([jsToString]). Only a
-/// canonical number string can be an array index. Thus the key gives its
-/// number when `ToString(ToNumber(key))` is the key, else NaN. NaN finds no
-/// dataset, and `show(NaN)` throws the [TypeError] of upstream at the
-/// controller of the new meta (core.controller.js:895). Examples: `'1'` and
-/// `[1]` give 1, and `null`, `true`, `''`, `'01'`, `'1.0'` and `' 1'` give
-/// NaN.
-double _datasetIndexKey(Object? value) {
-  if (value is num) return value.toDouble();
-  final key = jsToString(value);
-  final number = jsToNumber(key);
-  return jsNumberToString(number) == key ? number : double.nan;
 }
 
 /// plugin.legend.js:661 and :707 `color: (ctx) => ctx.chart.options.color`.
@@ -1812,7 +1775,7 @@ Object? _chartColor(Object? ctx) {
 /// gives [undefined]. The upstream call `_getSortedDatasetMetas()` has no
 /// argument, a falsy `filterVisible`. The items are [LegendItem]s. The
 /// datasets of the user are read by name.
-List<Object?> _generateLabels(types.Chart chart) {
+List<LegendItem> _generateLabels(types.Chart chart) {
   final datasets = jsGet(chart.data, 'datasets');
   final labels = LegendOptions(chart.legend!.options).labels;
   final usePointStyle = labels.usePointStyle;
@@ -1857,28 +1820,29 @@ LegendItem _datasetItem(
   final stylePointStyle = optionOf(style, OptionKey.pointStyle);
   final styleTextAlign = optionOf(style, OptionKey.textAlign);
 
-  return LegendItem()
-    ..text = jsGet(jsGetIndex(datasets, meta.index), 'label')
-    ..fillStyle = optionOf(style, OptionKey.backgroundColor)
-    ..fontColor = color
-    ..hidden = !jsTruthy(meta.visible)
-    ..lineCap = optionOf(style, OptionKey.borderCapStyle)
-    ..lineDash = optionOf(style, OptionKey.borderDash)
-    ..lineDashOffset = optionOf(style, OptionKey.borderDashOffset)
-    ..lineJoin = optionOf(style, OptionKey.borderJoinStyle)
-    ..lineWidth = (borderWidth.width + borderWidth.height) / 4
-    ..strokeStyle = optionOf(style, OptionKey.borderColor)
-    ..pointStyle = jsTruthy(pointStyle) ? pointStyle : stylePointStyle
-    ..rotation = optionOf(style, OptionKey.rotation)
-    ..textAlign = jsTruthy(textAlign) ? textAlign : styleTextAlign
+  return legendItemFromOptions(
+    text: jsGet(jsGetIndex(datasets, meta.index), 'label'),
+    fillStyle: optionOf(style, OptionKey.backgroundColor),
+    fontColor: color,
+    hidden: !jsTruthy(meta.visible),
+    lineCap: optionOf(style, OptionKey.borderCapStyle),
+    lineDash: optionOf(style, OptionKey.borderDash),
+    lineDashOffset: optionOf(style, OptionKey.borderDashOffset),
+    lineJoin: optionOf(style, OptionKey.borderJoinStyle),
+    lineWidth: (borderWidth.width + borderWidth.height) / 4,
+    strokeStyle: optionOf(style, OptionKey.borderColor),
+    pointStyle: jsTruthy(pointStyle) ? pointStyle : stylePointStyle,
+    rotation: optionOf(style, OptionKey.rotation),
+    textAlign: jsTruthy(textAlign) ? textAlign : styleTextAlign,
     // `useBorderRadius && (borderRadius || style.borderRadius)`
-    ..borderRadius = jsTruthy(useBorderRadius)
+    borderRadius: jsTruthy(useBorderRadius)
         ? (jsTruthy(borderRadius)
               ? borderRadius
               : optionOf(style, OptionKey.borderRadius))
-        : useBorderRadius
+        : useBorderRadius,
     // Below is extra data used for toggling the datasets
-    ..datasetIndex = meta.index;
+    datasetIndex: meta.index.toInt(),
+  );
 }
 
 /// plugin.legend.js:601 `start(chart, _args, options)`.
@@ -2000,457 +1964,6 @@ bool _scriptableDescriptor(String name) => !name.startsWith('on');
 /// plugin.legend.js:717 the `_scriptable` descriptor of `labels`.
 bool _labelsScriptableDescriptor(String name) =>
     !const ['generateLabels', 'filter', 'sort'].contains(name);
-
-/// A legend item of any class: a [LegendItem] gives its fields, and another
-/// item (an object of a `generateLabels` of user code or of a controller)
-/// gives the reads and writes by name of upstream ([_readItem]).
-extension type const _Item(Object? item) {
-  /// `item.text`.
-  Object? get text => switch (item) {
-    final LegendItem typed => typed.text,
-    _ => _readItem(item, 'text'),
-  };
-
-  /// `item.fillStyle`.
-  Object? get fillStyle => switch (item) {
-    final LegendItem typed => typed.fillStyle,
-    _ => _readItem(item, 'fillStyle'),
-  };
-
-  /// `item.fontColor`.
-  Object? get fontColor => switch (item) {
-    final LegendItem typed => typed.fontColor,
-    _ => _readItem(item, 'fontColor'),
-  };
-
-  /// `item.hidden`.
-  Object? get hidden => switch (item) {
-    final LegendItem typed => typed.hidden,
-    _ => _readItem(item, 'hidden'),
-  };
-
-  /// `item.hidden = value`.
-  set hidden(Object? value) {
-    switch (item) {
-      case final LegendItem typed:
-        typed.hidden = value;
-      default:
-        _writeItem(item, 'hidden', value);
-    }
-  }
-
-  /// `item.lineCap`.
-  Object? get lineCap => switch (item) {
-    final LegendItem typed => typed.lineCap,
-    _ => _readItem(item, 'lineCap'),
-  };
-
-  /// `item.lineDash`.
-  Object? get lineDash => switch (item) {
-    final LegendItem typed => typed.lineDash,
-    _ => _readItem(item, 'lineDash'),
-  };
-
-  /// `item.lineDashOffset`.
-  Object? get lineDashOffset => switch (item) {
-    final LegendItem typed => typed.lineDashOffset,
-    _ => _readItem(item, 'lineDashOffset'),
-  };
-
-  /// `item.lineJoin`.
-  Object? get lineJoin => switch (item) {
-    final LegendItem typed => typed.lineJoin,
-    _ => _readItem(item, 'lineJoin'),
-  };
-
-  /// `item.lineWidth`.
-  Object? get lineWidth => switch (item) {
-    final LegendItem typed => typed.lineWidth,
-    _ => _readItem(item, 'lineWidth'),
-  };
-
-  /// `item.strokeStyle`.
-  Object? get strokeStyle => switch (item) {
-    final LegendItem typed => typed.strokeStyle,
-    _ => _readItem(item, 'strokeStyle'),
-  };
-
-  /// `item.pointStyle`.
-  Object? get pointStyle => switch (item) {
-    final LegendItem typed => typed.pointStyle,
-    _ => _readItem(item, 'pointStyle'),
-  };
-
-  /// `item.rotation`.
-  Object? get rotation => switch (item) {
-    final LegendItem typed => typed.rotation,
-    _ => _readItem(item, 'rotation'),
-  };
-
-  /// `item.textAlign`.
-  Object? get textAlign => switch (item) {
-    final LegendItem typed => typed.textAlign,
-    _ => _readItem(item, 'textAlign'),
-  };
-
-  /// `item.textAlign = value`.
-  set textAlign(Object? value) {
-    switch (item) {
-      case final LegendItem typed:
-        typed.textAlign = value;
-      default:
-        _writeItem(item, 'textAlign', value);
-    }
-  }
-
-  /// `item.borderRadius`.
-  Object? get borderRadius => switch (item) {
-    final LegendItem typed => typed.borderRadius,
-    _ => _readItem(item, 'borderRadius'),
-  };
-
-  /// `item.datasetIndex`.
-  Object? get datasetIndex => switch (item) {
-    final LegendItem typed => typed.datasetIndex,
-    _ => _readItem(item, 'datasetIndex'),
-  };
-
-  /// `item.index`.
-  Object? get index => switch (item) {
-    final LegendItem typed => typed.index,
-    _ => _readItem(item, 'index'),
-  };
-}
-
-/// The read by name `item[name]` of a legend item of user code: [jsGet].
-/// An item of `undefined` or JS `null` throws its [TypeError], as upstream.
-Object? _readItem(Object? item, String name) => jsGet(item, name);
-
-/// The write by name `item[name] = value` of a legend item of user code. A
-/// write into an item that is not an object throws a [TypeError], as the
-/// write of strict mode does. A narrow or unmodifiable Map throws too
-/// (differences.md `js-semantics-legend-items`).
-void _writeItem(Object? item, String name, Object? value) {
-  // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
-  (item! as Map<String, Object?>)[name] = value;
-}
-
-/// `LegendItem` (`index.d.ts`): an item of the legend, the object of the
-/// built-in `generateLabels` (plugin.legend.js:680-701), with the upstream
-/// keys in the upstream key order. `index` is the key of the items of the
-/// doughnut and polar area controllers (`index.d.ts` `LegendItem.index`).
-///
-/// Each field holds any JS value: a user callback (`filter`, `sort`,
-/// `onClick`) reads and writes the item by name through the face, and a key
-/// that user code adds is an extra (Chart.js ADR 0054 §12).
-final class LegendItem extends TypedRecord implements types.TypedLegendItem {
-  /// An object without own keys.
-  LegendItem();
-
-  static const List<String> _fieldNames = [
-    'text',
-    'fillStyle',
-    'fontColor',
-    'hidden',
-    'lineCap',
-    'lineDash',
-    'lineDashOffset',
-    'lineJoin',
-    'lineWidth',
-    'strokeStyle',
-    'pointStyle',
-    'rotation',
-    'textAlign',
-    'borderRadius',
-    'datasetIndex',
-    'index',
-  ];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'text' => 0,
-    'fillStyle' => 1,
-    'fontColor' => 2,
-    'hidden' => 3,
-    'lineCap' => 4,
-    'lineDash' => 5,
-    'lineDashOffset' => 6,
-    'lineJoin' => 7,
-    'lineWidth' => 8,
-    'strokeStyle' => 9,
-    'pointStyle' => 10,
-    'rotation' => 11,
-    'textAlign' => 12,
-    'borderRadius' => 13,
-    'datasetIndex' => 14,
-    'index' => 15,
-    _ => -1,
-  };
-
-  Object? _text;
-
-  Object? _fillStyle;
-
-  Object? _fontColor;
-
-  Object? _hidden;
-
-  Object? _lineCap;
-
-  Object? _lineDash;
-
-  Object? _lineDashOffset;
-
-  Object? _lineJoin;
-
-  Object? _lineWidth;
-
-  Object? _strokeStyle;
-
-  Object? _pointStyle;
-
-  Object? _rotation;
-
-  Object? _textAlign;
-
-  Object? _borderRadius;
-
-  Object? _datasetIndex;
-
-  Object? _index;
-
-  /// `text`, or [undefined] when absent.
-  @override
-  Object? get text => hasSlot(0) ? _text : undefined;
-
-  set text(Object? value) {
-    _text = value;
-    touchSlot(0);
-  }
-
-  /// `fillStyle`, or [undefined] when absent.
-  Object? get fillStyle => hasSlot(1) ? _fillStyle : undefined;
-
-  set fillStyle(Object? value) {
-    _fillStyle = value;
-    touchSlot(1);
-  }
-
-  /// `fontColor`, or [undefined] when absent.
-  Object? get fontColor => hasSlot(2) ? _fontColor : undefined;
-
-  set fontColor(Object? value) {
-    _fontColor = value;
-    touchSlot(2);
-  }
-
-  /// `hidden`, or [undefined] when absent.
-  @override
-  Object? get hidden => hasSlot(3) ? _hidden : undefined;
-
-  set hidden(Object? value) {
-    _hidden = value;
-    touchSlot(3);
-  }
-
-  /// `lineCap`, or [undefined] when absent.
-  Object? get lineCap => hasSlot(4) ? _lineCap : undefined;
-
-  set lineCap(Object? value) {
-    _lineCap = value;
-    touchSlot(4);
-  }
-
-  /// `lineDash`, or [undefined] when absent.
-  Object? get lineDash => hasSlot(5) ? _lineDash : undefined;
-
-  set lineDash(Object? value) {
-    _lineDash = value;
-    touchSlot(5);
-  }
-
-  /// `lineDashOffset`, or [undefined] when absent.
-  Object? get lineDashOffset => hasSlot(6) ? _lineDashOffset : undefined;
-
-  set lineDashOffset(Object? value) {
-    _lineDashOffset = value;
-    touchSlot(6);
-  }
-
-  /// `lineJoin`, or [undefined] when absent.
-  Object? get lineJoin => hasSlot(7) ? _lineJoin : undefined;
-
-  set lineJoin(Object? value) {
-    _lineJoin = value;
-    touchSlot(7);
-  }
-
-  /// `lineWidth`, or [undefined] when absent.
-  Object? get lineWidth => hasSlot(8) ? _lineWidth : undefined;
-
-  set lineWidth(Object? value) {
-    _lineWidth = value;
-    touchSlot(8);
-  }
-
-  /// `strokeStyle`, or [undefined] when absent.
-  Object? get strokeStyle => hasSlot(9) ? _strokeStyle : undefined;
-
-  set strokeStyle(Object? value) {
-    _strokeStyle = value;
-    touchSlot(9);
-  }
-
-  /// `pointStyle`, or [undefined] when absent.
-  Object? get pointStyle => hasSlot(10) ? _pointStyle : undefined;
-
-  set pointStyle(Object? value) {
-    _pointStyle = value;
-    touchSlot(10);
-  }
-
-  /// `rotation`, or [undefined] when absent.
-  Object? get rotation => hasSlot(11) ? _rotation : undefined;
-
-  set rotation(Object? value) {
-    _rotation = value;
-    touchSlot(11);
-  }
-
-  /// `textAlign`, or [undefined] when absent.
-  Object? get textAlign => hasSlot(12) ? _textAlign : undefined;
-
-  set textAlign(Object? value) {
-    _textAlign = value;
-    touchSlot(12);
-  }
-
-  /// `borderRadius`, or [undefined] when absent.
-  Object? get borderRadius => hasSlot(13) ? _borderRadius : undefined;
-
-  set borderRadius(Object? value) {
-    _borderRadius = value;
-    touchSlot(13);
-  }
-
-  /// `datasetIndex`, or [undefined] when absent.
-  @override
-  Object? get datasetIndex => hasSlot(14) ? _datasetIndex : undefined;
-
-  set datasetIndex(Object? value) {
-    _datasetIndex = value;
-    touchSlot(14);
-  }
-
-  /// `index`, or [undefined] when absent.
-  @override
-  Object? get index => hasSlot(15) ? _index : undefined;
-
-  set index(Object? value) {
-    _index = value;
-    touchSlot(15);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _text,
-    1 => _fillStyle,
-    2 => _fontColor,
-    3 => _hidden,
-    4 => _lineCap,
-    5 => _lineDash,
-    6 => _lineDashOffset,
-    7 => _lineJoin,
-    8 => _lineWidth,
-    9 => _strokeStyle,
-    10 => _pointStyle,
-    11 => _rotation,
-    12 => _textAlign,
-    13 => _borderRadius,
-    14 => _datasetIndex,
-    _ => _index,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _text = value;
-      case 1:
-        _fillStyle = value;
-      case 2:
-        _fontColor = value;
-      case 3:
-        _hidden = value;
-      case 4:
-        _lineCap = value;
-      case 5:
-        _lineDash = value;
-      case 6:
-        _lineDashOffset = value;
-      case 7:
-        _lineJoin = value;
-      case 8:
-        _lineWidth = value;
-      case 9:
-        _strokeStyle = value;
-      case 10:
-        _pointStyle = value;
-      case 11:
-        _rotation = value;
-      case 12:
-        _textAlign = value;
-      case 13:
-        _borderRadius = value;
-      case 14:
-        _datasetIndex = value;
-      default:
-        _index = value;
-    }
-    return true;
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _text = null;
-      case 1:
-        _fillStyle = null;
-      case 2:
-        _fontColor = null;
-      case 3:
-        _hidden = null;
-      case 4:
-        _lineCap = null;
-      case 5:
-        _lineDash = null;
-      case 6:
-        _lineDashOffset = null;
-      case 7:
-        _lineJoin = null;
-      case 8:
-        _lineWidth = null;
-      case 9:
-        _strokeStyle = null;
-      case 10:
-        _pointStyle = null;
-      case 11:
-        _rotation = null;
-      case 12:
-        _textAlign = null;
-      case 13:
-        _borderRadius = null;
-      case 14:
-        _datasetIndex = null;
-      default:
-        _index = null;
-    }
-  }
-}
 
 /// A hit box of a legend item (plugin.legend.js:183 and :217): `{left,
 /// top, row, width, height}` of a horizontal legend and `{left, top, col,

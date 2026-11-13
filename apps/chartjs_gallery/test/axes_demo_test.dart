@@ -698,7 +698,7 @@ void main() {
     expect(jsGet(legend.options, 'display'), true);
     expect(
       [
-        for (final item in legend.legendItems!) jsGet(item, 'text'),
+        for (final item in legend.legendItems!) item.text.single,
       ],
       ['A', 'B'],
     );

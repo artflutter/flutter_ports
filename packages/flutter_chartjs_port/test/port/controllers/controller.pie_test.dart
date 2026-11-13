@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -92,16 +93,12 @@ List<Object?> _generateLabels(Chart chart) =>
 /// the real legend. It reads `legendItems` through `types.LegendElement`
 /// (Chart.js ADR 0028 Open 2), and `legendHitBoxes` through a cast to
 /// [Legend]: the member is not in index.d.ts (Chart.js ADR 0038, section 6;
-/// Chart.js ADR 0041, section 5). `keys` is the key list of each item in
-/// order (`Object.keys`): the harness compares only the expected keys of a
-/// Map.
+/// Chart.js ADR 0041, section 5). Items remain native for field comparisons;
+/// upstream own-key enumeration is outside the native item contract.
 Object? _realLegend(Chart chart) {
   final legend = chart.legend!;
   return <String, Object?>{
     'items': legend.legendItems,
-    'keys': [
-      for (final item in legend.legendItems!) jsObjectKeys(item),
-    ],
     'hitBoxes': (legend as Legend).legendHitBoxes,
   };
 }
@@ -316,14 +313,17 @@ void main() {
 
       jsCall(jsGet(_legendOverrides(), 'onClick'), [
         <String, Object?>{},
-        <String, Object?>{'index': 1.0},
+        LegendItem(text: ['item'], index: 1),
         legend,
       ]);
 
       expect(updates, before + 1);
       expect(chart.getDataVisibility(1), isFalse);
       expect(
-        [for (final item in _generateLabels(chart)) jsGet(item, 'hidden')],
+        [
+          for (final item in _generateLabels(chart))
+            (item! as LegendItem).hidden,
+        ],
         [false, true, false],
       );
     });

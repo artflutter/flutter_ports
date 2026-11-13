@@ -27,7 +27,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionResolver, createResolver, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -41,9 +40,12 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/legend_item.dart';
 
 // The tests of Chart.js ADR 0092 and of the row `adapt-hidden-legend-items`
 // of differences.md. A hidden legend of a built-in slice chart leaves its
@@ -122,17 +124,15 @@ Map<String, Object?> _eager(
 
 Legend _legendOf(Chart chart) => chart.legend! as Legend;
 
-/// The items of [legend] as plain data: the keys in order and the values.
-List<Object?> _items(types.LegendElement legend) => [
-  for (final item in legend.legendItems!)
-    [
-      for (final key in jsObjectKeys(item)) [key, jsGet(item, key)],
-    ],
+/// Native snapshots of the items at this observation point.
+List<LegendItem> _items(types.LegendElement legend) => [
+  for (final item in legend.legendItems!) item.copyWith(),
 ];
 
 /// The texts of the items of the box of [chart].
 List<Object?> _texts(Chart chart) => [
-  for (final item in chart.legend!.legendItems!) jsGet(item, 'text'),
+  for (final item in chart.legend!.legendItems!)
+    if (item.text.length == 1) item.text.single else item.text,
 ];
 
 /// `data.labels` of [chart].
@@ -529,13 +529,14 @@ Chart _chartOf(Map<String, Object?> config, {required bool exact}) {
 
 /// `fillStyle` of each item of the box of [chart].
 List<Object?> _fillStyles(Chart chart) => [
-  for (final item in chart.legend!.legendItems!) jsGet(item, 'fillStyle'),
+  for (final item in chart.legend!.legendItems!)
+    chartPaintValue(item.fillStyle),
 ];
 
 /// `fillStyle` and `lineWidth` of each item of the box of [chart].
 List<Object?> _fillAndWidth(Chart chart) => [
   for (final item in chart.legend!.legendItems!)
-    [jsGet(item, 'fillStyle'), jsGet(item, 'lineWidth')],
+    [chartPaintValue(item.fillStyle), item.lineWidth],
 ];
 
 /// The state of the context of arc 0 of [chart], as user code reads it.
@@ -563,7 +564,10 @@ void main() {
         final twin = acquireChart(_eager(type));
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_legendOf(twin).legendItemsPending, isFalse);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
         expect(_legendOf(chart).legendItemsPending, isFalse);
         expect(chart.legend!.legendItems, hasLength(3));
 
@@ -576,7 +580,10 @@ void main() {
           each.update();
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
         expect(chart.legend!.legendItems, hasLength(4));
       });
 
@@ -586,7 +593,11 @@ void main() {
         for (final mode in ['none', 'resize', 'default', 'active', 'none']) {
           chart.update(mode);
           twin.update(mode);
-          expect(_items(chart.legend!), _items(twin.legend!), reason: mode);
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(twin.legend!)),
+            reason: mode,
+          );
         }
       });
 
@@ -594,8 +605,11 @@ void main() {
         final chart = acquireChart(_config(type, legend: {'reverse': true}));
         final twin = acquireChart(_eager(type, legend: {'reverse': true}));
         expect(_legendOf(chart).legendItemsPending, isTrue);
-        expect(jsGet(chart.legend!.legendItems![0], 'text'), 'c');
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(chart.legend!.legendItems![0].text.single, 'c');
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: a plain label option and a theme-free chart color', (
@@ -611,7 +625,10 @@ void main() {
         final chart = acquireChart(_config(type, labels: labels));
         final twin = acquireChart(_eager(type, labels: labels));
         expect(_legendOf(chart).legendItemsPending, isTrue);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: the read of a plugin in each hook', (tester) async {
@@ -632,7 +649,7 @@ void main() {
           ..update()
           ..draw();
         expect(log, isNotEmpty);
-        expect(log, twinLog);
+        expect(log, legendObservationMatcher(twinLog));
       });
 
       testWidgets('$type: a plugin that reads in afterUpdate', (tester) async {
@@ -652,10 +669,13 @@ void main() {
           _eager(type, plugins: [reader((items) => twinSeen = items)]),
         );
         expect(seen, isNotNull);
-        expect(seen, twinSeen);
+        expect(seen, legendObservationMatcher(twinSeen));
         // The read in the hook ended the wait. The items stay.
         expect(_legendOf(chart).legendItemsPending, isFalse);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: a toggle of display', (tester) async {
@@ -676,15 +696,24 @@ void main() {
         expect(_legendOf(chart).legendItemsPending, isFalse);
         expect(chart.legend!.legendHitBoxes, hasLength(3));
         expect(_legendOf(chart).height, greaterThan(0));
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
         set(false);
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_legendOf(chart).height, 0);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
         set(true);
         expect(_legendOf(chart).width, _legendOf(twin).width);
         expect(_legendOf(chart).height, _legendOf(twin).height);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: a visibility change with an update', (tester) async {
@@ -696,8 +725,11 @@ void main() {
             ..update();
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
-        expect(jsGet(chart.legend!.legendItems![1], 'hidden'), isTrue);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(chart.legend!.legendItems![1].hidden, isTrue);
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
     }
 
@@ -752,10 +784,10 @@ void main() {
           ..legend!.legendItems;
         expect(legend.legendItemsPending, isTrue);
         final items = _items(legend);
-        expect(items, _items(twin.legend!));
+        expect(items, legendObservationMatcher(_items(twin.legend!)));
         // An eager build in the same state is the twin of the deferred build.
         legend.buildLabels();
-        expect(_items(legend), items);
+        expect(_items(legend), legendObservationMatcher(items));
       });
     }
   });
@@ -775,7 +807,10 @@ void main() {
         twin.getDatasetMeta(0).controller!.hasCachedDefaultDataOptions,
         isTrue,
       );
-      expect(_items(chart.legend!), _items(twin.legend!));
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
     });
 
     testWidgets('the proof holds for the layout of the next update', (
@@ -848,7 +883,10 @@ void main() {
       )..update();
       expect(seen, calls());
       expect(seen, greaterThan(0));
-      expect(_items(chart.legend!), _items(twin.legend!));
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
     }
 
     for (final type in _kinds) {
@@ -876,7 +914,7 @@ void main() {
               'generateLabels': (Object? chart) {
                 calls++;
                 return <Object?>[
-                  <String, Object?>{'text': 'x'},
+                  LegendItem(text: ['x']),
                 ];
               },
             },
@@ -886,11 +924,7 @@ void main() {
         expect(_legendOf(chart).legendItemsPending, isFalse);
         chart.update();
         expect(calls, 6);
-        expect(_items(chart.legend!), [
-          [
-            ['text', 'x'],
-          ],
-        ]);
+        expect(chart.legend!.legendItems!.single.text, ['x']);
       });
 
       testWidgets('$type: filter: one call for each item of each build', (
@@ -994,7 +1028,7 @@ void main() {
             labels: {
               key: (Object? context, Object? options) {
                 calls++;
-                return key == 'color' ? _red : 'star';
+                return key == 'color' ? _red : const StarPointStyle();
               },
             },
             calls: () => calls,
@@ -1011,7 +1045,7 @@ void main() {
             type,
             labels: {
               // A polar area generator does not read it, a doughnut one does.
-              'textAlign': (Object? context, Object? options) => 'left',
+              'textAlign': (Object? context, Object? options) => TextAlign.left,
             },
           ),
         );
@@ -1092,7 +1126,7 @@ void main() {
         ];
         final chart = acquireChart(config);
         expect(_legendOf(chart).legendItemsPending, isFalse);
-        expect(jsGet(chart.legend!.legendItems![0], 'text'), 'a');
+        expect(chart.legend!.legendItems![0].text.single, 'a');
       });
 
       testWidgets('$type: a subclass of the chart', (tester) async {
@@ -1101,12 +1135,15 @@ void main() {
         addTearDown(chart.destroy);
         final reference = acquireChart(_eager(type));
         expect(_legendOf(chart).legendItemsPending, isFalse);
-        expect(_items(chart.legend!), _items(reference.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(reference.legend!)),
+        );
       });
     }
 
     for (final (key, value) in <(String, Object?)>[
-      ('textAlign', 'left'),
+      ('textAlign', TextAlign.left),
       ('useBorderRadius', true),
       ('borderRadius', 2),
     ]) {
@@ -1127,7 +1164,10 @@ void main() {
         expect(seen, calls);
         // One call for each update, at the first read of the first build.
         expect(seen, 2);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
     }
 
@@ -1153,7 +1193,10 @@ void main() {
           exact.update(mode);
           expect(_legendOf(chart).legendItemsPending, isFalse);
           expect(_legendOf(exact).legendItemsPending, isTrue);
-          expect(_items(chart.legend!), _items(exact.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(exact.legend!)),
+          );
         }
       });
     }
@@ -1223,7 +1266,7 @@ void main() {
       final chart = acquireChart(_config('pie'));
       final legend = _legendOf(chart);
       expect(legend.legendItemsPending, isTrue);
-      final mine = <Object?>[];
+      final mine = <LegendItem>[];
       legend.legendItems = mine;
       expect(legend.legendItemsPending, isFalse);
       expect(legend.legendItems, same(mine));
@@ -1264,7 +1307,10 @@ void main() {
           replace(chart);
           replace(twin);
           // The last built items: here they are the snapshot of upstream.
-          expect(_items(chart.legend!), _items(twin.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(twin.legend!)),
+          );
           // The read adds no meta, as the snapshot of upstream does not.
           expect(chart.metasets, hasLength(metas));
           // The build still waits for a read that can run it.
@@ -1272,7 +1318,10 @@ void main() {
           chart.update();
           twin.update();
           expect(chart.getDatasetMeta(0).controller, isNotNull);
-          expect(_items(chart.legend!), _items(twin.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(twin.legend!)),
+          );
         });
       }
 
@@ -1303,7 +1352,7 @@ void main() {
           expect(each.legend!.legendItems, hasLength(4));
         }
         expect(seen, [3]);
-        expect(seen, twinSeen);
+        expect(seen, legendObservationMatcher(twinSeen));
       });
     }
   });
@@ -1340,9 +1389,12 @@ void main() {
       change(twin, () => twinCalls++);
       chart.update();
       twin.update();
-      expect(seen, twinSeen);
+      expect(seen, legendObservationMatcher(twinSeen));
       expect(calls, twinCalls);
-      expect(_items(chart.legend!), _items(twin.legend!));
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
     }
 
     for (final type in _kinds) {
@@ -1371,7 +1423,7 @@ void main() {
                 _labelOptionsOf(chart)['generateLabels'] = (chart) {
                   count();
                   return <Object?>[
-                    <String, Object?>{'text': 'u'},
+                    LegendItem(text: ['u']),
                   ];
                 },
           );
@@ -1383,7 +1435,7 @@ void main() {
             hook: hook,
             change: (chart, count) =>
                 _labelOptionsOf(chart)['pointStyle'] = const StarPointStyle(),
-            read: (chart) => jsGet(chart.legend!.legendItems![0], 'pointStyle'),
+            read: (chart) => chart.legend!.legendItems![0].pointStyle,
           );
         });
 
@@ -1415,7 +1467,10 @@ void main() {
           expect(atRead, isNull);
           // The snapshot of the last update.
           expect(_texts(chart), ['x', 'b', 'c']);
-          expect(_items(chart.legend!), _items(twin.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(twin.legend!)),
+          );
         });
       }
 
@@ -1427,7 +1482,8 @@ void main() {
           hook: 'beforeUpdate',
           change: (chart, count) =>
               (chart.config.options as Map<String, Object?>)['color'] = _green,
-          read: (chart) => jsGet(chart.legend!.legendItems![0], 'fontColor'),
+          read: (chart) =>
+              chartPaintValue(chart.legend!.legendItems![0].fontColor),
         );
       });
 
@@ -1469,7 +1525,7 @@ void main() {
           _labelOptionsOf(each)['generateLabels'] = (legendChart) {
             seen.add(_texts(each));
             return <Object?>[
-              <String, Object?>{'text': 'u'},
+              LegendItem(text: ['u']),
             ];
           };
           each.update();
@@ -1522,7 +1578,10 @@ void main() {
           each.update();
         }
         expect(_texts(chart), ['x', 'b', 'c']);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
         expect(calls, 0);
       });
 
@@ -1549,13 +1608,19 @@ void main() {
         for (final each in [chart, twin]) {
           each.update();
           expect(
-            jsGet(each.legend!.legendItems![0], 'pointStyle'),
+            each.legend!.legendItems![0].pointStyle,
             const StarPointStyle(),
           );
-          expect(jsGet(each.legend!.legendItems![0], 'fontColor'), _green);
+          expect(
+            chartPaintValue(each.legend!.legendItems![0].fontColor),
+            _green,
+          );
           expect(readOption(each.options, OptionKey.color), _green);
         }
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
     }
   });
@@ -1604,7 +1669,7 @@ void main() {
                 legend: {'display': display},
                 labels: {
                   'generateLabels': (Object? chart) => <Object?>[
-                    <String, Object?>{'text': 'x'},
+                    LegendItem(text: ['x']),
                   ],
                 },
                 plugins: [writeThenRead(key, (value) => seen = value)],
@@ -1647,7 +1712,7 @@ void main() {
           'pie',
           labels: {
             'generateLabels': (Object? chart) => <Object?>[
-              <String, Object?>{'text': 'x'},
+              LegendItem(text: ['x']),
             ],
           },
           plugins: [
@@ -1692,7 +1757,7 @@ void main() {
           },
         ),
       );
-      expect(jsGet(chart.legend!.legendItems![0], 'fontColor'), _green);
+      expect(chartPaintValue(chart.legend!.legendItems![0].fontColor), _green);
     });
   });
 
@@ -1730,7 +1795,10 @@ void main() {
         twin.update(mode);
         expect(seen, calls);
         expect(seen, greaterThan(0));
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
     }
 
@@ -1765,7 +1833,10 @@ void main() {
       twin.update('none');
       expect(seen, calls);
       expect(seen, 3);
-      expect(_items(chart.legend!), _items(twin.legend!));
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
     });
   });
 
@@ -1806,7 +1877,10 @@ void main() {
               ..update(mode);
             expect(seen, calls);
             expect(seen, greaterThan(0));
-            expect(_items(chart.legend!), _items(twin.legend!));
+            expect(
+              _items(chart.legend!),
+              legendObservationMatcher(_items(twin.legend!)),
+            );
           });
         }
       }
@@ -1863,20 +1937,23 @@ void main() {
           each.toggleDataVisibility(2);
         }
         // Upstream, and the twin: the snapshot of the last update.
-        expect(jsGet(twin.legend!.legendItems![0], 'text'), 'a');
-        expect(jsGet(twin.legend!.legendItems![2], 'hidden'), isFalse);
+        expect(twin.legend!.legendItems![0].text.single, 'a');
+        expect(twin.legend!.legendItems![2].hidden, isFalse);
         // A pending build: the values at the first read.
-        expect(jsGet(chart.legend!.legendItems![0], 'text'), 'changed');
-        expect(jsGet(chart.legend!.legendItems![2], 'hidden'), isTrue);
+        expect(chart.legend!.legendItems![0].text.single, 'changed');
+        expect(chart.legend!.legendItems![2].hidden, isTrue);
         // The read is a snapshot until the next mark.
         (jsGet(chart.data, 'labels')! as List<Object?>)[0] = 'again';
-        expect(jsGet(chart.legend!.legendItems![0], 'text'), 'changed');
+        expect(chart.legend!.legendItems![0].text.single, 'changed');
         // The next update gives the values of upstream again.
         chart.update();
         twin.update();
         (jsGet(twin.data, 'labels')! as List<Object?>)[0] = 'again';
         twin.update();
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: an in-place style change keeps the cached entry', (
@@ -1890,8 +1967,11 @@ void main() {
               _black;
         }
         // The cached entry of the last update answers both builds.
-        expect(jsGet(chart.legend!.legendItems![0], 'fillStyle'), _red);
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(chartPaintValue(chart.legend!.legendItems![0].fillStyle), _red);
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
     }
 
@@ -1904,7 +1984,9 @@ void main() {
       Map<String, Object?> reader(List<Object?> log) => {
         'id': 'colorReader',
         'afterDatasetsUpdate': (Chart chart, Object? args, Object? options) {
-          if (armed) log.add(jsGet(chart.legend!.legendItems![0], 'fillStyle'));
+          if (armed) {
+            log.add(chartPaintValue(chart.legend!.legendItems![0].fillStyle));
+          }
           return null;
         },
       };
@@ -1922,7 +2004,10 @@ void main() {
       // A pending build: the entry of this update, at the read.
       expect(seen, [_black]);
       // Both give the value of upstream after the update.
-      expect(_items(chart.legend!), _items(twin.legend!));
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
     });
 
     for (final type in _kinds) {
@@ -1974,9 +2059,9 @@ void main() {
         releaseChart(chart);
         releaseChart(twin);
         // Upstream, and the twin: the snapshot of the last update.
-        expect(jsGet(twinLegend.legendItems![0], 'text'), 'x');
+        expect(twinLegend.legendItems![0].text.single, 'x');
         // The last built items.
-        expect(jsGet(legend.legendItems![0], 'text'), 'a');
+        expect(legend.legendItems![0].text.single, 'a');
         expect(legend.legendItemsPending, isFalse);
       });
 
@@ -2012,7 +2097,10 @@ void main() {
           expect(seen, [
             ['a', 'b', 'c'],
           ]);
-          expect(_items(chart.legend!), _items(twin.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(twin.legend!)),
+          );
         },
       );
 
@@ -2032,7 +2120,9 @@ void main() {
         );
         for (final mode in const ['default', 'none']) {
           final chart = acquireChart(two())..update(mode);
-          final expected = jsGet(chart.legend!.legendItems![0], 'fillStyle');
+          final expected = chartPaintValue(
+            chart.legend!.legendItems![0].fillStyle,
+          );
           expect(expected, _blue);
           chart.update(mode);
           expect(_legendOf(chart).legendItemsPending, isTrue);
@@ -2040,10 +2130,16 @@ void main() {
           // The controller of the remaining dataset has another index: the
           // last built items, as the snapshot of upstream here. Never a default
           // color, and never a color of the dataset behind another index.
-          expect(jsGet(chart.legend!.legendItems![0], 'fillStyle'), _blue);
+          expect(
+            chartPaintValue(chart.legend!.legendItems![0].fillStyle),
+            _blue,
+          );
           expect(_legendOf(chart).legendItemsPending, isTrue);
           chart.update(mode);
-          expect(jsGet(chart.legend!.legendItems![0], 'fillStyle'), _green);
+          expect(
+            chartPaintValue(chart.legend!.legendItems![0].fillStyle),
+            _green,
+          );
           releaseChart(chart);
         }
       });
@@ -2101,7 +2197,7 @@ void main() {
         releaseChart(chart);
         expect(chart.legend, isNull);
         expect(legend.legendItemsPending, isFalse);
-        expect(_items(legend), twinItems);
+        expect(_items(legend), legendObservationMatcher(twinItems));
       });
 
       testWidgets('$type: the plugin goes in an update', (tester) async {
@@ -2281,7 +2377,7 @@ void main() {
         final items = _items(legend);
         expect(items, hasLength(200));
         legend.buildLabels();
-        expect(_items(legend), items);
+        expect(_items(legend), legendObservationMatcher(items));
       });
     }
 
@@ -2404,7 +2500,7 @@ void main() {
           final items = _items(legend);
           expect(items, hasLength(3));
           legend.buildLabels();
-          expect(_items(legend), items);
+          expect(_items(legend), legendObservationMatcher(items));
         });
       }
 
@@ -2422,7 +2518,7 @@ void main() {
           );
           final legend = _legendOf(chartOf(tester));
           expect(legend.legendItemsPending, isTrue);
-          expect(jsGet(legend.legendItems![1], 'fillStyle'), _green);
+          expect(chartPaintValue(legend.legendItems![1].fillStyle), _green);
         });
       }
 
@@ -2458,7 +2554,7 @@ void main() {
         final legend = _legendOf(chartOf(tester));
         expect(legend.legendItemsPending, isTrue);
         expect(legend.legendItems, hasLength(3));
-        expect(jsGet(legend.legendItems![1], 'fillStyle'), second);
+        expect(chartPaintValue(legend.legendItems![1].fillStyle), second);
       });
     }
   });
@@ -2484,7 +2580,10 @@ void main() {
             expect(_state(chart), _state(twin), reason: entry.key);
             if (entry.key == step) break;
           }
-          expect(_items(chart.legend!), _items(twin.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(twin.legend!)),
+          );
           final (a, b) = (
             await _pixels(tester, chart..draw()),
             await _pixels(tester, twin..draw()),
@@ -2534,7 +2633,7 @@ void main() {
           each.update('none');
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
-        expect(log, twinLog);
+        expect(log, legendObservationMatcher(twinLog));
         expect(log.last, hasLength(5));
         expect(_state(chart), _state(twin));
       });
@@ -2552,7 +2651,10 @@ void main() {
         twin.update('none');
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_state(chart), _state(twin));
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: a second dataset keeps its own path', (tester) async {
@@ -2611,7 +2713,10 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
         await tester.pump(const Duration(milliseconds: 100));
         expect(_state(chart), _state(twin));
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: a hover option with a function, and hover events', (
@@ -2647,7 +2752,10 @@ void main() {
         expect(_state(chart), _state(twin));
         final state = _contexts(chart);
         // The read of the items writes no context.
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
         expect(_contexts(chart), state);
         for (final each in [chart, twin]) {
           each.setActiveElements(<Object?>[]);
@@ -2677,7 +2785,10 @@ void main() {
           labelValues: <Object?>['x', 'x', 'x'],
         ),
       );
-      expect(_items(chart.legend!), _items(twin.legend!));
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
     });
 
     testWidgets('a function past the entries of the labels is no read', (
@@ -2692,7 +2803,7 @@ void main() {
         ),
       )..update('none');
       expect(_legendOf(chart).legendItemsPending, isTrue);
-      expect(jsGet(chart.legend!.legendItems![2], 'fillStyle'), _blue);
+      expect(chartPaintValue(chart.legend!.legendItems![2].fillStyle), _blue);
     });
 
     // `configure` of the update starts new scopes and a new resolver: a write
@@ -2722,7 +2833,7 @@ void main() {
         armed = true;
         chart.update('none');
         twin.update('none');
-        expect(seen, twinSeen);
+        expect(seen, legendObservationMatcher(twinSeen));
         expect(_state(chart), _state(twin));
         final options = (chart.getDatasetMeta(0).data[1] as ArcElement).options;
         expect(jsGet(options, 'borderWidth'), 9);
@@ -2731,8 +2842,14 @@ void main() {
         twin.update('none');
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_state(chart), _state(twin));
-        expect(_items(chart.legend!), _items(twin.legend!));
-        expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _black);
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
+        expect(
+          chartPaintValue(chart.legend!.legendItems![1].fillStyle),
+          _black,
+        );
       });
 
       testWidgets('a write of a function in $hook', (tester) async {
@@ -2766,7 +2883,10 @@ void main() {
         // The dataset update resolves the function: the last build is eager.
         expect(_legendOf(chart).legendItemsPending, isFalse);
         expect(_state(chart), _state(twin));
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
     }
 
@@ -2900,7 +3020,7 @@ void main() {
               ..draw();
           }
           expect(log, isNotEmpty);
-          expect(log, twinLog);
+          expect(log, legendObservationMatcher(twinLog));
           expect(_state(chart), _state(twin));
         });
       }
@@ -2942,7 +3062,7 @@ void main() {
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_legendOf(twin).legendItemsPending, isFalse);
-        expect(log.last, twinLog.last);
+        expect(log.last, legendObservationMatcher(twinLog.last));
         expect(_state(chart), _state(twin));
       });
     }
@@ -2989,7 +3109,10 @@ void main() {
           expect(seen, greaterThan(0));
           expect(seen, calls);
           expect(_state(chart), _state(twin));
-          expect(_items(chart.legend!), _items(twin.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(twin.legend!)),
+          );
         });
       }
 
@@ -3088,7 +3211,7 @@ void main() {
             'generateLabels': (Object? chart) {
               generators++;
               return <Object?>[
-                <String, Object?>{'text': 'x'},
+                LegendItem(text: ['x']),
               ];
             },
           },
@@ -3182,7 +3305,7 @@ void main() {
           expect(_state(chart), _state(twin), reason: '$dataset');
           expect(
             _plain(_items(chart.legend!)),
-            _plain(_items(twin.legend!)),
+            legendObservationMatcher(_plain(_items(twin.legend!))),
             reason: '$dataset',
           );
         }
@@ -3203,7 +3326,10 @@ void main() {
         final twin = acquireChart(_eager(type, dataset: dataset))
           ..update('none');
         expect(_state(chart), _state(twin));
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: a dataset and an options Map of another class', (
@@ -3273,7 +3399,10 @@ void main() {
         expect(reads, isNotEmpty);
         expect(reads, run(twin));
         expect(_state(chart), _state(twin));
-        expect(_items(chart.legend!), _items(twin.legend!));
+        expect(
+          _items(chart.legend!),
+          legendObservationMatcher(_items(twin.legend!)),
+        );
       });
 
       testWidgets('$type: the scalar context and a user context', (
@@ -3327,7 +3456,10 @@ void main() {
           expect(_legendOf(exact).legendItemsPending, isTrue);
           expect(_contexts(chart)[0], _contexts(exact)[0]);
           expect(_arcs(chart), _arcs(exact));
-          expect(_items(chart.legend!), _items(exact.legend!));
+          expect(
+            _items(chart.legend!),
+            legendObservationMatcher(_items(exact.legend!)),
+          );
         }
       });
     }
@@ -3409,7 +3541,7 @@ void main() {
 
           final exact = run(exact: true);
           expect(exact.first, expected);
-          expect(exact, run(exact: false));
+          expect(exact, legendObservationMatcher(run(exact: false)));
         });
 
         testWidgets('$type: $name: a read in a title function', (tester) async {
@@ -3453,7 +3585,7 @@ void main() {
 
           final exact = run(exact: true);
           expect(exact.first, expected);
-          expect(exact, run(exact: false));
+          expect(exact, legendObservationMatcher(run(exact: false)));
         });
       }
 
@@ -3517,7 +3649,7 @@ void main() {
             return log;
           }
 
-          expect(run(exact: true), run(exact: false));
+          expect(run(exact: true), legendObservationMatcher(run(exact: false)));
         });
       }
     }
@@ -3600,7 +3732,7 @@ void main() {
           final exact = run(exact: true);
           expect(exact, isNotEmpty);
           expect((exact.first! as List<Object?>)[1], 'default/false/raw=9.0');
-          expect(exact, run(exact: false));
+          expect(exact, legendObservationMatcher(run(exact: false)));
         });
 
         testWidgets('$name: a throwing _fallback past the first list', (
@@ -3632,7 +3764,7 @@ void main() {
 
           final exact = run(exact: true);
           expect(exact, ['default/false/raw=9.0']);
-          expect(exact, run(exact: false));
+          expect(exact, legendObservationMatcher(run(exact: false)));
         });
 
         testWidgets('$name: a Map of another class past the first list', (
@@ -3668,7 +3800,7 @@ void main() {
           final exact = run(exact: true);
           expect(exact, isNotEmpty);
           expect((exact.first! as List<Object?>)[1], 'default/false/raw=9.0');
-          expect(exact, run(exact: false));
+          expect(exact, legendObservationMatcher(run(exact: false)));
         });
       }
 
@@ -3703,7 +3835,7 @@ void main() {
 
         final exact = run(exact: true);
         expect((exact.first! as List<Object?>).first, 'default/false/raw=9.0');
-        expect(exact, run(exact: false));
+        expect(exact, legendObservationMatcher(run(exact: false)));
       });
 
       testWidgets('$type: a Map of another class in the legend', (
@@ -3745,7 +3877,7 @@ void main() {
 
         final exact = run(exact: true);
         expect((exact.first! as List<Object?>).first, 'default/false/raw=9.0');
-        expect(exact, run(exact: false));
+        expect(exact, legendObservationMatcher(run(exact: false)));
       });
 
       testWidgets('$type: a user arc at index 0 changes an option', (
@@ -3788,7 +3920,7 @@ void main() {
             9.0,
           ],
         );
-        expect(exact, run(exact: false));
+        expect(exact, legendObservationMatcher(run(exact: false)));
       });
     }
   });
@@ -3806,9 +3938,9 @@ void main() {
         colors[1] = _black;
       }
       // Upstream, and the twin: the snapshot of the last update.
-      expect(jsGet(twin.legend!.legendItems![1], 'fillStyle'), _green);
+      expect(chartPaintValue(twin.legend!.legendItems![1].fillStyle), _green);
       // A pending build: the entry of the list at the first read.
-      expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _black);
+      expect(chartPaintValue(chart.legend!.legendItems![1].fillStyle), _black);
     });
 
     testWidgets('a read after an entry became an object', (tester) async {
@@ -3823,10 +3955,10 @@ void main() {
       // The read cannot run the build: it gives the last built items, and the
       // build still waits.
       expect(_legendOf(chart).legendItemsPending, isTrue);
-      expect(_items(chart.legend!), built);
+      expect(_items(chart.legend!), legendObservationMatcher(built));
       expect(_legendOf(chart).legendItemsPending, isTrue);
       colors[1] = _black;
-      expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _black);
+      expect(chartPaintValue(chart.legend!.legendItems![1].fillStyle), _black);
       expect(_legendOf(chart).legendItemsPending, isFalse);
     });
 
@@ -3930,8 +4062,11 @@ void main() {
         _dataset0(each)['backgroundColor'] = <Object?>[_black];
         each.config.clearCache();
       }
-      expect(_items(chart.legend!), _items(twin.legend!));
-      expect(jsGet(chart.legend!.legendItems![1], 'fillStyle'), _green);
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
+      expect(chartPaintValue(chart.legend!.legendItems![1].fillStyle), _green);
     });
 
     testWidgets('a read with more labels than the mark', (tester) async {
@@ -3941,7 +4076,7 @@ void main() {
       // No index of a new label has an arc: the index of the dataset context.
       final items = chart.legend!.legendItems!;
       expect(items, hasLength(4));
-      expect(jsGet(items[3], 'fillStyle'), _red);
+      expect(chartPaintValue(items[3].fillStyle), _red);
       expect(_state(chart), state);
     });
 
@@ -3953,10 +4088,10 @@ void main() {
         'data': <Object?>[9.0, 9.0, 9.0],
         'backgroundColor': _black,
       };
-      expect(_items(chart.legend!), built);
+      expect(_items(chart.legend!), legendObservationMatcher(built));
       expect(_legendOf(chart).legendItemsPending, isTrue);
       chart.update('none');
-      expect(jsGet(chart.legend!.legendItems![0], 'fillStyle'), _black);
+      expect(chartPaintValue(chart.legend!.legendItems![0].fillStyle), _black);
     });
 
     testWidgets('a direct build writes the contexts of a resolve', (
@@ -3979,7 +4114,10 @@ void main() {
       expect(hover, _contexts(twin));
       expect(mode(chart), 'active');
       // A read of the snapshot writes no context.
-      expect(chart.legend!.legendItems, twin.legend!.legendItems);
+      expect(
+        _items(chart.legend!),
+        legendObservationMatcher(_items(twin.legend!)),
+      );
       expect(_contexts(chart), hover);
       expect(_contexts(twin), hover);
       // A direct build is the upstream call: each resolve writes its context.
@@ -4002,7 +4140,7 @@ void main() {
       expect(chart.legend, isNull);
       expect(legend.legendItemsPending, isFalse);
       expect(legend.legendItems, hasLength(3));
-      expect(jsGet(legend.legendItems![1], 'fillStyle'), _green);
+      expect(chartPaintValue(legend.legendItems![1].fillStyle), _green);
     });
   });
 
@@ -4142,7 +4280,7 @@ void main() {
           final (states, items, pixels) = await run(eager: false);
           final (twinStates, twinItems, twinPixels) = await run(eager: true);
           expect(states, twinStates);
-          expect(items, twinItems);
+          expect(items, legendObservationMatcher(twinItems));
           expect(pixels.buffer.asUint8List(), twinPixels.buffer.asUint8List());
         });
       }

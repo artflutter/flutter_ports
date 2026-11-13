@@ -943,15 +943,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin `legend`. The items of the
       built-in `generateLabels`, the hit boxes (`legendHitBoxes`, also a port-only member of
       `types.LegendElement`, which the keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the
-      column sizes are `LegendItem`, `LegendHitBox` and `LegendColumnSize`: typed records with the
-      upstream keys and the face. An item of user code is read by name. `LegendItem` and
-      `LegendHitBox` implement the port-only interfaces `types.TypedLegendItem` and
-      `types.TypedLegendHitBox`, and `TooltipItem` of `plugin.tooltip.dart` implements
-      `types.TypedTooltipItem`: the views `ChartLegendItem` and `ChartTooltipItem` of the typed API
-      and the keyboard of `ChartView` read them with no import of a plugin. The label options
-      `boxWidth`, `boxHeight`, `pointStyleWidth` and `padding` are numbers (row
-      `adapt-legend-number-options`). The default `onClick` gives the number of the property key
-      of the raw `datasetIndex` to `hide` and `show` (row `adapt-legend-dataset-index`).
+      column sizes use the shared native `LegendItem`, and the typed records `LegendHitBox`
+      and `LegendColumnSize`. `LegendItem` is extensible, with mutable native fields and
+      overridable `copyWith`/`merge` methods (doc/native-legend-item-design-draft.md).
+      Generators, rendering and events share that object by identity. Map items, `TypedLegendItem`
+      and `ChartLegendItem` are removed. `LegendHitBox` keeps `types.TypedLegendHitBox`.
+      Tooltip items keep `types.TypedTooltipItem` and the promoted `ChartTooltipItem` view.
+      Legend indexes are nullable integers; a descriptive item has no default click action
+      (row `adapt-native-legend-item`).
     - `plugin.subtitle.dart` has the plugin `subTitle` (no `_element`). Its box is a `Title` of
       `plugin.title.dart`, and the `WeakMap` of upstream is a file-private `Expando<Title>`
       (Chart.js ADR 0038 §5).

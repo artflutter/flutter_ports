@@ -25,7 +25,6 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
         PointInteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show jsCall, jsIsFunction;
@@ -37,6 +36,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -126,16 +126,12 @@ Object? _legendFunctions() =>
 /// the real legend. It reads `legendItems` through `types.LegendElement`
 /// (Chart.js ADR 0028 Open 2), and `legendHitBoxes` through a cast to
 /// [Legend]: the member is not in index.d.ts (Chart.js ADR 0038, section 6;
-/// Chart.js ADR 0041, section 5). `keys` is the key list of each item in
-/// order (`Object.keys`): the harness compares only the expected keys of a
-/// Map.
+/// Chart.js ADR 0041, section 5). Items remain native for field comparisons;
+/// upstream own-key enumeration is outside the native item contract.
 Object? _realLegend(Chart chart) {
   final legend = chart.legend!;
   return <String, Object?>{
     'items': legend.legendItems,
-    'keys': [
-      for (final item in legend.legendItems!) jsObjectKeys(item),
-    ],
     'hitBoxes': (legend as Legend).legendHitBoxes,
   };
 }
@@ -390,7 +386,7 @@ void main() {
       updates = 0;
       jsCall(jsGet(_legendFunctions(), 'onClick'), [
         <String, Object?>{},
-        <String, Object?>{'index': 1.0},
+        LegendItem(text: ['item'], index: 1),
         legend,
       ]);
       expect(updates, 1);
@@ -406,25 +402,13 @@ void main() {
     // The key `ToString(index)` of core.controller.js:882 (the fix F1 of the
     // wave 2 review). The visibility of the data indices 0, 1 and 2 after one
     // onClick, from the x64 Node.js probe `onclick_keys.mjs` of the unit.
-    for (final (name, index, visible) in <(String, Object?, String)>[
+    for (final (name, index, visible) in <(String, int?, String)>[
       ('null', null, '111'),
-      ('undefined', undefined, '111'),
-      ('true', true, '111'),
-      ('false', false, '111'),
-      ("''", '', '111'),
-      ("'01'", '01', '111'),
-      ("'1'", '1', '101'),
-      ("'1.0'", '1.0', '111'),
-      ("'2'", '2', '110'),
-      ('NaN', double.nan, '111'),
-      ('-0', -0.0, '011'),
-      ("'-0'", '-0', '111'),
-      ('[2]', <Object?>[2.0], '110'),
-      ('{}', <String, Object?>{}, '111'),
-      ('1', 1.0, '101'),
-      ('1.5', 1.5, '111'),
+      ('0', 0, '011'),
+      ('1', 1, '101'),
+      ('2', 2, '110'),
     ]) {
-      testWidgets('onClick with the index $name toggles the upstream key', (
+      testWidgets('onClick with the index $name uses the native index', (
         tester,
       ) async {
         final chart = acquireChart(
@@ -432,7 +416,7 @@ void main() {
         );
         jsCall(jsGet(_legendFunctions(), 'onClick'), [
           <String, Object?>{},
-          <String, Object?>{'index': index},
+          LegendItem(text: ['item'], index: index),
           chart.legend,
         ]);
         expect(
@@ -451,14 +435,14 @@ void main() {
     // Node.js v24.12.0 with the seven plugins registered (phase 8
     // `pins_plugins_probe.mjs`, `onclick01 polarArea`) gives the visibility
     // 1101 and the outer radii 232, 25.777778, 0 and 77.333333 (rounded).
-    testWidgets("onClick with the index '01', then unshift, hides the data "
+    testWidgets('onClick with the index 1, then unshift, hides the data '
         'index 2', (tester) async {
       final chart = acquireChart(
         _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
       );
       jsCall(jsGet(_legendFunctions(), 'onClick'), [
         <String, Object?>{},
-        <String, Object?>{'index': '01'},
+        LegendItem(text: ['item'], index: 1),
         chart.legend,
       ]);
       final data =

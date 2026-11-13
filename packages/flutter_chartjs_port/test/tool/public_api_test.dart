@@ -137,7 +137,6 @@ const Map<String, String> _notExported = {
   'PointProps': 'not in the ADR 0048 export list',
   'Registry': 'not in the ADR 0048 export list',
   'RoundedRect': 'not in the ADR 0048 export list',
-  'TRBLCorners': 'not in the ADR 0048 export list',
   'TypedRegistry': 'not in the ADR 0048 export list',
   // The typed contexts of Chart.js ADR 0054 section 11: internal, a context
   // is a ContextObject of lib/helpers.dart.
@@ -151,7 +150,6 @@ const Map<String, String> _notExported = {
   // facades, the legend and tooltip items): internal in 0.1.0.
   'DecimationOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'FillerOptions': 'an internal typed plugin type of Chart.js ADR 0054',
-  'LegendItem': 'an internal typed plugin type of Chart.js ADR 0054',
   'LegendOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TitleOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipItem': 'an internal typed plugin type of Chart.js ADR 0054',

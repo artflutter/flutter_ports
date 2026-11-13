@@ -61,8 +61,7 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartAnimationDetails,
         ChartEventDetails,
         ChartHit,
-        ChartLegendEventDetails,
-        ChartLegendItem;
+        ChartLegendEventDetails;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart'
@@ -83,6 +82,7 @@ import 'package:flutter_chartjs_port/src/types/animation.dart'
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show ChartEvent, LegendElement;
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
@@ -562,7 +562,7 @@ Object? Function(Object?, Object?, Object?) legendTrampoline(
   newest()?.call(
     ChartLegendEventDetails(
       event: event! as ChartEvent,
-      item: item! as ChartLegendItem,
+      item: item! as LegendItem,
       legend: legend! as LegendElement,
     ),
   );

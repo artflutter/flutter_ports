@@ -22,7 +22,7 @@ import 'package:flutter_test/flutter_test.dart';
 // typed callbacks over the objects of a real chart. The raw callbacks of
 // these charts cast the arguments of the chart to the views, as the
 // lowering of the typed config does: `ChartHit`, `ChartContext`,
-// `ChartTooltipItem` and `ChartLegendItem` give `int` indexes and the
+// `ChartTooltipItem` and `LegendItem` give `int` indexes and the
 // values of the objects, and a `List<ActiveElement>` is a `List<ChartHit>`
 // with no copy. The unit cases pin the rule for the JS `undefined`, an
 // absent key and a value of another type.
@@ -322,7 +322,7 @@ void main() {
     });
   });
 
-  group('ChartLegendItem and ChartLegendEventDetails', () {
+  group('LegendItem and ChartLegendEventDetails', () {
     testWidgets('a legend onClick gets a dataset item', (tester) async {
       ChartLegendEventDetails? details;
       final chart = acquireChart(
@@ -332,7 +332,7 @@ void main() {
               'onClick': (Object? event, Object? item, Object? legend) {
                 details = ChartLegendEventDetails(
                   event: event! as ChartEvent,
-                  item: item! as ChartLegendItem,
+                  item: item! as LegendItem,
                   legend: legend! as LegendElement,
                 );
               },
@@ -346,7 +346,12 @@ void main() {
       expect(item.datasetIndex, isA<int>());
       expect(
         [item.text, item.datasetIndex, item.index, item.hidden],
-        ['B', 1, null, false],
+        [
+          ['B'],
+          1,
+          null,
+          false,
+        ],
       );
       expect(details!.legend, same(chart.legend));
       expect(details!.event.type, 'click');
@@ -355,7 +360,7 @@ void main() {
     });
 
     testWidgets('a doughnut legend item has the data index', (tester) async {
-      ChartLegendItem? clicked;
+      LegendItem? clicked;
       final chart =
           acquireChart(<String, Object?>{
               'type': 'doughnut',
@@ -372,7 +377,7 @@ void main() {
                 'plugins': <String, Object?>{
                   'legend': <String, Object?>{
                     'onClick': (Object? event, Object? item, Object? legend) {
-                      clicked = item! as ChartLegendItem;
+                      clicked = item! as LegendItem;
                     },
                   },
                 },
@@ -385,20 +390,12 @@ void main() {
       expect(clicked!.index, isA<int>());
       expect(
         [clicked!.text, clicked!.datasetIndex, clicked!.index, clicked!.hidden],
-        ['c', null, 2, true],
-      );
-    });
-
-    test('another type gives null', () {
-      final item = <Object?, Object?>{
-        'text': <Object?>['two', 'lines'],
-        'datasetIndex': undefined,
-        'index': double.nan,
-        'hidden': 'yes',
-      } as ChartLegendItem;
-      expect(
-        [item.text, item.datasetIndex, item.index, item.hidden],
-        [null, null, null, false],
+        [
+          ['c'],
+          null,
+          2,
+          true,
+        ],
       );
     });
   });
@@ -517,7 +514,7 @@ void main() {
     testWidgets('a legend onClick replaces the default toggle', (
       tester,
     ) async {
-      final items = <ChartLegendItem>[];
+      final items = <LegendItem>[];
       final chart = acquireChartRoot(
         ChartConfigLowering(
           typedBar(
@@ -526,7 +523,13 @@ void main() {
         ).lower(),
       );
       await triggerMouseEvent(chart, 'click', _legendBox(chart, 1));
-      expect([items.single.text, items.single.datasetIndex], ['B', 1]);
+      expect(
+        [items.single.text, items.single.datasetIndex],
+        [
+          ['B'],
+          1,
+        ],
+      );
       expect(chart.isDatasetVisible(1), isTrue);
     });
 

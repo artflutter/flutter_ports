@@ -47,6 +47,7 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show DataUpdateShape, nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
     show nativePointChart, nativePointList;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -85,6 +86,7 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 
 /// controller.polarArea.js:38 `generateLabels(chart)` of
 /// `overrides.plugins.legend.labels` (Chart.js ADR 0028, section 6).
@@ -97,7 +99,8 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 ///
 /// `chart.data` is the data object of the user: its reads go by name. The
 /// legend options read typed ([readOption]).
-List<Object?> _generateLabels(types.Chart chart) {
+// DIVERGES(chartjs): adapt-native-legend-item, native legend entries.
+List<LegendItem> _generateLabels(types.Chart chart) {
   final data = chart.data;
   final labels = jsGet(data, 'labels');
   if (jsTruthy(_lengthOf(labels)) &&
@@ -112,7 +115,7 @@ List<Object?> _generateLabels(types.Chart chart) {
         _item(chart, label, i.toDouble(), pointStyle, color),
     ];
   }
-  return <Object?>[];
+  return <LegendItem>[];
 }
 
 /// `value.length` of a value of the data object of the user: the length of
@@ -125,12 +128,11 @@ Object? _lengthOf(Object? value) => switch (value) {
 
 /// The callback of `data.labels.map` (controller.polarArea.js:43-59).
 ///
-/// The keys keep the order of the upstream literal: the legend item stays a
-/// Map (the legend plugin reads Map items). A key of `style` that is absent
+/// The fields follow the upstream literal. A key of `style` that is absent
 /// gives `undefined`, as the JS property read does: the style is an
 /// [ElementOptions], and [readOption] gives its raw value. `index` is a
 /// `double` (Chart.js ADR 0045).
-Map<String, Object?> _item(
+LegendItem _item(
   types.Chart chart,
   Object? label,
   double i,
@@ -140,29 +142,29 @@ Map<String, Object?> _item(
   final meta = chart.getDatasetMeta(0);
   final style = meta.controller!.getStyle(i);
 
-  return <String, Object?>{
-    'text': label,
-    'fillStyle': readOption(style, OptionKey.backgroundColor),
-    'strokeStyle': readOption(style, OptionKey.borderColor),
-    'fontColor': color,
-    'lineWidth': readOption(style, OptionKey.borderWidth),
-    'pointStyle': pointStyle,
-    'hidden': !chart.getDataVisibility(i),
+  return legendItemFromOptions(
+    text: label,
+    fillStyle: readOption(style, OptionKey.backgroundColor),
+    strokeStyle: readOption(style, OptionKey.borderColor),
+    fontColor: color,
+    lineWidth: readOption(style, OptionKey.borderWidth),
+    pointStyle: pointStyle,
+    hidden: !chart.getDataVisibility(i),
 
     // Extra data used for toggling the correct item
-    'index': i,
-  };
+    index: i.toInt(),
+  );
 }
 
 /// controller.polarArea.js:65 `onClick(e, legendItem, legend)` of
 /// `overrides.plugins.legend` (Chart.js ADR 0028, section 6).
 ///
-/// `toggleDataVisibility(legendItem.index)` gives the raw item index to
-/// `types.Chart.toggleDataVisibility`, which writes the property key
-/// `ToString(index)` (core.controller.js:881-883), as upstream. The legend
-/// item is a Map of the legend plugin, or a user object: a read by name.
-void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
-  legend.chart.toggleDataVisibility(jsGet(legendItem, 'index'));
+/// A native item identifies a data entry with an integer. A descriptive
+/// item has no index and leaves visibility unchanged.
+void _onClick(Object? e, LegendItem legendItem, types.LegendElement legend) {
+  final index = legendItem.index;
+  if (index == null) return;
+  legend.chart.toggleDataVisibility(index);
   legend.chart.update();
 }
 

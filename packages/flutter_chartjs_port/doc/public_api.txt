@@ -73,6 +73,7 @@ JsObjectFace
 LabelItem
 LayoutPosition
 LegendElement
+LegendItem
 LineController
 LineElement
 LinePointStyle
@@ -123,6 +124,7 @@ SplinePoint
 StarPointStyle
 SteppedLine
 TRBL
+TRBLCorners
 TextMetrics
 Tick
 TickAlign
@@ -238,7 +240,6 @@ ChartInteraction
 ChartKind
 ChartLegend
 ChartLegendEventDetails
-ChartLegendItem
 ChartMeta
 ChartMetaClip
 ChartPaint
@@ -300,6 +301,7 @@ JsObjectFace
 LabelItem
 LayoutPosition
 LegendElement
+LegendItem
 LineController
 LineDataset
 LineElement
@@ -369,6 +371,7 @@ StarPointStyle
 StartAngleAnimation
 SteppedLine
 TRBL
+TRBLCorners
 TensionAnimation
 TextMetrics
 Tick

@@ -5,10 +5,9 @@
 /// - The details objects [ChartEventDetails], [ChartLegendEventDetails],
 ///   [ChartAnimationDetails] and [AxisTickInfo] hold the arguments of one
 ///   call. A new field is an addition that breaks no callback.
-/// - The views [ChartHit], [ChartContext], `ChartTooltipItem` and
-///   [ChartLegendItem] are extension types over the objects of the chart,
-///   with no copy. Their indexes are `int`: Chart.js gives a JS number,
-///   which the port holds as a `double`.
+/// - [ChartHit] and [ChartContext] are views over the chart objects.
+///   `ChartTooltipItem` is the shared core view. [LegendItem] is the shared
+///   native mutable object; legend event details preserve its identity.
 /// - [ChartScript] is the type of a scriptable option.
 ///
 /// A view has no public constructor: at run time, a view is the object of
@@ -23,10 +22,9 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableChartContext, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionScope;
 import 'package:flutter_chartjs_port/src/types/index.dart'
-    show ActiveElement, ChartEvent, LegendElement, Tick, TypedLegendItem;
+    show ActiveElement, ChartEvent, LegendElement, Tick;
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:meta/meta.dart' show immutable;
 
 export 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
@@ -78,7 +76,7 @@ final class ChartLegendEventDetails {
 
   /// The legend item under the event, or the item that the pointer left
   /// for `onLeave`.
-  final ChartLegendItem item;
+  final LegendItem item;
 
   /// The legend box.
   final LegendElement legend;
@@ -213,58 +211,6 @@ extension type ChartContext._(ContextObject _context) {
   /// `null` outside a data context.
   Object? get parsed => _defined(_dataContext?.parsed);
 }
-
-/// A legend item: the argument of the legend handlers
-/// (`LegendItem`, `index.d.ts:2326-2412`; `plugin.legend.js:675-701`).
-///
-/// A view of the item object of the legend: the typed legend item of the
-/// plugin ([TypedLegendItem], Chart.js ADR 0054 §12), or an item that a
-/// user `generateLabels` gives, read by name.
-extension type ChartLegendItem._(Object _item) {
-  /// The text of the item, or `null` for a text that is not a `String`.
-  String? get text => _string(
-    switch (_item) {
-      final TypedLegendItem item => item.text,
-      final item => _byName(item, 'text'),
-    },
-  );
-
-  /// The index of the dataset of the item, or `null` for an item of a data
-  /// item (pie, doughnut, polar area).
-  int? get datasetIndex => _int(
-    switch (_item) {
-      final TypedLegendItem item => item.datasetIndex,
-      final item => _byName(item, 'datasetIndex'),
-    },
-  );
-
-  /// The index of the data item of the item (pie, doughnut, polar area), or
-  /// `null` for an item of a dataset.
-  int? get index => _int(
-    switch (_item) {
-      final TypedLegendItem item => item.index,
-      final item => _byName(item, 'index'),
-    },
-  );
-
-  /// Whether the dataset or the data item of the item is hidden.
-  bool get hidden =>
-      switch (_item) {
-        final TypedLegendItem item => item.hidden,
-        final item => _byName(item, 'hidden'),
-      } ==
-      true;
-}
-
-/// The read by name `object[key]` of an object of user code in the place
-/// of a typed item, and of the dataset object of the app: the Map read, the
-/// face of a typed dataset scope of a typed config (Chart.js ADR 0054 §5),
-/// else Dart `null`.
-Object? _byName(Object object, String key) => switch (object) {
-  final Map<Object?, Object?> map => map[key],
-  final OptionScope scope => scope.jsRead(key),
-  _ => null,
-};
 
 /// [value] as an `int`, or `null` for a value that is not a finite number.
 int? _int(Object? value) =>

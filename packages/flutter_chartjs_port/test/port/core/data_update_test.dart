@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/types/data_item.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/legend_item.dart';
+
 final class _ObservedList extends ListBase<Object?> {
   _ObservedList(this.values);
   final List<Object?> values;
@@ -1198,10 +1200,10 @@ void main() {
           b.update('none');
           expect(deep(a), deep(b));
           Object legend(Chart c) => [
-            for (final item in c.legend!.legendItems ?? const <Object?>[])
-              plain(item),
+            for (final item in c.legend!.legendItems ?? const <LegendItem>[])
+              item,
           ];
-          expect(legend(a), legend(b));
+          expect(legend(a), legendObservationMatcher(legend(b)));
         });
 
         test('two datasets, one of them with a plain style', () {

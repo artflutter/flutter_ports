@@ -54,6 +54,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 
 export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show ChartArea, Point, TRBL;
@@ -1342,7 +1343,7 @@ abstract interface class LegendElement implements TRBL {
   /// index.d.ts:2417 `legendItems?: LegendItem[]`. Dart `null` stands for
   /// JS `undefined`, the value before the first `buildLabels`
   /// (plugin.legend.js:65).
-  List<Object?>? get legendItems;
+  List<LegendItem>? get legendItems;
 
   /// index.d.ts:2418 `options`, the resolver of the legend options.
   Object get options;
@@ -1375,28 +1376,6 @@ abstract interface class TypedLegendHitBox {
 
   /// `height`.
   double get height;
-}
-
-/// The typed legend item of the legend plugin, a port-only interface
-/// (Chart.js ADR 0054 §12): an item of the built-in `generateLabels`
-/// (plugin.legend.js:675-701), `LegendItem` of index.d.ts:2326. The class
-/// `LegendItem` of `plugin.legend.dart` implements it. Thus the view
-/// `ChartLegendItem` of the typed API reads its keys with no import of a
-/// plugin (Chart.js ADR 0052 §8). Each getter gives the JS value of the key,
-/// the `undefined` sentinel for an absent key. An item that a user
-/// `generateLabels` gives is a Map: the readers read it by name.
-abstract interface class TypedLegendItem {
-  /// index.d.ts:2330 `text`.
-  Object? get text;
-
-  /// index.d.ts:2341 `datasetIndex`.
-  Object? get datasetIndex;
-
-  /// index.d.ts:2346 `index`.
-  Object? get index;
-
-  /// index.d.ts:2362 `hidden`.
-  Object? get hidden;
 }
 
 /// The typed tooltip item of the tooltip plugin, a port-only interface

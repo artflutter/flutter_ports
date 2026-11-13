@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';
@@ -134,7 +135,7 @@ Map<String, Object?> _functions(_Logs logs) => {
 /// `<name>:<e.type>:<item.text>`.
 String _entry(String name, Object? e, Object? item) =>
     '$name:${(e! as types.ChartEvent).type}:'
-    '${jsToString(jsGet(item, 'text'))}';
+    '${jsToString((item! as LegendItem).text)}';
 
 /// `[datasetIndex, index]` of each active element of [elements].
 List<Object?> _activeItems(List<types.ActiveElement> elements) => [

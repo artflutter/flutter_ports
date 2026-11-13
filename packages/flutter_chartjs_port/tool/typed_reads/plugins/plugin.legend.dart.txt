@@ -1,9 +1,6 @@
-# L4 allowlist (Chart.js ADR 0054 §5, §12): the reads by name of objects of
-# user code. jsGet 10: the length of the text lines of an item (3), the
-# config argument of new Legend(config) through the class value (3), the
-# chart of a context of another class (_chartColor), chart.data.datasets and
-# the label of a dataset (the data of the user), and the item of a
-# generateLabels of user code or of a controller (_readItem). jsCall 2: the
-# filter and sort callbacks of the user, with JS arity.
-jsGet 10
+# Native legend items read fields directly. Remaining user-object reads:
+# jsGet: the class-value config (3), a foreign context chart (1),
+# chart.data.datasets (1), and the application dataset label (1).
+# jsCall: filter and sort callbacks, which retain their current JS arity.
+jsGet 6
 jsCall 2

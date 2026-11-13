@@ -1,5 +1,11 @@
 ## 0.1.0
 
+- Migrate legend entries to the public extensible `LegendItem` class with native
+  mutable fields and overridable `copyWith` and `merge`. Custom generators return
+  these objects instead of Maps; legend events expose the same object instead of
+  `ChartLegendItem`. Text is a list of lines, paints use `ChartPaint`, and indexes
+  are nullable integers. A missing index has no default visibility action.
+
 - Add `shadow: ChartShadow(...)` to each typed dataset. `ChartView` draws the
   shadow under the lines, points, bars and arcs of the dataset, but not under
   the area fill. A raw dataset sets `shadowColor`, `shadowBlur`,
