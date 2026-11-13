@@ -59,6 +59,12 @@ const Set<String> _addOnHelpers = {'_isPointInArea'};
 /// The runtime helpers of `src/helpers/index.ts` that `helpers.dart` does
 /// not export, with the reason.
 const Map<String, String> _notExportedHelpers = {
+  'fontString':
+      'no CSS font text: the canvas takes the TextStyle '
+      '(row adapt-text-style-fonts)',
+  'noop':
+      'no empty default callback: a tooltip callback that is null takes the '
+      'built-in default (row adapt-tooltip-callback-objects)',
   'toDimension':
       'the method pixelsOf of RadiusLength and amountOf of GraceLength '
       '(row adapt-length-objects)',

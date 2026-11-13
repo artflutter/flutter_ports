@@ -60,22 +60,20 @@ Object? _get(Map<String, Object?> object, String key) =>
 void main() {
   setUpSpecs();
   group('Chart.helpers.core', () {
+    // helpers.core.ts:11 `noop` is gone: a tooltip callback that is null
+    // takes the built-in default (differences.md row
+    // `adapt-tooltip-callback-objects`).
     group('noop', () {
-      test('should be callable', () {
-        expect(helpers.noop, isNotNull);
-        expect(helpers.isFunction(helpers.noop), isTrue);
-        // typeof helpers.noop.call: Dart calls a function value through
-        // jsCall.
-        expect(jsIsFunction(helpers.noop), isTrue);
-      });
-      test('should returns "undefined"', () {
-        // helpers.noop(42): ported code calls a function value with jsCall.
-        expect(jsCall(helpers.noop, [42]), same(undefined));
-        expect(
-          jsCall(helpers.noop, [42], thisArg: <String, Object?>{}),
-          same(undefined),
-        );
-      });
+      test(
+        'should be callable',
+        () {},
+        skip: 'diverges: adapt-tooltip-callback-objects',
+      );
+      test(
+        'should returns "undefined"',
+        () {},
+        skip: 'diverges: adapt-tooltip-callback-objects',
+      );
     });
 
     group('isArray', () {
@@ -239,7 +237,8 @@ void main() {
         expect(spy.calls[3].object, same(scope));
       });
       test('should return the value returned by fn', () {
-        expect(helpers.callback(helpers.noop, [41]), same(undefined));
+        // helpers.noop: an empty function, which returns undefined.
+        expect(helpers.callback(() => undefined, [41]), same(undefined));
         expect(helpers.callback((double i) => i + 1, [41.0]), 42);
       });
     });

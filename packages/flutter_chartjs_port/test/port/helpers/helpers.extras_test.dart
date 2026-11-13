@@ -155,31 +155,6 @@ const List<double> _xs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 }) => (min: min, max: max, minDefined: minDefined, maxDefined: maxDefined);
 
 void main() {
-  group('fontString', () {
-    test('converts the size with Number::toString', () {
-      expect(fontString(12, 'italic', 'Arial'), 'italic 12px Arial');
-      expect(
-        fontString(12.5, 'normal', 'Helvetica Neue'),
-        'normal 12.5px Helvetica Neue',
-      );
-      expect(
-        fontString(0.1 + 0.2, 'bold', 'serif'),
-        'bold 0.30000000000000004px serif',
-      );
-      expect(fontString(1e21, '', 'x'), ' 1e+21px x');
-      expect(fontString(1e-7, 'normal', 'x'), 'normal 1e-7px x');
-      // A double literal keeps the sign of the zero.
-      // ignore: prefer_int_literals
-      expect(fontString(-0.0, 'normal', 'x'), 'normal 0px x');
-      expect(fontString(double.nan, 'normal', 'x'), 'normal NaNpx x');
-      expect(fontString(double.infinity, 'normal', 'x'), 'normal Infinitypx x');
-      expect(
-        fontString(123456789012, 'normal', 'x'),
-        'normal 123456789012px x',
-      );
-    });
-  });
-
   group('_toLeftRightCenter', () {
     test('converts start and end, and others to center', () {
       // adapt-chart-align-enum: the align is a ChartAlign; Dart null is a

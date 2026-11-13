@@ -65,13 +65,6 @@ List<String> _printed(void Function() body) {
 }
 
 void main() {
-  group('noop', () {
-    test('returns undefined for any arguments', () {
-      expect(helpers.noop(), same(undefined));
-      expect(jsCall(helpers.noop, [1, 2, 3]), same(undefined));
-    });
-  });
-
   group('isObject', () {
     test('is false for a class instance, unlike JavaScript', () {
       // Port difference (Chart.js ADR 0043): in JavaScript an instance of a
