@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBLCorners;
+import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     show TooltipCornerRadii;
@@ -121,6 +122,10 @@ Matcher _cornersEqual(TRBLCorners? expected) => expected == null
 /// Matches native items inside an ordered test log without serializing them.
 Object? legendObservationMatcher(Object? expected) => switch (expected) {
   final LegendItem item => legendItemEquals(item),
+  final LegendHitBox box => predicate<LegendHitBox>(
+    (actual) => actual.equalsTo(box),
+    'hit box with equal geometry and membership',
+  ),
   final List<Object?> values => [
     for (final value in values) legendObservationMatcher(value),
   ],

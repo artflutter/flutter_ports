@@ -54,6 +54,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 
 export 'package:flutter_chartjs_port/src/types/geometric.dart'
@@ -1349,33 +1350,12 @@ abstract interface class LegendElement implements TRBL {
   Object get options;
 
   /// plugin.legend.js:52 `legendHitBoxes`: the hit box of each legend item,
-  /// a plain object with the keys `left`, `top`, `width` and `height`.
+  /// a native object with `left`, `top`, `width` and `height` geometry.
   /// `index.d.ts` does not declare it. The keyboard of `ChartView` reads it,
   /// so that no file of `lib/src/widgets/` imports a plugin (Chart.js ADR
   /// 0051, section 2). The hit boxes of the legend plugin are
-  /// [TypedLegendHitBox] objects.
-  List<TypedLegendHitBox> get legendHitBoxes;
-}
-
-/// The typed hit box of a legend item, a port-only interface (Chart.js ADR
-/// 0054 §12): `{left, top, row, width, height}` or `{left, top, col, width,
-/// height}` (plugin.legend.js:183, :217). The class `LegendHitBox` of
-/// `plugin.legend.dart` implements it. Thus the keyboard of `ChartView`
-/// reads a hit box with no import of a plugin (Chart.js ADR 0051 §2). Each
-/// getter gives the number of the key: NaN when absent, the `ToNumber` of a
-/// value that is not a number.
-abstract interface class TypedLegendHitBox {
-  /// `left`.
-  double get left;
-
-  /// `top`.
-  double get top;
-
-  /// `width`.
-  double get width;
-
-  /// `height`.
-  double get height;
+  /// [LegendHitBox] objects.
+  List<LegendHitBox> get legendHitBoxes;
 }
 
 /// The typed tooltip item of the tooltip plugin, a port-only interface

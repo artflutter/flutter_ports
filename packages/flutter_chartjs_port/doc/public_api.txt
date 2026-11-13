@@ -73,6 +73,8 @@ JsObjectFace
 LabelItem
 LayoutPosition
 LegendElement
+LegendHitBox
+LegendHitBoxX
 LegendItem
 LineController
 LineElement
@@ -301,6 +303,8 @@ JsObjectFace
 LabelItem
 LayoutPosition
 LegendElement
+LegendHitBox
+LegendHitBoxX
 LegendItem
 LineController
 LineDataset

@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.legend.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-legend-hit-box, native geometry reads.
 // DIVERGES(chartjs): adapt-native-legend-item, native item access.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
@@ -38,14 +39,14 @@ import '../support/jasmine.dart';
 // 0022, section 2. `chart.legend` is the field of `Chart`: Dart `null`
 // stands for JS `undefined`. The spec reads `legendItems` through
 // `types.LegendElement` and `legendHitBoxes` through a cast to `Legend`
-// (Chart.js ADR 0038, section 6). A hit box is a Map with the upstream
-// keys. A write into `chart.options` is the write through `operator []=`
+// (Chart.js ADR 0038, section 6). Hit boxes expose native typed fields. A
+// write into `chart.options` is the write through `operator []=`
 // of the option resolver, the `set` trap of upstream.
 // `jasmine.triggerMouseEvent` is triggerMouseEvent of chartjs_test_utils
 // (Chart.js ADR 0022, section 6).
 
 /// `chart.legend.legendHitBoxes`.
-List<JsObjectFace> _hitBoxes(Chart chart) =>
+List<LegendHitBox> _hitBoxes(Chart chart) =>
     (chart.legend! as Legend).legendHitBoxes;
 
 /// `chart.options.plugins`, the option resolver of the plugins.
@@ -62,9 +63,9 @@ JsObjectFace _legendDefaults() =>
 
 /// The point `{x, y}` at the center of the hit box [hb] (:1094-1097,
 /// :1136-1139, :1176-1179).
-AnyObject _center(JsObjectFace hb) => <String, Object?>{
-  'x': (hb['left']! as double) + ((hb['width']! as double) / 2),
-  'y': (hb['top']! as double) + ((hb['height']! as double) / 2),
+AnyObject _center(LegendHitBox hb) => <String, Object?>{
+  'x': hb.left + (hb.width / 2),
+  'y': hb.top + (hb.height / 2),
 };
 
 /// The three datasets of `should update bar chart correctly` (:39-57),
@@ -478,7 +479,7 @@ void main() {
       // Check whether any legend items reach outside the established bounds
       for (final item in _hitBoxes(chart)) {
         expect(
-          (item['left']! as double) + (item['width']! as double),
+          item.left + item.width,
           lessThanOrEqualTo(chart.width),
         );
       }
@@ -533,7 +534,7 @@ void main() {
       // Check whether any legend items reach outside the established bounds
       for (final item in _hitBoxes(chart)) {
         expect(
-          (item['left']! as double) + (item['width']! as double),
+          item.left + item.width,
           lessThanOrEqualTo(chart.width),
         );
       }
@@ -563,7 +564,7 @@ void main() {
         },
       );
       final hitBox = _hitBoxes(chart)[0];
-      expect(hitBox['height'], 40);
+      expect(hitBox.height, 40);
     });
 
     testWidgets('should pick up the first item when the property is an array', (

@@ -36,6 +36,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/legend_item.dart';
 import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
@@ -879,14 +880,20 @@ void main() {
       // 10, the lefts 129.65 and 205.67).
       final number = layout(<String, Object?>{'padding': 10});
       expect(number[0], [0, 0, 400, 32, 400, 32]);
-      expect(layout(<String, Object?>{'padding': '10'}), number);
+      expect(
+        layout(<String, Object?>{'padding': '10'}),
+        legendObservationMatcher(number),
+      );
     });
 
     testWidgets('a string boxWidth lays out as its number', (tester) async {
       // Upstream (stringBoxWidth): the hit box widths are the strings
       // '20620.021484375' and '20618.673828125'. The port adds 20.
       final number = layout(<String, Object?>{'boxWidth': 20});
-      expect(layout(<String, Object?>{'boxWidth': '20'}), number);
+      expect(
+        layout(<String, Object?>{'boxWidth': '20'}),
+        legendObservationMatcher(number),
+      );
     });
   });
 
@@ -949,8 +956,8 @@ void main() {
       final log = <String>[];
       final box = leftChart(log).legend! as Legend;
       final hb = box.legendHitBoxes[1];
-      final left = hb['left']! as double;
-      final top = hb['top']! as double;
+      final left = hb.left;
+      final top = hb.top;
       box
         ..handleEvent(_Event('mousemove', left + 1, top + 1))
         ..handleEvent(_Event('mouseout', left + 2, top + 2))
@@ -974,8 +981,8 @@ void main() {
       final log = <String>[];
       final box = leftChart(log).legend! as Legend;
       expect([box.left, box.top], [0, 0]);
-      expect(box.legendHitBoxes.first['left'], 0);
-      expect(box.legendHitBoxes.first['top'], 0);
+      expect(box.legendHitBoxes.first.left, 0);
+      expect(box.legendHitBoxes.first.top, 0);
       box
         ..handleEvent(_Event('click', null, null))
         ..handleEvent(_Event('click', double.nan, double.nan));
@@ -990,8 +997,8 @@ void main() {
       final log = <String>[];
       final box = leftChart(log).legend! as Legend;
       final hb = box.legendHitBoxes[1];
-      final right = (hb['left']! as double) + (hb['width']! as double);
-      final top = hb['top']! as double;
+      final right = hb.left + hb.width;
+      final top = hb.top;
       box
         ..handleEvent(_Event('click', right + 5e-7, top + 1))
         ..handleEvent(_Event('click', right + 2e-6, top + 1));
@@ -1016,8 +1023,8 @@ void main() {
         }),
       );
       final hb = (chart.legend! as Legend).legendHitBoxes.first;
-      final x = (hb['left']! as double) + (hb['width']! as double) / 2;
-      final y = (hb['top']! as double) + (hb['height']! as double) / 2;
+      final x = hb.left + hb.width / 2;
+      final y = hb.top + hb.height / 2;
       final canvas = chart.canvas!;
       dispatchCanvasEvent(
         canvas,

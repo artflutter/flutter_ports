@@ -49,10 +49,12 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:test/test.dart';
 
+import 'legend_hit_box.dart';
 import 'legend_item.dart';
 
 // ---------------------------------------------------------------------------
@@ -155,6 +157,11 @@ final class _JasmineEquals extends Matcher {
     List<Object?> bStack,
     List<String> path,
   ) {
+    if (a is LegendHitBox && b is Map<String, Object?>) {
+      return a.equalsTo(
+        legendHitBoxFromReference(b),
+      );
+    }
     if (a is LegendItem && b is Map<String, Object?>) {
       return legendItemEquals(legendItemFromReference(b)).matches(a, {});
     }

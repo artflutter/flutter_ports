@@ -379,6 +379,9 @@ class _VotesPageState extends State<VotesPage> {
   `LegendItem` used by rendering, with `List<String>` text, native `ChartPaint` styles and nullable
   integer indexes. Custom label generators return `LegendItem` objects; plugins can extend or
   implement the class. Its `copyWith` and `merge` methods are overridable.
+  `legend.legendHitBoxes` exposes native `LegendHitBox` objects with mutable geometry, integer
+  row/column membership, and overridable `contains`, `center`, `copyWith` and `merge`.
+  The `equalsTo` extension compares hit-box fields explicitly; `==` retains identity equality.
 - `ChartTooltip.callbacks` takes a `TooltipCallbacks` object, also in a raw config. Its text
   hooks return a list of lines: `null` requests the built-in default and `[]` emits no text.
   Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`

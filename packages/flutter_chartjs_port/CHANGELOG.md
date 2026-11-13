@@ -1,5 +1,10 @@
 ## 0.1.0
 
+- Migrate legend hit boxes to the public extensible `LegendHitBox` class.
+  Layout, pointer and keyboard handling share native mutable geometry and
+  integer row/column membership. Hit testing, centers, copying and merging
+  are overridable; record slots and by-name hit-box access are removed.
+
 - Migrate legend entries to the public extensible `LegendItem` class with native
   mutable fields and overridable `copyWith` and `merge`. Custom generators return
   these objects instead of Maps; legend events expose the same object instead of

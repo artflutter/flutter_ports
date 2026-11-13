@@ -663,8 +663,8 @@ void main() {
         final legend = chart.legend! as Legend;
         final box = legend.legendHitBoxes.first;
         final center = Offset(
-          (box['left']! as double) + (box['width']! as double) / 2,
-          (box['top']! as double) + (box['height']! as double) / 2,
+          box.left + box.width / 2,
+          box.top + box.height / 2,
         );
         expect(_legendItemVisible(chart, stem, 0), isTrue, reason: id);
         await tester.tapAt(origin + center);

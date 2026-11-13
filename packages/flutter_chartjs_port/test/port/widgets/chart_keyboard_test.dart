@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -73,7 +75,10 @@ Map<String, Object?> _config(
   List<Object?>? plugins,
 }) {
   void entry(String name, Object? e, Object? item) {
-    log?.add('$name ${(e! as types.ChartEvent).type} ${jsGet(item, 'text')}');
+    log?.add(
+      '$name ${(e! as types.ChartEvent).type} '
+      '${(item! as LegendItem).text.join('\n')}',
+    );
   }
 
   return <String, Object?>{
@@ -282,6 +287,47 @@ void _highlight(FocusHighlightStrategy strategy) {
 }
 
 void main() {
+  testWidgets('keyboard uses a plugin hit-box center without copying the box', (
+    tester,
+  ) async {
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+    late Chart chart;
+    types.ChartEvent? hovered;
+    await tester.pumpWidget(
+      _top(
+        _view(
+          _config(
+            'bar',
+            legend: {
+              'onHover':
+                  (
+                    types.ChartEvent event,
+                    LegendItem item,
+                    types.LegendElement legend,
+                  ) {
+                    hovered = event;
+                  },
+            },
+          ),
+          focusNode: focus,
+          onChartCreated: (value) => chart = value,
+        ),
+      ),
+    );
+    final boxes = chart.legend!.legendHitBoxes;
+    final box = _KeyboardHitBox(boxes.first);
+    boxes[0] = box;
+    focus.requestFocus();
+    await tester.pump();
+    await _key(tester, LogicalKeyboardKey.arrowDown);
+    expect(hovered, isNotNull);
+    expect(hovered!.x, box.left.ceilToDouble() + 1);
+    expect(hovered!.y, box.top.ceilToDouble() + 1);
+    expect(box.centerReads, greaterThan(0));
+    expect(chart.legend!.legendHitBoxes.first, same(box));
+  });
+
   group('the keys give the state of a mouse at the target', () {
     for (final type in ['bar', 'line', 'doughnut', 'radar']) {
       testWidgets(type, (tester) async {
@@ -1185,4 +1231,22 @@ void main() {
       expect(CanvasDocument.instance.hasListener('mouseup'), isFalse);
     });
   });
+}
+
+class _KeyboardHitBox extends LegendHitBox {
+  _KeyboardHitBox(LegendHitBox source)
+    : super.row(
+        left: source.left,
+        top: source.top,
+        width: source.width,
+        height: source.height,
+        row: source.row!,
+      );
+  int centerReads = 0;
+
+  @override
+  Offset get center {
+    centerReads++;
+    return Offset(left.ceilToDouble() + 1, top.ceilToDouble() + 1);
+  }
 }

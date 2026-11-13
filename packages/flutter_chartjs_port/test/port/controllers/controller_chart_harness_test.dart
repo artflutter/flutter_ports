@@ -355,13 +355,12 @@ void main() {
     testWidgets('click, setTooltip and setOption', (tester) async {
       final chart = acquireChart(_lineConfig());
       final box = (chart.legend! as Legend).legendHitBoxes[1];
-      double at(String key) => (box[key]! as num).toDouble();
       expect(chart.isDatasetVisible(1), isTrue);
       // A click on legend item 1 calls the default onClick of the legend.
       await runStep(tester, chart, [
         'click',
-        (at('left') + at('width') / 2).roundToDouble(),
-        (at('top') + at('height') / 2).roundToDouble(),
+        box.center.dx.roundToDouble(),
+        box.center.dy.roundToDouble(),
       ]);
       expect(chart.isDatasetVisible(1), isFalse);
       expect(chart.isDatasetVisible(0), isTrue);

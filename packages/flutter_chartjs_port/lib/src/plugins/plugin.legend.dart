@@ -25,8 +25,8 @@
 /// `position` and `weight`, and `false` for `fullSize` (Chart.js ADR 0038,
 /// section 7).
 ///
-/// Legend items use the native extensible [LegendItem] contract. Hit boxes
-/// and column sizes retain their typed-record faces (Chart.js ADR 0054).
+/// Legend entries and hit boxes use the native extensible [LegendItem] and
+/// [LegendHitBox] contracts. Column sizes retain their typed-record face.
 ///
 /// A hidden legend of a built-in slice chart leaves its items pending, and
 /// the first read of `legendItems` that can run the build runs it (Chart.js
@@ -117,11 +117,13 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show EventHookArgs, Plugin, UpdateHookArgs;
 import 'package:meta/meta.dart';
 
+export 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 export 'package:flutter_chartjs_port/src/types/legend_item.dart';
 
 /// `Math.SQRT2`.
@@ -229,7 +231,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:52 `legendHitBoxes`: contains hit boxes for each
   /// dataset (in dataset order).
   ///
-  /// Each hit box is a [LegendHitBox] with the upstream keys: `left`, `top`,
+  /// Each hit box is a native [LegendHitBox] with the geometry: `left`, `top`,
   /// `row`, `width` and `height` for a horizontal legend (:183), `left`,
   /// `top`, `col`, `width` and `height` for a vertical legend (:217).
   /// `index.d.ts` does not declare it. It implements the port-only member
@@ -719,7 +721,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
       ..textBaseline = CanvasTextBaseline.middle;
 
-    var row = -1.0;
+    var row = -1;
     var top = -lineHeight;
     final legendItems = this.legendItems!;
     for (var i = 0; i < legendItems.length; i++) {
@@ -776,7 +778,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     var currentColHeight = 0.0;
 
     var left = 0.0;
-    var col = 0.0;
+    var col = 0;
 
     final legendItems = this.legendItems!;
     for (var i = 0; i < legendItems.length; i++) {
@@ -828,6 +830,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   }
 
   /// plugin.legend.js:230 `adjustHitBoxes()`.
+  // DIVERGES(chartjs): adapt-native-legend-hit-box, native mutable geometry.
   void adjustHitBoxes() {
     final options = LegendOptions(this.options);
     if (!options.display) {
@@ -840,14 +843,14 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final padding = _labelPadding(options.labels);
     final rtlHelper = getRtlAdapter(options.rtl, left, width);
     if (isHorizontal()) {
-      var row = 0.0;
+      var row = 0;
       var left = alignStartEnd(
         align,
         this.left + padding,
         right - _lineWidthAt(row),
       );
       for (final hitbox in hitboxes) {
-        final hitboxRow = hitbox.row;
+        final hitboxRow = hitbox.row!;
         if (row != hitboxRow) {
           row = hitboxRow;
           left = alignStartEnd(
@@ -865,14 +868,14 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         left += hitboxWidth + padding;
       }
     } else {
-      var col = 0.0;
+      var col = 0;
       var top = alignStartEnd(
         align,
         this.top + titleHeight + padding,
         bottom - _columnHeightAt(col),
       );
       for (final hitbox in hitboxes) {
-        final hitboxCol = hitbox.col;
+        final hitboxCol = hitbox.col!;
         if (hitboxCol != col) {
           col = hitboxCol;
           top = alignStartEnd(
@@ -894,12 +897,12 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
   /// `this.lineWidths[row]` as a number: [undefined] gives NaN. Without
   /// line widths, the read throws a [TypeError], as upstream.
-  double _lineWidthAt(double row) =>
-      jsToNumber(jsGetIndex(lineWidths ?? undefined, row));
+  double _lineWidthAt(int row) =>
+      jsToNumber(jsGetIndex(lineWidths ?? undefined, row.toDouble()));
 
   /// `this.columnSizes[col].height` as a number. An absent column throws the
   /// [TypeError] of the read of `height` of `undefined`, as upstream.
-  double _columnHeightAt(double col) => _columnAt(col).height;
+  double _columnHeightAt(int col) => _columnAt(col.toDouble()).height;
 
   /// `this.columnSizes[col]`. Without column sizes, the read throws a
   /// [TypeError], as upstream. An absent column (`undefined`) throws the
@@ -1287,11 +1290,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       final lh = legendHitBoxes;
       for (var i = 0; i < lh.length; ++i) {
         final hitBox = lh[i];
-        final hitLeft = hitBox.left;
-        final hitTop = hitBox.top;
-
-        if (isBetween(px, hitLeft, hitLeft + hitBox.width) &&
-            isBetween(py, hitTop, hitTop + hitBox.height)) {
+        if (hitBox.contains(px, py)) {
           // Touching an element
           final items = legendItems;
           return items != null && i < items.length ? items[i] : null;
@@ -1964,192 +1963,6 @@ bool _scriptableDescriptor(String name) => !name.startsWith('on');
 /// plugin.legend.js:717 the `_scriptable` descriptor of `labels`.
 bool _labelsScriptableDescriptor(String name) =>
     !const ['generateLabels', 'filter', 'sort'].contains(name);
-
-/// A hit box of a legend item (plugin.legend.js:183 and :217): `{left,
-/// top, row, width, height}` of a horizontal legend and `{left, top, col,
-/// width, height}` of a vertical legend, in this key order. `index.d.ts`
-/// does not declare it.
-///
-/// The fields are numbers. A write by name of another value keeps the raw
-/// value for the face and its `ToNumber` in the field, the number that each
-/// arithmetic read of upstream gives (Chart.js ADR 0054 §6).
-final class LegendHitBox extends TypedRecord
-    implements types.TypedLegendHitBox {
-  /// The hit box `{left, top, row, width, height}` of a horizontal legend
-  /// (:183).
-  LegendHitBox.row({
-    required double left,
-    required double top,
-    required double row,
-    required double width,
-    required double height,
-  }) {
-    this
-      ..left = left
-      ..top = top
-      ..row = row
-      ..width = width
-      ..height = height;
-  }
-
-  /// The hit box `{left, top, col, width, height}` of a vertical legend
-  /// (:217).
-  LegendHitBox.col({
-    required double left,
-    required double top,
-    required double col,
-    required double width,
-    required double height,
-  }) {
-    this
-      ..left = left
-      ..top = top
-      ..col = col
-      ..width = width
-      ..height = height;
-  }
-
-  static const List<String> _fieldNames = [
-    'left',
-    'top',
-    'row',
-    'col',
-    'width',
-    'height',
-  ];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'left' => 0,
-    'top' => 1,
-    'row' => 2,
-    'col' => 3,
-    'width' => 4,
-    'height' => 5,
-    _ => -1,
-  };
-
-  double _left = double.nan;
-
-  double _top = double.nan;
-
-  double _row = double.nan;
-
-  double _col = double.nan;
-
-  double _width = double.nan;
-
-  double _height = double.nan;
-
-  /// `left`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  @override
-  double get left => _left;
-
-  set left(double value) {
-    _left = value;
-    touchSlot(0);
-  }
-
-  /// `top`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  @override
-  double get top => _top;
-
-  set top(double value) {
-    _top = value;
-    touchSlot(1);
-  }
-
-  /// `row`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  double get row => _row;
-
-  set row(double value) {
-    _row = value;
-    touchSlot(2);
-  }
-
-  /// `col`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  double get col => _col;
-
-  set col(double value) {
-    _col = value;
-    touchSlot(3);
-  }
-
-  /// `width`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  @override
-  double get width => _width;
-
-  set width(double value) {
-    _width = value;
-    touchSlot(4);
-  }
-
-  /// `height`: NaN when absent, the `ToNumber` of a value that is not a
-  /// number.
-  @override
-  double get height => _height;
-
-  set height(double value) {
-    _height = value;
-    touchSlot(5);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _left,
-    1 => _top,
-    2 => _row,
-    3 => _col,
-    4 => _width,
-    _ => _height,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    final number = value is double ? value : jsToNumber(value);
-    switch (slot) {
-      case 0:
-        _left = number;
-      case 1:
-        _top = number;
-      case 2:
-        _row = number;
-      case 3:
-        _col = number;
-      case 4:
-        _width = number;
-      default:
-        _height = number;
-    }
-    return value is double;
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _left = double.nan;
-      case 1:
-        _top = double.nan;
-      case 2:
-        _row = double.nan;
-      case 3:
-        _col = double.nan;
-      case 4:
-        _width = double.nan;
-      default:
-        _height = double.nan;
-    }
-  }
-}
 
 /// The size `{width, height}` of a column of a vertical legend
 /// (plugin.legend.js:209 and :224). The fields are numbers, as in
