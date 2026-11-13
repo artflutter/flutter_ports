@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
@@ -24,6 +25,7 @@ import '../../support/easing_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/scale_border.dart';
 
 /// A [Defaults] that records each call with its arguments, as
 /// `[method, ...arguments]`. It changes nothing.
@@ -81,6 +83,8 @@ String probeJson(Object? value) => switch (value) {
   RadiusLength() || GraceLength() => lengthJson,
   ScaleAxis() => axisJson,
   InteractionMode() => modeJson,
+  // The upstream object of a scale border (row adapt-native-scale-border).
+  ScaleBorder() => probeJson(upstreamBorderOf(value, routeColor: false)),
   final List<Object?> list => '[${list.map(probeJson).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((key) => _entry(map, key)).join(',')}}',

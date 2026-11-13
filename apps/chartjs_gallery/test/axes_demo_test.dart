@@ -559,7 +559,7 @@ void main() {
     await _tap(tester, 'axes.grid.offset');
     expect(jsGet(x.options['grid'], 'offset'), true);
     await _tap(tester, 'axes.border.display');
-    expect(jsGet(x.options['border'], 'display'), false);
+    expect((x.options['border']! as AxisBorder).display, isFalse);
 
     // A title takes space from the chart area.
     await _tap(tester, 'axes.title.display');

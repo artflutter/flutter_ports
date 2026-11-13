@@ -863,6 +863,21 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       a font object stops a debug build in `toFont`. The generators write a font object of a
       config as a `ChartTextStyle` literal and a font text of the canvas as a record
       (`tool/reference/font_record.mjs`, `test/support/font_record.dart`).
+    - The scale option `border` holds one `ScaleBorder` of the pure
+      `lib/src/types/axis_border.dart` (Chart.js ADR 0141, row `adapt-native-scale-border`),
+      also in a raw config: an `AxisBorder` (`display`, `color`, `width`, `dash`, `dashOffset`,
+      `z`) for a cartesian scale and a `RadialAxisBorder` (`dash`, `dashOffset`) for the radial
+      linear scale. The resolver merges the borders of the scopes with `ScaleBorder.merge`, as it
+      merges the fonts (the kind 4 of `nativeMergeKind` and `mergeNativeOptionValues` of
+      `helpers.core.dart`), and so do a route, `helpers.merge` and `mergeIf`:
+      a border of the same class merges field by field, another class replaces. The radial
+      defaults hold their own `RadialAxisBorder`, so the `AxisBorder` of `defaults.scale` never
+      reaches a radial scale. The route `scale.border.color` is gone: a cartesian scale reads
+      `defaults.borderColor` at its draw for an absent color. A function of the context gives the
+      whole border, and a scale calls it with each tick context. A Map stops a debug build in
+      `CoreScaleOptions.border`. The typed API has `border` on the six axes. In the tests, the
+      generators write the classes in the input configs, and an observed border compares in the
+      upstream form (`upstreamBorderOf`, `withPortBorders` of `test/support/scale_border.dart`).
     - The `align` of the legend, the title, the subtitle and an axis title, and the `position` of
       the legend title, hold the enum `ChartAlign` (`start`, `center`, `end`) of the pure
       `lib/src/types/align.dart` (row `adapt-chart-align-enum`), also in a raw config. The
@@ -1218,7 +1233,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     use `ChartValue<ChartPaint>?` (ADR 0128); lowering writes the corresponding
     `Opt` cell directly. Scalar element/text/scale fields use `ChartPaint`; raw
     configs keep value/list/function forms with paint leaves. `axes.dart` has the 6 axes,
-    `AxisTicks`, `AxisGrid` and `AxisTitle`.
+    `AxisTicks`, `AxisGrid` and `AxisTitle`; an axis takes its `border` as an `AxisBorder` (a
+    `RadialAxisBorder` for `RadialLinearAxis`) of `lib/chartjs.dart` (Chart.js ADR 0141).
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element
     styles. `callbacks.dart` has `ChartScript` and the views with `int` indexes;
@@ -1327,13 +1343,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (356 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (367 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
     `cubicInterpolationMode`, the 25 with `pointStyle`, the 142 with a `fill` (Chart.js ADR 0140;
-    the other 18 are moment skips), the 8 with a length, the 35 with an axis letter and the 1 with
-    a constant `segment` style) also has a hand port, of `<path>.js` or
+    the other 18 are moment skips), the 19 with a scale `border` (Chart.js ADR 0141), the 8 with
+    a length, the 35 with an axis letter and the 1 with a constant `segment` style) also has a
+    hand port, of `<path>.js` or
     `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.
@@ -1356,7 +1373,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0140. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0142. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1470,6 +1487,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0140 (the option `fill` holds a `FillTarget`) is accepted (2026-11-13): its code
       passes the tests. It supersedes the `ChartFill` parts of Chart.js ADR 0052 §1 and the type of
       `FillerSource.fill` and the `source.fill != false` test of Chart.js ADR 0040 §6.
+      Chart.js ADR 0141 (the scale option `border` holds a `ScaleBorder`) is accepted (2026-11-13):
+      its code passes the tests. It supersedes the scope kind `BorderOptions` and its facade of
+      Chart.js ADR 0054 §4 for the scale option `border`, and the theme key `scale.border.color`
+      as a key of a scope of Chart.js ADRs 0050 and 0118.
       Chart.js ADR 0142 (the line option `segment` holds a `LineSegmentStyle`) is accepted
       (2026-11-13): its code passes the tests. It supersedes, of Chart.js ADR 0054, the internal
       `ScriptableLineSegmentContext` of §11, the typed record of the segment style of §9 and the

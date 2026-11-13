@@ -609,6 +609,25 @@ void main() {
         expect(changed.reverse, isTrue);
         expect(changed, isNot(axis));
       }
+      // The border (Chart.js ADR 0141): an AxisBorder for a cartesian axis, a
+      // RadialAxisBorder for the radial axis, compared with ==.
+      const line = LinearAxis(border: AxisBorder(width: 2, dash: [4, 4]));
+      _expectEqual(line.copyWith(), line);
+      _expectEqual(
+        line,
+        const LinearAxis(border: AxisBorder(width: 2, dash: [4, 4])),
+      );
+      expect(
+        line.copyWith(border: const AxisBorder(width: 3)).border,
+        const AxisBorder(width: 3),
+      );
+      expect(line, isNot(const LinearAxis(border: AxisBorder(width: 3))));
+      const radial = RadialLinearAxis(border: RadialAxisBorder(dash: [2, 2]));
+      _expectEqual(radial.copyWith(), radial);
+      expect(
+        radial.copyWith(border: const RadialAxisBorder(dashOffset: 1)).border,
+        const RadialAxisBorder(dashOffset: 1),
+      );
       const config = ChartConfig(type: .bar, datasets: []);
       _expectEqual(config.copyWith(), config);
       expect(config.copyWith(type: .line).type, ChartKind.line);
@@ -750,6 +769,7 @@ void main() {
         'angleLinesLineWidth',
         'ticks',
         'grid',
+        'border',
         'title',
         'extra',
       ]);

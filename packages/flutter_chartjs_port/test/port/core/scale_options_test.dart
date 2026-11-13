@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -154,10 +155,7 @@ void main() {
           <String, Object?>{
             'ticks': <String, Object?>{'padding': '3', 'mirror': true},
             'grid': <String, Object?>{'tickLength': '8', 'drawTicks': true},
-            'border': <String, Object?>{
-              'width': 2,
-              'dash': <Object?>[4],
-            },
+            'border': const AxisBorder(width: 2, dash: <double>[4]),
             'title': <String, Object?>{'display': true, 'text': 'T'},
           },
         ]),
@@ -169,8 +167,8 @@ void main() {
       expect(options.ticks.mirror, isTrue);
       expect(options.grid.tickLength, '8');
       expect(options.grid.drawTicks, isTrue);
-      expect(options.border.width, 2);
-      expect(options.border.dash, [4]);
+      // The border is one object (Chart.js ADR 0141).
+      expect(options.border, const AxisBorder(width: 2, dash: <double>[4]));
       expect(options.title.text, 'T');
       // No scope has `ticks.major` (the scale defaults hold `major: {}`):
       // the nested facade holds `undefined`, and its read throws the

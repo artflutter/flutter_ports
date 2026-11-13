@@ -85,6 +85,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope,
         TickOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart'
+    show RadialAxisBorder, ScaleBorder;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show chartPaintOf;
@@ -794,16 +796,33 @@ void _pathRadiusLine(
   }
 }
 
+/// The border [value] of the radial linear scale: the resolved scale option
+/// `border` (Chart.js ADR 0141, row `adapt-native-scale-border`).
+///
+/// The radial scale takes a [RadialAxisBorder]. Another value stops a debug
+/// build; a release build draws solid grid lines for it.
+// DIVERGES(chartjs): adapt-native-scale-border, one RadialAxisBorder.
+RadialAxisBorder _radialBorderOf(ScaleBorder? value) {
+  assert(
+    value is RadialAxisBorder,
+    'The radial linear scale takes a RadialAxisBorder as its border, not '
+    '$value.',
+  );
+  return value is RadialAxisBorder ? value : const RadialAxisBorder();
+}
+
 /// scale.radialLinear.js:307 `drawRadiusLine(scale, gridLineOpts, radius,
 /// labelCount, borderOpts)`.
 ///
 /// `circular`, `color` and `lineWidth` are option values: truthiness tests.
+/// [borderOpts] is the [RadialAxisBorder] of the tick context (row
+/// `adapt-native-scale-border`).
 void _drawRadiusLine(
   RadialLinearScale scale,
   GridLineOptions gridLineOpts,
   double radius,
   int labelCount,
-  BorderOptions borderOpts,
+  RadialAxisBorder borderOpts,
 ) {
   final ctx = scale.ctx;
   final circular = gridLineOpts.circular;
@@ -818,13 +837,14 @@ void _drawRadiusLine(
     return;
   }
 
-  final dash = borderOpts.dash;
   ctx!
     ..save()
     ..strokeStyle = canvasStyle(color)
     ..lineWidth = canvasNumber(lineWidth)
-    ..setLineDash(canvasLineDash(jsTruthy(dash) ? dash : <Object?>[]))
-    ..lineDashOffset = canvasNumber(borderOpts.dashOffset)
+    // `borderOpts.dash || []`. An absent offset is the `undefined` of
+    // upstream: the canvas ignores it.
+    ..setLineDash(borderOpts.dash ?? const <double>[])
+    ..lineDashOffset = borderOpts.dashOffset
     ..beginPath();
   _pathRadiusLine(scale, radius, circular, labelCount);
   ctx
@@ -979,6 +999,10 @@ class RadialLinearScale(super.cfg)
       ..borderDash = <Object?>[]
       ..borderDashOffset = 0.0)
     ..grid = (GridLineOptionsScope()..circular = false)
+    // DIVERGES(chartjs): adapt-native-scale-border, the radial border. The
+    // values are those that the radial scale gets from `defaults.scale`
+    // upstream; the AxisBorder of `defaults.scale` never reaches it.
+    ..border = const RadialAxisBorder(dash: <double>[], dashOffset: 0)
     ..startAngle = 0.0
     // label settings
     ..ticks = (TickOptionsScope()
@@ -1363,7 +1387,6 @@ class RadialLinearScale(super.cfg)
     final opts = options;
     final angleLines = opts.angleLines;
     final grid = opts.grid;
-    final border = opts.border;
     final labelCount = pointLabels.length;
 
     if (jsTruthy(opts.pointLabels.display)) {
@@ -1378,7 +1401,11 @@ class RadialLinearScale(super.cfg)
           final offset = getDistanceFromCenterForValue(tick.value);
           final context = getContext(index);
           final optsAtIndex = grid.setContext(context);
-          final optsAtIndexBorder = border.setContext(context);
+          // DIVERGES(chartjs): adapt-native-scale-border, the border of the
+          // options of the tick context: a border function gets each context.
+          final optsAtIndexBorder = _radialBorderOf(
+            RadialLinearScaleOptions(opts.setContext(context)).border,
+          );
 
           _drawRadiusLine(
             this,

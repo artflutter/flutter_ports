@@ -70,6 +70,7 @@ const Map<String, int> shapeAtoms = {
   'chartClip': 4992,
   'chartShadow': 5120,
   'lineSegmentStyle': 5248,
+  'scaleBorder': 5376,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -263,6 +264,11 @@ const Map<String, TypedAtom> typedAtoms = {
   'lineSegmentStyle': (
     type: 'LineSegmentStyle',
     uri: 'package:flutter_chartjs_port/src/types/line_segment_style.dart',
+    field: null,
+  ),
+  'scaleBorder': (
+    type: 'ScaleBorder',
+    uri: 'package:flutter_chartjs_port/src/types/axis_border.dart',
     field: null,
   ),
 };

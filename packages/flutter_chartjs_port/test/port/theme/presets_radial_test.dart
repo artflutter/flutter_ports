@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -21,6 +22,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
+import '../../support/scale_border.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the radial linear scale case of phase 6: the light
@@ -45,7 +47,11 @@ String? _parsed(Object? value) => referenceParsedColor(value).rgbString();
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = jsGet(node, key);
+    // A border holds the fields of the upstream object (row
+    // adapt-native-scale-border).
+    node = node is ScaleBorder
+        ? (upstreamBorderOf(node)! as Map<String, Object?>)[key] ?? undefined
+        : jsGet(node, key);
   }
   return node;
 }
@@ -99,6 +105,9 @@ void main() {
     test('the radial options equal upstream with the light preset', () {
       final themed = _resolveRadial(compileLightTheme());
       for (final MapEntry(:key, value: upstream) in themeLightRadial.entries) {
+        // The radial scale has its own border with no color (row
+        // adapt-native-scale-border): upstream reads the route there.
+        if (key == 'border.color') continue;
         if (upstream is Map<String, Object?>) {
           // A font: the same fields, the size 10 of
           // scale.radialLinear.js:383-385 included.
@@ -115,6 +124,9 @@ void main() {
     test('without a theme, the radial options equal upstream exactly', () {
       final plain = _resolveRadial(null);
       for (final MapEntry(:key, value: upstream) in themeLightRadial.entries) {
+        // The radial scale has its own border with no color (row
+        // adapt-native-scale-border): upstream reads the route there.
+        if (key == 'border.color') continue;
         expect(
           plain[key],
           identical(upstream, undefined)

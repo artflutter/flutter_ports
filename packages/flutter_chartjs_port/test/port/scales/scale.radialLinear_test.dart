@@ -366,6 +366,8 @@ void main() {
           'position',
           'angleLines',
           'grid',
+          // The radial border (row adapt-native-scale-border).
+          'border',
           'startAngle',
           'ticks',
           'pointLabels',

@@ -45,6 +45,8 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart'
+    show ScaleBorder;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
@@ -16508,13 +16510,13 @@ base class ScaleOptionsScope() extends OptionScope {
   set grid(GridLineOptionsScope value) =>
       store(OptionKey.grid, OptScope<GridLineOptionsScope>(value));
 
-  Opt<BorderOptionsScope>? _border;
+  Opt<ScaleBorder>? _border;
 
   /// The cell of `border`, or Dart `null` when absent.
-  Opt<BorderOptionsScope>? get borderCell => _border;
+  Opt<ScaleBorder>? get borderCell => _border;
 
   /// Stores the cell of `border`. Dart `null` deletes the key.
-  set borderCell(Opt<BorderOptionsScope>? cell) {
+  set borderCell(Opt<ScaleBorder>? cell) {
     if (cell == null) {
       delete(OptionKey.border);
     } else {
@@ -16523,8 +16525,8 @@ base class ScaleOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `border`.
-  set border(BorderOptionsScope value) =>
-      store(OptionKey.border, OptScope<BorderOptionsScope>(value));
+  set border(ScaleBorder value) =>
+      store(OptionKey.border, OptValue<ScaleBorder>(value));
 
   Opt<ScaleTitleOptionsScope>? _title;
 
@@ -16992,7 +16994,7 @@ base class ScaleOptionsScope() extends OptionScope {
       case OptionKey.grid:
         _grid = fitCell(cell, classifyScope<GridLineOptionsScope>);
       case OptionKey.border:
-        _border = fitCell(cell, classifyScope<BorderOptionsScope>);
+        _border = fitCell(cell, classifyTyped<ScaleBorder>);
       case OptionKey.title:
         _title = fitCell(cell, classifyScope<ScaleTitleOptionsScope>);
       case OptionKey.stacked:
@@ -17153,7 +17155,7 @@ base class ScaleOptionsScope() extends OptionScope {
       case OptionKey.grid:
         return classifyScope<GridLineOptionsScope>(raw);
       case OptionKey.border:
-        return classifyScope<BorderOptionsScope>(raw);
+        return classifyTyped<ScaleBorder>(raw);
       case OptionKey.title:
         return classifyScope<ScaleTitleOptionsScope>(raw);
       case OptionKey.stacked:
@@ -18405,195 +18407,6 @@ base class GridLineOptionsScope() extends OptionScope {
         return classifyNumber(raw);
       case OptionKey.offset:
         return classifyBool(raw);
-      case OptionKey.z:
-        return classifyNumber(raw);
-      default:
-        return kind.classifyOther(raw);
-    }
-  }
-}
-
-/// index.d.ts:3042 BorderOptions, the scope `border` of a scale.
-base class BorderOptionsScope() extends OptionScope {
-  /// An empty scope.
-  this;
-
-  @override
-  ScopeKind get kind => ScopeKind.borderOptions;
-
-  Opt<bool>? _display;
-
-  /// The cell of `display`, or Dart `null` when absent.
-  Opt<bool>? get displayCell => _display;
-
-  /// Stores the cell of `display`. Dart `null` deletes the key.
-  set displayCell(Opt<bool>? cell) {
-    if (cell == null) {
-      delete(OptionKey.display);
-    } else {
-      store(OptionKey.display, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `display`.
-  set display(bool value) => store(OptionKey.display, OptValue<bool>(value));
-
-  Opt<Object>? _dash;
-
-  /// The cell of `dash`, or Dart `null` when absent.
-  Opt<Object>? get dashCell => _dash;
-
-  /// Stores the cell of `dash`. Dart `null` deletes the key.
-  set dashCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.dash);
-    } else {
-      store(OptionKey.dash, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `dash`.
-  set dash(Object value) =>
-      store(OptionKey.dash, classify(OptionKey.dash, value));
-
-  Opt<double>? _dashOffset;
-
-  /// The cell of `dashOffset`, or Dart `null` when absent.
-  Opt<double>? get dashOffsetCell => _dashOffset;
-
-  /// Stores the cell of `dashOffset`. Dart `null` deletes the key.
-  set dashOffsetCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.dashOffset);
-    } else {
-      store(OptionKey.dashOffset, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `dashOffset`.
-  set dashOffset(double value) =>
-      store(OptionKey.dashOffset, OptValue<double>(value));
-
-  Opt<ChartPaint>? _color;
-
-  /// The cell of `color`, or Dart `null` when absent.
-  Opt<ChartPaint>? get colorCell => _color;
-
-  /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<ChartPaint>? cell) {
-    if (cell == null) {
-      delete(OptionKey.color);
-    } else {
-      store(OptionKey.color, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `color`.
-  set color(ChartPaint value) =>
-      store(OptionKey.color, OptValue<ChartPaint>(value));
-
-  Opt<double>? _width;
-
-  /// The cell of `width`, or Dart `null` when absent.
-  Opt<double>? get widthCell => _width;
-
-  /// Stores the cell of `width`. Dart `null` deletes the key.
-  set widthCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.width);
-    } else {
-      store(OptionKey.width, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `width`.
-  set width(double value) => store(OptionKey.width, OptValue<double>(value));
-
-  Opt<double>? _z;
-
-  /// The cell of `z`, or Dart `null` when absent.
-  Opt<double>? get zCell => _z;
-
-  /// Stores the cell of `z`. Dart `null` deletes the key.
-  set zCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.z);
-    } else {
-      store(OptionKey.z, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `z`.
-  set z(double value) => store(OptionKey.z, OptValue<double>(value));
-
-  @override
-  Opt<Object?>? cellOf(OptionKey key) {
-    switch (key) {
-      case OptionKey.display:
-        return _display;
-      case OptionKey.dash:
-        return _dash;
-      case OptionKey.dashOffset:
-        return _dashOffset;
-      case OptionKey.color:
-        return _color;
-      case OptionKey.width:
-        return _width;
-      case OptionKey.z:
-        return _z;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  void setCell(OptionKey key, Opt<Object?>? cell) {
-    switch (key) {
-      case OptionKey.display:
-        _display = fitCell(cell, classifyBool);
-      case OptionKey.dash:
-        _dash = fitCell(cell, (raw) => classifyUnion(raw, 16));
-      case OptionKey.dashOffset:
-        _dashOffset = fitCell(cell, classifyNumber);
-      case OptionKey.color:
-        _color = fitCell(cell, classifyTyped<ChartPaint>);
-      case OptionKey.width:
-        _width = fitCell(cell, classifyNumber);
-      case OptionKey.z:
-        _z = fitCell(cell, classifyNumber);
-      default:
-        throw ArgumentError.value(key, 'key', 'Not a key of BorderOptions');
-    }
-  }
-
-  @override
-  bool hasField(OptionKey key) {
-    switch (key) {
-      case OptionKey.display:
-      case OptionKey.dash:
-      case OptionKey.dashOffset:
-      case OptionKey.color:
-      case OptionKey.width:
-      case OptionKey.z:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @override
-  Opt<Object?> classify(OptionKey key, Object? raw) {
-    switch (key) {
-      case OptionKey.display:
-        return classifyBool(raw);
-      case OptionKey.dash:
-        return classifyUnion(raw, 16);
-      case OptionKey.dashOffset:
-        return classifyNumber(raw);
-      case OptionKey.color:
-        return classifyTyped<ChartPaint>(raw);
-      case OptionKey.width:
-        return classifyNumber(raw);
       case OptionKey.z:
         return classifyNumber(raw);
       default:

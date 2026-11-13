@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:test/test.dart';
@@ -20,6 +21,7 @@ import 'package:test/test.dart';
 // (`dart test -p chrome`) cannot compile this file.
 import '../../support/color_json.dart';
 import '../../support/light_theme.dart';
+import '../../support/scale_border.dart';
 
 // theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0050,
 // Consequences). The test compares the compiled light preset with the
@@ -198,6 +200,8 @@ Directory? _repositoryRoot() {
 /// font object ([_fontLeaves]).
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
   if (value is TextStyle) return _fontLeaves(prefix, value);
+  // A border gives its fields (row adapt-native-scale-border).
+  if (value is ScaleBorder) return borderLeaves(prefix, value);
   if (!_isObject(value)) return {prefix: value};
   return {
     for (final key in jsObjectKeys(value))

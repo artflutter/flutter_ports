@@ -61,7 +61,9 @@ void main() {
         referenceColorText(setScale),
         '["route","scale.ticks","color","","color"]',
         '["route","scale.grid","color","","borderColor"]',
-        '["route","scale.border","color","","borderColor"]',
+        // The route of `scale.border.color` goes: a cartesian scale reads
+        // the default borderColor for an absent color (row
+        // adapt-native-scale-border).
         '["route","scale.title","color","","color"]',
         describeScale,
         '["describe","scales",{"_fallback":"scale"}]',
@@ -137,7 +139,7 @@ void main() {
     });
 
     test('scale._scriptable and scale._indexable', () {
-      final descriptor = values(5);
+      final descriptor = values(4);
       final scriptable = descriptor['_scriptable'];
       for (final (name, expected) in [
         ('beforeFit', false),
@@ -164,7 +166,7 @@ void main() {
     });
 
     test('scale.ticks._scriptable and scale.ticks._indexable', () {
-      final descriptor = values(7);
+      final descriptor = values(6);
       final scriptable = descriptor['_scriptable'];
       final indexable = descriptor['_indexable'];
       for (final (name, isScriptable, isIndexable) in [

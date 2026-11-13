@@ -12,7 +12,7 @@
 ///
 /// The names are the `index.d.ts` names of the option interfaces
 /// ([CoreScaleOptions], [CartesianScaleOptions], [TickOptions],
-/// [GridLineOptions], [BorderOptions], ...). The schema has one scope kind
+/// [GridLineOptions], ...). The schema has one scope kind
 /// for the options of every scale type (`ScaleOptionsScope`) and one for
 /// the ticks of every scale type (`TickOptionsScope`). Thus a facade has
 /// each key that the port reads through it, also a key that `index.d.ts`
@@ -53,8 +53,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextProxy, OptionView, boolOption, paddingOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
     show numberFormatOf;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, chartPaintOf;
 import 'package:intl/intl.dart' show NumberFormat;
@@ -200,8 +202,20 @@ extension type const CoreScaleOptions(OptionView _view) implements OptionView {
   /// `CartesianScaleOptions`.
   GridLineOptions get grid => GridLineOptions(_view.readKey(OptionKey.grid));
 
-  /// index.d.ts:3306 `border: BorderOptions` of `CartesianScaleOptions`.
-  BorderOptions get border => BorderOptions(_view.readKey(OptionKey.border));
+  /// index.d.ts:3306 `border: BorderOptions` of `CartesianScaleOptions`:
+  /// the [ScaleBorder] of the scopes, merged (Chart.js ADR 0141, row
+  /// `adapt-native-scale-border`). An [AxisBorder] for a cartesian scale and
+  /// a [RadialAxisBorder] for the radial linear scale. A value that is not a
+  /// border (an object of the `BorderOptions` keys) stops a debug build; a
+  /// release build gives Dart `null` for it.
+  ScaleBorder? get border {
+    final value = _view.readKey(OptionKey.border);
+    assert(
+      value is ScaleBorder || value == null || value is Undefined,
+      'The scale option border takes a ScaleBorder, not $value.',
+    );
+    return value is ScaleBorder ? value : null;
+  }
 
   /// index.d.ts:3309 `title` of `CartesianScaleOptions`.
   ScaleTitleOptions get title =>
@@ -458,32 +472,6 @@ extension type const GridLineOptions(Object? raw) {
       boolOption(readOption(raw, OptionKey.offset), OptionKey.offset);
 
   /// index.d.ts:3112 `z: number`.
-  Object? get z => readOption(raw, OptionKey.z);
-}
-
-/// index.d.ts:3042 `BorderOptions`.
-extension type const BorderOptions(Object? raw) {
-  /// `border.setContext(context)`.
-  BorderOptions setContext(Object context) =>
-      BorderOptions(_setContext(raw, context));
-
-  /// index.d.ts:3046 `display: boolean`.
-  bool get display =>
-      boolOption(readOption(raw, OptionKey.display), OptionKey.display);
-
-  /// index.d.ts:3050 `dash`.
-  Object? get dash => readOption(raw, OptionKey.dash);
-
-  /// index.d.ts:3054 `dashOffset`.
-  Object? get dashOffset => readOption(raw, OptionKey.dashOffset);
-
-  /// index.d.ts:3055 `color: Color`.
-  Object? get color => readOption(raw, OptionKey.color);
-
-  /// index.d.ts:3056 `width: number`.
-  Object? get width => readOption(raw, OptionKey.width);
-
-  /// index.d.ts:3057 `z: number`.
   Object? get z => readOption(raw, OptionKey.z);
 }
 

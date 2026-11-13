@@ -79,9 +79,7 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
               color: .solid(_text),
               font: TextStyle(fontSize: 12),
             ),
-            extra: {
-              'border': {'color': ChartPaint.solid(_axisLine)},
-            },
+            border: AxisBorder(color: ChartPaint.solid(_axisLine)),
           ),
           'y': LinearAxis(
             min: 0,
@@ -97,9 +95,7 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
               color: .solid(_text),
               font: TextStyle(fontSize: 12),
             ),
-            extra: {
-              'border': {'display': false},
-            },
+            border: AxisBorder(display: false),
           ),
         },
       ),

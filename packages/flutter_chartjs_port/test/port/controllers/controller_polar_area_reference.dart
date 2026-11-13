@@ -176,11 +176,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                 'color': 'rgba(0,0,0,0.1)',
               },
               'border': <String, Object?>{
-                'display': true,
                 'dash': <Object?>[],
                 'dashOffset': 0.0,
-                'width': 1.0,
-                'color': 'rgba(0,0,0,0.1)',
               },
               'ticks': <String, Object?>{
                 'showLabelBackdrop': true,
@@ -945,11 +942,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -1829,11 +1823,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -2708,11 +2699,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -3587,11 +3575,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -4521,11 +4506,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -5510,11 +5492,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -6499,11 +6478,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,

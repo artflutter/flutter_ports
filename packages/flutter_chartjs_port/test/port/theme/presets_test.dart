@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -24,6 +25,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
+import '../../support/scale_border.dart';
 import 'light_reference.dart';
 
 // theming.md §8 test 3, the parts of phases 5 and 6, and the values that
@@ -56,13 +58,19 @@ bool _isColorKey(String key) => key.endsWith('Color');
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = jsGet(node, key);
+    // A border holds the fields of the upstream object (row
+    // adapt-native-scale-border).
+    node = node is ScaleBorder
+        ? (upstreamBorderOf(node)! as Map<String, Object?>)[key] ?? undefined
+        : jsGet(node, key);
   }
   return node;
 }
 
 /// The leaves of [value] by dot path. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
+  // A border gives its fields (row adapt-native-scale-border).
+  if (value is ScaleBorder) return borderLeaves(prefix, value);
   if (!_isObject(value)) return {prefix: value};
   return {
     for (final key in jsObjectKeys(value))

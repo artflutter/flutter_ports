@@ -42,6 +42,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -59,6 +60,7 @@ import '../../support/length_json.dart';
 import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
 import '../../support/point_style_json.dart';
+import '../../support/scale_border.dart';
 import 'precedence_reference.dart'
     as frozen
     show themePrecedencePrototype, themePrecedenceUpstream;
@@ -325,6 +327,8 @@ String _json(Object? value) => switch (value) {
   ScaleAxis() => axisJson,
   InteractionMode() => modeJson,
   PointStyle() => pointStyleJson,
+  // The upstream object of a scale border (row adapt-native-scale-border).
+  ScaleBorder() => _json(upstreamBorderOf(value)),
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -411,7 +415,11 @@ void _put(Object root, String path, Object? value) {
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = jsGet(node, key);
+    // A border holds the fields of the upstream object (row
+    // adapt-native-scale-border).
+    node = node is ScaleBorder
+        ? (upstreamBorderOf(node)! as Map<String, Object?>)[key] ?? undefined
+        : jsGet(node, key);
   }
   return node;
 }
@@ -2574,7 +2582,9 @@ int _markerRgb(String label) {
 
 String _referenceLines(String text) => [
   for (final line in withAxisMarkers(
-    withLengthMarkers(withPointStyleMarkers(withCurveMarkers(text))),
+    withLengthMarkers(
+      withPointStyleMarkers(withCurveMarkers(withPortBorders(text))),
+    ),
   ).split('\n'))
     if (line.contains(': '))
       line.substring(0, line.indexOf(': ') + 2) +

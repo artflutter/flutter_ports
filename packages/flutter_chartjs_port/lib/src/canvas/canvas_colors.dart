@@ -117,7 +117,6 @@ void validateChartColors(Object? config) {
         'pointLabels',
         'ticks',
         'grid',
-        'border',
         'title',
         'subtitle',
         'labels',

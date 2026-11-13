@@ -185,9 +185,6 @@ enum ScopeKind(
   /// index.d.ts:3060 GridLineOptions, the scope `grid` of a scale.
   gridLineOptions('GridLineOptions'),
 
-  /// index.d.ts:3042 BorderOptions, the scope `border` of a scale.
-  borderOptions('BorderOptions'),
-
   /// Port-only name for index.d.ts:3309 CartesianScaleOptions `title`, the
   /// title of a scale.
   scaleTitleOptions('ScaleTitleOptions'),
@@ -321,8 +318,6 @@ enum ScopeKind(
         return MinorTickOptionsScope();
       case ScopeKind.gridLineOptions:
         return GridLineOptionsScope();
-      case ScopeKind.borderOptions:
-        return BorderOptionsScope();
       case ScopeKind.scaleTitleOptions:
         return ScaleTitleOptionsScope();
       case ScopeKind.timeScaleTimeOptions:
@@ -430,8 +425,6 @@ enum ScopeKind(
         return MinorTickOptionsScope;
       case ScopeKind.gridLineOptions:
         return GridLineOptionsScope;
-      case ScopeKind.borderOptions:
-        return BorderOptionsScope;
       case ScopeKind.scaleTitleOptions:
         return ScaleTitleOptionsScope;
       case ScopeKind.timeScaleTimeOptions:
@@ -1228,15 +1221,6 @@ enum ScopeKind(
           OptionKey.tickLength,
           OptionKey.tickWidth,
           OptionKey.offset,
-          OptionKey.z,
-        ];
-      case ScopeKind.borderOptions:
-        return const [
-          OptionKey.display,
-          OptionKey.dash,
-          OptionKey.dashOffset,
-          OptionKey.color,
-          OptionKey.width,
           OptionKey.z,
         ];
       case ScopeKind.scaleTitleOptions:
@@ -2807,7 +2791,7 @@ enum ScopeKind(
           case OptionKey.grid:
             return 32;
           case OptionKey.border:
-            return 32;
+            return 5376;
           case OptionKey.title:
             return 32;
           case OptionKey.stacked:
@@ -2941,23 +2925,6 @@ enum ScopeKind(
             return 1;
           case OptionKey.offset:
             return 2;
-          case OptionKey.z:
-            return 1;
-          default:
-            return 0;
-        }
-      case ScopeKind.borderOptions:
-        switch (key) {
-          case OptionKey.display:
-            return 2;
-          case OptionKey.dash:
-            return 16;
-          case OptionKey.dashOffset:
-            return 1;
-          case OptionKey.color:
-            return 4864;
-          case OptionKey.width:
-            return 1;
           case OptionKey.z:
             return 1;
           default:
@@ -3678,8 +3645,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.grid:
             return ScopeKind.gridLineOptions;
-          case OptionKey.border:
-            return ScopeKind.borderOptions;
           case OptionKey.title:
             return ScopeKind.scaleTitleOptions;
           case OptionKey.ticks:
@@ -3707,8 +3672,6 @@ enum ScopeKind(
       case ScopeKind.minorTickOptions:
         return null;
       case ScopeKind.gridLineOptions:
-        return null;
-      case ScopeKind.borderOptions:
         return null;
       case ScopeKind.scaleTitleOptions:
         return null;
@@ -3843,8 +3806,6 @@ enum ScopeKind(
         return 64;
       case ScopeKind.gridLineOptions:
         return 64;
-      case ScopeKind.borderOptions:
-        return 64;
       case ScopeKind.scaleTitleOptions:
         return 64;
       case ScopeKind.timeScaleTimeOptions:
@@ -3952,8 +3913,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.gridLineOptions:
         return null;
-      case ScopeKind.borderOptions:
-        return null;
       case ScopeKind.scaleTitleOptions:
         return null;
       case ScopeKind.timeScaleTimeOptions:
@@ -4060,8 +4019,6 @@ enum ScopeKind(
       case ScopeKind.minorTickOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.gridLineOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.borderOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.scaleTitleOptions:
         return classifyUnion(raw, 64);

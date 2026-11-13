@@ -126,7 +126,7 @@ class _Sample3State() extends State<Sample3> {
               'lineWidth': 0.5,
             },
           ),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           ticks: AxisTicks(
             maxRotation: 0,
             font: const TextStyle(fontWeight: FontWeight.bold),
@@ -145,7 +145,7 @@ class _Sample3State() extends State<Sample3> {
               'lineWidth': 0.5,
             },
           ),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           ticks: AxisTicks(
             stepSize: 1,
             color: ChartPaint.solid(Fl.white54.withValues(alpha: 0.5)),

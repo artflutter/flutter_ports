@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show SolidChartPaint;
@@ -30,6 +31,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
+import '../../support/scale_border.dart';
 
 // theming.md §8 test 7 (Chart.js ADR 0050, "The public classes"): the value
 // equality, `copyWith`, `lerp` and the diagnostics of `ChartThemeData`, the
@@ -144,6 +146,8 @@ ChartThemeData _only(String name, ChartThemeData from) =>
 /// `transitions` keys are left out.
 Map<String, Object?> _slots(Object? value, [String prefix = '']) {
   if (value == null && prefix.isEmpty) return const {};
+  // A border gives its fields (row adapt-native-scale-border).
+  if (value is ScaleBorder) return borderLeaves(prefix, value);
   if (!_isObject(value) ||
       prefix.endsWith('.font') ||
       prefix.endsWith('Font')) {
@@ -168,6 +172,8 @@ Object? _plain(Object? value) => _isObject(value)
     ? <String, Object?>{
         for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
       }
+    : value is ScaleBorder
+    ? upstreamBorderOf(value, routeColor: false)
     : value is Curve
     ? '$value'
     : value;

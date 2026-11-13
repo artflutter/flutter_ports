@@ -95,7 +95,7 @@ class _Sample5State() extends State<Sample5> {
       scales: const {
         'x': CategoryAxis(
           grid: AxisGrid(display: false),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           ticks: AxisTicks(
             maxRotation: 0,
             autoSkip: false,
@@ -106,7 +106,7 @@ class _Sample5State() extends State<Sample5> {
         'y': LinearAxis(
           min: 0,
           grid: AxisGrid(display: false),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           title: AxisTitle(
             display: true,
             text: 'count',
@@ -117,7 +117,7 @@ class _Sample5State() extends State<Sample5> {
         'y2': LinearAxis(
           position: .right,
           grid: AxisGrid(display: false),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           title: AxisTitle(
             display: true,
             text: 'count',
@@ -128,7 +128,7 @@ class _Sample5State() extends State<Sample5> {
         'x2': CategoryAxis(
           position: .top,
           grid: AxisGrid(display: false),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           title: AxisTitle(
             display: true,
             text: 'Wall clock',

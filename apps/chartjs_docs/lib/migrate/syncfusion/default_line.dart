@@ -122,9 +122,7 @@ final ChartConfig _config = ChartConfig(
         callback: _year,
         align: .inner,
       ),
-      extra: {
-        'border': {'color': ChartPaint.solid(_axisLine)},
-      },
+      border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
     // labelFormat: '{value}%', no axis line, no tick marks.
     'y': LinearAxis(
@@ -142,9 +140,7 @@ final ChartConfig _config = ChartConfig(
         font: TextStyle(fontSize: 12),
         callback: _percent,
       ),
-      extra: {
-        'border': {'display': false},
-      },
+      border: AxisBorder(display: false),
     ),
   },
 );

@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -134,6 +135,10 @@ void main() {
           },
 
           'grid': <String, Object?>{'circular': false},
+
+          // DIVERGES(chartjs): adapt-native-scale-border, the radial scale has
+          // its own border object with the values of `defaults.scale`.
+          'border': const RadialAxisBorder(dash: <double>[], dashOffset: 0),
 
           'startAngle': 0,
 

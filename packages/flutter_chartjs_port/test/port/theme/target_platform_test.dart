@@ -9,11 +9,13 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/scale_border.dart';
 
 // theming.md §8 test 1: the theme does not depend on TargetPlatform.
 // flutter_test reports TargetPlatform.android on each host (theming.md §2).
@@ -24,6 +26,8 @@ import '../../support/light_theme.dart';
 
 /// The leaves of [value] by dot path. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
+  // A border gives its fields (row adapt-native-scale-border).
+  if (value is ScaleBorder) return borderLeaves(prefix, value);
   if (!_isObject(value)) return {prefix: value};
   return {
     for (final key in jsObjectKeys(value))

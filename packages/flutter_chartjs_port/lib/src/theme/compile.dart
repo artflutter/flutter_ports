@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/options/opt.dart' show OptScope;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart'
+    show AxisBorder, RadialAxisBorder;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
@@ -121,14 +123,22 @@ ChartOptionsScope? compileChartTheme({
     t.subtitle.color = ChartPaint.solid(color);
   }
   // `borderColor` replaces `Defaults.borderColor` (`core.defaults.js:42`).
-  // The scale routes (`core.scale.defaults.js:87-88`), the route of the
-  // angle lines (`scale.radialLinear.js:400-404`) and the element routes
+  // The route of the grid color (`core.scale.defaults.js:87`), the default
+  // color of the scale border (the route of `core.scale.defaults.js:88`
+  // upstream, Chart.js ADR 0141), the route of the angle lines
+  // (`scale.radialLinear.js:400-404`) and the element routes
   // (`element.point.ts:44-47`, `element.line.js:267-270`,
   // `element.bar.js:159-162`) read it.
   if (borderColor != null) {
     t.grid.color = ChartPaint.solid(borderColor);
-    t.border.color = ChartPaint.solid(borderColor);
+    // The border is one object (Chart.js ADR 0141): the theme gives its
+    // color, and the scopes merge it with the defaults field by field. The
+    // radial scale gets its own empty border, so that the AxisBorder of
+    // `scale.border` never reaches it: hunk H1 merges
+    // `scales.radialLinear` first, and a border of the same class keeps it.
+    t.scale.border = AxisBorder(color: ChartPaint.solid(borderColor));
     t.angleLines.color = ChartPaint.solid(borderColor);
+    t.radialLinear.border = const RadialAxisBorder();
     t.point.borderColor = ChartPaint.solid(borderColor);
     t.line.borderColor = ChartPaint.solid(borderColor);
     t.bar.borderColor = ChartPaint.solid(borderColor);
@@ -258,29 +268,25 @@ final class _ThemeTree() {
   /// The scopes of the tree, for [freeze].
   final List<OptionScope> _scopes = [];
 
-  late final ScaleOptionsScope _scale = root.scale = add(ScaleOptionsScope());
+  /// `scale`.
+  late final ScaleOptionsScope scale = root.scale = add(ScaleOptionsScope());
 
   /// `scale.ticks`.
-  late final TickOptionsScope ticks = _scale.ticks = add(TickOptionsScope());
+  late final TickOptionsScope ticks = scale.ticks = add(TickOptionsScope());
 
   /// `scale.title`.
-  late final ScaleTitleOptionsScope scaleTitle = _scale.title = add(
+  late final ScaleTitleOptionsScope scaleTitle = scale.title = add(
     ScaleTitleOptionsScope(),
   );
 
   /// `scale.grid`.
-  late final GridLineOptionsScope grid = _scale.grid = add(
+  late final GridLineOptionsScope grid = scale.grid = add(
     GridLineOptionsScope(),
-  );
-
-  /// `scale.border`.
-  late final BorderOptionsScope border = _scale.border = add(
-    BorderOptionsScope(),
   );
 
   /// `scales.radialLinear`: hunk H1 reads only `theme.scales[<scale type>]`
   /// (theming.md §3.3), and the scale ids are keys by name.
-  late final ScaleOptionsScope _radialLinear = () {
+  late final ScaleOptionsScope radialLinear = () {
     final scales = root.scales = add(ScaleOptionsByIdScope());
     final radialLinear = add(ScaleOptionsScope());
     scales.store('radialLinear', OptScope<ScaleOptionsScope>(radialLinear));
@@ -288,11 +294,11 @@ final class _ThemeTree() {
   }();
 
   /// `scales.radialLinear.pointLabels`.
-  late final PointLabelOptionsScope pointLabels = _radialLinear.pointLabels =
+  late final PointLabelOptionsScope pointLabels = radialLinear.pointLabels =
       add(PointLabelOptionsScope());
 
   /// `scales.radialLinear.angleLines`.
-  late final AngleLineOptionsScope angleLines = _radialLinear.angleLines = add(
+  late final AngleLineOptionsScope angleLines = radialLinear.angleLines = add(
     AngleLineOptionsScope(),
   );
 

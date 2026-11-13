@@ -4,7 +4,11 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'dart:ui' show Color;
+
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -31,11 +35,12 @@ Map<String, Object?> fixture() => <String, Object?>{
           'min': -100,
           'max': 100,
           'grid': <String, Object?>{'color': 'red', 'drawOnChartArea': false},
-          'border': <String, Object?>{
-            'display': true,
-            'color': 'blue',
-            'width': 5,
-          },
+          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+          'border': const AxisBorder(
+            display: true,
+            color: ChartPaint.solid(Color(0xFF0000FF)),
+            width: 5,
+          ),
           'ticks': <String, Object?>{'display': false},
         },
         'y': <String, Object?>{
@@ -44,7 +49,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           'axis': const YAxis(),
           'min': -100,
           'max': 100,
-          'border': <String, Object?>{'color': 'red'},
+          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+          'border': const AxisBorder(
+            color: ChartPaint.solid(Color(0xFFFF0000)),
+          ),
           'grid': <String, Object?>{'color': 'red', 'drawOnChartArea': false},
           'ticks': <String, Object?>{'display': false},
         },

@@ -65,16 +65,16 @@ List<String>? numberLabel(
 ) => [value.toString()];
 
 /// The horizontal axis of Graphic: a line, no grid, 20 px below the region.
-const Map<String, Object?> bottomAxis = {
-  'border': {'color': ChartPaint.solid(Gx.stroke)},
-  'afterFit': _fitBottom,
-};
+const Map<String, Object?> bottomAxis = {'afterFit': _fitBottom};
+
+/// The axis line of the horizontal axis of Graphic.
+const AxisBorder bottomBorder = AxisBorder(color: ChartPaint.solid(Gx.stroke));
 
 /// The vertical axis of Graphic: a grid, no line, 40 px left of the region.
-const Map<String, Object?> leftAxis = {
-  'border': {'display': false},
-  'afterFit': _fitLeft,
-};
+const Map<String, Object?> leftAxis = {'afterFit': _fitLeft};
+
+/// The vertical axis of Graphic has no axis line.
+const AxisBorder leftBorder = AxisBorder(display: false);
 
 /// Graphic lets the labels at the ends overflow the region: no padding.
 void _fitBottom(Scale scale) => scale

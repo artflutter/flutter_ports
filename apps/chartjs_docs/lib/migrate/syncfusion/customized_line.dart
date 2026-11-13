@@ -151,9 +151,7 @@ final ChartConfig _config = ChartConfig(
         font: TextStyle(fontSize: 12),
         align: .inner,
       ),
-      extra: const {
-        'border': {'color': ChartPaint.solid(_axisLine)},
-      },
+      border: const AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
     // NumericAxis(minimum: 1, maximum: 3.5, interval: 0.5), no grid lines.
     'y': const LinearAxis(
@@ -170,9 +168,7 @@ final ChartConfig _config = ChartConfig(
         font: TextStyle(fontSize: 12),
         callback: _percent,
       ),
-      extra: {
-        'border': {'color': ChartPaint.solid(_axisLine)},
-      },
+      border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
   },
 );

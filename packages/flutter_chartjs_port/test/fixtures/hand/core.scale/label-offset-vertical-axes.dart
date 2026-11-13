@@ -4,6 +4,7 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
@@ -27,11 +28,13 @@ Map<String, Object?> fixture() => <String, Object?>{
         'x': <String, Object?>{
           'ticks': <String, Object?>{'display': false},
           'grid': <String, Object?>{'display': false},
-          'border': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+          'border': const AxisBorder(display: false),
         },
         'y': <String, Object?>{
           'ticks': <String, Object?>{'labelOffset': 25},
-          'border': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+          'border': const AxisBorder(display: false),
           'grid': <String, Object?>{'display': false},
         },
       },

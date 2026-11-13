@@ -1524,7 +1524,7 @@ const Map<String, String> observationDigests = {
   'fixture core.scale/grid/scriptable-borderDash.js (plain)':
       '6447b670828fd5de803abd6c1af35281f1ab95c4557ba2e94f02640de9382b1b',
   'fixture core.scale/grid/scriptable-borderDash.js (trace)':
-      '131cb5a585ad58eeea45ffb2504d19430488c45efbbe8472d3e50b3238d0c61e',
+      'c87db958ebfac0a0aef4425d0d95e10a2843a94681d15975da60c29023f6ca9e',
   'fixture core.scale/label-align-center.js (plain)':
       '73a631b6ca4795b87eecb31eb6f57998aba154d0b06c7966c96675a1705aa9ea',
   'fixture core.scale/label-align-center.js (trace)':

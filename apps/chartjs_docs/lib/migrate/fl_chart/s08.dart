@@ -95,7 +95,7 @@ final ChartConfig _config = fills(
         min: 0,
         max: 11,
         grid: AxisGrid(display: false),
-        extra: Fl.noBorder,
+        border: Fl.noBorder,
         ticks: AxisTicks(
           stepSize: 4,
           color: ChartPaint.solid(Colors.white),
@@ -106,7 +106,7 @@ final ChartConfig _config = fills(
         min: 0,
         max: 6,
         grid: const AxisGrid(display: false),
-        extra: Fl.noBorder,
+        border: Fl.noBorder,
         ticks: AxisTicks(
           stepSize: 2,
           autoSkip: false,

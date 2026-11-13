@@ -3,8 +3,10 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableScaleContext;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ScaleValuePosition;
 
@@ -19,12 +21,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           'position': const ScaleValuePosition('y', 0),
           'min': -10,
           'max': 10,
-          'border': <String, Object?>{
-            'dash': (Object? ctx) =>
-                jsToNumber(jsGet(ctx, 'index')).remainder(2) == 0
-                ? <Object?>[6, 3]
-                : <Object?>[],
-          },
+          // DIVERGES(chartjs): adapt-native-scale-border, one function of
+          // the context gives the border object, where upstream gives the
+          // dash. The scale calls it with each tick context.
+          'border': _border,
           'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
           'ticks': <String, Object?>{'display': false},
         },
@@ -33,12 +33,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           'position': const ScaleValuePosition('x', 0),
           'min': -10,
           'max': 10,
-          'border': <String, Object?>{
-            'dash': (Object? ctx) =>
-                jsToNumber(jsGet(ctx, 'index')).remainder(2) == 0
-                ? <Object?>[6, 3]
-                : <Object?>[],
-          },
+          // DIVERGES(chartjs): adapt-native-scale-border, one function of
+          // the context gives the border object, where upstream gives the
+          // dash. The scale calls it with each tick context.
+          'border': _border,
           'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
           'ticks': <String, Object?>{'display': false},
         },
@@ -46,3 +44,12 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
 };
+
+/// The border of the context [ctx]: `dash: (ctx) => ctx.index % 2 === 0 ?
+/// [6, 3] : []`. The scale context has no index: its `undefined % 2` is NaN,
+/// which gives the solid dash.
+AxisBorder _border(ScriptableScaleContext ctx) => AxisBorder(
+  dash: jsToNumber(ctx.index).remainder(2) == 0
+      ? const <double>[6, 3]
+      : const <double>[],
+);
