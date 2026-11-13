@@ -47,6 +47,18 @@ List<SankeyFlow> sankeyFlows(List<Sample> values) {
   }, growable: false);
 }
 
+/// The order of the nodes of [flows] in their columns: the number in the key
+/// of each node. A sankey chart with this order as its node priority keeps
+/// each node in its place while the values change. Without it, the layout
+/// of chartjs-chart-sankey sorts the nodes by their sizes, and a node jumps
+/// to another place when a size passes the size of another node.
+Map<String, int> sankeyNodeOrder(List<SankeyFlow> flows) => {
+  for (final flow in flows) ...{
+    flow.from: int.parse(flow.from.substring(1)),
+    flow.to: int.parse(flow.to.substring(1)),
+  },
+};
+
 /// A frame and its workload step, independent of library throughput.
 class const DatasetFrame(
   /// All generated items.

@@ -25,7 +25,9 @@ const List<ChangeLogEntry> changeLog = [
         'port of chartjs-chart-sankey: fl_chart, Graphic and Syncfusion have '
         'no sankey chart, and the lab shows that in place of a chart. The '
         'sankey chart takes the raw config of the port, so each tick of new '
-        'data is a full update. It has no axes, no zoom and no shadow.',
+        'data is a full update. It has no axes, no zoom and no shadow. Each '
+        'node has a fixed place in its column (the option priority), so the '
+        'nodes do not jump when the live values change.',
   ]),
   ChangeLogEntry('2026-11-10', [
     'Lab: a Zoom and pan setting for line, bar, scatter and bubble charts. '

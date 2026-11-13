@@ -135,7 +135,9 @@ Two tools measure this:
   `flutter_chartjs_chart_sankey_port`. fl_chart 1.3.0, Graphic 2.7.0 and Syncfusion
   35.1.43 have no sankey chart, so they show a message for it. The sankey chart takes
   the raw config of the port: each tick of new data is a full update. It has no axes,
-  no zoom and no shadow.
+  no zoom and no shadow. The option `priority` gives each node a fixed place in its
+  column. The default layout of the chart sorts the nodes by their sizes, so with
+  live data the nodes change places on most ticks.
 - **Dataset slider:** 100–20,000 actual input items, with 100/1k/5k/20k presets.
   The slider commits on release. The harness never downsamples or caps one
   library's data differently.

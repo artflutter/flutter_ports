@@ -265,6 +265,12 @@ void main() {
       sankeyFlows(DatasetGenerator(1, 7).frame(0).values).single.from,
       'S0',
     );
+    // The node order is the number of each key, for a fixed place.
+    final order = sankeyNodeOrder(flows);
+    expect(order, hasLength(24));
+    expect(order['S0'], 0);
+    expect(order['M7'], 7);
+    expect(order['T3'], 3);
   });
   test(
     'capture excludes warmup, stale batches and frames at/after the end',

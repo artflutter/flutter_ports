@@ -252,14 +252,27 @@ class const BenchmarkChart({
     }
   }
 
+  /// One node order per item count: the nodes of a count do not change with
+  /// the step.
+  static final Map<int, Map<String, int>> _sankeyOrders = {};
+
+  static Map<String, int> _sankeyOrderFor(List<SankeyFlow> flows) =>
+      _sankeyOrders.putIfAbsent(flows.length, () => sankeyNodeOrder(flows));
+
   /// The sankey chart of the Chart.js port: one flow for each item
   /// ([sankeyFlows]). The typed config has no dataset class of another
   /// package (seam S9 of the sankey port), so the chart takes the raw config,
   /// and each tick of new data is a full update. The flows have a gradient
   /// from the first to the second item color, or one color.
+  ///
+  /// The option `priority` gives each node a fixed place in its column
+  /// ([sankeyNodeOrder]). The default layout sorts the nodes by their sizes:
+  /// with live data, the order then changes on most ticks, and the nodes
+  /// jump across the chart.
   Widget _chartJsSankey() {
     _registerSankey();
     const blue = ChartPaint.solid(chartBlue);
+    final flows = sankeyFlows(frame.values);
     return cj.ChartView.raw(
       config: <String, Object?>{
         'type': sk.SankeyController.id,
@@ -268,9 +281,10 @@ class const BenchmarkChart({
             <String, Object?>{
               'label': 'Values',
               'data': <Object?>[
-                for (final f in sankeyFlows(frame.values))
+                for (final f in flows)
                   sk.SankeyDataPoint(from: f.from, to: f.to, flow: f.flow),
               ],
+              'priority': _sankeyOrderFor(flows),
               'colorFrom': blue,
               'colorTo': config.alternateColors
                   ? const ChartPaint.solid(chartTeal)
