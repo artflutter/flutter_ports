@@ -7,7 +7,6 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_chart_sankey_port/src/lib/core.dart';
 import 'package:flutter_chartjs_chart_sankey_port/src/lib/layout.dart';
 import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsMax;
 import 'package:test/test.dart';
 
 // layout.test.ts:13-31 `formatValue`, `formatDescription` and `each`: a
@@ -739,13 +738,13 @@ void main() {
         // production code.
         double visualBottom(SankeyNode node, Map<String, double> minSizes) {
           final minSizeUnits = minSizes[node.key] ?? 0;
-          final height = jsMax(node.size, minSizeUnits);
+          final height = math.max(node.size, minSizeUnits);
           return (node.y ?? 0) + (node.size + height) / 2;
         }
 
         double visualTop(SankeyNode node, Map<String, double> minSizes) {
           final minSizeUnits = minSizes[node.key] ?? 0;
-          final height = jsMax(node.size, minSizeUnits);
+          final height = math.max(node.size, minSizeUnits);
           return (node.y ?? 0) + (node.size - height) / 2;
         }
 
@@ -850,7 +849,9 @@ void main() {
           expect(maxY, _toBeCloseTo(visualBottom(nodes[1], minSizes), 9));
           expect(
             maxY,
-            greaterThan(nodes[1].y! + jsMax(nodes[1].inFlow, nodes[1].outFlow)),
+            greaterThan(
+              nodes[1].y! + math.max<double>(nodes[1].inFlow, nodes[1].outFlow),
+            ),
           );
         });
       });

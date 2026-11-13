@@ -15,6 +15,7 @@
 ///   0020): the registry of the host takes it.
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' show Color;
 
 import 'package:flutter/animation.dart' show Curves;
@@ -48,7 +49,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
 import 'package:flutter_chartjs_port/helpers.dart'
     show isNullOrUndef, toFont, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsMax, jsMin, jsNumberToString, jsToNumber, jsTruthy;
+    show jsGet, jsNumberToString, jsToNumber, jsTruthy;
 
 const ChartPaint _black = ChartPaint.solid(Color(0xFF000000));
 const ChartPaint _transparent = ChartPaint.solid(Color(0x00000000));
@@ -219,7 +220,7 @@ double _getColumnPadding(
   final trailingSpace = orientation == SankeyOrientation.vertical
       ? chartHeight - chartArea.bottom
       : chartWidth - chartArea.right;
-  return jsMax(0, nodeWidth + 3 - trailingSpace);
+  return math.max(0, nodeWidth + 3 - trailingSpace);
 }
 
 /// controller.ts:159 `getNodeRect`.
@@ -245,9 +246,9 @@ double _getColumnPadding(
   if (orientation == SankeyOrientation.vertical) {
     final x1 = xScale.getPixelForValue(_nodeY(node));
     final x2 = xScale.getPixelForValue(_nodeY(node) + size);
-    final left = jsMin(x1, x2);
+    final left = math.min(x1, x2);
     final naturalWidth = (x2 - x1).abs();
-    final width = jsMax(naturalWidth, minSize);
+    final width = math.max(naturalWidth, minSize);
     return (
       height: nodeWidth,
       width: width,
@@ -257,9 +258,9 @@ double _getColumnPadding(
   }
   final y1 = yScale.getPixelForValue(_nodeY(node));
   final y2 = yScale.getPixelForValue(_nodeY(node) + size);
-  final top = jsMin(y1, y2);
+  final top = math.min(y1, y2);
   final naturalHeight = (y2 - y1).abs();
-  final height = jsMax(naturalHeight, minSize);
+  final height = math.max(naturalHeight, minSize);
   return (
     height: height,
     width: nodeWidth,

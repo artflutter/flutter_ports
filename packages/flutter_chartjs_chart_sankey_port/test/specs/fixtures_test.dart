@@ -2,12 +2,14 @@
 @TestOn('vm')
 library;
 
+import 'dart:math' as math;
+
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
 import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
     show Flow, SankeyOrientation;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsMax;
+import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -104,7 +106,7 @@ void main() {
             x + width,
       ];
       expect(rightEdges, isNotEmpty);
-      expect(rightEdges.reduce(jsMax), closeTo(chart.width - 3, 0.000005));
+      expect(rightEdges.reduce(math.max), closeTo(chart.width - 3, 0.000005));
     });
   });
 }
