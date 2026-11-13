@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/helpers/helpers.core.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-tooltip-callback-objects, native callbacks.
 
 /// Port of `src/helpers/helpers.core.ts`.
 ///
@@ -36,6 +37,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
 /// helpers.core.ts:11 `noop`.
 ///
@@ -377,6 +379,8 @@ void merger(String key, Object target, Object source, MergeOptions options) {
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     merge(tval, sval, options);
+  } else if (sval is TooltipCallbacks && tval is TooltipCallbacks) {
+    _setProp(target, key, tval.merge(sval));
   } else if (sval is TextStyle && tval is TextStyle) {
     // Two fonts merge as two font objects: a field of the source wins (row
     // adapt-text-style-fonts).
@@ -604,6 +608,14 @@ void _mergeScope(
       } else {
         merge(tval, sval, options);
       }
+    } else if (tval is TooltipCallbacks && sval is TooltipCallbacks) {
+      target.storeNormalized(
+        tk,
+        target.classifyNormalized(
+          tk,
+          ifAbsent ? sval.merge(tval) : tval.merge(sval),
+        ),
+      );
     } else if (tval is TextStyle && sval is TextStyle) {
       // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
       target.storeNormalized(
@@ -683,6 +695,8 @@ void mergerIf(
 
   if (_isMapObject(tval) && _isMapObject(sval)) {
     mergeIf(tval, sval);
+  } else if (tval is TooltipCallbacks && sval is TooltipCallbacks) {
+    _setProp(target, key, sval.merge(tval));
   } else if (tval is TextStyle && sval is TextStyle) {
     // Two fonts merge as two font objects: a field of the target stays, and
     // the source fills its absent fields (row adapt-text-style-fonts).

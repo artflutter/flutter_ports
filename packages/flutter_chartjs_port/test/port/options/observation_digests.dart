@@ -2304,35 +2304,35 @@ const Map<String, String> observationDigests = {
   'fixture plugin.tooltip/box-padding.js (plain)':
       '523de55f16aa6716246deb94b876138ffc9f3a5e9a42c8b88b5756a9d41e03d0',
   'fixture plugin.tooltip/box-padding.js (trace)':
-      'a4e020b46b078e4a7045d6f534999d15e3d0c926ac3f3bed813cc015ee415af3',
+      'fe6d7ec8a507d61849f544ea8d04c4b29feec4e66ff79d38c3ffb4801b3964fb',
   'fixture plugin.tooltip/caret-position.js (plain)':
       'b823d10b7c449466b5d42b1d7d32f480de6d7bfe50075a41c4f913e5be5934c7',
   'fixture plugin.tooltip/caret-position.js (trace)':
-      'eea77a856a9adf4a53005b4cc88254b0ed00a7d7ecbcdd2bc9cafe4cbc1feac5',
+      'e8e419a6f83d99142b8c4a6c5a8aa916c618d4544515f63127ae847257c6eadf',
   'fixture plugin.tooltip/color-box-border-dash.js (plain)':
       'ffb1239d88be1183f4cabbb92f92087b552f27546a05dcdde2fa44aaa60c7df2',
   'fixture plugin.tooltip/color-box-border-dash.js (trace)':
-      '58179522715cff202475dbccbafabfb5d12d39d9a189ee15c0ae9dc2efc97c12',
+      '66a7fefd49fe0d55f818a95e7a4d49627ab2ca84b612857b2a248c26f643112a',
   'fixture plugin.tooltip/color-box-border-radius.js (plain)':
       '8ffb04b5c068c200a5c89463424ed0fd814ca79c45f3a5e7cdc3911385e64c71',
   'fixture plugin.tooltip/color-box-border-radius.js (trace)':
-      '358df023dd6f9dc47f85ffaacab9e3a09a592a7398ee3a06c698870c9a1e3c2b',
+      'ebf2994b565591763d8880d6dd64e80fe2ae9df87db6ba2a3ded8176723c5921',
   'fixture plugin.tooltip/corner-radius.js (plain)':
       'c04244c64cdb8969dd1a08fd3e16b20cb4b7b58604e68110c3e45ffb18c93dd9',
   'fixture plugin.tooltip/corner-radius.js (trace)':
-      'edb44f285052c96044e35410cab56f01184db08ed7390a13debdeebf98c901ca',
+      '9d6e6fa0ce8bb0435f31b174e9d561e2cbbaa3ed8ad2ebc85bac90fec21acc99',
   'fixture plugin.tooltip/opacity.js (plain)':
       '9617f8b5b779e9a98dc516cb4c1c670100d4cbad8831cc6383c69dac3d33863b',
   'fixture plugin.tooltip/opacity.js (trace)':
-      'a7d61d40a65c0806ddc3b55d15421e4d0fe0789bc46d5ddbef4a9f04ee293726',
+      '40afca8cd5d19b3bd356d30ccfe4321a3baea7e3da58d71007a7e07f864c4d95',
   'fixture plugin.tooltip/point-style.js (plain)':
       '13b909f1603639dbb857621d4013e2271ea084c6cc82c3b1035363aa7894521b',
   'fixture plugin.tooltip/point-style.js (trace)':
-      '0546859ed8ed52d71321a2e8a176adedf763938269d08007c7499a30e5d74a57',
+      '7727fa0c0cef6ab04653859c9299dd34c103aee749349d49e8b4111aab339c09',
   'fixture plugin.tooltip/positioning.js (plain)':
       'd9c8b8b626e934cfa9ad86b9dd448e1dd293034ccb6e9497daf322a2a3e06cd3',
   'fixture plugin.tooltip/positioning.js (trace)':
-      '524f50b6a86ed99c2ae37db43adb616185b951b611d631f79f969c4a810d7c77',
+      '4104e1c4d3bedce67f6cb6952209f15b4f53f31153d281dc9ced6f1503d32e77',
   'fixture scale.category/invalid-data.js (plain)':
       'eb21dc08a844d202f00f4243559b97870fc363f8014ad8877759fefb689911a6',
   'fixture scale.category/invalid-data.js (trace)':

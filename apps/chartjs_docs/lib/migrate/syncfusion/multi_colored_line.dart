@@ -30,10 +30,11 @@ Object? _segmentColor(JsObjectFace segment) =>
     _rainfall[(segment['p1DataIndex']! as num).toInt()].$2;
 
 // The marker in the tooltip takes the color of the point.
-Map<String, Object?> _tooltipMarker(JsObjectFace item) => {
-  'borderColor': Colors.white,
-  'backgroundColor': _rainfall[(item['dataIndex']! as num).toInt()].$2,
-};
+TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, ChartTooltipItem item) =>
+    TooltipLabelStyle(
+      borderColor: const ChartPaint.solid(Colors.white),
+      backgroundColor: ChartPaint.solid(_rainfall[item.dataIndex].$2),
+    );
 
 String? _mm(AxisTickInfo tick) => '${tick.value.round()}mm';
 
@@ -92,15 +93,25 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
     axis: .x,
   ),
-  tooltip: const ChartTooltip(
+  tooltip: ChartTooltip(
     backgroundColor: _tooltip,
-    labelText: _tooltipLabel,
     yAlign: .bottom,
-    extra: {
+    extra: const {
       'usePointStyle': true,
       'boxPadding': 4,
-      'callbacks': {'title': _noTitle, 'labelColor': _tooltipMarker},
     },
+    callbacks: TooltipCallbacks(
+      labelColor: _tooltipMarker,
+      title: _noTitle,
+      label: (tooltip, arg) {
+        final text = _tooltipLabel(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
   ),
   plugins: [_trackball],
   scales: const {
@@ -147,7 +158,8 @@ final ChartConfig _config = ChartConfig(
   },
 );
 
-List<String> _noTitle(Object? items) => const [];
+List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+    const [];
 
 class SfMultiColoredLine extends StatelessWidget {
   const SfMultiColoredLine({super.key});

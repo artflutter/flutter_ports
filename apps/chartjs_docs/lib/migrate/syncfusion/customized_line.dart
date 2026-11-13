@@ -65,7 +65,8 @@ String? _percent(AxisTickInfo tick) {
 String? _tooltipLabel(ChartTooltipItem item) =>
     '${item.label} : ${item.formattedValue}%';
 
-List<String> _noTitle(Object? items) => const [];
+List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+    const [];
 
 final ChartConfig _config = ChartConfig(
   type: .line,
@@ -110,14 +111,22 @@ final ChartConfig _config = ChartConfig(
   ),
   legend: const ChartLegend(display: false),
   // TooltipBehavior(header: '', canShowMarker: false)
-  tooltip: const ChartTooltip(
+  tooltip: ChartTooltip(
     backgroundColor: _tooltip,
     displayColors: false,
-    labelText: _tooltipLabel,
     yAlign: .bottom,
-    extra: {
-      'callbacks': {'title': _noTitle},
-    },
+    extra: const {},
+    callbacks: TooltipCallbacks(
+      title: _noTitle,
+      label: (tooltip, arg) {
+        final text = _tooltipLabel(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
   ),
   plugins: [_highLow],
   scales: {

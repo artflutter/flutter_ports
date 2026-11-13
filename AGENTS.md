@@ -1305,7 +1305,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0122. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0126. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1388,6 +1388,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       holds a bool) is accepted (2026-11-12): its code passes the tests. It supersedes a part of
       Chart.js ADR 0054 §4. Chart.js ADR 0122 (`dart:math` without fdlibm) is accepted
       (2026-11-12): its code passes the tests. It supersedes parts of Chart.js ADRs 0045 and 0035.
+      Chart.js ADR 0125 (native tooltip callbacks) is accepted (2026-11-13): its code passes the
+      tests. Chart.js ADR 0126 (a native plugin contract) is proposed (2026-11-13): it waits for
+      the review of the maintainer, and no code implements it.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -1793,6 +1796,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     JS runtime and port tools) is proposed. The gate of ADR 0008 is D3 phase 1. ADR 0009 (ports of
     add-on libraries) is proposed. Its gate is zoom phase 0. An add-on port depends on its host
     port and imports only the public libraries of the host. ADR 0008 item 1 has the clause for it.
+
+Tooltip callbacks use the native `TooltipCallbacks` object in chart and dataset configs (Chart.js ADR 0125).
+Its 14 hooks are typed functions with an explicit tooltip argument. Text hooks return `List<String>?`: null invokes
+the built-in default, and an empty list emits no lines. Fields merge with `other.field ?? field`. `ChartTooltipItem`
+is a core view over the original item. Result paints/styles are native values; default producers resolve their
+rendered forms. The typed API uses `ChartTooltip.callbacks` and `Dataset.tooltipCallbacks`; the old `titleText`,
+`labelText` and `footerText` parameters are removed. Reference generators emit native expected values; no callback
+Map adapter is present in the runtime.
 
 Text direction options hold `dart:ui.TextDirection` in raw and typed configs (Chart.js ADR 0124). The canvas
 `direction` is nullable: null selects inherited element direction. `overrideTextDirection` returns the previous

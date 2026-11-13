@@ -85,7 +85,7 @@ const List<String> _typedNames = [
   'ResizeTransition', 'ResetTransition',
   // Callbacks and views.
   'ChartEventDetails', 'ChartLegendEventDetails', 'ChartAnimationDetails',
-  'AxisTickInfo', 'ChartHit', 'ChartContext', 'ChartTooltipItem',
+  'AxisTickInfo', 'ChartHit', 'ChartContext',
   'ChartLegendItem', 'ChartScript',
 ];
 
@@ -145,8 +145,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 75 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(75));
+  test('the list has 74 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(74));
   });
 
   test(

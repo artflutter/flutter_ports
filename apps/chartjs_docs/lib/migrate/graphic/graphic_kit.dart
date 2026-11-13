@@ -126,8 +126,6 @@ ChartTooltip graphicTooltip({
   padding: const EdgeInsets.all(5),
   cornerRadius: _radius,
   displayColors: false,
-  titleText: title,
-  labelText: label,
   position: position,
   extra: {
     'caretSize': 0,
@@ -136,14 +134,33 @@ ChartTooltip graphicTooltip({
     'titleSpacing': 0,
     'bodySpacing': 0,
     // No title line unless [title] gives one.
-    if (title == null) 'callbacks': const {'title': _noTitle},
+    if (title == null) 'callbacks': const TooltipCallbacks(title: _noTitle),
     ...extra,
   },
+  callbacks: TooltipCallbacks(
+    title: (tooltip, arg) {
+      final text = title?.call(arg);
+      return text == null
+          ? null
+          : text.isEmpty
+          ? <String>[]
+          : [text];
+    },
+    label: (tooltip, arg) {
+      final text = label?.call(arg);
+      return text == null
+          ? null
+          : text.isEmpty
+          ? <String>[]
+          : [text];
+    },
+  ),
 );
 
 const double _radius = 3;
 
-List<String> _noTitle(Object? items) => const [];
+List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+    const [];
 
 /// The tooltip of Graphic has a shadow (`elevation: 3`).
 final Map<String, Object?> tooltipShadow = {

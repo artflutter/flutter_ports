@@ -12,6 +12,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -729,6 +730,95 @@ void _wrapFunctions(Object? value, String path, List<String> trace) {
 /// The recorder of [value] when it is a function with an exact arity, else
 /// Dart `null`.
 Object? _wrapped(Object? value, String path, List<String> trace) {
+  // The explicit tooltip is the former JS this; trace its item argument.
+  if (value is TooltipCallbacks) {
+    return TooltipCallbacks(
+      beforeTitle: value.beforeTitle == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.beforeTitle', [arg]));
+              return value.beforeTitle!(tooltip, arg);
+            },
+      title: value.title == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.title', [arg]));
+              return value.title!(tooltip, arg);
+            },
+      afterTitle: value.afterTitle == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.afterTitle', [arg]));
+              return value.afterTitle!(tooltip, arg);
+            },
+      beforeBody: value.beforeBody == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.beforeBody', [arg]));
+              return value.beforeBody!(tooltip, arg);
+            },
+      afterBody: value.afterBody == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.afterBody', [arg]));
+              return value.afterBody!(tooltip, arg);
+            },
+      beforeLabel: value.beforeLabel == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.beforeLabel', [arg]));
+              return value.beforeLabel!(tooltip, arg);
+            },
+      label: value.label == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.label', [arg]));
+              return value.label!(tooltip, arg);
+            },
+      afterLabel: value.afterLabel == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.afterLabel', [arg]));
+              return value.afterLabel!(tooltip, arg);
+            },
+      beforeFooter: value.beforeFooter == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.beforeFooter', [arg]));
+              return value.beforeFooter!(tooltip, arg);
+            },
+      footer: value.footer == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.footer', [arg]));
+              return value.footer!(tooltip, arg);
+            },
+      afterFooter: value.afterFooter == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.afterFooter', [arg]));
+              return value.afterFooter!(tooltip, arg);
+            },
+      labelColor: value.labelColor == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.labelColor', [arg]));
+              return value.labelColor!(tooltip, arg);
+            },
+      labelTextColor: value.labelTextColor == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.labelTextColor', [arg]));
+              return value.labelTextColor!(tooltip, arg);
+            },
+      labelPointStyle: value.labelPointStyle == null
+          ? null
+          : (tooltip, arg) {
+              trace.add(_traceLine('$path.labelPointStyle', [arg]));
+              return value.labelPointStyle!(tooltip, arg);
+            },
+    );
+  }
   switch (value) {
     case final JsFunction f:
       final k = _exactArity(f.function);
@@ -1260,9 +1350,7 @@ final List<_Case> _focusedCases = [
           'tooltip': <String, Object?>{
             'backgroundColor': (Object? ctx) =>
                 const native_ui.Color.fromRGBO(1, 2, 3, 0.5),
-            'callbacks': <String, Object?>{
-              'label': (Object? item) => 'item',
-            },
+            'callbacks': TooltipCallbacks(label: (tooltip, item) => ['item']),
           },
           'legend': <String, Object?>{
             'labels': <String, Object?>{

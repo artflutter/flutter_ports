@@ -48,7 +48,8 @@ String? _mm(AxisTickInfo tick) => '${tick.value.round()}mm';
 String? _tooltipLabel(ChartTooltipItem item) =>
     '${item.label} : ${item.formattedValue}mm';
 
-List<String> _noTitle(Object? items) => const [];
+List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+    const [];
 
 // The annotation of the original: a key of the three zones, at 95 % and
 // 19 % of the plot area.
@@ -111,14 +112,22 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
     axis: .x,
   ),
-  tooltip: const ChartTooltip(
+  tooltip: ChartTooltip(
     backgroundColor: _tooltip,
     displayColors: false,
-    labelText: _tooltipLabel,
     yAlign: .bottom,
-    extra: {
-      'callbacks': {'title': _noTitle},
-    },
+    extra: const {},
+    callbacks: TooltipCallbacks(
+      title: _noTitle,
+      label: (tooltip, arg) {
+        final text = _tooltipLabel(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
   ),
   plugins: [_zoneKey],
   scales: const {

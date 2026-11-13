@@ -41,7 +41,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         GenericDatasetOptionsScope,
         LineControllerDatasetOptionsScope,
         PolarAreaControllerDatasetOptionsScope,
-        RadarControllerDatasetOptionsScope;
+        RadarControllerDatasetOptionsScope,
+        TooltipDatasetOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/chart_value.dart'
     show ChartValue;
 import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartKind;
@@ -54,6 +55,7 @@ import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
 /// A dataset of a chart: an item of `data.datasets` of a Chart.js config.
@@ -95,6 +97,7 @@ abstract final class Dataset with Diagnosticable {
     this.hoverBorderColor,
     this.hoverBorderWidth,
     this.shadow,
+    this.tooltipCallbacks,
     this.extra,
   });
 
@@ -152,6 +155,9 @@ abstract final class Dataset with Diagnosticable {
   /// dataset carry it, so a `ChartView.raw` dataset can set them too.
   final ChartShadow? shadow;
 
+  /// Native per-item tooltip callback overrides for this dataset.
+  final TooltipCallbacks? tooltipCallbacks;
+
   /// The Chart.js options of the dataset that have no parameter, for
   /// example `{'clip': 5}`.
   ///
@@ -178,6 +184,7 @@ abstract final class Dataset with Diagnosticable {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     Map<String, Object?>? extra,
   });
 
@@ -205,6 +212,7 @@ abstract final class Dataset with Diagnosticable {
     ('hoverBorderColor', hoverBorderColor),
     ('hoverBorderWidth', hoverBorderWidth),
     ('shadow', shadow),
+    ('tooltipCallbacks', tooltipCallbacksPresence(tooltipCallbacks)),
   ];
 
   @override
@@ -236,7 +244,11 @@ abstract final class Dataset with Diagnosticable {
 /// chart lowers to the form of `docs/charts/mixed.md`. [Dataset.extra]
 /// merges last. [Dataset.key] does not lower.
 @internal
-OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
+OptionScope lowerDataset(
+  Dataset dataset,
+  ChartKind chartType, {
+  TooltipCallbacks? Function()? currentTooltipCallbacks,
+}) {
   if (!_dataUpdateTypesRegistered) {
     registerDataUpdateTypes(
       [
@@ -279,6 +291,18 @@ OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
       'shadowOffsetX': shadow.offset.dx,
       'shadowOffsetY': shadow.offset.dy,
     });
+  }
+  if (dataset.tooltipCallbacks case final callbacks?) {
+    scope.store(
+      OptionKey.tooltip,
+      scope.classify(
+        OptionKey.tooltip,
+        TooltipDatasetOptionsScope()
+          ..callbacks = currentTooltipCallbacks == null
+              ? callbacks
+              : tooltipCallbacksTrampoline(callbacks, currentTooltipCallbacks),
+      ),
+    );
   }
   return mergeExtra(scope, dataset.extra);
 }
@@ -374,6 +398,7 @@ final class BarDataset extends Dataset {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.xAxisID,
     this.yAxisID,
     this.stack,
@@ -476,6 +501,7 @@ final class BarDataset extends Dataset {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     String? xAxisID,
     String? yAxisID,
     String? stack,
@@ -502,6 +528,7 @@ final class BarDataset extends Dataset {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     stack: stack ?? this.stack,
@@ -658,6 +685,7 @@ final class LineDataset extends Dataset with _LineStyle {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.xAxisID,
     this.yAxisID,
     this.stack,
@@ -832,6 +860,7 @@ final class LineDataset extends Dataset with _LineStyle {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     String? xAxisID,
     String? yAxisID,
     String? stack,
@@ -868,6 +897,7 @@ final class LineDataset extends Dataset with _LineStyle {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     stack: stack ?? this.stack,
@@ -946,6 +976,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.xAxisID,
     this.yAxisID,
     this.stack,
@@ -1069,6 +1100,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     String? xAxisID,
     String? yAxisID,
     String? stack,
@@ -1104,6 +1136,7 @@ final class ScatterDataset extends Dataset with _LineStyle {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     stack: stack ?? this.stack,
@@ -1177,6 +1210,7 @@ final class BubbleDataset extends Dataset {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.xAxisID,
     this.yAxisID,
     this.radius,
@@ -1222,6 +1256,7 @@ final class BubbleDataset extends Dataset {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     String? xAxisID,
     String? yAxisID,
     double? radius,
@@ -1241,6 +1276,7 @@ final class BubbleDataset extends Dataset {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     xAxisID: xAxisID ?? this.xAxisID,
     yAxisID: yAxisID ?? this.yAxisID,
     radius: radius ?? this.radius,
@@ -1337,6 +1373,7 @@ final class PieDataset extends Dataset with _ArcStyle {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.offset,
     this.hoverOffset,
     this.spacing,
@@ -1429,6 +1466,7 @@ final class PieDataset extends Dataset with _ArcStyle {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     double? offset,
     double? hoverOffset,
     double? spacing,
@@ -1451,6 +1489,7 @@ final class PieDataset extends Dataset with _ArcStyle {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     offset: offset ?? this.offset,
     hoverOffset: hoverOffset ?? this.hoverOffset,
     spacing: spacing ?? this.spacing,
@@ -1502,6 +1541,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.offset,
     this.hoverOffset,
     this.spacing,
@@ -1564,6 +1604,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     double? offset,
     double? hoverOffset,
     double? spacing,
@@ -1586,6 +1627,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     offset: offset ?? this.offset,
     hoverOffset: hoverOffset ?? this.hoverOffset,
     spacing: spacing ?? this.spacing,
@@ -1637,6 +1679,7 @@ final class PolarAreaDataset extends Dataset {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.offset,
     this.hoverOffset,
     this.spacing,
@@ -1669,6 +1712,7 @@ final class PolarAreaDataset extends Dataset {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     double? offset,
     double? hoverOffset,
     double? spacing,
@@ -1686,6 +1730,7 @@ final class PolarAreaDataset extends Dataset {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     offset: offset ?? this.offset,
     hoverOffset: hoverOffset ?? this.hoverOffset,
     spacing: spacing ?? this.spacing,
@@ -1738,6 +1783,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     super.hoverBorderColor,
     super.hoverBorderWidth,
     super.shadow,
+    super.tooltipCallbacks,
     this.fill,
     this.tension,
     this.borderDash,
@@ -1843,6 +1889,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     Color? hoverBorderColor,
     double? hoverBorderWidth,
     ChartShadow? shadow,
+    TooltipCallbacks? tooltipCallbacks,
     ChartFill? fill,
     double? tension,
     List<double>? borderDash,
@@ -1874,6 +1921,7 @@ final class RadarDataset extends Dataset with _LineStyle {
     hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
+    tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
     fill: fill ?? this.fill,
     tension: tension ?? this.tension,
     borderDash: borderDash ?? this.borderDash,

@@ -68,6 +68,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// One option value of a typed scope (Chart.js ADR 0054 §1).
@@ -338,6 +339,9 @@ abstract final class ShapeBits {
   /// `textDirection`: the native direction of legend and tooltip text.
   static const int textDirection = 4608;
 
+  /// Native tooltip callbacks.
+  static const int tooltipCallbacks = 4736;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -445,6 +449,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.timeUnit => classifyTyped<TimeUnit>(raw),
   ShapeBits.chartPosition => classifyTyped<ChartPosition>(raw),
   ShapeBits.layoutPosition => classifyTyped<LayoutPosition>(raw),
+  ShapeBits.tooltipCallbacks => classifyTyped<TooltipCallbacks>(raw),
   ShapeBits.textDirection => classifyTyped<TextDirection>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),

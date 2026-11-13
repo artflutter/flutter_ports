@@ -51,7 +51,7 @@ ChartConfig _config(List<num> ys, {required bool average}) {
       tooltip: ChartTooltip(
         enabled: !average,
         displayColors: false,
-        titleText: (_) => null,
+        callbacks: TooltipCallbacks(title: (tooltip, _) => null),
       ),
       plugins: [_border],
       scales: {

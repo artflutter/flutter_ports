@@ -7,6 +7,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -91,7 +92,7 @@ Map<String, Object?> fixture() {
             // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
             'mode': const NearestInteractionMode(),
             'intersect': false,
-            'callbacks': <String, Object?>{'label': () => '​'},
+            'callbacks': TooltipCallbacks(label: (tooltip, arg) => ['​']),
           },
         },
 

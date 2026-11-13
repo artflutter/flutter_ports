@@ -108,15 +108,20 @@ class _Sample3State extends State<Sample3> {
         displayColors: false,
         titleFont: const TextStyle(fontWeight: FontWeight.bold),
         bodyFont: const TextStyle(fontWeight: FontWeight.w900),
-        titleText: (items) =>
-            items.isEmpty ? null : items.first.label! as String,
-        labelText: (item) => '${item.formattedValue} k calories',
         extra: {
           'filter': (JsObjectFace item) {
             final index = (item['dataIndex']! as num).toInt();
             return index != 0 && index != 6;
           },
         },
+        callbacks: TooltipCallbacks(
+          title: (tooltip, items) =>
+              switch (items.isEmpty ? null : items.first.label! as String) {
+                null => null,
+                final String text => text.isEmpty ? <String>[] : [text],
+              },
+          label: (tooltip, item) => ['${item.formattedValue} k calories'],
+        ),
       ),
       plugins: _plugins,
       scales: {

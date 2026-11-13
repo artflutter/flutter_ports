@@ -58,8 +58,7 @@ export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartHit,
         ChartLegendEventDetails,
         ChartLegendItem,
-        ChartScript,
-        ChartTooltipItem;
+        ChartScript;
 export 'package:flutter_chartjs_port/src/typed/chart_value.dart'
     show ChartConstant, ChartIndexed, ChartResolver, ChartValue;
 export 'package:flutter_chartjs_port/src/typed/config.dart'

@@ -83,9 +83,11 @@ final ChartConfig _config = fills(
     tooltip: ChartTooltip(
       backgroundColor: Fl.red,
       displayColors: false,
-      titleText: (_) => null,
-      labelText: (i) => i.formattedValue,
       bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      callbacks: TooltipCallbacks(
+        title: (tooltip, _) => null,
+        label: (tooltip, i) => [i.formattedValue],
+      ),
     ),
     plugins: _plugins,
     scales: {

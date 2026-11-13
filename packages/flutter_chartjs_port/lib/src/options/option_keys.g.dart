@@ -53,9 +53,6 @@ enum OptionKey {
   /// The key `adapters`.
   adapters('adapters'),
 
-  /// The key `afterBody`.
-  afterBody('afterBody'),
-
   /// The key `afterBuildTicks`.
   afterBuildTicks('afterBuildTicks'),
 
@@ -68,20 +65,11 @@ enum OptionKey {
   /// The key `afterFit`.
   afterFit('afterFit'),
 
-  /// The key `afterFooter`.
-  afterFooter('afterFooter'),
-
-  /// The key `afterLabel`.
-  afterLabel('afterLabel'),
-
   /// The key `afterSetDimensions`.
   afterSetDimensions('afterSetDimensions'),
 
   /// The key `afterTickToLabelConversion`.
   afterTickToLabelConversion('afterTickToLabelConversion'),
-
-  /// The key `afterTitle`.
-  afterTitle('afterTitle'),
 
   /// The key `afterUpdate`.
   afterUpdate('afterUpdate'),
@@ -155,9 +143,6 @@ enum OptionKey {
   /// The key `base`.
   base('base'),
 
-  /// The key `beforeBody`.
-  beforeBody('beforeBody'),
-
   /// The key `beforeBuildTicks`.
   beforeBuildTicks('beforeBuildTicks'),
 
@@ -170,20 +155,11 @@ enum OptionKey {
   /// The key `beforeFit`.
   beforeFit('beforeFit'),
 
-  /// The key `beforeFooter`.
-  beforeFooter('beforeFooter'),
-
-  /// The key `beforeLabel`.
-  beforeLabel('beforeLabel'),
-
   /// The key `beforeSetDimensions`.
   beforeSetDimensions('beforeSetDimensions'),
 
   /// The key `beforeTickToLabelConversion`.
   beforeTickToLabelConversion('beforeTickToLabelConversion'),
-
-  /// The key `beforeTitle`.
-  beforeTitle('beforeTitle'),
 
   /// The key `beforeUpdate`.
   beforeUpdate('beforeUpdate'),
@@ -404,9 +380,6 @@ enum OptionKey {
   /// The key `font`.
   font('font'),
 
-  /// The key `footer`.
-  footer('footer'),
-
   /// The key `footerAlign`.
   footerAlign('footerAlign'),
 
@@ -533,17 +506,8 @@ enum OptionKey {
   /// The key `label`.
   label('label'),
 
-  /// The key `labelColor`.
-  labelColor('labelColor'),
-
   /// The key `labelOffset`.
   labelOffset('labelOffset'),
-
-  /// The key `labelPointStyle`.
-  labelPointStyle('labelPointStyle'),
-
-  /// The key `labelTextColor`.
-  labelTextColor('labelTextColor'),
 
   /// The key `labels`.
   labels('labels'),

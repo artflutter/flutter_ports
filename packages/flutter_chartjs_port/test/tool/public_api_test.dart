@@ -155,7 +155,6 @@ const Map<String, String> _notExported = {
   'LegendOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TitleOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipItem': 'an internal typed plugin type of Chart.js ADR 0054',
-  'TooltipLabelStyle': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   // The typed scale option facades of Chart.js ADR 0054 section 4
   // (lib/src/core/scale_options.dart, extension types over the resolver

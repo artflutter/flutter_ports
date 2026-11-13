@@ -32,6 +32,7 @@ import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart' show ScaleAxis;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:test/test.dart';
 
 // The schema drift test of Chart.js ADR 0054 §2 and §15. It walks the
@@ -118,6 +119,60 @@ _Walk _walk(ScopeKind root, List<String> segments) {
   return (shape: shape, depth: segments.length);
 }
 
+// The pinned inventory still names callback fields inside its JS object.
+// Read the corresponding native fields directly in this test.
+const _callbackFields = <String>{
+  'beforeTitle',
+  'title',
+  'afterTitle',
+  'beforeBody',
+  'beforeLabel',
+  'label',
+  'labelColor',
+  'labelTextColor',
+  'labelPointStyle',
+  'afterLabel',
+  'afterBody',
+  'beforeFooter',
+  'footer',
+  'afterFooter',
+};
+Object? _field(Object? value, String key) => value is TooltipCallbacks
+    ? switch (key) {
+        'beforeTitle' => value.beforeTitle,
+        'title' => value.title,
+        'afterTitle' => value.afterTitle,
+        'beforeBody' => value.beforeBody,
+        'beforeLabel' => value.beforeLabel,
+        'label' => value.label,
+        'labelColor' => value.labelColor,
+        'labelTextColor' => value.labelTextColor,
+        'labelPointStyle' => value.labelPointStyle,
+        'afterLabel' => value.afterLabel,
+        'afterBody' => value.afterBody,
+        'beforeFooter' => value.beforeFooter,
+        'footer' => value.footer,
+        'afterFooter' => value.afterFooter,
+        _ => undefined,
+      }
+    : jsGet(value, key);
+
+bool _isCallbackField(ScopeKind root, String path) {
+  final parts = path.split('.');
+  if (parts.length < 2 ||
+      !_callbackFields.contains(parts.last) ||
+      parts[parts.length - 2] != 'callbacks') {
+    return false;
+  }
+  if (root == ScopeKind.chartConfiguration &&
+      path.startsWith('data.datasets[].tooltip.callbacks.')) {
+    return true;
+  }
+  final walk = _walk(root, parts.sublist(0, parts.length - 1));
+  return walk.shape != null &&
+      walk.shape! & ShapeBits.typed == ShapeBits.tooltipCallbacks;
+}
+
 /// Whether a value of the census kind [kind] fits the shape bits [shape].
 /// A function (scriptable), an array (indexable), `null` and `undefined`
 /// fit each key.
@@ -138,12 +193,15 @@ bool _fits(String kind, int shape) {
     // Upstream data hold an image where the port has an `ImagePointStyle`.
     'obj:UiImageSource' => shape & ShapeBits.typed == ShapeBits.pointStyle,
     // A font is a `ChartTextStyle` (Chart.js ADR 0116).
+    'obj:TooltipCallbacks' =>
+      shape & ShapeBits.typed == ShapeBits.tooltipCallbacks,
     'obj:EdgeInsets' => shape & ShapeBits.typed == ShapeBits.edgeInsets,
     'obj:ChartTextStyle' => shape & ShapeBits.typed == ShapeBits.textStyle,
     'bool' => shape & ShapeBits.boolean != 0,
     'Map' =>
       shape & ShapeBits.scope != 0 ||
-          shape & ShapeBits.typed == ShapeBits.edgeInsets,
+          shape & ShapeBits.typed == ShapeBits.edgeInsets ||
+          shape & ShapeBits.typed == ShapeBits.tooltipCallbacks,
     _ when kind.startsWith('NarrowMap') => shape & ShapeBits.scope != 0,
     _ => false,
   };
@@ -260,14 +318,17 @@ bool _skipped(String path) =>
 Object? _read(Object? root, String path) {
   var value = root;
   for (final key in path.split('.')) {
-    value = jsGet(value, key);
+    value = _field(value, key);
   }
   return value;
 }
 
 /// The keys of the object [value], or Dart `null` for another value.
-List<String>? _keysOf(Object? value) =>
-    isObject(value) ? jsObjectKeys(value) : null;
+List<String>? _keysOf(Object? value) => value is TooltipCallbacks
+    ? _callbackFields.where((key) => _field(value, key) != null).toList()
+    : isObject(value)
+    ? jsObjectKeys(value)
+    : null;
 
 /// Whether [key] of the object [object] is routed (`Defaults.route`).
 bool _routed(Object? object, String key) => switch (object) {
@@ -363,7 +424,7 @@ String? _mismatch(Object? actual, Object? expected) {
         return 'keys $keys != ${map.keys.toList()}';
       }
       for (final MapEntry(:key, :value) in map.entries) {
-        final item = _mismatch(jsGet(actual, key), value);
+        final item = _mismatch(_field(actual, key), value);
         if (item != null) return '.$key $item';
       }
       return null;
@@ -376,7 +437,7 @@ String? _mismatch(Object? actual, Object? expected) {
 void _leaves(Object? object, String prefix, List<String> out) {
   for (final key in _keysOf(object)!) {
     final path = prefix.isEmpty ? key : '$prefix.$key';
-    final value = jsGet(object, key);
+    final value = _field(object, key);
     final keys = _keysOf(value);
     if (_routed(object, key) || keys == null || keys.isEmpty) {
       out.add(path);
@@ -392,7 +453,7 @@ void _rawObjects(Object? object, String prefix, List<String> out) {
   for (final key in _keysOf(object)!) {
     if (_routed(object, key)) continue;
     final path = prefix.isEmpty ? key : '$prefix.$key';
-    final value = jsGet(object, key);
+    final value = _field(object, key);
     if (!isObject(value)) continue;
     if (value is! OptionScope) out.add(path);
     _rawObjects(value, path, out);
@@ -419,7 +480,9 @@ void main() {
           // A field of a font object: the font path holds a TextStyle.
           final font = _fontField.firstMatch(path);
           if (font != null && _isFontPath(root, font[1]!)) continue;
-          if (_isPaddingField(root, path)) continue;
+          if (_isPaddingField(root, path) || _isCallbackField(root, path)) {
+            continue;
+          }
           final walk = _walk(root, path.split('.'));
           final shape = walk.shape;
           if (walk.depth != path.split('.').length || shape == null) {
@@ -652,7 +715,7 @@ void main() {
       for (final (label, path, kind) in rows) {
         if (label == 'write') {
           final key = path.substring(path.indexOf('.') + 1);
-          if (optionKeyOf(key) == null) {
+          if (optionKeyOf(key) == null && !_callbackFields.contains(key)) {
             if (writes.contains(key)) {
               usedWrites.add(key);
             } else {
@@ -662,7 +725,8 @@ void main() {
           continue;
         }
         if (_skipped(path) ||
-            _isPaddingField(ScopeKind.chartConfiguration, path)) {
+            _isPaddingField(ScopeKind.chartConfiguration, path) ||
+            _isCallbackField(ScopeKind.chartConfiguration, path)) {
           continue;
         }
         final segments = path.split('.');

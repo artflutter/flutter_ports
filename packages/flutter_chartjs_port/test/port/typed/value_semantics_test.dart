@@ -42,6 +42,7 @@ const List<String> _style = [
   'hoverBorderColor',
   'hoverBorderWidth',
   'shadow',
+  'tooltipCallbacks',
 ];
 
 /// The parameter names of the line style.
@@ -422,7 +423,9 @@ void main() {
           'y': LinearAxis(min: _runtime(0)),
         },
         legend: ChartLegend(onClick: (details) {}),
-        tooltip: ChartTooltip(labelText: (item) => null),
+        tooltip: ChartTooltip(
+          callbacks: TooltipCallbacks(label: (tooltip, item) => null),
+        ),
         animation: ChartAnimation(onComplete: (details) {}),
         onClick: (details) {},
         extra: {
@@ -530,8 +533,12 @@ void main() {
         ChartLegend(onLeave: (details) {}),
       );
       _expectEqual(
-        ChartTooltip(footerText: (items) => 'a'),
-        ChartTooltip(footerText: (items) => 'b'),
+        ChartTooltip(
+          callbacks: TooltipCallbacks(footer: (tooltip, items) => ['a']),
+        ),
+        ChartTooltip(
+          callbacks: TooltipCallbacks(footer: (tooltip, items) => ['b']),
+        ),
       );
       _expectEqual(
         ChartAnimation(onProgress: (details) {}),

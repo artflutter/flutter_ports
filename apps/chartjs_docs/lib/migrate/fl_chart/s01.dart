@@ -94,8 +94,10 @@ ChartConfig _config(bool main) => fills(
         ? ChartTooltip(
             backgroundColor: Fl.blueGrey.withValues(alpha: 0.8),
             displayColors: false,
-            titleText: (_) => null,
-            labelText: (i) => i.formattedValue,
+            callbacks: TooltipCallbacks(
+              title: (tooltip, _) => null,
+              label: (tooltip, i) => [i.formattedValue],
+            ),
           )
         : const ChartTooltip(enabled: false),
     plugins: [_indicator],

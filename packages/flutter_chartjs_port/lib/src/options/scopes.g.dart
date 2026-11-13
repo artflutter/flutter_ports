@@ -53,6 +53,8 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
+    show TooltipCallbacks;
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
@@ -22294,13 +22296,13 @@ base class TooltipOptionsScope extends OptionScope {
   set animations(Object value) =>
       store(OptionKey.animations, classify(OptionKey.animations, value));
 
-  Opt<TooltipCallbacksScope>? _callbacks;
+  Opt<TooltipCallbacks>? _callbacks;
 
   /// The cell of `callbacks`, or Dart `null` when absent.
-  Opt<TooltipCallbacksScope>? get callbacksCell => _callbacks;
+  Opt<TooltipCallbacks>? get callbacksCell => _callbacks;
 
   /// Stores the cell of `callbacks`. Dart `null` deletes the key.
-  set callbacksCell(Opt<TooltipCallbacksScope>? cell) {
+  set callbacksCell(Opt<TooltipCallbacks>? cell) {
     if (cell == null) {
       delete(OptionKey.callbacks);
     } else {
@@ -22309,8 +22311,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `callbacks`.
-  set callbacks(TooltipCallbacksScope value) =>
-      store(OptionKey.callbacks, OptScope<TooltipCallbacksScope>(value));
+  set callbacks(TooltipCallbacks value) =>
+      store(OptionKey.callbacks, OptValue<TooltipCallbacks>(value));
 
   Opt<bool>? _reverse;
 
@@ -22533,7 +22535,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.animations:
         _animations = fitCell(cell, (raw) => classifyUnion(raw, 34));
       case OptionKey.callbacks:
-        _callbacks = fitCell(cell, classifyScope<TooltipCallbacksScope>);
+        _callbacks = fitCell(cell, classifyTyped<TooltipCallbacks>);
       case OptionKey.reverse:
         _reverse = fitCell(cell, classifyBool);
       case OptionKey.events:
@@ -22685,408 +22687,11 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.animations:
         return classifyUnion(raw, 34);
       case OptionKey.callbacks:
-        return classifyScope<TooltipCallbacksScope>(raw);
+        return classifyTyped<TooltipCallbacks>(raw);
       case OptionKey.reverse:
         return classifyBool(raw);
       case OptionKey.events:
         return classifyUnion(raw, 16);
-      default:
-        return kind.classifyOther(raw);
-    }
-  }
-}
-
-/// index.d.ts:2739 TooltipCallbacks (index.d.ts:2726 TooltipDatasetCallbacks),
-/// the scope `callbacks` of the tooltip and of a dataset tooltip.
-base class TooltipCallbacksScope extends OptionScope {
-  /// An empty scope.
-  TooltipCallbacksScope();
-
-  @override
-  ScopeKind get kind => ScopeKind.tooltipCallbacks;
-
-  Opt<Object>? _beforeLabel;
-
-  /// The cell of `beforeLabel`, or Dart `null` when absent.
-  Opt<Object>? get beforeLabelCell => _beforeLabel;
-
-  /// Stores the cell of `beforeLabel`. Dart `null` deletes the key.
-  set beforeLabelCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.beforeLabel);
-    } else {
-      store(OptionKey.beforeLabel, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `beforeLabel`.
-  set beforeLabel(Object value) =>
-      store(OptionKey.beforeLabel, classify(OptionKey.beforeLabel, value));
-
-  Opt<Object>? _label;
-
-  /// The cell of `label`, or Dart `null` when absent.
-  Opt<Object>? get labelCell => _label;
-
-  /// Stores the cell of `label`. Dart `null` deletes the key.
-  set labelCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.label);
-    } else {
-      store(OptionKey.label, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `label`.
-  set label(Object value) =>
-      store(OptionKey.label, classify(OptionKey.label, value));
-
-  Opt<Object>? _afterLabel;
-
-  /// The cell of `afterLabel`, or Dart `null` when absent.
-  Opt<Object>? get afterLabelCell => _afterLabel;
-
-  /// Stores the cell of `afterLabel`. Dart `null` deletes the key.
-  set afterLabelCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.afterLabel);
-    } else {
-      store(OptionKey.afterLabel, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `afterLabel`.
-  set afterLabel(Object value) =>
-      store(OptionKey.afterLabel, classify(OptionKey.afterLabel, value));
-
-  Opt<Object>? _labelColor;
-
-  /// The cell of `labelColor`, or Dart `null` when absent.
-  Opt<Object>? get labelColorCell => _labelColor;
-
-  /// Stores the cell of `labelColor`. Dart `null` deletes the key.
-  set labelColorCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.labelColor);
-    } else {
-      store(OptionKey.labelColor, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `labelColor`.
-  set labelColor(Object value) =>
-      store(OptionKey.labelColor, classify(OptionKey.labelColor, value));
-
-  Opt<Object>? _labelTextColor;
-
-  /// The cell of `labelTextColor`, or Dart `null` when absent.
-  Opt<Object>? get labelTextColorCell => _labelTextColor;
-
-  /// Stores the cell of `labelTextColor`. Dart `null` deletes the key.
-  set labelTextColorCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.labelTextColor);
-    } else {
-      store(OptionKey.labelTextColor, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `labelTextColor`.
-  set labelTextColor(Object value) => store(
-    OptionKey.labelTextColor,
-    classify(OptionKey.labelTextColor, value),
-  );
-
-  Opt<Object>? _labelPointStyle;
-
-  /// The cell of `labelPointStyle`, or Dart `null` when absent.
-  Opt<Object>? get labelPointStyleCell => _labelPointStyle;
-
-  /// Stores the cell of `labelPointStyle`. Dart `null` deletes the key.
-  set labelPointStyleCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.labelPointStyle);
-    } else {
-      store(OptionKey.labelPointStyle, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `labelPointStyle`.
-  set labelPointStyle(Object value) => store(
-    OptionKey.labelPointStyle,
-    classify(OptionKey.labelPointStyle, value),
-  );
-
-  Opt<Object>? _beforeTitle;
-
-  /// The cell of `beforeTitle`, or Dart `null` when absent.
-  Opt<Object>? get beforeTitleCell => _beforeTitle;
-
-  /// Stores the cell of `beforeTitle`. Dart `null` deletes the key.
-  set beforeTitleCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.beforeTitle);
-    } else {
-      store(OptionKey.beforeTitle, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `beforeTitle`.
-  set beforeTitle(Object value) =>
-      store(OptionKey.beforeTitle, classify(OptionKey.beforeTitle, value));
-
-  Opt<Object>? _title;
-
-  /// The cell of `title`, or Dart `null` when absent.
-  Opt<Object>? get titleCell => _title;
-
-  /// Stores the cell of `title`. Dart `null` deletes the key.
-  set titleCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.title);
-    } else {
-      store(OptionKey.title, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `title`.
-  set title(Object value) =>
-      store(OptionKey.title, classify(OptionKey.title, value));
-
-  Opt<Object>? _afterTitle;
-
-  /// The cell of `afterTitle`, or Dart `null` when absent.
-  Opt<Object>? get afterTitleCell => _afterTitle;
-
-  /// Stores the cell of `afterTitle`. Dart `null` deletes the key.
-  set afterTitleCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.afterTitle);
-    } else {
-      store(OptionKey.afterTitle, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `afterTitle`.
-  set afterTitle(Object value) =>
-      store(OptionKey.afterTitle, classify(OptionKey.afterTitle, value));
-
-  Opt<Object>? _beforeBody;
-
-  /// The cell of `beforeBody`, or Dart `null` when absent.
-  Opt<Object>? get beforeBodyCell => _beforeBody;
-
-  /// Stores the cell of `beforeBody`. Dart `null` deletes the key.
-  set beforeBodyCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.beforeBody);
-    } else {
-      store(OptionKey.beforeBody, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `beforeBody`.
-  set beforeBody(Object value) =>
-      store(OptionKey.beforeBody, classify(OptionKey.beforeBody, value));
-
-  Opt<Object>? _afterBody;
-
-  /// The cell of `afterBody`, or Dart `null` when absent.
-  Opt<Object>? get afterBodyCell => _afterBody;
-
-  /// Stores the cell of `afterBody`. Dart `null` deletes the key.
-  set afterBodyCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.afterBody);
-    } else {
-      store(OptionKey.afterBody, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `afterBody`.
-  set afterBody(Object value) =>
-      store(OptionKey.afterBody, classify(OptionKey.afterBody, value));
-
-  Opt<Object>? _beforeFooter;
-
-  /// The cell of `beforeFooter`, or Dart `null` when absent.
-  Opt<Object>? get beforeFooterCell => _beforeFooter;
-
-  /// Stores the cell of `beforeFooter`. Dart `null` deletes the key.
-  set beforeFooterCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.beforeFooter);
-    } else {
-      store(OptionKey.beforeFooter, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `beforeFooter`.
-  set beforeFooter(Object value) =>
-      store(OptionKey.beforeFooter, classify(OptionKey.beforeFooter, value));
-
-  Opt<Object>? _footer;
-
-  /// The cell of `footer`, or Dart `null` when absent.
-  Opt<Object>? get footerCell => _footer;
-
-  /// Stores the cell of `footer`. Dart `null` deletes the key.
-  set footerCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.footer);
-    } else {
-      store(OptionKey.footer, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `footer`.
-  set footer(Object value) =>
-      store(OptionKey.footer, classify(OptionKey.footer, value));
-
-  Opt<Object>? _afterFooter;
-
-  /// The cell of `afterFooter`, or Dart `null` when absent.
-  Opt<Object>? get afterFooterCell => _afterFooter;
-
-  /// Stores the cell of `afterFooter`. Dart `null` deletes the key.
-  set afterFooterCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.afterFooter);
-    } else {
-      store(OptionKey.afterFooter, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `afterFooter`.
-  set afterFooter(Object value) =>
-      store(OptionKey.afterFooter, classify(OptionKey.afterFooter, value));
-
-  @override
-  Opt<Object?>? cellOf(OptionKey key) {
-    switch (key) {
-      case OptionKey.beforeLabel:
-        return _beforeLabel;
-      case OptionKey.label:
-        return _label;
-      case OptionKey.afterLabel:
-        return _afterLabel;
-      case OptionKey.labelColor:
-        return _labelColor;
-      case OptionKey.labelTextColor:
-        return _labelTextColor;
-      case OptionKey.labelPointStyle:
-        return _labelPointStyle;
-      case OptionKey.beforeTitle:
-        return _beforeTitle;
-      case OptionKey.title:
-        return _title;
-      case OptionKey.afterTitle:
-        return _afterTitle;
-      case OptionKey.beforeBody:
-        return _beforeBody;
-      case OptionKey.afterBody:
-        return _afterBody;
-      case OptionKey.beforeFooter:
-        return _beforeFooter;
-      case OptionKey.footer:
-        return _footer;
-      case OptionKey.afterFooter:
-        return _afterFooter;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  void setCell(OptionKey key, Opt<Object?>? cell) {
-    switch (key) {
-      case OptionKey.beforeLabel:
-        _beforeLabel = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.label:
-        _label = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.afterLabel:
-        _afterLabel = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.labelColor:
-        _labelColor = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.labelTextColor:
-        _labelTextColor = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.labelPointStyle:
-        _labelPointStyle = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.beforeTitle:
-        _beforeTitle = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.title:
-        _title = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.afterTitle:
-        _afterTitle = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.beforeBody:
-        _beforeBody = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.afterBody:
-        _afterBody = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.beforeFooter:
-        _beforeFooter = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.footer:
-        _footer = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      case OptionKey.afterFooter:
-        _afterFooter = fitCell(cell, (raw) => classifyUnion(raw, 8));
-      default:
-        throw ArgumentError.value(key, 'key', 'Not a key of TooltipCallbacks');
-    }
-  }
-
-  @override
-  bool hasField(OptionKey key) {
-    switch (key) {
-      case OptionKey.beforeLabel:
-      case OptionKey.label:
-      case OptionKey.afterLabel:
-      case OptionKey.labelColor:
-      case OptionKey.labelTextColor:
-      case OptionKey.labelPointStyle:
-      case OptionKey.beforeTitle:
-      case OptionKey.title:
-      case OptionKey.afterTitle:
-      case OptionKey.beforeBody:
-      case OptionKey.afterBody:
-      case OptionKey.beforeFooter:
-      case OptionKey.footer:
-      case OptionKey.afterFooter:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @override
-  Opt<Object?> classify(OptionKey key, Object? raw) {
-    switch (key) {
-      case OptionKey.beforeLabel:
-        return classifyUnion(raw, 8);
-      case OptionKey.label:
-        return classifyUnion(raw, 8);
-      case OptionKey.afterLabel:
-        return classifyUnion(raw, 8);
-      case OptionKey.labelColor:
-        return classifyUnion(raw, 8);
-      case OptionKey.labelTextColor:
-        return classifyUnion(raw, 8);
-      case OptionKey.labelPointStyle:
-        return classifyUnion(raw, 8);
-      case OptionKey.beforeTitle:
-        return classifyUnion(raw, 8);
-      case OptionKey.title:
-        return classifyUnion(raw, 8);
-      case OptionKey.afterTitle:
-        return classifyUnion(raw, 8);
-      case OptionKey.beforeBody:
-        return classifyUnion(raw, 8);
-      case OptionKey.afterBody:
-        return classifyUnion(raw, 8);
-      case OptionKey.beforeFooter:
-        return classifyUnion(raw, 8);
-      case OptionKey.footer:
-        return classifyUnion(raw, 8);
-      case OptionKey.afterFooter:
-        return classifyUnion(raw, 8);
       default:
         return kind.classifyOther(raw);
     }
@@ -23102,13 +22707,13 @@ base class TooltipDatasetOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.tooltipDatasetOptions;
 
-  Opt<TooltipCallbacksScope>? _callbacks;
+  Opt<TooltipCallbacks>? _callbacks;
 
   /// The cell of `callbacks`, or Dart `null` when absent.
-  Opt<TooltipCallbacksScope>? get callbacksCell => _callbacks;
+  Opt<TooltipCallbacks>? get callbacksCell => _callbacks;
 
   /// Stores the cell of `callbacks`. Dart `null` deletes the key.
-  set callbacksCell(Opt<TooltipCallbacksScope>? cell) {
+  set callbacksCell(Opt<TooltipCallbacks>? cell) {
     if (cell == null) {
       delete(OptionKey.callbacks);
     } else {
@@ -23117,8 +22722,8 @@ base class TooltipDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `callbacks`.
-  set callbacks(TooltipCallbacksScope value) =>
-      store(OptionKey.callbacks, OptScope<TooltipCallbacksScope>(value));
+  set callbacks(TooltipCallbacks value) =>
+      store(OptionKey.callbacks, OptValue<TooltipCallbacks>(value));
 
   @override
   Opt<Object?>? cellOf(OptionKey key) {
@@ -23134,7 +22739,7 @@ base class TooltipDatasetOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.callbacks:
-        _callbacks = fitCell(cell, classifyScope<TooltipCallbacksScope>);
+        _callbacks = fitCell(cell, classifyTyped<TooltipCallbacks>);
       default:
         throw ArgumentError.value(
           key,
@@ -23158,7 +22763,7 @@ base class TooltipDatasetOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.callbacks:
-        return classifyScope<TooltipCallbacksScope>(raw);
+        return classifyTyped<TooltipCallbacks>(raw);
       default:
         return kind.classifyOther(raw);
     }

@@ -6,7 +6,8 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 8 cases, 75 widths.
 
-import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
+import 'dart:ui'
+    show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
@@ -19,8 +20,10 @@ import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
 /// The Node.js version that generated the data.
 const String pluginTooltipMoreReferenceNode = 'v24.22.1';
@@ -64,10 +67,12 @@ typedef PluginTooltipMoreReferenceWidth = ({
 });
 
 /// The cases.
-const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
+List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'a bar chart in mode index',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
@@ -103,11 +108,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 400.0, 271.6],
         'scales': <String, Object?>{
           'x': <String, Object?>{
@@ -773,10 +778,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['hover', 260.0, 167.0],
+          'do': const <Object?>['hover', 260.0, 167.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[27.34765625, 32.0, 400.0, 271.6],
-            'scales': <String, Object?>{
+            'chartArea': const <Object?>[27.34765625, 32.0, 400.0, 271.6],
+            'scales': const <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': XAxis(),
@@ -847,7 +852,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               },
             },
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'bar',
                 'indexAxis': XAxis(),
@@ -1377,7 +1382,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -1425,9 +1430,9 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 141.8166666666667,
               'xAlign': TooltipXAlign.right,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>['Mar'],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>['Mar'],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['Dataset 1: 20'],
@@ -1444,50 +1449,45 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': 'blue',
-                  'backgroundColor': 'red',
-                  'borderWidth': 0.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
-                <String, Object?>{
-                  'borderColor': 'green',
-                  'backgroundColor': 'rgba(0,0,0,0.1)',
-                  'borderWidth': 0.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
-                <String, Object?>{
-                  'borderColor': 'rgba(0,0,0,0.1)',
-                  'backgroundColor': 'rgba(0,0,0,0.1)',
-                  'borderWidth': 0.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 255, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                ),
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 128, 0, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                ),
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': undefined,
-                  'rotation': undefined,
-                },
-                <String, Object?>{
-                  'pointStyle': RectRotPointStyle(),
-                  'rotation': undefined,
-                },
-                <String, Object?>{
-                  'pointStyle': TrianglePointStyle(),
-                  'rotation': undefined,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(CirclePointStyle()),
+                TooltipLabelPointStyle.draw(RectRotPointStyle()),
+                TooltipLabelPointStyle.draw(TrianglePointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff', '#fff', '#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 0.0,
                   'dataIndex': 2.0,
@@ -1513,12 +1513,12 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': 10.0,
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[0.0, 2.0],
                 <Object?>[1.0, 2.0],
                 <Object?>[2.0, 2.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
@@ -2174,7 +2174,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
   ),
   (
     name: 'a pie chart',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'pie',
       'data': <String, Object?>{
         'labels': <Object?>['Red', 'Green', 'Blue'],
@@ -2196,11 +2196,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 400.0, 300.0],
         'scales': <String, Object?>{},
         'stacks': undefined,
@@ -2442,12 +2442,12 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['hover', 173.0, 227.0],
+          'do': const <Object?>['hover', 173.0, 227.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[0.0, 32.0, 400.0, 300.0],
-            'scales': <String, Object?>{},
+            'chartArea': const <Object?>[0.0, 32.0, 400.0, 300.0],
+            'scales': const <String, Object?>{},
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'pie',
                 'indexAxis': RAxis(),
@@ -2646,7 +2646,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -2670,35 +2670,35 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 226.89892622256133,
               'xAlign': TooltipXAlign.left,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>['Green'],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>['Green'],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['Votes: 19'],
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': '#fff',
-                  'backgroundColor': 'green',
-                  'borderWidth': 2.0,
-                  'borderDash': <Object?>[],
-                  'borderDashOffset': 0.0,
-                  'borderRadius': 0.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 255, 255, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 128, 0, 1),
+                  ),
+                  borderWidth: 2,
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': undefined,
-                  'rotation': undefined,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(CirclePointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 0.0,
                   'dataIndex': 1.0,
@@ -2708,10 +2708,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': 19.0,
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[0.0, 1.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
@@ -2917,7 +2917,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
   ),
   (
     name: 'a polar area chart',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['Red', 'Green', 'Blue'],
@@ -2939,11 +2939,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 400.0, 300.0],
         'scales': <String, Object?>{
           'r': <String, Object?>{
@@ -3225,10 +3225,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['hover', 233.0, 147.0],
+          'do': const <Object?>['hover', 233.0, 147.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[0.0, 32.0, 400.0, 300.0],
-            'scales': <String, Object?>{
+            'chartArea': const <Object?>[0.0, 32.0, 400.0, 300.0],
+            'scales': const <String, Object?>{
               'r': <String, Object?>{
                 'type': 'radialLinear',
                 'axis': RAxis(),
@@ -3267,7 +3267,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               },
             },
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'polarArea',
                 'indexAxis': RAxis(),
@@ -3457,7 +3457,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -3493,35 +3493,35 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 147.1,
               'xAlign': TooltipXAlign.right,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>['Red'],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>['Red'],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['Votes: 12'],
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': '#fff',
-                  'backgroundColor': 'red',
-                  'borderWidth': 2.0,
-                  'borderDash': <Object?>[],
-                  'borderDashOffset': 0.0,
-                  'borderRadius': 0.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 255, 255, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                  borderWidth: 2,
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': undefined,
-                  'rotation': undefined,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(CirclePointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 0.0,
                   'dataIndex': 0.0,
@@ -3531,10 +3531,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': 12.0,
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[0.0, 0.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
@@ -3822,7 +3822,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
   ),
   (
     name: 'a scatter chart with the positioner nearest',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'scatter',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -3860,11 +3860,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 393.6630859375, 271.6],
         'scales': <String, Object?>{
           'x': <String, Object?>{
@@ -4254,10 +4254,15 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['hover', 182.0, 36.0],
+          'do': const <Object?>['hover', 182.0, 36.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[30.681640625, 32.0, 393.6630859375, 271.6],
-            'scales': <String, Object?>{
+            'chartArea': const <Object?>[
+              30.681640625,
+              32.0,
+              393.6630859375,
+              271.6,
+            ],
+            'scales': const <String, Object?>{
               'x': <String, Object?>{
                 'type': 'linear',
                 'axis': XAxis(),
@@ -4328,7 +4333,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               },
             },
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'scatter',
                 'indexAxis': XAxis(),
@@ -4585,7 +4590,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -4633,35 +4638,34 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 32.0,
               'xAlign': TooltipXAlign.left,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>[],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>[],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['A: (3, 5)'],
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': 'rgba(0,0,0,0.1)',
-                  'backgroundColor': 'red',
-                  'borderWidth': 1.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': CirclePointStyle(),
-                  'rotation': 0.0,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(CirclePointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 0.0,
                   'dataIndex': 1.0,
@@ -4671,10 +4675,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': <String, Object?>{'x': 3.0, 'y': 5.0},
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[0.0, 1.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
@@ -5287,7 +5291,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
     name: 'a label color with a border radius',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -5312,18 +5316,22 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           'subtitle': false,
           'title': false,
           'tooltip': <String, Object?>{
-            'mode': IndexInteractionMode(),
+            'mode': const IndexInteractionMode(),
             'intersect': false,
-            'callbacks': <String, Object?>{'labelColor': 'fn:roundLabelColor'},
+            'callbacks': TooltipCallbacks(
+              labelColor:
+                  functions['roundLabelColor']!
+                      as TooltipItemCallback<TooltipLabelStyle>,
+            ),
           },
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
         'scales': <String, Object?>{
           'x': <String, Object?>{
@@ -5877,10 +5885,15 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['hover', 147.0, 100.0],
+          'do': const <Object?>['hover', 147.0, 100.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
-            'scales': <String, Object?>{
+            'chartArea': const <Object?>[
+              27.34765625,
+              32.0,
+              387.6630859375,
+              271.6,
+            ],
+            'scales': const <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': XAxis(),
@@ -5945,7 +5958,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               },
             },
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'line',
                 'indexAxis': XAxis(),
@@ -6375,7 +6388,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -6423,9 +6436,9 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 186.02857142857144,
               'xAlign': TooltipXAlign.left,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>['Feb'],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>['Feb'],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['Dataset 1: 30'],
@@ -6437,38 +6450,43 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': 'red',
-                  'backgroundColor': 'blue',
-                  'borderWidth': <String, Object?>{'top': 1.0, 'left': 2.0},
-                  'borderDash': <Object?>[2.0, 1.0],
-                  'borderDashOffset': 1.0,
-                  'borderRadius': 3.0,
-                },
-                <String, Object?>{
-                  'borderColor': 'green',
-                  'backgroundColor': 'blue',
-                  'borderWidth': <String, Object?>{'top': 1.0, 'left': 2.0},
-                  'borderDash': <Object?>[2.0, 1.0],
-                  'borderDashOffset': 1.0,
-                  'borderRadius': 3.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 255, 1),
+                  ),
+                  borderWidth: 2,
+                  borderDash: const <double>[2, 1],
+                  borderDashOffset: 1,
+                  borderRadius: const TooltipCornerRadii.all(3),
+                ),
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 128, 0, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 255, 1),
+                  ),
+                  borderWidth: 2,
+                  borderDash: const <double>[2, 1],
+                  borderDashOffset: 1,
+                  borderRadius: const TooltipCornerRadii.all(3),
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': CirclePointStyle(),
-                  'rotation': 0.0,
-                },
-                <String, Object?>{
-                  'pointStyle': RectRotPointStyle(),
-                  'rotation': 0.0,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(CirclePointStyle()),
+                TooltipLabelPointStyle.draw(RectRotPointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff', '#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 0.0,
                   'dataIndex': 1.0,
@@ -6486,11 +6504,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': 5.0,
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[0.0, 1.0],
                 <Object?>[1.0, 1.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
@@ -7121,7 +7139,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
   ),
   (
     name: 'a corner radius object and a border',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
@@ -7169,11 +7187,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
         'scales': <String, Object?>{
           'x': <String, Object?>{
@@ -7941,10 +7959,15 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['hover', 147.0, 203.0],
+          'do': const <Object?>['hover', 147.0, 203.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
-            'scales': <String, Object?>{
+            'chartArea': const <Object?>[
+              27.34765625,
+              32.0,
+              387.6630859375,
+              271.6,
+            ],
+            'scales': const <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': XAxis(),
@@ -8009,7 +8032,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               },
             },
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'line',
                 'indexAxis': XAxis(),
@@ -8653,7 +8676,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -8701,35 +8724,34 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 203.14285714285717,
               'xAlign': TooltipXAlign.left,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>['Feb'],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>['Feb'],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['Dataset 3: 15'],
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': 'rgba(0,0,0,0.1)',
-                  'backgroundColor': 'rgba(0,0,0,0.1)',
-                  'borderWidth': 1.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': TrianglePointStyle(),
-                  'rotation': 0.0,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(TrianglePointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 2.0,
                   'dataIndex': 1.0,
@@ -8739,10 +8761,10 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': 15.0,
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[2.0, 1.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
@@ -9400,7 +9422,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
   ),
   (
     name: 'bodyAlign center with the color boxes',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
@@ -9441,11 +9463,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
         'scales': <String, Object?>{
           'x': <String, Object?>{
@@ -10213,10 +10235,15 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['hover', 147.0, 100.0],
+          'do': const <Object?>['hover', 147.0, 100.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
-            'scales': <String, Object?>{
+            'chartArea': const <Object?>[
+              27.34765625,
+              32.0,
+              387.6630859375,
+              271.6,
+            ],
+            'scales': const <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': XAxis(),
@@ -10281,7 +10308,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               },
             },
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'line',
                 'indexAxis': XAxis(),
@@ -10925,7 +10952,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -10973,9 +11000,9 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 191.73333333333335,
               'xAlign': TooltipXAlign.left,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>['Feb'],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>['Feb'],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['Dataset 1: 30'],
@@ -10992,50 +11019,45 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': 'blue',
-                  'backgroundColor': 'red',
-                  'borderWidth': 1.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
-                <String, Object?>{
-                  'borderColor': 'green',
-                  'backgroundColor': 'rgba(0,0,0,0.1)',
-                  'borderWidth': 1.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
-                <String, Object?>{
-                  'borderColor': 'rgba(0,0,0,0.1)',
-                  'backgroundColor': 'rgba(0,0,0,0.1)',
-                  'borderWidth': 1.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 255, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                ),
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 128, 0, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                ),
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': CirclePointStyle(),
-                  'rotation': 0.0,
-                },
-                <String, Object?>{
-                  'pointStyle': RectRotPointStyle(),
-                  'rotation': 0.0,
-                },
-                <String, Object?>{
-                  'pointStyle': TrianglePointStyle(),
-                  'rotation': 0.0,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(CirclePointStyle()),
+                TooltipLabelPointStyle.draw(RectRotPointStyle()),
+                TooltipLabelPointStyle.draw(TrianglePointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff', '#fff', '#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 0.0,
                   'dataIndex': 1.0,
@@ -11061,12 +11083,12 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': 15.0,
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[0.0, 1.0],
                 <Object?>[1.0, 1.0],
                 <Object?>[2.0, 1.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
@@ -11747,7 +11769,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
   ),
   (
     name: 'full: title, filler and clickLegend',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
@@ -11783,11 +11805,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'initial': <String, Object?>{
+      'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 66.4, 387.6630859375, 271.6],
         'scales': <String, Object?>{
           'x': <String, Object?>{
@@ -12575,7 +12597,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
         },
       },
       'steps': <Object?>[
-        <String, Object?>{
+        const <String, Object?>{
           'do': <Object?>['click', 200.0, 50.0],
           'observations': <String, Object?>{
             'chartArea': <Object?>[27.34765625, 66.4, 387.6630859375, 271.6],
@@ -13375,10 +13397,15 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
           },
         },
         <String, Object?>{
-          'do': <Object?>['hover', 147.0, 76.0],
+          'do': const <Object?>['hover', 147.0, 76.0],
           'observations': <String, Object?>{
-            'chartArea': <Object?>[27.34765625, 66.4, 387.6630859375, 271.6],
-            'scales': <String, Object?>{
+            'chartArea': const <Object?>[
+              27.34765625,
+              66.4,
+              387.6630859375,
+              271.6,
+            ],
+            'scales': const <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
                 'axis': XAxis(),
@@ -13443,7 +13470,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               },
             },
             'stacks': undefined,
-            'datasets': <Object?>[
+            'datasets': const <Object?>[
               <String, Object?>{
                 'type': 'line',
                 'indexAxis': XAxis(),
@@ -14087,7 +14114,7 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                 ],
               },
             ],
-            'boxes': <Object?>[
+            'boxes': const <Object?>[
               <Object?>[
                 'legend',
                 ChartPosition.top,
@@ -14159,9 +14186,9 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
               'caretY': 169.0,
               'xAlign': TooltipXAlign.left,
               'yAlign': TooltipYAlign.center,
-              'title': <Object?>['Feb'],
-              'beforeBody': <Object?>[],
-              'body': <Object?>[
+              'title': const <Object?>['Feb'],
+              'beforeBody': const <Object?>[],
+              'body': const <Object?>[
                 <String, Object?>{
                   'before': <Object?>[],
                   'lines': <Object?>['Dataset 1: 30'],
@@ -14173,38 +14200,35 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'after': <Object?>[],
                 },
               ],
-              'afterBody': <Object?>[],
-              'footer': <Object?>[],
+              'afterBody': const <Object?>[],
+              'footer': const <Object?>[],
               'labelColors': <Object?>[
-                <String, Object?>{
-                  'borderColor': 'blue',
-                  'backgroundColor': 'red',
-                  'borderWidth': 1.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
-                <String, Object?>{
-                  'borderColor': 'rgba(0,0,0,0.1)',
-                  'backgroundColor': 'rgba(0,0,0,0.1)',
-                  'borderWidth': 1.0,
-                  'borderDash': undefined,
-                  'borderDashOffset': undefined,
-                  'borderRadius': 0.0,
-                },
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 255, 1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                ),
+                TooltipLabelStyle(
+                  borderColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                  backgroundColor: const ChartPaint.solid(
+                    Color.fromRGBO(0, 0, 0, 0.1),
+                  ),
+                ),
               ],
-              'labelPointStyles': <Object?>[
-                <String, Object?>{
-                  'pointStyle': CirclePointStyle(),
-                  'rotation': 0.0,
-                },
-                <String, Object?>{
-                  'pointStyle': TrianglePointStyle(),
-                  'rotation': 0.0,
-                },
+              'labelPointStyles': const <Object?>[
+                TooltipLabelPointStyle.draw(CirclePointStyle()),
+                TooltipLabelPointStyle.draw(TrianglePointStyle()),
               ],
-              'labelTextColors': <Object?>['#fff', '#fff'],
-              'dataPoints': <Object?>[
+              'labelTextColors': const <Object?>[
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+                ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1)),
+              ],
+              'dataPoints': const <Object?>[
                 <String, Object?>{
                   'datasetIndex': 0.0,
                   'dataIndex': 1.0,
@@ -14222,11 +14246,11 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
                   'raw': 15.0,
                 },
               ],
-              'active': <Object?>[
+              'active': const <Object?>[
                 <Object?>[0.0, 1.0],
                 <Object?>[2.0, 1.0],
               ],
-              'log': <Object?>[],
+              'log': const <Object?>[],
             },
           },
         },
