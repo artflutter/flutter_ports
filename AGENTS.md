@@ -283,8 +283,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color`
     0.3.2 port), and `js/`, the JS runtime: port-only `js_*.dart` files. `js_webidl.dart` has the WebIDL
     conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
-    0020). `js_map.dart` and `js_promise.dart` have the `Map` iteration and the promise jobs
-    (Chart.js ADR 0019).
+    0020). `js_promise.dart` has the promise jobs (Chart.js ADR 0019). The animator walks a copy
+    of its chart list (row `adapt-animator-chart-list`): a chart that a listener starts gets its
+    first visit in the next frame.
   - `lib/src/options/` (Chart.js ADR 0054, port-only, pure layers): the typed internal model.
     `opt.dart` has the option cell `Opt<T>` (`OptValue`, `OptFunction`, `OptList`, `OptScope`,
     `OptUndefined`, `OptNull`, `OptForeign`) and the classification of a raw JS value for a key of
@@ -2217,7 +2218,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
     `JsFreezable` (Chart.js ADR 0021 §5). Only a `JsFreezable` freezes. A write into frozen options throws a
     `TypeError`.
   - `jsOwnPropertyNames` is `Object.getOwnPropertyNames`. For a resolver, it gives the keys of the
-    `ownKeys` trap. `jsMapForEach` is `Map.prototype.forEach` while the callback changes the Map.
+    `ownKeys` trap.
   - `jsSplice` is `Array.prototype.splice`. `start` and `deleteCount` go through
     `ToIntegerOrInfinity`. Dart `null` stands for an absent `deleteCount`.
   - `Date.now()` has no runtime function: it is `clock.now().millisecondsSinceEpoch` of

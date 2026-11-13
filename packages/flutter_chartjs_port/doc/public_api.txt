@@ -945,7 +945,6 @@ jsIsFunction
 jsIsNaN
 jsIsObjectLike
 jsLessThan
-jsMapForEach
 jsMaxArity
 jsNumberToString
 jsObjectClass
@@ -1252,7 +1251,6 @@ jsIsFunction
 jsIsNaN
 jsIsObjectLike
 jsLessThan
-jsMapForEach
 jsMaxArity
 jsNumberToString
 jsObjectClass
