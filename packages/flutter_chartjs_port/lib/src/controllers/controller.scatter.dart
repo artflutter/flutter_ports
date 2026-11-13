@@ -78,6 +78,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show dataLabelLinesOf;
 
 /// The JS write `element[key] = value` by name into an element of a user
 /// element class (Chart.js ADR 0017, section 5), or of a property that the
@@ -285,7 +287,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// section 2). The `+` of the value joins the [jsToString] of each part.
   /// `chart.data.labels` is a property of the data object of the user.
   @override
-  ({Object? label, String value}) getLabelAndValue(int index) {
+  ({List<String> label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final dataLabels = jsGet(chart.data, 'labels');
     final labels = jsTruthy(dataLabels) ? dataLabels : <Object?>[];
@@ -297,7 +299,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final label = jsGetIndex(labels, index);
 
     return (
-      label: jsTruthy(label) ? label : '',
+      label: dataLabelLinesOf(label),
       value: '(${jsToString(x)}, ${jsToString(y)})',
     );
   }

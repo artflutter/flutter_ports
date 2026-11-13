@@ -204,13 +204,13 @@ void main() {
       );
     });
 
-    testWidgets('a label index past the end gives the label undefined', (
+    testWidgets('a label index past the end gives no label line', (
       tester,
     ) async {
       final chart = acquireChart(_radar(const [1.0, 2.0], labels: const ['a']));
       final controller = chart.getDatasetMeta(0).controller!;
-      expect(controller.getLabelAndValue(0).label, 'a');
-      expect(identical(controller.getLabelAndValue(1).label, undefined), true);
+      expect(controller.getLabelAndValue(0).label, ['a']);
+      expect(controller.getLabelAndValue(1).label, isEmpty);
       expect(controller.getLabelAndValue(1).value, '2');
     });
   });
@@ -247,7 +247,9 @@ void main() {
       });
     });
 
-    testWidgets('getLabelAndValue gives the raw label', (tester) async {
+    testWidgets('getLabelAndValue gives the lines of the label', (
+      tester,
+    ) async {
       final lines = <Object?>['line 1', 'line 2'];
       final chart = acquireChart(
         _radar(
@@ -259,12 +261,12 @@ void main() {
       final labels = [
         for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label,
       ];
-      expect(identical(labels[0], lines), isTrue);
-      expect(labels[1], 5.0);
-      expect(labels[2], 0.0);
-      expect(labels[3], isNull);
-      expect(labels[4], 'e');
-      expect(identical(labels[5], undefined), isTrue);
+      expect(labels[0], lines);
+      expect(labels[1], ['5']);
+      expect(labels[2], isEmpty);
+      expect(labels[3], isEmpty);
+      expect(labels[4], ['e']);
+      expect(labels[5], isEmpty);
     });
 
     testWidgets('an r scale that is not radial and no data: update does not '

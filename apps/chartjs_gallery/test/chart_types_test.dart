@@ -617,7 +617,7 @@ void main() {
         final tooltip = chart.tooltip!;
         expect(tooltip.opacity, 1, reason: id);
         final (:label, :value) = meta.controller!.getLabelAndValue(index);
-        final text = 'd0#$index $label: $value';
+        final text = 'd0#$index ${label.join(' ')}: $value';
         expect(state.hoverLabel, text, reason: id);
         expect(
           find.descendant(of: readout, matching: find.textContaining(text)),
@@ -626,8 +626,8 @@ void main() {
         );
         final points = tooltip.dataPoints!;
         expect(points, hasLength(1), reason: id);
-        expect(jsGet(points.single, 'datasetIndex'), 0, reason: id);
-        expect(jsGet(points.single, 'dataIndex'), index, reason: id);
+        expect(points.single.datasetIndex, 0, reason: id);
+        expect(points.single.dataIndex, index, reason: id);
         // The default label callback (plugin.tooltip.js:388-403).
         final datasetLabel =
             jsGet(
@@ -635,7 +635,7 @@ void main() {
                   'label',
                 )!
                 as String;
-        expect(jsGet(tooltip.body!.single, 'lines'), [
+        expect(tooltip.body!.single.lines, [
           '$datasetLabel: $value',
         ], reason: id);
 
@@ -707,7 +707,7 @@ void main() {
         expect(
           [
             for (final point in tooltip.dataPoints!)
-              (jsGet(point, 'datasetIndex'), jsGet(point, 'dataIndex')),
+              (point.datasetIndex, point.dataIndex),
           ],
           contains((0, 0)),
           reason: id,
@@ -716,7 +716,7 @@ void main() {
             .getDatasetMeta(0)
             .controller!
             .getLabelAndValue(0);
-        final text = 'd0#0 $label: $value';
+        final text = 'd0#0 ${label.join(' ')}: $value';
         expect(state.hoverLabel, startsWith(text), reason: id);
         expect(
           find.descendant(of: readout, matching: find.textContaining(text)),
@@ -790,7 +790,7 @@ void main() {
           .getDatasetMeta(0)
           .controller!
           .getLabelAndValue(2);
-      final text = 'd0#2 $label: $value';
+      final text = 'd0#2 ${label.join(' ')}: $value';
       expect(state.hoverLabel, text);
       expect(
         find.descendant(

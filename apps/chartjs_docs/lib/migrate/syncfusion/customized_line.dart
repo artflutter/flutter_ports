@@ -64,10 +64,10 @@ List<String>? _percent(
   List<Tick> ticks,
 ) => ['${value == value.roundToDouble() ? value.round() : value}%'];
 
-String? _tooltipLabel(ChartTooltipItem item) =>
-    '${item.label} : ${item.formattedValue}%';
+String? _tooltipLabel(TooltipItem item) =>
+    '${item.label.join(" ")} : ${item.formattedValue}%';
 
-List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
 
 final ChartConfig _config = ChartConfig(

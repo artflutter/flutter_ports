@@ -12,7 +12,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show TooltipCallbacks, TooltipItem;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -899,7 +900,18 @@ Function _recorder(
 String _traceLine(String path, List<Object?> args) {
   final first = args.isEmpty ? undefined : args[0];
   final String head;
-  if (_isObject(first)) {
+  if (first is TooltipItem) {
+    // A native tooltip item has the two indexes of the context keys (row
+    // `adapt-native-tooltip-item`), the keys of the former item record.
+    head = [
+      for (final key in _contextKeys)
+        switch (key) {
+          'dataIndex' => 'dataIndex=${first.dataIndex}',
+          'datasetIndex' => 'datasetIndex=${first.datasetIndex}',
+          _ => '$key=-',
+        },
+    ].join(' ');
+  } else if (_isObject(first)) {
     head = [
       for (final key in _contextKeys)
         switch (jsGet(first, key)) {

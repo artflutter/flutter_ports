@@ -101,6 +101,8 @@ import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show dataLabelLinesOf;
 import 'package:meta/meta.dart';
 
 /// controller.bar.js:546-556 the object of `_getRuler` (Chart.js ADR 0003).
@@ -822,7 +824,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// `'' + value` and `'[' + custom.start + ...` are [jsToString]. Thus the
   /// label is a `String` (Chart.js ADR 0028, section 2).
   @override
-  ({Object? label, String value}) getLabelAndValue(int index) {
+  ({List<String> label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final iScale = meta.iScale;
     final vScale = meta.vScale;
@@ -844,7 +846,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     }
 
     return (
-      label: jsToString(iScale!.getLabelForValue(_axisValueOf(parsed, iScale))),
+      label: dataLabelLinesOf(
+        jsToString(iScale!.getLabelForValue(_axisValueOf(parsed, iScale))),
+      ),
       value: value,
     );
   }

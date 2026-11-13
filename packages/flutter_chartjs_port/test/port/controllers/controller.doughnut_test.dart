@@ -416,8 +416,8 @@ void main() {
       expect(meta['total'], 15);
     });
 
-    testWidgets('getLabelAndValue gives the label of chart.data.labels as it '
-        'is', (tester) async {
+    testWidgets('getLabelAndValue gives the lines of the label of '
+        'chart.data.labels', (tester) async {
       final label0 = <Object?>['line 1', 'line 2'];
       final chart = acquireChart(<String, Object?>{
         'type': 'doughnut',
@@ -434,8 +434,14 @@ void main() {
       final labels = [
         for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label,
       ];
-      expect(identical(labels[0], label0), isTrue);
-      expect(labels.sublist(1), [5.0, '', 'd', '', '']);
+      expect(labels[0], label0);
+      expect(labels.sublist(1), [
+        ['5'],
+        <String>[],
+        ['d'],
+        <String>[],
+        <String>[],
+      ]);
       expect(controller.getLabelAndValue(0).value, '1');
     });
 

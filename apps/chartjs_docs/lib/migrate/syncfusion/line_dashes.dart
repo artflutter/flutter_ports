@@ -53,14 +53,14 @@ List<String>? _percent(
   List<Tick> ticks,
 ) => ['${value.round()}%'];
 
-String? _tooltipTitle(List<ChartTooltipItem> items) => items.first.datasetLabel;
+String? _tooltipTitle(List<TooltipItem> items) => items.first.datasetLabel;
 
-String? _tooltipLabel(ChartTooltipItem item) {
+String? _tooltipLabel(TooltipItem item) {
   final year = (item.parsed! as JsObjectFace)['x']! as num;
   return '${year.round()} : ${item.formattedValue}%';
 }
 
-TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, ChartTooltipItem item) =>
+TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, TooltipItem item) =>
     TooltipLabelStyle(
       borderColor: const ChartPaint.solid(Colors.white),
       backgroundColor: ChartPaint.solid(_colors[item.datasetIndex]),

@@ -46,10 +46,10 @@ List<String>? _mm(Scale scale, double value, int index, List<Tick> ticks) => [
   '${value.round()}mm',
 ];
 
-String? _tooltipLabel(ChartTooltipItem item) =>
-    '${item.label} : ${item.formattedValue}mm';
+String? _tooltipLabel(TooltipItem item) =>
+    '${item.label.join(" ")} : ${item.formattedValue}mm';
 
-List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
 
 // The annotation of the original: a key of the three zones, at 95 % and

@@ -59,6 +59,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/tick.dart';
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/active_element.dart'
@@ -67,6 +68,8 @@ export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show ChartArea, Point, TRBL;
 export 'package:flutter_chartjs_port/src/types/layout.dart' show LayoutItem;
 export 'package:flutter_chartjs_port/src/types/tick.dart' show Tick;
+export 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show TooltipBodyItem, TooltipItem;
 
 /// index.d.ts:463 `ChartMetaClip`, the type of `ChartMeta._clip`.
 ///
@@ -558,11 +561,11 @@ abstract interface class DatasetController() {
   /// index.d.ts:641 `getLabelAndValue(index)`. plugin.tooltip.js:130 calls
   /// it.
   ///
-  /// The result is a record of the object `{label, value}`. index.d.ts
-  /// declares a string label, but the controllers return the raw label:
-  /// any JS value, Dart `null` for JS `null` or the `undefined` sentinel
-  /// (Chart.js ADR 0028, section 2). The tooltip item keeps it.
-  ({Object? label, String value}) getLabelAndValue(int index);
+  /// The result is a record of the object `{label, value}`. The label is
+  /// the List of the lines of the label of the data item, empty for no
+  /// label (row `adapt-native-tooltip-item`). The tooltip item keeps it.
+  // DIVERGES(chartjs): adapt-native-tooltip-item, the lines of the label.
+  ({List<String> label, String value}) getLabelAndValue(int index);
 
   /// index.d.ts:648 `getDataset()`. plugin.tooltip.js:138 calls it.
   ///
@@ -1346,57 +1349,22 @@ abstract interface class LegendElement() implements TRBL {
   List<LegendHitBox> get legendHitBoxes;
 }
 
-/// The typed tooltip item of the tooltip plugin, a port-only interface
-/// (Chart.js ADR 0054 §12): the object of `createTooltipItem`
-/// (plugin.tooltip.js:127-146), `TooltipItem` of index.d.ts:2978. The class
-/// `TooltipItem` of `plugin.tooltip.dart` implements it. Thus the view
-/// `ChartTooltipItem` of the typed API reads its keys with no import of a
-/// plugin (Chart.js ADR 0052 §8). Each getter gives the JS value of the key,
-/// the `undefined` sentinel for an absent key.
-abstract interface class TypedTooltipItem() {
-  /// The data element.
-  Object? get element;
-
-  /// index.d.ts:2982 `chart`.
-  Object? get chart;
-
-  /// index.d.ts:2987 `label`.
-  Object? get label;
-
-  /// index.d.ts:2992 `parsed`.
-  Object? get parsed;
-
-  /// index.d.ts:2997 `raw`.
-  Object? get raw;
-
-  /// index.d.ts:3002 `formattedValue`.
-  Object? get formattedValue;
-
-  /// index.d.ts:3007 `dataset`.
-  Object? get dataset;
-
-  /// index.d.ts:3012 `datasetIndex`.
-  Object? get datasetIndex;
-
-  /// index.d.ts:3017 `dataIndex`.
-  Object? get dataIndex;
-}
-
 /// index.d.ts:2648 `TooltipModel`, with the members of Chart.js ADR 0039,
 /// section 14. The `Tooltip` class of `plugin.tooltip.dart` implements it.
 ///
-/// [x], [y] and [options] come from [Element]. A line of text can be any JS
-/// value, so each list is a `List<Object?>`. The items of [dataPoints] and
-/// [body] are plain objects (Maps). The constructor sets `undefined` for
-/// these members, and `0` for [opacity] (plugin.tooltip.js:467-494). Dart
-/// `null` for a list or an alignment stands for JS `undefined`. A number
-/// getter gives NaN for JS `undefined` (Chart.js ADR 0039, section 2).
+/// [x], [y] and [options] come from [Element]. A line of text is a
+/// `String`. The items of [dataPoints] are [TooltipItem]s, and the items of
+/// [body] are [TooltipBodyItem]s (row `adapt-native-tooltip-item`). The
+/// constructor sets `undefined` for these members, and `0` for [opacity]
+/// (plugin.tooltip.js:467-494). Dart `null` for a list or an alignment
+/// stands for JS `undefined`. A number getter gives NaN for JS `undefined`
+/// (Chart.js ADR 0039, section 2).
 abstract interface class TooltipModel() implements Element {
   /// index.d.ts:2649 `readonly chart`.
   Chart get chart;
 
-  /// index.d.ts:2652 `dataPoints`: the tooltip items, plain objects.
-  List<Object?>? get dataPoints;
+  /// index.d.ts:2652 `dataPoints`: the tooltip items.
+  List<TooltipItem>? get dataPoints;
 
   /// index.d.ts:2655 `xAlign`, a [TooltipXAlign] (row
   /// `adapt-tooltip-align-enums`).
@@ -1418,20 +1386,20 @@ abstract interface class TooltipModel() implements Element {
   /// index.d.ts:2665 `caretY`.
   double get caretY;
 
-  /// index.d.ts:2673 `body`: the plain objects `{before, lines, after}`.
-  List<Object?>? get body;
+  /// index.d.ts:2673 `body`: the lines of each tooltip item.
+  List<TooltipBodyItem>? get body;
 
   /// index.d.ts:2675 `beforeBody`.
-  List<Object?>? get beforeBody;
+  List<String>? get beforeBody;
 
   /// index.d.ts:2677 `afterBody`.
-  List<Object?>? get afterBody;
+  List<String>? get afterBody;
 
   /// index.d.ts:2681 `title`.
-  List<Object?>? get title;
+  List<String>? get title;
 
   /// index.d.ts:2685 `footer`.
-  List<Object?>? get footer;
+  List<String>? get footer;
 
   /// index.d.ts:2688 `labelColors`.
   List<Object?>? get labelColors;

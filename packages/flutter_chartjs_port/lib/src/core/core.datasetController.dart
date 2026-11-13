@@ -100,6 +100,8 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show dataLabelLinesOf;
 import 'package:meta/meta.dart';
 
 /// core.datasetController.js:12 `scaleClip`.
@@ -1872,15 +1874,17 @@ class DatasetController(
   /// sentinel (Chart.js ADR 0028, section 2). The `value` is always a
   /// string.
   @override
-  ({Object? label, String value}) getLabelAndValue(int index) {
+  ({List<String> label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final iScale = meta.iScale;
     final vScale = meta.vScale;
     final parsed = getParsed(index);
     return (
       label: iScale != null
-          ? jsToString(iScale.getLabelForValue(_axisValueOf(parsed, iScale)))
-          : '',
+          ? dataLabelLinesOf(
+              jsToString(iScale.getLabelForValue(_axisValueOf(parsed, iScale))),
+            )
+          : const [],
       value: vScale != null
           ? jsToString(vScale.getLabelForValue(_axisValueOf(parsed, vScale)))
           : '',

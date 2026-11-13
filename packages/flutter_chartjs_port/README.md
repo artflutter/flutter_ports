@@ -349,7 +349,7 @@ class _VotesPageState() extends State<VotesPage> {
     }
   }
 
-  List<String> _label(TooltipModel tooltip, ChartTooltipItem item) =>
+  List<String> _label(TooltipModel tooltip, TooltipItem item) =>
       ['${item.datasetLabel}: ${item.formattedValue} votes'];
 
   ChartPaint _barColor(ChartContext context) =>

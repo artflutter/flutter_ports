@@ -31,6 +31,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show boolOption, paddingOption, readOption, textDirectionOption;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
@@ -39,6 +40,21 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, chartPaintOf;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+
+/// The function of the type [T] in the option [key], or Dart `null` for no
+/// function.
+///
+/// Upstream tests the option for truthiness and calls it. `false`, JS
+/// `null` and an absent value are no function. A function of another type
+/// stops a debug build, and a release build makes no call.
+T? _functionOption<T extends Function>(Object? value, OptionKey key) {
+  if (value is T) return value;
+  assert(
+    value == null || value == false || identical(value, undefined),
+    'The option ${key.jsName} holds a $T, not $value.',
+  );
+  return null;
+}
 
 /// The option [key] of the options object [options]: `options[key]`, the
 /// shared typed read [readOption] of `helpers.config.dart`.
@@ -269,11 +285,19 @@ extension type const TooltipOptions(Object? object) {
   bool get enabled =>
       boolOption(optionOf(object, OptionKey.enabled), OptionKey.enabled);
 
-  /// `external`.
-  Object? get external => optionOf(object, OptionKey.external);
+  /// `external`: the function itself, or Dart `null` for no function (row
+  /// `adapt-native-tooltip-item`).
+  TooltipExternal? get external => _functionOption<TooltipExternal>(
+    optionOf(object, OptionKey.external),
+    OptionKey.external,
+  );
 
-  /// `filter`.
-  Object? get filter => optionOf(object, OptionKey.filter);
+  /// `filter`: the function itself, or Dart `null` for no function (row
+  /// `adapt-native-tooltip-item`).
+  TooltipItemFilter? get filter => _functionOption<TooltipItemFilter>(
+    optionOf(object, OptionKey.filter),
+    OptionKey.filter,
+  );
 
   /// `footerAlign`.
   Object? get footerAlign => optionOf(object, OptionKey.footerAlign);
@@ -290,8 +314,12 @@ extension type const TooltipOptions(Object? object) {
   /// `footerSpacing`.
   Object? get footerSpacing => optionOf(object, OptionKey.footerSpacing);
 
-  /// `itemSort`.
-  Object? get itemSort => optionOf(object, OptionKey.itemSort);
+  /// `itemSort`: the function itself, or Dart `null` for no function (row
+  /// `adapt-native-tooltip-item`).
+  TooltipItemComparator? get itemSort => _functionOption<TooltipItemComparator>(
+    optionOf(object, OptionKey.itemSort),
+    OptionKey.itemSort,
+  );
 
   /// `mode`: the mode itself, or Dart `null` for a value that is not a
   /// mode (row `adapt-interaction-mode-objects`).

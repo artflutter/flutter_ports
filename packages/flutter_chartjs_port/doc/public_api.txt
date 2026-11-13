@@ -36,7 +36,6 @@ ChartPattern
 ChartPosition
 ChartShaderPaint
 ChartTextStyle
-ChartTooltipItem
 CirclePointStyle
 CrossPointStyle
 CrossRotPointStyle
@@ -136,10 +135,15 @@ TickSource
 TimeScale
 TimeSeriesScale
 TimeUnit
+TooltipBodyItem
 TooltipCallbacks
 TooltipCornerRadii
 TooltipDrawHookArgs
+TooltipExternal
+TooltipItem
 TooltipItemCallback
+TooltipItemComparator
+TooltipItemFilter
 TooltipItemsCallback
 TooltipLabelPointStyle
 TooltipLabelStyle
@@ -253,7 +257,6 @@ ChartTheme
 ChartThemeData
 ChartTitle
 ChartTooltip
-ChartTooltipItem
 ChartTransition
 ChartValue
 ChartView
@@ -387,10 +390,15 @@ TimeScale
 TimeSeriesAxis
 TimeSeriesScale
 TimeUnit
+TooltipBodyItem
 TooltipCallbacks
 TooltipCornerRadii
 TooltipDrawHookArgs
+TooltipExternal
+TooltipItem
 TooltipItemCallback
+TooltipItemComparator
+TooltipItemFilter
 TooltipItemsCallback
 TooltipLabelPointStyle
 TooltipLabelStyle

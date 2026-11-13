@@ -60,14 +60,18 @@ List<String>? _dateLabel(
 ) => ordinalTick(index, _dates.length, 5) ? [_dates[index]] : null;
 
 /// `multiTuples: true`: the date, then one line for each type.
-String? _date(List<ChartTooltipItem> items) => _dates[items.first.dataIndex];
+String? _date(List<TooltipItem> items) => _dates[items.first.dataIndex];
 
-String? _typeValue(ChartTooltipItem item) =>
+String? _typeValue(TooltipItem item) =>
     '${_types[item.datasetIndex]}: ${_value(item.datasetIndex, item.dataIndex)}';
 
 /// The tooltip leaves out the base.
-bool _isBand(JsObjectFace item) =>
-    (item['datasetIndex']! as num) < _types.length;
+bool _isBand(
+  TooltipItem item,
+  int index,
+  List<TooltipItem> items,
+  Object data,
+) => item.datasetIndex < _types.length;
 
 final ChartConfig _config = ChartConfig(
   type: .line,
@@ -111,7 +115,7 @@ final ChartConfig _config = ChartConfig(
     position: const FollowYPositioner(),
     title: _date,
     label: _typeValue,
-    extra: const {'filter': _isBand},
+    filter: _isBand,
   ),
   plugins: [crosshair(), tooltipShadow],
 );

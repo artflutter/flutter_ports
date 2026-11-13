@@ -54,6 +54,7 @@ import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:test/test.dart';
 
+import 'data_label.dart';
 import 'legend_hit_box.dart';
 import 'legend_item.dart';
 
@@ -155,6 +156,12 @@ final class const _JasmineEquals(final Object? expected) extends Matcher {
   ) {
     if (a is LegendHitBox && b is Map<String, Object?>) {
       return a.equalsTo(legendHitBoxFromReference(b));
+    }
+    if (a is types.TooltipBodyItem && b is Map<String, Object?>) {
+      return _eq(plainBodyItem(a), b, aStack, bStack, path);
+    }
+    if (a is Map<String, Object?> && b is types.TooltipBodyItem) {
+      return _eq(a, plainBodyItem(b), aStack, bStack, path);
     }
     if (a is LegendItem && b is Map<String, Object?>) {
       return legendItemEquals(legendItemFromReference(b)).matches(a, {});

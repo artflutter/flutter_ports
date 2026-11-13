@@ -57,13 +57,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           'callbacks': TooltipCallbacks(
             label: (tooltip, arg) => ['​'],
             labelColor: (tooltip, tooltipItem) {
-              final meta = (jsGet(tooltipItem, 'chart')! as types.Chart)
-                  .getDatasetMeta(
-                    (jsGet(tooltipItem, 'datasetIndex')! as num).toInt(),
-                  );
-              final options = meta.controller!.getStyle(
-                (jsGet(tooltipItem, 'dataIndex')! as num).toInt(),
+              final meta = tooltipItem.chart.getDatasetMeta(
+                tooltipItem.datasetIndex,
               );
+              final options = meta.controller!.getStyle(tooltipItem.dataIndex);
               return TooltipLabelStyle(
                 borderColor: jsGet(options, 'borderColor')! as ChartPaint,
                 backgroundColor:

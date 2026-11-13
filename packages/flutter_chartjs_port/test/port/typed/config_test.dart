@@ -65,7 +65,7 @@ List<List<Object?>> _elements(Chart chart) => [
 ];
 
 /// The label line of a scatter point: `(x, y)`.
-String? _pointLabel(ChartTooltipItem item) {
+String? _pointLabel(TooltipItem item) {
   final parsed = item.parsed! as JsObjectFace;
   return '(${(parsed['x']! as num).toInt()}, ${(parsed['y']! as num).toInt()})';
 }
@@ -318,8 +318,7 @@ void main() {
             'tooltip': <String, Object?>{
               'callbacks': TooltipCallbacks(
                 label: (tooltip, item) {
-                  final parsed =
-                      (item! as JsObjectFace)['parsed']! as JsObjectFace;
+                  final parsed = item.parsed! as JsObjectFace;
                   final text =
                       '(${(parsed['x']! as num).toInt()}, '
                       '${(parsed['y']! as num).toInt()})';
@@ -341,10 +340,7 @@ void main() {
           'mousemove',
           chart.getDatasetMeta(0).data[1],
         );
-        return [
-          for (final item in chart.tooltip!.body!)
-            (item! as JsObjectFace)['lines'],
-        ];
+        return [for (final item in chart.tooltip!.body!) item.lines];
       }
 
       final typedLines = await labelsOf(typed);

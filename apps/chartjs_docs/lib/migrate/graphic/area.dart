@@ -23,10 +23,10 @@ List<String>? _dateLabel(
     ? [invalidData[index].date]
     : null;
 
-String? _date(List<ChartTooltipItem> items) =>
+String? _date(List<TooltipItem> items) =>
     'Date: ${invalidData[items.first.dataIndex].date}';
 
-String? _value(ChartTooltipItem item) => 'Close: ${_close(item.dataIndex)}';
+String? _value(TooltipItem item) => 'Close: ${_close(item.dataIndex)}';
 
 final ChartConfig _config = ChartConfig(
   type: .line,

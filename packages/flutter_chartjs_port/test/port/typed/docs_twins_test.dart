@@ -850,15 +850,12 @@ List<String>? _units(Scale scale, double value, int index, List<Tick> ticks) =>
     ['${value.round()} u'];
 
 /// The tooltip label of the bar type chart.
-String? _barLabel(ChartTooltipItem item) =>
+String? _barLabel(TooltipItem item) =>
     '${item.datasetLabel}: ${item.formattedValue} units';
 
 /// The raw tooltip label callback of `_barLabel`.
-Object? _rawBarLabel(Object? item) {
-  final dataset = _byName(item, 'dataset');
-  return '${_byName(dataset, 'label')}: ${_byName(item, 'formattedValue')} '
-      'units';
-}
+Object? _rawBarLabel(TooltipItem item) =>
+    '${_byName(item.dataset, 'label')}: ${item.formattedValue} units';
 
 /// The typed bar chart: stacked bars with the bar keys, a category and a
 /// linear axis with ticks, grids, a title and a tick format, the legend,
@@ -1514,7 +1511,7 @@ Map<String, Object?> _bubbleTypeRaw() => <String, Object?>{
 };
 
 /// The tooltip footer of the pie type chart.
-String? _budgetFooter(List<ChartTooltipItem> items) => 'Items: ${items.length}';
+String? _budgetFooter(List<TooltipItem> items) => 'Items: ${items.length}';
 
 /// The raw tooltip footer callback of `_budgetFooter`.
 Object? _rawBudgetFooter(Object? items) =>
@@ -1829,14 +1826,12 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
 };
 
 /// The tooltip title of the radar type chart.
-String? _radarTitle(List<ChartTooltipItem> items) =>
-    'Axis ${items.first.label}';
+String? _radarTitle(List<TooltipItem> items) =>
+    'Axis ${items.first.label.join(' ')}';
 
 /// The raw tooltip title callback of `_radarTitle`.
-Object? _rawRadarTitle(Object? items) {
-  final first = (items! as List<Object?>).first;
-  return 'Axis ${_byName(first, 'label')}';
-}
+Object? _rawRadarTitle(List<TooltipItem> items) =>
+    'Axis ${items.first.label.join(' ')}';
 
 /// The typed radar chart: a filled line with a point style, a line that
 /// fills to the dataset 0, a radial linear axis with the suggested range,

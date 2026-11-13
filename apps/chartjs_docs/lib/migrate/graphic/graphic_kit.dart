@@ -122,8 +122,9 @@ bool ordinalTick(int index, int length, int count) {
 /// The tooltip window of Graphic: a white box with 12 px gray text.
 ChartTooltip graphicTooltip({
   required TooltipPositioner position,
-  String? Function(List<ChartTooltipItem> items)? title,
-  String? Function(ChartTooltipItem item)? label,
+  String? Function(List<TooltipItem> items)? title,
+  String? Function(TooltipItem item)? label,
+  TooltipItemFilter? filter,
   Map<String, Object?> extra = const {},
 }) => ChartTooltip(
   backgroundColor: const ChartPaint.solid(Gx.tooltipBackground),
@@ -135,6 +136,7 @@ ChartTooltip graphicTooltip({
   cornerRadius: _radius,
   displayColors: false,
   position: position,
+  filter: filter,
   extra: {
     'caretSize': 0,
     'caretPadding': 0,
@@ -167,7 +169,7 @@ ChartTooltip graphicTooltip({
 
 const double _radius = 3;
 
-List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
 
 /// The tooltip of Graphic has a shadow (`elevation: 3`).

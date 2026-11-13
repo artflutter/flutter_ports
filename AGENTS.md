@@ -953,7 +953,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `copyWith` and `merge` (doc/native-legend-hit-box-design-draft.md). Pointer and keyboard
       consumers use the same boxes. `LegendHitBoxX.equalsTo` lives beside the class,
       compares shared fields with the reference-test numeric tolerance, and preserves identity `==`/hashing.
-      Tooltip items keep `types.TypedTooltipItem` and the promoted `ChartTooltipItem` view.
+      A tooltip item is the native `TooltipItem` (row `adapt-native-tooltip-item`).
       Legend indexes are nullable integers; a descriptive item has no default click action
       (row `adapt-native-legend-item`).
     - `plugin.subtitle.dart` has the plugin `subTitle` (no `_element`). Its box is a `Title` of
@@ -977,9 +977,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `TooltipPosition` are in the pure `tooltip_position.dart`, because `opt.dart` reads the
       type. The generators write the positioner class into the reference data (`DartPositioner`),
       and a positioner of a test has the name `'fn:positioner:<key>'` there. The typed API has
-      `ChartTooltip.position`. The tooltip items, body items, label colors, label point styles and positions are typed
-      records (`TooltipItem`, `TooltipBodyItem`, `TooltipLabelStyle`, `TooltipLabelPointStyle`,
-      `TooltipPosition`); `invokeCallbackWithFallback` takes an `OptionKey`. The access by name
+      `ChartTooltip.position`. The tooltip items and body items are the native `TooltipItem` and
+      `TooltipBodyItem` of `lib/src/types/tooltip_item.dart` (row `adapt-native-tooltip-item`). The
+      label colors, label point styles and positions are typed classes (`TooltipLabelStyle`,
+      `TooltipLabelPointStyle`, `TooltipPosition`). The access by name
       covers its 28 own names and `_ignoreReplayEvents`: `operator []` and `operator []=` handle
       the 24 names that `Element` does not handle. `update` is a field that holds a function (row
       `harness-method-fields`). The hooks cast `chart.tooltip` to `Tooltip`.
@@ -1811,11 +1812,25 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 
 Tooltip callbacks use the native `TooltipCallbacks` object in chart and dataset configs (Chart.js ADR 0125).
 Its 14 hooks are typed functions with an explicit tooltip argument. Text hooks return `List<String>?`: null invokes
-the built-in default, and an empty list emits no lines. Fields merge with `other.field ?? field`. `ChartTooltipItem`
-is a core view over the original item. Result paints/styles are native values; default producers resolve their
+the built-in default, and an empty list emits no lines. Fields merge with `other.field ?? field`. A hook gets the
+native `TooltipItem`. Result paints/styles are native values; default producers resolve their
 rendered forms. The typed API uses `ChartTooltip.callbacks` and `Dataset.tooltipCallbacks`; the old `titleText`,
 `labelText` and `footerText` parameters are removed. Reference generators emit native expected values; no callback
 Map adapter is present in the runtime.
+
+A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/tooltip_item.dart` (row
+`adapt-native-tooltip-item`, doc/native-tooltip-item-design-draft.md). It is immutable: `datasetIndex` and
+`dataIndex` are `int`, `label` is the `List<String>` of the lines of the label, `formattedValue` is a `String`,
+`element` is nullable, and `dataset`, `parsed` and `raw` are values of the app. A body item is the final class
+`TooltipBodyItem` with the `List<String>` fields `before`, `lines` and `after`. `TooltipModel.dataPoints` is a
+`List<TooltipItem>?`, `body` is a `List<TooltipBodyItem>?`, and the four text lists are `List<String>?`.
+`getLabelAndValue` of a dataset controller returns `({List<String> label, String value})`: a falsy label is the
+empty List (`dataLabelLinesOf`). The tooltip options `filter`, `itemSort` and `external` hold the typed functions
+`TooltipItemFilter`, `TooltipItemComparator` and `TooltipExternal` of `tooltip_callbacks.dart`, also in a raw
+config, with no `this`; a function of another type stops a debug build. The typed API has `ChartTooltip.filter`,
+`itemSort` and `external`. `types.TypedTooltipItem`, `ChartTooltipItem` and the two records of
+`plugin.tooltip.dart` are removed. In the tests, `test/support/data_label.dart` gives the native label of a
+reference label (`nativeDataLabel`) and the plain forms of the native items.
 
 An active element is the native extensible class `ActiveElement` of `lib/src/types/active_element.dart` (row
 `adapt-native-active-element`, doc/native-active-element-design-draft.md): `datasetIndex` and `index` are `int`,

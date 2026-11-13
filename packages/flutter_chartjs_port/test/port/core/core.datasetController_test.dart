@@ -891,7 +891,9 @@ final class _Run(final AnyObject spec) {
             .getLabelAndValue(jsToNumber(args[1]).toInt());
         out.add(
           'labelAndValue ${_s(args[0])} ${_s(args[1])}: '
-          '${_enc({'label': label, 'value': value})}',
+          // The upstream label is one string (row
+          // `adapt-native-tooltip-item`).
+          '${_enc({'label': label.join(), 'value': value})}',
         );
       case 'allParsed':
         final values = controller(args[0])

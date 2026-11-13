@@ -67,6 +67,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/data_label.dart';
 import '../scales/scale_chart_harness.dart';
 import '../scales/scale_time_harness.dart' show atNow;
 
@@ -685,7 +686,13 @@ void expectControllerObservations(
     for (final key in expectedDataset.keys) {
       expect(
         dataset[key],
-        referenceMatcher(expectedDataset[key]),
+        // The native label of the upstream label (row
+        // `adapt-native-tooltip-item`).
+        referenceMatcher(
+          key == 'labelAndValue'
+              ? nativeLabelAndValue(expectedDataset[key])
+              : expectedDataset[key],
+        ),
         reason: '$label: datasets.$i.$key',
       );
     }

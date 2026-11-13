@@ -276,7 +276,13 @@ void main() {
       final controller = meta.controller!;
       expect(controller.getContext(2)['raw'], '3');
       final (:label, :value) = controller.getLabelAndValue(1);
-      expect([label, value], ['b', '2']);
+      expect(
+        [label, value],
+        [
+          ['b'],
+          '2',
+        ],
+      );
       expect(
         _points(chart),
         referenceMatcher(
@@ -508,7 +514,9 @@ void main() {
       });
     });
 
-    testWidgets('getLabelAndValue gives a String label', (tester) async {
+    testWidgets('getLabelAndValue gives the String label as one line', (
+      tester,
+    ) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{
@@ -529,7 +537,14 @@ void main() {
       final controller = chart.getDatasetMeta(0).controller!;
       expect(
         [for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label],
-        ['line 1,line 2', '5', '0', 'd', 'undefined', 'undefined'],
+        [
+          ['line 1,line 2'],
+          ['5'],
+          ['0'],
+          ['d'],
+          ['undefined'],
+          ['undefined'],
+        ],
       );
     });
   });

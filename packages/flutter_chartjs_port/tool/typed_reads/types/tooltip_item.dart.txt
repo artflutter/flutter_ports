@@ -1,0 +1,4 @@
+# L4 allowlist (Chart.js ADR 0054 §5): stringIndex 1: the `label` of the
+# dataset of a tooltip item (TooltipItem.datasetLabel). The dataset is an
+# object of the user: a Map, or the typed dataset scope of a typed config.
+stringIndex 1
