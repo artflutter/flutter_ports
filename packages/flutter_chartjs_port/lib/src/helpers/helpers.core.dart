@@ -39,17 +39,10 @@ import 'package:flutter_chartjs_port/src/types/data_item.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
-/// helpers.core.ts:11 `noop`.
-///
-/// An empty function that can be used, for example, for optional callback.
-///
-/// It returns the [undefined] sentinel, as a JavaScript function without a
-/// `return` returns `undefined`. Ported code calls it through [jsCall], which
-/// drops the arguments that it does not take.
-Undefined noop() {
-  /* noop */
-  return undefined;
-}
+// DIVERGES(chartjs): adapt-tooltip-callback-objects, no noop.
+// helpers.core.ts:11 `noop` is the default of 9 tooltip callbacks
+// (plugin.tooltip.js:363-435). In the port, a tooltip callback that is null
+// takes the built-in default, so no code needs an empty function.
 
 /// The counter of [uid]: the `id` variable of the closure at
 /// helpers.core.ts:19.

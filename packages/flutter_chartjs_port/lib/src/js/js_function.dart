@@ -57,9 +57,7 @@
 /// **Results.** [jsCall] returns the result of the closure. A Dart closure
 /// that returns nothing returns Dart `null`, which is JavaScript `null`. A
 /// closure that must return JavaScript `undefined` returns the [undefined]
-/// sentinel. For example, `noop` of `helpers.core` returns [undefined], and
-/// the tooltip uses its default callback only for an `undefined` result
-/// (`plugin.tooltip.js`, `invokeCallbackWithFallback`).
+/// sentinel, as a JavaScript function without a `return` does.
 ///
 /// **Numbers.** Ported code passes each number as a `double` (Chart.js ADR
 /// 0045). Declare a numeric parameter as `double`, `num` or `Object?`. An

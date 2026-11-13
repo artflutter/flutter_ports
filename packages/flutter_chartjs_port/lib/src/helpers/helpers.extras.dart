@@ -40,13 +40,10 @@ import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
-/// helpers.extras.ts:7 `fontString`.
-///
-/// The `+` operator converts [pixelSize] with `Number::toString`
-/// ([jsNumberToString]), so `12` gives `'12px'`, not `'12.0px'`.
-String fontString(double pixelSize, String fontStyle, String fontFamily) {
-  return '$fontStyle ${jsNumberToString(pixelSize)}px $fontFamily';
-}
+// DIVERGES(chartjs): adapt-text-style-fonts, no fontString.
+// helpers.extras.ts:7 `fontString` builds a CSS font text. In the port, a
+// font is a TextStyle from the option to the canvas: no code reads a CSS
+// font text.
 
 /// helpers.extras.ts:14 `requestAnimFrame`.
 ///

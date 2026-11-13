@@ -518,7 +518,6 @@ drawPointLegend
 each
 easingEffects
 finiteOrDefault
-fontString
 formatNumber
 getAngleFromPoint
 getDatasetClipArea
@@ -542,7 +541,6 @@ log10
 merge
 mergeIf
 niceNum
-noop
 notifyArrayListeners
 overrideTextDirection
 pi
