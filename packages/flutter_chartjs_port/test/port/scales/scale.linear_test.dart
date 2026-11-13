@@ -208,7 +208,7 @@ void main() {
       // scale.linear.tests.js:8-12.
       final scale = registry.getScale('linear');
       expect(scale, same(LinearScale.jsClass));
-      expect(jsTypeof(scale), 'function');
+      expect(scale, isA<JsClass>());
       expect(LinearScale.jsClass['id'], 'linear');
       expect(LinearScale.jsClass['defaults'], same(LinearScale.defaults));
       expect(LinearScale.jsClass.superclass, same(LinearScaleBase.jsClass));
@@ -223,7 +223,7 @@ void main() {
       final ticks = linear['ticks']! as JsObjectFace;
       expect(ticks.jsKeys(), ['callback']);
       expect(ticks['callback'], same(formatters['numeric']));
-      expect(jsTypeof(ticks['callback']), 'function');
+      expect(ticks['callback'], isA<Function>());
     });
 
     testWidgets('jsConstruct makes a LinearScale from the cfg object', (

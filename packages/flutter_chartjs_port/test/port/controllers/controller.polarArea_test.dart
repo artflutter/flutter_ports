@@ -111,7 +111,8 @@ Map<String, Object?> _state(PolarAreaController c) {
     'minMax': [jsToNumber(min), jsToNumber(max)],
     'radii': [c.innerRadius ?? undefined, c.outerRadius ?? undefined],
     'frozen': [
-      for (final arc in c.cachedMeta.data) jsObjectIsFrozen(arc.options),
+      for (final arc in c.cachedMeta.data)
+        (arc.options! as JsFreezable).isFrozen,
     ],
   };
 }

@@ -618,7 +618,8 @@ String _encMap(Object m) {
 /// The text of an options object: its id, frozen state and value.
 String _encOptions(Object? options) => options == null
     ? 'undefined'
-    : '${_idOf('opt', options)} frozen=${jsObjectIsFrozen(options)} '
+    : '${_idOf('opt', options)} '
+          'frozen=${options is JsFreezable && options.isFrozen} '
           '${_enc(options)}';
 
 /// An id or a scale of a meta: `'none'` for JS `null` and `undefined`.
@@ -1590,7 +1591,7 @@ void main() {
       expect(opts0, isA<PointOptions>());
       expect(opts0, same(opts1));
       expect(opts0[r'$shared'], isTrue);
-      expect(jsObjectIsFrozen(opts0), isTrue);
+      expect((opts0 as JsFreezable).isFrozen, isTrue);
     });
 
     test('without sharing, each call gives a new PointOptions', () {
@@ -1602,8 +1603,8 @@ void main() {
       expect(opts1, isA<PointOptions>());
       expect(opts0, isNot(same(opts1)));
       expect(opts0[r'$shared'], isFalse);
-      expect(jsObjectIsFrozen(opts0), isFalse);
-      expect(jsObjectIsFrozen(opts1), isFalse);
+      expect((opts0 as JsFreezable).isFrozen, isFalse);
+      expect((opts1 as JsFreezable).isFrozen, isFalse);
     });
 
     test('a scriptable option gives a PointOptions that is not frozen', () {
@@ -1614,7 +1615,7 @@ void main() {
       expect(opts0, isA<PointOptions>());
       expect(opts0, isNot(same(opts1)));
       expect(opts0[r'$shared'], isFalse);
-      expect(jsObjectIsFrozen(opts0), isFalse);
+      expect((opts0 as JsFreezable).isFrozen, isFalse);
       expect(
         opts1['backgroundColor'],
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
@@ -1629,7 +1630,7 @@ void main() {
       expect(first, isA<LineOptions>());
       expect(second, isA<LineOptions>());
       expect(first, isNot(same(second)));
-      expect(jsObjectIsFrozen(first), isFalse);
+      expect((first as JsFreezable).isFrozen, isFalse);
       expect(first[r'$shared'], isFalse);
       run.step(<Object?>['update', 'reset']);
       final line = run.meta(0).dataset!;
@@ -1644,7 +1645,7 @@ void main() {
       final shared = controller.getSharedOptions(source)!;
       expect(shared, isA<PointOptions>());
       expect(shared, isNot(same(source)));
-      expect(jsObjectIsFrozen(shared), isFalse);
+      expect((shared as JsFreezable).isFrozen, isFalse);
       expect(jsObjectKeys(shared), jsObjectKeys(source));
       expect(controller.sharedOptions, same(shared));
       run.step(<Object?>['update', 'none']);
@@ -1665,7 +1666,7 @@ void main() {
       final options = run.meta(0).data[0].options;
       expect(options, isA<PointOptions>());
       expect((options! as JsObjectFace)[r'$shared'], isFalse);
-      expect(jsObjectIsFrozen(options), isFalse);
+      expect((options as JsFreezable).isFrozen, isFalse);
       expect(options, isNot(same(run.controller(0).sharedOptions)));
     });
 
@@ -1673,14 +1674,14 @@ void main() {
       final bar = _runTo('draw without a dataset element', 2);
       final barOptions = bar.controller(0).resolveDataElementOptions(0);
       expect(barOptions, isA<BarOptions>());
-      expect(jsObjectIsFrozen(barOptions), isTrue);
+      expect((barOptions as JsFreezable).isFrozen, isTrue);
       final arc = _runTo('arc element options', 2);
       final arcOptions = arc.controller(0).resolveDataElementOptions(0);
       expect(arcOptions, isA<ArcOptions>());
       final custom = _runTo('custom element options', 2);
       final customOptions = custom.controller(0).resolveDataElementOptions(0);
       expect(customOptions, isA<GenericElementOptions>());
-      expect(jsObjectIsFrozen(customOptions), isTrue);
+      expect((customOptions as JsFreezable).isFrozen, isTrue);
       expect(jsObjectKeys(customOptions), [r'$shared', 'size', 'label']);
     });
 
@@ -1690,8 +1691,8 @@ void main() {
       final run = _runTo(r'frozen options with $shared false', 3);
       final options = run.meta(0).data[0].options;
       expect(options, isA<PointOptions>());
-      expect(jsObjectIsFrozen(options), isTrue);
       expect((options! as JsObjectFace)[r'$shared'], isFalse);
+      expect((options as JsFreezable).isFrozen, isTrue);
       expect(
         () => run.step(<Object?>['update', 'default']),
         throwsA(isA<TypeError>()),

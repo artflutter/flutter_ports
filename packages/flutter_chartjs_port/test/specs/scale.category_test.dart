@@ -9,6 +9,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
@@ -40,8 +41,8 @@ import '../support/tick_label.dart';
 // - `chart.scales.x` is `chart.scales['x']!`.
 // - A property chain of the spec, for example
 //   `Chart.defaults.scales.category`, is a chain of `jsGet`.
-// - `typeof Constructor` is `jsTypeof(constructor)`. `not.toBe(undefined)`
-//   is `isNot(same(undefined))`.
+// - `typeof Constructor === 'function'` is `isA<JsClass>()`.
+//   `not.toBe(undefined)` is `isNot(same(undefined))`.
 // - `toEqual` of an object compares the keys and values. Jasmine compares
 //   functions by identity. The default tick callback is a top-level
 //   function, a `TickCallback` (row `adapt-native-tick`).
@@ -65,7 +66,7 @@ void main() {
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('category');
       expect(constructor, isNot(same(undefined)));
-      expect(jsTypeof(constructor), 'function');
+      expect(constructor, isA<JsClass>());
     });
 
     test('Should have the correct default config', () {

@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
@@ -84,7 +85,7 @@ void main() {
     group('auto', fixture.specs('controller.radar'));
 
     test('should be registered as dataset controller', () {
-      expect(jsTypeof(Chart.registry.controllers.items['radar']), 'function');
+      expect(Chart.registry.controllers.items['radar'], isA<JsClass>());
     });
 
     testWidgets('Should be constructed', (tester) async {

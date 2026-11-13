@@ -570,8 +570,8 @@ and the items that stay open. In short:
   and `getCenterPoint` return an `ElementPoint`.
 - The JS form `value || 0` before arithmetic is `jsOrZero` of `lib/src/js/js_number.dart`. The
   port-only file `lib/src/js/js_webidl.dart` converts an option value for a Canvas 2D setter, as
-  the WebIDL type of the DOM setter does (`canvasStyle`, `canvasNumber`, `canvasKeyword` and
-  `canvasLineDash`). The controllers and the plugins use the same functions.
+  the WebIDL type of the DOM setter does (`canvasStyle`, `canvasNumber`, `canvasLineCap`,
+  `canvasLineJoin` and `canvasLineDash`). The controllers and the plugins use the same functions.
 - `core.element.dart`, `lib/src/elements/` and `lib/src/js/js_webidl.dart` are pure layers. Their
   specs and tests run on the VM, with dart2js and with dart2wasm.
 - [Chart.js ADR 0020](adr/0020-registry-and-component-classes.md) §3 answers the Open item on how
@@ -637,7 +637,8 @@ short:
   `GenericElementOptions`. `resolveNamedOptions` takes the new object as an optional argument.
 - The four `Object.assign` copies of options use `copyOptions`, which keeps the class.
 - `ElementOptions` implements `JsFreezable`. A write into frozen options throws a `TypeError`, as
-  JavaScript strict mode does. `jsObjectFreeze` and `jsObjectIsFrozen` stand for the builtins.
+  JavaScript strict mode does. `jsObjectFreeze` stands for `Object.freeze`, and the getter
+  `isFrozen` for `Object.isFrozen`.
 - A gallery stress mode `chart` measures the element draw cost through the real chart path.
 
 ### 2.18 Chart.js ADR 0022: Chart test harness on Flutter (gate 5)

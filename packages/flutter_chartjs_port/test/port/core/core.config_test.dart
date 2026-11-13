@@ -2128,7 +2128,7 @@ void main() {
         expect(typed[r'$shared'], isTrue, reason: id);
         expect(jsObjectKeys(typed), [r'$shared', ...names], reason: id);
         expect(_json(typed), _json(plain), reason: id);
-        expect(jsObjectIsFrozen(typed), isFalse, reason: id);
+        expect((typed as JsFreezable).isFrozen, isFalse, reason: id);
       }
     });
 

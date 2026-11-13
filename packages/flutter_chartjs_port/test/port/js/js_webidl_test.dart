@@ -7,9 +7,9 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:test/test.dart';
 
 // The conversions follow the WebIDL types of the DOM setters: ToNumber for
-// an unrestricted double, ToString for a DOMString, and ToNumber of each item
-// for a sequence of numbers. An undefined value gives Dart null, which the
-// canvas layer ignores, as the DOM ignores the value.
+// an unrestricted double and ToNumber of each item for a sequence of
+// numbers. An undefined value gives Dart null, which the canvas layer
+// ignores, as the DOM ignores the value.
 
 void main() {
   group('canvasStyle', () {
@@ -35,17 +35,6 @@ void main() {
       expect(canvasNumber(true), 1.0);
       expect(canvasNumber('a'), isNaN);
       expect(canvasNumber(double.infinity), double.infinity);
-    });
-  });
-
-  group('canvasKeyword', () {
-    test('gives null for undefined and null, else the ToString', () {
-      expect(canvasKeyword(undefined), isNull);
-      expect(canvasKeyword(null), isNull);
-      expect(canvasKeyword('center'), 'center');
-      expect(canvasKeyword(''), '');
-      expect(canvasKeyword(1), '1');
-      expect(canvasKeyword(true), 'true');
     });
   });
 

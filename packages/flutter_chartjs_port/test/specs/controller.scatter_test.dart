@@ -9,6 +9,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -41,7 +42,7 @@ void main() {
     group('auto', fixture.specs('controller.scatter'));
 
     test('should be registered as dataset controller', () {
-      expect(jsTypeof(Chart.registry.controllers.items['scatter']), 'function');
+      expect(Chart.registry.controllers.items['scatter'], isA<JsClass>());
     });
 
     // :8

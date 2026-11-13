@@ -29,9 +29,9 @@
 ///   (`_orZero`) and `toRadiusCorners` read the raw value (`_rawNumber` and
 ///   the option functions such as `_borderAlign`).
 /// - The JS `+` of two options (`_sum`) adds two numbers and joins a string.
-/// - A canvas setter gets its value through `canvasStyle`, `canvasNumber`,
-///   `canvasKeyword` or `canvasLineDash` of `lib/src/js/js_webidl.dart`, as
-///   in the other element classes.
+/// - A canvas setter gets its value through `canvasStyle`, `canvasNumber`
+///   or `canvasLineDash` of `lib/src/js/js_webidl.dart`, as in the other
+///   element classes.
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.

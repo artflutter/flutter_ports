@@ -5,7 +5,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
@@ -324,7 +323,6 @@ void main() {
       final object = _Freezable();
       expect(jsObjectFreeze(object), same(object));
       expect(object.isFrozen, isTrue);
-      expect(jsObjectIsFrozen(object), isTrue);
       // A second freeze returns the object again.
       expect(jsObjectFreeze(object), same(object));
       expect(object.freezes, 2);
@@ -349,91 +347,7 @@ void main() {
       expect(jsObjectFreeze(map), same(map));
       map['a'] = 2.0;
       expect(map['a'], 2.0);
-      expect(jsObjectIsFrozen(map), isFalse);
-    });
-  });
-
-  group('jsObjectIsFrozen', () {
-    test('is true for a primitive', () {
-      // Object.isFrozen of null, undefined, 1, NaN, 's' and true is true.
-      for (final value in <Object?>[
-        null,
-        undefined,
-        1.0,
-        double.nan,
-        's',
-        '',
-        true,
-        false,
-      ]) {
-        expect(jsObjectIsFrozen(value), isTrue, reason: '$value');
-      }
-    });
-
-    test('is the frozen state of a JsFreezable', () {
-      final object = _Freezable();
-      expect(jsObjectIsFrozen(object), isFalse);
-      object.freeze();
-      expect(jsObjectIsFrozen(object), isTrue);
-    });
-
-    test('is false for each other value', () {
-      // Object.isFrozen({}), Object.isFrozen([]), Object.isFrozen(() => 1)
-      // and Object.isFrozen(class A {}) are false. A Map.unmodifiable is
-      // not a JsFreezable (js-semantics-object-freeze).
-      for (final value in <Object?>[
-        <String, Object?>{},
-        Map<String, Object?>.unmodifiable({'a': 1.0}),
-        <Object?>[],
-        () => 1.0,
-        JsClass('A'),
-      ]) {
-        expect(jsObjectIsFrozen(value), isFalse, reason: '$value');
-      }
-    });
-  });
-
-  group('jsTypeof', () {
-    test('gives the typeof of each kind of value', () {
-      // typeof undefined, null, true, 0, NaN, 's', {}, [], () => 1 and
-      // class C {} in Node.js v24.12.0 on x64.
-      final values = <Object?>[
-        undefined,
-        null,
-        true,
-        0.0,
-        double.nan,
-        's',
-        <String, Object?>{},
-        <Object?>[],
-        () => 1.0,
-        JsClass('C'),
-      ];
-      expect(values.map(jsTypeof), [
-        'undefined',
-        'object',
-        'boolean',
-        'number',
-        'number',
-        'string',
-        'object',
-        'object',
-        'function',
-        'function',
-      ]);
-    });
-
-    test('gives function for a JsFunction and number for an int', () {
-      expect(jsTypeof(JsFunction((Object? self) => self)), 'function');
-      expect(jsTypeof(1), 'number');
-      expect(jsTypeof(false), 'boolean');
-      expect(jsTypeof(''), 'string');
-      expect(jsTypeof(Object()), 'object');
-    });
-
-    test('gives object for a DateTime, as for a JS Date', () {
-      // typeof new Date(2015, 0) (Chart.js ADR 0024, decision 2).
-      expect(jsTypeof(DateTime.utc(2015)), 'object');
+      expect(map, isNot(isA<JsFreezable>()));
     });
   });
 }

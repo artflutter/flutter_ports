@@ -233,7 +233,7 @@ void main() {
         same(LogarithmicScale.defaults),
       );
       expect(LogarithmicScale.jsClass.superclass, same(Scale.jsClass));
-      expect(jsTypeof(LogarithmicScale.jsClass), 'function');
+      expect(LogarithmicScale.jsClass, isA<JsClass>());
     });
 
     test('defaults.scales.logarithmic has the callback and major ticks', () {

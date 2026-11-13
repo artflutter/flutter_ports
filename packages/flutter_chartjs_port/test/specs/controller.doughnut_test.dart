@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show PercentRadius;
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
@@ -105,11 +106,8 @@ void main() {
     // :4 The case also reads `Chart.controllers.pie`. flutter_test_config.dart
     // registers the pie controller with the built-in components.
     test('should be registered as dataset controller', () {
-      expect(
-        jsTypeof(Chart.registry.controllers.items['doughnut']),
-        'function',
-      );
-      expect(jsTypeof(Chart.registry.controllers.items['pie']), 'function');
+      expect(Chart.registry.controllers.items['doughnut'], isA<JsClass>());
+      expect(Chart.registry.controllers.items['pie'], isA<JsClass>());
     });
 
     testWidgets('should be constructed', (tester) async {

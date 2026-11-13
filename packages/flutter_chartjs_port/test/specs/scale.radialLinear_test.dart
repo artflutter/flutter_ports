@@ -13,6 +13,7 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 // flutter_chartjs_port, which does not export lib/src yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -51,8 +52,8 @@ import '../support/tick_label.dart';
 // The spec forms:
 // - A property chain of the spec, for example `Chart.defaults.scales`, is a
 //   chain of `jsGet`.
-// - `typeof x` is `jsTypeof(x)`. The class value of a scale is a `JsClass`,
-//   and its `typeof` is `'function'` (Chart.js ADR 0020).
+// - `typeof x === 'function'` is `isA<JsClass>()`: the class value of a
+//   scale is a `JsClass` (Chart.js ADR 0020).
 // - `toEqual` of an object compares the keys and the values with `equals`.
 //   A routed key, for example `ticks.color`, is a key of the RoutedScope
 //   and reads its route target. The key `backdropColor` holds the
@@ -109,7 +110,7 @@ void main() {
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('radialLinear');
       expect(constructor, isNot(same(undefined)));
-      expect(jsTypeof(constructor), 'function');
+      expect(constructor, isA<JsClass>());
     });
 
     test('Should have the correct default config', () {

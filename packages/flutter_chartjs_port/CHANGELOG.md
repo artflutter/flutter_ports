@@ -1,5 +1,9 @@
 ## 0.1.0
 
+- The JS runtime of `js_semantics.dart` has no `canvasKeyword`, `jsTypeof` and
+  `jsObjectIsFrozen`: no library code called them. Read the frozen state with
+  the `isFrozen` getter of a `JsFreezable`, and test a type with `is`.
+
 - The scale option `border` holds one object, also in a raw configuration: an
   `AxisBorder` (`display`, `color`, `width`, `dash`, `dashOffset`, `z`) for a
   cartesian axis and a `RadialAxisBorder` (`dash`, `dashOffset`) for the radial

@@ -248,7 +248,7 @@ void main() {
       expect(opts0, isA<PointOptions>());
       expect(opts0, same(opts1));
       expect(opts0[r'$shared'], isTrue);
-      expect(jsObjectIsFrozen(opts0), isTrue);
+      expect((opts0 as JsFreezable).isFrozen, isTrue);
     });
 
     testWidgets(r'without sharing, the cache entry is frozen with $shared '
@@ -262,14 +262,14 @@ void main() {
       expect(opts1, isA<PointOptions>());
       expect(opts0, isNot(same(opts1)));
       expect(opts0[r'$shared'], isFalse);
-      expect(jsObjectIsFrozen(opts0), isFalse);
-      expect(jsObjectIsFrozen(opts1), isFalse);
+      expect((opts0 as JsFreezable).isFrozen, isFalse);
+      expect((opts1 as JsFreezable).isFrozen, isFalse);
       // `cloneIfNotShared(cached, sharing)` (core.datasetController.js:845)
       // returns the cache entry itself when sharing is on.
       controller.enableOptionSharing = true;
       final cached = controller.resolveDataElementOptions(0);
       expect(cached, isA<PointOptions>());
-      expect(jsObjectIsFrozen(cached), isTrue);
+      expect((cached as JsFreezable).isFrozen, isTrue);
       expect(cached[r'$shared'], isFalse);
       expect(controller.resolveDataElementOptions(1), same(cached));
     });
@@ -295,7 +295,7 @@ void main() {
       expect(opts0, isA<PointOptions>());
       expect(opts0, isNot(same(opts1)));
       expect(opts0[r'$shared'], isFalse);
-      expect(jsObjectIsFrozen(opts0), isFalse);
+      expect((opts0 as JsFreezable).isFrozen, isFalse);
       expect(
         opts0['backgroundColor'],
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
@@ -316,7 +316,7 @@ void main() {
       expect(first, isA<LineOptions>());
       expect(second, isA<LineOptions>());
       expect(first, isNot(same(second)));
-      expect(jsObjectIsFrozen(first), isFalse);
+      expect((first as JsFreezable).isFrozen, isFalse);
       expect(first[r'$shared'], isFalse);
       // The line holds the dataset options with `segment` at the end
       // (controller.line.js:66).
@@ -339,7 +339,7 @@ void main() {
       final controller = _controllerOf(_chart('typedLineLine'));
       final cached = controller.resolveDataElementOptions(0);
       expect(cached, isA<LineOptions>());
-      expect(jsObjectIsFrozen(cached), isTrue);
+      expect((cached as JsFreezable).isFrozen, isTrue);
       expect(cached[r'$shared'], isFalse);
       expect(controller.resolveDatasetElementOptions(), isNot(same(cached)));
     });
@@ -353,7 +353,7 @@ void main() {
       final shared = controller.getSharedOptions(source)!;
       expect(shared, isA<PointOptions>());
       expect(shared, isNot(same(source)));
-      expect(jsObjectIsFrozen(shared), isFalse);
+      expect((shared as JsFreezable).isFrozen, isFalse);
       expect(jsObjectKeys(shared), jsObjectKeys(source));
       chart.update('none');
       final points = chart.getDatasetMeta(0).data;
@@ -398,25 +398,25 @@ void main() {
       expect(active[r'$shared'], isFalse);
       expect(point.options, same(copy));
       expect((copy! as JsObjectFace)[r'$shared'], isFalse);
-      expect(jsObjectIsFrozen(copy), isFalse);
       expect((copy as JsObjectFace)['radius'], active['radius']);
       expect(copy['backgroundColor'], active['backgroundColor']);
+      expect((copy as JsFreezable).isFrozen, isFalse);
     });
 
     testWidgets('bar, arc and custom element types', (tester) async {
       final barOptions = _controllerOf(_chart('typedBar'))
           .resolveDataElementOptions(0);
       expect(barOptions, isA<BarOptions>());
-      expect(jsObjectIsFrozen(barOptions), isTrue);
+      expect((barOptions as JsFreezable).isFrozen, isTrue);
       final arcOptions = _controllerOf(_chart('typedArc'))
           .resolveDataElementOptions(0);
       expect(arcOptions, isA<ArcOptions>());
-      expect(jsObjectIsFrozen(arcOptions), isTrue);
+      expect((arcOptions as JsFreezable).isFrozen, isTrue);
       final customOptions = _controllerOf(
         _chart('typedCustom', dataset: {'size': 4.0}),
       ).resolveDataElementOptions(0);
       expect(customOptions, isA<GenericElementOptions>());
-      expect(jsObjectIsFrozen(customOptions), isTrue);
+      expect((customOptions as JsFreezable).isFrozen, isTrue);
       expect(jsObjectKeys(customOptions), [r'$shared', 'size', 'label']);
       expect(customOptions['size'], 4.0);
     });
@@ -444,8 +444,8 @@ void main() {
       final chart = _chart('typedPointPoint');
       final options = chart.getDatasetMeta(0).data[0].options;
       expect(options, isA<PointOptions>());
-      expect(jsObjectIsFrozen(options), isTrue);
       expect((options! as JsObjectFace)[r'$shared'], isFalse);
+      expect((options as JsFreezable).isFrozen, isTrue);
     });
   });
 
