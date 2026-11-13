@@ -71,7 +71,7 @@ final class const InputProbeFrame({
   required final int scrolls,
 
   /// The `PointerPanZoomUpdateEvent`s of the frame (a trackpad; the host
-  /// maps none of them, Chart.js ADR 0108 Open 5).
+  /// gives each as a `wheel`, Chart.js ADR 0137).
   required final int panZooms,
 
   /// The chart updates of the frame (`afterUpdate`).

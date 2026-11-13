@@ -131,6 +131,7 @@ library;
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -711,6 +712,11 @@ class const ChartHost({
   /// attaches in its constructor and takes its size in this layout. A
   /// listener must not call `setState` (Chart.js ADR 0016, ADR 0049).
   final VoidCallback? onFirstLayout,
+
+  /// Whether a trackpad scroll and a trackpad pinch give `wheel` events, as
+  /// in Chrome: a scroll gives its deltas, and a pinch gives a `wheel` with
+  /// `ctrlKey` (Chart.js ADR 0137).
+  final bool trackpadGestures = true,
   super.key,
 }) extends LeafRenderObjectWidget {
   /// Creates a host for [canvas].
@@ -730,6 +736,7 @@ class const ChartHost({
       gestureSettings: MediaQuery.maybeGestureSettingsOf(context),
       onTickerModeChanged: onTickerModeChanged,
       onFirstLayout: onFirstLayout,
+      trackpadGestures: trackpadGestures,
     );
   }
 
@@ -741,7 +748,8 @@ class const ChartHost({
       ..onFirstLayout = onFirstLayout
       ..devicePixelRatio = _devicePixelRatio(context)
       ..tickerEnabled = TickerMode.valuesOf(context).enabled
-      ..gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
+      ..gestureSettings = MediaQuery.maybeGestureSettingsOf(context)
+      ..trackpadGestures = trackpadGestures;
   }
 }
 
@@ -836,6 +844,9 @@ class RenderChartHost({
   /// the attach report and before the host takes its size (see
   /// [ChartHost.onFirstLayout]).
   var VoidCallback? onFirstLayout,
+
+  /// See [ChartHost.trackpadGestures].
+  var bool trackpadGestures = true,
 }) extends RenderBox implements CanvasContainer, MouseTrackerAnnotation {
   /// Creates the render object of a host for [canvas].
   this {
@@ -1369,6 +1380,8 @@ class RenderChartHost({
     bool touch = false,
     bool compat = false,
     Offset? client,
+    Offset? wheelDelta,
+    bool wheelCtrl = false,
   }) {
     List<NativeTouch>? touches;
     _Modifiers? modifiers;
@@ -1385,10 +1398,11 @@ class RenderChartHost({
           position,
           source,
           client: client ?? source.position,
-          modifiers: modifiers ??= _modifiers(),
+          modifiers: modifiers ??= _withCtrl(_modifiers(), wheelCtrl),
           touchEvent: isTouchEvent,
           touches: isTouchEvent ? (touches ??= _touchList) : const [],
           compat: compat,
+          wheelDelta: wheelDelta,
         ),
       )) {
         notPrevented = false;
@@ -1442,10 +1456,14 @@ class RenderChartHost({
     bool touchEvent = false,
     List<NativeTouch> touches = const [],
     bool compat = false,
+    Offset? wheelDelta,
   }) {
     final mouseLike = _isMouseKind(source.kind);
     final pointerEvent = type.startsWith('pointer') || type == 'click';
-    final wheel = type == 'wheel' && source is PointerScrollEvent;
+    final delta = type != 'wheel'
+        ? Offset.zero
+        : wheelDelta ??
+              (source is PointerScrollEvent ? source.scrollDelta : Offset.zero);
     return NativeEvent(
       type: type,
       // A TouchEvent has no offsetX and offsetY.
@@ -1461,8 +1479,8 @@ class RenderChartHost({
       buttons: _buttons(type, source, mouseLike: mouseLike, compat: compat),
       pointerId: pointerEvent ? _domPointerId(source) : 0,
       pointerType: pointerEvent ? _pointerType(source.kind) : '',
-      deltaX: wheel ? source.scrollDelta.dx : 0,
-      deltaY: wheel ? source.scrollDelta.dy : 0,
+      deltaX: delta.dx,
+      deltaY: delta.dy,
       ctrlKey: modifiers.ctrl,
       altKey: modifiers.alt,
       shiftKey: modifiers.shift,
@@ -1681,6 +1699,12 @@ class RenderChartHost({
           }
           _mouseButtons.remove(event.pointer);
         }
+      case PointerPanZoomStartEvent() when trackpadGestures:
+        _handlePanZoomStart(event);
+      case PointerPanZoomUpdateEvent():
+        _handlePanZoomUpdate(event, position);
+      case PointerPanZoomEndEvent():
+        _handlePanZoomEnd(event);
       case PointerScrollEvent():
         if (!_emit(const ['wheel'], position, event)) {
           // A listener prevented the default of the wheel (Chart.js ADR
@@ -1693,6 +1717,55 @@ class RenderChartHost({
         }
       default:
         break;
+    }
+  }
+
+  /// The trackpad gestures in progress, by pointer (Chart.js ADR 0137).
+  final Map<int, _PanZoom> _panZooms = {};
+
+  /// The start of a trackpad gesture: the host joins the gesture arena of
+  /// the pointer, so that it can take the gesture from a scrollable
+  /// ancestor when a listener prevents a `wheel` of it.
+  void _handlePanZoomStart(PointerPanZoomStartEvent event) {
+    _panZooms[event.pointer] = _PanZoom(
+      GestureBinding.instance.gestureArena.add(
+        event.pointer,
+        const _TrackpadClaim(),
+      ),
+    );
+  }
+
+  /// One step of a trackpad gesture, as Chrome sends it: a pinch step is a
+  /// `wheel` with `ctrlKey` and `deltaY` -100 times the natural log of the
+  /// scale step, and a scroll step is a `wheel` with the opposite of the pan
+  /// step. A prevented `wheel` takes the gesture from the arena.
+  void _handlePanZoomUpdate(PointerPanZoomUpdateEvent event, Offset position) {
+    final gesture = _panZooms[event.pointer];
+    if (gesture == null) return;
+    final step = event.scale / gesture.scale;
+    gesture.scale = event.scale;
+    final pinch = step != 1 && step.isFinite && step > 0;
+    final delta = pinch ? Offset(0, -100 * math.log(step)) : -event.panDelta;
+    if (delta == Offset.zero) return;
+    final notPrevented = _emit(
+      const ['wheel'],
+      position,
+      event,
+      wheelDelta: delta,
+      wheelCtrl: pinch,
+    );
+    if (!notPrevented && !gesture.claimed) {
+      gesture.claimed = true;
+      gesture.arena.resolve(GestureDisposition.accepted);
+    }
+  }
+
+  /// The end of a trackpad gesture: the host gives up an arena that it did
+  /// not take.
+  void _handlePanZoomEnd(PointerPanZoomEndEvent event) {
+    final gesture = _panZooms.remove(event.pointer);
+    if (gesture != null && !gesture.claimed) {
+      gesture.arena.resolve(GestureDisposition.rejected);
     }
   }
 
@@ -2308,6 +2381,41 @@ double _slopLimitSquared(
 /// The modifier keys of an event: `ctrlKey`, `altKey`, `shiftKey` and
 /// `metaKey`.
 typedef _Modifiers = ({bool ctrl, bool alt, bool shift, bool meta});
+
+/// [modifiers] with `ctrlKey` also when [ctrl] is true: the `wheel` of a
+/// trackpad pinch (Chart.js ADR 0137).
+_Modifiers _withCtrl(_Modifiers modifiers, bool ctrl) => ctrl
+    ? (
+        ctrl: true,
+        alt: modifiers.alt,
+        shift: modifiers.shift,
+        meta: modifiers.meta,
+      )
+    : modifiers;
+
+/// A trackpad gesture of the host (Chart.js ADR 0137): its entry in the
+/// gesture arena, whether the host took it, and the last scale.
+final class _PanZoom(final GestureArenaEntry arena) {
+  /// Whether the host accepted [arena].
+  bool claimed = false;
+
+  /// The scale of the last step.
+  double scale = 1;
+}
+
+/// The member of the gesture arena of a trackpad gesture of a host
+/// (Chart.js ADR 0137). The host reads the raw pan-zoom events, so a win or
+/// a loss changes nothing for it.
+final class const _TrackpadClaim() implements GestureArenaMember {
+  @override
+  void acceptGesture(int pointer) {}
+
+  @override
+  void rejectGesture(int pointer) {}
+
+  @override
+  String toString() => 'RenderChartHost (trackpad)';
+}
 
 /// The modifier keys that are down now, from `HardwareKeyboard`. Flutter
 /// updates the pressed keys before it calls the key handlers, so the down of

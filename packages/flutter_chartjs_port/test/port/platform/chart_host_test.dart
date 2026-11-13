@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' as native_ui;
 
 import 'package:flutter/gestures.dart';
@@ -1677,6 +1678,109 @@ void main() {
       expect(controller.offset, 50);
       // The scrollable responds: it scrolled.
       expect(responses, [false]);
+    });
+
+    // Chart.js ADR 0137: a trackpad scroll and a trackpad pinch give wheel
+    // events, as in Chrome.
+
+    testWidgets('a trackpad scroll and pinch give wheel events', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      addCanvasEventListener(_host(tester).canvas, 'wheel', log.add);
+      final pointer = TestPointer(1, PointerDeviceKind.trackpad);
+      await tester.sendEventToBinding(
+        pointer.panZoomStart(const Offset(140, 40)),
+      );
+      await tester.sendEventToBinding(
+        pointer.panZoomUpdate(const Offset(140, 40), pan: const Offset(4, -10)),
+      );
+      final scroll = log.single;
+      expect(scroll.type, 'wheel');
+      expect((scroll.deltaX, scroll.deltaY), (-4.0, 10.0));
+      expect(scroll.ctrlKey, isFalse);
+      expect((scroll.offsetX, scroll.offsetY), (100.0, 40.0));
+      log.clear();
+      await tester.sendEventToBinding(
+        pointer.panZoomUpdate(
+          const Offset(140, 40),
+          pan: const Offset(4, -10),
+          scale: 1.25,
+        ),
+      );
+      final pinch = log.single;
+      expect(pinch.ctrlKey, isTrue);
+      expect(pinch.deltaX, 0);
+      expect(pinch.deltaY, closeTo(-100 * math.log(1.25), 1e-9));
+      await tester.sendEventToBinding(pointer.panZoomEnd());
+    });
+
+    testWidgets('a prevented trackpad wheel takes the gesture from a parent '
+        'ListView', (tester) async {
+      final canvas = UiCanvasElement();
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _box(
+          ListView(
+            controller: controller,
+            children: [
+              SizedBox(height: 200, child: ChartHost(canvas: canvas)),
+              const SizedBox(height: 1000),
+            ],
+          ),
+        ),
+      );
+      void prevent(NativeEvent event) => event.preventDefault();
+      addCanvasEventListener(canvas, 'wheel', prevent);
+      Future<void> scroll(int id) async {
+        final pointer = TestPointer(id, PointerDeviceKind.trackpad);
+        await tester.sendEventToBinding(
+          pointer.panZoomStart(const Offset(100, 100)),
+        );
+        for (var y = 1; y <= 5; y++) {
+          await tester.sendEventToBinding(
+            pointer.panZoomUpdate(
+              const Offset(100, 100),
+              pan: Offset(0, -20.0 * y),
+            ),
+          );
+          await tester.pump();
+        }
+        await tester.sendEventToBinding(pointer.panZoomEnd());
+        await tester.pumpAndSettle();
+      }
+
+      await scroll(1);
+      expect(controller.offset, 0);
+
+      removeCanvasEventListener(canvas, 'wheel', prevent);
+      await scroll(2);
+      expect(controller.offset, greaterThan(0));
+    });
+
+    testWidgets('trackpadGestures false gives no wheel', (tester) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(
+        _box(
+          SizedBox(
+            height: 200,
+            child: ChartHost(canvas: canvas, trackpadGestures: false),
+          ),
+        ),
+      );
+      final log = <NativeEvent>[];
+      addCanvasEventListener(canvas, 'wheel', log.add);
+      final pointer = TestPointer(1, PointerDeviceKind.trackpad);
+      await tester.sendEventToBinding(
+        pointer.panZoomStart(const Offset(50, 50)),
+      );
+      await tester.sendEventToBinding(
+        pointer.panZoomUpdate(const Offset(50, 50), pan: const Offset(0, -10)),
+      );
+      await tester.sendEventToBinding(pointer.panZoomEnd());
+      expect(log, isEmpty);
     });
 
     testWidgets('a wheel that a listener prevents takes the platform default, '

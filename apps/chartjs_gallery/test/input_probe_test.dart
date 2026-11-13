@@ -114,7 +114,8 @@ void main() {
       mouse.removePointer(location: at(0.5, 0.5)),
     );
 
-    // Two trackpad updates in one frame: the host maps none of them.
+    // Two trackpad updates in one frame: the host gives each as a wheel
+    // (Chart.js ADR 0137), and each wheel zooms the chart.
     final pad = TestPointer(4, PointerDeviceKind.trackpad);
     await tester.sendEventToBinding(pad.panZoomStart(at(0.5, 0.5)));
     await tester.sendEventToBinding(
@@ -127,7 +128,7 @@ void main() {
     await tester.pump();
     final trackpad = state.recorder.frames.last;
     expect(trackpad.panZooms, 2);
-    expect(trackpad.updates, 0);
+    expect(trackpad.updates, 2);
     await tester.sendEventToBinding(pad.panZoomEnd());
 
     // The next second prints the counts of these frames.
