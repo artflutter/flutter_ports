@@ -7,6 +7,7 @@
 /// same name: a gradient or a pattern is a `ChartShaderPaint` there.
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
@@ -18,8 +19,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
         ChartTextStyle,
         JsObjectFace,
         Undefined;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsMax, jsMin;
+import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
 
 /// labels.ts:13 `DrawLabelOptions`.
 final class const DrawLabelOptions({
@@ -109,7 +109,10 @@ void _addRoundedRectPath(
   double height,
   double radius,
 ) {
-  final r = jsMax(0, jsMin(jsMin(radius, width / 2), height / 2));
+  final r = math.max<double>(
+    0,
+    math.min(math.min(radius, width / 2), height / 2),
+  );
   ctx
     ..beginPath()
     ..moveTo(x + r, y)
@@ -215,7 +218,7 @@ void drawLabel(
   ctx.font = font;
   var textWidth = double.negativeInfinity;
   for (final line in lines) {
-    textWidth = jsMax(textWidth, ctx.measureText(line).width);
+    textWidth = math.max(textWidth, ctx.measureText(line).width);
   }
   final totalTextHeight = textHeight * lines.length;
   final text = _getTextPosition(position, options, totalTextHeight);

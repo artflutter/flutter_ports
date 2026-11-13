@@ -7,10 +7,11 @@
 /// nodes decides their positions.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
 import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsMax, jsMin, jsSort;
+import 'package:flutter_chartjs_port/js_semantics.dart' show jsSort;
 
 const double _smallValue = 1e-6;
 
@@ -140,7 +141,7 @@ double calculateX(
   // Calculate the maxX from nodes in case some were placed by column option
   final maxX = allNodes.fold<double>(
     0,
-    (max, node) => jsMax(max, _nodeX(node)),
+    (max, node) => math.max(max, _nodeX(node)),
   );
 
   if (mode == SankeyMode.edge) {
@@ -215,7 +216,7 @@ double _processFrom(SankeyNode node, double start) {
       n.y = y;
       _processFrom(n, _truthy(y) ? y + _smallValue : 0);
     }
-    y = jsMax(n.y! + n.outFlow, y);
+    y = math.max(n.y! + n.outFlow, y);
   }
   return _nodeY(node) + node.size;
 }
@@ -253,7 +254,7 @@ double _processTo(SankeyNode node, double start) {
     } else {
       // Within the same traversal direction, reserve the destination node's
       // full height so subsequently placed nodes cannot overlap it.
-      y = jsMax(n.y! + jsMax(n.inFlow, n.outFlow), y);
+      y = math.max(n.y! + math.max<double>(n.inFlow, n.outFlow), y);
     }
   }
   return _nodeY(node) + node.size;
@@ -296,13 +297,13 @@ double _processRest(List<SankeyNode> nodeArray, double maxX) {
   var leftY =
       leftNodes.fold<double>(0, (acc, cur) {
         final end = _nodeY(cur) + cur.outFlow;
-        return jsMax(acc, _truthy(end) ? end : 0);
+        return math.max(acc, _truthy(end) ? end : 0);
       }) +
       _smallValue;
   var rightY =
       rightNodes.fold<double>(0, (acc, cur) {
         final end = _nodeY(cur) + cur.inFlow;
-        return jsMax(acc, _truthy(end) ? end : 0);
+        return math.max(acc, _truthy(end) ? end : 0);
       }) +
       _smallValue;
   var centerY = 0.0;
@@ -310,12 +311,12 @@ double _processRest(List<SankeyNode> nodeArray, double maxX) {
   if (leftY >= rightY) {
     for (final node in leftToDo) {
       leftY = _setOrGetY(node, leftY);
-      leftY = jsMax(leftY + node.outFlow, _processTo(node, leftY));
+      leftY = math.max(leftY + node.outFlow, _processTo(node, leftY));
     }
 
     for (final node in rightToDo) {
       rightY = _setOrGetY(node, rightY);
-      rightY = jsMax(rightY + node.inFlow, _processFrom(node, rightY));
+      rightY = math.max(rightY + node.inFlow, _processFrom(node, rightY));
     }
   } else {
     for (final node in leftToDo) {
@@ -324,7 +325,7 @@ double _processRest(List<SankeyNode> nodeArray, double maxX) {
 
     for (final node in rightToDo) {
       rightY = _setOrGetY(node, rightY);
-      rightY = jsMax(rightY + node.inFlow, _processFrom(node, rightY));
+      rightY = math.max(rightY + node.inFlow, _processFrom(node, rightY));
     }
   }
   for (final node in centerToDo) {
@@ -332,16 +333,18 @@ double _processRest(List<SankeyNode> nodeArray, double maxX) {
         .where((n) => _nodeX(n) == _nodeX(node) && defined(n.y))
         .fold<double>(
           0,
-          (acc, cur) =>
-              jsMax(acc, _nodeY(cur) + jsMax(cur.inFlow, cur.outFlow)),
+          (acc, cur) => math.max(
+            acc,
+            _nodeY(cur) + math.max<double>(cur.inFlow, cur.outFlow),
+          ),
         );
     y = _setOrGetY(node, y);
-    y = jsMax(y + node.inFlow, _processFrom(node, y));
-    y = jsMax(y + node.outFlow, _processTo(node, y));
-    centerY = jsMax(centerY, y);
+    y = math.max(y + node.inFlow, _processFrom(node, y));
+    y = math.max(y + node.outFlow, _processTo(node, y));
+    centerY = math.max(centerY, y);
   }
 
-  return jsMax(jsMax(leftY, rightY), centerY);
+  return math.max(math.max(leftY, rightY), centerY);
 }
 
 /// layout.ts:270 `fixTop`.
@@ -357,7 +360,7 @@ double _fixTop(List<SankeyNode> nodeArray, double maxX) {
       if (_nodeY(node) < minY) node.y = minY;
       minY = _nodeY(node) + node.size;
     }
-    maxY = jsMax(maxY, minY);
+    maxY = math.max(maxY, minY);
   }
   return maxY;
 }
@@ -413,7 +416,7 @@ double calculateYUsingPriority(List<SankeyNode> nodeArray, double maxX) {
     if (nodes.isNotEmpty) {
       final nextX = nodeArray.fold<double>(
         double.infinity,
-        (next, node) => _nodeX(node) > x ? jsMin(next, _nodeX(node)) : next,
+        (next, node) => _nodeX(node) > x ? math.min(next, _nodeX(node)) : next,
       );
       final sum = nodes[0].to
           .where((to) => _nodeX(to.node) > nextX)
@@ -422,9 +425,9 @@ double calculateYUsingPriority(List<SankeyNode> nodeArray, double maxX) {
     }
     for (final node in nodes) {
       node.y = y;
-      y += jsMax(node.outFlow, node.inFlow);
+      y += math.max<double>(node.outFlow, node.inFlow);
     }
-    maxY = jsMax(y, maxY);
+    maxY = math.max(y, maxY);
   }
   return maxY;
 }
@@ -477,7 +480,7 @@ double _extraHalfFor(
   double scale,
 ) {
   final minSizeUnits = (minSizes[node.key] ?? 0) * scale;
-  return jsMax(0, minSizeUnits - node.size) / 2;
+  return math.max<double>(0, minSizeUnits - node.size) / 2;
 }
 
 /// layout.ts:408 `stretchedSize`.
@@ -490,7 +493,7 @@ double _stretchedSize(
   double scale,
 ) {
   final minSizeUnits = (minSizes[node.key] ?? 0) * scale;
-  return jsMax(node.size, minSizeUnits);
+  return math.max(node.size, minSizeUnits);
 }
 
 /// layout.ts:419 `countCrossColumnPaddings`.
@@ -536,7 +539,7 @@ double _offsetForNode(
   final before = gap.before * scale;
   final after = gap.after * scale;
   final transitionGap = realNodesAbove > 0
-      ? jsMax(state.lastAfter, before) + state.lastExtraHalf + extraHalf
+      ? math.max(state.lastAfter, before) + state.lastExtraHalf + extraHalf
       : 0.0;
   final realCumOffset = state.realCumOffset + transitionGap;
   final virtualLevels = paddings - realNodesAbove;
@@ -591,7 +594,7 @@ double _addEvenPadding(
       node.y =
           _nodeY(prev) +
           prev.size +
-          jsMax(prevGap.after, gap.before) * scale +
+          math.max(prevGap.after, gap.before) * scale +
           prevExtraHalf +
           extraHalf;
     }
@@ -600,8 +603,11 @@ double _addEvenPadding(
     prevGap = gap;
     prevExtraHalf = extraHalf;
     final h = _stretchedSize(node, minSizes, scale);
-    maxY = jsMax(
-      jsMax(maxY, _nodeY(node) + jsMax(node.inFlow, node.outFlow)),
+    maxY = math.max(
+      math.max(
+        maxY,
+        _nodeY(node) + math.max<double>(node.inFlow, node.outFlow),
+      ),
       _nodeY(node) + (node.size + h) / 2,
     );
   }
@@ -671,8 +677,11 @@ double addPadding(
     }
 
     final h = _stretchedSize(node, minSizes, scale);
-    maxY = jsMax(
-      jsMax(maxY, _nodeY(node) + jsMax(node.inFlow, node.outFlow)),
+    maxY = math.max(
+      math.max(
+        maxY,
+        _nodeY(node) + math.max<double>(node.inFlow, node.outFlow),
+      ),
       _nodeY(node) + (node.size + h) / 2,
     );
   }

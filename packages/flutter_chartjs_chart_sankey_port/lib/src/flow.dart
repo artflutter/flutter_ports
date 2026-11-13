@@ -13,6 +13,7 @@
 ///   registry of the host takes it.
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' show Color, Offset;
 
 import 'package:flutter_chartjs_chart_sankey_port/src/labels.dart';
@@ -35,7 +36,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
         undefined;
 import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor, toFont;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsMax, jsMin, jsNumberToString, jsToNumber, jsTruthy;
+    show jsGet, jsNumberToString, jsToNumber, jsTruthy;
 
 typedef _FlowPoint = ({double x, double y});
 typedef _ControlPoints = ({_FlowPoint cp1, _FlowPoint cp2});
@@ -147,7 +148,7 @@ void _clipFlow(
   ctx.beginPath();
   if (vertical) {
     ctx.rect(
-      jsMin(x, x2),
+      math.min(x, x2),
       y,
       (x2 - x).abs() + width + 1,
       (y2 - y) * progress + 1,
@@ -155,7 +156,7 @@ void _clipFlow(
   } else {
     ctx.rect(
       x,
-      jsMin(y, y2),
+      math.min(y, y2),
       (x2 - x) * progress + 1,
       (y2 - y).abs() + height + 1,
     );
@@ -209,7 +210,7 @@ void _drawFlowPath(
     return (
       height: y2 - y,
       width: (x2 - x).abs() + width,
-      x: jsMin(x, x2),
+      x: math.min(x, x2),
       y: y,
     );
   }
@@ -217,7 +218,7 @@ void _drawFlowPath(
     height: (y2 - y).abs() + height,
     width: x2 - x,
     x: x,
-    y: jsMin(y, y2),
+    y: math.min(y, y2),
   );
 }
 
@@ -488,8 +489,8 @@ class Flow([Map<String, Object?>? cfg])
     final x = _prop('x', useFinalPosition);
     final x2 = _prop('x2', useFinalPosition);
     final width = _prop('width', useFinalPosition);
-    final min = jsMin(x, x2);
-    final max = jsMax(x, x2) + (_vertical ? width : 0);
+    final min = math.min(x, x2);
+    final max = math.max(x, x2) + (_vertical ? width : 0);
     return mx >= min && mx <= max;
   }
 
@@ -504,8 +505,8 @@ class Flow([Map<String, Object?>? cfg])
     final y = _prop('y', useFinalPosition);
     final y2 = _prop('y2', useFinalPosition);
     final height = _prop('height', useFinalPosition);
-    final minY = jsMin(y, y2);
-    final maxY = jsMax(y, y2) + (_vertical ? 0 : height);
+    final minY = math.min(y, y2);
+    final maxY = math.max(y, y2) + (_vertical ? 0 : height);
     return my >= minY && my <= maxY;
   }
 

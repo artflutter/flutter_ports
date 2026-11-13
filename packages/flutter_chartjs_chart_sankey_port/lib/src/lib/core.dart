@@ -3,6 +3,8 @@
 /// Port of `src/lib/core.ts`: the data points and the nodes of the data.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
 import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
 import 'package:flutter_chartjs_port/js_semantics.dart'
@@ -10,8 +12,6 @@ import 'package:flutter_chartjs_port/js_semantics.dart'
         JsObjectFace,
         JsProxyObject,
         jsGet,
-        jsMax,
-        jsMin,
         jsSort,
         jsToNumber,
         jsToString,
@@ -35,8 +35,8 @@ double nodeSizeOf(SankeyNode node, SankeySize size) {
   final a = _or(node.inFlow, node.outFlow);
   final b = _or(node.outFlow, node.inFlow);
   return switch (size) {
-    SankeySize.min => jsMin(a, b),
-    SankeySize.max => jsMax(a, b),
+    SankeySize.min => math.min(a, b),
+    SankeySize.max => math.max(a, b),
   };
 }
 
