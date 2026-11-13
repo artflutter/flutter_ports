@@ -133,11 +133,7 @@ void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
       continue;
     }
 
-    source.fill = resolveTarget(
-      sources,
-      i,
-      FillerOptions(options).propagate,
-    );
+    source.fill = resolveTarget(sources, i, FillerOptions(options).propagate);
   }
 }
 

@@ -723,9 +723,7 @@ ParityModel computeParity(ParityInput input) {
   for (final area in parityAreas) {
     final source = sources[area.project];
     if (source == null) {
-      throw ParityInputError(
-        '$portSourcesPath has no entry ${area.project}.',
-      );
+      throw ParityInputError('$portSourcesPath has no entry ${area.project}.');
     }
     final pin = '$repository/${source.pinPath}';
     final pinDir = Directory(pin);
@@ -1461,9 +1459,8 @@ ParityImport importParity(
       (name) => name == 'Dart target' || name == 'Dart test',
     );
     for (final (:line, :cells) in table.rows) {
-      final match = RegExp(r'^\[`([^`]+)`\]\(([^)\s]*)\)$').firstMatch(
-        cells.first,
-      );
+      final match = RegExp(r'^\[`([^`]+)`\]\(([^)\s]*)\)$')
+          .firstMatch(cells.first);
       final row = match == null ? null : model.rowOf(source.header, match[1]!);
       if (row == null || match![2] != row.url) {
         warn(
@@ -1548,9 +1545,8 @@ bool _sameLines(List<String> a, List<String> b) =>
 
 /// The Summary prose [lines] with a placeholder for each count of rows.
 List<String> _summaryProse(List<String> lines) {
-  final labels = [
-    for (final area in parityAreas) RegExp.escape(area.label),
-  ].join('|');
+  final labels = [for (final area in parityAreas) RegExp.escape(area.label)]
+      .join('|');
   final pattern = RegExp(
     '(\\bThe\\s+($labels)\\s+area\\s+has\\s+)(\\d+)(\\s+`'
     '(${statusValues.map(RegExp.escape).join('|')})`)',
@@ -1717,9 +1713,7 @@ String _recognizeRow(String text, UpstreamRow row, void Function(String) warn) {
   const reason = '(?:(?:blocked|diverges|n/a)(?:: [^`]+)?)';
   final item = RegExp('(\\d+) `($reason)`(?: \\([^)]*\\))?(, and |, | and )?');
   result = result.replaceAllMapped(
-    RegExp(
-      '(?<![\\w{/])\\d+ cases? skipped(: `($reason)`|, `($reason)`|: |)',
-    ),
+    RegExp('(?<![\\w{/])\\d+ cases? skipped(: `($reason)`|, `($reason)`|: |)'),
     (m) {
       final named = m[2] ?? m[3];
       final rest = m[1]!;

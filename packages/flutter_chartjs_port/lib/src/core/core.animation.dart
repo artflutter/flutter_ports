@@ -206,12 +206,8 @@ class Animation implements types.Animation {
   /// Map. [to] is the [undefined] sentinel when the caller passes no target
   /// value. [prop] is the property name: [Animation.typed] with its
   /// [AnimatedProp].
-  Animation(
-    Object cfg,
-    Object target,
-    String prop, [
-    Object? to = undefined,
-  ]) : this.typed(cfg, target, AnimatedProp.of(prop), to);
+  Animation(Object cfg, Object target, String prop, [Object? to = undefined])
+    : this.typed(cfg, target, AnimatedProp.of(prop), to);
 
   /// core.animation.js:28 `constructor(cfg, target, prop, to)` for the key
   /// [prop] of the typed table of `Animations` (Chart.js ADR 0054 §10).

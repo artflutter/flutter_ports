@@ -30,12 +30,8 @@ Map<String, Object?> fixture() {
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'type': 'time',
-          },
-          'y': <String, Object?>{
-            'display': false,
-          },
+          'x': <String, Object?>{'type': 'time'},
+          'y': <String, Object?>{'display': false},
         },
       },
     },

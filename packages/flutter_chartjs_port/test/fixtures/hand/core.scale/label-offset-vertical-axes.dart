@@ -12,20 +12,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        '◀',
-        '■',
-        '◆',
-        '●',
-      ],
+      'labels': <Object?>['◀', '■', '◆', '●'],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            12,
-            19,
-            3,
-            5,
-          ],
+          'data': <Object?>[12, 19, 3, 5],
         },
       ],
     },
@@ -35,34 +25,19 @@ Map<String, Object?> fixture() => <String, Object?>{
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
         'x': <String, Object?>{
-          'ticks': <String, Object?>{
-            'display': false,
-          },
-          'grid': <String, Object?>{
-            'display': false,
-          },
-          'border': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
+          'grid': <String, Object?>{'display': false},
+          'border': <String, Object?>{'display': false},
         },
         'y': <String, Object?>{
-          'ticks': <String, Object?>{
-            'labelOffset': 25,
-          },
-          'border': <String, Object?>{
-            'display': false,
-          },
-          'grid': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'labelOffset': 25},
+          'border': <String, Object?>{'display': false},
+          'grid': <String, Object?>{'display': false},
         },
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

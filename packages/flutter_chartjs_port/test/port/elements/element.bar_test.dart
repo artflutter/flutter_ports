@@ -256,10 +256,7 @@ void main() {
     test('reads the current width and height, not the final values', () {
       final bar = _bar(
         {'width': 6, 'height': 10},
-        [
-          ('width', true, 60),
-          ('height', true, 100),
-        ],
+        [('width', true, 60), ('height', true, 100)],
       );
       expect(bar.getRange(const XAxis()), 3);
       expect(bar.getRange(const YAxis()), 5);
@@ -675,10 +672,7 @@ void main() {
         'backgroundColor': 'backgroundColor',
         'borderColor': 'borderColor',
       });
-      expect(BarElement.defaultRoutes.keys, [
-        'backgroundColor',
-        'borderColor',
-      ]);
+      expect(BarElement.defaultRoutes.keys, ['backgroundColor', 'borderColor']);
     });
 
     test('jsClass is BarElement as a value', () {

@@ -104,7 +104,7 @@ final class _UserPie extends PieController {
   );
 }
 
-final class _UserArc extends ArcElement {}
+final class _UserArc extends ArcElement;
 
 final class _UserChart extends Chart {
   _UserChart(super.item, super.userConfig);
@@ -559,9 +559,7 @@ void main() {
     }
 
     /// A bar chart with [onHover], and a mouse over its bar 1.
-    (Chart, Map<String, Object?>) hovered(
-      void Function(Chart chart) onHover,
-    ) {
+    (Chart, Map<String, Object?>) hovered(void Function(Chart chart) onHover) {
       final cfg = config('bar');
       void hover(Object? e, Object? active, Object? c) => onHover(c! as Chart);
       (cfg['options']! as Map<String, Object?>)['onHover'] = hover;
@@ -817,17 +815,13 @@ void main() {
     final ao = a.getElementsAtEventForMode(
       hit,
       const NearestInteractionMode(),
-      <String, Object?>{
-        'intersect': true,
-      },
+      <String, Object?>{'intersect': true},
       false,
     );
     final bo = b.getElementsAtEventForMode(
       hit,
       const NearestInteractionMode(),
-      <String, Object?>{
-        'intersect': true,
-      },
+      <String, Object?>{'intersect': true},
       false,
     );
     expect(ao.map((x) => x.index), bo.map((x) => x.index));
@@ -1187,10 +1181,7 @@ void main() {
           expect(a.updateData(), isTrue);
           b.update('none');
           expect(deep(a), deep(b));
-          expect(
-            (a.getDatasetMeta(0).data[1] as Element).active,
-            isTrue,
-          );
+          expect((a.getDatasetMeta(0).data[1] as Element).active, isTrue);
           final point = a.getDatasetMeta(0).data[2];
           final event = _Event(point.x, point.y);
           a.eventHandler(event);
@@ -1362,10 +1353,7 @@ void main() {
           final cfg = indexed(type);
           ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
             ...dataset(config(type)),
-            'backgroundColor': <Object?>[
-              green,
-              blue,
-            ],
+            'backgroundColor': <Object?>[green, blue],
             'hidden': true,
           });
           return cfg;
@@ -1426,15 +1414,9 @@ void main() {
       final forms = <String, Object? Function()>{
         'Object?': () => <Object?>[red, green],
         'Object': () => <Object>[red, green],
-        'Color': () => <ChartPaint>[
-          red,
-          green,
-        ],
+        'Color': () => <ChartPaint>[red, green],
         'Color?': () => <ChartPaint?>[red, null, green],
-        'const Color': () => const <ChartPaint>[
-          red,
-          green,
-        ],
+        'const Color': () => const <ChartPaint>[red, green],
         'const Object': () => const <Object>[red, green],
       };
       for (final MapEntry(key: name, value: form) in forms.entries) {
@@ -1970,10 +1952,7 @@ void main() {
           datasets: [
             typed.PieDataset(
               data: [1, 2, 3],
-              backgroundColor: typed.ChartValue.indexed([
-                red,
-                blue,
-              ]),
+              backgroundColor: typed.ChartValue.indexed([red, blue]),
             ),
           ],
           responsive: false,
@@ -2166,22 +2145,15 @@ void main() {
         },
       );
       final lowering = ChartConfigLowering(
-        cfg(
-          const [1, 2, 3],
-          const typed.ChartValue.indexed([
-            red,
-            blue,
-          ]),
-        ),
+        cfg(const [1, 2, 3], const typed.ChartValue.indexed([red, blue])),
       );
       final a = chart(lowering.lower());
       lowering.apply(
-        cfg(
-          const [3, 2, 1],
-          typed.ChartValue.indexed(
-            List<ChartPaint>.of(const [red, blue]),
-          ),
-        ),
+        cfg(const [
+          3,
+          2,
+          1,
+        ], typed.ChartValue.indexed(List<ChartPaint>.of(const [red, blue]))),
       );
       expect(lowering.lastApplyDataOnly, isTrue);
       expect(a.updateData(), isTrue);
@@ -2190,13 +2162,7 @@ void main() {
         blue,
       );
       lowering.apply(
-        cfg(
-          const [2, 2, 2],
-          const typed.ChartValue.indexed([
-            green,
-            blue,
-          ]),
-        ),
+        cfg(const [2, 2, 2], const typed.ChartValue.indexed([green, blue])),
       );
       expect(lowering.lastApplyDataOnly, isFalse);
     });

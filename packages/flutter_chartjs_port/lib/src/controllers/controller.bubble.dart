@@ -456,10 +456,7 @@ class BubbleController extends DatasetController {
         fields = null;
         indexed = false;
       }
-      max = jsMax(
-        max,
-        point.size(resolveDataElementOptions(i * 1.0)) / 2,
-      );
+      max = jsMax(max, point.size(resolveDataElementOptions(i * 1.0)) / 2);
       // The first ordinary resolution makes the entry of constant options, and
       // two warm the indexed plan. There is one attempt for each loop.
       if (i == last) {

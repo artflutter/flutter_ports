@@ -181,20 +181,17 @@ resolverTraceSetups = {
   'fallbackString': (f) => defaults.describe('elements.bar', <String, Object?>{
     '_fallback': 'radiusFallback',
   }),
-  'fallbackTrue': (f) => defaults.describe('elements.bar', <String, Object?>{
-    '_fallback': true,
-  }),
+  'fallbackTrue': (f) =>
+      defaults.describe('elements.bar', <String, Object?>{'_fallback': true}),
   'fallbackFunction': (f) => defaults.describe(
     'elements.bar',
     <String, Object?>{'_fallback': f['fallbackFn']},
   ),
-  'userDescriptors': (f) => defaults.describe(
-    'elements.point',
-    <String, Object?>{
-      '_scriptable': f['userScriptable'],
-      '_indexable': f['userIndexable'],
-    },
-  ),
+  'userDescriptors': (f) =>
+      defaults.describe('elements.point', <String, Object?>{
+        '_scriptable': f['userScriptable'],
+        '_indexable': f['userIndexable'],
+      }),
   'extraKey': (f) {},
   'animationFallback': (f) => defaults.describe('animation', <String, Object?>{
     '_fallback': f['animationFallback'],

@@ -155,11 +155,7 @@ abstract interface class MinMax {
 /// (scale.linearbase.js:274, scale.logarithmic.js:172). Another item gives
 /// the read of [jsGet]: `undefined` for an absent key of a Map, and
 /// `isNaN(undefined)` is true (Chart.js ADR 0025, section 7).
-void setMinAndMaxByKey(
-  List<Object?> array,
-  MinMax target,
-  String property,
-) {
+void setMinAndMaxByKey(List<Object?> array, MinMax target, String property) {
   for (var i = 0, ilen = array.length; i < ilen; i++) {
     final item = array[i];
     final value = item is types.Tick && property == 'value'

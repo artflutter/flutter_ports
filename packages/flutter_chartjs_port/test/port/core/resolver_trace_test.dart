@@ -327,11 +327,8 @@ void _runCase(ResolverTraceReferenceCase c) {
     final step = entry['do']! as List<Object?>;
     final label = 'step $k $step';
     trace.clear();
-    Object? run() => k == 0
-        ? chart = acquireChart(
-            config,
-          )
-        : _applyStep(chart!, step);
+    Object? run() =>
+        k == 0 ? chart = acquireChart(config) : _applyStep(chart!, step);
     if (error != null && (error['at']! as num).toInt() == k) {
       expect(run, _throwsError(error), reason: label);
       _expectSame(List.of(trace), entry['trace'], '$label: trace');

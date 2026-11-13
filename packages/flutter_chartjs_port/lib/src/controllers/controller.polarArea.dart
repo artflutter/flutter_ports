@@ -675,9 +675,7 @@ class PolarAreaController extends DatasetController {
 
     // `meta.data.forEach((element, index) => ...)`.
     for (var index = 0; index < meta.data.length; index++) {
-      if (!jsIsNaN(
-            parsedValueOf(getParsed(index * 1.0), const RAxis()),
-          ) &&
+      if (!jsIsNaN(parsedValueOf(getParsed(index * 1.0), const RAxis())) &&
           chart.getDataVisibility(index * 1.0)) {
         count++;
       }

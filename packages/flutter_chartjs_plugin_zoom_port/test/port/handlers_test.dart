@@ -289,11 +289,8 @@ void main() {
       // (`src/handlers.ts:88-93`, seam H2).
       final chart = await _start(
         tester,
-        (onChartCreated) => _view(
-          dragZoom,
-          legend: true,
-          onChartCreated: onChartCreated,
-        ),
+        (onChartCreated) =>
+            _view(dragZoom, legend: true, onChartCreated: onChartCreated),
       );
       final legend = chart.legend!;
       final area = chart.chartArea!;
@@ -335,11 +332,8 @@ void main() {
       addTearDown(node.dispose);
       final chart = await _start(
         tester,
-        (onChartCreated) => _view(
-          dragZoom,
-          focusNode: node,
-          onChartCreated: onChartCreated,
-        ),
+        (onChartCreated) =>
+            _view(dragZoom, focusNode: node, onChartCreated: onChartCreated),
       );
       final area = chart.chartArea!;
       final left = area.left.ceilToDouble() + 20;
@@ -377,11 +371,8 @@ void main() {
       addTearDown(node.dispose);
       final chart = await _start(
         tester,
-        (onChartCreated) => _view(
-          dragZoom,
-          focusNode: node,
-          onChartCreated: onChartCreated,
-        ),
+        (onChartCreated) =>
+            _view(dragZoom, focusNode: node, onChartCreated: onChartCreated),
       );
       node.requestFocus();
       await tester.pump();

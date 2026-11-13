@@ -355,15 +355,11 @@ void main() {
       final copy = bar.copyWith(grouped: false);
       expect(copy.data, same(data));
       expect([copy.borderRadius, copy.stack, copy.grouped], [4, 's', false]);
-      final doughnut = const DoughnutDataset(
-        cutout: PercentRadius(70),
-      ).copyWith(rotation: 90);
+      final doughnut = const DoughnutDataset(cutout: PercentRadius(70))
+          .copyWith(rotation: 90);
       expect(
         [doughnut.cutout, doughnut.rotation],
-        [
-          const PercentRadius(70),
-          90,
-        ],
+        [const PercentRadius(70), 90],
       );
     });
 
@@ -392,9 +388,7 @@ void main() {
       const paintStart = 'ChartPaint.solid(Color(';
       expect(
         dataset.toString(),
-        contains(
-          '(label: A, backgroundColor: ChartValue.indexed([$paintStart',
-        ),
+        contains('(label: A, backgroundColor: ChartValue.indexed([$paintStart'),
       );
     });
 

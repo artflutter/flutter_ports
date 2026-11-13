@@ -17,9 +17,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       'responsive': false,
       'scales': <String, Object?>{
         'r': <String, Object?>{
-          'grid': <String, Object?>{
-            'display': true,
-          },
+          'grid': <String, Object?>{'display': true},
           'angleLines': <String, Object?>{
             'color': (Object? context) {
               return jsToNumber(jsGet(context, 'index')).remainder(2) == 0
@@ -32,12 +30,8 @@ Map<String, Object?> fixture() => <String, Object?>{
                   : 5;
             },
           },
-          'pointLabels': <String, Object?>{
-            'display': false,
-          },
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'pointLabels': <String, Object?>{'display': false},
+          'ticks': <String, Object?>{'display': false},
         },
       },
     },

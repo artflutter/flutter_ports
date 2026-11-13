@@ -105,10 +105,7 @@ String _numeric(Scale self, double tickValue, double index, List<Tick> ticks) {
   // toFixed has a max of 20 decimal places
   final numDecimal = logDelta.isNaN
       ? 1.0
-      : jsMax(
-          jsMin(-1 * logDelta.floorToDouble(), 20),
-          0,
-        );
+      : jsMax(jsMin(-1 * logDelta.floorToDouble(), 20), 0);
 
   // DIVERGES(chartjs): adapt-intl-number-format, a NumberFormat formats the
   // tick as it is: Dart cannot copy it to merge the digits of the tick.

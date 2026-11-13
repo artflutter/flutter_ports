@@ -137,7 +137,7 @@ enum PluginHook {
   /// `afterTooltipDraw`.
   afterTooltipDraw('afterTooltipDraw');
 
-  const PluginHook(this.jsName);
+  PluginHook(this.jsName);
 
   /// The JS name of the hook.
   final String jsName;
@@ -241,10 +241,7 @@ final class UpdateHookArgs extends PluginHookArgs {
   @internal
   final bool layoutKept;
 
-  static const List<String> _fieldNames = [
-    'mode',
-    'cancelable',
-  ];
+  static const List<String> _fieldNames = ['mode', 'cancelable'];
 
   @override
   List<String> get fieldNames => _fieldNames;
@@ -310,15 +307,11 @@ final class UpdateHookArgs extends PluginHookArgs {
 final class CancelableHookArgs extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  CancelableHookArgs({
-    bool? cancelable,
-  }) {
+  CancelableHookArgs({bool? cancelable}) {
     if (cancelable != null) this.cancelable = cancelable;
   }
 
-  static const List<String> _fieldNames = [
-    'cancelable',
-  ];
+  static const List<String> _fieldNames = ['cancelable'];
 
   @override
   List<String> get fieldNames => _fieldNames;
@@ -366,15 +359,11 @@ final class CancelableHookArgs extends PluginHookArgs {
 final class ResizeHookArgs extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  ResizeHookArgs({
-    required Object? size,
-  }) {
+  ResizeHookArgs({required Object? size}) {
     this.size = size;
   }
 
-  static const List<String> _fieldNames = [
-    'size',
-  ];
+  static const List<String> _fieldNames = ['size'];
 
   @override
   List<String> get fieldNames => _fieldNames;
@@ -550,11 +539,7 @@ final class DatasetDrawHookArgs extends PluginHookArgs {
     if (cancelable != null) this.cancelable = cancelable;
   }
 
-  static const List<String> _fieldNames = [
-    'meta',
-    'index',
-    'cancelable',
-  ];
+  static const List<String> _fieldNames = ['meta', 'index', 'cancelable'];
 
   @override
   List<String> get fieldNames => _fieldNames;
@@ -776,18 +761,12 @@ final class EventHookArgs extends PluginHookArgs {
 final class TooltipDrawHookArgs extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  TooltipDrawHookArgs({
-    required Object? tooltip,
-    bool? cancelable,
-  }) {
+  TooltipDrawHookArgs({required Object? tooltip, bool? cancelable}) {
     this.tooltip = tooltip;
     if (cancelable != null) this.cancelable = cancelable;
   }
 
-  static const List<String> _fieldNames = [
-    'tooltip',
-    'cancelable',
-  ];
+  static const List<String> _fieldNames = ['tooltip', 'cancelable'];
 
   @override
   List<String> get fieldNames => _fieldNames;

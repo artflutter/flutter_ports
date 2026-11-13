@@ -13,33 +13,11 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'radar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-      ],
+      'labels': <Object?>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       'datasets': <Object?>[
         <String, Object?>{
           'borderColor': 'transparent',
-          'data': <Object?>[
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-          ],
+          'data': <Object?>[3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
           'pointBackgroundColor': '#00ff00',
           'pointBorderColor': 'transparent',
           'pointBorderWidth': 0,
@@ -61,18 +39,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'borderColor': 'transparent',
-          'data': <Object?>[
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-          ],
+          'data': <Object?>[2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
           'pointBackgroundColor': 'transparent',
           'pointBorderColor': '#0000ff',
           'pointBorderWidth': 1,
@@ -94,18 +61,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'borderColor': 'transparent',
-          'data': <Object?>[
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-          ],
+          'data': <Object?>[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
           'pointBackgroundColor': '#00ff00',
           'pointBorderColor': '#0000ff',
           'pointBorderWidth': 1,
@@ -130,16 +86,10 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'responsive': false,
       'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'display': false,
-          'min': 0,
-          'max': 3,
-        },
+        'r': <String, Object?>{'display': false, 'min': 0, 'max': 3},
       },
       'elements': <String, Object?>{
-        'line': <String, Object?>{
-          'fill': false,
-        },
+        'line': <String, Object?>{'fill': false},
       },
       'layout': <String, Object?>{
         'padding': const EdgeInsets.only(left: 24, right: 24),
@@ -147,9 +97,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 512,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
 };

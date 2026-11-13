@@ -756,10 +756,7 @@ void main() {
       expect(pixels.inked(50, 25), isTrue);
       expect(pixels.inked(50, 85), isFalse);
       expect(() => ctx.arc(0, 0, -1, 0, 1), throwsRangeError);
-      expect(
-        () => ctx.ellipse(0, 0, 1, -1, 0, 0, 1),
-        throwsRangeError,
-      );
+      expect(() => ctx.ellipse(0, 0, 1, -1, 0, 0, 1), throwsRangeError);
       expect(() => ctx.arcTo(0, 0, 1, 1, -1), throwsRangeError);
     });
 
@@ -960,14 +957,10 @@ void main() {
     });
 
     test('a linear gradient', () async {
-      const gradient = ChartGradient.linear(
-        ui.Offset.zero,
-        ui.Offset(100, 0),
-        [
-          native_ui.Color.fromRGBO(255, 0, 0, 1),
-          native_ui.Color.fromRGBO(0, 0, 255, 1),
-        ],
-      );
+      const gradient = ChartGradient.linear(ui.Offset.zero, ui.Offset(100, 0), [
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+        native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ]);
       final ctx = _context()
         ..fillStyle = gradient
         ..fillRect(0, 0, 100, 100);
@@ -1072,14 +1065,10 @@ void main() {
 
     test('a gradient is in user space at fill time', () async {
       final ctx = _context();
-      const gradient = ChartGradient.linear(
-        ui.Offset.zero,
-        ui.Offset(50, 0),
-        [
-          native_ui.Color.fromRGBO(255, 0, 0, 1),
-          native_ui.Color.fromRGBO(0, 0, 255, 1),
-        ],
-      );
+      const gradient = ChartGradient.linear(ui.Offset.zero, ui.Offset(50, 0), [
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+        native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ]);
       ctx
         ..translate(50, 0)
         ..fillStyle = gradient
@@ -1091,15 +1080,10 @@ void main() {
 
     test('radial and conic gradients paint', () async {
       final ctx = _context();
-      const radial = ChartGradient.radial(
-        ui.Offset.zero,
-        100,
-        [
-          native_ui.Color.fromRGBO(255, 0, 0, 1),
-          native_ui.Color.fromRGBO(0, 0, 255, 1),
-        ],
-        focalRadius: 10,
-      );
+      const radial = ChartGradient.radial(ui.Offset.zero, 100, [
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+        native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ], focalRadius: 10);
       ctx
         ..fillStyle = radial
         ..fillRect(0, 0, 100, 100);
@@ -1120,15 +1104,10 @@ void main() {
       // A negative radius throws at the draw.
       expect(
         () => ctx
-          ..fillStyle = const ChartGradient.radial(
-            ui.Offset.zero,
-            1,
-            [
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-              native_ui.Color.fromRGBO(0, 0, 255, 1),
-            ],
-            focalRadius: -1,
-          )
+          ..fillStyle = const ChartGradient.radial(ui.Offset.zero, 1, [
+            native_ui.Color.fromRGBO(255, 0, 0, 1),
+            native_ui.Color.fromRGBO(0, 0, 255, 1),
+          ], focalRadius: -1)
           ..fillRect(0, 0, 100, 100),
         throwsRangeError,
       );
@@ -1188,10 +1167,7 @@ void main() {
       source.image.dispose();
       again.image.dispose();
 
-      expect(
-        () => UiCanvasElement(width: 0).toImageSource(),
-        throwsStateError,
-      );
+      expect(() => UiCanvasElement(width: 0).toImageSource(), throwsStateError);
     });
 
     test('a line dash', () async {
@@ -1424,7 +1400,7 @@ void main() {
           ..rotate(angle)
           ..translate(shift, 0)
           ..fillText('HHHH', x, 0);
-        return _render(ctx);
+        return await _render(ctx);
       }
 
       bool same(_Pixels a, _Pixels b) {
@@ -2383,13 +2359,10 @@ void main() {
         circle(ctx, 50 + i * 0.1, 50, 3, fill: false);
       }
       final pixels = await _render(ctx);
-      final reference = await _reference(
-        [
-          for (var i = 0; i < 20; i++)
-            dot(50 + i * 0.1, 50, 3, fill: null, width: 2100),
-        ],
-        snap: false,
-      );
+      final reference = await _reference([
+        for (var i = 0; i < 20; i++)
+          dot(50 + i * 0.1, 50, 3, fill: null, width: 2100),
+      ], snap: false);
       expect(
         _worstDifference(pixels.data, reference),
         lessThanOrEqualTo(tolerance),

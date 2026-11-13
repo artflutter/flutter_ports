@@ -1203,9 +1203,8 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final metasets = iScale!
         .getMatchingVisibleMetas(type)
         .where(
-          (meta) => jsTruthy(
-            readOption(meta.controller!.options, OptionKey.grouped),
-          ),
+          (meta) =>
+              jsTruthy(readOption(meta.controller!.options, OptionKey.grouped)),
         )
         .toList();
     final stacked = readOption(iScale.options, OptionKey.stacked);
@@ -1295,9 +1294,9 @@ class BarController extends DatasetController implements NativeBarIndexReads {
     final indexAxis = readOption(chart.options, OptionKey.indexAxis);
     final indexScaleId = indexAxis is ScaleAxis ? indexAxis : null;
     // The `Object.keys` order of the scale ids of the user.
-    return jsObjectKeys(
-      scales,
-    ).where((key) => sameAxis(scales[key]!.axis, indexScaleId)).firstOrNull;
+    return jsObjectKeys(scales)
+        .where((key) => sameAxis(scales[key]!.axis, indexScaleId))
+        .firstOrNull;
   }
 
   /// `indexAxis === 'x' ? dataset.xAxisID : dataset.yAxisID` (:503-504,

@@ -15,22 +15,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 1,
-              'y': 10,
-            },
-            <String, Object?>{
-              'x': 5,
-              'y': 0,
-            },
-            <String, Object?>{
-              'x': 15,
-              'y': -10,
-            },
-            <String, Object?>{
-              'x': 19,
-              'y': -5,
-            },
+            <String, Object?>{'x': 1, 'y': 10},
+            <String, Object?>{'x': 5, 'y': 0},
+            <String, Object?>{'x': 15, 'y': -10},
+            <String, Object?>{'x': 19, 'y': -5},
           ],
           'borderColor': 'red',
           'fill': false,
@@ -48,18 +36,11 @@ Map<String, Object?> fixture() => <String, Object?>{
           'min': 0,
           'max': 20,
         },
-        'y': <String, Object?>{
-          'display': false,
-          'min': -15,
-          'max': 15,
-        },
+        'y': <String, Object?>{'display': false, 'min': -15, 'max': 15},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

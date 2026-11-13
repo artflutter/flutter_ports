@@ -269,13 +269,10 @@ class _ResultsTableState extends State<ResultsTable> {
                         ),
                       ),
                       DataCell(
-                        Text(
-                          switch (row.slowerBy) {
-                            final times? =>
-                              '${times.toStringAsFixed(1)}× slower',
-                            null => row.winner ? 'best' : '—',
-                          },
-                        ),
+                        Text(switch (row.slowerBy) {
+                          final times? => '${times.toStringAsFixed(1)}× slower',
+                          null => row.winner ? 'best' : '—',
+                        }),
                       ),
                       DataCell(_value(row, RankMetric.frame)),
                       DataCell(_value(row, RankMetric.ui)),

@@ -358,10 +358,10 @@ void main() {
         math.getAngleFromPoint(const _Point(null, null), const _Point(0, -1)),
         (angle: -1.5707963267948966, distance: 1.0),
       );
-      expect(
-        math.getAngleFromPoint(const _Point(0, 0), const _Point(-1, 0)),
-        (angle: js_math.pi, distance: 1.0),
-      );
+      expect(math.getAngleFromPoint(const _Point(0, 0), const _Point(-1, 0)), (
+        angle: js_math.pi,
+        distance: 1.0,
+      ));
       expect(
         math.getAngleFromPoint(const _Point(0, 0), const _Point(-1, -1e-9)),
         (angle: 3.141592654589793, distance: 1.0),

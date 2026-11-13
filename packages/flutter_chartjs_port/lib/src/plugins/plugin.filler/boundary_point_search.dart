@@ -72,9 +72,7 @@ final class BoundaryPointSearch {
   /// Returns the same single segment as boundSegments for exact ascending
   /// bounds. The target is the same private, unstyled boundary used by [find].
   /// Source geometry and source callbacks are still handled by boundSegment.
-  types.Segment? bound(
-    ({String property, double start, double end})? bounds,
-  ) {
+  types.Segment? bound(({String property, double start, double end})? bounds) {
     if (!boundarySegmentSearchEnabled ||
         bounds == null ||
         bounds.property != (_horizontal ? 'x' : 'y') ||

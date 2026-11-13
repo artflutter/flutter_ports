@@ -129,7 +129,7 @@ Future<int> run(List<String> args, {required StringSink out}) async {
   final displayPrefix = prefix.isEmpty ? '' : '$prefix/';
   final stale = _staleBlockCheck(name, package, parity, displayPrefix, out);
   if (fixtures) {
-    return _runFixtureMode(
+    return await _runFixtureMode(
       package,
       manifest,
       results,
@@ -270,7 +270,7 @@ Future<({String output, List<Finding> findings})> _runSpecs(
       !specs.listSync(recursive: true).any((f) => f.path.endsWith('.dart'))) {
     return (output: '', findings: const <Finding>[]);
   }
-  return _runTests(package, caseTestArguments);
+  return await _runTests(package, caseTestArguments);
 }
 
 /// Runs `flutter` with [arguments] in [package]. Returns its standard

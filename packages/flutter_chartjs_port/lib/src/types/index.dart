@@ -465,9 +465,7 @@ abstract interface class Chart {
   /// metas in the drawing order, only the visible ones when [filterVisible]
   /// is true. `index.d.ts` does not declare it. The dataset controller
   /// reads it (core.datasetController.js:61).
-  List<ChartMeta> getSortedDatasetMetas(
-    bool filterVisible,
-  );
+  List<ChartMeta> getSortedDatasetMetas(bool filterVisible);
 
   /// index.d.ts:572 `getDataVisibility(index: number): boolean`. The radial
   /// scale calls it (scale.radialLinear.js:463).
@@ -604,10 +602,7 @@ abstract interface class DatasetController {
   ///
   /// Dart `null` for [canStack] stands for JS `undefined`. The result is a
   /// record.
-  ({double min, double max}) getMinMax(
-    Scale scale, [
-    bool? canStack,
-  ]);
+  ({double min, double max}) getMinMax(Scale scale, [bool? canStack]);
 
   /// core.datasetController.js:262 `options`, the resolver of the dataset
   /// options. index.d.ts does not declare it. controller.bar.js:437 reads it.
@@ -618,10 +613,7 @@ abstract interface class DatasetController {
 
   /// index.d.ts:656 `getStyle(index, active)`. controller.doughnut.js:101
   /// calls it.
-  Object getStyle(
-    double? index, [
-    bool? active,
-  ]);
+  Object getStyle(double? index, [bool? active]);
 
   /// index.d.ts:658 `resolveDataElementOptions(index, mode)`.
   /// controller.doughnut.js:354 calls it.
@@ -1019,32 +1011,20 @@ abstract interface class VisualElement {
 
   /// index.d.ts:1848 `inRange(mouseX, mouseY, useFinalPosition?):
   /// boolean`.
-  bool inRange(
-    double? mouseX,
-    double? mouseY, [
-    bool? useFinalPosition,
-  ]);
+  bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]);
 
   /// index.d.ts:1849 `inXRange(mouseX, useFinalPosition?): boolean`.
-  bool inXRange(
-    double? mouseX, [
-    bool? useFinalPosition,
-  ]);
+  bool inXRange(double? mouseX, [bool? useFinalPosition]);
 
   /// index.d.ts:1850 `inYRange(mouseY, useFinalPosition?): boolean`.
-  bool inYRange(
-    double? mouseY, [
-    bool? useFinalPosition,
-  ]);
+  bool inYRange(double? mouseY, [bool? useFinalPosition]);
 
   /// index.d.ts:1851 `getCenterPoint(useFinalPosition?): Point`.
   ///
   /// The element classes return the `ElementPoint` of `core.element.dart`,
   /// which stands for the object literal `{x, y}` (Chart.js ADR 0017,
   /// section 9).
-  Point getCenterPoint([
-    bool? useFinalPosition,
-  ]);
+  Point getCenterPoint([bool? useFinalPosition]);
 }
 
 /// index.d.ts:1852 the optional member `getRange?(axis: 'x' | 'y'): number`
@@ -1632,8 +1612,6 @@ abstract interface class Element implements Point {
 /// The run of markers of the point element class of `element.point.dart`
 /// (Chart.js ADR 0104), for `DatasetController.draw`: a controller imports no
 /// element module (Chart.js ADR 0028 §1).
-// A capability dispatched on the element, not a standalone operation.
-// ignore: one_member_abstracts
 abstract interface class PointCircleRun {
   /// See `PointElement.drawCircleRun` of `element.point.dart`.
   int drawCircleRun(
@@ -1732,8 +1710,6 @@ extension PointElementProperty on PointElement {
 /// `undefined` from NaN tests a point against this interface. Thus it does
 /// not import `core.element.dart` (Chart.js ADR 0003). An example is
 /// `boundSegment` of `helpers.segment.dart`.
-// The access by name has one member, the property read.
-// ignore: one_member_abstracts
 abstract interface class ElementPropertyRead {
   /// The JS property read `element[prop]`. It gives the `undefined`
   /// sentinel for a property in the `undefined` state and for an unknown

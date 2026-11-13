@@ -48,9 +48,8 @@ String _readout(WidgetTester tester) => tester
 
 /// The canvas position of the last dragged point, from the readout.
 Offset _readPoint(WidgetTester tester) {
-  final m = RegExp(
-    r'^point \d+ \(([-\d.]+), ([-\d.]+)\)',
-  ).firstMatch(_readout(tester))!;
+  final m = RegExp(r'^point \d+ \(([-\d.]+), ([-\d.]+)\)')
+      .firstMatch(_readout(tester))!;
   return Offset(double.parse(m[1]!), double.parse(m[2]!));
 }
 
@@ -62,10 +61,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const GalleryApp());
-    expect(
-      find.text('Phase 2: ported helpers — live demo'),
-      findsOneWidget,
-    );
+    expect(find.text('Phase 2: ported helpers — live demo'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('gallery.helpersDemo')));
     await tester.pumpAndSettle();
     expect(find.byType(HelpersDemoPage), findsOneWidget);
@@ -126,11 +122,7 @@ void main() {
     await _scrollTo(tester, find.text('1,000,000').first);
     expect(find.text('1,000,000'), findsNWidgets(2));
 
-    await _scrollTo(
-      tester,
-      find.byKey(const ValueKey('ticks.locale')),
-      -200,
-    );
+    await _scrollTo(tester, find.byKey(const ValueKey('ticks.locale')), -200);
     await tester.tap(find.byKey(const ValueKey('ticks.locale')));
     await tester.pumpAndSettle();
     await tester.tap(find.text(tickLocales[1].toLanguageTag()).last);

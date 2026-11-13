@@ -228,17 +228,17 @@ extension type const CartesianScaleOptions(OptionView _view)
 /// index.d.ts:3344 `CategoryScaleOptions`. Its `labels` is
 /// [CoreScaleOptions.labels].
 extension type const CategoryScaleOptions(OptionView _view)
-    implements CartesianScaleOptions {}
+    implements CartesianScaleOptions;
 
 /// index.d.ts:3356 `LinearScaleOptions`. Its keys are in
 /// [CoreScaleOptions] and [TickOptions].
 extension type const LinearScaleOptions(OptionView _view)
-    implements CartesianScaleOptions {}
+    implements CartesianScaleOptions;
 
 /// index.d.ts:3405 `LogarithmicScaleOptions`. Its keys are in
 /// [CoreScaleOptions] and [TickOptions].
 extension type const LogarithmicScaleOptions(OptionView _view)
-    implements CartesianScaleOptions {}
+    implements CartesianScaleOptions;
 
 /// index.d.ts:3484 `TimeScaleOptions`.
 extension type const TimeScaleOptions(OptionView _view)

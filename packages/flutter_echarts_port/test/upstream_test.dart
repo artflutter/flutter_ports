@@ -149,39 +149,24 @@ void main() {
       ? false
       : '${manifest.path} is missing. Run `dart run melos run upstream`.';
 
-  test(
-    'echartsVersion matches the checked-out upstream submodule',
-    () {
-      final upstream = jsonDecode(
-        echartsManifest!.readAsStringSync(),
-      ) as Map<String, Object?>;
-      expect(upstream['version'], echartsVersion);
-    },
-    skip: skipUnless(echartsManifest),
-  );
+  test('echartsVersion matches the checked-out upstream submodule', () {
+    final upstream =
+        jsonDecode(echartsManifest!.readAsStringSync()) as Map<String, Object?>;
+    expect(upstream['version'], echartsVersion);
+  }, skip: skipUnless(echartsManifest));
 
-  test(
-    'zrenderVersion is the zrender version that ECharts requires',
-    () {
-      final upstream = jsonDecode(
-        echartsManifest!.readAsStringSync(),
-      ) as Map<String, Object?>;
-      final dependencies = upstream['dependencies']! as Map<String, Object?>;
-      expect(dependencies['zrender'], zrenderVersion);
-    },
-    skip: skipUnless(echartsManifest),
-  );
+  test('zrenderVersion is the zrender version that ECharts requires', () {
+    final upstream =
+        jsonDecode(echartsManifest!.readAsStringSync()) as Map<String, Object?>;
+    final dependencies = upstream['dependencies']! as Map<String, Object?>;
+    expect(dependencies['zrender'], zrenderVersion);
+  }, skip: skipUnless(echartsManifest));
 
-  test(
-    'zrenderVersion matches the checked-out zrender submodule',
-    () {
-      final upstream = jsonDecode(
-        zrenderManifest!.readAsStringSync(),
-      ) as Map<String, Object?>;
-      expect(upstream['version'], zrenderVersion);
-    },
-    skip: skipUnless(zrenderManifest),
-  );
+  test('zrenderVersion matches the checked-out zrender submodule', () {
+    final upstream =
+        jsonDecode(zrenderManifest!.readAsStringSync()) as Map<String, Object?>;
+    expect(upstream['version'], zrenderVersion);
+  }, skip: skipUnless(zrenderManifest));
 
   final sourcesFile = root == null
       ? null
@@ -232,16 +217,12 @@ void main() {
       for (final source in sources) {
         final header = source['header'];
         final path = source['pin.path'];
-        test(
-          '$header: the gitlink of $path is the commit of the entry',
-          () {
-            expect(source['pin.kind'], 'submodule');
-            expect(source['pin.ref'], source['version']);
-            expect(source['pin.commit'], matches(RegExp(r'^[0-9a-f]{40}$')));
-            expect(_gitlink(root!, path!), source['pin.commit']);
-          },
-          skip: git ? false : 'git is not available in the repository',
-        );
+        test('$header: the gitlink of $path is the commit of the entry', () {
+          expect(source['pin.kind'], 'submodule');
+          expect(source['pin.ref'], source['version']);
+          expect(source['pin.commit'], matches(RegExp(r'^[0-9a-f]{40}$')));
+          expect(_gitlink(root!, path!), source['pin.commit']);
+        }, skip: git ? false : 'git is not available in the repository');
       }
     },
     skip: sourcesFile == null

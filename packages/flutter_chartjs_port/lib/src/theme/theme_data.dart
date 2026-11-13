@@ -257,9 +257,7 @@ class ChartThemeData with Diagnosticable {
         ColorProperty('backgroundColor', backgroundColor, defaultValue: null),
       )
       ..add(ColorProperty('surface', surface, defaultValue: null))
-      ..add(
-        ColorProperty('inverseSurface', inverseSurface, defaultValue: null),
-      )
+      ..add(ColorProperty('inverseSurface', inverseSurface, defaultValue: null))
       ..add(
         ColorProperty('onInverseSurface', onInverseSurface, defaultValue: null),
       )

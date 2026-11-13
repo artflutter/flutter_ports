@@ -220,10 +220,7 @@ void main() {
           point.x,
           closeTo(area.left + (item.x as double) * area.width, 1e-9),
         );
-        expect(
-          point.y,
-          closeTo(area.bottom - item.y! * area.height, 1e-9),
-        );
+        expect(point.y, closeTo(area.bottom - item.y! * area.height, 1e-9));
       }
     }
     expect(_radius(_point(chart, 0, 0)), 6);
@@ -647,10 +644,7 @@ void main() {
     expect(animator.running(chart), isFalse);
     final area = chart.chartArea!;
     final item = state.dataOf(0).first;
-    expect(
-      point.y,
-      closeTo(area.bottom - item.y! * area.height, 1e-9),
-    );
+    expect(point.y, closeTo(area.bottom - item.y! * area.height, 1e-9));
     expect(point.y, isNot(y));
 
     await _tap(tester, 'core.data.add');
@@ -761,9 +755,7 @@ void main() {
     final legend = chart.legend! as Legend;
     expect(jsGet(legend.options, 'display'), true);
     expect(
-      [
-        for (final item in legend.legendItems!) item.text.single,
-      ],
+      [for (final item in legend.legendItems!) item.text.single],
       ['A', 'B'],
     );
     expect(legend.height, greaterThan(0));

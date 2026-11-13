@@ -283,10 +283,7 @@ void main() {
         expect(indexed.borderColor, isA<ChartIndexed<ChartPaint>>());
         expect(constant.borderColor, isA<ChartConstant<ChartPaint>>());
         expect(resolver.borderColor, isA<ChartResolver<ChartPaint>>());
-        expect(
-          resolver.copyWith().borderColor,
-          same(resolver.borderColor),
-        );
+        expect(resolver.copyWith().borderColor, same(resolver.borderColor));
         expect(
           // Explicit null is part of copyWith's keep-current-value contract.
           // ignore: avoid_redundant_argument_values
@@ -298,17 +295,11 @@ void main() {
           isA<OptList<ChartPaint>>(),
         );
         expect(
-          lowerDataset(
-            constant,
-            ChartKind.bar,
-          ).ownCell(OptionKey.borderColor),
+          lowerDataset(constant, ChartKind.bar).ownCell(OptionKey.borderColor),
           isA<OptValue<ChartPaint>>(),
         );
         expect(
-          lowerDataset(
-            resolver,
-            ChartKind.bar,
-          ).ownCell(OptionKey.borderColor),
+          lowerDataset(resolver, ChartKind.bar).ownCell(OptionKey.borderColor),
           isA<OptFunction<ChartPaint>>(),
         );
       },

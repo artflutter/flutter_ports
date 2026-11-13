@@ -18,18 +18,9 @@ void main() {
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 1,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 1,
-            },
+            <String, Object?>{'x': 1, 'y': 3},
+            <String, Object?>{'x': 2, 'y': 2},
+            <String, Object?>{'x': 3, 'y': 1},
           ],
         },
       ],
@@ -51,9 +42,7 @@ void main() {
                       startSpy.call(context);
                       return true;
                     },
-                    'pinch': <String, Object?>{
-                      'enabled': true,
-                    },
+                    'pinch': <String, Object?>{'enabled': true},
                   },
                 },
               },
@@ -72,41 +61,38 @@ void main() {
         });
       });
 
-      testWidgets(
-        'should call onZoomRejected when onStartZoom returns false',
-        (tester) async {
-          await waitForDone((done) {
-            final rejectSpy = createSpy('rejected');
-            final chart = acquireChart(<String, Object?>{
-              'type': 'scatter',
-              'data': data,
-              'options': <String, Object?>{
-                'plugins': <String, Object?>{
+      testWidgets('should call onZoomRejected when onStartZoom returns false', (
+        tester,
+      ) async {
+        await waitForDone((done) {
+          final rejectSpy = createSpy('rejected');
+          final chart = acquireChart(<String, Object?>{
+            'type': 'scatter',
+            'data': data,
+            'options': <String, Object?>{
+              'plugins': <String, Object?>{
+                'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
-                    'zoom': <String, Object?>{
-                      'mode': Mode.xy,
-                      'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
-                      'onZoomRejected': rejectSpy.call,
-                      'pinch': <String, Object?>{
-                        'enabled': true,
-                      },
-                    },
+                    'mode': Mode.xy,
+                    'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
+                    'onZoomRejected': rejectSpy.call,
+                    'pinch': <String, Object?>{'enabled': true},
                   },
                 },
               },
-            });
-
-            simulatePinch(
-              chart,
-              done: () {
-                expect(rejectSpy, toHaveBeenCalled());
-                expect(chart.scales['x']!.min, toBe(1));
-                done();
-              },
-            );
+            },
           });
-        },
-      );
+
+          simulatePinch(
+            chart,
+            done: () {
+              expect(rejectSpy, toHaveBeenCalled());
+              expect(chart.scales['x']!.min, toBe(1));
+              done();
+            },
+          );
+        });
+      });
 
       testWidgets('should call onZoomComplete', (tester) async {
         await waitForDone((done) {
@@ -122,9 +108,7 @@ void main() {
                       expect(ctx.chart.scales['x']!.min, isNot(toBe(1)));
                       done();
                     },
-                    'pinch': <String, Object?>{
-                      'enabled': true,
-                    },
+                    'pinch': <String, Object?>{'enabled': true},
                   },
                 },
               },
@@ -152,9 +136,7 @@ void main() {
                     return true;
                   },
                   'onZoomComplete': completeSpy.call,
-                  'pinch': <String, Object?>{
-                    'enabled': true,
-                  },
+                  'pinch': <String, Object?>{'enabled': true},
                 },
               },
             },

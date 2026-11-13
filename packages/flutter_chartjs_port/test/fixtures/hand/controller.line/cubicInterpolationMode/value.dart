@@ -12,38 +12,17 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-      ],
+      'labels': <Object?>[0, 1, 2, 3, 4, 5],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            4,
-            2,
-            6,
-            4,
-            8,
-          ],
+          'data': <Object?>[0, 4, 2, 6, 4, 8],
           'borderColor': '#ff0000',
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
           'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            2,
-            6,
-            4,
-            8,
-            6,
-            10,
-          ],
+          'data': <Object?>[2, 6, 4, 8, 6, 10],
         },
       ],
     },
@@ -59,23 +38,14 @@ Map<String, Object?> fixture() => <String, Object?>{
           'tension': 0.4,
         },
       },
-      'layout': <String, Object?>{
-        'padding': const EdgeInsets.all(32),
-      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

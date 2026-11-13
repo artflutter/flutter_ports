@@ -134,10 +134,7 @@ class _SplineDemoState extends State<SplineDemo> {
     int? best;
     var bestDistance = 32.0 * 32.0;
     for (var i = 0; i < _points.length; i++) {
-      final p = Offset(
-        _points[i].dx * size.width,
-        _points[i].dy * size.height,
-      );
+      final p = Offset(_points[i].dx * size.width, _points[i].dy * size.height);
       final d = (p - local).distanceSquared;
       if (d < bestDistance) {
         bestDistance = d;

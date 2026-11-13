@@ -16,46 +16,16 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 0,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 1,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 4,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 5,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 6,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 7,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 8,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 9,
-              'y': 3,
-            },
+            <String, Object?>{'x': 0, 'y': 3},
+            <String, Object?>{'x': 1, 'y': 3},
+            <String, Object?>{'x': 2, 'y': 3},
+            <String, Object?>{'x': 3, 'y': 3},
+            <String, Object?>{'x': 4, 'y': 3},
+            <String, Object?>{'x': 5, 'y': 3},
+            <String, Object?>{'x': 6, 'y': 3},
+            <String, Object?>{'x': 7, 'y': 3},
+            <String, Object?>{'x': 8, 'y': 3},
+            <String, Object?>{'x': 9, 'y': 3},
           ],
           'backgroundColor': '#00ff00',
           'borderColor': 'transparent',
@@ -77,46 +47,16 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 0,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 1,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 4,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 5,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 6,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 7,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 8,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 9,
-              'y': 2,
-            },
+            <String, Object?>{'x': 0, 'y': 2},
+            <String, Object?>{'x': 1, 'y': 2},
+            <String, Object?>{'x': 2, 'y': 2},
+            <String, Object?>{'x': 3, 'y': 2},
+            <String, Object?>{'x': 4, 'y': 2},
+            <String, Object?>{'x': 5, 'y': 2},
+            <String, Object?>{'x': 6, 'y': 2},
+            <String, Object?>{'x': 7, 'y': 2},
+            <String, Object?>{'x': 8, 'y': 2},
+            <String, Object?>{'x': 9, 'y': 2},
           ],
           'backgroundColor': 'transparent',
           'borderColor': '#0000ff',
@@ -138,46 +78,16 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 0,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 1,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 4,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 5,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 6,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 7,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 8,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 9,
-              'y': 1,
-            },
+            <String, Object?>{'x': 0, 'y': 1},
+            <String, Object?>{'x': 1, 'y': 1},
+            <String, Object?>{'x': 2, 'y': 1},
+            <String, Object?>{'x': 3, 'y': 1},
+            <String, Object?>{'x': 4, 'y': 1},
+            <String, Object?>{'x': 5, 'y': 1},
+            <String, Object?>{'x': 6, 'y': 1},
+            <String, Object?>{'x': 7, 'y': 1},
+            <String, Object?>{'x': 8, 'y': 1},
+            <String, Object?>{'x': 9, 'y': 1},
           ],
           'backgroundColor': '#00ff00',
           'borderColor': '#0000ff',
@@ -202,14 +112,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'responsive': false,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-          'min': 0,
-          'max': 4,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false, 'min': 0, 'max': 4},
       },
       'elements': <String, Object?>{
         'line': <String, Object?>{
@@ -217,9 +121,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderWidth': 1,
           'fill': false,
         },
-        'point': <String, Object?>{
-          'radius': 16,
-        },
+        'point': <String, Object?>{'radius': 16},
       },
       'layout': <String, Object?>{
         'padding': const EdgeInsets.only(left: 24, right: 24),
@@ -227,9 +129,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

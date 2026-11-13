@@ -48,18 +48,24 @@ void main() {
 
   group('adapt-kurkle-simple-colors', () {
     test('integer channels clamp but RGB alpha keeps its fractional byte', () {
-      expect(
-        _members(rgbParse('rgba(000, 999, 256, 0.5)')),
-        (r: 0.0, g: 255.0, b: 255.0, a: 127.5),
-      );
-      expect(
-        _members(rgbParse('rgba(12, 34, 56)')),
-        (r: 12.0, g: 34.0, b: 56.0, a: 255.0),
-      );
-      expect(
-        _members(rgbParse('rgb(12,34,56,.25)')),
-        (r: 12.0, g: 34.0, b: 56.0, a: 63.75),
-      );
+      expect(_members(rgbParse('rgba(000, 999, 256, 0.5)')), (
+        r: 0.0,
+        g: 255.0,
+        b: 255.0,
+        a: 127.5,
+      ));
+      expect(_members(rgbParse('rgba(12, 34, 56)')), (
+        r: 12.0,
+        g: 34.0,
+        b: 56.0,
+        a: 255.0,
+      ));
+      expect(_members(rgbParse('rgb(12,34,56,.25)')), (
+        r: 12.0,
+        g: 34.0,
+        b: 56.0,
+        a: 63.75,
+      ));
     });
 
     test('short decimal alpha has the same rounding as Number(string)', () {
@@ -75,33 +81,45 @@ void main() {
     });
 
     test('HSL, HSV and HWB keep their distinct conversions', () {
-      expect(
-        _members(hueParse('hsl(120,100%,50%)')),
-        (r: 0.0, g: 255.0, b: 0.0, a: 255.0),
-      );
-      expect(
-        _members(hueParse('hsv(240,100%,100%,0.5)')),
-        (r: 0.0, g: 0.0, b: 255.0, a: 128.0),
-      );
-      expect(
-        _members(hueParse('hwb(0,0%,0%,.25)')),
-        (r: 255.0, g: 0.0, b: 0.0, a: 64.0),
-      );
+      expect(_members(hueParse('hsl(120,100%,50%)')), (
+        r: 0.0,
+        g: 255.0,
+        b: 0.0,
+        a: 255.0,
+      ));
+      expect(_members(hueParse('hsv(240,100%,100%,0.5)')), (
+        r: 0.0,
+        g: 0.0,
+        b: 255.0,
+        a: 128.0,
+      ));
+      expect(_members(hueParse('hwb(0,0%,0%,.25)')), (
+        r: 255.0,
+        g: 0.0,
+        b: 0.0,
+        a: 64.0,
+      ));
     });
 
     test('uncommon syntax falls back to the upstream expressions', () {
-      expect(
-        _members(rgbParse('rgb(100% 0% 0% / 50%)')),
-        (r: 255.0, g: 0.0, b: 0.0, a: 127.0),
-      );
-      expect(
-        _members(rgbParse('rgba(+1,\t2e1,3,.5)')),
-        (r: 1.0, g: 20.0, b: 3.0, a: 127.5),
-      );
-      expect(
-        _members(rgbParse('rgb(1\u00a02\u20283)')),
-        (r: 1.0, g: 2.0, b: 3.0, a: 255.0),
-      );
+      expect(_members(rgbParse('rgb(100% 0% 0% / 50%)')), (
+        r: 255.0,
+        g: 0.0,
+        b: 0.0,
+        a: 127.0,
+      ));
+      expect(_members(rgbParse('rgba(+1,\t2e1,3,.5)')), (
+        r: 1.0,
+        g: 20.0,
+        b: 3.0,
+        a: 127.5,
+      ));
+      expect(_members(rgbParse('rgb(1\u00a02\u20283)')), (
+        r: 1.0,
+        g: 2.0,
+        b: 3.0,
+        a: 255.0,
+      ));
       expect(rgbParse('rgb(1,2,3)\n'), isNull);
       expect(hueParse('hsl(120deg 100% 50%)'), isNotNull);
       expect(rgbParse('rgb(1,2,3,)'), isNull);
@@ -115,14 +133,18 @@ void main() {
     test('malformed numeric captures keep valid colors with NaN values', () {
       expect(rgbParse('rgba(1,2,3,1..2)')!.a, isNaN);
       expect(rgbParse('rgba(1,2,3,0..)')!.a, isNaN);
-      expect(
-        _members(rgbParse('rgb(1..2,20,30)')),
-        (r: 0.0, g: 20.0, b: 30.0, a: 255.0),
-      );
-      expect(
-        _members(hueParse('hsl(1..2,20%,30%)')),
-        (r: 0.0, g: 0.0, b: 0.0, a: 255.0),
-      );
+      expect(_members(rgbParse('rgb(1..2,20,30)')), (
+        r: 0.0,
+        g: 20.0,
+        b: 30.0,
+        a: 255.0,
+      ));
+      expect(_members(hueParse('hsl(1..2,20%,30%)')), (
+        r: 0.0,
+        g: 0.0,
+        b: 0.0,
+        a: 255.0,
+      ));
     });
 
     test('overflow keeps RGB clamping and HSL ToInt32 wrapping', () {

@@ -84,9 +84,7 @@ void main() {
       _standbyOfLastTest = standby;
     });
 
-    testWidgets('the end of a test disposes its standby hosts', (
-      tester,
-    ) async {
+    testWidgets('the end of a test disposes its standby hosts', (tester) async {
       expect(_standbyOfLastTest.debugDisposed, isTrue);
     });
 
@@ -102,9 +100,7 @@ void main() {
       expect(document.createElement<Object>('DIV'), isA<HarnessElement>());
     });
 
-    testWidgets('getElementById searches the tree of the body', (
-      tester,
-    ) async {
+    testWidgets('getElementById searches the tree of the body', (tester) async {
       final wrapper = document.createElement<HarnessElement>('div')
         ..setAttribute('id', 'wrapper');
       final canvas = document.createElement<HTMLCanvasElement>('canvas')
@@ -237,9 +233,7 @@ void main() {
   });
 
   group('layout', () {
-    testWidgets('the px width and height give the content box', (
-      tester,
-    ) async {
+    testWidgets('the px width and height give the content box', (tester) async {
       final (wrapper, canvas) = _wrap('width: 300px; height: 350px');
       await _checkpoint();
       expect(_containerOf(canvas), const Size(300, 350));
@@ -312,9 +306,7 @@ void main() {
       expect(wrapper.clientHeight, 0);
     });
 
-    testWidgets('max-width and max-height cap the content box', (
-      tester,
-    ) async {
+    testWidgets('max-width and max-height cap the content box', (tester) async {
       final (wrapper, canvas) = _wrap('max-width: 600px; max-height: 50px');
       await _checkpoint();
       expect(_containerOf(canvas), const Size(600, 50));
@@ -472,10 +464,7 @@ void main() {
         attributes: {'class': 'chartjs-wrapper'},
       );
       await _checkpoint();
-      expect(
-        _hostOf(wrapped).localToGlobal(Offset.zero),
-        const Offset(20, 40),
-      );
+      expect(_hostOf(wrapped).localToGlobal(Offset.zero), const Offset(20, 40));
       // A percentage is not a px length: the static position stays.
       final (_, percent) = _wrap('position: absolute; left: 10%; top: 5px');
       await _checkpoint();
@@ -531,9 +520,7 @@ void main() {
       expect(document.body.clientWidth, 800);
     });
 
-    testWidgets('a style write alone waits for the next frame', (
-      tester,
-    ) async {
+    testWidgets('a style write alone waits for the next frame', (tester) async {
       final (wrapper, canvas) = _wrap('width: 300px; height: 350px');
       await _checkpoint();
       wrapper.style.width = '455px';
@@ -594,9 +581,7 @@ void main() {
     });
 
     testWidgets('a write in the forced layout of a checkpoint waits for the '
-        'frame', (
-      tester,
-    ) async {
+        'frame', (tester) async {
       final canvas = document.createElement<HTMLCanvasElement>('canvas');
       final wrapper = document.createElement<HarnessElement>('div')
         ..setAttribute('style', 'width: 300px; height: 350px');
@@ -927,9 +912,7 @@ void main() {
       // as a hook of the runner does. It waits for the frame of the outer
       // loop, and it tests its condition after that step.
       scheduleMicrotask(() {
-        unawaited(
-          pumpFrames(() => frameRan).then((_) => innerDone = true),
-        );
+        unawaited(pumpFrames(() => frameRan).then((_) => innerDone = true));
       });
       SchedulerBinding.instance.scheduleFrameCallback((_) => frameRan = true);
       expect(await pumpFrames(() => innerDone), 1);
@@ -948,10 +931,7 @@ void main() {
         (_) => log.add('frame at ${clock.now().difference(start)}'),
       );
       await pumpFrame();
-      expect(log, [
-        'task at ${Duration.zero}',
-        'frame at $frameInterval',
-      ]);
+      expect(log, ['task at ${Duration.zero}', 'frame at $frameInterval']);
       expect(clock.now().difference(start), frameInterval);
     });
 

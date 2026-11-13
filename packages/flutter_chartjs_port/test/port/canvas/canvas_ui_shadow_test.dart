@@ -334,10 +334,7 @@ void main() {
             'x': <String, Object?>{'display': false},
             'y': <String, Object?>{'display': false},
           },
-          'plugins': <String, Object?>{
-            'legend': false,
-            'title': false,
-          },
+          'plugins': <String, Object?>{'legend': false, 'title': false},
         },
         'plugins': <Object?>[
           if (shadow)

@@ -261,10 +261,9 @@ types.Element _makeLine(Map<String, Object?> d) {
   final c = input['chart']! as Map<String, Object?>;
   final lines = (c['lines']! as List<Object?>).cast<Map<String, Object?>>();
   final area = c['area'];
-  final chart = _FakeChart(
-    [for (final line in lines) line['visible']! as bool],
-    area == null ? null : _Area(area as Map<String, Object?>),
-  );
+  final chart = _FakeChart([
+    for (final line in lines) line['visible']! as bool,
+  ], area == null ? null : _Area(area as Map<String, Object?>));
   final scale = _makeScale(c['scale'], chart);
   final iScale = _makeScale(c['iScale'], chart);
   chart.metas = [
@@ -382,9 +381,8 @@ List<Object?> _calls(MockContext ctx) => [
     [
       call['name'],
       ...switch (call['name']) {
-        'clip' || 'fill' => (call['args']! as List<Object?>).where(
-          (arg) => arg != null,
-        ),
+        'clip' ||
+        'fill' => (call['args']! as List<Object?>).where((arg) => arg != null),
         _ => call['args']! as List<Object?>,
       },
     ],

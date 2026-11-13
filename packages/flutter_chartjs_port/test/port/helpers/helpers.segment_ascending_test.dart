@@ -8,7 +8,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 /// A point of a user class: it takes the loop of `boundSegment`.
-class _UserPoint extends PointElement {}
+class _UserPoint extends PointElement;
 
 List<Object?> _trace(List<types.Segment> segments) => [
   for (final s in segments) (s.start, s.end, s.loop, s.style),

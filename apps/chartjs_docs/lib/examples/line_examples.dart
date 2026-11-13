@@ -185,11 +185,7 @@ const shadowLine = LineDataset(
   data: values,
   borderColor: .constant(.solid(teal)),
   borderWidth: 3,
-  shadow: ChartShadow(
-    color: Color(0x66000000),
-    blur: 10,
-    offset: Offset(0, 6),
-  ),
+  shadow: ChartShadow(color: Color(0x66000000), blur: 10, offset: Offset(0, 6)),
 );
 // #enddocregion line-shadow
 

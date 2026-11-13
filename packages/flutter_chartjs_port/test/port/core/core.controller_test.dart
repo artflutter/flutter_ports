@@ -347,9 +347,7 @@ String _edges(Object? area) => switch (area) {
 
 /// The text of the metas of [list]: `index/order/label` for each.
 String _metas(List<ChartMeta?> list) => list
-    .map(
-      (m) => m == null ? 'hole' : '${_n(m.index)}/${_n(m.order)}/${m.label}',
-    )
+    .map((m) => m == null ? 'hole' : '${_n(m.index)}/${_n(m.order)}/${m.label}')
     .join(' ');
 
 /// The text of the active elements [items].
@@ -442,10 +440,7 @@ void _scenario(
 /// The chart of [config] on a canvas of `document.createElement`, in a
 /// wrapper of 300 x 200 in the harness body. [replace] runs on the chart
 /// before the append, which attaches the chart.
-Chart _hostedChart(
-  AnyObject config, {
-  void Function(Chart chart)? replace,
-}) {
+Chart _hostedChart(AnyObject config, {void Function(Chart chart)? replace}) {
   final canvas = document.createElement<HTMLCanvasElement>('canvas');
   final wrapper = document.createElement<HarnessElement>('div');
   final chart = Chart(canvas, config);
@@ -502,10 +497,7 @@ void main() {
           '${canvas.style.getPropertyValue('width')} '
               '${canvas.style.getPropertyValue('height')}',
         )
-        ..observe(
-          'currentDevicePixelRatio',
-          _n(chart.currentDevicePixelRatio),
-        )
+        ..observe('currentDevicePixelRatio', _n(chart.currentDevicePixelRatio))
         ..observe('aspectRatio', _n(chart.aspectRatio!))
         ..observe('chartArea', _edges(chart.chartArea))
         ..observe(
@@ -547,10 +539,7 @@ void main() {
           'same context',
           identical(chart.getContext(), chart.getContext()),
         )
-        ..observe(
-          'instances',
-          identical(Chart.instances[_n(chart.id)], chart),
-        )
+        ..observe('instances', identical(Chart.instances[_n(chart.id)], chart))
         ..observe('visible count', _n(chart.getVisibleDatasetCount()))
         ..observe(
           'draw calls',
@@ -767,9 +756,9 @@ void main() {
       o.label(chart, 'chart');
       final ctx = canvas.getContext('2d');
       String find(Object? key) => o.json(Chart.getChart(key) ?? undefined);
-      String inUse(Object? item) => error(
-        () => Chart(item, _testConfig([])),
-      ).replaceFirst("'${_n(chart.id)}'", "'<id>'");
+      String inUse(Object? item) =>
+          error(() => Chart(item, _testConfig([])))
+              .replaceFirst("'${_n(chart.id)}'", "'<id>'");
       o
         ..observe('canvas', find(canvas))
         ..observe('context', find(ctx))
@@ -798,9 +787,9 @@ void main() {
       String elementHidden(int index) => jsToString(
         (chart.getDatasetMeta(0).data[index] as Element)['hidden'],
       );
-      String visibilities(int count) => [
-        for (var i = 0; i < count; i++) chart.getDataVisibility(i),
-      ].join(' ');
+      String visibilities(int count) =>
+          [for (var i = 0; i < count; i++) chart.getDataVisibility(i)]
+              .join(' ');
       o.observe(
         'visible',
         '${chart.isDatasetVisible(0)} ${chart.isDatasetVisible(1)} '
@@ -856,15 +845,18 @@ void main() {
       final log = <String>[];
       final hover = <String>[];
       final options = <String, Object?>{
-        'onHover': JsFunction(
-          (Object? self, Object? e, Object? active, Object? chart) {
-            hover.add(
-              'hover ${(e! as types.ChartEvent).type} '
-              '${_activeText(active! as List<Object?>, o)} '
-              '${identical(self, chart)}',
-            );
-          },
-        ),
+        'onHover': JsFunction((
+          Object? self,
+          Object? e,
+          Object? active,
+          Object? chart,
+        ) {
+          hover.add(
+            'hover ${(e! as types.ChartEvent).type} '
+            '${_activeText(active! as List<Object?>, o)} '
+            '${identical(self, chart)}',
+          );
+        }),
         'onClick': (Object? e, Object? active) {
           hover.add(
             'click ${(e! as types.ChartEvent).type} '
@@ -960,10 +952,7 @@ void main() {
     });
 
     _scenario('interaction modes', (o, charts) {
-      final chart = Chart(
-        _Canvas(),
-        _testConfig([_points('a'), _points('b')]),
-      );
+      final chart = Chart(_Canvas(), _testConfig([_points('a'), _points('b')]));
       charts.add(chart);
       _labelElements(chart, o);
       final p1 = chart.getDatasetMeta(0).data[1];
@@ -991,14 +980,9 @@ void main() {
           o.observe(
             '$label $intersect',
             items(
-              chart.getElementsAtEventForMode(
-                e,
-                mode,
-                <String, Object?>{
-                  'intersect': intersect,
-                },
-                false,
-              ),
+              chart.getElementsAtEventForMode(e, mode, <String, Object?>{
+                'intersect': intersect,
+              }, false),
             ),
           );
         }
@@ -1075,10 +1059,7 @@ void main() {
       o.observe('fraction', '${sizeOf()} ${styleOf()}');
       chart.options['devicePixelRatio'] = 2;
       chart.resize(100, 50);
-      o.observe(
-        'ratio 2',
-        '${sizeOf()} ${_n(chart.currentDevicePixelRatio)}',
-      );
+      o.observe('ratio 2', '${sizeOf()} ${_n(chart.currentDevicePixelRatio)}');
       chart
         ..options['aspectRatio'] = 4
         ..options['maintainAspectRatio'] = true
@@ -1248,9 +1229,7 @@ void main() {
     // (core.datasetController.js:306, 331-333). The `===` of
     // core.scale.js:1688 leaves dataset 0 out of the metas of the scale, and
     // `indexOf(1)` of controller.bar.js:649 gives -1.
-    testWidgets('keeps the number and gives the upstream bars', (
-      tester,
-    ) async {
+    testWidgets('keeps the number and gives the upstream bars', (tester) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'bar',
         'data': <String, Object?>{
@@ -1283,21 +1262,13 @@ void main() {
       expect(meta0.xScale?.id, '1');
       expect(meta1.xAxisID, '1');
       expect(meta1.xScale?.id, '1');
-      List<double> xs(types.ChartMeta meta) => [
-        for (final e in meta.data) e.x,
-      ];
-      expect(
-        xs(meta0),
-        [
-          for (final x in [-5.417, 114.912, 235.242, 355.572]) closeTo(x, 1e-3),
-        ],
-      );
-      expect(
-        xs(meta1),
-        [
-          for (final x in [90.846, 211.176, 331.506, 451.835]) closeTo(x, 1e-3),
-        ],
-      );
+      List<double> xs(types.ChartMeta meta) => [for (final e in meta.data) e.x];
+      expect(xs(meta0), [
+        for (final x in [-5.417, 114.912, 235.242, 355.572]) closeTo(x, 1e-3),
+      ]);
+      expect(xs(meta1), [
+        for (final x in [90.846, 211.176, 331.506, 451.835]) closeTo(x, 1e-3),
+      ]);
       expect(
         jsToNumber((meta0.data.first as Element)['width']),
         closeTo(86.637, 1e-3),
@@ -1460,11 +1431,7 @@ void main() {
 
       void expectVisibility(List<bool> expected) {
         for (var i = 0; i < expected.length; i++) {
-          expect(
-            chart.getDataVisibility(i),
-            expected[i],
-            reason: 'index $i',
-          );
+          expect(chart.getDataVisibility(i), expected[i], reason: 'index $i');
         }
       }
 
@@ -1571,9 +1538,8 @@ void main() {
       );
       // A Dart function is not a class value: `new` throws a TypeError.
       expect(
-        () => Chart(_Canvas(), <String, Object?>{
-          'platform': BasicPlatform.new,
-        }),
+        () =>
+            Chart(_Canvas(), <String, Object?>{'platform': BasicPlatform.new}),
         throwsA(isA<TypeError>()),
       );
     });
@@ -1614,10 +1580,13 @@ void main() {
         ]),
       );
       final ids = jsObjectKeys(Chart.registry.plugins.items);
-      expect(
-        ids.where((id) => id.startsWith('form')),
-        ['formA', 'formB', 'formC', 'formD', 'formE'],
-      );
+      expect(ids.where((id) => id.startsWith('form')), [
+        'formA',
+        'formB',
+        'formC',
+        'formD',
+        'formE',
+      ]);
     });
 
     test('a nested List and Dart null throw', () {
@@ -1676,10 +1645,7 @@ void main() {
       );
       addTearDown(chart.destroy);
       ((chart.data as AnyObject)['datasets']! as List<Object?>).add(
-        <String, Object?>{
-          'type': 'plainController',
-          'data': <Object?>[],
-        },
+        <String, Object?>{'type': 'plainController', 'data': <Object?>[]},
       );
       log.clear();
       expect(chart.update, throwsA(isA<TypeError>()));
@@ -1753,7 +1719,7 @@ void main() {
         final header = ByteData.sublistView(png, 16, 24);
         expect(header.getUint32(0), canvas.width);
         expect(header.getUint32(4), canvas.height);
-        return decode(png);
+        return await decode(png);
       });
       expect(pixels!.getUint32(0), 0xff0000ff);
       final last = (canvas.width * canvas.height - 1) * 4;
@@ -1867,13 +1833,10 @@ void main() {
       tester,
     ) async {
       final log = <String>[];
-      final chart = Chart(
-        _Canvas(),
-        <String, Object?>{
-          'plugins': [_spy('spy', log, Observations())],
-          'options': <String, Object?>{'resizeDelay': 50},
-        },
-      );
+      final chart = Chart(_Canvas(), <String, Object?>{
+        'plugins': [_spy('spy', log, Observations())],
+        'options': <String, Object?>{'resizeDelay': 50},
+      });
       log.clear();
       chart.resize(200, 100);
       expect(log, isNot(contains(startsWith('beforeUpdate'))));
@@ -1889,13 +1852,10 @@ void main() {
       tester,
     ) async {
       final log = <String>[];
-      final chart = Chart(
-        _Canvas(),
-        <String, Object?>{
-          'plugins': [_spy('spy', log, Observations())],
-          'options': <String, Object?>{'resizeDelay': 50},
-        },
-      );
+      final chart = Chart(_Canvas(), <String, Object?>{
+        'plugins': [_spy('spy', log, Observations())],
+        'options': <String, Object?>{'resizeDelay': 50},
+      });
       addTearDown(chart.destroy);
       log.clear();
       chart.resize(200, 100);
@@ -1911,9 +1871,7 @@ void main() {
 
   group('platform-animator-mute', () {
     testWidgets('a looping chart under TickerMode(enabled: false) schedules '
-        'no frame, and it continues when TickerMode turns on', (
-      tester,
-    ) async {
+        'no frame, and it continues when TickerMode turns on', (tester) async {
       // The owner of the chart connects the ticker state of its host to the
       // animator (Chart.js ADR 0016, decision 7): it mutes the chart that it
       // creates under TickerMode(enabled: false).

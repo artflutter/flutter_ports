@@ -993,11 +993,7 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   put(scope, OptionKey.align, ticks.align);
   put(scope, OptionKey.crossAlign, ticks.crossAlign);
   put(scope, OptionKey.source, ticks.source);
-  put(
-    scope,
-    OptionKey.callback,
-    format == null ? null : _tickCallback(format),
-  );
+  put(scope, OptionKey.callback, format == null ? null : _tickCallback(format));
   return mergeExtra(scope, ticks.extra);
 }
 

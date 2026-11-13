@@ -80,12 +80,7 @@ abstract class PropertyAnimation extends AnimationSettings {
 /// The animation of `x`: the horizontal position of an element.
 final class XAnimation extends PropertyAnimation {
   /// The animation options of `x`.
-  const XAnimation({
-    super.duration,
-    super.delay,
-    super.easing,
-    super.loop,
-  });
+  const XAnimation({super.duration, super.delay, super.easing, super.loop});
 
   /// No animation of `x`: a change shows at once. It is the
   /// duration 0.
@@ -95,12 +90,7 @@ final class XAnimation extends PropertyAnimation {
 /// The animation of `y`: the vertical position of an element.
 final class YAnimation extends PropertyAnimation {
   /// The animation options of `y`.
-  const YAnimation({
-    super.duration,
-    super.delay,
-    super.easing,
-    super.loop,
-  });
+  const YAnimation({super.duration, super.delay, super.easing, super.loop});
 
   /// No animation of `y`: a change shows at once. It is the
   /// duration 0.
@@ -110,12 +100,7 @@ final class YAnimation extends PropertyAnimation {
 /// The animation of `base`: the base of a bar.
 final class BaseAnimation extends PropertyAnimation {
   /// The animation options of `base`.
-  const BaseAnimation({
-    super.duration,
-    super.delay,
-    super.easing,
-    super.loop,
-  });
+  const BaseAnimation({super.duration, super.delay, super.easing, super.loop});
 
   /// No animation of `base`: a change shows at once. It is the
   /// duration 0.
@@ -125,12 +110,7 @@ final class BaseAnimation extends PropertyAnimation {
 /// The animation of `width`: the width of a bar.
 final class WidthAnimation extends PropertyAnimation {
   /// The animation options of `width`.
-  const WidthAnimation({
-    super.duration,
-    super.delay,
-    super.easing,
-    super.loop,
-  });
+  const WidthAnimation({super.duration, super.delay, super.easing, super.loop});
 
   /// No animation of `width`: a change shows at once. It is the
   /// duration 0.
@@ -200,12 +180,7 @@ final class TensionAnimation extends PropertyAnimation {
 /// The animation of `color`: the text color.
 final class ColorAnimation extends PropertyAnimation {
   /// The animation options of `color`.
-  const ColorAnimation({
-    super.duration,
-    super.delay,
-    super.easing,
-    super.loop,
-  });
+  const ColorAnimation({super.duration, super.delay, super.easing, super.loop});
 
   /// No animation of `color`: a change shows at once. It is the
   /// duration 0.

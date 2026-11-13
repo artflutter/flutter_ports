@@ -295,12 +295,7 @@ void main() {
     ]) {
       List<Object?> parse(Chart chart) {
         final meta = chart.getDatasetMeta(0);
-        return meta.controller!.parsePrimitiveData(
-          meta,
-          values,
-          0,
-          4,
-        );
+        return meta.controller!.parsePrimitiveData(meta, values, 0, 4);
       }
 
       expect(parse(a).map(_plain), parse(b).map(_plain));

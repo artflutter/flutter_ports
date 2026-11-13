@@ -186,10 +186,7 @@ void main() {
       const chartHeight = 400;
       const devicePixelRatio = 0.8999999761581421; // 1.7999999523162842;
       final chart = acquireChart({}, {
-        'canvas': <String, Object?>{
-          'width': chartWidth,
-          'height': chartHeight,
-        },
+        'canvas': <String, Object?>{'width': chartWidth, 'height': chartHeight},
       });
 
       helpers.retinaScale(chart, devicePixelRatio, true);
@@ -229,9 +226,7 @@ void main() {
         skip: 'n/a: Flutter has no shadow DOM',
       );
 
-      testWidgets('Should not return NaN with a custom event', (
-        tester,
-      ) async {
+      testWidgets('Should not return NaN with a custom event', (tester) async {
         Object? dataX;
         Object? dataY;
         late final Chart chart;

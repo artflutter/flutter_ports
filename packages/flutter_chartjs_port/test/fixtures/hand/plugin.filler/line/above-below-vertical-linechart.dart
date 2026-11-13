@@ -13,20 +13,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        1,
-        2,
-        3,
-        4,
-      ],
+      'labels': <Object?>[1, 2, 3, 4],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            200,
-            400,
-            200,
-            400,
-          ],
+          'data': <Object?>[200, 400, 200, 400],
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
           'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
@@ -41,12 +31,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           },
         },
         <String, Object?>{
-          'data': <Object?>[
-            400,
-            200,
-            400,
-            200,
-          ],
+          'data': <Object?>[400, 200, 400, 200],
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
           'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
@@ -62,15 +47,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'plugins': <String, Object?>{
-        'filler': <String, Object?>{
-          'propagate': false,
-        },
-        'datalabels': <String, Object?>{
-          'display': false,
-        },
-        'legend': <String, Object?>{
-          'display': false,
-        },
+        'filler': <String, Object?>{'propagate': false},
+        'datalabels': <String, Object?>{'display': false},
+        'legend': <String, Object?>{'display': false},
       },
     },
   },

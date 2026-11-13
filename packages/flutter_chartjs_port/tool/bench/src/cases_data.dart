@@ -200,13 +200,7 @@ BenchCase _curve(int count, String mode) => BenchCase(
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        updateBezierControlPoints(
-          points,
-          options,
-          area,
-          false,
-          const XAxis(),
-        );
+        updateBezierControlPoints(points, options, area, false, const XAxis());
         acc += points[count ~/ 2].cp1x.toInt();
       }
       return acc;
@@ -304,42 +298,32 @@ List<BenchCase> dataCases() => [
     items: 2,
     per: '_lookupByKey first + last on 100k parsed Maps',
   ),
-  BenchCase(
-    'data',
-    'collection/lookupByKey_100k_elements',
-    () {
-      final table = <Object?>[
-        for (var i = 0; i < 100000; i++)
-          _PointElement(i * 3.0, (i % 31).toDouble()),
-      ];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          final value = ((i * 7919) % 100000) * 3.0 + 1;
-          acc += lookupByKey(table, 'x', value).lo;
-        }
-        return acc;
-      };
-    },
-    per: '_lookupByKey on 100k point elements',
-  ),
-  BenchCase(
-    'data',
-    'collection/rlookupByKey_100k_maps',
-    () {
-      final table = <Object?>[
-        for (var i = 0; i < 100000; i++)
-          <String, Object?>{'x': (100000 - i).toDouble()},
-      ];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          final value = ((i * 7919) % 100000).toDouble() + 0.5;
-          acc += rlookupByKey(table, 'x', value).lo;
-        }
-        return acc;
-      };
-    },
-    per: '_rlookupByKey on 100k Maps sorted descending',
-  ),
+  BenchCase('data', 'collection/lookupByKey_100k_elements', () {
+    final table = <Object?>[
+      for (var i = 0; i < 100000; i++)
+        _PointElement(i * 3.0, (i % 31).toDouble()),
+    ];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        final value = ((i * 7919) % 100000) * 3.0 + 1;
+        acc += lookupByKey(table, 'x', value).lo;
+      }
+      return acc;
+    };
+  }, per: '_lookupByKey on 100k point elements'),
+  BenchCase('data', 'collection/rlookupByKey_100k_maps', () {
+    final table = <Object?>[
+      for (var i = 0; i < 100000; i++)
+        <String, Object?>{'x': (100000 - i).toDouble()},
+    ];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        final value = ((i * 7919) % 100000).toDouble() + 0.5;
+        acc += rlookupByKey(table, 'x', value).lo;
+      }
+      return acc;
+    };
+  }, per: '_rlookupByKey on 100k Maps sorted descending'),
 ];

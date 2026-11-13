@@ -43,20 +43,12 @@ Map<String, Object?> fixture() => <String, Object?>{
                 : '#ff00ff';
           },
         },
-        'point': <String, Object?>{
-          'backgroundColor': '#0000ff',
-          'radius': 10,
-        },
+        'point': <String, Object?>{'backgroundColor': '#0000ff', 'radius': 10},
       },
-      'layout': <String, Object?>{
-        'padding': const EdgeInsets.all(32),
-      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
       'scales': <String, Object?>{
         'x': <String, Object?>{'display': false},
-        'y': <String, Object?>{
-          'display': false,
-          'beginAtZero': true,
-        },
+        'y': <String, Object?>{'display': false, 'beginAtZero': true},
       },
       'plugins': <String, Object?>{
         'legend': false,
@@ -67,9 +59,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

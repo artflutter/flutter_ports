@@ -637,11 +637,9 @@ void main() {
 
   _twins(
     'the spacing of the polar area under the arc defaults',
-    (type, _) => _config(
-      type,
-      {'backgroundColor': const ChartPaint.solid(red)},
-      options: _maskedSpacing(),
-    ),
+    (type, _) => _config(type, {
+      'backgroundColor': const ChartPaint.solid(red),
+    }, options: _maskedSpacing()),
     types: const ['polarArea'],
   );
 
@@ -719,9 +717,7 @@ void main() {
     'parsing false',
     (type, _) => _config(
       type,
-      {
-        'backgroundColor': const ChartPaint.solid(red),
-      },
+      {'backgroundColor': const ChartPaint.solid(red)},
       options: {'parsing': false},
     ),
     types: const ['pie', 'doughnut'],
@@ -737,19 +733,14 @@ void main() {
     types: const ['bubble'],
   );
 
-  _twins(
-    'two datasets',
-    (type, _) {
-      final cfg = _config(type, {
-        'backgroundColor': const ChartPaint.solid(red),
-      });
-      _datasets(cfg).add(<String, Object?>{
-        'data': _data(type, 2),
-        'backgroundColor': const ChartPaint.solid(blue),
-      });
-      return cfg;
-    },
-  );
+  _twins('two datasets', (type, _) {
+    final cfg = _config(type, {'backgroundColor': const ChartPaint.solid(red)});
+    _datasets(cfg).add(<String, Object?>{
+      'data': _data(type, 2),
+      'backgroundColor': const ChartPaint.solid(blue),
+    });
+    return cfg;
+  });
 
   group('a throw in a resolve', () {
     for (final type in _allTypes) {
@@ -1024,9 +1015,7 @@ void main() {
       final probes = <_ProbePoint>[];
       final chart = _withElements(
         _config('bubble', {'backgroundColor': const ChartPaint.solid(red)}),
-        (
-          _,
-        ) {
+        (_) {
           final probe = _ProbePoint();
           probes.add(probe);
           return probe;
@@ -1884,11 +1873,9 @@ void main() {
       test('a direct loop keeps the same arcs', () {
         final results = <Object?>[];
         for (final kind in ['polarArea', _refType('polarArea')]) {
-          final cfg = _config(
-            kind,
-            {'backgroundColor': const ChartPaint.solid(red)},
-            options: _maskedSpacing(),
-          );
+          final cfg = _config(kind, {
+            'backgroundColor': const ChartPaint.solid(red),
+          }, options: _maskedSpacing());
           final chart = _chart(cfg);
           final meta = chart.getDatasetMeta(0);
           final controller = meta.controller!;
@@ -2018,4 +2005,4 @@ void main() {
 }
 
 /// An axis of a class that the core does not know.
-final class _OtherAxis implements ScaleAxis {}
+final class _OtherAxis implements ScaleAxis;

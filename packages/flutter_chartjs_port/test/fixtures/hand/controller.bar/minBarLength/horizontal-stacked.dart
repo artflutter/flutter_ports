@@ -12,20 +12,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-        3,
-        4,
-      ],
+      'labels': <Object?>[0, 1, 2, 3, 4],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            0.01,
-            30,
-          ],
+          'data': <Object?>[0, 0.01, 30],
           'backgroundColor': '#00ff00',
           'borderColor': '#000',
           'borderWidth': 4,
@@ -41,29 +31,20 @@ Map<String, Object?> fixture() => <String, Object?>{
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'stack': 'demo',
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
         },
         'x2': <String, Object?>{
           'type': 'linear',
           'position': 'bottom',
           'stack': 'demo',
           'stackWeight': 1,
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
         },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 512,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
 };

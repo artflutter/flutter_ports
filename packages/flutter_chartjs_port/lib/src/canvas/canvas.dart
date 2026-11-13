@@ -600,14 +600,7 @@ abstract interface class CanvasRenderingContext2D implements CanvasPath {
   void transform(double a, double b, double c, double d, double e, double f);
 
   /// `setTransform(a, b, c, d, e, f)`.
-  void setTransform(
-    double a,
-    double b,
-    double c,
-    double d,
-    double e,
-    double f,
-  );
+  void setTransform(double a, double b, double c, double d, double e, double f);
 
   /// `resetTransform()`.
   void resetTransform();

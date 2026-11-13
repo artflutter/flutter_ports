@@ -97,12 +97,7 @@ Map<String, Object?> _config(
 /// dataset 0 of [chart].
 List<List<Object?>> _elements(Chart chart) => [
   for (final element in chart.getDatasetMeta(0).data.cast<chartjs.Element>())
-    [
-      element.x,
-      element.y,
-      element['skip'],
-      _byName(element.options, 'radius'),
-    ],
+    [element.x, element.y, element['skip'], _byName(element.options, 'radius')],
 ];
 
 void main() {
@@ -296,10 +291,7 @@ void main() {
         _chartOf('bar', <Object?>[
           <String, Object?>{
             'data': <Object?>[1, 2, 3],
-            'backgroundColor': <Object?>[
-              _redValue,
-              _blueValue,
-            ],
+            'backgroundColor': <Object?>[_redValue, _blueValue],
           },
         ]),
       );

@@ -51,7 +51,5 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
     },
   },
-  'options': <String, Object?>{
-    'spriteText': true,
-  },
+  'options': <String, Object?>{'spriteText': true},
 };

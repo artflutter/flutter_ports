@@ -239,10 +239,9 @@ void main() {
         expect(zone.cachedIntervals, hasLength(12));
         // The label pass: the same instants, also in reverse order.
         expect([for (final t in ticks) zone.offsetAt(t)], offsets);
-        expect(
-          [for (final t in ticks.reversed) zone.offsetAt(t)],
-          offsets.reversed,
-        );
+        expect([
+          for (final t in ticks.reversed) zone.offsetAt(t),
+        ], offsets.reversed);
         expect(reads(), first);
       });
 
@@ -406,42 +405,38 @@ void main() {
     // Chart.js ADR 0110: the VM reads timeZoneOffset in place of the local
     // fields. Both come from the same offset in whole seconds. The web keeps
     // the local fields: dart2js gives timeZoneOffset in whole minutes.
-    test(
-      'timeZoneOffset gives the offset of the local fields on the VM',
-      () {
-        const max = 8640000000000000;
-        final random = math.Random(110);
-        final instants = <int>[
-          -max,
-          max,
-          -max + 1,
-          max - 1,
-          0,
-          -1,
-          for (final change in changes) ...[change - 1, change, change + 1],
-          for (var i = 0; i < 20000; i++)
-            from + (random.nextDouble() * (to - from)).floor(),
-          // Outside ±2^31 s, where the VM takes a substitute year.
-          for (var i = 0; i < 5000; i++)
-            ((random.nextDouble() * 2 - 1) * max).truncate(),
-        ];
-        final mismatches = <String>[];
-        for (final t in instants) {
-          final offset = DateTime.fromMillisecondsSinceEpoch(
-            t,
-          ).timeZoneOffset.inMilliseconds;
-          if (offset != _platformOffset(t)) {
-            mismatches.add('$t: $offset, ${_platformOffset(t)}');
-          }
-          zone.clear();
-          if (zone.offsetAt(t) != _platformOffset(t)) {
-            mismatches.add('offsetAt($t): ${zone.offsetAt(t)}');
-          }
+    test('timeZoneOffset gives the offset of the local fields on the VM', () {
+      const max = 8640000000000000;
+      final random = math.Random(110);
+      final instants = <int>[
+        -max,
+        max,
+        -max + 1,
+        max - 1,
+        0,
+        -1,
+        for (final change in changes) ...[change - 1, change, change + 1],
+        for (var i = 0; i < 20000; i++)
+          from + (random.nextDouble() * (to - from)).floor(),
+        // Outside ±2^31 s, where the VM takes a substitute year.
+        for (var i = 0; i < 5000; i++)
+          ((random.nextDouble() * 2 - 1) * max).truncate(),
+      ];
+      final mismatches = <String>[];
+      for (final t in instants) {
+        final offset = DateTime.fromMillisecondsSinceEpoch(t)
+            .timeZoneOffset
+            .inMilliseconds;
+        if (offset != _platformOffset(t)) {
+          mismatches.add('$t: $offset, ${_platformOffset(t)}');
         }
-        expect(mismatches, isEmpty);
-      },
-      skip: _onWeb ? 'the web keeps the local fields' : false,
-    );
+        zone.clear();
+        if (zone.offsetAt(t) != _platformOffset(t)) {
+          mismatches.add('offsetAt($t): ${zone.offsetAt(t)}');
+        }
+      }
+      expect(mismatches, isEmpty);
+    }, skip: _onWeb ? 'the web keeps the local fields' : false);
 
     test('reads the instants outside the range of a Date at the ends', () {
       const max = 8640000000000000;

@@ -434,10 +434,7 @@ void main() {
               // the recording, where the ordinary strokes split it.
               expect(_pictures(fan), lessThan(_pictures(ordinary)));
             }
-            expect(
-              await _pixels(tester, fan),
-              await _pixels(tester, ordinary),
-            );
+            expect(await _pixels(tester, fan), await _pixels(tester, ordinary));
           });
         }
       }

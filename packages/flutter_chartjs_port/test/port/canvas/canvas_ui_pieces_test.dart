@@ -29,12 +29,7 @@ const double _base = 280;
 double _end(int count) => 10 + (count - 1) * 480 / count;
 
 /// A line that goes up in x.
-void _top(
-  CanvasPath path,
-  int count, {
-  bool curved = true,
-  double noise = 40,
-}) {
+void _top(CanvasPath path, int count, {bool curved = true, double noise = 40}) {
   final r = math.Random(3);
   double y(int i) =>
       150 + 60 * math.sin(i * .01) + noise * (r.nextDouble() - .5);
@@ -1139,9 +1134,7 @@ void main() {
     });
 
     testWidgets('a straight line with a fill ends inside a pixel column or on '
-        'the base', (
-      tester,
-    ) async {
+        'the base', (tester) async {
       // Tick labels on the x axis, a legend at the right and a gap put the
       // end of a line between two whole pixels. Then the last pixel column of
       // the fast path has several points, and the top edge ends at their

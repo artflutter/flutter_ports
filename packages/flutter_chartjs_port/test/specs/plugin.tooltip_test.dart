@@ -102,16 +102,8 @@ Matcher _fontFields(TextStyle expected) => isA<TextStyle>()
       expected.fontFamilyFallback,
     )
     .having((f) => f.fontSize, 'fontSize', expected.fontSize)
-    .having(
-      (f) => f.fontStyle,
-      'fontStyle',
-      expected.fontStyle ?? anything,
-    )
-    .having(
-      (f) => f.fontWeight,
-      'fontWeight',
-      expected.fontWeight ?? anything,
-    );
+    .having((f) => f.fontStyle, 'fontStyle', expected.fontStyle ?? anything)
+    .having((f) => f.fontWeight, 'fontWeight', expected.fontWeight ?? anything);
 
 /// `chart.tooltip`, the tooltip of [chart], as the class of the plugin.
 Tooltip _tooltipOf(Chart chart) => chart.tooltip! as Tooltip;
@@ -279,53 +271,46 @@ void main() {
     group('auto', fixture.specs('plugin.tooltip'));
 
     group('config', () {
-      test(
-        'should not include the dataset label in the body string if not '
-        'defined',
-        () {
-          final data = <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30],
-                'pointHoverBorderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 0, 0, 1),
-                ),
-                'pointHoverBackgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(0, 255, 0, 1),
-                ),
-              },
-            ],
-            'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
-          };
-          final dataset0 =
-              (data['datasets']! as List<Object?>)[0]! as AnyObject;
-          final tooltipItem = <String, Object?>{
-            'index': 1,
-            'datasetIndex': 0,
-            'dataset': dataset0,
-            'label': 'Point 2',
-            'formattedValue': '20',
-          };
+      test('should not include the dataset label in the body string if not '
+          'defined', () {
+        final data = <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 20, 30],
+              'pointHoverBorderColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              ),
+              'pointHoverBackgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(0, 255, 0, 1),
+              ),
+            },
+          ],
+          'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
+        };
+        final dataset0 = (data['datasets']! as List<Object?>)[0]! as AnyObject;
+        final tooltipItem = <String, Object?>{
+          'index': 1,
+          'datasetIndex': 0,
+          'dataset': dataset0,
+          'label': 'Point 2',
+          'formattedValue': '20',
+        };
 
-          final callbacks =
-              jsGet(
-                    jsGet(jsGet(_defaults(), 'plugins'), 'tooltip'),
-                    'callbacks',
-                  )!
-                  as TooltipCallbacks;
-          Object? label() => callbacks.label!(
-            const _CallbackTooltip(),
-            ChartTooltipItem(tooltipItem),
-          );
+        final callbacks =
+            jsGet(jsGet(jsGet(_defaults(), 'plugins'), 'tooltip'), 'callbacks')!
+                as TooltipCallbacks;
+        Object? label() => callbacks.label!(
+          const _CallbackTooltip(),
+          ChartTooltipItem(tooltipItem),
+        );
 
-          var value = label();
-          expect(value, ['20']);
+        var value = label();
+        expect(value, ['20']);
 
-          dataset0['label'] = 'My dataset';
-          value = label();
-          expect(value, ['My dataset: 20']);
-        },
-      );
+        dataset0['label'] = 'My dataset';
+        value = label();
+        expect(value, ['My dataset: 20']);
+      });
     });
 
     group('index mode', () {
@@ -367,10 +352,7 @@ void main() {
         );
 
         final options = tooltip.options!;
-        expect(
-          jsGet(options, 'padding'),
-          const EdgeInsets.all(6),
-        );
+        expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
         expect(tooltip.xAlign, TooltipXAlign.left);
         expect(tooltip.yAlign, TooltipYAlign.center);
         expect(
@@ -378,10 +360,7 @@ void main() {
           const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         );
 
-        expect(
-          jsGet(options, 'bodyFont'),
-          _fontFields(_modelFont()),
-        );
+        expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
 
         expect(
           options,
@@ -518,10 +497,7 @@ void main() {
       expect(tooltip.xAlign, TooltipXAlign.left);
       expect(tooltip.yAlign, TooltipYAlign.center);
 
-      expect(
-        jsGet(options, 'bodyFont'),
-        _fontFields(_modelFont()),
-      );
+      expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
 
       expect(
         options,
@@ -531,10 +507,7 @@ void main() {
         }),
       );
 
-      expect(
-        jsGet(options, 'titleFont'),
-        _fontFields(_modelFont(bold: true)),
-      );
+      expect(jsGet(options, 'titleFont'), _fontFields(_modelFont(bold: true)));
 
       expect(
         options,
@@ -545,10 +518,7 @@ void main() {
         }),
       );
 
-      expect(
-        jsGet(options, 'footerFont'),
-        _fontFields(_modelFont(bold: true)),
-      );
+      expect(jsGet(options, 'footerFont'), _fontFields(_modelFont(bold: true)));
 
       expect(
         options,
@@ -646,10 +616,7 @@ void main() {
       expect(tooltip.xAlign, TooltipXAlign.left);
       expect(tooltip.yAlign, TooltipYAlign.center);
 
-      expect(
-        jsGet(options, 'bodyFont'),
-        _fontFields(_modelFont()),
-      );
+      expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
 
       expect(
         options,
@@ -659,10 +626,7 @@ void main() {
         }),
       );
 
-      expect(
-        jsGet(options, 'titleFont'),
-        _fontFields(_modelFont(bold: true)),
-      );
+      expect(jsGet(options, 'titleFont'), _fontFields(_modelFont(bold: true)));
 
       expect(
         options,
@@ -672,10 +636,7 @@ void main() {
         }),
       );
 
-      expect(
-        jsGet(options, 'footerFont'),
-        _fontFields(_modelFont(bold: true)),
-      );
+      expect(jsGet(options, 'footerFont'), _fontFields(_modelFont(bold: true)));
 
       expect(
         options,
@@ -876,10 +837,7 @@ void main() {
     testWidgets('Should follow dataset order', (tester) async {
       final chart = acquireChart(
         _line(
-          _twoDatasets(
-            extra1: const {'order': 10},
-            extra2: const {'order': 5},
-          ),
+          _twoDatasets(extra1: const {'order': 10}, extra2: const {'order': 5}),
           _tooltipOptions(<String, Object?>{
             'mode': const IndexInteractionMode(),
           }),
@@ -1078,10 +1036,7 @@ void main() {
 
       // First dispatch change event, should update tooltip
       await triggerMouseEvent(chart, 'mousemove', firstPoint);
-      expect(
-        calls,
-        contains(jasmineEquals(<Object?>[true, undefined])),
-      );
+      expect(calls, contains(jasmineEquals(<Object?>[true, undefined])));
 
       // Reset calls
       calls.clear();
@@ -1127,10 +1082,7 @@ void main() {
 
         // First dispatch change event, should update tooltip
         await triggerMouseEvent(chart, 'mousemove', firstPoint);
-        expect(
-          calls,
-          contains(jasmineEquals(<Object?>[true, undefined])),
-        );
+        expect(calls, contains(jasmineEquals(<Object?>[true, undefined])));
 
         // Reset calls
         calls.clear();
@@ -1138,10 +1090,7 @@ void main() {
         // Second dispatch change event (same event), should update tooltip
         // because position mode is 'nearest'
         await triggerMouseEvent(chart, 'mousemove', secondPoint);
-        expect(
-          calls,
-          contains(jasmineEquals(<Object?>[true, undefined])),
-        );
+        expect(calls, contains(jasmineEquals(<Object?>[true, undefined])));
       },
     );
 
@@ -1270,27 +1219,24 @@ void main() {
         },
       );
 
-      test(
-        'Should not fail with all hiden data elements on the average '
-        'positioner',
-        () {
-          const averagePositioner = AverageTooltipPositioner();
+      test('Should not fail with all hiden data elements on the average '
+          'positioner', () {
+        const averagePositioner = AverageTooltipPositioner();
 
-          // Simulate `hasValue` returns false
-          // Upstream gives a plain object without an element. An active
-          // item of the port has the type `ActiveElement`: its element is
-          // Dart `null`.
-          TooltipPosition? call() => averagePositioner.positionOf(
-            Tooltip((chart: _NoChart(), options: null)),
-            const [_NoElementItem()],
-            null,
-          );
-          expect(call, returnsNormally);
-          final result = call();
-          // The `false` of upstream is Dart `null`.
-          expect(result, isNull);
-        },
-      );
+        // Simulate `hasValue` returns false
+        // Upstream gives a plain object without an element. An active
+        // item of the port has the type `ActiveElement`: its element is
+        // Dart `null`.
+        TooltipPosition? call() => averagePositioner.positionOf(
+          Tooltip((chart: _NoChart(), options: null)),
+          const [_NoElementItem()],
+          null,
+        );
+        expect(call, returnsNormally);
+        final result = call();
+        // The `false` of upstream is Dart `null`.
+        expect(result, isNull);
+      });
     });
 
     testWidgets(
@@ -1351,10 +1297,7 @@ void main() {
             expect(tooltip.dataPoints!.length, 1);
             expect(tooltip.x, greaterThanOrEqualTo(0));
             if (tooltip.width <= chart.width) {
-              expect(
-                tooltip.x + tooltip.width,
-                lessThanOrEqualTo(chart.width),
-              );
+              expect(tooltip.x + tooltip.width, lessThanOrEqualTo(chart.width));
             }
             expect(tooltip.caretX, toBeCloseToPixel(tooltipPosition.x));
             // if tooltip is longer than chart area then all tests done
@@ -1418,10 +1361,7 @@ void main() {
       expect(tooltip.xAlign, TooltipXAlign.center);
       expect(tooltip.yAlign, TooltipYAlign.top);
 
-      expect(
-        jsGet(options, 'bodyFont'),
-        _fontFields(_modelFont()),
-      );
+      expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
 
       expect(
         options,
@@ -1431,10 +1371,7 @@ void main() {
         }),
       );
 
-      expect(
-        jsGet(options, 'titleFont'),
-        _fontFields(_modelFont(bold: true)),
-      );
+      expect(jsGet(options, 'titleFont'), _fontFields(_modelFont(bold: true)));
 
       expect(
         options,
@@ -1445,10 +1382,7 @@ void main() {
         }),
       );
 
-      expect(
-        jsGet(options, 'footerFont'),
-        _fontFields(_modelFont(bold: true)),
-      );
+      expect(jsGet(options, 'footerFont'), _fontFields(_modelFont(bold: true)));
 
       expect(
         options,
@@ -2034,9 +1968,7 @@ void main() {
 
     testWidgets(
       'should tolerate datasets removed on events outside chartArea',
-      (
-        tester,
-      ) async {
+      (tester) async {
         final dataset1 = <String, Object?>{
           'label': 'Dataset 1',
           'data': <Object?>[10, 20, 30],
@@ -2090,9 +2022,7 @@ void main() {
 
     testWidgets(
       'should tolerate elements removed on events outside chartArea',
-      (
-        tester,
-      ) async {
+      (tester) async {
         final dataset1 = <String, Object?>{
           'label': 'Dataset 1',
           'data': <Object?>[10, 20, 30],
@@ -2171,9 +2101,7 @@ void main() {
 
     testWidgets(
       'should use default callback if user callback returns undefined',
-      (
-        tester,
-      ) async {
+      (tester) async {
         Null returnsDefault(Object? tooltip, Object? arg) => null;
         final chart = acquireChart(
           _line(

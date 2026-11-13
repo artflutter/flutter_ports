@@ -773,9 +773,7 @@ void _referenceLocal(
             final expected = reference.diff[index++];
             final got = diffUnit(a, b, unit, zone);
             if (!_same(got, expected)) {
-              mismatches.add(
-                'diff($a, $b, $unit): $got, expected $expected',
-              );
+              mismatches.add('diff($a, $b, $unit): $got, expected $expected');
             }
           }
         }
@@ -793,12 +791,7 @@ void _referenceLocal(
             'format($t): $iso, expected ${reference.formatDefault[i]}',
           );
         }
-        final fields = formatDate(
-          t,
-          'yyyy-MM-dd HH:mm:ss.SSS',
-          zone,
-          'en_US',
-        );
+        final fields = formatDate(t, 'yyyy-MM-dd HH:mm:ss.SSS', zone, 'en_US');
         if (fields != reference.formatFields[i]) {
           mismatches.add(
             'format($t, $dateReferenceLocalFieldsFormat): $fields, '

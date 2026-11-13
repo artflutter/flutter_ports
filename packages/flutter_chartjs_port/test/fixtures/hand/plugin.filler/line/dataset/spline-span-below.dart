@@ -14,49 +14,16 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        '0',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-      ],
+      'labels': <Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8'],
       'datasets': <Object?>[
         <String, Object?>{
           'backgroundColor': 'rgba(255, 0, 0, 0.25)',
-          'data': <Object?>[
-            null,
-            null,
-            0,
-            -1,
-            0,
-            1,
-            0,
-            -1,
-            0,
-          ],
-          'fill': <String, Object?>{
-            'target': 1,
-            'above': 'transparent',
-          },
+          'data': <Object?>[null, null, 0, -1, 0, 1, 0, -1, 0],
+          'fill': <String, Object?>{'target': 1, 'above': 'transparent'},
         },
         <String, Object?>{
           'backgroundColor': 'rgba(0, 255, 0, 0.25)',
-          'data': <Object?>[
-            1,
-            0,
-            null,
-            1,
-            0,
-            null,
-            -1,
-            0,
-            1,
-          ],
+          'data': <Object?>[1, 0, null, 1, 0, null, -1, 0, 1],
           'fill': <String, Object?>{
             // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
             'target': const RelativeFill(1),
@@ -65,17 +32,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'backgroundColor': 'rgba(255, 0, 255, 0.25)',
-          'data': <Object?>[
-            2,
-            0,
-            -2,
-            0,
-            2,
-            0,
-            -2,
-            0,
-            2,
-          ],
+          'data': <Object?>[2, 0, -2, 0, 2, 0, -2, 0, 2],
           'fill': <String, Object?>{
             // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
             'target': const RelativeFill(-2),
@@ -84,17 +41,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'backgroundColor': 'rgba(255, 255, 0, 0.25)',
-          'data': <Object?>[
-            3,
-            1,
-            -1,
-            -3,
-            -1,
-            1,
-            3,
-            1,
-            -1,
-          ],
+          'data': <Object?>[3, 1, -1, -3, -1, 1, 3, 1, -1],
           'fill': <String, Object?>{
             // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
             'target': const RelativeFill(-1),
@@ -107,17 +54,11 @@ Map<String, Object?> fixture() => <String, Object?>{
       'responsive': false,
       'spanGaps': true,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
       'elements': <String, Object?>{
-        'point': <String, Object?>{
-          'radius': 0,
-        },
+        'point': <String, Object?>{'radius': 0},
         'line': <String, Object?>{
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
@@ -133,9 +74,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

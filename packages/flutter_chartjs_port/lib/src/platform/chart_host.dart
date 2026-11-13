@@ -1740,10 +1740,7 @@ class RenderChartHost extends RenderBox
           _canvas.style.touchAction.trim().toLowerCase() == 'none';
     }
     final limitSquared = _slopLimitSquared(event.kind, gestureSettings);
-    final hostTouch = _touches[event.pointer] = _HostTouch(
-      event,
-      limitSquared,
-    );
+    final hostTouch = _touches[event.pointer] = _HostTouch(event, limitSquared);
     if (_touches.length > _sequenceTouches) {
       _sequenceTouches = _touches.length;
     }

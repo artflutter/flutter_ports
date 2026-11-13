@@ -126,9 +126,7 @@ final class _SpyMatcher extends Matcher {
     return switch (check) {
       _SpyCheck.called => item.count > 0,
       _SpyCheck.times => item.count == times,
-      _SpyCheck.calledWith => item.calls.any(
-        (call) => _eq(call, args),
-      ),
+      _SpyCheck.calledWith => item.calls.any((call) => _eq(call, args)),
     };
   }
 
@@ -137,11 +135,7 @@ final class _SpyMatcher extends Matcher {
     _SpyCheck.called => description.add('a spy that has been called'),
     _SpyCheck.times => description.add('a spy called $times times'),
     _SpyCheck.calledWith =>
-      description
-          .add(
-            'a spy called with ',
-          )
-          .addDescriptionOf(args),
+      description.add('a spy called with ').addDescriptionOf(args),
   };
 
   @override
@@ -294,7 +288,6 @@ final class _ToBeCloseTo extends Matcher {
   }
 
   @override
-  Description describe(Description description) => description.add(
-    'a number close to $expected with precision $precision',
-  );
+  Description describe(Description description) =>
+      description.add('a number close to $expected with precision $precision');
 }

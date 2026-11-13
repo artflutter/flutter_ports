@@ -43,9 +43,7 @@ Future<Chart> _openChart(WidgetTester tester, String stem) async {
 }
 
 void main() {
-  testWidgets('lists the tracked version and every chart type', (
-    tester,
-  ) async {
+  testWidgets('lists the tracked version and every chart type', (tester) async {
     await tester.pumpWidget(const GalleryApp());
 
     expect(find.text('Tracking Chart.js $chartJsVersion'), findsOneWidget);

@@ -94,12 +94,7 @@ Future<Render> _direct(_Circles c, int size, {ui.Color color = _white}) =>
 
 /// The first [n] circles of [c], each in `colors[i % colors.length]`, on a
 /// canvas context.
-void _fillsIn(
-  UiCanvasContext ctx,
-  _Circles c,
-  int n,
-  List<ui.Color> colors,
-) {
+void _fillsIn(UiCanvasContext ctx, _Circles c, int n, List<ui.Color> colors) {
   for (var i = 0; i < n; i++) {
     ctx.fillStyle = colors[i % colors.length];
     ctx.beginPath();
@@ -111,20 +106,16 @@ void _fillsIn(
 
 /// The first [n] circles of [c], each with `drawCircle` in
 /// `colors[i % colors.length]`.
-Future<Render> _directIn(
-  _Circles c,
-  int n,
-  List<ui.Color> colors,
-  int size,
-) => _picture(size, (canvas) {
-  for (var i = 0; i < n; i++) {
-    canvas.drawCircle(
-      ui.Offset(c.xs[i], c.ys[i]),
-      c.rs[i],
-      ui.Paint()..color = colors[i % colors.length],
-    );
-  }
-});
+Future<Render> _directIn(_Circles c, int n, List<ui.Color> colors, int size) =>
+    _picture(size, (canvas) {
+      for (var i = 0; i < n; i++) {
+        canvas.drawCircle(
+          ui.Offset(c.xs[i], c.ys[i]),
+          c.rs[i],
+          ui.Paint()..color = colors[i % colors.length],
+        );
+      }
+    });
 
 /// [c] in the form that the batch has for a fixed radius (Chart.js ADR 0055
 /// §8.5): the rasterized circle of the exact radius at the nearest quarter
@@ -490,85 +481,79 @@ void main() {
       },
     );
 
-    test(
-      'radii on both sides of 2 keep the ink',
-      () async {
-        final c = _Circles(1, 4);
-        final direct = await _direct(c, 700);
-        final render = await renderContext(
-          (ctx) => _fills(ctx, c),
-          width: 700,
-          height: 700,
-        );
-        final diff = comparePixels(render, direct);
-        expect(diff.opaqueFlips, 0, reason: '$diff');
-        expect(diff.inkRatio, lessThan(0.02), reason: '$diff');
-      },
-    );
+    test('radii on both sides of 2 keep the ink', () async {
+      final c = _Circles(1, 4);
+      final direct = await _direct(c, 700);
+      final render = await renderContext(
+        (ctx) => _fills(ctx, c),
+        width: 700,
+        height: 700,
+      );
+      final diff = comparePixels(render, direct);
+      expect(diff.opaqueFlips, 0, reason: '$diff');
+      expect(diff.inkRatio, lessThan(0.02), reason: '$diff');
+    });
 
-    test(
-      'below the minimum, each fill keeps its exact color, also when the '
-      'color changes',
-      () async {
-        // The alpha of these colors has no 8-bit form: 0.5 is not 128 / 255.
-        const hovered = ui.Color.fromRGBO(79, 107, 237, 0.5);
-        const others = ui.Color.fromRGBO(220, 57, 18, 0.5);
-        Future<void> check(_Circles c, int n, List<ui.Color> colors) async {
-          final render = await renderContext(
-            (ctx) => _fillsIn(ctx, c, n, colors),
-            width: 300,
-            height: 300,
-          );
-          final direct = await _directIn(c, n, colors, 300);
-          final diff = comparePixels(render, direct);
-          expect(diff.differing, 0, reason: '$n fills: $diff');
-          expect(render.ink, greaterThan(0));
-        }
-
-        // A hover: three points of one color and radius, then a point with
-        // another color and radius.
-        final hover = _Circles(3, 3, size: 300)
-          ..rs[3] = 4
-          ..xs[3] += 1;
+    test('below the minimum, each fill keeps its exact color, also when the '
+        'color changes', () async {
+      // The alpha of these colors has no 8-bit form: 0.5 is not 128 / 255.
+      const hovered = ui.Color.fromRGBO(79, 107, 237, 0.5);
+      const others = ui.Color.fromRGBO(220, 57, 18, 0.5);
+      Future<void> check(_Circles c, int n, List<ui.Color> colors) async {
         final render = await renderContext(
-          (ctx) {
-            ctx.fillStyle = others;
-            for (var i = 0; i < 3; i++) {
-              ctx.beginPath();
-              ctx.arc(hover.xs[i], hover.ys[i], 3, 0, 2 * math.pi);
-              ctx.closePath();
-              ctx.fill();
-            }
-            ctx.fillStyle = hovered;
-            ctx.beginPath();
-            ctx.arc(hover.xs[3], hover.ys[3], 4, 0, 2 * math.pi);
-            ctx.closePath();
-            ctx.fill();
-            expect(ctx.debugPendingCircles, 4);
-          },
+          (ctx) => _fillsIn(ctx, c, n, colors),
           width: 300,
           height: 300,
         );
-        final direct = await _picture(300, (canvas) {
-          final paint = ui.Paint()..color = others;
-          for (var i = 0; i < 3; i++) {
-            canvas.drawCircle(ui.Offset(hover.xs[i], hover.ys[i]), 3, paint);
-          }
-          paint.color = hovered;
-          canvas.drawCircle(ui.Offset(hover.xs[3], hover.ys[3]), 4, paint);
-        });
+        final direct = await _directIn(c, n, colors, 300);
         final diff = comparePixels(render, direct);
-        expect(diff.differing, 0, reason: 'the hover: $diff');
+        expect(diff.differing, 0, reason: '$n fills: $diff');
+        expect(render.ink, greaterThan(0));
+      }
 
-        // Each color change in a run with varying radii, up to its last fill
-        // below the minimum.
-        final c = _Circles(2, 8, size: 300);
-        expect(c.rs.length, greaterThanOrEqualTo(minLadderRun));
-        await check(c, 2, const [hovered, others]);
-        await check(c, minLadderRun - 1, const [hovered, others]);
-        await check(c, minLadderRun - 1, const [hovered, others, others]);
-      },
-    );
+      // A hover: three points of one color and radius, then a point with
+      // another color and radius.
+      final hover = _Circles(3, 3, size: 300)
+        ..rs[3] = 4
+        ..xs[3] += 1;
+      final render = await renderContext(
+        (ctx) {
+          ctx.fillStyle = others;
+          for (var i = 0; i < 3; i++) {
+            ctx.beginPath();
+            ctx.arc(hover.xs[i], hover.ys[i], 3, 0, 2 * math.pi);
+            ctx.closePath();
+            ctx.fill();
+          }
+          ctx.fillStyle = hovered;
+          ctx.beginPath();
+          ctx.arc(hover.xs[3], hover.ys[3], 4, 0, 2 * math.pi);
+          ctx.closePath();
+          ctx.fill();
+          expect(ctx.debugPendingCircles, 4);
+        },
+        width: 300,
+        height: 300,
+      );
+      final direct = await _picture(300, (canvas) {
+        final paint = ui.Paint()..color = others;
+        for (var i = 0; i < 3; i++) {
+          canvas.drawCircle(ui.Offset(hover.xs[i], hover.ys[i]), 3, paint);
+        }
+        paint.color = hovered;
+        canvas.drawCircle(ui.Offset(hover.xs[3], hover.ys[3]), 4, paint);
+      });
+      final diff = comparePixels(render, direct);
+      expect(diff.differing, 0, reason: 'the hover: $diff');
+
+      // Each color change in a run with varying radii, up to its last fill
+      // below the minimum.
+      final c = _Circles(2, 8, size: 300);
+      expect(c.rs.length, greaterThanOrEqualTo(minLadderRun));
+      await check(c, 2, const [hovered, others]);
+      await check(c, minLadderRun - 1, const [hovered, others]);
+      await check(c, minLadderRun - 1, const [hovered, others, others]);
+    });
 
     test('from the minimum on, a solid pixel is within 1 of 255', () async {
       // The atlas has the 8-bit form of a color. Its alpha of 0.5 is 128 / 255.

@@ -30,23 +30,15 @@ Map<String, Object?> fixture() => <String, Object?>{
         // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
         'mode': const NearestInteractionMode(),
       },
-      'plugins': <String, Object?>{
-        'tooltip': true,
-        'legend': false,
-      },
+      'plugins': <String, Object?>{'tooltip': true, 'legend': false},
       'scales': <String, Object?>{
-        'y': <String, Object?>{
-          'beginAtZero': false,
-        },
+        'y': <String, Object?>{'beginAtZero': false},
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 256,
-      'height': 256,
-    },
+    'canvas': <String, Object?>{'width': 256, 'height': 256},
     'run': (Chart chart) async {
       final chartArea = chart.chartArea!;
       final point = <String, Object?>{

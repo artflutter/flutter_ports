@@ -27,13 +27,9 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'base': 2,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
         'y': <String, Object?>{
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
           'grid': <String, Object?>{
             'color': (Object? context) {
               return (jsGet(context, 'tick')! as Tick).value == 2
@@ -49,9 +45,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'width': 128,
-      'height': 128,
-    },
+    'canvas': <String, Object?>{'width': 128, 'height': 128},
   },
 };

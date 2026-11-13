@@ -469,10 +469,7 @@ DocPageContent lineChartPage() => DocPageContent(
             const DocTable([
               ('pointBackgroundColor', 'The fill color of the points.'),
               ('pointBorderColor', 'The border color of the points.'),
-              (
-                'pointBorderWidth',
-                'The width of the point border in pixels.',
-              ),
+              ('pointBorderWidth', 'The width of the point border in pixels.'),
               (
                 'pointHitRadius',
                 'The size in pixels of the invisible area that reacts to '
@@ -728,9 +725,7 @@ DocPageContent lineChartPage() => DocPageContent(
               'function that returns `undefined` keeps the style of the '
               'line.',
             ),
-            DocTip(
-              'To style a gap, set `spanGaps` to `true`.',
-            ),
+            DocTip('To style a gap, set `spanGaps` to `true`.'),
             DocParagraph('The context of a segment function has these keys:'),
             DocTable([
               ('type', "The string `'segment'`."),
@@ -1055,9 +1050,7 @@ class _LiveLineDemoState extends State<LiveLineDemo> {
         ),
         Padding(
           padding: const EdgeInsets.all(12),
-          child: RepaintBoundary(
-            child: liveLineChart(_current),
-          ),
+          child: RepaintBoundary(child: liveLineChart(_current)),
         ),
         const Divider(height: 1, color: DocColors.border),
         CodeBlock(code: DocScope.of(context).snippets['live']),

@@ -991,16 +991,10 @@ void _adr0021Tests() {
       expect(jsGet(copy, r'$shared'), isFalse);
     });
 
-    test(
-      'GenericElementOptions and a plain Map give the JavaScript order',
-      () {
-        expect(
-          jsObjectKeys(targetCopy(GenericElementOptions(source))),
-          jsOrder,
-        );
-        expect(jsObjectKeys(targetCopy(source)), jsOrder);
-      },
-    );
+    test('GenericElementOptions and a plain Map give the JavaScript order', () {
+      expect(jsObjectKeys(targetCopy(GenericElementOptions(source))), jsOrder);
+      expect(jsObjectKeys(targetCopy(source)), jsOrder);
+    });
 
     test('a typed copy without extra keys gives the JavaScript order', () {
       final noExtra = {...source}..remove('myKey');

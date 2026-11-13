@@ -122,10 +122,7 @@ Object? _or(Object? a, Object? b) => jsTruthy(a) ? a : b;
 /// - `useShadowDOM: true` throws an [UnsupportedError], in place of the
 ///   `pending()` of a browser without the shadow DOM (:64-68).
 /// - `spriteText` (:90-92) has no port: the port compares no image.
-Chart acquireChart([
-  Object? config,
-  Map<String, Object?>? options,
-]) {
+Chart acquireChart([Object? config, Map<String, Object?>? options]) {
   // DIVERGES(chartjs): harness-acquire-chart, only in a testWidgets body.
   if (!TestWidgetsFlutterBinding.ensureInitialized().inTest) {
     throw StateError(

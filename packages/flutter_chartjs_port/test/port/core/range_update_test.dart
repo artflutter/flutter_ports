@@ -190,10 +190,7 @@ Map<String, Object?> _config(
     'animation': _animation(log, animated: animated),
     'layout': <String, Object?>{'padding': _padding(log)},
     'scales': scales,
-    'plugins': <String, Object?>{
-      'title': _titleOf(log, titleAxis),
-      ...plugins,
-    },
+    'plugins': <String, Object?>{'title': _titleOf(log, titleAxis), ...plugins},
     ...extra,
   },
 };
@@ -652,16 +649,11 @@ final List<_Case> _cases = [
     _range('x', '2026-11-04', '2026-11-09'),
     _reset(['x']),
   ]),
-  _Case(
-    'time local',
-    _time,
-    [
-      _range('x', _day(3), _day(12)),
-      _range('x', _day(5), _day(6)),
-      _reset(['x']),
-    ],
-    zone: 'local',
-  ),
+  _Case('time local', _time, [
+    _range('x', _day(3), _day(12)),
+    _range('x', _day(5), _day(6)),
+    _reset(['x']),
+  ], zone: 'local'),
   _Case('logarithmic', _logarithmic, [
     _range('y', 2.0, 500.0),
     _range('y', 10.0, 100.0),
@@ -716,10 +708,7 @@ Map<String, Object?> _small(
       'x': <String, Object?>{'type': 'linear'},
       'y': <String, Object?>{'type': 'linear'},
     },
-    'plugins': <String, Object?>{
-      'title': _titleOf(log, 'x'),
-      ...pluginOptions,
-    },
+    'plugins': <String, Object?>{'title': _titleOf(log, 'x'), ...pluginOptions},
     ...extra,
   },
 };
@@ -1068,10 +1057,7 @@ void main() {
       for (final chart in [full, ranges]) {
         // The upstream push, then the notification of the array listener.
         final values =
-            jsGet(
-                    (jsGet(chart.data, 'datasets')! as List<Object?>)[0],
-                    'data',
-                  )!
+            jsGet((jsGet(chart.data, 'datasets')! as List<Object?>)[0], 'data')!
                   as List<Object?>
               ..add(<String, Object?>{'x': 8.0, 'y': 6.0});
         notifyArrayListeners(values, 'push', [values.last]);
@@ -1081,9 +1067,7 @@ void main() {
     });
 
     testWidgets('6. another data or options object, another dataset, '
-        'another chart type, another inline plugin List', (
-      tester,
-    ) async {
+        'another chart type, another inline plugin List', (tester) async {
       final changes = <String, void Function(Chart chart)>{
         'config.data': (chart) {
           final config = chart.config;

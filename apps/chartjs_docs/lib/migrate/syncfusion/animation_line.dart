@@ -51,9 +51,7 @@ class _SfAnimationLineState extends State<SfAnimationLine> {
         type: .line,
         datasets: [
           LineDataset(
-            points: [
-              for (final (x, y) in _values.indexed) DataPoint(x, y),
-            ],
+            points: [for (final (x, y) in _values.indexed) DataPoint(x, y)],
             borderColor: const .constant(.solid(_color)),
             borderWidth: 2,
             pointRadius: 4,
@@ -66,9 +64,7 @@ class _SfAnimationLineState extends State<SfAnimationLine> {
         padding: const EdgeInsets.all(10),
         legend: const ChartLegend(display: false),
         tooltip: const ChartTooltip(enabled: false),
-        animation: const ChartAnimation(
-          duration: Duration(milliseconds: 1500),
-        ),
+        animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         // The original has no tooltip and no selection.
         extra: const {'events': <String>[]},
         scales: const {

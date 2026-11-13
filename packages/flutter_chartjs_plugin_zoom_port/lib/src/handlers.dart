@@ -271,11 +271,7 @@ void _applyMinMaxProps(
   } else {
     rect
       ..top = _clamp(jsMin(begin.y, end.y), chartArea.top, chartArea.bottom)
-      ..bottom = _clamp(
-        jsMax(begin.y, end.y),
-        chartArea.top,
-        chartArea.bottom,
-      );
+      ..bottom = _clamp(jsMax(begin.y, end.y), chartArea.top, chartArea.bottom);
   }
 }
 
@@ -534,10 +530,7 @@ void wheel(Chart chart, NativeEvent event) {
   final amount = ZoomAmount(
     x: percentage,
     y: percentage,
-    focalPoint: (
-      x: event.clientX - rect!.left,
-      y: event.clientY - rect.top,
-    ),
+    focalPoint: (x: event.clientX - rect!.left, y: event.clientY - rect.top),
   );
 
   zoom(chart, amount, 'zoom', ZoomTrigger.wheel);

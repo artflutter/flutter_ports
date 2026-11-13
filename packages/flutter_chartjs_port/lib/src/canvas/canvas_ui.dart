@@ -697,12 +697,7 @@ final class UiCanvasContext
   /// bitmap. [scaleX] and [scaleY] map the bitmap pixels to logical pixels:
   /// the host gives the display size over the bitmap size. It ends the
   /// current recording.
-  void paint(
-    ui.Canvas canvas,
-    ui.Offset offset,
-    double scaleX,
-    double scaleY,
-  ) {
+  void paint(ui.Canvas canvas, ui.Offset offset, double scaleX, double scaleY) {
     _notified = false;
     if (_disposed) return;
     _endRecording();
@@ -850,14 +845,7 @@ final class UiCanvasContext
         if (_pictureDraws >= _maxPictureDraws) _endRecording(split: true);
       }
     }
-    _batch.add(
-      x,
-      y,
-      radius,
-      color,
-      stroke: stroke,
-      width: width,
-    );
+    _batch.add(x, y, radius, color, stroke: stroke, width: width);
     _drew(batched: true);
     return true;
   }
@@ -1114,10 +1102,7 @@ final class UiCanvasContext
       paint
         ..shader = source.shader
         ..color = source.color
-        ..colorFilter = ui.ColorFilter.mode(
-          s.shadowColor,
-          ui.BlendMode.srcIn,
-        );
+        ..colorFilter = ui.ColorFilter.mode(s.shadowColor, ui.BlendMode.srcIn);
     }
     final canvas = _c
       ..save()
@@ -2118,12 +2103,7 @@ final class UiCanvasContext
     if (fillType == null || !s.transform.isInvertible) return;
     if (path2d != null) {
       final path = uiPathOf(path2d)..fillType = fillType;
-      if (!_setupPaint(
-        _fillPaint,
-        s.fillColor,
-        s.fillShader,
-        mapped: false,
-      )) {
+      if (!_setupPaint(_fillPaint, s.fillColor, s.fillShader, mapped: false)) {
         return;
       }
       if (s.shadowOn) {
@@ -2156,12 +2136,7 @@ final class UiCanvasContext
           return;
         }
       }
-      if (!_setupPaint(
-        _fillPaint,
-        s.fillColor,
-        s.fillShader,
-        mapped: true,
-      )) {
+      if (!_setupPaint(_fillPaint, s.fillColor, s.fillShader, mapped: true)) {
         return;
       }
       if (s.shadowOn) {
@@ -2682,10 +2657,7 @@ final class UiCanvasContext
     // A gradient or a pattern needs the paragraph space of its shader.
     void place(ui.Paragraph paragraph) {
       if (source == null && t.isTranslation && sx == 1) {
-        _c.drawParagraph(
-          paragraph,
-          ui.Offset(t.e + x + dx, t.f + y + top),
-        );
+        _c.drawParagraph(paragraph, ui.Offset(t.e + x + dx, t.f + y + top));
       } else {
         final canvas = _c
           ..save()
@@ -2707,9 +2679,7 @@ final class UiCanvasContext
       final paint = stroke ? _textStrokePaint(_black) : ui.Paint();
       final sigma = _shadowSigma(user: true);
       paint
-        ..color = s.shadowColor.withValues(
-          alpha: s.shadowColor.a * sourceAlpha,
-        )
+        ..color = s.shadowColor.withValues(alpha: s.shadowColor.a * sourceAlpha)
         ..maskFilter = sigma > 0
             ? ui.MaskFilter.blur(ui.BlurStyle.normal, sigma)
             : null;

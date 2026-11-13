@@ -371,9 +371,7 @@ void main() {
                 'y': <String, Object?>{'type': 'linear', 'display': false},
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
-              'layout': <String, Object?>{
-                'padding': const EdgeInsets.all(10),
-              },
+              'layout': <String, Object?>{'padding': const EdgeInsets.all(10)},
             },
           },
           <String, Object?>{
@@ -460,9 +458,7 @@ void main() {
                 'y': <String, Object?>{'type': 'linear', 'display': false},
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
-              'layout': <String, Object?>{
-                'padding': EdgeInsets.zero,
-              },
+              'layout': <String, Object?>{'padding': EdgeInsets.zero},
             },
           },
           <String, Object?>{

@@ -195,10 +195,7 @@ cj.ChartConfig _config({
     scales: time
         ? const {'x': cj.TimeAxis(), 'y': cj.LinearAxis()}
         : xy
-        ? const {
-            'x': cj.LinearAxis(min: 0, max: 100),
-            'y': cj.LinearAxis(),
-          }
+        ? const {'x': cj.LinearAxis(min: 0, max: 100), 'y': cj.LinearAxis()}
         : stacked
         ? const {
             'x': cj.CategoryAxis(stacked: true),
@@ -412,7 +409,7 @@ Future<Map<String, Object?>> _animate(
   _capture.begin();
   await _delay(seconds * 1000);
   timer.cancel();
-  return _capture.end(seconds);
+  return await _capture.end(seconds);
 }
 
 /// A mouse that moves over the chart on each frame, with the tooltip and the
@@ -565,7 +562,7 @@ Future<Map<String, Object?>> _stream(
   _capture.begin();
   await _delay(seconds * 1000);
   running = false;
-  return _capture.end(seconds);
+  return await _capture.end(seconds);
 }
 
 typedef _Cell = ({

@@ -79,14 +79,10 @@ final class _Repo {
       status: 'ported',
       dart: true,
     );
-    module(
-      'src/types/index.d.ts',
-      [
-        "import Element from '../core/core.element.js';",
-        'export declare class Chart {}',
-      ],
-      status: 'distributed',
-    );
+    module('src/types/index.d.ts', [
+      "import Element from '../core/core.element.js';",
+      'export declare class Chart {}',
+    ], status: 'distributed');
     tree.write('$_package/lib/src/types/index.dart', [
       _header('src/types/index.d.ts'),
       'abstract interface class Chart {}',
@@ -319,9 +315,7 @@ void main() {
       );
       expect(
         () => parseModule('export x;\n'),
-        throwsA(
-          error(1, 'an "export x" form that the helper does not read.'),
-        ),
+        throwsA(error(1, 'an "export x" form that the helper does not read.')),
       );
     });
   });
@@ -348,10 +342,7 @@ void main() {
       );
       expect(partial.state, ParityState.partial);
       expect(partial.symbols, {'toFontString', '_isPointInArea'});
-      expect(
-        classifyStatus('partial: `a` (and `b` later)').symbols,
-        {'a'},
-      );
+      expect(classifyStatus('partial: `a` (and `b` later)').symbols, {'a'});
     });
   });
 
@@ -748,10 +739,9 @@ void main() {
       final a = _module(order, 'src/core/core.cycleA.js');
       expect(a.category, ModuleCategory.ready);
       expect(a.group, ['src/core/core.cycleB.js']);
-      expect(
-        _module(order, 'src/core/core.cycleB.js').group,
-        ['src/core/core.cycleA.js'],
-      );
+      expect(_module(order, 'src/core/core.cycleB.js').group, [
+        'src/core/core.cycleA.js',
+      ]);
       expect(
         _module(order, 'src/core/core.cycleC.js').category,
         ModuleCategory.blocked,

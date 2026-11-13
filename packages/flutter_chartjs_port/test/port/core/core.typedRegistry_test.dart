@@ -289,11 +289,7 @@ void main() {
         ..observe(name, error(() => reg.register(tr)))
         ..observe(
           '$name keys',
-          o.json(
-            jsObjectKeys(
-              jsGet(defaults['elements'], 'troutes-$name'),
-            ),
-          ),
+          o.json(jsObjectKeys(jsGet(defaults['elements'], 'troutes-$name'))),
         );
     }
     expect(o.text, registryReference['typedRegistry routes of other values']);
@@ -416,9 +412,10 @@ void main() {
       ..observe(
         'empty scope',
         error(
-          () => TypedRegistry(_tBase, '').unregister(<String, Object?>{
-            'id': 'x',
-          }),
+          () => TypedRegistry(
+            _tBase,
+            '',
+          ).unregister(<String, Object?>{'id': 'x'}),
         ),
       );
     defaults['tprim'] = 5.0;
@@ -466,12 +463,7 @@ void main() {
     };
     o
       ..observe('scope', reg.register(plugin))
-      ..observe(
-        'keys',
-        o.json(
-          jsObjectKeys(at(defaults, 'tplugins2.tmap')),
-        ),
-      )
+      ..observe('keys', o.json(jsObjectKeys(at(defaults, 'tplugins2.tmap'))))
       ..observe(
         'defaults.tplugins2.tmap',
         o.json(at(defaults, 'tplugins2.tmap')),

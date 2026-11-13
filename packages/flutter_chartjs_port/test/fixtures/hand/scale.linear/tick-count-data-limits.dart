@@ -28,13 +28,9 @@ Map<String, Object?> fixture() => <String, Object?>{
             'callback': (Object? v) => jsNumberToString(v! as num),
           },
         },
-        'x': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
       },
     },
   },
-  'options': <String, Object?>{
-    'spriteText': true,
-  },
+  'options': <String, Object?>{'spriteText': true},
 };

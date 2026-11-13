@@ -505,9 +505,7 @@ class LineController extends DatasetController {
           held ??
               (i > 0 &&
                   (jsToNumber(iValue) -
-                              jsToNumber(
-                                parsedValueOf(prevParsed, iAxis),
-                              ))
+                              jsToNumber(parsedValueOf(prevParsed, iAxis)))
                           .abs() >
                       maxGapLength),
         );

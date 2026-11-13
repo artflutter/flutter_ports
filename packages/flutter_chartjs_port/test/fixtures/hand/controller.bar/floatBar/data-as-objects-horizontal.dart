@@ -12,43 +12,27 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        'a',
-        'b',
-        'c',
-      ],
+      'labels': <Object?>['a', 'b', 'c'],
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
             <String, Object?>{
               'y': 'b',
-              'x': <Object?>[
-                2,
-                8,
-              ],
+              'x': <Object?>[2, 8],
             },
             <String, Object?>{
               'y': 'c',
-              'x': <Object?>[
-                2,
-                5,
-              ],
+              'x': <Object?>[2, 5],
             },
           ],
           'backgroundColor': '#ff0000',
         },
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'y': 'a',
-              'x': 10,
-            },
+            <String, Object?>{'y': 'a', 'x': 10},
             <String, Object?>{
               'y': 'c',
-              'x': <Object?>[
-                6,
-                10,
-              ],
+              'x': <Object?>[6, 10],
             },
           ],
           'backgroundColor': '#00ff00',
@@ -60,21 +44,12 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-          'min': 0,
-        },
-        'y': <String, Object?>{
-          'display': false,
-          'stacked': true,
-        },
+        'x': <String, Object?>{'display': false, 'min': 0},
+        'y': <String, Object?>{'display': false, 'stacked': true},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

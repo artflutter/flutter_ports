@@ -18,9 +18,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       ],
     },
     'options': <String, Object?>{
-      'animation': <String, Object?>{
-        'duration': 0,
-      },
+      'animation': <String, Object?>{'duration': 0},
       'backgroundColor': 'red',
       'radius': () => 20,
       'scales': <String, Object?>{
@@ -30,10 +28,7 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
     'run': (Chart chart) {
       chart.options['radius'] = 5;
       chart.update();

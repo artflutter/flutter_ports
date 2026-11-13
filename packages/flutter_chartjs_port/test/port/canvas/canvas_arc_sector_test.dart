@@ -444,12 +444,7 @@ void main() {
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
       for (var i = 0; i < 600; i++) {
-        _sector(
-          ctx,
-          i * 0.01,
-          (i + 1) * 0.01,
-          color: i.isEven ? _blue : _red,
-        );
+        _sector(ctx, i * 0.01, (i + 1) * 0.01, color: i.isEven ? _blue : _red);
       }
       expect(ctx.debugPictureCount, greaterThan(1));
     });

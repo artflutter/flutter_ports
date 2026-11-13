@@ -258,4 +258,4 @@ void main() {
 
 /// An axis of a class that the core does not know: no field of a parsed
 /// item and no stack entry.
-final class _OtherAxis implements ScaleAxis {}
+final class _OtherAxis implements ScaleAxis;

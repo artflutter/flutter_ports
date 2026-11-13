@@ -15,24 +15,14 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'type': 'bar',
           'stack': 'mixed',
-          'data': <Object?>[
-            5,
-            20,
-            1,
-            10,
-          ],
+          'data': <Object?>[5, 20, 1, 10],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
         },
         <String, Object?>{
           'type': 'line',
           'stack': 'mixed',
-          'data': <Object?>[
-            6,
-            16,
-            3,
-            19,
-          ],
+          'data': <Object?>[6, 16, 3, 19],
           'borderColor': '#0000ff',
           'fill': false,
         },
@@ -44,24 +34,14 @@ Map<String, Object?> fixture() => <String, Object?>{
           // DIVERGES(chartjs): adapt-axis-objects, the axis
           // class.
           'axis': const YAxis(),
-          'labels': <Object?>[
-            'a',
-            'b',
-            'c',
-            'd',
-          ],
+          'labels': <Object?>['a', 'b', 'c', 'd'],
         },
-        'y': <String, Object?>{
-          'stacked': true,
-        },
+        'y': <String, Object?>{'stacked': true},
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

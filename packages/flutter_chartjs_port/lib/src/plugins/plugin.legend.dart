@@ -624,9 +624,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     if (jsTruthy(filter)) {
       legendItems = [
         for (final item in legendItems)
-          if (jsTruthy(
-            jsCall(filter, [item, chart.data], thisArg: labelOpts),
-          ))
+          if (jsTruthy(jsCall(filter, [item, chart.data], thisArg: labelOpts)))
             item,
       ];
     }
@@ -634,9 +632,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final sort = LegendLabelOptions(labelOpts).sort;
     if (jsTruthy(sort)) {
       legendItems = jsSort(legendItems, (a, b) {
-        return jsToNumber(
-          jsCall(sort, [a, b, chart.data], thisArg: labelOpts),
-        );
+        return jsToNumber(jsCall(sort, [a, b, chart.data], thisArg: labelOpts));
       });
     }
 
@@ -987,24 +983,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
               : legendItem.fillStyle,
         )
         // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enums.
-        ..lineCap = canvasLineCap(
-          legendItem.lineCap ?? ui.StrokeCap.butt,
-        )
-        ..lineDashOffset = canvasNumber(
-          legendItem.lineDashOffset ?? 0,
-        )
-        ..lineJoin = canvasLineJoin(
-          legendItem.lineJoin ?? ui.StrokeJoin.miter,
-        )
+        ..lineCap = canvasLineCap(legendItem.lineCap ?? ui.StrokeCap.butt)
+        ..lineDashOffset = canvasNumber(legendItem.lineDashOffset ?? 0)
+        ..lineJoin = canvasLineJoin(legendItem.lineJoin ?? ui.StrokeJoin.miter)
         ..lineWidth = canvasNumber(lineWidth)
         ..strokeStyle = canvasStyle(
           legendItem.strokeStyle is UnchangedChartPaint
               ? defaultColor
               : legendItem.strokeStyle,
         )
-        ..setLineDash(
-          canvasLineDash(legendItem.lineDash ?? <double>[]),
-        );
+        ..setLineDash(canvasLineDash(legendItem.lineDash ?? <double>[]));
 
       if (labelOpts.usePointStyle) {
         // Recalculate x and y for drawPoint() because its expecting

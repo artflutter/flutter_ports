@@ -13,35 +13,14 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-      ],
+      'labels': <Object?>[0, 1, 2, 3, 4, 5],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            5,
-            10,
-            null,
-            -10,
-            -5,
-          ],
+          'data': <Object?>[0, 5, 10, null, -10, -5],
           'borderWidth': 2,
         },
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            5,
-            10,
-            null,
-            -10,
-            -5,
-          ],
+          'data': <Object?>[0, 5, 10, null, -10, -5],
           'borderSkipped': false,
         },
       ],
@@ -63,19 +42,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

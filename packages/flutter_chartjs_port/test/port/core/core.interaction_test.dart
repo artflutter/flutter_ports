@@ -386,12 +386,7 @@ void main() {
             final mode = q.mode;
             if (q.error != null) {
               expect(
-                () => mode.itemsAt(
-                  chart,
-                  event,
-                  q.options,
-                  q.useFinalPosition,
-                ),
+                () => mode.itemsAt(chart, event, q.options, q.useFinalPosition),
                 throwsA(isA<TypeError>()),
               );
               expect(q.error, 'TypeError');
@@ -580,9 +575,7 @@ void main() {
       const IndexInteractionMode().itemsAt(
         chart,
         _Event(180, 150, chart),
-        const {
-          'intersect': true,
-        },
+        const {'intersect': true},
       );
 
       expect(trace, [

@@ -154,10 +154,7 @@ void main() {
     test('takes part in ==', () {
       const a = LineDataset(shadow: _shadow);
       expect(a, const LineDataset(shadow: _shadow));
-      expect(
-        a,
-        isNot(LineDataset(shadow: _shadow.copyWith(blur: 2))),
-      );
+      expect(a, isNot(LineDataset(shadow: _shadow.copyWith(blur: 2))));
       expect(a, isNot(const LineDataset()));
       expect(a.copyWith(label: 'x').shadow, _shadow);
     });

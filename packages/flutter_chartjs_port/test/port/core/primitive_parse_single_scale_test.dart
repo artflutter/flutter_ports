@@ -178,10 +178,7 @@ void main() {
       expect(
         tryParseNumericSingleScale(
           scale,
-          <Object?>[
-            1.0,
-            <String, Object?>{},
-          ],
+          <Object?>[1.0, <String, Object?>{}],
           0,
           2,
         ),

@@ -451,9 +451,7 @@ void main() {
       expect(run(['--fix']), 2);
       expect(
         out.toString(),
-        startsWith(
-          'check:typed-reads: unexpected argument --fix\n',
-        ),
+        startsWith('check:typed-reads: unexpected argument --fix\n'),
       );
       expect(run([package, package]), 2);
       expect(run([tree.path('packages')]), 2);

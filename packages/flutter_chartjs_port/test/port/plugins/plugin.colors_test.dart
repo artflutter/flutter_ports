@@ -195,10 +195,7 @@ void main() {
   );
   testReferenceWidths(pluginColorsReferenceWidths);
 
-  testPluginChartCases(
-    _reference,
-    observers: {'colors': _observeColors},
-  );
+  testPluginChartCases(_reference, observers: {'colors': _observeColors});
 
   group('theming.md §8 test 3: the light preset', () {
     testPluginChartCases(
@@ -359,9 +356,7 @@ void main() {
       ((config['options']! as AnyObject)['plugins']!
           as AnyObject)['colors'] = <String, Object?>{
         'enabled': true,
-        themeBorderColorsKey: <Object?>[
-          const native_ui.Color(0xff000005),
-        ],
+        themeBorderColorsKey: <Object?>[const native_ui.Color(0xff000005)],
       };
       final chart = acquireChart(config);
       expect(

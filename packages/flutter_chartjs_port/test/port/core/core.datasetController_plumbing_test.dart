@@ -352,10 +352,7 @@ void main() {
         final data = JsObjectLike(chart.data);
         final datasets = data['datasets'];
         data.remove('datasets');
-        expect(
-          readOption(chart.data, OptionKey.datasets),
-          same(undefined),
-        );
+        expect(readOption(chart.data, OptionKey.datasets), same(undefined));
         expect(
           () => _controllerOf(chart).getDataset(),
           throwsA(isA<TypeError>()),
@@ -643,9 +640,7 @@ void main() {
         <Object?>[1.0, null, -0.0, 4.0],
         <double>[1, 2, 3, 4],
       ]) {
-        final chart = _chart(
-          lineConfig(<Object?>[...data], xType: 'category'),
-        );
+        final chart = _chart(lineConfig(<Object?>[...data], xType: 'category'));
         final plain = parseInto(chart, <Object?>[], 4);
         expect(chart.getDatasetMeta(0).parsed.length, 4);
         expect(
@@ -980,4 +975,4 @@ extension type JsObjectLike(Object object) {
 }
 
 /// An axis of a class that the core does not know.
-final class _OtherAxis implements ScaleAxis {}
+final class _OtherAxis implements ScaleAxis;

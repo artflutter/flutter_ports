@@ -22,104 +22,74 @@ final class _Item {
 
 /// The JS runtime cases.
 List<BenchCase> runtimeCases() => [
-  BenchCase(
-    'js',
-    'jsCall/arity_match',
-    () {
-      Object? f(Object? a) => a;
-      final args = <Object?>[1.0];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          if (jsCall(f, args) != null) acc++;
-        }
-        return acc;
-      };
-    },
-    per: 'jsCall of a 1-parameter closure with 1 argument',
-  ),
-  BenchCase(
-    'js',
-    'jsCall/arity_match_2',
-    () {
-      Object? f(Object? a, Object? b) => b;
-      final args = <Object?>[1.0, 2.0];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          if (jsCall(f, args) != null) acc++;
-        }
-        return acc;
-      };
-    },
-    per: 'jsCall of a 2-parameter closure with 2 arguments',
-  ),
-  BenchCase(
-    'js',
-    'jsCall/extra_args',
-    () {
-      Object? f(Object? a) => a;
-      final args = <Object?>[1.0, 2.0, 3.0];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          if (jsCall(f, args) != null) acc++;
-        }
-        return acc;
-      };
-    },
-    per: 'jsCall of a 1-parameter closure with 3 arguments',
-  ),
-  BenchCase(
-    'js',
-    'jsCall/missing_args',
-    () {
-      Object? f(Object? a, Object? b, Object? c) => c;
-      final args = <Object?>[1.0];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          if (identical(jsCall(f, args), undefined)) acc++;
-        }
-        return acc;
-      };
-    },
-    per: 'jsCall of a 3-parameter closure with 1 argument',
-  ),
-  BenchCase(
-    'js',
-    'jsCall/js_function_this',
-    () {
-      final f = JsFunction((Object? self, Object? a) => self);
-      final args = <Object?>[1.0];
-      final self = <String, Object?>{};
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          if (jsCall(f, args, thisArg: self) != null) acc++;
-        }
-        return acc;
-      };
-    },
-    per: 'jsCall of a JsFunction with this and 1 argument',
-  ),
-  BenchCase(
-    'js',
-    'direct_call/reference',
-    () {
-      Object? f(Object? a) => a;
-      // A list read keeps the compilers from inlining the closure.
-      final g = <Object? Function(Object?)>[f][0];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          if (g(1.0) != null) acc++;
-        }
-        return acc;
-      };
-    },
-    per: 'direct closure call (reference, not a port path)',
-  ),
+  BenchCase('js', 'jsCall/arity_match', () {
+    Object? f(Object? a) => a;
+    final args = <Object?>[1.0];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        if (jsCall(f, args) != null) acc++;
+      }
+      return acc;
+    };
+  }, per: 'jsCall of a 1-parameter closure with 1 argument'),
+  BenchCase('js', 'jsCall/arity_match_2', () {
+    Object? f(Object? a, Object? b) => b;
+    final args = <Object?>[1.0, 2.0];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        if (jsCall(f, args) != null) acc++;
+      }
+      return acc;
+    };
+  }, per: 'jsCall of a 2-parameter closure with 2 arguments'),
+  BenchCase('js', 'jsCall/extra_args', () {
+    Object? f(Object? a) => a;
+    final args = <Object?>[1.0, 2.0, 3.0];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        if (jsCall(f, args) != null) acc++;
+      }
+      return acc;
+    };
+  }, per: 'jsCall of a 1-parameter closure with 3 arguments'),
+  BenchCase('js', 'jsCall/missing_args', () {
+    Object? f(Object? a, Object? b, Object? c) => c;
+    final args = <Object?>[1.0];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        if (identical(jsCall(f, args), undefined)) acc++;
+      }
+      return acc;
+    };
+  }, per: 'jsCall of a 3-parameter closure with 1 argument'),
+  BenchCase('js', 'jsCall/js_function_this', () {
+    final f = JsFunction((Object? self, Object? a) => self);
+    final args = <Object?>[1.0];
+    final self = <String, Object?>{};
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        if (jsCall(f, args, thisArg: self) != null) acc++;
+      }
+      return acc;
+    };
+  }, per: 'jsCall of a JsFunction with this and 1 argument'),
+  BenchCase('js', 'direct_call/reference', () {
+    Object? f(Object? a) => a;
+    // A list read keeps the compilers from inlining the closure.
+    final g = <Object? Function(Object?)>[f][0];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        if (g(1.0) != null) acc++;
+      }
+      return acc;
+    };
+  }, per: 'direct closure call (reference, not a port path)'),
   BenchCase('js', 'jsGet/map_hit', () {
     final map = <String, Object?>{
       for (var i = 0; i < 20; i++) 'key$i': i.toDouble(),
@@ -231,20 +201,15 @@ List<BenchCase> runtimeCases() => [
       return acc;
     };
   }, per: 'jsNumberToString of one of 6 doubles'),
-  BenchCase(
-    'js',
-    'jsNumberToString/integral',
-    () {
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          acc += jsNumberToString((i & 1023).toDouble()).length;
-        }
-        return acc;
-      };
-    },
-    per: 'jsNumberToString of an integral double (index keys)',
-  ),
+  BenchCase('js', 'jsNumberToString/integral', () {
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        acc += jsNumberToString((i & 1023).toDouble()).length;
+      }
+      return acc;
+    };
+  }, per: 'jsNumberToString of an integral double (index keys)'),
   BenchCase('js', 'jsObjectKeys/map30', () {
     final map = <String, Object?>{
       for (var i = 0; i < 30; i++) 'option$i': i.toDouble(),

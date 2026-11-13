@@ -15,18 +15,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': -20,
-              'y': -30,
-            },
-            <String, Object?>{
-              'x': 0,
-              'y': 0,
-            },
-            <String, Object?>{
-              'x': 20,
-              'y': 15,
-            },
+            <String, Object?>{'x': -20, 'y': -30},
+            <String, Object?>{'x': 0, 'y': 0},
+            <String, Object?>{'x': 20, 'y': 15},
           ],
         },
       ],
@@ -40,16 +31,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           'axis': const XAxis(),
           'min': -100,
           'max': 100,
-          'border': <String, Object?>{
-            'color': 'red',
-          },
-          'grid': <String, Object?>{
-            'color': 'red',
-            'drawOnChartArea': false,
-          },
-          'ticks': <String, Object?>{
-            'display': true,
-          },
+          'border': <String, Object?>{'color': 'red'},
+          'grid': <String, Object?>{'color': 'red', 'drawOnChartArea': false},
+          'ticks': <String, Object?>{'display': true},
         },
         'y': <String, Object?>{
           'position': 'center',
@@ -58,25 +42,15 @@ Map<String, Object?> fixture() => <String, Object?>{
           'axis': const YAxis(),
           'min': -100,
           'max': 100,
-          'border': <String, Object?>{
-            'color': 'red',
-          },
-          'grid': <String, Object?>{
-            'color': 'red',
-            'drawOnChartArea': false,
-          },
-          'ticks': <String, Object?>{
-            'display': true,
-          },
+          'border': <String, Object?>{'color': 'red'},
+          'grid': <String, Object?>{'color': 'red', 'drawOnChartArea': false},
+          'ticks': <String, Object?>{'display': true},
         },
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
     'spriteText': true,
   },
 };

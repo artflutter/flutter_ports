@@ -240,11 +240,7 @@ Object? _segment(Object? options) => options is LineOptions
 /// converted here in the same way, with [canvasKeyword], [canvasLineDash],
 /// [canvasNumber] and [canvasStyle] of `lib/src/js/js_webidl.dart`, as in
 /// the other element classes.
-void _setStyle(
-  CanvasRenderingContext2D ctx,
-  Object? options, [
-  Object? style,
-]) {
+void _setStyle(CanvasRenderingContext2D ctx, Object? options, [Object? style]) {
   if (style == null && options is LineOptions) {
     // `style = options`: `valueOrDefault(options.x, options.x)` is the value
     // of `options.x`. The typed fields give the raw values; a double field
@@ -1336,47 +1332,39 @@ class LineElement extends Element
   /// `TypeError`: the method is not a function. Here the call throws a
   /// [NoSuchMethodError].
   @override
-  bool inRange(
-    double? mouseX,
-    double? mouseY, [
-    bool? useFinalPosition,
-  ]) => throw NoSuchMethodError.withInvocation(
-    this,
-    Invocation.method(#inRange, [mouseX, mouseY, useFinalPosition]),
-  );
+  bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) =>
+      throw NoSuchMethodError.withInvocation(
+        this,
+        Invocation.method(#inRange, [mouseX, mouseY, useFinalPosition]),
+      );
 
   /// index.d.ts:1849 `inXRange`. element.line.js has no `inXRange`: the
   /// call throws a [NoSuchMethodError], as for [inRange].
   @override
-  bool inXRange(
-    double? mouseX, [
-    bool? useFinalPosition,
-  ]) => throw NoSuchMethodError.withInvocation(
-    this,
-    Invocation.method(#inXRange, [mouseX, useFinalPosition]),
-  );
+  bool inXRange(double? mouseX, [bool? useFinalPosition]) =>
+      throw NoSuchMethodError.withInvocation(
+        this,
+        Invocation.method(#inXRange, [mouseX, useFinalPosition]),
+      );
 
   /// index.d.ts:1850 `inYRange`. element.line.js has no `inYRange`: the
   /// call throws a [NoSuchMethodError], as for [inRange].
   @override
-  bool inYRange(
-    double? mouseY, [
-    bool? useFinalPosition,
-  ]) => throw NoSuchMethodError.withInvocation(
-    this,
-    Invocation.method(#inYRange, [mouseY, useFinalPosition]),
-  );
+  bool inYRange(double? mouseY, [bool? useFinalPosition]) =>
+      throw NoSuchMethodError.withInvocation(
+        this,
+        Invocation.method(#inYRange, [mouseY, useFinalPosition]),
+      );
 
   /// index.d.ts:1851 `getCenterPoint`. element.line.js has no
   /// `getCenterPoint`: the call throws a [NoSuchMethodError], as for
   /// [inRange].
   @override
-  ElementPoint getCenterPoint([
-    bool? useFinalPosition,
-  ]) => throw NoSuchMethodError.withInvocation(
-    this,
-    Invocation.method(#getCenterPoint, [useFinalPosition]),
-  );
+  ElementPoint getCenterPoint([bool? useFinalPosition]) =>
+      throw NoSuchMethodError.withInvocation(
+        this,
+        Invocation.method(#getCenterPoint, [useFinalPosition]),
+      );
 
   /// core.datasetController.js:767-768 `element.$context`, the data context
   /// of the element: [Element.$context] narrowed to a [ScriptableContext]

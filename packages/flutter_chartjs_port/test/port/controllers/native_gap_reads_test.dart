@@ -199,10 +199,7 @@ class _UserPoint extends PointElement {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  registerDataUpdateTypes(
-    [<DataPoint>[].runtimeType],
-    [DataPoint],
-  );
+  registerDataUpdateTypes([<DataPoint>[].runtimeType], [DataPoint]);
 
   const stopsOf1_5 = [false, false, true, false, false, true, false];
   const noStops = [false, false, false, false, false, false, false];
@@ -334,24 +331,21 @@ void main() {
       test('a user scale that writes the previous item keeps the read', () {
         Chart.register([_WritingScale.value]);
         addTearDown(() => Chart.unregister([_WritingScale.value]));
-        final twins = _twins(
-          () {
-            final cfg = _config(
-              type,
-              form: 'map',
-              spanGaps: 50,
-              x: const {'type': 'gap-writing-scale', 'min': 0.0, 'max': 10.0},
-            );
-            _WritingScale.data =
-                ((cfg['data']! as Map<String, Object?>)['datasets']!
-                            as List<Object?>)
-                        .cast<Map<String, Object?>>()
-                        .first['data']!
-                    as List<Object?>;
-            return cfg;
-          },
-          before: (chart) => _WritingScale.armed = true,
-        );
+        final twins = _twins(() {
+          final cfg = _config(
+            type,
+            form: 'map',
+            spanGaps: 50,
+            x: const {'type': 'gap-writing-scale', 'min': 0.0, 'max': 10.0},
+          );
+          _WritingScale.data =
+              ((cfg['data']! as Map<String, Object?>)['datasets']!
+                          as List<Object?>)
+                      .cast<Map<String, Object?>>()
+                      .first['data']!
+                  as List<Object?>;
+          return cfg;
+        }, before: (chart) => _WritingScale.armed = true);
         expect(twins.takes, 0);
         // The read gives the x 100 that the scale wrote in the pass 2 before
         // its gap test: |4 - 100| > 50. The x of the pass 1 gives |4 - 1|.

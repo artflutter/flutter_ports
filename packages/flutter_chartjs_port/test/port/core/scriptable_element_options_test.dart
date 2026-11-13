@@ -16,7 +16,7 @@ import 'package:test/test.dart';
 const red = ChartPaint.solid(Color(0xffff0000));
 const blue = ChartPaint.solid(Color(0xff0000ff));
 
-class _OrdinaryConfig extends Config {}
+class _OrdinaryConfig extends Config;
 
 class _Fixture {
   _Fixture({bool ordinary = false})

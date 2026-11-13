@@ -22,26 +22,23 @@ void main() {
       ],
     };
 
-    testWidgets(
-      'should disable text selection and browser touch actions while '
-      'gestures are enabled',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'pan': <String, Object?>{'enabled': true},
-              },
+    testWidgets('should disable text selection and browser touch actions while '
+        'gestures are enabled', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'scatter',
+        'data': data,
+        'options': <String, Object?>{
+          'plugins': <String, Object?>{
+            'zoom': <String, Object?>{
+              'pan': <String, Object?>{'enabled': true},
             },
           },
-        });
+        },
+      });
 
-        expect(chart.canvas!.style.touchAction, toBe('none'));
-        expect(chart.canvas!.style.userSelect, toBe('none'));
-      },
-    );
+      expect(chart.canvas!.style.touchAction, toBe('none'));
+      expect(chart.canvas!.style.userSelect, toBe('none'));
+    });
 
     testWidgets(
       'should leave canvas styles untouched when neither pan nor pinch is '

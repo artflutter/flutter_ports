@@ -522,19 +522,9 @@ void main() {
         20,
       ]);
       // A width of 0 scales the radii of its sides to 0.
-      expect(_geometry(0, 0, 0, 40, [5, 5, 5, 5])!.sublist(4, 8), [
-        0,
-        0,
-        0,
-        0,
-      ]);
+      expect(_geometry(0, 0, 0, 40, [5, 5, 5, 5])!.sublist(4, 8), [0, 0, 0, 0]);
       // A side whose radii add up to 0 sets no ratio.
-      expect(_geometry(0, 0, 0, 40, [0, 0, 0, 0])!.sublist(4, 8), [
-        0,
-        0,
-        0,
-        0,
-      ]);
+      expect(_geometry(0, 0, 0, 40, [0, 0, 0, 0])!.sublist(4, 8), [0, 0, 0, 0]);
       expect(_geometry(0, 0, 10, 40, [0, 0, 8, 0])!.sublist(4, 8), [
         0,
         0,

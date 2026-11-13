@@ -1017,9 +1017,8 @@ Map<String, Object?> _benchConfig(
       'x': _hidden('linear', min: 0, max: 1),
       'y': _hidden('linear', min: 0, max: 1),
     },
-    'polarArea' || 'radar' => <String, Object?>{
-      'r': _hidden('radialLinear', min: 0, max: 1),
-    },
+    'polarArea' ||
+    'radar' => <String, Object?>{'r': _hidden('radialLinear', min: 0, max: 1)},
     _ => null,
   };
   return <String, Object?>{
@@ -1090,19 +1089,9 @@ final List<_Case> _benchCases = [
     'chart.line.primitive',
     () => _benchConfig('line', primitive: true),
   ),
-  for (final type in [
-    'bar',
-    'bubble',
-    'doughnut',
-    'pie',
-    'polarArea',
-    'radar',
-  ])
+  for (final type in ['bar', 'bubble', 'doughnut', 'pie', 'polarArea', 'radar'])
     _configCase('chart.$type', () => _benchConfig(type)),
-  _configCase(
-    'motion.line',
-    () => _benchConfig('line', animation: _motion()),
-  ),
+  _configCase('motion.line', () => _benchConfig('line', animation: _motion())),
   _configCase('motion.bar', () => _benchConfig('bar', animation: _motion())),
   _configCase(
     'motion.line.delay',
@@ -1310,38 +1299,32 @@ final List<_Case> _focusedCases = [
   ),
   _configCase(
     'object option: bar borderRadius',
-    () => _line(
-      [
-        <String, Object?>{
-          'data': _values(6),
-          'borderRadius': <String, Object?>{
-            'topLeft': 4.0,
-            'topRight': _index,
-            'bottomLeft': 0.0,
-            'bottomRight': 2.0,
-          },
-          'borderSkipped': false,
+    () => _line([
+      <String, Object?>{
+        'data': _values(6),
+        'borderRadius': <String, Object?>{
+          'topLeft': 4.0,
+          'topRight': _index,
+          'bottomLeft': 0.0,
+          'bottomRight': 2.0,
         },
-      ],
-      type: 'bar',
-    ),
+        'borderSkipped': false,
+      },
+    ], type: 'bar'),
   ),
   _configCase(
     'object option: arc borderRadius',
-    () => _line(
-      [
-        <String, Object?>{
-          'data': _values(6, 1),
-          'borderRadius': <String, Object?>{
-            'outerStart': 2.0,
-            'outerEnd': (Object? ctx) => 1 + _index(ctx),
-            'innerStart': 1.0,
-            'innerEnd': 0.0,
-          },
+    () => _line([
+      <String, Object?>{
+        'data': _values(6, 1),
+        'borderRadius': <String, Object?>{
+          'outerStart': 2.0,
+          'outerEnd': (Object? ctx) => 1 + _index(ctx),
+          'innerStart': 1.0,
+          'innerEnd': 0.0,
         },
-      ],
-      type: 'doughnut',
-    ),
+      },
+    ], type: 'doughnut'),
   ),
   _configCase(
     'fallbacks: interaction, tooltip, legend labels',
@@ -1498,19 +1481,16 @@ final List<_Case> _focusedCases = [
   _animationDefaultsCase(),
   _configCase(
     'bar: skipNull with two datasets',
-    () => _line(
-      [
-        <String, Object?>{
-          'data': <Object?>[1.0, null, 3.0, null, 5.0, 2.0],
-          'skipNull': true,
-        },
-        <String, Object?>{
-          'data': <Object?>[null, 2.0, 1.0, 4.0, null, 3.0],
-          'skipNull': true,
-        },
-      ],
-      type: 'bar',
-    ),
+    () => _line([
+      <String, Object?>{
+        'data': <Object?>[1.0, null, 3.0, null, 5.0, 2.0],
+        'skipNull': true,
+      },
+      <String, Object?>{
+        'data': <Object?>[null, 2.0, 1.0, 4.0, null, 3.0],
+        'skipNull': true,
+      },
+    ], type: 'bar'),
   ),
   _configCase(
     'bar: stacked with stack groups',
@@ -1531,17 +1511,14 @@ final List<_Case> _focusedCases = [
   ),
   _configCase(
     'mixed: bar and line',
-    () => _line(
-      [
-        <String, Object?>{'data': _values(6), 'type': 'bar'},
-        <String, Object?>{
-          'data': _values(6, 3),
-          'type': 'line',
-          'pointRadius': (Object? ctx) => 2 + _index(ctx),
-        },
-      ],
-      type: 'bar',
-    ),
+    () => _line([
+      <String, Object?>{'data': _values(6), 'type': 'bar'},
+      <String, Object?>{
+        'data': _values(6, 3),
+        'type': 'line',
+        'pointRadius': (Object? ctx) => 2 + _index(ctx),
+      },
+    ], type: 'bar'),
   ),
   _configCase(
     'scatter and bubble with scriptable radius',
@@ -1569,31 +1546,25 @@ final List<_Case> _focusedCases = [
   ),
   _configCase(
     'polar area and radar with scriptable colors',
-    () => _line(
-      [
-        <String, Object?>{
-          'data': _values(6, 1),
-          'backgroundColor': (Object? ctx) => ChartPaint.solid(
-            _index(ctx).toInt().isEven
-                ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-                : const native_ui.Color.fromRGBO(0, 0, 255, 1),
-          ),
-        },
-      ],
-      type: 'polarArea',
-    ),
+    () => _line([
+      <String, Object?>{
+        'data': _values(6, 1),
+        'backgroundColor': (Object? ctx) => ChartPaint.solid(
+          _index(ctx).toInt().isEven
+              ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+              : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ),
+      },
+    ], type: 'polarArea'),
   ),
   _configCase(
     'radar with scriptable point options',
-    () => _line(
-      [
-        <String, Object?>{
-          'data': _values(6, 2),
-          'pointRadius': (Object? ctx) => 2 + _index(ctx),
-          'fill': true,
-        },
-      ],
-      type: 'radar',
-    ),
+    () => _line([
+      <String, Object?>{
+        'data': _values(6, 2),
+        'pointRadius': (Object? ctx) => 2 + _index(ctx),
+        'fill': true,
+      },
+    ], type: 'radar'),
   ),
 ];

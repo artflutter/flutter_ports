@@ -14,73 +14,23 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        '0',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-      ],
+      'labels': <Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8'],
       'datasets': <Object?>[
         <String, Object?>{
           'backgroundColor': 'rgba(0, 0, 192, 0.25)',
-          'data': <Object?>[
-            null,
-            null,
-            2,
-            4,
-            2,
-            1,
-            -1,
-            1,
-            2,
-          ],
+          'data': <Object?>[null, null, 2, 4, 2, 1, -1, 1, 2],
         },
         <String, Object?>{
           'backgroundColor': 'rgba(0, 192, 0, 0.25)',
-          'data': <Object?>[
-            4,
-            2,
-            null,
-            3,
-            2.5,
-            null,
-            -2,
-            1.5,
-            3,
-          ],
+          'data': <Object?>[4, 2, null, 3, 2.5, null, -2, 1.5, 3],
         },
         <String, Object?>{
           'backgroundColor': 'rgba(192, 0, 0, 0.25)',
-          'data': <Object?>[
-            3.5,
-            2,
-            1,
-            2.5,
-            -2,
-            3,
-            -1,
-            null,
-            null,
-          ],
+          'data': <Object?>[3.5, 2, 1, 2.5, -2, 3, -1, null, null],
         },
         <String, Object?>{
           'backgroundColor': 'rgba(128, 0, 128, 0.25)',
-          'data': <Object?>[
-            5,
-            6,
-            5,
-            -2,
-            -4,
-            -3,
-            4,
-            2,
-            4.5,
-          ],
+          'data': <Object?>[5, 6, 5, -2, -4, -3, 4, 2, 4.5],
         },
       ],
     },
@@ -88,17 +38,11 @@ Map<String, Object?> fixture() => <String, Object?>{
       'responsive': false,
       'spanGaps': true,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
       'elements': <String, Object?>{
-        'point': <String, Object?>{
-          'radius': 0,
-        },
+        'point': <String, Object?>{'radius': 0},
         'line': <String, Object?>{
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
@@ -116,9 +60,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

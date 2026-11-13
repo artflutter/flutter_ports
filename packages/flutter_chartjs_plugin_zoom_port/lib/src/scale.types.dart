@@ -71,10 +71,7 @@ ScaleRange zoomDelta(double? val, double? min, double range, double newRange) {
       : 0.0;
   final maxPercent = 1 - minPercent;
 
-  return (
-    min: newRange * minPercent,
-    max: newRange * maxPercent,
-  );
+  return (min: newRange * minPercent, max: newRange * maxPercent);
 }
 
 /// scale.types.ts:30 `getValueAtPoint(scale, point)`.
@@ -179,10 +176,7 @@ double _getLimit(
 ScaleRange _linearRange(Scale scale, double pixel0, double pixel1) {
   final v0 = scale.getValueForPixel(pixel0) ?? scale.min;
   final v1 = scale.getValueForPixel(pixel1) ?? scale.max;
-  return (
-    min: jsMin(v0, v1),
-    max: jsMax(v0, v1),
-  );
+  return (min: jsMin(v0, v1), max: jsMax(v0, v1));
 }
 
 /// The limits `{ min: 'original', max: 'original' }` of
@@ -268,13 +262,7 @@ bool updateRange(
     'min',
     double.negativeInfinity,
   );
-  final maxLimit = _getLimit(
-    state,
-    scale,
-    scaleLimits,
-    'max',
-    double.infinity,
-  );
+  final maxLimit = _getLimit(state, scale, scaleLimits, 'max', double.infinity);
 
   if (pan && (min < minLimit || max > maxLimit)) {
     // At limit: No change but return true to indicate no need to store the

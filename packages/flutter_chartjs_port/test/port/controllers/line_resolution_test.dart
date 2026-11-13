@@ -237,13 +237,12 @@ void main() {
                   config.datasetElementScopeKeys('line', 'point'),
                 );
                 final resolver =
-                    (config.createResolver(scopes, null, [
-                      'point',
-                      '',
-                    ]) as helpers.OptionResolver)..jsWrite(
-                      'backgroundColor',
-                      const ChartPaint.solid(blue),
-                    );
+                    (config.createResolver(scopes, null, ['point', ''])
+                          as helpers.OptionResolver)
+                      ..jsWrite(
+                        'backgroundColor',
+                        const ChartPaint.solid(blue),
+                      );
                 meta.controller!.resolveDataElementOptions(3, 'none');
                 resolver.jsWrite('backgroundColor', color);
                 config.resolveOwnedElementNamedOptions(

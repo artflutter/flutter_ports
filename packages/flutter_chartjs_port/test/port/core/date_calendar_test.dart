@@ -219,10 +219,7 @@ void main() {
       expect(startOfUnit(t, week, null, 1), _ms(DateTime.utc(2014, 12, 29)));
       expect(startOfUnit(t, week, null, 4), _ms(DateTime.utc(2015)));
       expect(startOfUnit(t, week, null, 6), _ms(DateTime.utc(2014, 12, 27)));
-      expect(
-        endOfUnit(t, week, null, 6),
-        _ms(DateTime.utc(2015, 1, 3)) - 1,
-      );
+      expect(endOfUnit(t, week, null, 6), _ms(DateTime.utc(2015, 1, 3)) - 1);
     });
   });
 

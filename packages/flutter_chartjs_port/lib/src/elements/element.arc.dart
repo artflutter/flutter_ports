@@ -410,12 +410,7 @@ _BorderRadius _parseBorderRadius(
 /// element.arc.ts:94 `rThetaToXY`.
 ///
 /// Convert (r, 𝜃) to (x, y)
-({double x, double y}) _rThetaToXY(
-  double r,
-  double theta,
-  double x,
-  double y,
-) {
+({double x, double y}) _rThetaToXY(double r, double theta, double x, double y) {
   return (x: x + r * math.cos(theta), y: y + r * math.sin(theta));
 }
 
@@ -689,22 +684,8 @@ void _pathArc(
     }
     final innerMidAdjustedAngle = (innerArcStart + innerArcEnd) / 2;
     ctx
-      ..arc(
-        x,
-        y,
-        innerRadius,
-        innerArcStart,
-        innerMidAdjustedAngle,
-        true,
-      )
-      ..arc(
-        x,
-        y,
-        innerRadius,
-        innerMidAdjustedAngle,
-        innerArcEnd,
-        true,
-      );
+      ..arc(x, y, innerRadius, innerArcStart, innerMidAdjustedAngle, true)
+      ..arc(x, y, innerRadius, innerMidAdjustedAngle, innerArcEnd, true);
 
     // The corner segment from point 6 to point 7
     if (innerStart > 0) {
@@ -961,9 +942,7 @@ class ArcElement extends Element
     ..selfJoin = false;
 
   /// element.arc.ts:393 `static defaultRoutes`.
-  static final AnyObject defaultRoutes = {
-    'backgroundColor': 'backgroundColor',
-  };
+  static final AnyObject defaultRoutes = {'backgroundColor': 'backgroundColor'};
 
   /// element.arc.ts:397 `static descriptors`, a typed scope of the kind
   /// `Descriptors` (Chart.js ADR 0054 §3). The `_indexable` function is a
@@ -1301,11 +1280,7 @@ class ArcElement extends Element
   /// where upstream compares two `undefined`. `_angleBetween` is false for
   /// NaN, so the result is the same.
   @override
-  bool inRange(
-    double? chartX,
-    double? chartY, [
-    bool? useFinalPosition,
-  ]) {
+  bool inRange(double? chartX, double? chartY, [bool? useFinalPosition]) {
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
     final (:angle, :distance) = getAngleFromPoint(
       ElementPoint(
@@ -1369,19 +1344,13 @@ class ArcElement extends Element
   /// (differences.md row `adapt-arc-axis-range`).
   // DIVERGES(chartjs): adapt-arc-axis-range, no upstream inXRange.
   @override
-  bool inXRange(
-    double? mouseX, [
-    bool? useFinalPosition,
-  ]) => false;
+  bool inXRange(double? mouseX, [bool? useFinalPosition]) => false;
 
   /// No upstream counterpart: `ArcElement` has no `inYRange`. It gives
   /// false, as [inXRange] does.
   // DIVERGES(chartjs): adapt-arc-axis-range, no upstream inYRange.
   @override
-  bool inYRange(
-    double? mouseY, [
-    bool? useFinalPosition,
-  ]) => false;
+  bool inYRange(double? mouseY, [bool? useFinalPosition]) => false;
 
   /// element.arc.ts:448 `getCenterPoint(useFinalPosition)`.
   ///
@@ -1395,9 +1364,7 @@ class ArcElement extends Element
   /// applies `ToNumber` to the result. The center is the tooltip position
   /// and the point of the `nearest` and `index` hit modes.
   @override
-  ElementPoint getCenterPoint([
-    bool? useFinalPosition,
-  ]) {
+  ElementPoint getCenterPoint([bool? useFinalPosition]) {
     // `getProps(['x', 'y', 'startAngle', 'endAngle', 'innerRadius',
     // 'outerRadius'], useFinalPosition)` in the typed form.
     final x = finalNumber(AnimatedProp.x, this.x, useFinalPosition);
@@ -1446,9 +1413,7 @@ class ArcElement extends Element
   /// element.arc.ts:466 `tooltipPosition(useFinalPosition)`: the
   /// [getCenterPoint].
   @override
-  ElementPoint tooltipPosition([
-    bool? useFinalPosition,
-  ]) {
+  ElementPoint tooltipPosition([bool? useFinalPosition]) {
     return getCenterPoint(useFinalPosition);
   }
 

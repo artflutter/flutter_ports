@@ -11,46 +11,23 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-      ],
+      'labels': <Object?>[0, 1, 2, 3, 4, 5],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            5,
-            10,
-            null,
-            -10,
-            -5,
-          ],
+          'data': <Object?>[0, 5, 10, null, -10, -5],
           'pointBorderColor': '#ff0000',
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': const StarPointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            4,
-            -5,
-            -10,
-            null,
-            10,
-            5,
-          ],
+          'data': <Object?>[4, -5, -10, null, 10, 5],
         },
       ],
     },
     'options': <String, Object?>{
       'elements': <String, Object?>{
-        'line': <String, Object?>{
-          'fill': false,
-        },
+        'line': <String, Object?>{'fill': false},
         'point': <String, Object?>{
           'backgroundColor': '#00ff00',
           // DIVERGES(chartjs): adapt-point-style-objects, the style
@@ -60,19 +37,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

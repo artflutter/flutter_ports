@@ -209,10 +209,7 @@ void main() {
       ) async {
         final chart = acquireChart(
           <String, Object?>{
-            'options': <String, Object?>{
-              'responsive': false,
-              'aspectRatio': 3,
-            },
+            'options': <String, Object?>{'responsive': false, 'aspectRatio': 3},
           },
           <String, Object?>{
             'canvas': <String, Object?>{'style': 'width: 400px; height: 410px'},
@@ -246,50 +243,44 @@ void main() {
         },
       );
 
-      testWidgets(
-        'should use canvas attributes for render and display sizes',
-        (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': false},
+      testWidgets('should use canvas attributes for render and display sizes', (
+        tester,
+      ) async {
+        final chart = acquireChart(
+          <String, Object?>{
+            'options': <String, Object?>{'responsive': false},
+          },
+          <String, Object?>{
+            'canvas': <String, Object?>{
+              'style': '',
+              'width': 305,
+              'height': 245,
             },
-            <String, Object?>{
-              'canvas': <String, Object?>{
-                'style': '',
-                'width': 305,
-                'height': 245,
-              },
-            },
-          );
+          },
+        );
 
-          expect(
-            chart,
-            toBeChartOfSize({'dw': 305, 'dh': 245, 'rw': 305, 'rh': 245}),
-          );
-        },
-      );
+        expect(
+          chart,
+          toBeChartOfSize({'dw': 305, 'dh': 245, 'rw': 305, 'rh': 245}),
+        );
+      });
 
-      testWidgets(
-        'should use canvas style for render and display sizes (if no '
-        'attributes)',
-        (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': false},
-            },
-            <String, Object?>{
-              'canvas': <String, Object?>{
-                'style': 'width: 345px; height: 125px',
-              },
-            },
-          );
+      testWidgets('should use canvas style for render and display sizes (if no '
+          'attributes)', (tester) async {
+        final chart = acquireChart(
+          <String, Object?>{
+            'options': <String, Object?>{'responsive': false},
+          },
+          <String, Object?>{
+            'canvas': <String, Object?>{'style': 'width: 345px; height: 125px'},
+          },
+        );
 
-          expect(
-            chart,
-            toBeChartOfSize({'dw': 345, 'dh': 125, 'rw': 345, 'rh': 125}),
-          );
-        },
-      );
+        expect(
+          chart,
+          toBeChartOfSize({'dw': 345, 'dh': 125, 'rw': 345, 'rh': 125}),
+        );
+      });
 
       testWidgets(
         'should use attributes for the render size and style for the display '

@@ -305,7 +305,7 @@ Future<void> _run(BenchmarkController c) async {
   if (_option('MATRIX_IGNORE_COVER') == '1') _ignoreCover(c);
   _measureFrames();
   final hold = _option('MATRIX_HOLD');
-  if (hold != null) return _hold(c, hold);
+  if (hold != null) return await _hold(c, hold);
   final engines = _list('MATRIX_ENGINES', 'chartjs');
   final types = _list(
     'MATRIX_TYPES',

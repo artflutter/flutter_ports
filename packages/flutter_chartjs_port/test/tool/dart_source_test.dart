@@ -24,11 +24,7 @@ void main() {
       ]);
       expect(
         [for (final c in source.comments) (c.line, c.text)],
-        [
-          (1, '// one'),
-          (2, '/* two /* nested */ still */'),
-          (3, '/// three'),
-        ],
+        [(1, '// one'), (2, '/* two /* nested */ still */'), (3, '/// three')],
       );
       expect(source.comments.map((c) => c.isLineComment), [true, false, true]);
     });
@@ -204,9 +200,8 @@ void main() {
 
     test('reads the project of the port-only marker', () {
       expect(
-        Header.parse([
-          '// Original code, not ported from Chart.js: a reason.',
-        ]).portOnlyProject,
+        Header.parse(['// Original code, not ported from Chart.js: a reason.'])
+            .portOnlyProject,
         'Chart.js',
       );
       final zoom = Header.parse([

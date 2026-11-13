@@ -33,9 +33,7 @@ final Map<String, Object?> defaults = <String, Object?>{
       'drawTime': DrawTime.beforeDatasetsDraw,
       'modifierKey': null,
     },
-    'pinch': <String, Object?>{
-      'enabled': false,
-    },
+    'pinch': <String, Object?>{'enabled': false},
     'mode': Mode.xy,
   },
 };

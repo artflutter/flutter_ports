@@ -140,9 +140,7 @@ class RadarController extends DatasetController {
 
     return (
       label: label,
-      value: jsToString(
-        vScale.getLabelForValue(parsedValueOf(parsed, axis)),
-      ),
+      value: jsToString(vScale.getLabelForValue(parsedValueOf(parsed, axis))),
     );
   }
 

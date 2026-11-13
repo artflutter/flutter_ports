@@ -75,14 +75,12 @@ final AnyObject controllers = Map<String, Object?>.unmodifiable(
 /// The keys are in code unit order, as in the bundle. `elements/index.js`
 /// lists `ArcElement`, `LineElement`, `PointElement` and `BarElement`
 /// (:1-4). That source order would register `line` before `bar`.
-final AnyObject elements = Map<String, Object?>.unmodifiable(
-  <String, Object?>{
-    'ArcElement': ArcElement.jsClass,
-    'BarElement': BarElement.jsClass,
-    'LineElement': LineElement.jsClass,
-    'PointElement': PointElement.jsClass,
-  },
-);
+final AnyObject elements = Map<String, Object?>.unmodifiable(<String, Object?>{
+  'ArcElement': ArcElement.jsClass,
+  'BarElement': BarElement.jsClass,
+  'LineElement': LineElement.jsClass,
+  'PointElement': PointElement.jsClass,
+});
 
 /// index.ts:10 `import * as plugins from './plugins/index.js'`.
 ///
@@ -90,33 +88,29 @@ final AnyObject elements = Map<String, Object?>.unmodifiable(
 /// (Chart.js ADR 0038, section 2). That order is also the source order of
 /// `plugins/index.js` (:1-7). Each value is the plugin object of its module
 /// (Chart.js ADR 0038, section 1).
-final AnyObject plugins = Map<String, Object?>.unmodifiable(
-  <String, Object?>{
-    'Colors': colors,
-    'Decimation': decimation,
-    'Filler': filler,
-    'Legend': legend,
-    'SubTitle': subTitle,
-    'Title': title,
-    'Tooltip': tooltip,
-  },
-);
+final AnyObject plugins = Map<String, Object?>.unmodifiable(<String, Object?>{
+  'Colors': colors,
+  'Decimation': decimation,
+  'Filler': filler,
+  'Legend': legend,
+  'SubTitle': subTitle,
+  'Title': title,
+  'Tooltip': tooltip,
+});
 
 /// index.ts:11 `import * as scales from './scales/index.js'`.
 ///
 /// The keys are in code unit order, as in the bundle. That order is also the
 /// source order of `scales/index.js` (:1-6). `LinearScaleBase` is not an
 /// export of `scales/index.js`. Thus it is not a key.
-final AnyObject scales = Map<String, Object?>.unmodifiable(
-  <String, Object?>{
-    'CategoryScale': CategoryScale.jsClass,
-    'LinearScale': LinearScale.jsClass,
-    'LogarithmicScale': LogarithmicScale.jsClass,
-    'RadialLinearScale': RadialLinearScale.jsClass,
-    'TimeScale': TimeScale.jsClass,
-    'TimeSeriesScale': TimeSeriesScale.jsClass,
-  },
-);
+final AnyObject scales = Map<String, Object?>.unmodifiable(<String, Object?>{
+  'CategoryScale': CategoryScale.jsClass,
+  'LinearScale': LinearScale.jsClass,
+  'LogarithmicScale': LogarithmicScale.jsClass,
+  'RadialLinearScale': RadialLinearScale.jsClass,
+  'TimeScale': TimeScale.jsClass,
+  'TimeSeriesScale': TimeSeriesScale.jsClass,
+});
 
 /// index.ts:20 `registerables`: the four namespaces.
 ///

@@ -37,18 +37,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// The test controller of the registered class values.
 final class _TypedController extends DatasetController {
-  _TypedController(
-    super.chart,
-    super.datasetIndex, [
-    super.newTarget,
-  ]) : drawElements = true;
+  _TypedController(super.chart, super.datasetIndex, [super.newTarget])
+    : drawElements = true;
 
   /// A controller whose [draw] draws nothing.
-  _TypedController.noDraw(
-    super.chart,
-    super.datasetIndex, [
-    super.newTarget,
-  ]) : drawElements = false;
+  _TypedController.noDraw(super.chart, super.datasetIndex, [super.newTarget])
+    : drawElements = false;
 
   /// Whether [draw] draws the elements. The bar, arc and custom elements of
   /// these tests have no geometry properties, so their draw would throw.
@@ -409,21 +403,16 @@ void main() {
       expect((copy! as JsObjectFace)[r'$shared'], isFalse);
       expect(jsObjectIsFrozen(copy), isFalse);
       expect((copy as JsObjectFace)['radius'], active['radius']);
-      expect(
-        copy['backgroundColor'],
-        active['backgroundColor'],
-      );
+      expect(copy['backgroundColor'], active['backgroundColor']);
     });
 
     testWidgets('bar, arc and custom element types', (tester) async {
-      final barOptions = _controllerOf(
-        _chart('typedBar'),
-      ).resolveDataElementOptions(0);
+      final barOptions = _controllerOf(_chart('typedBar'))
+          .resolveDataElementOptions(0);
       expect(barOptions, isA<BarOptions>());
       expect(jsObjectIsFrozen(barOptions), isTrue);
-      final arcOptions = _controllerOf(
-        _chart('typedArc'),
-      ).resolveDataElementOptions(0);
+      final arcOptions = _controllerOf(_chart('typedArc'))
+          .resolveDataElementOptions(0);
       expect(arcOptions, isA<ArcOptions>());
       expect(jsObjectIsFrozen(arcOptions), isTrue);
       final customOptions = _controllerOf(

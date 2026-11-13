@@ -346,11 +346,7 @@ void main() {
             acquireChart(
               _one(
                 <String, Object?>{'parsing': false},
-                <Object?>[
-                  1.0,
-                  2.0,
-                  3.0,
-                ],
+                <Object?>[1.0, 2.0, 3.0],
               ),
             ),
           ),

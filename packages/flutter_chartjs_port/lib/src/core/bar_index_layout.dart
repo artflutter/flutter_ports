@@ -16,8 +16,6 @@ abstract interface class NativeBarIndexReads {
 
 /// A chart that can prove the single-dataset axis/stack position at this
 /// instant. The caller rechecks after option resolution; nothing is frozen.
-// This capability must dispatch on the chart instance.
-// ignore: one_member_abstracts
 abstract interface class SingleBarIndexSource {
   /// True only when the axis count is one and axis/stack indices are zero.
   bool hasSingleBarIndexLayout(

@@ -31,24 +31,14 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
-      'plugins': <String, Object?>{
-        'tooltip': false,
-        'legend': false,
-      },
+      'plugins': <String, Object?>{'tooltip': false, 'legend': false},
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'width': 256,
-      'height': 256,
-    },
+    'canvas': <String, Object?>{'width': 256, 'height': 256},
     'run': (Chart chart) async {
       final point = chart.getDatasetMeta(0).data[0];
       await triggerMouseEvent(chart, 'click', <String, Object?>{

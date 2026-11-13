@@ -196,11 +196,7 @@ void expectSame(Object? actual, Object? expected, String path) {
     case final Map<String, Object?> map:
       expect(actual, isA<Map<String, Object?>>(), reason: path);
       final other = actual! as Map<String, Object?>;
-      expect(
-        other.keys.toSet(),
-        map.keys.toSet(),
-        reason: '$path: the keys',
-      );
+      expect(other.keys.toSet(), map.keys.toSet(), reason: '$path: the keys');
       for (final MapEntry(:key, :value) in map.entries) {
         expectSame(other[key], value, '$path.$key');
       }

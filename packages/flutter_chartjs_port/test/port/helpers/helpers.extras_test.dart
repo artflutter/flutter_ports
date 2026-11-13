@@ -192,9 +192,7 @@ const List<double> _xs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     ],
     dataset: dataset,
   );
-  final points = [
-    for (final x in xs) _Point(x * 10, x),
-  ];
+  final points = [for (final x in xs) _Point(x * 10, x)];
   return (meta, points);
 }
 
@@ -223,10 +221,7 @@ void main() {
       // ignore: prefer_int_literals
       expect(fontString(-0.0, 'normal', 'x'), 'normal 0px x');
       expect(fontString(double.nan, 'normal', 'x'), 'normal NaNpx x');
-      expect(
-        fontString(double.infinity, 'normal', 'x'),
-        'normal Infinitypx x',
-      );
+      expect(fontString(double.infinity, 'normal', 'x'), 'normal Infinitypx x');
       expect(
         fontString(123456789012, 'normal', 'x'),
         'normal 123456789012px x',
@@ -419,9 +414,7 @@ void main() {
           for (final x in _xs) {'x': x, 'y': x},
         ],
       );
-      final points = [
-        for (final x in _xs) _Point(x * 10, x),
-      ];
+      final points = [for (final x in _xs) _Point(x * 10, x)];
       expect(getStartAndCountOfVisiblePoints(meta, points, true), (
         start: 2,
         count: 6,
@@ -539,9 +532,7 @@ void main() {
   });
 
   group('throttled', () {
-    testWidgets('calls fn once per frame with the latest args', (
-      tester,
-    ) async {
+    testWidgets('calls fn once per frame with the latest args', (tester) async {
       final calls = <Object?>[];
       final throttledFn = throttled<Object?>(calls.add)
         ..call('a')
@@ -572,9 +563,7 @@ void main() {
   });
 
   group('js-semantics-debounce-args', () {
-    testWidgets('gives fn the latest argument after the delay', (
-      tester,
-    ) async {
+    testWidgets('gives fn the latest argument after the delay', (tester) async {
       final calls = <Object?>[];
       final debounced = debounce<Object?>(calls.add, 50);
       expect(debounced('a'), 50);
@@ -651,9 +640,7 @@ void main() {
       expect(calls, ['b']);
     });
 
-    testWidgets('cancel() does nothing without a pending call', (
-      tester,
-    ) async {
+    testWidgets('cancel() does nothing without a pending call', (tester) async {
       final calls = <Object?>[];
       final debounced = debounce<Object?>(calls.add, 0)..cancel();
       debounced('a');

@@ -517,10 +517,7 @@ void main() {
       });
       test('should fallback if a scriptable option returns undefined', () {
         Object? input() => undefined;
-        expect(
-          resolve([input], <String, Object?>{'v': 42.0}),
-          same(undefined),
-        );
+        expect(resolve([input], <String, Object?>{'v': 42.0}), same(undefined));
         expect(resolve([input, 'foo'], <String, Object?>{'v': 42.0}), 'foo');
         expect(
           resolve([input, undefined, 'foo'], <String, Object?>{'v': 42.0}),
@@ -543,14 +540,8 @@ void main() {
         }
 
         expect(resolve([input, 'foo'], <String, Object?>{'v': 42.0}, 0), 42);
-        expect(
-          resolve([input, 'foo'], <String, Object?>{'v': 42.0}, 1),
-          'foo',
-        );
-        expect(
-          resolve([input, 'foo'], <String, Object?>{'v': 42.0}, 5),
-          'bar',
-        );
+        expect(resolve([input, 'foo'], <String, Object?>{'v': 42.0}, 1), 'foo');
+        expect(resolve([input, 'foo'], <String, Object?>{'v': 42.0}, 5), 'bar');
         expect(
           resolve(
             [

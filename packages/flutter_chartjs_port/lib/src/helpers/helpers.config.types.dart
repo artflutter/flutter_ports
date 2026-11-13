@@ -74,8 +74,7 @@ abstract interface class ResolverCache {
 
 /// helpers.config.types.ts:24 `ResolverProxy`: `Merge<T[number]>` and
 /// [ResolverCache]. The face ([JsProxyObject]) gives the merged options.
-abstract interface class ResolverProxy
-    implements ResolverCache, JsProxyObject {}
+abstract interface class ResolverProxy implements ResolverCache, JsProxyObject;
 
 /// helpers.config.types.ts:29 `DescriptorDefaults`.
 ///
@@ -153,7 +152,7 @@ abstract interface class ContextCache {
 
 /// helpers.config.types.ts:57 `ContextProxy`: `Merge<T[number]>` and
 /// [ContextCache]. The face ([JsProxyObject]) gives the merged options.
-abstract interface class ContextProxy implements ContextCache, JsProxyObject {}
+abstract interface class ContextProxy implements ContextCache, JsProxyObject;
 
 /// The object literal of [DescriptorDefaults].
 final class _DescriptorDefaults implements DescriptorDefaults {

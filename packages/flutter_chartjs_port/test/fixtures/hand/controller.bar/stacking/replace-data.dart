@@ -36,14 +36,8 @@ Map<String, Object?> fixture() {
       'data': barChartData,
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'display': false,
-            'stacked': true,
-          },
-          'y': <String, Object?>{
-            'display': false,
-            'stacked': true,
-          },
+          'x': <String, Object?>{'display': false, 'stacked': true},
+          'y': <String, Object?>{'display': false, 'stacked': true},
         },
       },
     },

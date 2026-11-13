@@ -262,10 +262,7 @@ Map<String, double> _paddingSides(EdgeInsets p) => {
 List<String> _families(String text) => [
   for (final name in text.split(','))
     if (name.trim().isNotEmpty)
-      name.trim().replaceAllMapped(
-        RegExp(r'''^(['"])(.*)\1$'''),
-        (m) => m[2]!,
-      ),
+      name.trim().replaceAllMapped(RegExp(r'''^(['"])(.*)\1$'''), (m) => m[2]!),
 ];
 
 /// The mismatch of the field [field] of the font [font] with the value
@@ -655,14 +652,10 @@ void main() {
         } else if (id != null && scopes.containsKey(folder)) {
           final scope = scopes[folder]!;
           object = switch (kind) {
-            'static defaults' || 'field defaults' => _read(
-              defaults,
-              '$scope.$id',
-            ),
-            'static descriptors' || 'field descriptors' => _read(
-              descriptors,
-              '$scope.$id',
-            ),
+            'static defaults' ||
+            'field defaults' => _read(defaults, '$scope.$id'),
+            'static descriptors' ||
+            'field descriptors' => _read(descriptors, '$scope.$id'),
             'static overrides' => _read(overrides, id),
             _ => null,
           };

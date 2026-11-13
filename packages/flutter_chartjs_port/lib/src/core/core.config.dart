@@ -228,9 +228,7 @@ Object? _retrieveAxisFromDatasets(String id, Object config) {
   if (jsTruthy(jsGet(config, 'data')) &&
       jsTruthy(jsGet(jsGet(config, 'data'), 'datasets'))) {
     final boundDs = (jsGet(jsGet(config, 'data'), 'datasets')! as List)
-        .where(
-          (d) => id == jsGet(d, 'xAxisID') || id == jsGet(d, 'yAxisID'),
-        )
+        .where((d) => id == jsGet(d, 'xAxisID') || id == jsGet(d, 'yAxisID'))
         .toList();
     if (boundDs.isNotEmpty) {
       final axis = _getAxisFromDataset(id, const XAxis(), boundDs[0]);
@@ -1387,12 +1385,7 @@ class Config implements types.ChartConfiguration {
         : prefixes.join(',');
     final (:resolver, :subPrefixes) =
         preparedResolver ??
-        _getResolver(
-          _resolverCache,
-          scopes,
-          prefixes,
-          cacheKey: cacheKey,
-        );
+        _getResolver(_resolverCache, scopes, prefixes, cacheKey: cacheKey);
     // Only equal prefix sets reuse the same already-resolved descriptors for
     // the scriptable subresolver. Hover resolution keeps its ordinary reads.
     final samePrefixes =

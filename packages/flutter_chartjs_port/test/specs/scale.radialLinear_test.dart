@@ -164,38 +164,35 @@ void main() {
       );
     });
 
-    testWidgets(
-      'Should correctly determine the max & min data values',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, -5, 78, -100],
-              },
-              <String, Object?>{
-                'data': <Object?>[150],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-              'label6',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{},
-          },
-        });
+    testWidgets('Should correctly determine the max & min data values', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, -5, 78, -100],
+            },
+            <String, Object?>{
+              'data': <Object?>[150],
+            },
+          ],
+          'labels': <Object?>[
+            'label1',
+            'label2',
+            'label3',
+            'label4',
+            'label5',
+            'label6',
+          ],
+        },
+        'options': <String, Object?>{'scales': <String, Object?>{}},
+      });
 
-        expect(chart.scales['r']!.min, -100);
-        expect(chart.scales['r']!.max, 150);
-      },
-    );
+      expect(chart.scales['r']!.min, -100);
+      expect(chart.scales['r']!.max, 150);
+    });
 
     testWidgets(
       'Should correctly determine the max & min of string data values',
@@ -220,9 +217,7 @@ void main() {
               'label6',
             ],
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{},
-          },
+          'options': <String, Object?>{'scales': <String, Object?>{}},
         });
 
         expect(chart.scales['r']!.min, -100);
@@ -258,9 +253,7 @@ void main() {
               'label6',
             ],
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{},
-          },
+          'options': <String, Object?>{'scales': <String, Object?>{}},
         });
 
         expect(chart.scales['r']!.min, -100);
@@ -300,9 +293,7 @@ void main() {
               'label8',
             ],
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{},
-          },
+          'options': <String, Object?>{'scales': <String, Object?>{}},
         });
 
         expect(chart.scales['r']!.min, 50);
@@ -331,73 +322,69 @@ void main() {
       },
     );
 
-    testWidgets(
-      'Should use the suggestedMin and suggestedMax options',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 1, 1, 2, 1, 0],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-              'label6',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{'suggestedMin': -10, 'suggestedMax': 10},
+    testWidgets('Should use the suggestedMin and suggestedMax options', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[1, 1, 1, 2, 1, 0],
             },
+          ],
+          'labels': <Object?>[
+            'label1',
+            'label2',
+            'label3',
+            'label4',
+            'label5',
+            'label6',
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{'suggestedMin': -10, 'suggestedMax': 10},
           },
-        });
+        },
+      });
 
-        expect(chart.scales['r']!.min, -10);
-        expect(chart.scales['r']!.max, 10);
-      },
-    );
+      expect(chart.scales['r']!.min, -10);
+      expect(chart.scales['r']!.max, 10);
+    });
 
-    testWidgets(
-      'Should use the min and max options',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 1, 1, 2, 1, 0],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-              'label6',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{'min': -1010, 'max': 1010},
+    testWidgets('Should use the min and max options', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[1, 1, 1, 2, 1, 0],
             },
+          ],
+          'labels': <Object?>[
+            'label1',
+            'label2',
+            'label3',
+            'label4',
+            'label5',
+            'label6',
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{'min': -1010, 'max': 1010},
           },
-        });
+        },
+      });
 
-        expect(chart.scales['r']!.min, -1010);
-        expect(chart.scales['r']!.max, 1010);
-        expect(
-          _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>['-1,010', '-500', '0', '500', '1,010']),
-        );
-      },
-    );
+      expect(chart.scales['r']!.min, -1010);
+      expect(chart.scales['r']!.max, 1010);
+      expect(
+        _getLabels(chart.scales['r']!),
+        jasmineEquals(<Object?>['-1,010', '-500', '0', '500', '1,010']),
+      );
+    });
 
     testWidgets(
       'should forcibly include 0 in the range if the beginAtZero option is '
@@ -495,321 +482,262 @@ void main() {
       },
     );
 
-    testWidgets(
-      'Should correctly limit the maximum number of ticks',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'labels': <Object?>['label1', 'label2', 'label3'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0.5, 1.5, 2.5],
-              },
-            ],
+    testWidgets('Should correctly limit the maximum number of ticks', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'labels': <Object?>['label1', 'label2', 'label3'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[0.5, 1.5, 2.5],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'pointLabels': <String, Object?>{'display': false},
+            },
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{'display': false},
+        },
+      });
+
+      expect(
+        _getLabels(chart.scales['r']!),
+        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+      );
+
+      _optionsR(chart, 'ticks')['maxTicksLimit'] = 11;
+      chart.update();
+
+      expect(
+        _getLabels(chart.scales['r']!),
+        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+      );
+
+      _optionsR(chart, 'ticks')['stepSize'] = 0.01;
+      chart.update();
+
+      expect(
+        _getLabels(chart.scales['r']!),
+        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+      );
+
+      _optionsR(chart)['min'] = 0.3;
+      _optionsR(chart)['max'] = 2.8;
+      chart.update();
+
+      expect(
+        _getLabels(chart.scales['r']!),
+        jasmineEquals(<Object?>['0.3', '0.8', '1.3', '1.8', '2.3', '2.8']),
+      );
+    });
+
+    testWidgets('Should build labels using the user supplied callback', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78],
+            },
+          ],
+          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'ticks': <String, Object?>{
+                'callback': (Object? value, Object? index) => jsToString(index),
               },
             },
           },
-        });
+        },
+      });
 
-        expect(
-          _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
-        );
+      expect(
+        _getLabels(chart.scales['r']!),
+        jasmineEquals(<Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8']),
+      );
+      expect(
+        _r(chart).pointLabels,
+        jasmineEquals(<Object?>[
+          'label1',
+          'label2',
+          'label3',
+          'label4',
+          'label5',
+        ]),
+      );
+    });
 
-        _optionsR(chart, 'ticks')['maxTicksLimit'] = 11;
-        chart.update();
-
-        expect(
-          _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
-        );
-
-        _optionsR(chart, 'ticks')['stepSize'] = 0.01;
-        chart.update();
-
-        expect(
-          _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
-        );
-
-        _optionsR(chart)['min'] = 0.3;
-        _optionsR(chart)['max'] = 2.8;
-        chart.update();
-
-        expect(
-          _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>['0.3', '0.8', '1.3', '1.8', '2.3', '2.8']),
-        );
-      },
-    );
-
-    testWidgets(
-      'Should build labels using the user supplied callback',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'ticks': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
-                },
+    testWidgets('Should build point labels using the user supplied callback', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78],
+            },
+          ],
+          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'pointLabels': <String, Object?>{
+                'callback': (Object? value, Object? index) => jsToString(index),
               },
             },
           },
-        });
+        },
+      });
 
-        expect(
-          _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8']),
-        );
-        expect(
-          _r(chart).pointLabels,
-          jasmineEquals(<Object?>[
-            'label1',
-            'label2',
-            'label3',
-            'label4',
-            'label5',
-          ]),
-        );
-      },
-    );
+      expect(
+        _r(chart).pointLabels,
+        jasmineEquals(<Object?>['0', '1', '2', '3', '4']),
+      );
+    });
 
-    testWidgets(
-      'Should build point labels using the user supplied callback',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
+    testWidgets('Should build point labels from falsy values', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78, 20],
+            },
+          ],
+          'labels': <Object?>[0, '', undefined, null, double.nan, false],
+        },
+      });
+
+      expect(
+        _r(chart).pointLabels,
+        jasmineEquals(<Object?>[0, '', '', '', '', '']),
+      );
+    });
+
+    testWidgets('Should build point labels considering hidden data', (
+      tester,
+    ) async {
+      final chart =
+          acquireChart(<String, Object?>{
+              'type': 'polarArea',
+              'data': <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[10, 5, 0, 25, 78, 20],
+                  },
+                ],
+                'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
               },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
-                },
+            })
+            ..toggleDataVisibility(3)
+            ..update();
+
+      expect(
+        _r(chart).pointLabels,
+        jasmineEquals(<Object?>['a', 'b', 'c', 'e', 'f']),
+      );
+    });
+
+    testWidgets('should correctly set the center point', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78],
+            },
+          ],
+          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'pointLabels': <String, Object?>{
+                'callback': (Object? value, Object? index) => jsToString(index),
               },
             },
           },
-        });
+        },
+      });
 
-        expect(
-          _r(chart).pointLabels,
-          jasmineEquals(<Object?>['0', '1', '2', '3', '4']),
-        );
-      },
-    );
+      expect(_r(chart).drawingArea, 215);
+      expect(_r(chart).xCenter, 256);
+      expect(_r(chart).yCenter, 280);
+    });
 
-    testWidgets(
-      'Should build point labels from falsy values',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78, 20],
-              },
-            ],
-            'labels': <Object?>[0, '', undefined, null, double.nan, false],
-          },
-        });
-
-        expect(
-          _r(chart).pointLabels,
-          jasmineEquals(<Object?>[0, '', '', '', '', '']),
-        );
-      },
-    );
-
-    testWidgets(
-      'Should build point labels considering hidden data',
-      (tester) async {
-        final chart =
-            acquireChart(<String, Object?>{
-                'type': 'polarArea',
-                'data': <String, Object?>{
-                  'datasets': <Object?>[
-                    <String, Object?>{
-                      'data': <Object?>[10, 5, 0, 25, 78, 20],
-                    },
-                  ],
-                  'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-                },
-              })
-              ..toggleDataVisibility(3)
-              ..update();
-
-        expect(
-          _r(chart).pointLabels,
-          jasmineEquals(<Object?>['a', 'b', 'c', 'e', 'f']),
-        );
-      },
-    );
-
-    testWidgets(
-      'should correctly set the center point',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
-                },
+    testWidgets('should correctly get the label for a given data index', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78],
+            },
+          ],
+          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'pointLabels': <String, Object?>{
+                'callback': (Object? value, Object? index) => jsToString(index),
               },
             },
           },
-        });
+        },
+      });
+      expect(chart.scales['r']!.getLabelForValue(5), '5');
+    });
 
-        expect(_r(chart).drawingArea, 215);
-        expect(_r(chart).xCenter, 256);
-        expect(_r(chart).yCenter, 280);
-      },
-    );
-
-    testWidgets(
-      'should correctly get the label for a given data index',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
-                },
+    testWidgets('should get the correct distance from the center point', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78],
+            },
+          ],
+          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'pointLabels': <String, Object?>{
+                'callback': (Object? value, Object? index) => jsToString(index),
               },
             },
           },
-        });
-        expect(chart.scales['r']!.getLabelForValue(5), '5');
-      },
-    );
+        },
+      });
 
-    testWidgets(
-      'should get the correct distance from the center point',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
-                },
-              },
-            },
-          },
-        });
+      expect(_r(chart).getDistanceFromCenterForValue(_r(chart).min), 0);
+      expect(_r(chart).getDistanceFromCenterForValue(_r(chart).max), 215);
 
-        expect(
-          _r(chart).getDistanceFromCenterForValue(_r(chart).min),
-          0,
-        );
-        expect(
-          _r(chart).getDistanceFromCenterForValue(_r(chart).max),
-          215,
-        );
+      final position = _r(chart).getPointPositionForValue(1, 5);
+      expect(position.x, toBeCloseToPixel(269));
+      expect(position.y, toBeCloseToPixel(276));
 
-        final position = _r(chart).getPointPositionForValue(1, 5);
-        expect(position.x, toBeCloseToPixel(269));
-        expect(position.y, toBeCloseToPixel(276));
+      _r(chart).options['reverse'] = true;
+      chart.update();
 
-        _r(chart).options['reverse'] = true;
-        chart.update();
-
-        expect(
-          _r(chart).getDistanceFromCenterForValue(_r(chart).min),
-          215,
-        );
-        expect(
-          _r(chart).getDistanceFromCenterForValue(_r(chart).max),
-          0,
-        );
-      },
-    );
+      expect(_r(chart).getDistanceFromCenterForValue(_r(chart).min), 215);
+      expect(_r(chart).getDistanceFromCenterForValue(_r(chart).max), 0);
+    });
 
     testWidgets(
       'should get the correct value for a distance from the center point',
@@ -856,62 +784,52 @@ void main() {
       },
     );
 
-    testWidgets(
-      'should correctly get angles for all points',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'startAngle': 15,
-                'pointLabels': <String, Object?>{
-                  'callback': (Object? value, Object? index) =>
-                      jsToString(index),
-                },
+    testWidgets('should correctly get angles for all points', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78],
+            },
+          ],
+          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'startAngle': 15,
+              'pointLabels': <String, Object?>{
+                'callback': (Object? value, Object? index) => jsToString(index),
               },
             },
           },
-        });
+        },
+      });
 
-        double radToNearestDegree(double rad) {
-          return jsRound((360 * rad) / (2 * math.pi));
-        }
+      double radToNearestDegree(double rad) {
+        return jsRound((360 * rad) / (2 * math.pi));
+      }
 
-        const slice = 72; // (360 / 5)
+      const slice = 72; // (360 / 5)
 
-        for (var i = 0; i < 5; i++) {
-          expect(
-            radToNearestDegree(_r(chart).getIndexAngle(i.toDouble())),
-            15 + (slice * i),
-          );
-        }
+      for (var i = 0; i < 5; i++) {
+        expect(
+          radToNearestDegree(_r(chart).getIndexAngle(i.toDouble())),
+          15 + (slice * i),
+        );
+      }
 
-        _r(chart).options['startAngle'] = 0;
-        chart.update();
+      _r(chart).options['startAngle'] = 0;
+      chart.update();
 
-        for (var x = 0; x < 5; x++) {
-          expect(
-            radToNearestDegree(_r(chart).getIndexAngle(x.toDouble())),
-            slice * x,
-          );
-        }
-      },
-    );
+      for (var x = 0; x < 5; x++) {
+        expect(
+          radToNearestDegree(_r(chart).getIndexAngle(x.toDouble())),
+          slice * x,
+        );
+      }
+    });
 
     testWidgets(
       'should correctly get the correct label alignment for all points',
@@ -985,85 +903,78 @@ void main() {
       },
     );
 
-    testWidgets(
-      'should correctly get the point positions in center',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'polarArea',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
+    testWidgets('should correctly get the point positions in center', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'polarArea',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[10, 5, 0, 25, 78],
+            },
+          ],
+          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'pointLabels': <String, Object?>{
+                'display': true,
+                'padding': 5,
+                'centerPointLabels': true,
               },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{
-                  'display': true,
-                  'padding': 5,
-                  'centerPointLabels': true,
-                },
-                'ticks': <String, Object?>{'display': false},
-              },
+              'ticks': <String, Object?>{'display': false},
             },
           },
-        });
+        },
+      });
 
-        const pi = math.pi;
-        const lavelNum = 5;
-        const padding = 5;
-        final pointLabelItems = _r(chart).pointLabelItems;
-        const additionalAngle = pi / lavelNum;
-        final opts = _r(chart).options;
-        final outerDistance = _r(chart).getDistanceFromCenterForValue(
-          jsTruthy(jsGet(opts['ticks'], 'reverse'))
-              ? _r(chart).min
-              : _r(chart).max,
+      const pi = math.pi;
+      const lavelNum = 5;
+      const padding = 5;
+      final pointLabelItems = _r(chart).pointLabelItems;
+      const additionalAngle = pi / lavelNum;
+      final opts = _r(chart).options;
+      final outerDistance = _r(chart).getDistanceFromCenterForValue(
+        jsTruthy(jsGet(opts['ticks'], 'reverse'))
+            ? _r(chart).min
+            : _r(chart).max,
+      );
+      const tickBackdropHeight = 0;
+      // The parameter `y` of upstream is the local `result`.
+      double yForAngle(double y, double h, double angle) {
+        var result = y;
+        if (angle == 90 || angle == 270) {
+          result -= h / 2;
+        } else if (angle > 270 || angle < 90) {
+          result -= h;
+        }
+        return result;
+      }
+
+      double toDegrees(double radians) {
+        return radians * (180 / pi);
+      }
+
+      for (var i = 0; i < 5; i++) {
+        final extra = i == 0 ? tickBackdropHeight / 2 : 0;
+        final pointLabelItem = pointLabelItems[i];
+        final pointPosition = _r(chart).getPointPosition(
+          i.toDouble(),
+          outerDistance + extra + padding,
+          additionalAngle,
         );
-        const tickBackdropHeight = 0;
-        // The parameter `y` of upstream is the local `result`.
-        double yForAngle(double y, double h, double angle) {
-          var result = y;
-          if (angle == 90 || angle == 270) {
-            result -= h / 2;
-          } else if (angle > 270 || angle < 90) {
-            result -= h;
-          }
-          return result;
-        }
-
-        double toDegrees(double radians) {
-          return radians * (180 / pi);
-        }
-
-        for (var i = 0; i < 5; i++) {
-          final extra = i == 0 ? tickBackdropHeight / 2 : 0;
-          final pointLabelItem = pointLabelItems[i];
-          final pointPosition = _r(chart).getPointPosition(
-            i.toDouble(),
-            outerDistance + extra + padding,
-            additionalAngle,
-          );
-          expect(pointLabelItem.x, pointPosition.x);
-          expect(
-            pointLabelItem.y,
-            yForAngle(
-              pointPosition.y,
-              12,
-              toDegrees(pointPosition.angle + pi / 2),
-            ),
-          );
-        }
-      },
-    );
+        expect(pointLabelItem.x, pointPosition.x);
+        expect(
+          pointLabelItem.y,
+          yForAngle(
+            pointPosition.y,
+            12,
+            toDegrees(pointPosition.angle + pi / 2),
+          ),
+        );
+      }
+    });
   });
 }

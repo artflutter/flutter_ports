@@ -90,9 +90,7 @@ Map<String, Object?> _logObservations(Scale scale, Chart chart) {
   return {
     'start': scale.start,
     'end': scale.end,
-    'significands': [
-      for (final t in scale.ticks!) t.significand ?? double.nan,
-    ],
+    'significands': [for (final t in scale.ticks!) t.significand ?? double.nan],
     'labelForValue': [
       for (final v in <Object?>[
         scale.min,
@@ -400,10 +398,7 @@ void main() {
       expect(y.parse(-0.0), same(undefined));
       expect(y.getLabelForValue(undefined), '0');
       // The point of the 0 is at the pixel of min.
-      expect(
-        chart.getDatasetMeta(0).data[0].y,
-        y.getPixelForValue(y.min),
-      );
+      expect(chart.getDatasetMeta(0).data[0].y, y.getPixelForValue(y.min));
     });
   });
 

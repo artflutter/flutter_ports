@@ -16,22 +16,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 10,
-              'y': 1,
-            },
-            <String, Object?>{
-              'x': 0,
-              'y': 5,
-            },
-            <String, Object?>{
-              'x': -10,
-              'y': 15,
-            },
-            <String, Object?>{
-              'x': -5,
-              'y': 19,
-            },
+            <String, Object?>{'x': 10, 'y': 1},
+            <String, Object?>{'x': 0, 'y': 5},
+            <String, Object?>{'x': -10, 'y': 15},
+            <String, Object?>{'x': -5, 'y': 19},
           ],
           'borderColor': 'red',
           'fill': false,
@@ -46,11 +34,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-          'min': -15,
-          'max': 15,
-        },
+        'x': <String, Object?>{'display': false, 'min': -15, 'max': 15},
         'y': <String, Object?>{
           'type': 'linear',
           'display': false,
@@ -61,9 +45,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

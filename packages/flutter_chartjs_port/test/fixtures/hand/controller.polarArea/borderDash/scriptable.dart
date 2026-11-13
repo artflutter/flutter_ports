@@ -31,16 +31,11 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'display': false,
-        },
+        'r': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

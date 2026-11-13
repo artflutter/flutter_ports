@@ -263,11 +263,7 @@ bool _skipped(Element element) => jsTruthy(switch (element) {
         // range` is the JS `+` ([jsAdd]): a string range joins. The lookup
         // compares the joined text with a number through `<` or `>=`, which
         // apply `ToNumber` to it.
-        final start = lookupMethod(
-          data,
-          key,
-          (value ?? 0) - jsToNumber(range),
-        );
+        final start = lookupMethod(data, key, (value ?? 0) - jsToNumber(range));
         final end = lookupMethod(data, key, jsToNumber(jsAdd(value, range)));
         return (lo: start.lo, hi: end.hi);
       }
@@ -465,11 +461,7 @@ List<InteractionItem> _getNearestCartesianItems(
 
   void evaluationFunc(Element element, double datasetIndex, double index) {
     final visual = element as types.VisualElement;
-    final inRange = visual.inRange(
-      position.x,
-      position.y,
-      useFinalPosition,
-    );
+    final inRange = visual.inRange(position.x, position.y, useFinalPosition);
     if (intersect && !inRange) {
       return;
     }
@@ -903,7 +895,7 @@ enum InteractionAxis {
   /// the plane uses no coordinate, as `'r'.indexOf('x')` gives -1.
   r(usesX: false, usesY: false);
 
-  const InteractionAxis({required this.usesX, required this.usesY});
+  InteractionAxis({required this.usesX, required this.usesY});
 
   /// `axis.indexOf('x') !== -1` (core.interaction.js:95).
   final bool usesX;

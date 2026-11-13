@@ -32,12 +32,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'type': 'category',
           'position': 'top',
           'id': 'x-axis-1',
-          'ticks': <String, Object?>{
-            'display': false,
-          },
-          'border': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
+          'border': <String, Object?>{'display': false},
           'grid': <String, Object?>{
             'drawOnChartArea': false,
             'color': 'rgba(0, 0, 0, 1)',
@@ -53,12 +49,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'offset': false,
           'min': -100,
           'max': 100,
-          'ticks': <String, Object?>{
-            'display': false,
-          },
-          'border': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
+          'border': <String, Object?>{'display': false},
           'grid': <String, Object?>{
             'offset': false,
             'drawOnChartArea': false,
@@ -71,9 +63,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

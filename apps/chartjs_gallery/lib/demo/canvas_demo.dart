@@ -222,9 +222,8 @@ class _PointStylesCardState extends State<_PointStylesCard> {
                   key: 'canvas.style.$name',
                   label: name,
                   value: _on.contains(name),
-                  onChanged: (on) => setState(
-                    () => on ? _on.add(name) : _on.remove(name),
-                  ),
+                  onChanged: (on) =>
+                      setState(() => on ? _on.add(name) : _on.remove(name)),
                 ),
             ],
           ),

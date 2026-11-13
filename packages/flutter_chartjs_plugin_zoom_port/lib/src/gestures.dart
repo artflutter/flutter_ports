@@ -272,10 +272,7 @@ void _startPan(Chart chart, State state, GestureEvent event) {
     return;
   }
   final rect = event.target.getBoundingClientRect();
-  final point = (
-    x: event.center.x - rect.left,
-    y: event.center.y - rect.top,
-  );
+  final point = (x: event.center.x - rect.left, y: event.center.y - rect.top);
 
   final started = onPanStart?.call((chart: chart, event: event, point: point));
   if (started == false) {

@@ -30,9 +30,7 @@ final List<Object?> _lineSet = [
 void main() {
   removeBuiltins();
 
-  testWidgets('an app registers the line set next to Material', (
-    tester,
-  ) async {
+  testWidgets('an app registers the line set next to Material', (tester) async {
     expect(() => registry.getController('line'), throwsStateError);
     Chart.register(_lineSet);
     addTearDown(() => Chart.unregister(_lineSet));

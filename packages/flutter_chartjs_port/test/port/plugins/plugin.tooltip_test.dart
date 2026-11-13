@@ -355,13 +355,10 @@ final Map<String, Object? Function(Chart chart)> _extras = {
   ],
 };
 
-final List<ScaleChartCase> _reference = _mapObservations(
-  [
-    ...pluginTooltipReference(_functions),
-    ...pluginTooltipMoreReference(_functions),
-  ],
-  _undefinedAxisIds,
-);
+final List<ScaleChartCase> _reference = _mapObservations([
+  ...pluginTooltipReference(_functions),
+  ...pluginTooltipMoreReference(_functions),
+], _undefinedAxisIds);
 
 /// The reference cases of the themed run: [_reference] with the parsed text
 /// colors of [_parseTextColors].
@@ -514,8 +511,8 @@ Tooltip _tooltipOf(Chart chart) => chart.tooltip! as Tooltip;
 
 /// `setActiveElements([{datasetIndex: 0, index}], {x: 150, y: 100})` on the
 /// tooltip of [chart], the call of the probe.
-void _activate(Chart chart, [Object? index = 1]) =>
-    _tooltipOf(chart).setActiveElements(
+void _activate(Chart chart, [Object? index = 1]) => _tooltipOf(chart)
+    .setActiveElements(
       [
         <String, Object?>{'datasetIndex': 0, 'index': index},
       ],
@@ -1080,9 +1077,7 @@ void main() {
   });
 
   group('_active by name', () {
-    testWidgets('a write of _active changes getActiveElements', (
-      tester,
-    ) async {
+    testWidgets('a write of _active changes getActiveElements', (tester) async {
       final chart = acquireChart(_probeChart());
       final t = _tooltipOf(chart);
       final element = chart.getDatasetMeta(0).data[2];
@@ -1427,13 +1422,10 @@ void main() {
         },
       });
       final t = _tooltipOf(chart)
-        ..setActiveElements(
-          [
-            <String, Object?>{'datasetIndex': 0, 'index': 0},
-            <String, Object?>{'datasetIndex': 0, 'index': 1},
-          ],
-          _point(150, 100),
-        );
+        ..setActiveElements([
+          <String, Object?>{'datasetIndex': 0, 'index': 0},
+          <String, Object?>{'datasetIndex': 0, 'index': 1},
+        ], _point(150, 100));
       expect(t.title, ['d']);
       expect(_bodyLines(t), [
         ['1: 10'],
@@ -1554,11 +1546,9 @@ void main() {
       ]);
       expect(identical(t['_cachedAnimations'], undefined), isTrue);
       final options =
-          jsCall(
-                jsGet(t.options, 'setContext'),
-                [t.getContext()],
-                thisArg: t.options,
-              )!
+          jsCall(jsGet(t.options, 'setContext'), [
+                t.getContext(),
+              ], thisArg: t.options)!
               as JsObjectFace;
       expect(jsGet(options, '_cacheable'), false);
       expect(jsGet(jsGet(options, 'animations'), '_cacheable'), false);
@@ -1664,9 +1654,7 @@ void main() {
       ]);
     });
 
-    testWidgets('false of beforeTooltipDraw cancels the draw', (
-      tester,
-    ) async {
+    testWidgets('false of beforeTooltipDraw cancels the draw', (tester) async {
       // plugin.tooltip.js:1254-1256: the return before the draw and
       // afterTooltipDraw.
       expect(drawOrder(cancel: true), [
@@ -1678,9 +1666,7 @@ void main() {
   });
 
   group('options false', () {
-    testWidgets('plugins.tooltip false gives no chart.tooltip', (
-      tester,
-    ) async {
+    testWidgets('plugins.tooltip false gives no chart.tooltip', (tester) async {
       // The probe output `optionsFalse`: no tooltip, also after the enable
       // and update(): only afterInit writes chart.tooltip.
       final chart = acquireChart(_probeChart(false));
@@ -1713,9 +1699,7 @@ void main() {
   });
 
   group('external', () {
-    testWidgets('external gets the tooltip as this and replay', (
-      tester,
-    ) async {
+    testWidgets('external gets the tooltip as this and replay', (tester) async {
       // The probe output `external`: [undefined, true,
       // 'chart,tooltip,replay'] for the mousemove, [true, ...] for the replay
       // of chart.update(), [undefined, ...] for setActiveElements.
@@ -1855,18 +1839,25 @@ void main() {
         twoDatasets(<String, Object?>{
           'mode': const IndexInteractionMode(),
           'intersect': false,
-          'filter': JsFunction(
-            (Object? self, Object? a, Object? b, Object? c, Object? d) {
-              seen.add(['filter', position(self)]);
-              return true;
-            },
-          ),
-          'itemSort': JsFunction(
-            (Object? self, Object? a, Object? b, Object? c) {
-              seen.add(['itemSort', position(self)]);
-              return 0;
-            },
-          ),
+          'filter': JsFunction((
+            Object? self,
+            Object? a,
+            Object? b,
+            Object? c,
+            Object? d,
+          ) {
+            seen.add(['filter', position(self)]);
+            return true;
+          }),
+          'itemSort': JsFunction((
+            Object? self,
+            Object? a,
+            Object? b,
+            Object? c,
+          ) {
+            seen.add(['itemSort', position(self)]);
+            return 0;
+          }),
         }),
       );
       activateBoth(chart);
@@ -1899,13 +1890,7 @@ void main() {
       );
       activateBoth(chart);
       final t = _tooltipOf(chart);
-      expect(
-        [for (final p in t.dataPoints!) jsGet(p, 'datasetIndex')],
-        [
-          1,
-          0,
-        ],
-      );
+      expect([for (final p in t.dataPoints!) jsGet(p, 'datasetIndex')], [1, 0]);
       expect(_bodyLines(t), [
         ['two: 2'],
         ['one: 20'],
@@ -1989,9 +1974,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChart(
-        _probeChart({
-          'textDirection': native_ui.TextDirection.rtl,
-        }),
+        _probeChart({'textDirection': native_ui.TextDirection.rtl}),
       );
       _activate(chart);
       final ctx = _StyleContext()

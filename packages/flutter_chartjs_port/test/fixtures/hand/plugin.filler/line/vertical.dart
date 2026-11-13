@@ -15,52 +15,22 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'y': 1,
-              'x': 12,
-            },
-            <String, Object?>{
-              'y': 3,
-              'x': 14,
-            },
-            <String, Object?>{
-              'y': 4,
-              'x': 20,
-            },
-            <String, Object?>{
-              'y': 6,
-              'x': 13,
-            },
-            <String, Object?>{
-              'y': 9,
-              'x': 18,
-            },
+            <String, Object?>{'y': 1, 'x': 12},
+            <String, Object?>{'y': 3, 'x': 14},
+            <String, Object?>{'y': 4, 'x': 20},
+            <String, Object?>{'y': 6, 'x': 13},
+            <String, Object?>{'y': 9, 'x': 18},
           ],
           'borderColor': 'red',
           'fill': false,
         },
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'y': 1,
-              'x': 22.5,
-            },
-            <String, Object?>{
-              'y': 3,
-              'x': 23.5,
-            },
-            <String, Object?>{
-              'y': 4,
-              'x': 34,
-            },
-            <String, Object?>{
-              'y': 6,
-              'x': 17,
-            },
-            <String, Object?>{
-              'y': 9,
-              'x': 22.5,
-            },
+            <String, Object?>{'y': 1, 'x': 22.5},
+            <String, Object?>{'y': 3, 'x': 23.5},
+            <String, Object?>{'y': 4, 'x': 34},
+            <String, Object?>{'y': 6, 'x': 17},
+            <String, Object?>{'y': 9, 'x': 22.5},
           ],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target
           // value.
@@ -75,18 +45,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'radius': 0,
-      'plugins': <String, Object?>{
-        'legend': false,
-      },
+      'plugins': <String, Object?>{'legend': false},
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-          'type': 'linear',
-        },
-        'y': <String, Object?>{
-          'display': false,
-          'type': 'linear',
-        },
+        'x': <String, Object?>{'display': false, 'type': 'linear'},
+        'y': <String, Object?>{'display': false, 'type': 'linear'},
       },
     },
   },

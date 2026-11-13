@@ -83,11 +83,8 @@ const Type nativeSegmentType = _Segment;
 // representation for exact bounds of a private, unstyled linear boundary.
 /// An internal segment for validated, non-wrapping private boundary indices.
 @internal
-Segment createBoundarySegment(int start, int end) => _Segment(
-  start: start.toDouble(),
-  end: end.toDouble(),
-  loop: false,
-);
+Segment createBoundarySegment(int start, int end) =>
+    _Segment(start: start.toDouble(), end: end.toDouble(), loop: false);
 
 /// The result of `propertyFn` (helpers.segment.js:13-23).
 typedef _PropertyFn = ({
@@ -105,11 +102,7 @@ _PropertyFn _propertyFn(String property) {
       normalize: normalizeAngle,
     );
   }
-  return (
-    between: isBetween,
-    compare: (a, b) => a - b,
-    normalize: (x) => x,
-  );
+  return (between: isBetween, compare: (a, b) => a - b, normalize: (x) => x);
 }
 
 /// helpers.segment.js:26 `normalizeSegment`.

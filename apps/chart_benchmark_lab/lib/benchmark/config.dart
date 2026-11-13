@@ -14,7 +14,7 @@ enum ChartLibrary {
   /// Syncfusion's native Flutter charts.
   syncfusion('Syncfusion', '35.1.43', Color(0xffbe185d));
 
-  const ChartLibrary(this.label, this.version, this.color);
+  ChartLibrary(this.label, this.version, this.color);
 
   /// Display name.
   final String label;
@@ -132,7 +132,7 @@ enum ChartType {
   /// A closed line around a center, with one spoke per value.
   radar('Radar', Icons.radar);
 
-  const ChartType(this.label, this.icon);
+  ChartType(this.label, this.icon);
 
   /// Display name.
   final String label;
@@ -165,7 +165,7 @@ enum Workload {
   /// Dispose and recreate the chart with unchanged values.
   rebuild('Recreate chart');
 
-  const Workload(this.label);
+  Workload(this.label);
 
   /// Display name.
   final String label;

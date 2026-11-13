@@ -37,11 +37,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// result is `false`, a `double` dataset index, a [FillBoundary] or the
 /// option object `{value}`. `sources[fill]` is `jsGetIndex`: an index out of
 /// range gives `undefined`, and `!target` returns `false`.
-Object resolveTarget(
-  List<FillerSource?> sources,
-  int index,
-  bool propagate,
-) {
+Object resolveTarget(List<FillerSource?> sources, int index, bool propagate) {
   final source = sources[index]!;
   var fill = source.fill;
   final visited = <Object>[index.toDouble()];

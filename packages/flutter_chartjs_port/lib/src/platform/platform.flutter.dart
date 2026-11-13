@@ -68,11 +68,7 @@ final class _ChartjsExpando {
 /// platform.dom.js:51-59 `initial`: the attributes and the inline style of
 /// the canvas before the chart changed them.
 final class _Initial {
-  _Initial({
-    required this.height,
-    required this.width,
-    required this.style,
-  });
+  _Initial({required this.height, required this.width, required this.style});
 
   /// platform.dom.js:52 `height`: the `height` attribute. Dart `null` is
   /// the JS `null` of an absent attribute.

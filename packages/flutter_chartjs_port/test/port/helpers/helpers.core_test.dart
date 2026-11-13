@@ -354,9 +354,7 @@ void main() {
       const instance = _Instance();
       final output = helpers.merge(
         <String, Object?>{'a': 1},
-        <String, Object?>{
-          'a': instance,
-        },
+        <String, Object?>{'a': instance},
       );
       expect((output! as Map<String, Object?>)['a'], same(instance));
     });
@@ -547,18 +545,14 @@ void main() {
         listed.add(jsObjectKeys(target));
       }
 
-      helpers.merge(
-        element,
-        <String, Object?>{'q': 1},
-        helpers.MergeOptions(merger: keysMerger),
-      );
+      helpers.merge(element, <String, Object?>{
+        'q': 1,
+      }, helpers.MergeOptions(merger: keysMerger));
       expect(listed, [<String>[]]);
       expect(
-        () => helpers.merge(
-          element,
-          <String, Object?>{'q': 1},
-          const helpers.MergeOptions(merger: helpers.mergerIf),
-        ),
+        () => helpers.merge(element, <String, Object?>{
+          'q': 1,
+        }, const helpers.MergeOptions(merger: helpers.mergerIf)),
         throwsUnsupportedError,
       );
     });
@@ -645,18 +639,12 @@ void main() {
     });
 
     test('returns a falsy value on the path', () {
-      expect(
-        helpers.resolveObjectKey(<String, Object?>{'a': 0}, 'a.b'),
-        0,
-      );
+      expect(helpers.resolveObjectKey(<String, Object?>{'a': 0}, 'a.b'), 0);
       expect(
         helpers.resolveObjectKey(<String, Object?>{'a': null}, 'a.b'),
         isNull,
       );
-      expect(
-        helpers.resolveObjectKey(<String, Object?>{'a': ''}, 'a.b'),
-        '',
-      );
+      expect(helpers.resolveObjectKey(<String, Object?>{'a': ''}, 'a.b'), '');
       expect(
         helpers.resolveObjectKey(<String, Object?>{'a': true}, 'a.b'),
         same(undefined),
@@ -767,10 +755,9 @@ void main() {
     test('respects the set equality policy', () {
       // Make the equality policy explicit: default sets handle NaN differently
       // in DDC. The helper must honor the supplied Set's comparator.
-      Set<double> strict() => HashSet<double>(
-        equals: (a, b) => a == b,
-        hashCode: (_) => 0,
-      )..add(double.nan);
+      Set<double> strict() =>
+          HashSet<double>(equals: (a, b) => a == b, hashCode: (_) => 0)
+            ..add(double.nan);
       expect(helpers.setsEqual(strict(), strict()), isFalse);
       // 0 and -0 are the same element, as in a JavaScript Set.
       expect(helpers.setsEqual({0.0}, {-0.0}), isTrue);

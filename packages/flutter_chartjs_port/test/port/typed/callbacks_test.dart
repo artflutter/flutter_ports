@@ -511,9 +511,7 @@ void main() {
       );
     });
 
-    testWidgets('a legend onClick replaces the default toggle', (
-      tester,
-    ) async {
+    testWidgets('a legend onClick replaces the default toggle', (tester) async {
       final items = <LegendItem>[];
       final chart = acquireChartRoot(
         ChartConfigLowering(
@@ -548,16 +546,12 @@ void main() {
         final tooltip = chart.tooltip!;
         return [
           tooltip.title,
-          [
-            for (final item in tooltip.body!) (item! as JsObjectFace)['lines'],
-          ],
+          [for (final item in tooltip.body!) (item! as JsObjectFace)['lines']],
           tooltip.footer,
         ];
       }
 
-      final defaults = await tooltipOf(
-        ChartConfigLowering(typedBar()).lower(),
-      );
+      final defaults = await tooltipOf(ChartConfigLowering(typedBar()).lower());
       expect(defaults, [
         ['c'],
         [
@@ -682,12 +676,7 @@ void main() {
       expect(
         [
           for (final d in details)
-            [
-              identical(d.chart, chart),
-              d.initial,
-              d.numSteps,
-              d.currentStep,
-            ],
+            [identical(d.chart, chart), d.initial, d.numSteps, d.currentStep],
         ],
         [
           [true, true, 1000, 250],

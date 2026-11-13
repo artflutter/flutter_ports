@@ -197,9 +197,7 @@ void main() {
 
       testWidgets(
         'should return FALSE if any plugin explicitly returns FALSE',
-        (
-          tester,
-        ) async {
+        (tester) async {
           final chart = acquireChart(<String, Object?>{
             'plugins': [
               <String, Object?>{'hook': () => undefined},
@@ -385,12 +383,7 @@ void main() {
           chart.notifyPlugins('hook');
 
           expect(plugin['hook'], toHaveBeenCalled());
-          expect(
-            jsObjectKeys(
-              plugin['hook'].calls.first().args[2],
-            ),
-            ['a'],
-          );
+          expect(jsObjectKeys(plugin['hook'].calls.first().args[2]), ['a']);
           // jasmine.objectContaining({a: 42})
           expect(
             plugin['hook'].calls.first().args[2],

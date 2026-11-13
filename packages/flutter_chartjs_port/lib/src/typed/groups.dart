@@ -894,10 +894,7 @@ TransitionsSpecScope? lowerTransitions(List<ChartTransition> transitions) {
 /// lower to trampolines that call the callback of the newest config of
 /// [lowering].
 @internal
-Object lowerAnimation(
-  ChartAnimation animation,
-  ChartConfigLowering lowering,
-) {
+Object lowerAnimation(ChartAnimation animation, ChartConfigLowering lowering) {
   if (animation._none) return false;
   final scope = AnimationOptionsScope();
   _putSettings(scope, animation);

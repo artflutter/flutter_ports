@@ -811,12 +811,7 @@ const List<PointSizeCase> pointSizeReference = [
     options: <String, Object?>{'radius': 2},
     size: 4,
   ),
-  (
-    name: 'no options',
-    elementOptions: null,
-    options: null,
-    size: 0,
-  ),
+  (name: 'no options', elementOptions: null, options: null, size: 0),
 ];
 
 /// `new PointElement({options}).getRange()`.
@@ -841,16 +836,8 @@ const List<PointGetRangeCase> pointGetRangeReference = [
     options: <String, Object?>{'radius': 3},
     range: double.nan,
   ),
-  (
-    name: 'an empty object',
-    options: <String, Object?>{},
-    range: double.nan,
-  ),
-  (
-    name: 'no options',
-    options: null,
-    range: double.nan,
-  ),
+  (name: 'an empty object', options: <String, Object?>{}, range: double.nan),
+  (name: 'no options', options: null, range: double.nan),
 ];
 
 /// `new PointElement(cfg).draw(ctx, area)` and the calls that upstream

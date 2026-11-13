@@ -14,18 +14,10 @@ Map<String, Object?> fixture() => <String, Object?>{
     'data': <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            1,
-            2,
-            3,
-          ],
+          'data': <Object?>[1, 2, 3],
         },
       ],
-      'labels': <Object?>[
-        'Long long label 1',
-        'Label2',
-        'Label3',
-      ],
+      'labels': <Object?>['Long long label 1', 'Label2', 'Label3'],
     },
     'options': <String, Object?>{
       // DIVERGES(chartjs): adapt-axis-objects, the axis
@@ -34,18 +26,13 @@ Map<String, Object?> fixture() => <String, Object?>{
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'position': 'left',
-          'ticks': <String, Object?>{
-            'crossAlign': 'near',
-          },
+          'ticks': <String, Object?>{'crossAlign': 'near'},
         },
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

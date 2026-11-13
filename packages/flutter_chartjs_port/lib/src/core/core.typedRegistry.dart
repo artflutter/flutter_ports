@@ -36,11 +36,7 @@ final class TypedRegistry {
   ///
   /// An absent [override] is false: upstream tests only its truthiness
   /// (core.typedRegistry.js:48, :77).
-  TypedRegistry(
-    this.type,
-    this.scope, [
-    this.override = false,
-  ]);
+  TypedRegistry(this.type, this.scope, [this.override = false]);
 
   /// core.typedRegistry.js:10 `type`: the class value of the base class of
   /// the components, or [jsObjectClass] for the plugins.

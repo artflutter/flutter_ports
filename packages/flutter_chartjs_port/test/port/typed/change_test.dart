@@ -232,9 +232,7 @@ void main() {
     });
 
     testWidgets('plugins: [plugin] in each build gives no update while the '
-        'plugin is the same object; another plugin gives one', (
-      tester,
-    ) async {
+        'plugin is the same object; another plugin gives one', (tester) async {
       final modes = _spyOnUpdates();
       final starts = <String>[];
       Map<String, Object?> plugin(String id) => <String, Object?>{
@@ -459,10 +457,7 @@ void main() {
       final box = chart.legend!.legendHitBoxes[1];
       final center =
           tester.getTopLeft(find.byType(ChartView)) +
-          Offset(
-            box.left + box.width / 2,
-            box.top + box.height / 2,
-          );
+          Offset(box.left + box.width / 2, box.top + box.height / 2);
       await tester.tapAt(center);
       await tester.pump();
       expect(clicks, ['first B 1']);

@@ -39,26 +39,15 @@ Map<String, Object?> fixture() {
       'options': <String, Object?>{
         'plugins': false,
         'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'min': 1,
-            'max': 1.1,
-          },
-          'y': <String, Object?>{
-            'min': 1,
-            'max': 1.1,
-          },
+          'x': <String, Object?>{'min': 1, 'max': 1.1},
+          'y': <String, Object?>{'min': 1, 'max': 1.1},
         },
-        'layout': <String, Object?>{
-          'padding': const EdgeInsets.all(32),
-        },
+        'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
       },
     },
     'options': <String, Object?>{
       'spriteText': true,
-      'canvas': <String, Object?>{
-        'height': 240,
-        'width': 320,
-      },
+      'canvas': <String, Object?>{'height': 240, 'width': 320},
     },
   };
 }

@@ -11,26 +11,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'radar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-      ],
+      'labels': <Object?>[0, 1, 2, 3, 4, 5, 6],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            5,
-            10,
-            null,
-            -10,
-            -5,
-            0,
-          ],
+          'data': <Object?>[0, 5, 10, null, -10, -5, 0],
           'pointBackgroundColor': '#ff0000',
           'pointBorderColor': '#ff0000',
           // DIVERGES(chartjs): adapt-point-style-objects, the style
@@ -46,23 +30,13 @@ Map<String, Object?> fixture() => <String, Object?>{
           ],
         },
         <String, Object?>{
-          'data': <Object?>[
-            4,
-            -5,
-            -10,
-            null,
-            10,
-            5,
-            -4,
-          ],
+          'data': <Object?>[4, -5, -10, null, 10, 5, -4],
         },
       ],
     },
     'options': <String, Object?>{
       'elements': <String, Object?>{
-        'line': <String, Object?>{
-          'fill': false,
-        },
+        'line': <String, Object?>{'fill': false},
         'point': <String, Object?>{
           'backgroundColor': '#00ff00',
           'borderColor': '#00ff00',
@@ -80,17 +54,11 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'display': false,
-          'min': -15,
-        },
+        'r': <String, Object?>{'display': false, 'min': -15},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 512,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
 };

@@ -113,10 +113,10 @@ void main() {
 
   group('hook arguments', () {
     test('keep the key order of the upstream literals', () {
-      expect(
-        jsObjectKeys(UpdateHookArgs(mode: undefined, cancelable: true)),
-        ['mode', 'cancelable'],
-      );
+      expect(jsObjectKeys(UpdateHookArgs(mode: undefined, cancelable: true)), [
+        'mode',
+        'cancelable',
+      ]);
       expect(jsObjectKeys(UpdateHookArgs(mode: 'none')), ['mode']);
       expect(jsGet(UpdateHookArgs(mode: undefined), 'mode'), same(undefined));
       final dataset = DatasetUpdateHookArgs(
@@ -128,10 +128,10 @@ void main() {
       expect(jsObjectKeys(dataset), ['meta', 'index', 'mode', 'cancelable']);
       dataset['cancelable'] = false;
       expect(dataset.cancelable, isFalse);
-      expect(
-        jsObjectKeys(DatasetDrawHookArgs(meta: null, index: 0)),
-        ['meta', 'index'],
-      );
+      expect(jsObjectKeys(DatasetDrawHookArgs(meta: null, index: 0)), [
+        'meta',
+        'index',
+      ]);
       expect(jsObjectKeys(CancelableHookArgs(cancelable: true)), [
         'cancelable',
       ]);
@@ -149,9 +149,7 @@ void main() {
   group('MapPlugin', () {
     test('reads map[hook] and calls it with JS arity', () {
       final calls = <Object?>[];
-      final map = <String, Object?>{
-        'afterInit': JsFunction(calls.add),
-      };
+      final map = <String, Object?>{'afterInit': JsFunction(calls.add)};
       final plugin = MapPlugin(map);
       expect(plugin.hookValue('beforeInit'), isNull);
       plugin.invokeHook(

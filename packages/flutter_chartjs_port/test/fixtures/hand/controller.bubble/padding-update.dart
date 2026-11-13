@@ -28,10 +28,7 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 256,
-      'height': 256,
-    },
+    'canvas': <String, Object?>{'width': 256, 'height': 256},
     'run': (Chart chart) {
       chart.update();
     },

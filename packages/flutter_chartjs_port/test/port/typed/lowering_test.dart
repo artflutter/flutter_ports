@@ -88,17 +88,12 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
       ]),
     ),
     {
-      'backgroundColor': [
-        _redValue,
-        _blueValue,
-      ],
+      'backgroundColor': [_redValue, _blueValue],
     },
   ),
   'backgroundColor resolver': (
     (d) => d.copyWith(backgroundColor: const ChartValue.resolver(_colorFor)),
-    {
-      'backgroundColor': (Object? context, Object? options) => _redValue,
-    },
+    {'backgroundColor': (Object? context, Object? options) => _redValue},
   ),
   'borderColor': (
     (d) => d.copyWith(borderColor: const ChartValue.constant(.solid(_blue))),
@@ -112,17 +107,12 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
       ]),
     ),
     {
-      'borderColor': [
-        _blueValue,
-        _redValue,
-      ],
+      'borderColor': [_blueValue, _redValue],
     },
   ),
   'borderColor resolver': (
     (d) => d.copyWith(borderColor: const ChartValue.resolver(_colorFor)),
-    {
-      'borderColor': (Object? context, Object? options) => _redValue,
-    },
+    {'borderColor': (Object? context, Object? options) => _redValue},
   ),
   'borderWidth': ((d) => d.copyWith(borderWidth: 2), {'borderWidth': 2}),
   'hoverBackgroundColor': (
@@ -137,10 +127,7 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
     (d) => d.copyWith(hoverBorderWidth: 3),
     {'hoverBorderWidth': 3},
   ),
-  'extra': (
-    (d) => d.copyWith(extra: {'clip': 5}),
-    {'clip': 5},
-  ),
+  'extra': ((d) => d.copyWith(extra: {'clip': 5}), {'clip': 5}),
 };
 
 /// A [LineDataset], a [ScatterDataset] and a [RadarDataset] with the same
@@ -300,22 +287,13 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
     const [BarDataset(categoryPercentage: 0.6)],
     {'categoryPercentage': 0.6},
   ),
-  'barThickness': (
-    const [BarDataset(barThickness: 10)],
-    {'barThickness': 10},
-  ),
+  'barThickness': (const [BarDataset(barThickness: 10)], {'barThickness': 10}),
   'maxBarThickness': (
     const [BarDataset(maxBarThickness: 12)],
     {'maxBarThickness': 12},
   ),
-  'minBarLength': (
-    const [BarDataset(minBarLength: 2)],
-    {'minBarLength': 2},
-  ),
-  'grouped': (
-    const [BarDataset(grouped: false)],
-    {'grouped': false},
-  ),
+  'minBarLength': (const [BarDataset(minBarLength: 2)], {'minBarLength': 2}),
+  'grouped': (const [BarDataset(grouped: false)], {'grouped': false}),
   'fill, a name': (_lineStyle(fill: .origin), {'fill': FillBoundary.origin}),
   'fill, none': (_lineStyle(fill: .none), {'fill': false}),
   'fill, a dataset index': (_lineStyle(fill: const .dataset(1)), {'fill': 1}),
@@ -631,10 +609,7 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
 /// The cases of the parameters of [AxisTicks] and the twin `ticks` Map.
 const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
   'display': (AxisTicks(display: false), {'display': false}),
-  'color': (
-    AxisTicks(color: ChartPaint.solid(_red)),
-    {'color': _redValue},
-  ),
+  'color': (AxisTicks(color: ChartPaint.solid(_red)), {'color': _redValue}),
   'font': (AxisTicks(font: _font), {'font': _fontValue}),
   'padding': (AxisTicks(padding: 6), {'padding': 6}),
   'stepSize': (AxisTicks(stepSize: 5), {'stepSize': 5}),
@@ -646,10 +621,7 @@ const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
 /// The cases of the parameters of [AxisGrid] and the twin `grid` Map.
 const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
   'display': (AxisGrid(display: false), {'display': false}),
-  'color': (
-    AxisGrid(color: ChartPaint.solid(_blue)),
-    {'color': _blueValue},
-  ),
+  'color': (AxisGrid(color: ChartPaint.solid(_blue)), {'color': _blueValue}),
   'lineWidth': (AxisGrid(lineWidth: 2), {'lineWidth': 2}),
   'drawOnChartArea': (
     AxisGrid(drawOnChartArea: false),
@@ -664,17 +636,12 @@ const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
 const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
   'display': (AxisTitle(display: true), {'display': true}),
   'text': (AxisTitle(text: 'Month'), {'text': 'Month'}),
-  'color': (
-    AxisTitle(color: ChartPaint.solid(_red)),
-    {'color': _redValue},
-  ),
+  'color': (AxisTitle(color: ChartPaint.solid(_red)), {'color': _redValue}),
   'font': (AxisTitle(font: _font), {'font': _fontValue}),
   'align': (AxisTitle(align: .end), {'align': ChartAlign.end}),
   'padding': (
     AxisTitle(padding: EdgeInsets.symmetric(vertical: 4)),
-    {
-      'padding': EdgeInsets.only(left: 0, top: 4, right: 0, bottom: 4),
-    },
+    {'padding': EdgeInsets.only(left: 0, top: 4, right: 0, bottom: 4)},
   ),
   'extra': (AxisTitle(extra: {'strokeWidth': 1}), {'strokeWidth': 1}),
 };
@@ -972,10 +939,7 @@ const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
 const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   'display': (ChartTitle(display: true), {'display': true}),
   'text': (ChartTitle(text: 'Votes'), {'text': 'Votes'}),
-  'color': (
-    ChartTitle(color: ChartPaint.solid(_blue)),
-    {'color': _blueValue},
-  ),
+  'color': (ChartTitle(color: ChartPaint.solid(_blue)), {'color': _blueValue}),
   'font': (ChartTitle(font: _font), {'font': _fontValue}),
   'align': (ChartTitle(align: .start), {'align': ChartAlign.start}),
   'position': (
@@ -984,9 +948,7 @@ const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   ),
   'padding': (
     ChartTitle(padding: EdgeInsets.only(top: 10, bottom: 30)),
-    {
-      'padding': EdgeInsets.only(left: 0, top: 10, right: 0, bottom: 30),
-    },
+    {'padding': EdgeInsets.only(left: 0, top: 10, right: 0, bottom: 30)},
   ),
   'fullSize': (ChartTitle(fullSize: false), {'fullSize': false}),
   'extra': (
@@ -1067,9 +1029,7 @@ final Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
         },
       ),
     ),
-    {
-      'callbacks': TooltipCallbacks(title: (tooltip, arg) => null),
-    },
+    {'callbacks': TooltipCallbacks(title: (tooltip, arg) => null)},
   ),
   'labelText': (
     ChartTooltip(
@@ -1084,9 +1044,7 @@ final Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
         },
       ),
     ),
-    {
-      'callbacks': TooltipCallbacks(label: (tooltip, arg) => null),
-    },
+    {'callbacks': TooltipCallbacks(label: (tooltip, arg) => null)},
   ),
   'footerText': (
     ChartTooltip(
@@ -1101,18 +1059,13 @@ final Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
         },
       ),
     ),
-    {
-      'callbacks': TooltipCallbacks(footer: (tooltip, arg) => null),
-    },
+    {'callbacks': TooltipCallbacks(footer: (tooltip, arg) => null)},
   ),
   'position': (
     const ChartTooltip(position: NearestTooltipPositioner()),
     {'position': const NearestTooltipPositioner()},
   ),
-  'extra': (
-    const ChartTooltip(extra: {'caretSize': 8}),
-    {'caretSize': 8},
-  ),
+  'extra': (const ChartTooltip(extra: {'caretSize': 8}), {'caretSize': 8}),
 };
 
 /// The cases of the parameters of [ChartInteraction] and the twin Map.
@@ -1126,14 +1079,8 @@ const Map<String, (ChartInteraction, Map<String, Object?>)> _interaction = {
     ChartInteraction(includeInvisible: true),
     {'includeInvisible': true},
   ),
-  'axis': (
-    ChartInteraction(axis: .xy),
-    {'axis': InteractionAxis.xy},
-  ),
-  'extra': (
-    ChartInteraction(extra: {'unknownKey': 1}),
-    {'unknownKey': 1},
-  ),
+  'axis': (ChartInteraction(axis: .xy), {'axis': InteractionAxis.xy}),
+  'extra': (ChartInteraction(extra: {'unknownKey': 1}), {'unknownKey': 1}),
 };
 
 /// The cases of the parameters of [ChartAnimation] and the twin value.
@@ -1202,12 +1149,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(type: .bar, datasets: [], padding: EdgeInsets.all(20)),
     {
       'layout': {
-        'padding': EdgeInsets.only(
-          left: 20,
-          top: 20,
-          right: 20,
-          bottom: 20,
-        ),
+        'padding': EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
       },
     },
   ),
@@ -1800,10 +1742,7 @@ void main() {
         'data': data,
         'hidden': false,
         'order': 1,
-        'backgroundColor': [
-          _redValue,
-          _blueValue,
-        ],
+        'backgroundColor': [_redValue, _blueValue],
         'borderColor': _blueValue,
         'borderWidth': 2,
         'hoverBackgroundColor': _blueValue,
@@ -2609,11 +2548,7 @@ void main() {
           },
         ),
       );
-      expect(jsObjectKeys(options['scales']), [
-        'y2',
-        'x',
-        'y',
-      ]);
+      expect(jsObjectKeys(options['scales']), ['y2', 'x', 'y']);
     });
 
     test('extra merges into options, into a group and wins', () {
@@ -2716,10 +2651,7 @@ void main() {
       );
       lowering.config = const ChartConfig(type: .bar, datasets: []);
       expect(
-        label.label!(
-          const _CallbackTooltip(),
-          ChartTooltipItem(item),
-        ),
+        label.label!(const _CallbackTooltip(), ChartTooltipItem(item)),
         isNull,
       );
       expect(calls, ['first', 'second']);

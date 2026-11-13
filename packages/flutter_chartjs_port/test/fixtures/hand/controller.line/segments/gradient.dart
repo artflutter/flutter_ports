@@ -56,9 +56,7 @@ Map<String, Object?> fixture() {
             'pointBorderWidth': 0,
             'pointRadius': 10,
             'borderWidth': 5,
-            'segment': <String, Object?>{
-              'borderColor': getGradient,
-            },
+            'segment': <String, Object?>{'borderColor': getGradient},
           },
         ],
       },

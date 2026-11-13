@@ -507,10 +507,7 @@ void main() {
 
       // Check whether any legend items reach outside the established bounds
       for (final item in _hitBoxes(chart)) {
-        expect(
-          item.left + item.width,
-          lessThanOrEqualTo(chart.width),
-        );
+        expect(item.left + item.width, lessThanOrEqualTo(chart.width));
       }
     });
 
@@ -574,10 +571,7 @@ void main() {
 
       // Check whether any legend items reach outside the established bounds
       for (final item in _hitBoxes(chart)) {
-        expect(
-          item.left + item.width,
-          lessThanOrEqualTo(chart.width),
-        );
+        expect(item.left + item.width, lessThanOrEqualTo(chart.width));
       }
     });
 

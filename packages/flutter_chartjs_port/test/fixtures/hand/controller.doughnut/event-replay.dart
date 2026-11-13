@@ -48,10 +48,7 @@ Map<String, Object?> fixture() {
       },
     },
     'options': <String, Object?>{
-      'canvas': <String, Object?>{
-        'width': 512,
-        'height': 512,
-      },
+      'canvas': <String, Object?>{'width': 512, 'height': 512},
       'run': (Chart chart) async {
         ctx.drawImage(
           (chart.canvas! as UiCanvasElement).toImageSource(),
@@ -97,11 +94,7 @@ Map<String, Object?> fixture() {
         );
 
         clearCanvas(chart.canvas);
-        chart.ctx!.drawImage(
-          (canvas as UiCanvasElement).toImageSource(),
-          0,
-          0,
-        );
+        chart.ctx!.drawImage((canvas as UiCanvasElement).toImageSource(), 0, 0);
       },
     },
   };

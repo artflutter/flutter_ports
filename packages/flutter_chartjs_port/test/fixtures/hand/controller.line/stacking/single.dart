@@ -12,34 +12,18 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-      ],
+      'labels': <Object?>[0, 1, 2],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            -1,
-            -1,
-          ],
+          'data': <Object?>[0, -1, -1],
           'backgroundColor': '#ff0000',
         },
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            2,
-            2,
-          ],
+          'data': <Object?>[0, 2, 2],
           'backgroundColor': '#00ff00',
         },
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            0,
-            1,
-          ],
+          'data': <Object?>[0, 0, 1],
           'backgroundColor': '#0000ff',
         },
       ],
@@ -51,13 +35,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           // value.
           'fill': const RelativeFill(-1),
         },
-        'point': <String, Object?>{
-          'radius': 0,
-        },
+        'point': <String, Object?>{'radius': 0},
       },
-      'layout': <String, Object?>{
-        'padding': const EdgeInsets.all(32),
-      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
       'plugins': <String, Object?>{
         'legend': false,
         'title': false,
@@ -65,20 +45,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         'filler': true,
       },
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-          'stacked': 'single',
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false, 'stacked': 'single'},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

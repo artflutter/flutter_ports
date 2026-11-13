@@ -19,13 +19,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5', ''],
     },
     'options': <String, Object?>{
-      'plugins': <String, Object?>{
-        'legend': false,
-      },
+      'plugins': <String, Object?>{'legend': false},
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
         'y': <String, Object?>{
           'type': 'linear',
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
@@ -71,9 +67,6 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 256,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 256},
   },
 };

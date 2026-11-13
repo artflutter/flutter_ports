@@ -57,10 +57,7 @@ Map<String, Object?> fixture() {
       },
     },
     'options': <String, Object?>{
-      'canvas': <String, Object?>{
-        'height': 512,
-        'width': 512,
-      },
+      'canvas': <String, Object?>{'height': 512, 'width': 512},
       'run': (Chart chart) {
         final completer = Completer<void>();
         for (var i = 0.0; i < 64; i++) {
@@ -91,11 +88,7 @@ Map<String, Object?> fixture() {
         }
         ctx.stroke();
         clearCanvas(chart.canvas);
-        chart.ctx!.drawImage(
-          (canvas as UiCanvasElement).toImageSource(),
-          0,
-          0,
-        );
+        chart.ctx!.drawImage((canvas as UiCanvasElement).toImageSource(), 0, 0);
         completer.complete();
         return completer.future;
       },

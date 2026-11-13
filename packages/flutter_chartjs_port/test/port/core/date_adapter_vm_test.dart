@@ -254,10 +254,7 @@ void main() {
           adapter.format(undefined, 'yyyy-MM-dd HH:mm'),
           '2026-10-20 09:41',
         );
-        expect(
-          adapter.startOf(undefined, TimeUnit.day),
-          _at(2026, 10, 20),
-        );
+        expect(adapter.startOf(undefined, TimeUnit.day), _at(2026, 10, 20));
       });
     });
   });

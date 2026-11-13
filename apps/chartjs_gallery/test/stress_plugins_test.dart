@@ -274,10 +274,7 @@ void main() {
       final tooltipPlugin =
           pluginCase.scene.tooltip && pluginCase.benchKeys['tooltip'] == true;
       // The other scenes keep the tooltip plugin: they listen to no event.
-      expect(
-        chart.tooltip == null,
-        pluginCase.scene.tooltip && !tooltipPlugin,
-      );
+      expect(chart.tooltip == null, pluginCase.scene.tooltip && !tooltipPlugin);
       expect(
         chart.options['events'],
         pluginCase.scene.tooltip ? isNotEmpty : isEmpty,

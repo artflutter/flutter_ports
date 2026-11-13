@@ -577,10 +577,7 @@ void main() {
       expect(x.parse(2022.0, 0), 2.0);
       expect(x.parse(1999.0), 2.0);
       expect(x.getLabels(), [2020, 2021, 2022]);
-      expect(
-        chart.getDatasetMeta(0).data.single.x,
-        x.getPixelForValue(2.0),
-      );
+      expect(chart.getDatasetMeta(0).data.single.x, x.getPixelForValue(2.0));
     });
 
     testWidgets('a List of labels that cannot grow throws at a string that '

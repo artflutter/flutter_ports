@@ -248,66 +248,61 @@ void main() {
           late Chart chart;
           late Scale scaleX;
           late Scale scaleY;
-          testWidgets(
-            'should ${pressed ? '' : 'not '}change '
-            '${pressed ? 'with' : 'without'} key ${key.name}',
-            (tester) async {
-              final rejectedSpy = createSpy('wheelFailed');
-              chart = acquireChart(<String, Object?>{
-                'type': 'line',
-                'data': data(),
-                'options': <String, Object?>{
-                  'scales': <String, Object?>{
-                    'x': <String, Object?>{
-                      'type': 'linear',
-                      'min': 0,
-                      'max': 10,
-                    },
-                    'y': <String, Object?>{'type': 'linear'},
-                  },
-                  'plugins': <String, Object?>{
+          testWidgets('should ${pressed ? '' : 'not '}change '
+              '${pressed ? 'with' : 'without'} key ${key.name}', (
+            tester,
+          ) async {
+            final rejectedSpy = createSpy('wheelFailed');
+            chart = acquireChart(<String, Object?>{
+              'type': 'line',
+              'data': data(),
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
+                  'y': <String, Object?>{'type': 'linear'},
+                },
+                'plugins': <String, Object?>{
+                  'zoom': <String, Object?>{
                     'zoom': <String, Object?>{
-                      'zoom': <String, Object?>{
-                        'drag': <String, Object?>{
-                          'enabled': true,
-                          'modifierKey': key,
-                        },
-                        'mode': Mode.x,
-                        'onZoomRejected': rejectedSpy.call,
+                      'drag': <String, Object?>{
+                        'enabled': true,
+                        'modifierKey': key,
                       },
+                      'mode': Mode.x,
+                      'onZoomRejected': rejectedSpy.call,
                     },
                   },
                 },
-              });
+              },
+            });
 
-              scaleX = chart.scales['x']!;
-              scaleY = chart.scales['y']!;
+            scaleX = chart.scales['x']!;
+            scaleY = chart.scales['y']!;
 
-              final oldMinX = scaleX.options.min;
-              final oldMaxX = scaleX.options.max;
+            final oldMinX = scaleX.options.min;
+            final oldMaxX = scaleX.options.max;
 
-              final pt = (
-                x: scaleX.getPixelForValue(1.5),
-                y: scaleY.getPixelForValue(1.1),
-              );
-              final pt2 = (x: pt.x + 20, y: pt.y + 20);
-              final init = pressed ? EventInit.withKey(key) : const EventInit();
+            final pt = (
+              x: scaleX.getPixelForValue(1.5),
+              y: scaleY.getPixelForValue(1.1),
+            );
+            final pt2 = (x: pt.x + 20, y: pt.y + 20);
+            final init = pressed ? EventInit.withKey(key) : const EventInit();
 
-              dispatchEvent(chart, 'mousedown', pt, init);
-              dispatchEvent(chart, 'mousemove', pt2, init);
-              dispatchEvent(chart, 'mouseup', pt2, init);
+            dispatchEvent(chart, 'mousedown', pt, init);
+            dispatchEvent(chart, 'mousemove', pt2, init);
+            dispatchEvent(chart, 'mouseup', pt2, init);
 
-              if (pressed) {
-                expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
-                expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
-                expect(rejectedSpy, isNot(toHaveBeenCalled()));
-              } else {
-                expect(scaleX.options.min, jasmineEquals(oldMinX));
-                expect(scaleX.options.max, jasmineEquals(oldMaxX));
-                expect(rejectedSpy, toHaveBeenCalled());
-              }
-            },
-          );
+            if (pressed) {
+              expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
+              expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
+              expect(rejectedSpy, isNot(toHaveBeenCalled()));
+            } else {
+              expect(scaleX.options.min, jasmineEquals(oldMinX));
+              expect(scaleX.options.max, jasmineEquals(oldMaxX));
+              expect(rejectedSpy, toHaveBeenCalled());
+            }
+          });
         }
       }
     });
@@ -318,70 +313,65 @@ void main() {
           late Chart chart;
           late Scale scaleX;
           late Scale scaleY;
-          testWidgets(
-            'should ${pressed ? 'not ' : ''}change '
-            '${pressed ? 'without' : 'with'} key ${key.name}',
-            (tester) async {
-              final rejectedSpy = createSpy('zoomRejected');
-              final clickSpy = createSpy('clicked');
-              chart = acquireChart(<String, Object?>{
-                'type': 'line',
-                'data': data(),
-                'options': <String, Object?>{
-                  'scales': <String, Object?>{
-                    'x': <String, Object?>{
-                      'type': 'linear',
-                      'min': 0,
-                      'max': 10,
-                    },
-                    'y': <String, Object?>{'type': 'linear'},
-                  },
-                  'plugins': <String, Object?>{
-                    'zoom': <String, Object?>{
-                      'pan': <String, Object?>{
-                        'enabled': true,
-                        'modifierKey': key,
-                      },
-                      'zoom': <String, Object?>{
-                        'drag': <String, Object?>{'enabled': true},
-                        'mode': Mode.x,
-                        'onZoomRejected': rejectedSpy.call,
-                      },
-                    },
-                  },
-                  'onClick': clickSpy.call,
+          testWidgets('should ${pressed ? 'not ' : ''}change '
+              '${pressed ? 'without' : 'with'} key ${key.name}', (
+            tester,
+          ) async {
+            final rejectedSpy = createSpy('zoomRejected');
+            final clickSpy = createSpy('clicked');
+            chart = acquireChart(<String, Object?>{
+              'type': 'line',
+              'data': data(),
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
+                  'y': <String, Object?>{'type': 'linear'},
                 },
-              });
+                'plugins': <String, Object?>{
+                  'zoom': <String, Object?>{
+                    'pan': <String, Object?>{
+                      'enabled': true,
+                      'modifierKey': key,
+                    },
+                    'zoom': <String, Object?>{
+                      'drag': <String, Object?>{'enabled': true},
+                      'mode': Mode.x,
+                      'onZoomRejected': rejectedSpy.call,
+                    },
+                  },
+                },
+                'onClick': clickSpy.call,
+              },
+            });
 
-              scaleX = chart.scales['x']!;
-              scaleY = chart.scales['y']!;
+            scaleX = chart.scales['x']!;
+            scaleY = chart.scales['y']!;
 
-              final oldMinX = scaleX.options.min;
-              final oldMaxX = scaleX.options.max;
+            final oldMinX = scaleX.options.min;
+            final oldMaxX = scaleX.options.max;
 
-              final pt = (
-                x: scaleX.getPixelForValue(1.5),
-                y: scaleY.getPixelForValue(1.1),
-              );
-              final pt2 = (x: pt.x + 20, y: pt.y + 20);
-              final init = pressed ? EventInit.withKey(key) : const EventInit();
+            final pt = (
+              x: scaleX.getPixelForValue(1.5),
+              y: scaleY.getPixelForValue(1.1),
+            );
+            final pt2 = (x: pt.x + 20, y: pt.y + 20);
+            final init = pressed ? EventInit.withKey(key) : const EventInit();
 
-              dispatchEvent(chart, 'mousedown', pt, init);
-              dispatchEvent(chart, 'mousemove', pt2, init);
-              dispatchEvent(chart, 'mouseup', pt2, init);
+            dispatchEvent(chart, 'mousedown', pt, init);
+            dispatchEvent(chart, 'mousemove', pt2, init);
+            dispatchEvent(chart, 'mouseup', pt2, init);
 
-              if (pressed) {
-                expect(scaleX.options.min, jasmineEquals(oldMinX));
-                expect(scaleX.options.max, jasmineEquals(oldMaxX));
-                expect(rejectedSpy, toHaveBeenCalled());
-              } else {
-                expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
-                expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
-                expect(rejectedSpy, isNot(toHaveBeenCalled()));
-              }
-              expect(clickSpy, isNot(toHaveBeenCalled()));
-            },
-          );
+            if (pressed) {
+              expect(scaleX.options.min, jasmineEquals(oldMinX));
+              expect(scaleX.options.max, jasmineEquals(oldMaxX));
+              expect(rejectedSpy, toHaveBeenCalled());
+            } else {
+              expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
+              expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
+              expect(rejectedSpy, isNot(toHaveBeenCalled()));
+            }
+            expect(clickSpy, isNot(toHaveBeenCalled()));
+          });
         }
       }
     });

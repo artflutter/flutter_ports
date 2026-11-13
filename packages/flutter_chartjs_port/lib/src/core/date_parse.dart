@@ -739,9 +739,7 @@ final class _IsoParse {
       if (year == null) return double.nan;
       final yearLength = daysInMonth(year, 2) == 29 ? 366 : 365;
       if (dayOfYear > yearLength || dayOfYear == 0) return double.nan;
-      final civil = civilFromDays(
-        daysFromCivil(year, 1, 1) + dayOfYear - 1,
-      );
+      final civil = civilFromDays(daysFromCivil(year, 1, 1) + dayOfYear - 1);
       month = civil.month - 1;
       date = civil.day;
     }

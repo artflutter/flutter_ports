@@ -121,22 +121,19 @@ void Function(T args) throttled<T>(void Function(T args) fn) {
 Debounced<T> debounce<T>(void Function(T args) fn, double delay) {
   Timer? timeout;
   // DIVERGES(chartjs): platform-debounce-cancel, a Debounced with cancel().
-  return Debounced<T>._(
-    (args) {
-      if (delay != 0 && !delay.isNaN) {
-        timeout?.cancel();
-        timeout = Timer(
-          Duration(milliseconds: jsToInt32(delay).toInt()),
-          // DIVERGES(chartjs): js-semantics-debounce-args, args not [args].
-          () => fn(args),
-        );
-      } else {
-        fn(args);
-      }
-      return delay;
-    },
-    () => timeout?.cancel(),
-  );
+  return Debounced<T>._((args) {
+    if (delay != 0 && !delay.isNaN) {
+      timeout?.cancel();
+      timeout = Timer(
+        Duration(milliseconds: jsToInt32(delay).toInt()),
+        // DIVERGES(chartjs): js-semantics-debounce-args, args not [args].
+        () => fn(args),
+      );
+    } else {
+      fn(args);
+    }
+    return delay;
+  }, () => timeout?.cancel());
 }
 
 /// The result of [debounce]: the upstream debounced function, plus
@@ -202,12 +199,7 @@ double alignStartEnd(ChartAlign? align, double start, double end) =>
 /// Defaults to `left`
 /// @private
 // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-double textX(
-  TextAlign? align,
-  double left,
-  double right,
-  bool rtl,
-) {
+double textX(TextAlign? align, double left, double right, bool rtl) {
   final check = rtl ? TextAlign.left : TextAlign.right;
   return align == check
       ? right
@@ -288,13 +280,9 @@ double textX(
                   1.0,
       );
       if (jsTruthy(spanGaps)) {
-        final distanceToDefinedHi =
-            _slice(
-              parsed,
-              end - 1,
-            ).indexWhere(
-              (point) => !isNullOrUndef(_parsedValue(point, vScale!.axis)),
-            );
+        final distanceToDefinedHi = _slice(parsed, end - 1).indexWhere(
+          (point) => !isNullOrUndef(_parsedValue(point, vScale!.axis)),
+        );
         end += math.max<int>(0, distanceToDefinedHi);
       }
       count = limitValue(end, start, pointCount) - start;

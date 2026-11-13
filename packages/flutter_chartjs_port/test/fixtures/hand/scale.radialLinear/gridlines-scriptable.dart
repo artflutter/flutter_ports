@@ -34,12 +34,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             'color': 'rgba(255, 255, 255, 0.5)',
             'lineWidth': 2,
           },
-          'pointLabels': <String, Object?>{
-            'display': false,
-          },
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'pointLabels': <String, Object?>{'display': false},
+          'ticks': <String, Object?>{'display': false},
         },
       },
     },

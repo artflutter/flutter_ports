@@ -60,16 +60,14 @@ Map<String, Object?> _config([Map<String, Object?> extra = const {}]) =>
     };
 
 /// A hand fixture with [config] and the [run] hook.
-Map<String, Object?> _fixture(
-  Map<String, Object?> config, [
-  Function? run,
-]) => <String, Object?>{
-  'config': config,
-  'options': <String, Object?>{
-    'canvas': <String, Object?>{'height': 64, 'width': 64},
-    'run': ?run,
-  },
-};
+Map<String, Object?> _fixture(Map<String, Object?> config, [Function? run]) =>
+    <String, Object?>{
+      'config': config,
+      'options': <String, Object?>{
+        'canvas': <String, Object?>{'height': 64, 'width': 64},
+        'run': ?run,
+      },
+    };
 
 Map<String, Object?> _options(Map<String, Object?> config) =>
     config['options']! as Map<String, Object?>;
@@ -90,9 +88,7 @@ Map<String, Object?> _ruleInstance() {
   });
 }
 
-final Map<String, Object?> _pluginOptions = <String, Object?>{
-  'legend': false,
-};
+final Map<String, Object?> _pluginOptions = <String, Object?>{'legend': false};
 
 Map<String, Object?> _ruleObject() {
   final config = _config({

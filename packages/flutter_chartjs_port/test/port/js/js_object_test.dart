@@ -261,10 +261,7 @@ void main() {
       expectKey(5.0, 'x', undefined);
       expectKey(true, 'x', undefined);
       // class A { static id = 'a'; } class B extends A {}: B.id is 'a'.
-      final b = JsClass(
-        'B',
-        superclass: JsClass('A', statics: {'id': 'a'}),
-      );
+      final b = JsClass('B', superclass: JsClass('A', statics: {'id': 'a'}));
       expectKey(b, 'id', 'a');
     });
 

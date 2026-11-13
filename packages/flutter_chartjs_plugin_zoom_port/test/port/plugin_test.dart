@@ -141,10 +141,7 @@ Map<String, Object?> _rangeConfig(
         'label': 'a',
         'data': <Object?>[
           for (var i = 0; i < 24; i++)
-            <String, Object?>{
-              'x': i * 4.0,
-              'y': 10.0 + (i * 37) % 80,
-            },
+            <String, Object?>{'x': i * 4.0, 'y': 10.0 + (i * 37) % 80},
         ],
         'pointRadius': 3.0,
       },
@@ -254,13 +251,8 @@ void main() {
         init: const EventInit(pointerType: 'mouse'),
       ),
       'zoom': (chart) => chart.zoom(const .all(1.2)),
-      'zoomRect': (chart) => chart.zoomRect(
-        (x: 120.0, y: 90.0),
-        (
-          x: 300.0,
-          y: 260.0,
-        ),
-      ),
+      'zoomRect': (chart) =>
+          chart.zoomRect((x: 120.0, y: 90.0), (x: 300.0, y: 260.0)),
       'zoomScale': (chart) => chart.zoomScale('x', (min: 10, max: 60)),
       'pan': (chart) => chart.pan(const PanAmount(x: -30, y: 15)),
       'resetZoom': (chart) => chart.resetZoom(),

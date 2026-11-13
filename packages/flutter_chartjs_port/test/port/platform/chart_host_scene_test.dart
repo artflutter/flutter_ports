@@ -225,9 +225,9 @@ void main() {
 
   group('under a shader mask at a fractional offset', () {
     Widget mask(Widget child) => ShaderMask(
-      shaderCallback: (bounds) => const LinearGradient(
-        colors: [Color(0xFFFFFFFF), Color(0x00FFFFFF)],
-      ).createShader(bounds),
+      shaderCallback: (bounds) =>
+          const LinearGradient(colors: [Color(0xFFFFFFFF), Color(0x00FFFFFF)])
+              .createShader(bounds),
       child: child,
     );
 
@@ -423,9 +423,7 @@ void main() {
       final context = canvas.getContext2d();
       addTearDown(context.dispose);
       _chart(context, 1);
-      await tester.pumpWidget(
-        _frame(ChartHost(canvas: canvas), Offset.zero),
-      );
+      await tester.pumpWidget(_frame(ChartHost(canvas: canvas), Offset.zero));
       final layer = _layers(tester).single;
       await tester.pumpWidget(
         _frame(ChartHost(canvas: canvas), const Offset(20, 10)),

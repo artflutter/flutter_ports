@@ -573,10 +573,7 @@ void main() {
       expect(_chart(tester), same(chart));
       expect(chart.data, same(last['data']));
       expect(chart.getDatasetMeta(0).data, hasLength(3));
-      expect(
-        jsGet(chart.getDatasetMeta(0).controller!.getParsed(0), 'y'),
-        10,
-      );
+      expect(jsGet(chart.getDatasetMeta(0).controller!.getParsed(0), 'y'), 10);
     });
 
     testWidgets('a replayed onHover with setState gives no exception', (
@@ -670,9 +667,8 @@ void main() {
         'again', (tester) async {
       final created = <Chart>[];
       final config = _config();
-      Widget build(Map<String, Object?> config) => _box(
-        ChartView.raw(config: config, onChartCreated: created.add),
-      );
+      Widget build(Map<String, Object?> config) =>
+          _box(ChartView.raw(config: config, onChartCreated: created.add));
       await tester.pumpWidget(build(config));
       expect(created, hasLength(1));
       final first = created.single;
@@ -784,18 +780,16 @@ void main() {
           ),
           (
             'bounded width, unbounded height (Column)',
-            (chart) => _box(
-              SingleChildScrollView(child: Column(children: [chart])),
-            ),
+            (chart) =>
+                _box(SingleChildScrollView(child: Column(children: [chart]))),
             const {},
             const Size(400, 200),
             const Size(400, 400),
           ),
           (
             'unbounded width, bounded height (Row)',
-            (chart) => _box(
-              SizedBox(height: 120, child: Row(children: [chart])),
-            ),
+            (chart) =>
+                _box(SizedBox(height: 120, child: Row(children: [chart]))),
             const {},
             const Size(240, 120),
             const Size(120, 120),
@@ -816,9 +810,8 @@ void main() {
           ),
           (
             'maintainAspectRatio: false, unbounded height',
-            (chart) => _box(
-              SingleChildScrollView(child: Column(children: [chart])),
-            ),
+            (chart) =>
+                _box(SingleChildScrollView(child: Column(children: [chart]))),
             const {'maintainAspectRatio': false},
             const Size(400, 150),
             const Size(400, 150),
@@ -982,9 +975,7 @@ void main() {
       expect(animator.has(chart), isFalse);
     });
 
-    testWidgets('a theme switch and a theme removal draw once', (
-      tester,
-    ) async {
+    testWidgets('a theme switch and a theme removal draw once', (tester) async {
       final counts = <String, int>{};
       final config = _config(
         options: <String, Object?>{'animation': <String, Object?>{}},

@@ -117,14 +117,7 @@ final class UiTransform {
   }
 
   /// `setTransform(a, b, c, d, e, f)`.
-  void setValues(
-    double a,
-    double b,
-    double c,
-    double d,
-    double e,
-    double f,
-  ) {
+  void setValues(double a, double b, double c, double d, double e, double f) {
     this.a = a;
     this.b = b;
     this.c = c;
@@ -501,10 +494,7 @@ final class UiPathBuilder implements CanvasPath {
   /// with a clip on whole bitmap pixels, so that each pixel column belongs to
   /// one piece. A piece keeps the geometry of the whole shape in its column.
   /// The commands stay deferred. A false result calls nothing.
-  bool tryFillColumns(
-    ui.Path scratch,
-    void Function(ui.Rect clip) draw,
-  ) {
+  bool tryFillColumns(ui.Path scratch, void Function(ui.Rect clip) draw) {
     final n = _deferred;
     if (_built || _circle || _sector || n < minPieceCommands) return false;
     final codes = _codes;

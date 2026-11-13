@@ -130,10 +130,8 @@ class DocParagraph extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: DocText(text),
-  );
+  Widget build(BuildContext context) =>
+      Padding(padding: const EdgeInsets.only(bottom: 12), child: DocText(text));
 }
 
 /// A list with bullets.
@@ -355,11 +353,7 @@ class DocTable extends StatelessWidget {
                 if (constraints.maxWidth < 560) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      nameCell,
-                      const SizedBox(height: 4),
-                      textCell,
-                    ],
+                    children: [nameCell, const SizedBox(height: 4), textCell],
                   );
                 }
                 return Row(

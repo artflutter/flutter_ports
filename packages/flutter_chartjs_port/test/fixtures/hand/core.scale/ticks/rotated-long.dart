@@ -63,9 +63,6 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 1024,
-      'height': 512,
-    },
+    'canvas': <String, Object?>{'width': 1024, 'height': 512},
   },
 };

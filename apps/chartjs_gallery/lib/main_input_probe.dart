@@ -17,10 +17,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// The point count of the chart: `--dart-define=POINTS=<n>`, 20000 by
 /// default.
-const int inputProbePoints = int.fromEnvironment(
-  'POINTS',
-  defaultValue: 20000,
-);
+const int inputProbePoints = int.fromEnvironment('POINTS', defaultValue: 20000);
 
 /// The input probe of Chart.js ADR 0112 (section "Measurement").
 ///
@@ -483,10 +480,7 @@ class InputProbePageState extends State<InputProbePage> {
     // Only on a phone: a test on a desktop leaves no file.
     if (Platform.isIOS || Platform.isAndroid) {
       try {
-        inputProbeLinesFile.writeAsStringSync(
-          '$line\n',
-          mode: FileMode.append,
-        );
+        inputProbeLinesFile.writeAsStringSync('$line\n', mode: FileMode.append);
       } on FileSystemException {
         // The console line stays; a probe needs no file.
       }

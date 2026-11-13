@@ -92,10 +92,7 @@ final class _Controller implements types.DatasetController {
   final double max;
 
   @override
-  ({double min, double max}) getMinMax(
-    types.Scale scale, [
-    bool? canStack,
-  ]) {
+  ({double min, double max}) getMinMax(types.Scale scale, [bool? canStack]) {
     _log.add('getMinMax:${(scale as Scale).id}:$canStack');
     return (min: min, max: max);
   }
@@ -203,10 +200,8 @@ final class _Chart implements types.Chart {
   }
 
   @override
-  ContextObject getContext() => _context ??= createContext(null, {
-    'chart': this,
-    'type': 'chart',
-  });
+  ContextObject getContext() =>
+      _context ??= createContext(null, {'chart': this, 'type': 'chart'});
 
   @override
   List<types.ChartMeta> getSortedVisibleDatasetMetas() => _metas;
@@ -870,16 +865,13 @@ void main() {
     test('beforeLayout resets the data limits cache', () {
       final chart = _plainChart();
       final scale =
-          _TestScale(_cfg(chart), {
-            'ticks': <Object?>[],
-            'min': 0,
-            'max': 1,
-          })..init(
-            _scaleOptions({
-              'axis': const XAxis(),
-              'position': ChartPosition.bottom,
-            }, chart),
-          );
+          _TestScale(_cfg(chart), {'ticks': <Object?>[], 'min': 0, 'max': 1})
+            ..init(
+              _scaleOptions({
+                'axis': const XAxis(),
+                'position': ChartPosition.bottom,
+              }, chart),
+            );
       _log = [];
       scale.update(100, 100);
       expect(_log.where((e) => e == 'determineDataLimits'), hasLength(1));
@@ -918,10 +910,7 @@ void main() {
               }, chart),
             )
             ..update(440, 200);
-      expect(
-        () => scale.draw(chart.chartArea),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => scale.draw(chart.chartArea), throwsA(isA<TypeError>()));
     });
 
     test('a scale without a context throws a TypeError at the draw', () {
@@ -929,11 +918,7 @@ void main() {
       final scale =
           _TestScale(
               {'id': 'x', 'type': 'test', 'ctx': null, 'chart': chart},
-              {
-                'ticks': <Object?>[],
-                'min': 0,
-                'max': 1,
-              },
+              {'ticks': <Object?>[], 'min': 0, 'max': 1},
             )
             ..init(
               _scaleOptions({
@@ -942,10 +927,7 @@ void main() {
               }, chart),
             )
             ..update(440, 200);
-      expect(
-        () => scale.draw(chart.chartArea),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => scale.draw(chart.chartArea), throwsA(isA<TypeError>()));
     });
   });
 

@@ -708,9 +708,7 @@ void main() {
       expect(spy.updateControlPoints.count(), 1);
     });
 
-    testWidgets('spyOnArrayListener records the _onData calls', (
-      tester,
-    ) async {
+    testWidgets('spyOnArrayListener records the _onData calls', (tester) async {
       final chart = acquireChart(_config());
       final data = _data(chart, 0);
       final calls = spyOnArrayListener(
@@ -736,19 +734,15 @@ void main() {
     });
 
     test('jasmineEquals and objectContaining', () {
-      expect(
-        <String, Object?>{'a': 1, 'b': double.nan},
-        jasmineEquals({
-          'a': 1.0,
-          'b': double.nan,
-        }),
-      );
+      expect(<String, Object?>{
+        'a': 1,
+        'b': double.nan,
+      }, jasmineEquals({'a': 1.0, 'b': double.nan}));
       expect(0.0, isNot(jasmineEquals(-0.0)));
       expect(<String, Object?>{'a': 1, 'b': 2}, objectContaining({'a': 1}));
-      expect(
-        <String, Object?>{'a': 1},
-        isNot(objectContaining({'a': 1, 'b': 2})),
-      );
+      expect(<String, Object?>{
+        'a': 1,
+      }, isNot(objectContaining({'a': 1, 'b': 2})));
     });
   });
 }

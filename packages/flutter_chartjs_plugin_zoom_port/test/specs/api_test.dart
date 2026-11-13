@@ -47,19 +47,10 @@ Map<String, Object?> _scatter0to100([Map<String, Object?>? zoom]) =>
       'type': 'scatter',
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'min': 0,
-            'max': 100,
-          },
-          'y': <String, Object?>{
-            'min': 0,
-            'max': 100,
-          },
+          'x': <String, Object?>{'min': 0, 'max': 100},
+          'y': <String, Object?>{'min': 0, 'max': 100},
         },
-        if (zoom != null)
-          'plugins': <String, Object?>{
-            'zoom': zoom,
-          },
+        if (zoom != null) 'plugins': <String, Object?>{'zoom': zoom},
       },
     };
 
@@ -168,11 +159,7 @@ void main() {
         final chart = acquireChart(
           _scatter0to100(<String, Object?>{
             'limits': <String, Object?>{
-              'x': <String, Object?>{
-                'min': 0,
-                'max': 100,
-                'minRange': 100,
-              },
+              'x': <String, Object?>{'min': 0, 'max': 100, 'minRange': 100},
             },
           }),
         );
@@ -187,11 +174,7 @@ void main() {
           _scatter0to100(<String, Object?>{
             'mode': Mode.x,
             'limits': <String, Object?>{
-              'x': <String, Object?>{
-                'min': 0,
-                'max': 100,
-                'minRange': 50,
-              },
+              'x': <String, Object?>{'min': 0, 'max': 100, 'minRange': 50},
             },
           }),
         );
@@ -224,10 +207,7 @@ void main() {
         final chart = acquireChart(
           _scatter0to100(<String, Object?>{
             'limits': <String, Object?>{
-              'x': <String, Object?>{
-                'min': 0,
-                'max': 100,
-              },
+              'x': <String, Object?>{'min': 0, 'max': 100},
             },
           }),
         );
@@ -277,9 +257,7 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'onZoom': zoomSpy.call,
-                },
+                'zoom': <String, Object?>{'onZoom': zoomSpy.call},
               },
             },
           },
@@ -423,10 +401,7 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'min': 'b',
-                'max': 'd',
-              },
+              'x': <String, Object?>{'min': 'b', 'max': 'd'},
             },
           },
         });
@@ -460,24 +435,15 @@ void main() {
           'options': <String, Object?>{
             'indexAxis': const YAxis(),
             'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'min': 2,
-                'max': 4,
-              },
+              'y': <String, Object?>{'min': 2, 'max': 4},
             },
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
                 'limits': <String, Object?>{
-                  'y': <String, Object?>{
-                    'min': 1,
-                    'max': 5,
-                    'minRange': 1,
-                  },
+                  'y': <String, Object?>{'min': 1, 'max': 5, 'minRange': 1},
                 },
                 'zoom': <String, Object?>{
-                  'wheel': <String, Object?>{
-                    'enabled': true,
-                  },
+                  'wheel': <String, Object?>{'enabled': true},
                   'mode': Mode.y,
                 },
               },
@@ -524,9 +490,7 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'logarithmic',
-              },
+              'y': <String, Object?>{'type': 'logarithmic'},
             },
           },
         });

@@ -28,7 +28,7 @@ enum RankMetric {
   /// The 90th percentile of the UI time.
   ui('UI p90', 2, ' ms');
 
-  const RankMetric(
+  RankMetric(
     this.label,
     this.decimals,
     this.unit, {
@@ -233,9 +233,7 @@ String? winnerSummary(List<RankedResult> rows) {
   }
   if (winners.length != 1) return null;
   final first = winners.single;
-  final next = rows.firstWhere(
-    (r) => r.result.library != first.result.library,
-  );
+  final next = rows.firstWhere((r) => r.result.library != first.result.library);
   final a = first.result.metrics;
   final b = next.result.metrics;
   final name = first.result.library.label;

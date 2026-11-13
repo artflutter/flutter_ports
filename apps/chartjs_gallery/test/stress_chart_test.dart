@@ -457,10 +457,7 @@ void main() {
             type == StressChartType.pie ||
             type == StressChartType.polarArea;
         expect(legend.legendItems, hasLength(arcs ? 20 : 1));
-        expect(
-          withLegend.chartArea!.top,
-          greaterThan(chart.chartArea!.top),
-        );
+        expect(withLegend.chartArea!.top, greaterThan(chart.chartArea!.top));
       } finally {
         chart.destroy();
         withLegend.destroy();
@@ -546,18 +543,15 @@ void main() {
       isFalse,
     );
     final radar = config(StressChartType.radar)['options']!;
-    expect(
-      (radar as Map<String, Object?>)['scales'],
-      {
-        'r': {
-          'type': 'radialLinear',
-          'display': false,
-          'ticks': {'display': false},
-          'min': 0,
-          'max': 1,
-        },
+    expect((radar as Map<String, Object?>)['scales'], {
+      'r': {
+        'type': 'radialLinear',
+        'display': false,
+        'ticks': {'display': false},
+        'min': 0,
+        'max': 1,
       },
-    );
+    });
     final scatter = config(StressChartType.scatter, showLine: true);
     expect(
       (((scatter['data']! as Map<String, Object?>)['datasets']! as List).single
@@ -573,11 +567,7 @@ void main() {
   testWidgets('chart, update, scriptable: each point resolves its color', (
     tester,
   ) async {
-    await _pumpChart(
-      tester,
-      call: StressChartCall.update,
-      scriptable: true,
-    );
+    await _pumpChart(tester, call: StressChartCall.update, scriptable: true);
     await _frames(tester, 10);
     final points = _points(tester);
     final options = points.first.options;
@@ -802,16 +792,8 @@ void main() {
           reason: '$key $count',
         );
       }
-      expect(
-        await _selected(tester, 'stress.n.1000'),
-        isTrue,
-        reason: key,
-      );
-      expect(
-        chart.getDatasetMeta(0).data,
-        hasLength(1000),
-        reason: key,
-      );
+      expect(await _selected(tester, 'stress.n.1000'), isTrue, reason: key);
+      expect(chart.getDatasetMeta(0).data, hasLength(1000), reason: key);
       expect(
         await stressControlExists(tester, 'stress.chart.showLine'),
         type.points,
@@ -856,9 +838,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('chart: a running loop goes on across the modes', (
-    tester,
-  ) async {
+  testWidgets('chart: a running loop goes on across the modes', (tester) async {
     final stats = await _pumpChart(tester, call: StressChartCall.update);
     await _frames(tester, 10);
     final x = _points(tester).first.x;
@@ -1425,14 +1405,16 @@ void main() {
   });
 
   test('stressDefaultScenarios of the mode chart: the counts of the type', () {
-    expect(
-      stressDefaultScenarios(StressMode.chart, StressChartType.line),
-      [(1000, 0), (5000, 0), (20000, 0)],
-    );
-    expect(
-      stressDefaultScenarios(StressMode.chart, StressChartType.radar),
-      [(100, 0), (1000, 0), (5000, 0)],
-    );
+    expect(stressDefaultScenarios(StressMode.chart, StressChartType.line), [
+      (1000, 0),
+      (5000, 0),
+      (20000, 0),
+    ]);
+    expect(stressDefaultScenarios(StressMode.chart, StressChartType.radar), [
+      (100, 0),
+      (1000, 0),
+      (5000, 0),
+    ]);
     expect(stressDefaultScenarios(StressMode.chart), [
       for (final n in stressType.counts) (n, 0),
     ]);

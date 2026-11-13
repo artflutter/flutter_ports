@@ -84,10 +84,7 @@ void main() {
         );
       }
       expect(DateAdapterBase().options, <String, Object?>{});
-      expect(
-        DateAdapterBase().options,
-        isNot(same(DateAdapterBase().options)),
-      );
+      expect(DateAdapterBase().options, isNot(same(DateAdapterBase().options)));
     });
 
     test('a truthy options that is not an object stays as it is', () {
@@ -126,11 +123,7 @@ void main() {
       final before = DateAdapterBase(<String, Object?>{'tag': 'before'});
       DateAdapterBase.override({
         'parse': JsFunction((Object? self, Object? value, Object? format) {
-          calls.add([
-            _option(self! as DateAdapter, 'tag'),
-            value,
-            format,
-          ]);
+          calls.add([_option(self! as DateAdapter, 'tag'), value, format]);
           return 42.0;
         }),
         'formats': () => <String, Object?>{'day': 'D'},
@@ -139,11 +132,7 @@ void main() {
       final after = DateAdapterBase(<String, Object?>{'tag': 'after'});
       expect(
         [before.parse('x'), before.parse('x', 'fmt'), after.parse('y')],
-        [
-          42.0,
-          42.0,
-          42.0,
-        ],
+        [42.0, 42.0, 42.0],
       );
       expect(calls, [
         ['before', 'x', undefined],

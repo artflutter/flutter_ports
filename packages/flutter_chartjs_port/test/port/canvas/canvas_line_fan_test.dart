@@ -788,10 +788,7 @@ void main() {
       UiCanvasContext.debugLineFanWithoutImpeller = false;
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
-      expect(
-        _fan(ctx, _ends(4)),
-        ui.ImageFilter.isShaderFilterSupported,
-      );
+      expect(_fan(ctx, _ends(4)), ui.ImageFilter.isShaderFilterSupported);
     });
 
     test('the context is the capability', () {
@@ -807,9 +804,8 @@ void main() {
       expect(dir.parent.path, isNot(dir.path), reason: 'no repository root');
       dir = dir.parent;
     }
-    final lines = File(
-      '${dir.path}/.github/workflows/ci.yaml',
-    ).readAsLinesSync();
+    final lines = File('${dir.path}/.github/workflows/ci.yaml')
+        .readAsLinesSync();
     final start = lines.indexOf('  test-impeller:');
     expect(start, isNot(-1), reason: 'ci.yaml has no job test-impeller');
     final job = lines

@@ -13,14 +13,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        'a',
-      ],
+      'labels': <Object?>['a'],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            -0.18,
-          ],
+          'data': <Object?>[-0.18],
         },
       ],
     },
@@ -29,9 +25,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
         'x': <String, Object?>{
           // DIVERGES(chartjs): adapt-length-objects, the length
           // class.
@@ -42,9 +36,6 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 512,
-      'height': 128,
-    },
+    'canvas': <String, Object?>{'width': 512, 'height': 128},
   },
 };

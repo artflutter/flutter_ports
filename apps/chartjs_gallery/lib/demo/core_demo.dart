@@ -321,10 +321,10 @@ class CoreDemoState extends State<CoreDemo> {
     setState(() {
       _data = [
         for (final data in _data)
-          _spreadPoints(
-            [for (final item in data) item.y, if (add) _value()],
-            add ? data.length + 1 : math.max(data.length - 1, 1),
-          ),
+          _spreadPoints([
+            for (final item in data) item.y,
+            if (add) _value(),
+          ], add ? data.length + 1 : math.max(data.length - 1, 1)),
       ];
     });
     _readout.value++;
@@ -542,10 +542,7 @@ class CoreDemoState extends State<CoreDemo> {
                 builder: (context, constraints) => SizedBox(
                   key: const ValueKey('core.host'),
                   height: constraints.maxWidth >= 560 ? 320 : 280,
-                  child: ChartView(
-                    config: _config(),
-                    onChartCreated: _onChart,
-                  ),
+                  child: ChartView(config: _config(), onChartCreated: _onChart),
                 ),
               ),
               const SizedBox(height: 12),

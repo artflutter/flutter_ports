@@ -345,9 +345,7 @@ String _normalized(String path) {
 /// `jsMax` and `jsMin` for them (Chart.js ADR 0045): on dart2wasm, the
 /// generic functions box their `double` operands. The rule does not flag an
 /// `int` type argument.
-Future<Map<String, List<JsSite>>> resolvedSites(
-  List<String> files,
-) async {
+Future<Map<String, List<JsSite>>> resolvedSites(List<String> files) async {
   if (files.isEmpty) return const {};
   final collection = AnalysisContextCollection(
     includedPaths: [for (final file in files) _normalized(file)],

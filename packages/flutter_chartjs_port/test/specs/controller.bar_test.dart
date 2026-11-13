@@ -277,172 +277,154 @@ void main() {
     );
 
     // :162
-    testWidgets(
-      'should correctly count the number of stacks when a group is '
-      'specified for some',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
-          },
-        });
+    testWidgets('should correctly count the number of stacks when a group is '
+        'specified for some', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+          ],
+          'labels': <Object?>[],
+        },
+      });
 
-        final meta = chart.getDatasetMeta(3);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackCount(), 3);
-      },
-    );
+      final meta = chart.getDatasetMeta(3);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackCount(), 3);
+    });
 
     // :180
-    testWidgets(
-      'should correctly count the number of stacks when a group is '
-      'specified for some and the scale is stacked',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
+    testWidgets('should correctly count the number of stacks when a group is '
+        'specified for some and the scale is stacked', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+          ],
+          'labels': <Object?>[],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'stacked': true},
+            'y': <String, Object?>{'stacked': true},
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
-            },
-          },
-        });
+        },
+      });
 
-        final meta = chart.getDatasetMeta(3);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackCount(), 2);
-      },
-    );
+      final meta = chart.getDatasetMeta(3);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackCount(), 2);
+    });
 
     // :208
-    testWidgets(
-      'should correctly count the number of stacks when a group is '
-      'specified for some and the scale is not stacked',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
+    testWidgets('should correctly count the number of stacks when a group is '
+        'specified for some and the scale is not stacked', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+          ],
+          'labels': <Object?>[],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'stacked': false},
+            'y': <String, Object?>{'stacked': false},
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': false},
-              'y': <String, Object?>{'stacked': false},
-            },
-          },
-        });
+        },
+      });
 
-        final meta = chart.getDatasetMeta(3);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackCount(), 4);
-      },
-    );
+      final meta = chart.getDatasetMeta(3);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackCount(), 4);
+    });
 
     // :236
-    testWidgets(
-      'should correctly count the number of stacks when a group is '
-      'specified for all',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-            ],
-            'labels': <Object?>[],
-          },
-        });
+    testWidgets('should correctly count the number of stacks when a group is '
+        'specified for all', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+          ],
+          'labels': <Object?>[],
+        },
+      });
 
-        final meta = chart.getDatasetMeta(3);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackCount(), 2);
-      },
-    );
+      final meta = chart.getDatasetMeta(3);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackCount(), 2);
+    });
 
     // :254
-    testWidgets(
-      'should correctly count the number of stacks when a group is '
-      'specified for all and the scale is stacked',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-            ],
-            'labels': <Object?>[],
+    testWidgets('should correctly count the number of stacks when a group is '
+        'specified for all and the scale is stacked', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+          ],
+          'labels': <Object?>[],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'stacked': true},
+            'y': <String, Object?>{'stacked': true},
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
-            },
-          },
-        });
+        },
+      });
 
-        final meta = chart.getDatasetMeta(3);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackCount(), 2);
-      },
-    );
+      final meta = chart.getDatasetMeta(3);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackCount(), 2);
+    });
 
     // :282
-    testWidgets(
-      'should correctly count the number of stacks when a group is '
-      'specified for all and the scale is not stacked',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-            ],
-            'labels': <Object?>[],
+    testWidgets('should correctly count the number of stacks when a group is '
+        'specified for all and the scale is not stacked', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+          ],
+          'labels': <Object?>[],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'stacked': false},
+            'y': <String, Object?>{'stacked': false},
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': false},
-              'y': <String, Object?>{'stacked': false},
-            },
-          },
-        });
+        },
+      });
 
-        final meta = chart.getDatasetMeta(3);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackCount(), 4);
-      },
-    );
+      final meta = chart.getDatasetMeta(3);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackCount(), 4);
+    });
 
     // :310
     testWidgets(
@@ -470,97 +452,88 @@ void main() {
     );
 
     // :329
-    testWidgets(
-      'should correctly get the stack index when a group is not '
-      'specified',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
-          },
-        });
+    testWidgets('should correctly get the stack index when a group is not '
+        'specified', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+          ],
+          'labels': <Object?>[],
+        },
+      });
 
-        final meta = chart.getDatasetMeta(1);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackIndex(0), 0);
-        expect(controller.getStackIndex(1), 1);
-        expect(controller.getStackIndex(2), 2);
-        expect(controller.getStackIndex(3), 3);
-      },
-    );
+      final meta = chart.getDatasetMeta(1);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackIndex(0), 0);
+      expect(controller.getStackIndex(1), 1);
+      expect(controller.getStackIndex(2), 2);
+      expect(controller.getStackIndex(3), 3);
+    });
 
     // :350
-    testWidgets(
-      'should correctly get the stack index when a group is not '
-      'specified and the scale is stacked',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
+    testWidgets('should correctly get the stack index when a group is not '
+        'specified and the scale is stacked', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+          ],
+          'labels': <Object?>[],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'stacked': true},
+            'y': <String, Object?>{'stacked': true},
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
-            },
-          },
-        });
+        },
+      });
 
-        final meta = chart.getDatasetMeta(1);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackIndex(0), 0);
-        expect(controller.getStackIndex(1), 0);
-        expect(controller.getStackIndex(2), 0);
-        expect(controller.getStackIndex(3), 0);
-      },
-    );
+      final meta = chart.getDatasetMeta(1);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackIndex(0), 0);
+      expect(controller.getStackIndex(1), 0);
+      expect(controller.getStackIndex(2), 0);
+      expect(controller.getStackIndex(3), 0);
+    });
 
     // :381
-    testWidgets(
-      'should correctly get the stack index when a group is not '
-      'specified and the scale is not stacked',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
+    testWidgets('should correctly get the stack index when a group is not '
+        'specified and the scale is not stacked', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+            <String, Object?>{'data': <Object?>[]},
+          ],
+          'labels': <Object?>[],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'stacked': false},
+            'y': <String, Object?>{'stacked': false},
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': false},
-              'y': <String, Object?>{'stacked': false},
-            },
-          },
-        });
+        },
+      });
 
-        final meta = chart.getDatasetMeta(1);
-        final controller = meta.controller! as BarController;
-        expect(controller.getStackIndex(0), 0);
-        expect(controller.getStackIndex(1), 1);
-        expect(controller.getStackIndex(2), 2);
-        expect(controller.getStackIndex(3), 3);
-      },
-    );
+      final meta = chart.getDatasetMeta(1);
+      final controller = meta.controller! as BarController;
+      expect(controller.getStackIndex(0), 0);
+      expect(controller.getStackIndex(1), 1);
+      expect(controller.getStackIndex(2), 2);
+      expect(controller.getStackIndex(3), 3);
+    });
 
     // :412
     testWidgets(
@@ -827,10 +800,7 @@ void main() {
       expect(meta.data.length, 2);
       expect(meta.parsed.length, 2);
 
-      final expectedValues = [
-        (x: 89, y: 512),
-        (x: 217, y: 0),
-      ];
+      final expectedValues = [(x: 89, y: 512), (x: 217, y: 0)];
       for (var i = 0; i < expectedValues.length; i++) {
         final expected = expectedValues[i];
         expect(_bar(meta, i).x, toBeCloseToPixel(expected.x));
@@ -1238,10 +1208,7 @@ void main() {
 
         final meta = chart.getDatasetMeta(1);
 
-        final values = [
-          (x: 89, y: 256),
-          (x: 217, y: 0),
-        ];
+        final values = [(x: 89, y: 256), (x: 217, y: 0)];
         for (var i = 0; i < values.length; i++) {
           expect(_bar(meta, i).base, toBeCloseToPixel(512));
           expect(_bar(meta, i).width, toBeCloseToPixel(46));
@@ -1288,10 +1255,7 @@ void main() {
 
       final meta = chart.getDatasetMeta(2);
 
-      final values = [
-        (b: 384, x: 89, y: 256),
-        (b: 256, x: 217, y: 0),
-      ];
+      final values = [(b: 384, x: 89, y: 256), (b: 256, x: 217, y: 0)];
       for (var i = 0; i < values.length; i++) {
         expect(_bar(meta, i).base, toBeCloseToPixel(values[i].b));
         expect(_bar(meta, i).width, toBeCloseToPixel(46));
@@ -1960,10 +1924,10 @@ void main() {
         // `getMinMax()` without an argument: `canStack` is `undefined`,
         // falsy.
         final minMax = chart.scales['y']!.getMinMax(false);
-        expect(
-          <String, Object?>{'min': minMax.min, 'max': minMax.max},
-          jasmineEquals(<String, Object?>{'min': -10, 'max': 10}),
-        );
+        expect(<String, Object?>{
+          'min': minMax.min,
+          'max': minMax.max,
+        }, jasmineEquals(<String, Object?>{'min': -10, 'max': 10}));
       });
     });
 
@@ -1991,10 +1955,7 @@ void main() {
           ..draw()
           ..ctx = orig;
 
-        expect(
-          ctx.getCalls().where((x) => x['name'] == 'clip').length,
-          0,
-        );
+        expect(ctx.getCalls().where((x) => x['name'] == 'clip').length, 0);
       });
     });
 
@@ -2174,10 +2135,7 @@ void main() {
 
 /// The `forEach` of :797-807 and of the same blocks: `base`, `width`, `x`
 /// and `y` of each bar of [meta] against [values].
-void _expectBars(
-  ChartMeta meta,
-  List<({num b, num w, num x, num y})> values,
-) {
+void _expectBars(ChartMeta meta, List<({num b, num w, num x, num y})> values) {
   for (var i = 0; i < values.length; i++) {
     final bar = _bar(meta, i);
     expect(bar.base, toBeCloseToPixel(values[i].b));

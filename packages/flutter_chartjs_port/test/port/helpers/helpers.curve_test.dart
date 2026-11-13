@@ -327,12 +327,7 @@ void main() {
     });
 
     test('keeps a skipped point without spanGaps', () {
-      final points = [
-        _P(0, 0),
-        _P(10, 10, skip: true),
-        _P(20, 0),
-        _P(30, 20),
-      ];
+      final points = [_P(0, 0), _P(10, 10, skip: true), _P(20, 0), _P(30, 20)];
       updateBezierControlPoints(
         points,
         {'tension': 0.5},
@@ -382,15 +377,7 @@ void main() {
 
     test('replaces a skipped neighbour with the middle point', () {
       final r = splineCurve(_P(0, 0, skip: true), _P(1, 1), _P(2, 5), 0.5);
-      expect(
-        [
-          r.previous.x,
-          r.previous.y,
-          r.next.x,
-          r.next.y,
-        ],
-        [1, 1, 1.5, 3],
-      );
+      expect([r.previous.x, r.previous.y, r.next.x, r.next.y], [1, 1, 1.5, 3]);
     });
   });
 
@@ -406,12 +393,7 @@ void main() {
       // Monotone mode leaves cp1 of the point after a skipped point unset.
       // capBezierPoints then gives Math.max(Math.min(undefined, max), min),
       // which is NaN upstream.
-      final points = [
-        _P(0, 10),
-        _P(10, 20, skip: true),
-        _P(20, 5),
-        _P(30, 25),
-      ];
+      final points = [_P(0, 10), _P(10, 20, skip: true), _P(20, 5), _P(30, 25)];
       updateBezierControlPoints(
         points,
         {
@@ -424,10 +406,12 @@ void main() {
       );
       expect([points[2].cp1x, points[2].cp1y], everyElement(isNaN));
       expect(points[2].cp2x, 23.333333333333332);
-      expect(
-        [points[1].cp1x, points[1].cp1y, points[1].cp2x, points[1].cp2y],
-        everyElement(isNaN),
-      );
+      expect([
+        points[1].cp1x,
+        points[1].cp1y,
+        points[1].cp2x,
+        points[1].cp2y,
+      ], everyElement(isNaN));
     });
   });
 

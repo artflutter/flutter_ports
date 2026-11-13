@@ -16,26 +16,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-      ],
+      'labels': <Object?>[1, 2, 3, 4, 5, 6, 7],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            55,
-            49,
-            70,
-            71,
-            46,
-            45,
-            30,
-          ],
+          'data': <Object?>[55, 49, 70, 71, 46, 45, 30],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
           'fill': 1,
           'borderColor': 'rgb(255, 0, 0)',
@@ -43,43 +27,19 @@ Map<String, Object?> fixture() => <String, Object?>{
           'xAxisID': 'x1',
         },
         <String, Object?>{
-          'data': <Object?>[
-            65,
-            59,
-            80,
-            81,
-            56,
-            55,
-            40,
-          ],
+          'data': <Object?>[65, 59, 80, 81, 56, 55, 40],
           'fill': false,
           'borderColor': 'rgb(255, 0, 0)',
           'xAxisID': 'x1',
         },
         <String, Object?>{
-          'data': <Object?>[
-            65,
-            59,
-            80,
-            81,
-            56,
-            55,
-            40,
-          ],
+          'data': <Object?>[65, 59, 80, 81, 56, 55, 40],
           'fill': false,
           'borderColor': 'rgb(0, 0, 255)',
           'xAxisID': 'x2',
         },
         <String, Object?>{
-          'data': <Object?>[
-            75,
-            69,
-            90,
-            91,
-            66,
-            65,
-            50,
-          ],
+          'data': <Object?>[75, 69, 90, 91, 66, 65, 50],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
           'fill': const RelativeFill(-1),
           'borderColor': 'rgb(0, 0, 255)',
@@ -101,9 +61,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'tooltip': false,
       },
       'elements': <String, Object?>{
-        'point': <String, Object?>{
-          'radius': 0,
-        },
+        'point': <String, Object?>{'radius': 0},
         'line': <String, Object?>{
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
@@ -129,9 +87,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'stack': 'stack',
           'display': false,
         },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
       },
     },
   },

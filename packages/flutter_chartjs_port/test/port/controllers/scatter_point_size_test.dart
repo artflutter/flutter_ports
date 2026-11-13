@@ -176,9 +176,7 @@ Chart _chart(Object cfg, {bool reference = false}) {
 
 List<_ProbePoint> _probes(Chart chart) {
   final points = chart.getDatasetMeta(0).data;
-  return [
-    for (var i = 0; i < points.length; i++) points[i] = _ProbePoint(),
-  ];
+  return [for (var i = 0; i < points.length; i++) points[i] = _ProbePoint()];
 }
 
 Object? _plain(Object? value) {
@@ -524,10 +522,7 @@ void main() {
   group('the context reader beside a plan', () {
     for (final typed in [false, true]) {
       test('fresh contexts through updates, typed root $typed', () {
-        const colors = ChartValue<ChartPaint>.indexed([
-          red,
-          blue,
-        ]);
+        const colors = ChartValue<ChartPaint>.indexed([red, blue]);
         final lowering = ChartConfigLowering(_typed(_points(), color: colors));
         final rawConfig = _config(backgroundColor: <ChartPaint>[red, blue]);
         final a = _chart(typed ? lowering.lower() : rawConfig);

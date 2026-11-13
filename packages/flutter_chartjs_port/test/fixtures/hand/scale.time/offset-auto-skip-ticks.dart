@@ -19,26 +19,11 @@ Map<String, Object?> fixture() => <String, Object?>{
           'label': 'Dataset',
           'borderColor': '#2f54eb',
           'data': <Object?>[
-            <String, Object?>{
-              'y': 3,
-              'x': 1646345700000,
-            },
-            <String, Object?>{
-              'y': 7,
-              'x': 1646346600000,
-            },
-            <String, Object?>{
-              'y': 9,
-              'x': 1646347500000,
-            },
-            <String, Object?>{
-              'y': 5,
-              'x': 1646348400000,
-            },
-            <String, Object?>{
-              'y': 5,
-              'x': 1646349300000,
-            },
+            <String, Object?>{'y': 3, 'x': 1646345700000},
+            <String, Object?>{'y': 7, 'x': 1646346600000},
+            <String, Object?>{'y': 9, 'x': 1646347500000},
+            <String, Object?>{'y': 5, 'x': 1646348400000},
+            <String, Object?>{'y': 5, 'x': 1646349300000},
           ],
         },
       ],
@@ -53,21 +38,14 @@ Map<String, Object?> fixture() => <String, Object?>{
           // DIVERGES(chartjs): adapt-axis-objects, the axis
           // class.
           'axis': const XAxis(),
-          'grid': <String, Object?>{
-            'offset': true,
-          },
+          'grid': <String, Object?>{'offset': true},
         },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 600,
-      'height': 400,
-    },
+    'canvas': <String, Object?>{'width': 600, 'height': 400},
   },
 };

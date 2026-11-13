@@ -138,12 +138,8 @@ final class _Scale implements types.Scale {
 
   @override
   ({double min, double max, bool minDefined, bool maxDefined})
-  getUserBounds() => (
-    min: double.nan,
-    max: double.nan,
-    minDefined: false,
-    maxDefined: false,
-  );
+  getUserBounds() =>
+      (min: double.nan, max: double.nan, minDefined: false, maxDefined: false);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -456,12 +452,7 @@ void main() {
 
     test('min-max dx 0', () {
       _expectItems(
-        minMaxDecimation(
-          [_p(1, 5), _p(1, 9), _p(1, 1), _p(1, 3)],
-          0,
-          4,
-          10,
-        ),
+        minMaxDecimation([_p(1, 5), _p(1, 9), _p(1, 1), _p(1, 3)], 0, 4, 10),
         [_p(1, 5)],
       );
     });

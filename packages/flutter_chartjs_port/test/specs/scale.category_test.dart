@@ -243,61 +243,54 @@ void main() {
       expect(scale.getLabelForValue(1), 'tick2');
     });
 
-    testWidgets(
-      'Should get the correct pixel for a value when horizontal',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
-            ],
-            'labels': <Object?>[
-              'tick1',
-              'tick2',
-              'tick3',
-              'tick4',
-              'tick_last',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{'type': 'linear'},
+    testWidgets('Should get the correct pixel for a value when horizontal', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'yAxisID': 'y',
+              'data': <Object?>[10, 5, 0, 25, 78],
             },
+          ],
+          'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'type': 'category',
+              'position': ChartPosition.bottom,
+            },
+            'y': <String, Object?>{'type': 'linear'},
           },
-        });
+        },
+      });
 
-        final xScale = chart.scales['x']!;
-        expect(
-          xScale.getPixelForValue(0),
-          toBeCloseToPixel(23 + 6), // plus lineHeight
-        );
-        expect(xScale.getValueForPixel(23), 0);
+      final xScale = chart.scales['x']!;
+      expect(
+        xScale.getPixelForValue(0),
+        toBeCloseToPixel(23 + 6), // plus lineHeight
+      );
+      expect(xScale.getValueForPixel(23), 0);
 
-        expect(xScale.getPixelForValue(4), toBeCloseToPixel(487));
-        expect(xScale.getValueForPixel(487), 4);
+      expect(xScale.getPixelForValue(4), toBeCloseToPixel(487));
+      expect(xScale.getValueForPixel(487), 4);
 
-        xScale.options['offset'] = true;
-        chart.update();
+      xScale.options['offset'] = true;
+      chart.update();
 
-        expect(
-          xScale.getPixelForValue(0),
-          toBeCloseToPixel(71 + 6), // plus lineHeight
-        );
-        expect(xScale.getValueForPixel(69), 0);
+      expect(
+        xScale.getPixelForValue(0),
+        toBeCloseToPixel(71 + 6), // plus lineHeight
+      );
+      expect(xScale.getValueForPixel(69), 0);
 
-        expect(xScale.getPixelForValue(4), toBeCloseToPixel(461));
-        expect(xScale.getValueForPixel(417), 4);
-      },
-    );
+      expect(xScale.getPixelForValue(4), toBeCloseToPixel(461));
+      expect(xScale.getValueForPixel(417), 4);
+    });
 
     testWidgets(
       'Should get the correct pixel for a value when there are repeated '
@@ -392,53 +385,52 @@ void main() {
       },
     );
 
-    testWidgets(
-      'should get the correct pixel for a value when vertical',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>['3', '5', '1', '4', '2'],
-              },
-            ],
-            'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
-            'yLabels': <Object?>['1', '2', '3', '4', '5'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.left,
-              },
+    testWidgets('should get the correct pixel for a value when vertical', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'yAxisID': 'y',
+              'data': <Object?>['3', '5', '1', '4', '2'],
+            },
+          ],
+          'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+          'yLabels': <Object?>['1', '2', '3', '4', '5'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'type': 'category',
+              'position': ChartPosition.bottom,
+            },
+            'y': <String, Object?>{
+              'type': 'category',
+              'position': ChartPosition.left,
             },
           },
-        });
+        },
+      });
 
-        final yScale = chart.scales['y']!;
-        expect(yScale.getPixelForValue(0), toBeCloseToPixel(32));
-        expect(yScale.getValueForPixel(257), 2);
+      final yScale = chart.scales['y']!;
+      expect(yScale.getPixelForValue(0), toBeCloseToPixel(32));
+      expect(yScale.getValueForPixel(257), 2);
 
-        expect(yScale.getPixelForValue(4), toBeCloseToPixel(484));
-        expect(yScale.getValueForPixel(144), 1);
+      expect(yScale.getPixelForValue(4), toBeCloseToPixel(484));
+      expect(yScale.getValueForPixel(144), 1);
 
-        yScale.options['offset'] = true;
-        chart.update();
+      yScale.options['offset'] = true;
+      chart.update();
 
-        expect(yScale.getPixelForValue(0), toBeCloseToPixel(77));
-        expect(yScale.getValueForPixel(256), 2);
+      expect(yScale.getPixelForValue(0), toBeCloseToPixel(77));
+      expect(yScale.getValueForPixel(256), 2);
 
-        expect(yScale.getPixelForValue(4), toBeCloseToPixel(438));
-        expect(yScale.getValueForPixel(167), 1);
-      },
-    );
+      expect(yScale.getPixelForValue(4), toBeCloseToPixel(438));
+      expect(yScale.getValueForPixel(167), 1);
+    });
 
     testWidgets(
       'should get the correct pixel for a value when vertical and zoomed',

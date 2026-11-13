@@ -11,31 +11,11 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        '0',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-      ],
+      'labels': <Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8'],
       'datasets': <Object?>[
         <String, Object?>{
           'backgroundColor': 'rgba(255, 0, 0, 0.25)',
-          'data': <Object?>[
-            0,
-            1,
-            2,
-            -1,
-            0,
-            2,
-            1,
-            -1,
-            -2,
-          ],
+          'data': <Object?>[0, 1, 2, -1, 0, 2, 1, -1, -2],
           'fill': <String, Object?>{
             // DIVERGES(chartjs): adapt-fill-target-objects, the target
             // value.
@@ -45,17 +25,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           },
         },
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-          ],
+          'data': <Object?>[0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
       ],
     },
@@ -63,21 +33,12 @@ Map<String, Object?> fixture() => <String, Object?>{
       'responsive': false,
       'spanGaps': true,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
       'elements': <String, Object?>{
-        'point': <String, Object?>{
-          'radius': 0,
-        },
-        'line': <String, Object?>{
-          'borderColor': 'transparent',
-          'tension': 0,
-        },
+        'point': <String, Object?>{'radius': 0},
+        'line': <String, Object?>{'borderColor': 'transparent', 'tension': 0},
       },
       'plugins': <String, Object?>{
         'legend': false,
@@ -87,9 +48,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

@@ -634,17 +634,13 @@ Map<String, Object?> fixture() {
         ],
       },
       'options': <String, Object?>{
-        'animation': <String, Object?>{
-          'duration': 0,
-        },
+        'animation': <String, Object?>{'duration': 0},
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'timeseries',
             'offset': true,
             'ticks': <String, Object?>{
-              'major': <String, Object?>{
-                'enabled': true,
-              },
+              'major': <String, Object?>{'enabled': true},
               // DIVERGES(chartjs): adapt-text-style-fonts, a style.
               'font': (Object? context) {
                 return jsTruthy(jsGet(context, 'tick')) &&
@@ -672,15 +668,11 @@ Map<String, Object?> fixture() {
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'border': <String, Object?>{
-              'display': false,
-            },
+            'border': <String, Object?>{'display': false},
           },
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-    },
+    'options': <String, Object?>{'spriteText': true},
   };
 }

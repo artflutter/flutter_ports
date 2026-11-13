@@ -332,10 +332,7 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// get the radii of the new options.
   void _applyOptions() {
     final barOptions = _barOptions = _pair(_barBase(), BarOptions.new);
-    final pointOptions = _pointOptions = _pair(
-      _pointBase(),
-      PointOptions.new,
-    );
+    final pointOptions = _pointOptions = _pair(_pointBase(), PointOptions.new);
     final arcOptions = _arcOptions = [
       for (var i = 0; i < _arcValues.length; i++)
         _pair(_arcBase(i), ArcOptions.new),
@@ -434,9 +431,7 @@ class ElementsDemoState extends State<ElementsDemo> {
           'y': _valueY(_barValues[i]),
           'height': (base - _valueY(_barValues[i])).abs(),
           'width': barWidth,
-          'borderSkipped': _borderSkipped(
-            BarElement.defaults['borderSkipped'],
-          ),
+          'borderSkipped': _borderSkipped(BarElement.defaults['borderSkipped']),
           'inflateAmount': 0.0,
         }),
     ];

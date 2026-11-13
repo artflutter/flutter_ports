@@ -98,12 +98,7 @@ AnyObject _segmentOption(String kind) => switch (kind) {
 /// `stop` is an absent key.
 PointElement _point(LineReferencePointInput point) {
   final (x, y, skip, stop) = point;
-  return PointElement({
-    'x': x,
-    'y': y,
-    'skip': ?skip,
-    'stop': ?stop,
-  });
+  return PointElement({'x': x, 'y': y, 'skip': ?skip, 'stop': ?stop});
 }
 
 /// [options] as they are: the plain Map form of the options.
@@ -188,16 +183,8 @@ LineReferencePoint _encode(Point point, List<types.PointElement> points) {
 /// The matcher of the expected interpolate point [point].
 Matcher _expectedPoint(LineReferencePoint point) => isA<LineReferencePoint>()
     .having((p) => p.index, 'index', point.index)
-    .having(
-      (p) => p.x,
-      'x',
-      point.x == null ? isNull : _number(point.x!),
-    )
-    .having(
-      (p) => p.y,
-      'y',
-      point.y == null ? isNull : _number(point.y!),
-    );
+    .having((p) => p.x, 'x', point.x == null ? isNull : _number(point.x!))
+    .having((p) => p.y, 'y', point.y == null ? isNull : _number(point.y!));
 
 /// Runs the steps of the reference case [c], with the options in the form
 /// [form], and compares each record.
@@ -245,9 +232,7 @@ void _run(LineReferenceCase c, Object Function(AnyObject) form) {
         );
         result = switch (line.interpolate(point, property)) {
           null => null,
-          final List<Point> list => [
-            for (final p in list) _encode(p, points),
-          ],
+          final List<Point> list => [for (final p in list) _encode(p, points)],
           final Point p => _encode(p, points),
           final other => other,
         };
@@ -518,10 +503,7 @@ void main() {
       // The DOM setLineDash throws a TypeError for a value that is not a
       // sequence.
       final line = _simpleLine(_options({'borderDash': undefined}));
-      expect(
-        () => line.draw(createMockContext()),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => line.draw(createMockContext()), throwsA(isA<TypeError>()));
     });
   });
 
@@ -688,10 +670,7 @@ void main() {
 
     test('gives undefined from pathSegment on the fast path', () {
       final line = _simpleLine(_options());
-      expect(
-        line.pathSegment(createMockContext(), line.segments[0]),
-        isNull,
-      );
+      expect(line.pathSegment(createMockContext(), line.segments[0]), isNull);
     });
 
     test('reads the params of pathSegment with ToNumber and ToBoolean', () {

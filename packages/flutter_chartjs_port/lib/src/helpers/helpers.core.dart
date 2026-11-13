@@ -551,13 +551,7 @@ Object? merge(
     if (typed && currentObject is OptionScope) {
       final typedKeys = currentObject.typedMergeKeys;
       if (typedKeys != null) {
-        _mergeScope(
-          object,
-          currentObject,
-          typedKeys,
-          mergeOptions,
-          ifAbsent,
-        );
+        _mergeScope(object, currentObject, typedKeys, mergeOptions, ifAbsent);
         continue;
       }
     }
@@ -715,9 +709,7 @@ void deprecated(String scope, Object? value, String previous, String current) {
   if (!identical(value, undefined)) {
     // console.warn has no other counterpart in the pure layers.
     // ignore: avoid_print
-    print(
-      '$scope: "$previous" is deprecated. Please use "$current" instead',
-    );
+    print('$scope: "$previous" is deprecated. Please use "$current" instead');
   }
 }
 

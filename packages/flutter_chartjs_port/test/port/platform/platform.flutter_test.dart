@@ -335,14 +335,14 @@ void main() {
       final canvas = UiCanvasElement();
 
       test('passes bounded sizes through', () {
-        expect(
-          platform.getMaximumSize(canvas, 400, 300),
-          (width: 400.0, height: 300.0),
-        );
-        expect(
-          platform.getMaximumSize(canvas, 400, 300, 2),
-          (width: 400.0, height: 200.0),
-        );
+        expect(platform.getMaximumSize(canvas, 400, 300), (
+          width: 400.0,
+          height: 300.0,
+        ));
+        expect(platform.getMaximumSize(canvas, 400, 300, 2), (
+          width: 400.0,
+          height: 200.0,
+        ));
       });
 
       test('gives 300 x 150 for two unbounded sides', () {
@@ -357,25 +357,25 @@ void main() {
       });
 
       test('gives the other side from a bounded side and the ratio', () {
-        expect(
-          platform.getMaximumSize(canvas, 400, double.infinity, 2),
-          (width: 400.0, height: 200.0),
-        );
-        expect(
-          platform.getMaximumSize(canvas, double.infinity, 100, 2),
-          (width: 200.0, height: 100.0),
-        );
+        expect(platform.getMaximumSize(canvas, 400, double.infinity, 2), (
+          width: 400.0,
+          height: 200.0,
+        ));
+        expect(platform.getMaximumSize(canvas, double.infinity, 100, 2), (
+          width: 200.0,
+          height: 100.0,
+        ));
       });
 
       test('gives the default side without a ratio', () {
-        expect(
-          platform.getMaximumSize(canvas, 400, double.infinity),
-          (width: 400.0, height: 150.0),
-        );
-        expect(
-          platform.getMaximumSize(canvas, double.infinity, 100),
-          (width: 300.0, height: 100.0),
-        );
+        expect(platform.getMaximumSize(canvas, 400, double.infinity), (
+          width: 400.0,
+          height: 150.0,
+        ));
+        expect(platform.getMaximumSize(canvas, double.infinity, 100), (
+          width: 300.0,
+          height: 100.0,
+        ));
       });
     });
   });

@@ -209,11 +209,10 @@ void main() {
           context.restore();
         }
 
-        const gradient = ChartGradient.linear(
-          Offset.zero,
-          ui.Offset(80, 0),
-          [_red, _blue],
-        );
+        const gradient = ChartGradient.linear(Offset.zero, ui.Offset(80, 0), [
+          _red,
+          _blue,
+        ]);
         context
           ..fillStyle = gradient
           ..fillRect(0, 0, 96, 64)
@@ -253,7 +252,7 @@ void main() {
           ..fillStyle = _red
           ..fillRect(5, 10, 70, 30);
         if (split) expect(context.debugPictureCount, greaterThan(1));
-        return _paint(context, background: true, scale: 0.75);
+        return await _paint(context, background: true, scale: 0.75);
       }
 
       expect(await render(split: true), await render(split: false));

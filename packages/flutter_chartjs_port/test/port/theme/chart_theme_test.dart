@@ -121,9 +121,8 @@ void main() {
       expect(a.updateShouldNotify(theme(_redTheme.copyWith())), isFalse);
       expect(a.updateShouldNotify(theme(const ChartThemeData())), isTrue);
       expect(
-        theme(const ChartThemeData.light()).updateShouldNotify(
-          theme(const ChartThemeData.dark()),
-        ),
+        theme(const ChartThemeData.light())
+            .updateShouldNotify(theme(const ChartThemeData.dark())),
         isTrue,
       );
     });
@@ -211,10 +210,7 @@ void main() {
         data: _redTheme,
         child: SizedBox(),
       ).debugFillProperties(builder);
-      expect(
-        builder.properties.map((p) => p.value),
-        contains(_redTheme),
-      );
+      expect(builder.properties.map((p) => p.value), contains(_redTheme));
     });
   });
 }

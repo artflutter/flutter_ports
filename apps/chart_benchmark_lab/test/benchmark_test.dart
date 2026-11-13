@@ -114,11 +114,7 @@ void main() {
         final reason = '${library.name} ${type.name}';
         expect(library.zoomsWith(type), xAxis, reason: reason);
         // Zoom stops no library: each has it on each type with an x axis.
-        expect(
-          library.runs(config),
-          library.supports(type),
-          reason: reason,
-        );
+        expect(library.runs(config), library.supports(type), reason: reason);
       }
     }
   });

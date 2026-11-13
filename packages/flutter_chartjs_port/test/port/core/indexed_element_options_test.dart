@@ -21,7 +21,7 @@ const _red = ChartPaint.solid(Color(0xffff0000));
 const _blue = ChartPaint.solid(Color(0xff0000ff));
 
 // An otherwise identical Config that intentionally retains the ordinary path.
-class _OrdinaryConfig extends Config {}
+class _OrdinaryConfig extends Config;
 
 class _ObservedConfig extends Config {
   int calls = 0;

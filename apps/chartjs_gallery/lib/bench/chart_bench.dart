@@ -546,10 +546,7 @@ final class _PluginTiming {
 
   /// The ticks of each part since the last call. It resets the parts.
   Map<String, int> take() {
-    final parts = {
-      ..._parts.take(),
-      if (tooltip) 'tooltipDraw': _tooltipTicks,
-    };
+    final parts = {..._parts.take(), if (tooltip) 'tooltipDraw': _tooltipTicks};
     _tooltipTicks = 0;
     return parts;
   }
@@ -1982,13 +1979,7 @@ ChartBenchCase _zoomCase(
 List<ChartBenchCase> chartBenchZoomCasesWith({required bool rangeUpdates}) => [
   for (final scale in chartBenchZoomScales) ...[
     for (final call in chartBenchDrawAndUpdate)
-      _zoomCase(
-        'base',
-        call,
-        scale,
-        rangeUpdates: rangeUpdates,
-        plugin: false,
-      ),
+      _zoomCase('base', call, scale, rangeUpdates: rangeUpdates, plugin: false),
     for (final call in chartBenchDrawAndUpdate)
       _zoomCase('idle', call, scale, rangeUpdates: rangeUpdates),
   ],
@@ -2203,11 +2194,7 @@ final class _BenchChart extends Chart {
   }
 
   @override
-  bool? notifyPlugins(
-    String hook, [
-    Object? args,
-    FilterCallback? filter,
-  ]) {
+  bool? notifyPlugins(String hook, [Object? args, FilterCallback? filter]) {
     notifies++;
     return super.notifyPlugins(hook, args, filter);
   }

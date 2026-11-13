@@ -60,15 +60,12 @@ void main() {
     test('reports the error of a job and runs the next job', () async {
       final errors = <Object>[];
       final log = <String>[];
-      await runZonedGuarded(
-        () async {
-          jsRunWithMicrotaskCheckpoint(() {
-            jsEnqueuePromiseJob(() => throw StateError('job'));
-            jsEnqueuePromiseJob(() => log.add('next job'));
-          });
-        },
-        (error, stack) => errors.add(error),
-      );
+      await runZonedGuarded(() async {
+        jsRunWithMicrotaskCheckpoint(() {
+          jsEnqueuePromiseJob(() => throw StateError('job'));
+          jsEnqueuePromiseJob(() => log.add('next job'));
+        });
+      }, (error, stack) => errors.add(error));
       expect(log, ['next job']);
       expect(errors, [isStateError]);
     });

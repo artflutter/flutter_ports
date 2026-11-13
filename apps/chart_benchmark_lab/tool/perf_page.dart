@@ -314,17 +314,16 @@ Future<void> _driver(BenchmarkController c, Stopwatch sinceMain) async {
         ..remove('gapMax')
         ..remove('lateGaps');
     }
-    hostLine(
-      'PAGE ${jsonEncode({
-        'scenario': name,
-        'platform': kIsWeb ? 'web' : defaultTargetPlatform.name,
-        'width': size.width,
-        'height': size.height,
-        'refreshHz': _display(),
-        ...figures,
-        ...extra,
-      })}',
-    );
+    final page = {
+      'scenario': name,
+      'platform': kIsWeb ? 'web' : defaultTargetPlatform.name,
+      'width': size.width,
+      'height': size.height,
+      'refreshHz': _display(),
+      ...figures,
+      ...extra,
+    };
+    hostLine('PAGE ${jsonEncode(page)}');
   }
 
   hostLine(
@@ -337,11 +336,7 @@ Future<void> _driver(BenchmarkController c, Stopwatch sinceMain) async {
   await _delay(500);
   Element content() => _byKey('library.chartjs')!;
 
-  await scenario(
-    'scroll.empty',
-    () => _scroll(content(), 6),
-    continuous: true,
-  );
+  await scenario('scroll.empty', () => _scroll(content(), 6), continuous: true);
 
   // A tap on a setting, with no saved rows to rebuild.
   if (!narrow) {
@@ -357,11 +352,7 @@ Future<void> _driver(BenchmarkController c, Stopwatch sinceMain) async {
   c.results.addAll([for (var i = 0; i < 24; i++) _result(c, i)]);
   c.clearStopReason();
   await _delay(500);
-  await scenario(
-    'scroll.table',
-    () => _scroll(content(), 6),
-    continuous: true,
-  );
+  await scenario('scroll.table', () => _scroll(content(), 6), continuous: true);
 
   await _reveal(_ofType<BenchmarkChart>()!);
   await scenario('run.readout', () async {
@@ -400,9 +391,8 @@ Future<void> _driver(BenchmarkController c, Stopwatch sinceMain) async {
 
   // The settings of a phone stay closed until a person opens them.
   Future<void> tapSettingsTile() async {
-    final tile = _walk(
-      _ofType<ExpansionTile>()!,
-    ).firstWhere((e) => e.widget is ListTile);
+    final tile = _walk(_ofType<ExpansionTile>()!)
+        .firstWhere((e) => e.widget is ListTile);
     await _reveal(tile);
     await _tap(_center(tile));
     await _delay(500);
@@ -500,11 +490,7 @@ Future<void> _driver(BenchmarkController c, Stopwatch sinceMain) async {
       );
       await _onEachFrame(4, (t) {
         final next =
-            settings +
-            Offset(
-              100 * math.sin(t * 2.3),
-              300 * math.sin(t * 1.1),
-            );
+            settings + Offset(100 * math.sin(t * 2.3), 300 * math.sin(t * 1.1));
         GestureBinding.instance.handlePointerEvent(
           PointerHoverEvent(
             viewId: _view,

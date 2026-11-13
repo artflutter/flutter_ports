@@ -439,11 +439,11 @@ void main() {
       tester,
     ) async {
       final r = _r(
-        _chart(
-          ['A', 'B', 'C'],
-          [1.0, 5.0, 9.0],
-          {'reverse': true, 'min': 0.0, 'max': 10.0},
-        ),
+        _chart(['A', 'B', 'C'], [1.0, 5.0, 9.0], {
+          'reverse': true,
+          'min': 0.0,
+          'max': 10.0,
+        }),
       );
       expect(r.getDistanceFromCenterForValue(10), 0);
       expect(r.getDistanceFromCenterForValue(0), r.drawingArea);
@@ -476,12 +476,7 @@ void main() {
         final p = r.getPointLabelPosition(i);
         expect(
           [p.left, p.top, p.right, p.bottom],
-          [
-            item.left,
-            item.top,
-            item.right,
-            item.bottom,
-          ],
+          [item.left, item.top, item.right, item.bottom],
         );
       }
       expect(() => r.getPointLabelPosition(4), throwsRangeError);

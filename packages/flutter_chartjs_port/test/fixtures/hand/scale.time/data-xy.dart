@@ -22,34 +22,13 @@ Map<String, Object?> fixture() {
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{
-                'x': newDateFromRef(0),
-                'y': 1,
-              },
-              <String, Object?>{
-                'x': newDateFromRef(1),
-                'y': 10,
-              },
-              <String, Object?>{
-                'x': newDateFromRef(2),
-                'y': 0,
-              },
-              <String, Object?>{
-                'x': newDateFromRef(4),
-                'y': 5,
-              },
-              <String, Object?>{
-                'x': newDateFromRef(6),
-                'y': 77,
-              },
-              <String, Object?>{
-                'x': newDateFromRef(7),
-                'y': 9,
-              },
-              <String, Object?>{
-                'x': newDateFromRef(9),
-                'y': 5,
-              },
+              <String, Object?>{'x': newDateFromRef(0), 'y': 1},
+              <String, Object?>{'x': newDateFromRef(1), 'y': 10},
+              <String, Object?>{'x': newDateFromRef(2), 'y': 0},
+              <String, Object?>{'x': newDateFromRef(4), 'y': 5},
+              <String, Object?>{'x': newDateFromRef(6), 'y': 77},
+              <String, Object?>{'x': newDateFromRef(7), 'y': 9},
+              <String, Object?>{'x': newDateFromRef(9), 'y': 5},
             ],
             'fill': false,
           },
@@ -61,13 +40,9 @@ Map<String, Object?> fixture() {
             'type': 'time',
             // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
             'position': ChartPosition.bottom,
-            'ticks': <String, Object?>{
-              'maxRotation': 0,
-            },
+            'ticks': <String, Object?>{'maxRotation': 0},
           },
-          'y': <String, Object?>{
-            'display': false,
-          },
+          'y': <String, Object?>{'display': false},
         },
       },
     },

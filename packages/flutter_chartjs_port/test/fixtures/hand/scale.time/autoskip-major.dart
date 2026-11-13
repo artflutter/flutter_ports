@@ -22,11 +22,7 @@ Map<String, Object?> fixture() {
       'type': 'line',
       'data': <String, Object?>{
         'datasets': <Object?>[
-          <String, Object?>{
-            'xAxisID': 'x',
-            'data': data,
-            'fill': false,
-          },
+          <String, Object?>{'xAxisID': 'x', 'data': data, 'fill': false},
         ],
       },
       'options': <String, Object?>{
@@ -34,23 +30,17 @@ Map<String, Object?> fixture() {
           'x': <String, Object?>{
             'type': 'time',
             'ticks': <String, Object?>{
-              'major': <String, Object?>{
-                'enabled': true,
-              },
+              'major': <String, Object?>{'enabled': true},
               // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
               'source': TickSource.data,
               'autoSkip': true,
               'maxRotation': 0,
             },
           },
-          'y': <String, Object?>{
-            'display': false,
-          },
+          'y': <String, Object?>{'display': false},
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-    },
+    'options': <String, Object?>{'spriteText': true},
   };
 }
