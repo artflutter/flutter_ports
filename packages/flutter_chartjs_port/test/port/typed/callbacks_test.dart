@@ -269,12 +269,12 @@ void main() {
         _bar(<String, Object?>{
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{
-              'callbacks': <String, Object?>{
-                'label': (Object? item) {
-                  items.add(item! as ChartTooltipItem);
-                  return 'L';
+              'callbacks': TooltipCallbacks(
+                label: (tooltip, item) {
+                  items.add(item!);
+                  return ['L'];
                 },
-              },
+              ),
             },
           },
         }),
@@ -566,9 +566,11 @@ void main() {
         ChartConfigLowering(
           typedBar(
             tooltip: ChartTooltip(
-              titleText: (items) => null,
-              labelText: (item) => null,
-              footerText: (items) => null,
+              callbacks: TooltipCallbacks(
+                title: (tooltip, items) => null,
+                label: (tooltip, item) => null,
+                footer: (tooltip, items) => null,
+              ),
             ),
           ),
         ).lower(),
@@ -578,9 +580,15 @@ void main() {
         ChartConfigLowering(
           typedBar(
             tooltip: ChartTooltip(
-              titleText: (items) => 'T ${items.length}',
-              labelText: (item) => '${item.datasetLabel} ${item.dataIndex}',
-              footerText: (items) => 'F ${items.single.formattedValue}',
+              callbacks: TooltipCallbacks(
+                title: (tooltip, items) => ['T ${items.length}'],
+                label: (tooltip, item) => [
+                  '${item.datasetLabel} ${item.dataIndex}',
+                ],
+                footer: (tooltip, items) => [
+                  'F ${items.single.formattedValue}',
+                ],
+              ),
             ),
           ),
         ).lower(),

@@ -1407,6 +1407,9 @@ abstract interface class TypedLegendItem {
 /// plugin (Chart.js ADR 0052 §8). Each getter gives the JS value of the key,
 /// the `undefined` sentinel for an absent key.
 abstract interface class TypedTooltipItem {
+  /// The data element.
+  Object? get element;
+
   /// index.d.ts:2982 `chart`.
   Object? get chart;
 

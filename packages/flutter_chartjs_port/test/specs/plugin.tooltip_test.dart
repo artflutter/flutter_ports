@@ -5,12 +5,17 @@ library;
 
 import 'dart:collection';
 import 'dart:ui' as native_ui;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show
+        ChartPaint,
+        TooltipCallbacks,
+        TooltipLabelPointStyle,
+        TooltipLabelStyle;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -23,7 +28,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -34,6 +38,7 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -194,14 +199,14 @@ AnyObject _tooltipOptions(AnyObject tooltip) => <String, Object?>{
 
 /// The label color of the default `labelColor` for a line point with the
 /// default colors (:157-163).
-AnyObject _defaultLabelColor() => <String, Object?>{
-  'borderColor': jsGet(_defaults(), 'borderColor'),
-  'backgroundColor': jsGet(_defaults(), 'backgroundColor'),
-  'borderWidth': 1,
-  'borderDash': undefined,
-  'borderDashOffset': undefined,
-  'borderRadius': 0,
-};
+TooltipLabelStyle _defaultLabelColor() => TooltipLabelStyle(
+  borderColor: ChartPaint.solid(
+    jsGet(_defaults(), 'borderColor')! as native_ui.Color,
+  ),
+  backgroundColor: ChartPaint.solid(
+    jsGet(_defaults(), 'backgroundColor')! as native_ui.Color,
+  ),
+);
 
 /// The body item `{before: [], lines: [line], after: []}`.
 AnyObject _bodyItem(String line) => <String, Object?>{
@@ -315,23 +320,23 @@ void main() {
             'formattedValue': '20',
           };
 
-          Object? label() => jsCall(
-            jsGet(
+          final callbacks =
               jsGet(
-                jsGet(jsGet(_defaults(), 'plugins'), 'tooltip'),
-                'callbacks',
-              ),
-              'label',
-            ),
-            [tooltipItem],
+                    jsGet(jsGet(_defaults(), 'plugins'), 'tooltip'),
+                    'callbacks',
+                  )!
+                  as TooltipCallbacks;
+          Object? label() => callbacks.label!(
+            const _CallbackTooltip(),
+            ChartTooltipItem(tooltipItem),
           );
 
           var value = label();
-          expect(value, '20');
+          expect(value, ['20']);
 
           dataset0['label'] = 'My dataset';
           value = label();
-          expect(value, 'My dataset: 20');
+          expect(value, ['My dataset: 20']);
         },
       );
     });
@@ -598,7 +603,7 @@ void main() {
       expect(
         tooltip.labelTextColors,
         jasmineEquals(<Object?>[
-          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         ]),
       );
 
@@ -619,24 +624,26 @@ void main() {
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
             'mode': const IndexInteractionMode(),
-            'callbacks': <String, Object?>{
-              'beforeTitle': () => 'beforeTitle',
-              'title': () => 'title',
-              'afterTitle': () => 'afterTitle',
-              'beforeBody': () => 'beforeBody',
-              'beforeLabel': () => 'beforeLabel',
-              'label': () => 'label',
-              'afterLabel': () => 'afterLabel',
-              'afterBody': () => 'afterBody',
-              'beforeFooter': () => 'beforeFooter',
-              'footer': () => 'footer',
-              'afterFooter': () => 'afterFooter',
-              'labelTextColor': () => const native_ui.Color(0xFF123ABC),
-              'labelPointStyle': () => <String, Object?>{
-                'pointStyle': 'labelPointStyle',
-                'rotation': 42,
-              },
-            },
+            'callbacks': TooltipCallbacks(
+              beforeTitle: (tooltip, arg) => 'beforeTitle'.split('\n'),
+              title: (tooltip, arg) => 'title'.split('\n'),
+              afterTitle: (tooltip, arg) => 'afterTitle'.split('\n'),
+              beforeBody: (tooltip, arg) => 'beforeBody'.split('\n'),
+              beforeLabel: (tooltip, arg) => 'beforeLabel'.split('\n'),
+              label: (tooltip, arg) => ['label'],
+              afterLabel: (tooltip, arg) => 'afterLabel'.split('\n'),
+              afterBody: (tooltip, arg) => 'afterBody'.split('\n'),
+              beforeFooter: (tooltip, arg) => 'beforeFooter'.split('\n'),
+              footer: (tooltip, arg) => 'footer'.split('\n'),
+              afterFooter: (tooltip, arg) => 'afterFooter'.split('\n'),
+              labelTextColor: (tooltip, arg) =>
+                  const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
+              labelPointStyle: (tooltip, arg) =>
+                  const TooltipLabelPointStyle.draw(
+                    CirclePointStyle(),
+                    rotation: 42,
+                  ),
+            ),
           }),
         ),
       );
@@ -716,10 +723,8 @@ void main() {
         'lines': <Object?>['label'],
         'after': <Object?>['afterLabel'],
       };
-      AnyObject pointStyle() => <String, Object?>{
-        'pointStyle': 'labelPointStyle',
-        'rotation': 42,
-      };
+      TooltipLabelPointStyle pointStyle() =>
+          const TooltipLabelPointStyle.draw(CirclePointStyle(), rotation: 42);
       expect(
         tooltip,
         objectContaining(<String, Object?>{
@@ -732,8 +737,8 @@ void main() {
           'afterBody': <Object?>['afterBody'],
           'footer': <Object?>['beforeFooter', 'footer', 'afterFooter'],
           'labelTextColors': <Object?>[
-            const native_ui.Color(0xFF123ABC),
-            const native_ui.Color(0xFF123ABC),
+            const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
+            const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
           ],
           'labelColors': <Object?>[_defaultLabelColor(), _defaultLabelColor()],
           'labelPointStyles': <Object?>[pointStyle(), pointStyle()],
@@ -768,15 +773,16 @@ void main() {
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{
               'mode': const IndexInteractionMode(),
-              'callbacks': <String, Object?>{
-                'beforeLabel': (Object? ctx) {
+              'callbacks': TooltipCallbacks(
+                beforeLabel: (tooltip, ctx) {
                   final parsed = jsGet(ctx, 'parsed');
-                  return jsAdd(
-                    jsAdd(jsGet(parsed, 'x'), ','),
-                    jsGet(parsed, 'y'),
-                  );
+                  return [
+                    jsToString(
+                      jsAdd(jsAdd(jsGet(parsed, 'x'), ','), jsGet(parsed, 'y')),
+                    ),
+                  ];
                 },
-              },
+              ),
             },
           },
         },
@@ -1072,9 +1078,9 @@ void main() {
           _tooltipOptions(<String, Object?>{
             'mode': const NearestInteractionMode(),
             'intersect': true,
-            'callbacks': <String, Object?>{
-              'title': () => 'registering callback...',
-            },
+            'callbacks': TooltipCallbacks(
+              title: (tooltip, arg) => 'registering callback...'.split('\n'),
+            ),
           }),
         ),
       );
@@ -1116,9 +1122,10 @@ void main() {
                 'mode': const NearestInteractionMode(),
                 'position': const NearestTooltipPositioner(),
                 'intersect': true,
-                'callbacks': <String, Object?>{
-                  'title': () => 'registering callback...',
-                },
+                'callbacks': TooltipCallbacks(
+                  title: (tooltip, arg) =>
+                      'registering callback...'.split('\n'),
+                ),
               },
             },
           }),
@@ -1407,20 +1414,22 @@ void main() {
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
             'mode': const IndexInteractionMode(),
-            'callbacks': <String, Object?>{
-              'beforeTitle': () => 'beforeTitle\nnewline',
-              'title': () => 'title\nnewline',
-              'afterTitle': () => 'afterTitle\nnewline',
-              'beforeBody': () => 'beforeBody\nnewline',
-              'beforeLabel': () => 'beforeLabel\nnewline',
-              'label': () => 'label',
-              'afterLabel': () => 'afterLabel\nnewline',
-              'afterBody': () => 'afterBody\nnewline',
-              'beforeFooter': () => 'beforeFooter\nnewline',
-              'footer': () => 'footer\nnewline',
-              'afterFooter': () => 'afterFooter\nnewline',
-              'labelTextColor': () => const native_ui.Color(0xFF123ABC),
-            },
+            'callbacks': TooltipCallbacks(
+              beforeTitle: (tooltip, arg) => 'beforeTitle\nnewline'.split('\n'),
+              title: (tooltip, arg) => 'title\nnewline'.split('\n'),
+              afterTitle: (tooltip, arg) => 'afterTitle\nnewline'.split('\n'),
+              beforeBody: (tooltip, arg) => 'beforeBody\nnewline'.split('\n'),
+              beforeLabel: (tooltip, arg) => 'beforeLabel\nnewline'.split('\n'),
+              label: (tooltip, arg) => ['label'],
+              afterLabel: (tooltip, arg) => 'afterLabel\nnewline'.split('\n'),
+              afterBody: (tooltip, arg) => 'afterBody\nnewline'.split('\n'),
+              beforeFooter: (tooltip, arg) =>
+                  'beforeFooter\nnewline'.split('\n'),
+              footer: (tooltip, arg) => 'footer\nnewline'.split('\n'),
+              afterFooter: (tooltip, arg) => 'afterFooter\nnewline'.split('\n'),
+              labelTextColor: (tooltip, arg) =>
+                  const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
+            ),
           }),
         ),
       );
@@ -1502,13 +1511,10 @@ void main() {
         'lines': <Object?>['label'],
         'after': <Object?>['afterLabel', 'newline'],
       };
-      AnyObject labelColor() => <String, Object?>{
-        'borderColor': jsGet(_defaults(), 'borderColor'),
-        'backgroundColor': jsGet(_defaults(), 'backgroundColor'),
-      };
+      TooltipLabelStyle labelColor() => _defaultLabelColor();
       expect(
         tooltip,
-        toEqualOptions(<String, Object?>{
+        objectContaining(<String, Object?>{
           'opacity': 1,
 
           // Text
@@ -1532,8 +1538,8 @@ void main() {
             'newline',
           ],
           'labelTextColors': <Object?>[
-            const native_ui.Color(0xFF123ABC),
-            const native_ui.Color(0xFF123ABC),
+            const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
+            const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
           ],
           'labelColors': <Object?>[labelColor(), labelColor()],
         }),
@@ -1601,23 +1607,26 @@ void main() {
           'body': <Object?>[_bodyItem('label')],
           'afterBody': <Object?>[],
           'footer': <Object?>['footer'],
-          'labelTextColors': <Object?>[
-            const native_ui.Color.fromRGBO(255, 255, 255, 1),
+          'labelTextColors': <ChartPaint>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
           ],
-          'labelColors': <Object?>[
-            <String, Object?>{
-              'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-              'backgroundColor': const native_ui.Color.fromRGBO(0, 255, 0, 1),
-            },
-            <String, Object?>{
-              'borderColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                0,
-                255,
-                255,
-                1,
+          'labelColors': <TooltipLabelStyle>[
+            TooltipLabelStyle(
+              borderColor: const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 0, 0, 1),
               ),
-            },
+              backgroundColor: const ChartPaint.solid(
+                native_ui.Color.fromRGBO(0, 255, 0, 1),
+              ),
+            ),
+            TooltipLabelStyle(
+              borderColor: const ChartPaint.solid(
+                native_ui.Color.fromRGBO(0, 0, 255, 1),
+              ),
+              backgroundColor: const ChartPaint.solid(
+                native_ui.Color.fromRGBO(0, 255, 255, 1),
+              ),
+            ),
           ],
         });
       }
@@ -2183,26 +2192,26 @@ void main() {
       (
         tester,
       ) async {
-        Undefined returnsUndefined() => undefined;
+        Null returnsDefault(Object? tooltip, Object? arg) => null;
         final chart = acquireChart(
           _line(
             _twoDatasets(),
             _tooltipOptions(<String, Object?>{
-              'callbacks': <String, Object?>{
-                'beforeTitle': returnsUndefined,
-                'title': returnsUndefined,
-                'afterTitle': returnsUndefined,
-                'beforeBody': returnsUndefined,
-                'beforeLabel': returnsUndefined,
-                'label': returnsUndefined,
-                'afterLabel': returnsUndefined,
-                'afterBody': returnsUndefined,
-                'beforeFooter': returnsUndefined,
-                'footer': returnsUndefined,
-                'afterFooter': returnsUndefined,
-                'labelTextColor': returnsUndefined,
-                'labelPointStyle': returnsUndefined,
-              },
+              'callbacks': TooltipCallbacks(
+                beforeTitle: returnsDefault,
+                title: returnsDefault,
+                afterTitle: returnsDefault,
+                beforeBody: returnsDefault,
+                beforeLabel: returnsDefault,
+                label: returnsDefault,
+                afterLabel: returnsDefault,
+                afterBody: returnsDefault,
+                beforeFooter: returnsDefault,
+                footer: returnsDefault,
+                afterFooter: returnsDefault,
+                labelTextColor: returnsDefault,
+                labelPointStyle: returnsDefault,
+              ),
             }),
           ),
         );
@@ -2223,15 +2232,13 @@ void main() {
             'afterBody': <Object?>[],
             'footer': <Object?>[],
             'labelTextColors': <Object?>[
-              const native_ui.Color.fromRGBO(255, 255, 255, 1),
+              const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 255, 255, 1),
+              ),
             ],
             'labelColors': <Object?>[_defaultLabelColor()],
             'labelPointStyles': <Object?>[
-              <String, Object?>{
-                // DIVERGES(chartjs): adapt-point-style-objects, the style
-                // class.
-                'pointStyle': const CirclePointStyle(), 'rotation': 0,
-              },
+              const TooltipLabelPointStyle.draw(CirclePointStyle()),
             ],
           }),
         );
@@ -2283,6 +2290,13 @@ final class _NoElementItem implements types.ActiveElement {
 
 /// A chart that no positioner of the tests reads.
 final class _NoChart implements types.Chart {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+final class const _CallbackTooltip() implements types.TooltipModel {
+  @override
+  Object get options => const <String, Object?>{};
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

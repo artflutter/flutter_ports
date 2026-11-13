@@ -146,8 +146,11 @@ export 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 export 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis, XAxis, YAxis;
+export 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    hide chartPaintOf, chartPaintValue;
 export 'package:flutter_chartjs_port/src/types/chart_text_style.dart'
     show ChartTextStyle;
+export 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 export 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
 export 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition, ScaleValuePosition;
@@ -165,4 +168,6 @@ export 'package:flutter_chartjs_port/src/types/plugin.dart'
         ResizeHookArgs,
         TooltipDrawHookArgs,
         UpdateHookArgs;
+export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
+    hide tooltipCallbacksOf, tooltipCallbacksPresence;
 export 'package:flutter_chartjs_port/src/upstream.dart';

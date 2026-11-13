@@ -53,10 +53,11 @@ String? _tooltipLabel(ChartTooltipItem item) {
   return '${year.round()} : ${item.formattedValue}%';
 }
 
-Map<String, Object?> _tooltipMarker(JsObjectFace item) => {
-  'borderColor': Colors.white,
-  'backgroundColor': _colors[(item['datasetIndex']! as num).toInt()],
-};
+TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, ChartTooltipItem item) =>
+    TooltipLabelStyle(
+      borderColor: const ChartPaint.solid(Colors.white),
+      backgroundColor: ChartPaint.solid(_colors[item.datasetIndex]),
+    );
 
 final ChartConfig _config = ChartConfig(
   type: .line,
@@ -78,17 +79,33 @@ final ChartConfig _config = ChartConfig(
     labelColor: _text,
     labelFont: TextStyle(fontSize: 13),
   ),
-  tooltip: const ChartTooltip(
+  tooltip: ChartTooltip(
     backgroundColor: _tooltip,
-    titleText: _tooltipTitle,
-    labelText: _tooltipLabel,
     yAlign: .bottom,
-    extra: {
+    extra: const {
       'titleAlign': TextAlign.center,
       'usePointStyle': true,
       'boxPadding': 4,
-      'callbacks': {'labelColor': _tooltipMarker},
     },
+    callbacks: TooltipCallbacks(
+      labelColor: _tooltipMarker,
+      title: (tooltip, arg) {
+        final text = _tooltipTitle(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+      label: (tooltip, arg) {
+        final text = _tooltipLabel(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
   ),
   scales: const {
     'x': LinearAxis(

@@ -1116,30 +1116,13 @@ kinds:
       textDirection: textDirection
       animation: bool | scope AnimationOptions
       animations: bool | scope AnimationsSpec
-      callbacks: scope TooltipCallbacks
+      callbacks: tooltipCallbacks
       reverse: bool  # read at plugin.tooltip.js:1202
       events: list  # read at core.controller.js:1170
-  TooltipCallbacks:
-    doc: index.d.ts:2739 TooltipCallbacks (index.d.ts:2726 TooltipDatasetCallbacks), the scope `callbacks` of the tooltip and of a dataset tooltip.
-    keys:
-      beforeLabel: fn
-      label: fn
-      afterLabel: fn
-      labelColor: fn
-      labelTextColor: fn
-      labelPointStyle: fn
-      beforeTitle: fn
-      title: fn
-      afterTitle: fn
-      beforeBody: fn
-      afterBody: fn
-      beforeFooter: fn
-      footer: fn
-      afterFooter: fn
   TooltipDatasetOptions:
     doc: index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset (read at plugin.tooltip.js:357).
     keys:
-      callbacks: scope TooltipCallbacks
+      callbacks: tooltipCallbacks
   FillerOptions:
     doc: index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
     keys:

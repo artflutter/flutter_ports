@@ -3,7 +3,11 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'dart:ui' show Color;
+
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show ChartPaint, TooltipCallbacks, TooltipCornerRadii, TooltipLabelStyle;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
@@ -53,9 +57,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
           'mode': const NearestInteractionMode(),
           'intersect': false,
-          'callbacks': <String, Object?>{
-            'label': () => '​',
-            'labelColor': (Object? tooltipItem) {
+          'callbacks': TooltipCallbacks(
+            label: (tooltip, arg) => ['​'],
+            labelColor: (tooltip, tooltipItem) {
               final meta = (jsGet(tooltipItem, 'chart')! as types.Chart)
                   .getDatasetMeta(
                     jsToNumber(jsGet(tooltipItem, 'datasetIndex')),
@@ -63,17 +67,21 @@ Map<String, Object?> fixture() => <String, Object?>{
               final options = meta.controller!.getStyle(
                 jsToNumber(jsGet(tooltipItem, 'dataIndex')),
               );
-              return <String, Object?>{
-                'borderColor': jsGet(options, 'borderColor'),
-                'backgroundColor': jsGet(options, 'backgroundColor'),
-                'borderWidth': 2,
-                'borderRadius': <String, Object?>{
-                  'topRight': 5,
-                  'bottomRight': 5,
-                },
-              };
+              return TooltipLabelStyle(
+                borderColor: ChartPaint.solid(
+                  jsGet(options, 'borderColor')! as Color,
+                ),
+                backgroundColor: ChartPaint.solid(
+                  jsGet(options, 'backgroundColor')! as Color,
+                ),
+                borderWidth: 2,
+                borderRadius: const TooltipCornerRadii(
+                  topRight: 5,
+                  bottomRight: 5,
+                ),
+              );
             },
-          },
+          ),
         },
       },
 

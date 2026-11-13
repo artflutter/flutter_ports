@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
@@ -86,7 +87,7 @@ Map<String, Object?> fixture() {
             'intersect': false,
             'padding': const EdgeInsets.all(5),
             'usePointStyle': true,
-            'callbacks': <String, Object?>{'label': () => '​'},
+            'callbacks': TooltipCallbacks(label: (tooltip, arg) => ['​']),
           },
         },
         'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},

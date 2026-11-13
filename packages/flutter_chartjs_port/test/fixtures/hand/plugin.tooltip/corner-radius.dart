@@ -3,6 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show PointInteractionMode;
@@ -58,11 +59,12 @@ Map<String, Object?> fixture() {
             'backgroundColor': 'white',
             'borderColor': 'black',
             'borderWidth': 1,
-            'callbacks': <String, Object?>{
-              'beforeLabel': () => 'before label',
-              'label': () => 'label',
-              'afterLabel': () => 'after1\nafter2\nafter3\nafter4\nafter5',
-            },
+            'callbacks': TooltipCallbacks(
+              beforeLabel: (tooltip, arg) => 'before label'.split('\n'),
+              label: (tooltip, arg) => ['label'],
+              afterLabel: (tooltip, arg) =>
+                  'after1\nafter2\nafter3\nafter4\nafter5'.split('\n'),
+            ),
             'cornerRadius': <String, Object?>{
               'topLeft': 10,
               'topRight': 20,

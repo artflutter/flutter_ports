@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
+import 'package:flutter_chartjs_port/src/types/index.dart' as callback_types;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'twin.dart';
@@ -944,34 +945,46 @@ const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
 };
 
 /// The cases of the parameters of [ChartTooltip] and the twin Map.
-const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
+final Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
   'textDirection': (
-    ChartTooltip(textDirection: native_ui.TextDirection.rtl),
+    const ChartTooltip(textDirection: native_ui.TextDirection.rtl),
     {'textDirection': native_ui.TextDirection.rtl},
   ),
-  'enabled': (ChartTooltip(enabled: false), {'enabled': false}),
+  'enabled': (const ChartTooltip(enabled: false), {'enabled': false}),
   'mode': (
-    ChartTooltip(mode: IndexInteractionMode()),
-    {'mode': IndexInteractionMode()},
+    const ChartTooltip(mode: IndexInteractionMode()),
+    {'mode': const IndexInteractionMode()},
   ),
-  'intersect': (ChartTooltip(intersect: false), {'intersect': false}),
+  'intersect': (const ChartTooltip(intersect: false), {'intersect': false}),
   'backgroundColor': (
-    ChartTooltip(backgroundColor: _red),
+    const ChartTooltip(backgroundColor: _red),
     {'backgroundColor': _redValue},
   ),
-  'titleColor': (ChartTooltip(titleColor: _red), {'titleColor': _redValue}),
-  'titleFont': (ChartTooltip(titleFont: _font), {'titleFont': _fontValue}),
-  'bodyColor': (ChartTooltip(bodyColor: _blue), {'bodyColor': _blueValue}),
-  'bodyFont': (ChartTooltip(bodyFont: _font), {'bodyFont': _fontValue}),
+  'titleColor': (
+    const ChartTooltip(titleColor: _red),
+    {'titleColor': _redValue},
+  ),
+  'titleFont': (
+    const ChartTooltip(titleFont: _font),
+    {'titleFont': _fontValue},
+  ),
+  'bodyColor': (
+    const ChartTooltip(bodyColor: _blue),
+    {'bodyColor': _blueValue},
+  ),
+  'bodyFont': (const ChartTooltip(bodyFont: _font), {'bodyFont': _fontValue}),
   'footerColor': (
-    ChartTooltip(footerColor: _blue),
+    const ChartTooltip(footerColor: _blue),
     {'footerColor': _blueValue},
   ),
-  'footerFont': (ChartTooltip(footerFont: _font), {'footerFont': _fontValue}),
+  'footerFont': (
+    const ChartTooltip(footerFont: _font),
+    {'footerFont': _fontValue},
+  ),
   'padding': (
-    ChartTooltip(padding: EdgeInsets.all(10)),
+    const ChartTooltip(padding: EdgeInsets.all(10)),
     {
-      'padding': EdgeInsets.only(
+      'padding': const EdgeInsets.only(
         left: 10,
         top: 10,
         right: 10,
@@ -979,35 +992,68 @@ const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
       ),
     },
   ),
-  'cornerRadius': (ChartTooltip(cornerRadius: 0), {'cornerRadius': 0}),
+  'cornerRadius': (const ChartTooltip(cornerRadius: 0), {'cornerRadius': 0}),
   'displayColors': (
-    ChartTooltip(displayColors: false),
+    const ChartTooltip(displayColors: false),
     {'displayColors': false},
   ),
   'titleText': (
-    ChartTooltip(titleText: _title2),
+    ChartTooltip(
+      callbacks: TooltipCallbacks(
+        title: (tooltip, arg) {
+          final text = _title2(arg);
+          return text == null
+              ? null
+              : text.isEmpty
+              ? <String>[]
+              : [text];
+        },
+      ),
+    ),
     {
-      'callbacks': {'title': _function},
+      'callbacks': TooltipCallbacks(title: (tooltip, arg) => null),
     },
   ),
   'labelText': (
-    ChartTooltip(labelText: _label),
+    ChartTooltip(
+      callbacks: TooltipCallbacks(
+        label: (tooltip, arg) {
+          final text = _label(arg);
+          return text == null
+              ? null
+              : text.isEmpty
+              ? <String>[]
+              : [text];
+        },
+      ),
+    ),
     {
-      'callbacks': {'label': _function},
+      'callbacks': TooltipCallbacks(label: (tooltip, arg) => null),
     },
   ),
   'footerText': (
-    ChartTooltip(footerText: _title2),
+    ChartTooltip(
+      callbacks: TooltipCallbacks(
+        footer: (tooltip, arg) {
+          final text = _title2(arg);
+          return text == null
+              ? null
+              : text.isEmpty
+              ? <String>[]
+              : [text];
+        },
+      ),
+    ),
     {
-      'callbacks': {'footer': _function},
+      'callbacks': TooltipCallbacks(footer: (tooltip, arg) => null),
     },
   ),
   'position': (
-    ChartTooltip(position: NearestTooltipPositioner()),
-    {'position': NearestTooltipPositioner()},
+    const ChartTooltip(position: NearestTooltipPositioner()),
+    {'position': const NearestTooltipPositioner()},
   ),
   'extra': (
-    ChartTooltip(extra: {'caretSize': 8}),
+    const ChartTooltip(extra: {'caretSize': 8}),
     {'caretSize': 8},
   ),
 };
@@ -2247,10 +2293,10 @@ void main() {
 
     test('each group with all its parameters, in parameter order', () {
       final options = _options(
-        const ChartConfig(
+        ChartConfig(
           type: .bar,
-          datasets: [],
-          legend: ChartLegend(
+          datasets: const [],
+          legend: const ChartLegend(
             display: true,
             position: .bottom,
             align: .start,
@@ -2266,7 +2312,7 @@ void main() {
             onLeave: _onLegend,
             extra: {'fullSize': false},
           ),
-          title: ChartTitle(
+          title: const ChartTitle(
             display: true,
             text: 'T',
             color: _red,
@@ -2279,7 +2325,7 @@ void main() {
           ),
           tooltip: ChartTooltip(
             enabled: true,
-            mode: IndexInteractionMode(),
+            mode: const IndexInteractionMode(),
             intersect: false,
             backgroundColor: _red,
             titleColor: _blue,
@@ -2288,21 +2334,44 @@ void main() {
             bodyFont: _font,
             footerColor: _blue,
             footerFont: _font,
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             cornerRadius: 3,
             displayColors: false,
-            titleText: _title2,
-            labelText: _label,
-            footerText: _title2,
-            position: NearestTooltipPositioner(),
+            position: const NearestTooltipPositioner(),
+            callbacks: TooltipCallbacks(
+              title: (tooltip, arg) {
+                final text = _title2(arg);
+                return text == null
+                    ? null
+                    : text.isEmpty
+                    ? <String>[]
+                    : [text];
+              },
+              label: (tooltip, arg) {
+                final text = _label(arg);
+                return text == null
+                    ? null
+                    : text.isEmpty
+                    ? <String>[]
+                    : [text];
+              },
+              footer: (tooltip, arg) {
+                final text = _title2(arg);
+                return text == null
+                    ? null
+                    : text.isEmpty
+                    ? <String>[]
+                    : [text];
+              },
+            ),
           ),
-          interaction: ChartInteraction(
+          interaction: const ChartInteraction(
             mode: NearestInteractionMode(),
             intersect: false,
             includeInvisible: true,
             axis: .x,
           ),
-          animation: ChartAnimation(
+          animation: const ChartAnimation(
             duration: Duration(milliseconds: 500),
             delay: Duration(milliseconds: 20),
             easing: Curves.linear,
@@ -2369,11 +2438,11 @@ void main() {
             ),
             'cornerRadius': 3,
             'displayColors': false,
-            'callbacks': {
-              'title': _function,
-              'label': _function,
-              'footer': _function,
-            },
+            'callbacks': TooltipCallbacks(
+              title: (tooltip, arg) => null,
+              label: (tooltip, arg) => null,
+              footer: (tooltip, arg) => null,
+            ),
           },
         },
         'interaction': {
@@ -2530,10 +2599,12 @@ void main() {
           type: .bar,
           datasets: const [],
           tooltip: ChartTooltip(
-            labelText: (item) {
-              calls.add('first');
-              return 'first';
-            },
+            callbacks: TooltipCallbacks(
+              label: (tooltip, item) {
+                calls.add('first');
+                return ['first'];
+              },
+            ),
           ),
         ),
       );
@@ -2543,27 +2614,48 @@ void main() {
         'callbacks',
       );
       final item = <String, Object?>{'label': 'a'};
-      expect(jsCall(jsGet(label, 'label'), [item]), 'first');
+      expect(
+        (label! as TooltipCallbacks).label!(
+          const _CallbackTooltip(),
+          ChartTooltipItem(item),
+        ),
+        ['first'],
+      );
       lowering.config = ChartConfig(
         type: .bar,
         datasets: const [],
         tooltip: ChartTooltip(
-          labelText: (item) {
-            calls.add('second');
-            return null;
-          },
+          callbacks: TooltipCallbacks(
+            label: (tooltip, item) {
+              calls.add('second');
+              return null;
+            },
+          ),
         ),
       );
       expect(
-        identical(jsCall(jsGet(label, 'label'), [item]), undefined),
-        isTrue,
+        (label as TooltipCallbacks).label!(
+          const _CallbackTooltip(),
+          ChartTooltipItem(item),
+        ),
+        isNull,
       );
       lowering.config = const ChartConfig(type: .bar, datasets: []);
       expect(
-        identical(jsCall(jsGet(label, 'label'), [item]), undefined),
-        isTrue,
+        label.label!(
+          const _CallbackTooltip(),
+          ChartTooltipItem(item),
+        ),
+        isNull,
       );
       expect(calls, ['first', 'second']);
     });
   });
+}
+
+final class const _CallbackTooltip() implements callback_types.TooltipModel {
+  @override
+  Object get options => const <String, Object?>{};
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

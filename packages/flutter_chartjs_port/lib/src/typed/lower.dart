@@ -31,7 +31,7 @@
 ///    tick format, and a trampoline for each event and text callback.
 /// 5. A trampoline reads the callback of the newest config of its
 ///    [ChartConfigLowering] at each call ([eventTrampoline],
-///    [legendTrampoline], [tooltipItemsTrampoline], [tooltipItemTrampoline]
+///    [legendTrampoline], [tooltipCallbacksTrampoline]
 ///    and [animationTrampoline]). Thus a new closure in a config that is
 ///    `==` to the last one needs no new lowering.
 /// 6. `extra` merges last ([mergeExtra]): each entry becomes a cell of the
@@ -44,7 +44,6 @@ import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart' show Key, ValueChanged, listEquals;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptScope, OptionKey, OptionScope, ScopeKind;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -63,8 +62,7 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartEventDetails,
         ChartHit,
         ChartLegendEventDetails,
-        ChartLegendItem,
-        ChartTooltipItem;
+        ChartLegendItem;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart'
@@ -85,6 +83,7 @@ import 'package:flutter_chartjs_port/src/types/animation.dart'
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show ChartEvent, LegendElement;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
 /// The lowering of a typed config to the root scope of a Chart.js config
@@ -366,6 +365,10 @@ String _duplicateKeyMessage(List<Dataset> datasets) =>
     '${_duplicateKey(datasets)}. A key is the identity of a dataset from one '
     'config to the next: give each dataset its own key.';
 
+/// The newest typed dataset of one live dataset scope: the tooltip
+/// callback trampolines of its scope read their callbacks from it.
+final class _DatasetCallbacks(var Dataset dataset);
+
 /// One live dataset scope of a [ChartConfigLowering]: the typed dataset,
 /// the scope of the chart and the cells that the lowering wrote into it.
 final class _LiveDataset {
@@ -373,18 +376,30 @@ final class _LiveDataset {
     this.dataset,
     this.scope,
     this.lowered, {
+    required this.callbacks,
     this.dataOnly = false,
   });
 
   /// The live dataset of a new scope: the lowering of [dataset] in a chart
   /// of the type [type].
   factory _LiveDataset.lower(Dataset dataset, ChartKind type) {
-    final scope = lowerDataset(dataset, type);
-    return _LiveDataset(dataset, scope, _shallowCopy(scope));
+    final callbacks = _DatasetCallbacks(dataset);
+    final scope = lowerDataset(
+      dataset,
+      type,
+      currentTooltipCallbacks: () => callbacks.dataset.tooltipCallbacks,
+    );
+    return _LiveDataset(
+      dataset,
+      scope,
+      _shallowCopy(scope),
+      callbacks: callbacks,
+    );
   }
 
   /// The typed dataset of [scope].
   final Dataset dataset;
+  final _DatasetCallbacks callbacks;
 
   /// The dataset scope of the chart.
   final OptionScope scope;
@@ -403,10 +418,21 @@ final class _LiveDataset {
   /// 0052: an object, a List and a function by identity.
   _LiveDataset patch(Dataset next, ChartKind type, {required bool sameType}) {
     final scope = this.scope;
+    callbacks.dataset = next;
     if (sameType && next == dataset) {
-      return _LiveDataset(next, scope, lowered, dataOnly: true);
+      return _LiveDataset(
+        next,
+        scope,
+        lowered,
+        callbacks: callbacks,
+        dataOnly: true,
+      );
     }
-    final written = lowerDataset(next, type);
+    final written = lowerDataset(
+      next,
+      type,
+      currentTooltipCallbacks: () => callbacks.dataset.tooltipCallbacks,
+    );
     final last = lowered;
     // An `extra` List goes by reference, so a new one is a new value even
     // with the same items.
@@ -428,7 +454,13 @@ final class _LiveDataset {
             (key == OptionKey.data || _sameStyleList(old.raw, cell.raw));
       }
     }
-    return _LiveDataset(next, scope, written, dataOnly: dataOnly);
+    return _LiveDataset(
+      next,
+      scope,
+      written,
+      callbacks: callbacks,
+      dataOnly: dataOnly,
+    );
   }
 
   /// Whether [a] and [b] are the Lists of two lowerings of one style List
@@ -447,6 +479,57 @@ OptionScope _shallowCopy(OptionScope scope) {
   }
   return copy;
 }
+
+/// Keeps typed tooltip callbacks connected to the newest config.
+/// Internal lowering detail, matching the existing event trampolines.
+@internal
+TooltipCallbacks tooltipCallbacksTrampoline(
+  TooltipCallbacks callbacks,
+  TooltipCallbacks? Function() newest,
+) => TooltipCallbacks(
+  beforeTitle: callbacks.beforeTitle == null
+      ? null
+      : (tooltip, arg) => newest()?.beforeTitle?.call(tooltip, arg),
+  title: callbacks.title == null
+      ? null
+      : (tooltip, arg) => newest()?.title?.call(tooltip, arg),
+  afterTitle: callbacks.afterTitle == null
+      ? null
+      : (tooltip, arg) => newest()?.afterTitle?.call(tooltip, arg),
+  beforeBody: callbacks.beforeBody == null
+      ? null
+      : (tooltip, arg) => newest()?.beforeBody?.call(tooltip, arg),
+  afterBody: callbacks.afterBody == null
+      ? null
+      : (tooltip, arg) => newest()?.afterBody?.call(tooltip, arg),
+  beforeLabel: callbacks.beforeLabel == null
+      ? null
+      : (tooltip, arg) => newest()?.beforeLabel?.call(tooltip, arg),
+  label: callbacks.label == null
+      ? null
+      : (tooltip, arg) => newest()?.label?.call(tooltip, arg),
+  afterLabel: callbacks.afterLabel == null
+      ? null
+      : (tooltip, arg) => newest()?.afterLabel?.call(tooltip, arg),
+  beforeFooter: callbacks.beforeFooter == null
+      ? null
+      : (tooltip, arg) => newest()?.beforeFooter?.call(tooltip, arg),
+  footer: callbacks.footer == null
+      ? null
+      : (tooltip, arg) => newest()?.footer?.call(tooltip, arg),
+  afterFooter: callbacks.afterFooter == null
+      ? null
+      : (tooltip, arg) => newest()?.afterFooter?.call(tooltip, arg),
+  labelColor: callbacks.labelColor == null
+      ? null
+      : (tooltip, arg) => newest()?.labelColor?.call(tooltip, arg),
+  labelTextColor: callbacks.labelTextColor == null
+      ? null
+      : (tooltip, arg) => newest()?.labelTextColor?.call(tooltip, arg),
+  labelPointStyle: callbacks.labelPointStyle == null
+      ? null
+      : (tooltip, arg) => newest()?.labelPointStyle?.call(tooltip, arg),
+);
 
 /// The trampoline of the chart callback that [newest] reads:
 /// `options.onClick` or `options.onHover`.
@@ -484,33 +567,6 @@ Object? Function(Object?, Object?, Object?) legendTrampoline(
     ),
   );
   return null;
-};
-
-/// The trampoline of a tooltip callback of the items that [newest] reads:
-/// `callbacks.title` or `callbacks.footer` of `plugins.tooltip`.
-///
-/// The tooltip calls it with the List of the tooltip items. A callback
-/// that gives Dart `null`, and a newest config without the callback, give
-/// `undefined`: the tooltip then calls its default callback
-/// (`plugin.tooltip.js:447-455`).
-Object? Function(Object?) tooltipItemsTrampoline(
-  String? Function(List<ChartTooltipItem> items)? Function() newest,
-) => (items) {
-  final callback = newest();
-  if (callback == null) return undefined;
-  return callback((items! as List<Object?>).cast<ChartTooltipItem>()) ??
-      undefined;
-};
-
-/// The trampoline of the tooltip callback of one item that [newest] reads:
-/// `callbacks.label` of `plugins.tooltip`. Dart `null` gives `undefined`,
-/// as in [tooltipItemsTrampoline].
-Object? Function(Object?) tooltipItemTrampoline(
-  String? Function(ChartTooltipItem item)? Function() newest,
-) => (item) {
-  final callback = newest();
-  if (callback == null) return undefined;
-  return callback(item! as ChartTooltipItem) ?? undefined;
 };
 
 /// The trampoline of the animation callback that [newest] reads:
@@ -622,7 +678,14 @@ void _mergeInto(OptionScope target, Map<Object?, Object?> source) {
         continue;
       }
     }
-    _store(target, name, value);
+    final previous = target.ownCell(name)?.raw;
+    _store(
+      target,
+      name,
+      previous is TooltipCallbacks && value is TooltipCallbacks
+          ? previous.merge(value)
+          : value,
+    );
   }
 }
 

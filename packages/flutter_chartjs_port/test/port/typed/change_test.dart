@@ -483,7 +483,14 @@ void main() {
         datasets: const [
           BarDataset(label: 'A', data: [1, 2]),
         ],
-        tooltip: ChartTooltip(labelText: (item) => text),
+        tooltip: ChartTooltip(
+          callbacks: TooltipCallbacks(
+            label: (tooltip, item) => switch (text) {
+              null => null,
+              final String text => text.isEmpty ? <String>[] : [text],
+            },
+          ),
+        ),
         animation: ChartAnimation.none,
       );
       await tester.pumpWidget(_box(ChartView(config: config())));

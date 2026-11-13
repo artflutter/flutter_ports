@@ -231,11 +231,6 @@ enum ScopeKind {
   /// the scope `plugins.tooltip`.
   tooltipOptions('TooltipOptions'),
 
-  /// index.d.ts:2739 TooltipCallbacks (index.d.ts:2726
-  /// TooltipDatasetCallbacks), the scope `callbacks` of the tooltip and of a
-  /// dataset tooltip.
-  tooltipCallbacks('TooltipCallbacks'),
-
   /// index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset
   /// (read at plugin.tooltip.js:357).
   tooltipDatasetOptions('TooltipDatasetOptions'),
@@ -368,8 +363,6 @@ enum ScopeKind {
         return TitleOptionsScope();
       case ScopeKind.tooltipOptions:
         return TooltipOptionsScope();
-      case ScopeKind.tooltipCallbacks:
-        return TooltipCallbacksScope();
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope();
       case ScopeKind.fillerOptions:
@@ -485,8 +478,6 @@ enum ScopeKind {
         return TitleOptionsScope;
       case ScopeKind.tooltipOptions:
         return TooltipOptionsScope;
-      case ScopeKind.tooltipCallbacks:
-        return TooltipCallbacksScope;
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope;
       case ScopeKind.fillerOptions:
@@ -1450,23 +1441,6 @@ enum ScopeKind {
           OptionKey.callbacks,
           OptionKey.reverse,
           OptionKey.events,
-        ];
-      case ScopeKind.tooltipCallbacks:
-        return const [
-          OptionKey.beforeLabel,
-          OptionKey.label,
-          OptionKey.afterLabel,
-          OptionKey.labelColor,
-          OptionKey.labelTextColor,
-          OptionKey.labelPointStyle,
-          OptionKey.beforeTitle,
-          OptionKey.title,
-          OptionKey.afterTitle,
-          OptionKey.beforeBody,
-          OptionKey.afterBody,
-          OptionKey.beforeFooter,
-          OptionKey.footer,
-          OptionKey.afterFooter,
         ];
       case ScopeKind.tooltipDatasetOptions:
         return const [OptionKey.callbacks];
@@ -3365,7 +3339,7 @@ enum ScopeKind {
           case OptionKey.animations:
             return 34;
           case OptionKey.callbacks:
-            return 32;
+            return 4736;
           case OptionKey.reverse:
             return 2;
           case OptionKey.events:
@@ -3373,43 +3347,10 @@ enum ScopeKind {
           default:
             return 0;
         }
-      case ScopeKind.tooltipCallbacks:
-        switch (key) {
-          case OptionKey.beforeLabel:
-            return 8;
-          case OptionKey.label:
-            return 8;
-          case OptionKey.afterLabel:
-            return 8;
-          case OptionKey.labelColor:
-            return 8;
-          case OptionKey.labelTextColor:
-            return 8;
-          case OptionKey.labelPointStyle:
-            return 8;
-          case OptionKey.beforeTitle:
-            return 8;
-          case OptionKey.title:
-            return 8;
-          case OptionKey.afterTitle:
-            return 8;
-          case OptionKey.beforeBody:
-            return 8;
-          case OptionKey.afterBody:
-            return 8;
-          case OptionKey.beforeFooter:
-            return 8;
-          case OptionKey.footer:
-            return 8;
-          case OptionKey.afterFooter:
-            return 8;
-          default:
-            return 0;
-        }
       case ScopeKind.tooltipDatasetOptions:
         switch (key) {
           case OptionKey.callbacks:
-            return 32;
+            return 4736;
           default:
             return 0;
         }
@@ -3942,20 +3883,11 @@ enum ScopeKind {
             return ScopeKind.animationOptions;
           case OptionKey.animations:
             return ScopeKind.animationsSpec;
-          case OptionKey.callbacks:
-            return ScopeKind.tooltipCallbacks;
           default:
             return null;
         }
-      case ScopeKind.tooltipCallbacks:
-        return null;
       case ScopeKind.tooltipDatasetOptions:
-        switch (key) {
-          case OptionKey.callbacks:
-            return ScopeKind.tooltipCallbacks;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.fillerOptions:
         return null;
       case ScopeKind.decimationOptions:
@@ -4068,8 +4000,6 @@ enum ScopeKind {
       case ScopeKind.titleOptions:
         return 64;
       case ScopeKind.tooltipOptions:
-        return 64;
-      case ScopeKind.tooltipCallbacks:
         return 64;
       case ScopeKind.tooltipDatasetOptions:
         return 64;
@@ -4186,8 +4116,6 @@ enum ScopeKind {
         return null;
       case ScopeKind.tooltipOptions:
         return null;
-      case ScopeKind.tooltipCallbacks:
-        return null;
       case ScopeKind.tooltipDatasetOptions:
         return null;
       case ScopeKind.fillerOptions:
@@ -4302,8 +4230,6 @@ enum ScopeKind {
       case ScopeKind.titleOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.tooltipOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.tooltipCallbacks:
         return classifyUnion(raw, 64);
       case ScopeKind.tooltipDatasetOptions:
         return classifyUnion(raw, 64);

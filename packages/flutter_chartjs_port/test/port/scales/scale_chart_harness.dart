@@ -77,7 +77,9 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:flutter_chartjs_port/src/upstream.dart' show chartJsVersion;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -508,6 +510,73 @@ double referenceAbsoluteTolerance = 1e-9;
 /// - Lists and maps: item by item. A font: [fontFieldsMatcher]. Other
 ///   values: `==`.
 Object? referenceMatcher(Object? expected) => switch (expected) {
+  final SolidChartPaint p => isA<SolidChartPaint>().having(
+    (v) => nativeColorBytes(v.color),
+    'color',
+    nativeColorBytes(p.color),
+  ),
+  final GradientChartPaint p => isA<GradientChartPaint>().having(
+    (v) => v.gradient,
+    'gradient',
+    same(p.gradient),
+  ),
+  final PatternChartPaint p => isA<PatternChartPaint>().having(
+    (v) => v.pattern,
+    'pattern',
+    same(p.pattern),
+  ),
+  UnchangedChartPaint() => isA<UnchangedChartPaint>(),
+  final TooltipCornerRadii r =>
+    isA<TooltipCornerRadii>()
+        .having((v) => v.topLeft, 'topLeft', referenceMatcher(r.topLeft))
+        .having((v) => v.topRight, 'topRight', referenceMatcher(r.topRight))
+        .having(
+          (v) => v.bottomLeft,
+          'bottomLeft',
+          referenceMatcher(r.bottomLeft),
+        )
+        .having(
+          (v) => v.bottomRight,
+          'bottomRight',
+          referenceMatcher(r.bottomRight),
+        ),
+  final TooltipLabelStyle s =>
+    isA<TooltipLabelStyle>()
+        .having(
+          (v) => v.borderColor,
+          'borderColor',
+          referenceMatcher(s.borderColor),
+        )
+        .having(
+          (v) => v.backgroundColor,
+          'backgroundColor',
+          referenceMatcher(s.backgroundColor),
+        )
+        .having(
+          (v) => v.borderWidth,
+          'borderWidth',
+          referenceMatcher(s.borderWidth),
+        )
+        .having(
+          (v) => v.borderDash,
+          'borderDash',
+          referenceMatcher(s.borderDash),
+        )
+        .having(
+          (v) => v.borderDashOffset,
+          'borderDashOffset',
+          referenceMatcher(s.borderDashOffset),
+        )
+        .having(
+          (v) => v.borderRadius,
+          'borderRadius',
+          referenceMatcher(s.borderRadius),
+        ),
+  final TooltipLabelPointStyle s =>
+    isA<TooltipLabelPointStyle>()
+        .having((v) => v.pointStyle, 'pointStyle', s.pointStyle)
+        .having((v) => v.rotation, 'rotation', referenceMatcher(s.rotation)),
+
   final String text when isReferenceColor(text) => referenceColorOrString(text),
   final num n when n.isNaN => isNaN,
   final num n when n.isInfinite => equals(n),

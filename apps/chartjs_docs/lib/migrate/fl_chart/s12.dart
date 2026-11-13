@@ -119,14 +119,16 @@ class _Sample12State extends State<Sample12> {
         titleFont: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         bodyColor: Fl.yellow,
         bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        titleText: (items) {
-          final date =
-              _history![((items.first.parsed! as JsObjectFace)['x']! as num)
-                      .toInt()]
-                  .$1;
-          return '${date.year}/${date.month}/${date.day}';
-        },
-        labelText: (i) => '\$${i.formattedValue.split('.').first}',
+        callbacks: TooltipCallbacks(
+          title: (tooltip, items) {
+            final date =
+                _history![((items.first.parsed! as JsObjectFace)['x']! as num)
+                        .toInt()]
+                    .$1;
+            return ['${date.year}/${date.month}/${date.day}'];
+          },
+          label: (tooltip, i) => ['\$${i.formattedValue.split('.').first}'],
+        ),
       ),
       plugins: _plugins,
       scales: {

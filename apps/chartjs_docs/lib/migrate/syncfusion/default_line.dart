@@ -39,10 +39,11 @@ String? _percent(AxisTickInfo tick) => '${tick.value.round()}%';
 String? _tooltipTitle(List<ChartTooltipItem> items) => items.first.datasetLabel;
 
 // The marker in the tooltip: a filled circle with a white border.
-Map<String, Object?> _tooltipMarker(JsObjectFace item) => {
-  'borderColor': Colors.white,
-  'backgroundColor': _colors[(item['datasetIndex']! as num).toInt()],
-};
+TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, ChartTooltipItem item) =>
+    TooltipLabelStyle(
+      borderColor: const ChartPaint.solid(Colors.white),
+      backgroundColor: ChartPaint.solid(_colors[item.datasetIndex]),
+    );
 
 String? _tooltipLabel(ChartTooltipItem item) {
   final year = (item.parsed! as JsObjectFace)['x']! as num;
@@ -69,17 +70,33 @@ final ChartConfig _config = ChartConfig(
     labelColor: _text,
     labelFont: TextStyle(fontSize: 13),
   ),
-  tooltip: const ChartTooltip(
+  tooltip: ChartTooltip(
     backgroundColor: _tooltip,
-    titleText: _tooltipTitle,
-    labelText: _tooltipLabel,
     yAlign: .bottom,
-    extra: {
+    extra: const {
       'titleAlign': TextAlign.center,
       'usePointStyle': true,
       'boxPadding': 4,
-      'callbacks': {'labelColor': _tooltipMarker},
     },
+    callbacks: TooltipCallbacks(
+      labelColor: _tooltipMarker,
+      title: (tooltip, arg) {
+        final text = _tooltipTitle(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+      label: (tooltip, arg) {
+        final text = _tooltipLabel(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
   ),
   scales: const {
     // NumericAxis(interval: 2, edgeLabelPlacement: shift), no grid lines.

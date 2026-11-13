@@ -46,8 +46,10 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:test/test.dart';
 
 // ---------------------------------------------------------------------------
@@ -150,6 +152,41 @@ final class _JasmineEquals extends Matcher {
     List<Object?> bStack,
     List<String> path,
   ) {
+    if (a is ChartPaint && b is ChartPaint) {
+      return switch ((a, b)) {
+        (SolidChartPaint(:final color), SolidChartPaint(color: final other)) =>
+          equalColorValues(color, other) ?? color == other,
+        (
+          GradientChartPaint(:final gradient),
+          GradientChartPaint(gradient: final other),
+        ) =>
+          identical(gradient, other),
+        (
+          PatternChartPaint(:final pattern),
+          PatternChartPaint(pattern: final other),
+        ) =>
+          identical(pattern, other),
+        (UnchangedChartPaint(), UnchangedChartPaint()) => true,
+        _ => false,
+      };
+    }
+    if (a is TooltipCornerRadii && b is TooltipCornerRadii) {
+      return a.topLeft == b.topLeft &&
+          a.topRight == b.topRight &&
+          a.bottomLeft == b.bottomLeft &&
+          a.bottomRight == b.bottomRight;
+    }
+    if (a is TooltipLabelPointStyle && b is TooltipLabelPointStyle) {
+      return a.pointStyle == b.pointStyle && a.rotation == b.rotation;
+    }
+    if (a is TooltipLabelStyle && b is TooltipLabelStyle) {
+      return _eq(a.borderColor, b.borderColor, aStack, bStack, path) &&
+          _eq(a.backgroundColor, b.backgroundColor, aStack, bStack, path) &&
+          _eq(a.borderDash, b.borderDash, aStack, bStack, path) &&
+          a.borderWidth == b.borderWidth &&
+          a.borderDashOffset == b.borderDashOffset &&
+          _eq(a.borderRadius, b.borderRadius, aStack, bStack, path);
+    }
     if (a is num && b is num) {
       if (a.isNaN || b.isNaN) return a.isNaN && b.isNaN;
       return a == b && (a != 0 || a.isNegative == b.isNegative);

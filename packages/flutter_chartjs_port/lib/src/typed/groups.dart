@@ -33,7 +33,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LegendLabelOptionsScope,
         LegendOptionsScope,
         TitleOptionsScope,
-        TooltipCallbacksScope,
         TooltipOptionsScope,
         TransitionOptionsScope,
         TransitionsSpecScope;
@@ -42,12 +41,13 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show ChartAnimationDetails, ChartLegendEventDetails, ChartTooltipItem;
+    show ChartAnimationDetails, ChartLegendEventDetails;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
 /// The legend: the options of the legend plugin, `options.plugins.legend`
@@ -386,9 +386,7 @@ final class ChartTooltip with Diagnosticable {
     this.padding,
     this.cornerRadius,
     this.displayColors,
-    this.titleText,
-    this.labelText,
-    this.footerText,
+    this.callbacks,
     this.textDirection,
     this.extra,
   });
@@ -458,18 +456,8 @@ final class ChartTooltip with Diagnosticable {
   /// `displayColors`.
   final bool? displayColors;
 
-  /// The title of the tooltip: `callbacks.title`. It gets the items of the
-  /// tooltip. `null` gives the default title, the label of the first item.
-  final String? Function(List<ChartTooltipItem> items)? titleText;
-
-  /// The text of the label line of an item: `callbacks.label`. `null`
-  /// gives the default text, the dataset label and the value
-  /// (`docs/configuration/tooltip.md`, "Label Callback").
-  final String? Function(ChartTooltipItem item)? labelText;
-
-  /// The footer of the tooltip: `callbacks.footer`. It gets the items of
-  /// the tooltip. `null` gives the default footer, no footer.
-  final String? Function(List<ChartTooltipItem> items)? footerText;
+  /// The native callbacks of the tooltip. Null inherits the defaults.
+  final TooltipCallbacks? callbacks;
 
   /// The text direction during drawing. Null keeps the canvas direction.
   final TextDirection? textDirection;
@@ -498,9 +486,7 @@ final class ChartTooltip with Diagnosticable {
     EdgeInsets? padding,
     double? cornerRadius,
     bool? displayColors,
-    String? Function(List<ChartTooltipItem> items)? titleText,
-    String? Function(ChartTooltipItem item)? labelText,
-    String? Function(List<ChartTooltipItem> items)? footerText,
+    TooltipCallbacks? callbacks,
     TextDirection? textDirection,
     Map<String, Object?>? extra,
   }) => ChartTooltip(
@@ -521,9 +507,7 @@ final class ChartTooltip with Diagnosticable {
     padding: padding ?? this.padding,
     cornerRadius: cornerRadius ?? this.cornerRadius,
     displayColors: displayColors ?? this.displayColors,
-    titleText: titleText ?? this.titleText,
-    labelText: labelText ?? this.labelText,
-    footerText: footerText ?? this.footerText,
+    callbacks: callbacks ?? this.callbacks,
     textDirection: textDirection ?? this.textDirection,
     extra: extra ?? this.extra,
   );
@@ -546,9 +530,7 @@ final class ChartTooltip with Diagnosticable {
     ('padding', padding),
     ('cornerRadius', cornerRadius),
     ('displayColors', displayColors),
-    ('titleText', byPresence(titleText)),
-    ('labelText', byPresence(labelText)),
-    ('footerText', byPresence(footerText)),
+    ('callbacks', tooltipCallbacksPresence(callbacks)),
     ('textDirection', textDirection),
     ('extra', byEntries(extra)),
   ];
@@ -575,22 +557,6 @@ TooltipOptionsScope lowerTooltip(
   ChartTooltip tooltip,
   ChartConfigLowering lowering,
 ) {
-  final callbacks = TooltipCallbacksScope();
-  if (tooltip.titleText != null) {
-    callbacks.title = tooltipItemsTrampoline(
-      () => lowering.config.tooltip?.titleText,
-    );
-  }
-  if (tooltip.labelText != null) {
-    callbacks.label = tooltipItemTrampoline(
-      () => lowering.config.tooltip?.labelText,
-    );
-  }
-  if (tooltip.footerText != null) {
-    callbacks.footer = tooltipItemsTrampoline(
-      () => lowering.config.tooltip?.footerText,
-    );
-  }
   final scope = TooltipOptionsScope();
   put(scope, OptionKey.enabled, tooltip.enabled);
   put(scope, OptionKey.mode, tooltip.mode);
@@ -609,7 +575,12 @@ TooltipOptionsScope lowerTooltip(
   put(scope, OptionKey.padding, tooltip.padding);
   put(scope, OptionKey.cornerRadius, tooltip.cornerRadius);
   put(scope, OptionKey.displayColors, tooltip.displayColors);
-  if (callbacks.ownKeyCount != 0) scope.callbacks = callbacks;
+  if (tooltip.callbacks case final callbacks?) {
+    scope.callbacks = tooltipCallbacksTrampoline(
+      callbacks,
+      () => lowering.config.tooltip?.callbacks,
+    );
+  }
   put(scope, OptionKey.textDirection, tooltip.textDirection);
   return mergeExtra(scope, tooltip.extra);
 }

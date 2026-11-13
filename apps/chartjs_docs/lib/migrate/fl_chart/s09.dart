@@ -44,13 +44,15 @@ final ChartConfig _config = fills(
     tooltip: ChartTooltip(
       backgroundColor: Colors.black,
       displayColors: false,
-      titleText: (_) => null,
-      labelText: (i) {
-        final p = i.parsed! as JsObjectFace;
-        return '${p['x']}, ${(p['y']! as num).toStringAsFixed(2)}';
-      },
       bodyColor: Fl.pink,
       bodyFont: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+      callbacks: TooltipCallbacks(
+        title: (tooltip, _) => null,
+        label: (tooltip, i) {
+          final p = i.parsed! as JsObjectFace;
+          return ['${p['x']}, ${(p['y']! as num).toStringAsFixed(2)}'];
+        },
+      ),
     ),
     plugins: [touchIndicator(color: Fl.pink, fromValue: 0)],
     scales: {

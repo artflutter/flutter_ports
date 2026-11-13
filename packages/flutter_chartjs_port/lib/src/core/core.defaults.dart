@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/core/core.defaults.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-tooltip-callback-objects, native callbacks.
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 // DIVERGES(chartjs): adapt-typed-options, typed scopes of Chart.js ADR 0054.
 
@@ -27,7 +28,6 @@ library;
 import 'dart:core' as core show override;
 import 'dart:core';
 import 'dart:ui' as ui;
-
 import 'dart:ui' show FontStyle;
 
 import 'package:flutter/painting.dart' show TextStyle;
@@ -48,6 +48,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart';
 
 /// core.defaults.js:7 `overrides`, `Object.create(null)`.
@@ -344,6 +345,9 @@ base class Defaults extends ChartOptionsScope implements types.Defaults {
       // `Object.assign({}, target, local)` of two fonts: the local font
       // merges over the target font (row adapt-text-style-fonts).
       // DIVERGES(chartjs): adapt-text-style-fonts, two fonts merge.
+      if (local is TooltipCallbacks) {
+        return value is TooltipCallbacks ? value.merge(local) : local;
+      }
       if (local is TextStyle) {
         return value is TextStyle ? value.merge(local) : local;
       }

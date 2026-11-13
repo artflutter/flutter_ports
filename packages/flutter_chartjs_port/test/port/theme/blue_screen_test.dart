@@ -7,6 +7,7 @@ import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
@@ -229,7 +230,9 @@ AnyObject _config(
           'labels': ?legendLabels,
         },
         'tooltip': <String, Object?>{
-          'callbacks': <String, Object?>{'footer': () => 'Footer'},
+          'callbacks': TooltipCallbacks(
+            footer: (tooltip, arg) => 'Footer'.split('\n'),
+          ),
         },
       },
       if (cartesian)

@@ -344,8 +344,8 @@ class _VotesPageState extends State<VotesPage> {
     }
   }
 
-  String? _label(ChartTooltipItem item) =>
-      '${item.datasetLabel}: ${item.formattedValue} votes';
+  List<String> _label(TooltipModel tooltip, ChartTooltipItem item) =>
+      ['${item.datasetLabel}: ${item.formattedValue} votes'];
 
   Color _barColor(ChartContext context) =>
       (context.raw as num? ?? 0) > 10 ? Colors.green : Colors.grey;
@@ -365,7 +365,7 @@ class _VotesPageState extends State<VotesPage> {
         ],
         onClick: _onClick,
         legend: ChartLegend(onClick: _onLegendClick),
-        tooltip: ChartTooltip(labelText: _label),
+        tooltip: ChartTooltip(callbacks: TooltipCallbacks(label: _label)),
       ),
     );
   }
@@ -376,8 +376,10 @@ class _VotesPageState extends State<VotesPage> {
   pointer (`hits`, each with `datasetIndex`, `index` and `element`) and the chart.
 - The legend `onClick`, `onHover` and `onLeave` get `ChartLegendEventDetails`. A legend `onClick`
   replaces the default click, which hides or shows the dataset.
-- The tooltip `titleText`, `labelText` and `footerText` give the text. A `null` result gives the
-  default text.
+- `ChartTooltip.callbacks` takes a `TooltipCallbacks` object, also in a raw config. Its text
+  hooks return a list of lines: `null` requests the built-in default and `[]` emits no text.
+  Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`
+  override the six per-item hooks. Callback objects merge field by field with `merge`.
 - `AxisTicks.format` gives the tick label, and `ChartAnimation.onProgress` and `onComplete` get
   `ChartAnimationDetails`.
 - A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColorFor` get a

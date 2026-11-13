@@ -8,6 +8,13 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show
+        ChartPaint,
+        TooltipCallbacks,
+        TooltipCornerRadii,
+        TooltipItemsCallback,
+        TooltipLabelStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CSSStyleDeclaration, HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
@@ -20,15 +27,12 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode, IndexInteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show noop;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show optionKeyOf;
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
@@ -36,13 +40,17 @@ import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show SolidChartPaint;
+import 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
+    show tooltipCallbacksOf;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
-import '../../support/jasmine.dart' show jasmineEquals;
 import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
@@ -95,35 +103,34 @@ void _log(types.Chart chart, String entry) =>
 final Map<String, Object?> _functions = {
   // The custom positioner of the generator, `position: 'custom'`.
   'positioner:custom': const _CustomPositioner(),
-  // () => ['Title A', 'Title B']
-  'cbTitle': () => <Object?>['Title A', 'Title B'],
-  // () => 'After 1\nAfter 2'
-  'cbAfterTitle': () => 'After 1\nAfter 2',
-  // () => 5
-  'cbBeforeBody': () => 5.0,
-  // (item) => 'Item ' + item.datasetIndex + '.' + item.dataIndex
-  'cbBeforeLabel': (Object? item) => jsAdd(
-    jsAdd(jsAdd('Item ', jsGet(item, 'datasetIndex')), '.'),
-    jsGet(item, 'dataIndex'),
-  ),
-  // (item) => item.datasetIndex === 0 ? ['Line 1', 'Line 2'] : undefined
-  'cbLabel': (Object? item) => jsGet(item, 'datasetIndex') == 0.0
-      ? <Object?>['Line 1', 'Line 2']
-      : undefined,
-  // () => null
-  'cbAfterLabel': () => null,
-  // () => 'End 1\nEnd 2'
-  'cbAfterBody': () => 'End 1\nEnd 2',
-  // () => 'Before footer'
-  'cbBeforeFooter': () => 'Before footer',
-  // (items) => 'Count: ' + items.length
-  'cbFooter': (Object? items) => jsAdd('Count: ', jsGet(items, 'length')),
-  // () => ''
-  'cbAfterFooter': () => '',
-  // (item) => item.datasetIndex === 0 ? 'red' : 'blue'
-  'cbLabelTextColor': (Object? item) => jsGet(item, 'datasetIndex') == 0.0
-      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+  'cbTitle': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+      <String>['Title A', 'Title B'],
+  'cbAfterTitle': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+      <String>['After 1', 'After 2'],
+  'cbBeforeBody': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+      <String>['5'],
+  'cbBeforeLabel': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+      <String>['Item ${item.datasetIndex}.${item.dataIndex}'],
+  'cbLabel': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+      item.datasetIndex == 0 ? <String>['Line 1', 'Line 2'] : null,
+  'cbAfterLabel': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+      <String>[],
+  'cbAfterBody': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+      <String>['End 1', 'End 2'],
+  'cbBeforeFooter': (
+    types.TooltipModel tooltip,
+    List<ChartTooltipItem> items,
+  ) => <String>['Before footer'],
+  'cbFooter': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+      <String>['Count: ${items.length}'],
+  'cbAfterFooter': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+      <String>[],
+  'cbLabelTextColor': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+      ChartPaint.solid(
+        item.datasetIndex == 0
+            ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+            : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ),
   // (item) => item.datasetIndex !== 1
   'tooltipFilter': (Object? item) => jsGet(item, 'datasetIndex') != 1.0,
   // (a, b) => b.datasetIndex - a.datasetIndex
@@ -142,16 +149,21 @@ final Map<String, Object?> _functions = {
   // (item) => ({borderColor: item.datasetIndex === 0 ? 'red' : 'green',
   // backgroundColor: 'blue', borderWidth: {top: 1, left: 2}, borderDash:
   // [2, 1], borderDashOffset: 1, borderRadius: 3})
-  'roundLabelColor': (Object? item) => <String, Object?>{
-    'borderColor': jsGet(item, 'datasetIndex') == 0.0
-        ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-        : const native_ui.Color.fromRGBO(0, 128, 0, 1),
-    'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
-    'borderWidth': <String, Object?>{'top': 1.0, 'left': 2.0},
-    'borderDash': <Object?>[2.0, 1.0],
-    'borderDashOffset': 1.0,
-    'borderRadius': 3.0,
-  },
+  'roundLabelColor': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+      TooltipLabelStyle(
+        borderColor: ChartPaint.solid(
+          item.datasetIndex == 0
+              ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
+              : const native_ui.Color.fromRGBO(0, 128, 0, 1),
+        ),
+        backgroundColor: const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ),
+        borderWidth: 2,
+        borderDash: [2, 1],
+        borderDashOffset: 1,
+        borderRadius: const TooltipCornerRadii.all(3),
+      ),
 };
 
 /// The custom positioner of the generator (`Tooltip.positioners.custom`):
@@ -344,7 +356,10 @@ final Map<String, Object? Function(Chart chart)> _extras = {
 };
 
 final List<ScaleChartCase> _reference = _mapObservations(
-  [...pluginTooltipReference, ...pluginTooltipMoreReference],
+  [
+    ...pluginTooltipReference(_functions),
+    ...pluginTooltipMoreReference(_functions),
+  ],
   _undefinedAxisIds,
 );
 
@@ -429,19 +444,6 @@ const List<String> _callbackNames = [
   'footer',
   'afterFooter',
 ];
-
-/// The names whose callback gets the list of the tooltip items. The other
-/// names get one item.
-const Set<String> _listCallbacks = {
-  'beforeTitle',
-  'title',
-  'afterTitle',
-  'beforeBody',
-  'afterBody',
-  'beforeFooter',
-  'footer',
-  'afterFooter',
-};
 
 /// `new Tooltip(config)` through the class value.
 Object? _construct(List<Object?> args) => jsConstruct(Tooltip.jsClass, args);
@@ -616,6 +618,170 @@ void _replay(
 Tooltip _newTooltip() => Tooltip((chart: _FakeChart(), options: null));
 
 void main() {
+  group('native callback objects', () {
+    testWidgets('hooks share the item list and result lists are copied', (
+      tester,
+    ) async {
+      List<ChartTooltipItem>? titleItems;
+      final returned = <String>['one line'];
+      final chart = acquireChart(
+        _probeChart({
+          'callbacks': TooltipCallbacks(
+            beforeTitle: (tooltip, items) {
+              titleItems = items;
+              return [];
+            },
+            title: (tooltip, items) {
+              expect(identical(items, titleItems), isTrue);
+              return [];
+            },
+            beforeBody: (tooltip, items) {
+              expect(identical(items, titleItems), isTrue);
+              return returned;
+            },
+            label: (tooltip, item) {
+              expect(identical(item, titleItems!.single), isTrue);
+              return returned;
+            },
+            footer: (tooltip, items) {
+              expect(identical(items, titleItems), isTrue);
+              return [];
+            },
+          ),
+        }),
+      );
+      _activate(chart);
+      final tooltip = _tooltipOf(chart);
+      expect(tooltip.beforeBody, returned);
+      expect(_bodyLines(tooltip), [returned]);
+      returned.add('later');
+      expect(tooltip.beforeBody, ['one line']);
+      expect(_bodyLines(tooltip), [
+        ['one line'],
+      ]);
+    });
+
+    for (final radius in [0.0, 3.0]) {
+      testWidgets(
+        'native zero border width suppresses the swatch stroke ($radius)',
+        (tester) async {
+          final chart = acquireChart(
+            _probeChart({
+              'callbacks': TooltipCallbacks(
+                labelColor: (tooltip, item) => TooltipLabelStyle(
+                  borderWidth: 0,
+                  borderRadius: TooltipCornerRadii.all(radius),
+                ),
+              ),
+            }),
+          );
+          _activate(chart);
+          final ctx = _StyleContext();
+          _tooltipOf(chart).draw(ctx);
+          final names = ctx.getCalls().map((call) => jsGet(call, 'name'));
+          expect(names, isNot(contains('strokeRect')));
+          expect(names, isNot(contains('stroke')));
+        },
+      );
+    }
+
+    test('merge uses each supplied field and retains the others', () {
+      List<String> title(types.TooltipModel t, List<ChartTooltipItem> items) =>
+          ['title'];
+      List<String> label(types.TooltipModel t, ChartTooltipItem item) => [
+        'label',
+      ];
+      List<String> replacement(types.TooltipModel t, ChartTooltipItem item) => [
+        'replacement',
+      ];
+      final base = TooltipCallbacks(title: title, label: label);
+      final merged = base.merge(TooltipCallbacks(label: replacement));
+      expect(merged.title, same(title));
+      expect(merged.label, same(replacement));
+      expect(base.label, same(label));
+      expect(base.merge(null), same(base));
+      expect(base.merge(const TooltipCallbacks()).label, same(label));
+    });
+
+    test('the raw boundary rejects callback Maps', () {
+      expect(
+        () => tooltipCallbacksOf({'title': () => 'old'}),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    testWidgets(
+      'a dataset null result calls the built-in, not the chart override',
+      (tester) async {
+        var chartCalls = 0;
+        var datasetCalls = 0;
+        var datasetTitleCalls = 0;
+        final config = _probeChart({
+          'callbacks': TooltipCallbacks(
+            title: (tooltip, items) => ['chart title'],
+            label: (tooltip, item) {
+              chartCalls++;
+              return ['chart label'];
+            },
+          ),
+        });
+        final datasets =
+            (config['data']! as Map<String, Object?>)['datasets']!
+                as List<Object?>;
+        (datasets[0]! as Map<String, Object?>)['tooltip'] = {
+          'callbacks': TooltipCallbacks(
+            title: (tooltip, items) {
+              datasetTitleCalls++;
+              return ['wrong title'];
+            },
+            label: (tooltip, item) {
+              datasetCalls++;
+              return null;
+            },
+          ),
+        };
+        final chart = acquireChart(config);
+        _activate(chart);
+        final tooltip = _tooltipOf(chart);
+        expect(tooltip.title, ['chart title']);
+        expect(_bodyLines(tooltip), [
+          ['one: 20'],
+        ]);
+        expect(datasetCalls, 1);
+        expect(chartCalls, 0);
+        expect(datasetTitleCalls, 0);
+      },
+    );
+
+    testWidgets('unchanged paints inherit the resolved item style', (
+      tester,
+    ) async {
+      const fill = native_ui.Color(0xff123456);
+      const border = native_ui.Color(0xffabcdef);
+      final config = _probeChart({
+        'bodyColor': fill,
+        'callbacks': TooltipCallbacks(
+          labelColor: (tooltip, item) => TooltipLabelStyle(),
+          labelTextColor: (tooltip, item) => const ChartPaint.unchanged(),
+        ),
+      });
+      final datasets =
+          (config['data']! as Map<String, Object?>)['datasets']!
+              as List<Object?>;
+      (datasets[0]! as Map<String, Object?>).addAll({
+        'backgroundColor': fill,
+        'borderColor': border,
+      });
+      final chart = acquireChart(config);
+      _activate(chart);
+      final tooltip = _tooltipOf(chart);
+      final style = tooltip.labelColors!.single! as TooltipLabelStyle;
+      expect((style.backgroundColor as SolidChartPaint).color, fill);
+      expect((style.borderColor as SolidChartPaint).color, border);
+      expect((tooltip.labelTextColors!.single! as SolidChartPaint).color, fill);
+    });
+  });
+
   testReferenceOrigin(
     node: pluginTooltipReferenceNode,
     arch: pluginTooltipReferenceArch,
@@ -635,8 +801,8 @@ void main() {
     expect(
       [
         for (final c in [
-          ...pluginTooltipReference,
-          ...pluginTooltipMoreReference,
+          ...pluginTooltipReference(_functions),
+          ...pluginTooltipMoreReference(_functions),
         ])
           c.name,
       ],
@@ -703,7 +869,10 @@ void main() {
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
       final config =
-          copyReference(pluginTooltipReference.first.config, _functions)!
+          copyReference(
+                pluginTooltipReference(_functions).first.config,
+                _functions,
+              )!
               as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
@@ -754,7 +923,10 @@ void main() {
       expect(jsObjectKeys(tooltip), _upstreamKeys);
       final defaults = tooltip['defaults']! as JsObjectFace;
       expect(jsObjectKeys(defaults), _upstreamDefaultsKeys);
-      expect(jsObjectKeys(defaults['callbacks']), _callbackNames);
+      expect(
+        _callbackNamesOf(defaults['callbacks']! as TooltipCallbacks),
+        _callbackNames,
+      );
     });
   });
 
@@ -1158,20 +1330,25 @@ void main() {
 
   group('callbacks', () {
     for (final (name, callback, title, height)
-        in <(String, Object?, List<Object?>, double)>[
+        in <(String, TooltipItemsCallback, List<Object?>, double)>[
           // The probe output `titleUndefined`: title [B], height 46.8.
-          ('undefined takes the default', () => undefined, ['B'], 46.8),
+          (
+            'undefined takes the default',
+            (tooltip, items) => null,
+            ['B'],
+            46.8,
+          ),
           // The probe output `titleNull`: title [], height 26.4.
-          ('null skips the default', () => null, [], 26.4),
+          ('null skips the default', (tooltip, items) => [], [], 26.4),
           // The probe output `titleNumber`: title [5], height 46.8.
-          ('a number is a line', () => 5.0, [5], 46.8),
+          ('a number is a line', (tooltip, items) => ['5'], ['5'], 46.8),
           // The probe output `titleNoop`: title [B]. noop gives undefined.
-          ('noop takes the default', noop, ['B'], 46.8),
+          ('noop takes the default', (tooltip, items) => null, ['B'], 46.8),
         ]) {
       testWidgets('a title callback: $name', (tester) async {
         final chart = acquireChart(
           _probeChart(<String, Object?>{
-            'callbacks': <String, Object?>{'title': callback},
+            'callbacks': TooltipCallbacks(title: callback),
           }),
         );
         _activate(chart);
@@ -1186,14 +1363,12 @@ void main() {
       });
     }
 
-    test('labelTextColor without this throws a TypeError', () {
-      // The probe output `labelTextColorNoThis`: TypeError.
+    test('default callbacks expose native fields', () {
       final callbacks =
-          (tooltip['defaults']! as JsObjectFace)['callbacks']! as JsObjectFace;
-      expect(
-        () => jsCall(callbacks['labelTextColor'], const []),
-        throwsA(isA<TypeError>()),
-      );
+          (tooltip['defaults']! as JsObjectFace)['callbacks']!
+              as TooltipCallbacks;
+      expect(callbacks.labelTextColor, isNotNull);
+      expect(callbacks.title, isNotNull);
     });
 
     testWidgets('a scatter chart keeps the raw label', (tester) async {
@@ -1220,7 +1395,7 @@ void main() {
       final t = _tooltipOf(chart);
       _activate(chart, 0);
       expect(jsGet(t.dataPoints![0], 'label'), 7);
-      expect(t.title, [7]);
+      expect(t.title, ['7']);
       _activate(chart);
       expect(jsGet(t.dataPoints![0], 'label'), '');
       expect(t.title, isEmpty);
@@ -1289,14 +1464,16 @@ void main() {
               'label': 'two',
               'data': <Object?>[5, 15, 25],
               'tooltip': <String, Object?>{
-                'callbacks': <String, Object?>{
-                  'label': (Object? item) =>
-                      jsAdd('D1 ', jsGet(item, 'formattedValue')),
-                  'beforeLabel': () => 'pre',
-                  'labelTextColor': () =>
-                      const native_ui.Color.fromRGBO(255, 0, 0, 1),
-                  'title': () => 'not used',
-                },
+                'callbacks': TooltipCallbacks(
+                  label: (tooltip, item) => [
+                    jsToString(jsAdd('D1 ', jsGet(item, 'formattedValue'))),
+                  ],
+                  beforeLabel: (tooltip, arg) => 'pre'.split('\n'),
+                  labelTextColor: (tooltip, arg) => const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(255, 0, 0, 1),
+                  ),
+                  title: (tooltip, arg) => 'not used'.split('\n'),
+                ),
               },
             },
           ],
@@ -1323,10 +1500,13 @@ void main() {
       ]);
       expect(jsGet(t.body![0], 'before'), isEmpty);
       expect(jsGet(t.body![1], 'before'), ['pre']);
-      expect(t.labelTextColors, [
-        const native_ui.Color.fromRGBO(255, 255, 255, 1),
-        const native_ui.Color.fromRGBO(255, 0, 0, 1),
-      ]);
+      expect(
+        t.labelTextColors!.cast<SolidChartPaint>().map((paint) => paint.color),
+        [
+          const native_ui.Color.fromRGBO(255, 255, 255, 1),
+          const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        ],
+      );
       expect(t.width, closeTo(66.037109375, 1e-9));
       expect(t.height, closeTo(79.6, 1e-9));
       expect(t.x, closeTo(273.00732421875, 1e-9));
@@ -1335,69 +1515,13 @@ void main() {
   });
 
   group('noop test', () {
-    testWidgets('the helper gives the result of the two upstream calls', (
-      tester,
-    ) async {
-      // Chart.js ADR 0039, section 8: the test of noop gives the result of
-      // `callbacks[name].call(ctx, arg)` and, for an undefined result,
-      // `defaultCallbacks[name].call(ctx, arg)`, for each of the 14 names.
-      final chart = acquireChart(_probeChart());
-      _activate(chart);
-      final t = _tooltipOf(chart);
-      final items = t.dataPoints!;
-      final defaults =
-          (tooltip['defaults']! as JsObjectFace)['callbacks']! as JsObjectFace;
-      var userCalls = 0;
-      Object? twoCalls(Object callbacks, String name, Object? arg) {
-        final result = jsCall1(jsGet(callbacks, name), arg, thisArg: t);
-        return identical(result, undefined)
-            ? jsCall1(defaults[name], arg, thisArg: t)
-            : result;
-      }
-
-      for (final name in _callbackNames) {
-        final arg = _listCallbacks.contains(name) ? items : items[0];
-        for (final (label, value) in <(String, Object?)>[
-          ('noop', noop),
-          ('a user function', () => 'user'),
-          (
-            'a function that returns undefined',
-            () {
-              userCalls++;
-              return undefined;
-            },
-          ),
-        ]) {
-          final callbacks = <String, Object?>{name: value};
-          userCalls = 0;
-          // The helper takes the typed key of the callback name (Chart.js
-          // ADR 0054 §4).
-          final helper = invokeCallbackWithFallback(
-            callbacks,
-            optionKeyOf(name)!,
-            t,
-            arg,
-          );
-          final helperCalls = userCalls;
-          userCalls = 0;
-          final upstream = twoCalls(callbacks, name, arg);
-          expect(
-            helper,
-            jasmineEquals(upstream),
-            reason: '$name: $label',
-          );
-          expect(helperCalls, userCalls, reason: '$name: $label: the calls');
-        }
-      }
-    });
-
     testWidgets('a user title that is noop gives the default title', (
       tester,
     ) async {
       // The probe output `titleNoop`: title [B].
       final chart = acquireChart(
         _probeChart(<String, Object?>{
-          'callbacks': <String, Object?>{'title': noop},
+          'callbacks': TooltipCallbacks(title: (tooltip, arg) => null),
         }),
       );
       _activate(chart);
@@ -2026,3 +2150,20 @@ final class _StyleContext extends MockContext {
   @override
   final _StyleCanvas canvas = _StyleCanvas();
 }
+
+List<String> _callbackNamesOf(TooltipCallbacks callbacks) => [
+  if (callbacks.beforeTitle != null) 'beforeTitle',
+  if (callbacks.title != null) 'title',
+  if (callbacks.afterTitle != null) 'afterTitle',
+  if (callbacks.beforeBody != null) 'beforeBody',
+  if (callbacks.beforeLabel != null) 'beforeLabel',
+  if (callbacks.label != null) 'label',
+  if (callbacks.labelColor != null) 'labelColor',
+  if (callbacks.labelTextColor != null) 'labelTextColor',
+  if (callbacks.labelPointStyle != null) 'labelPointStyle',
+  if (callbacks.afterLabel != null) 'afterLabel',
+  if (callbacks.afterBody != null) 'afterBody',
+  if (callbacks.beforeFooter != null) 'beforeFooter',
+  if (callbacks.footer != null) 'footer',
+  if (callbacks.afterFooter != null) 'afterFooter',
+];

@@ -319,10 +319,10 @@ List<ChartConfig> _configs() {
         padding: _padding,
         fullSize: true,
       ),
-      tooltip: const ChartTooltip(
+      tooltip: ChartTooltip(
         textDirection: .rtl,
         enabled: true,
-        mode: IndexInteractionMode(),
+        mode: const IndexInteractionMode(),
         intersect: false,
         backgroundColor: _red,
         titleColor: _red,
@@ -334,9 +334,32 @@ List<ChartConfig> _configs() {
         padding: _padding,
         cornerRadius: 6,
         displayColors: true,
-        titleText: _text,
-        labelText: _label,
-        footerText: _text,
+        callbacks: TooltipCallbacks(
+          title: (tooltip, arg) {
+            final text = _text(arg);
+            return text == null
+                ? null
+                : text.isEmpty
+                ? <String>[]
+                : [text];
+          },
+          label: (tooltip, arg) {
+            final text = _label(arg);
+            return text == null
+                ? null
+                : text.isEmpty
+                ? <String>[]
+                : [text];
+          },
+          footer: (tooltip, arg) {
+            final text = _text(arg);
+            return text == null
+                ? null
+                : text.isEmpty
+                ? <String>[]
+                : [text];
+          },
+        ),
       ),
       filler: const ChartFiller(propagate: true),
       interaction: const ChartInteraction(

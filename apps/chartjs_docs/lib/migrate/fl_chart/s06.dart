@@ -55,15 +55,13 @@ final ChartConfig _config = fills(
       backgroundColor: Colors.white,
       cornerRadius: 0,
       displayColors: false,
-      titleText: (_) => null,
-      labelText: (i) => i.formattedValue,
       bodyFont: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      extra: {
-        'callbacks': {
-          'labelTextColor': (JsObjectFace item) =>
-              (item['datasetIndex']! as num) == 0 ? _orange : Fl.blue,
-        },
-      },
+      callbacks: TooltipCallbacks(
+        labelTextColor: (tooltip, item) =>
+            ChartPaint.solid(item.datasetIndex == 0 ? _orange : Fl.blue),
+        title: (tooltip, _) => null,
+        label: (tooltip, i) => [i.formattedValue],
+      ),
     ),
     scales: {
       'x': LinearAxis(

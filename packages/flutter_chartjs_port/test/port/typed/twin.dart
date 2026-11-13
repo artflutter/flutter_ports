@@ -27,6 +27,7 @@ import 'package:flutter_chartjs_port/src/options/property_animation.dart'
     show AnimationSettings;
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Expects the lowered [actual] to be the raw twin [expected].
@@ -34,6 +35,15 @@ void expectTwin(Object? actual, Object? expected) =>
     _twin(actual, expected, r'$');
 
 void _twin(Object? actual, Object? expected, String path) {
+  if (expected is TooltipCallbacks) {
+    expect(actual, isA<TooltipCallbacks>(), reason: path);
+    expect(
+      tooltipCallbacksPresence(actual! as TooltipCallbacks),
+      tooltipCallbacksPresence(expected),
+      reason: path,
+    );
+    return;
+  }
   if (expected is Map<String, Object?> ||
       (expected is JsObjectFace && expected is! TypedDataItem)) {
     expect(

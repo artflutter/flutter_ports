@@ -7,6 +7,7 @@ import 'dart:ui' as native_ui;
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'chart_twin.dart';
@@ -835,10 +836,10 @@ Object? _rawBarLabel(Object? item) {
 /// The typed bar chart: stacked bars with the bar keys, a category and a
 /// linear axis with ticks, grids, a title and a tick format, the legend,
 /// the title, the tooltip with a label text and the padding.
-ChartConfig _barTyped() => const ChartConfig(
+ChartConfig _barTyped() => ChartConfig(
   type: .bar,
-  labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-  datasets: [
+  labels: const ['Q1', 'Q2', 'Q3', 'Q4'],
+  datasets: const [
     BarDataset(
       label: 'North',
       data: [12, 19, 3, 5],
@@ -871,7 +872,7 @@ ChartConfig _barTyped() => const ChartConfig(
       grouped: true,
     ),
   ],
-  scales: {
+  scales: const {
     'x': CategoryAxis(
       stacked: true,
       grid: AxisGrid(display: false),
@@ -891,8 +892,8 @@ ChartConfig _barTyped() => const ChartConfig(
       ),
     ),
   },
-  padding: EdgeInsets.all(8),
-  legend: ChartLegend(
+  padding: const EdgeInsets.all(8),
+  legend: const ChartLegend(
     position: .bottom,
     align: .start,
     boxWidth: 20,
@@ -901,7 +902,7 @@ ChartConfig _barTyped() => const ChartConfig(
     labelColor: _navy,
     labelFont: TextStyle(fontSize: 11),
   ),
-  title: ChartTitle(
+  title: const ChartTitle(
     display: true,
     text: 'Sales by quarter',
     align: .start,
@@ -909,14 +910,23 @@ ChartConfig _barTyped() => const ChartConfig(
     padding: EdgeInsets.only(top: 4, bottom: 8),
   ),
   tooltip: ChartTooltip(
-    mode: IndexInteractionMode(),
+    mode: const IndexInteractionMode(),
     intersect: false,
-    backgroundColor: Color(0xCC000000),
-    padding: EdgeInsets.all(10),
+    backgroundColor: const Color(0xCC000000),
+    padding: const EdgeInsets.all(10),
     cornerRadius: 4,
     displayColors: false,
-    titleFont: TextStyle(fontSize: 13),
-    labelText: _barLabel,
+    titleFont: const TextStyle(fontSize: 13),
+    callbacks: TooltipCallbacks(
+      label: (tooltip, arg) {
+        final text = _barLabel(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
   ),
 );
 
@@ -1043,7 +1053,9 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'padding': const EdgeInsets.all(10),
         'cornerRadius': 4,
         'displayColors': false,
-        'callbacks': <String, Object?>{'label': _rawBarLabel},
+        'callbacks': TooltipCallbacks(
+          label: (tooltip, arg) => [jsToString(_rawBarLabel(arg))],
+        ),
       },
     },
   },
@@ -1447,10 +1459,10 @@ Object? _rawBudgetFooter(Object? items) =>
 /// The typed pie chart: the arc keys, a radius in percent, the rotation and
 /// the circumference, the legend at the right and the tooltip with a body
 /// style and a footer text.
-ChartConfig _pieTypeTyped() => const ChartConfig(
+ChartConfig _pieTypeTyped() => ChartConfig(
   type: .pie,
-  labels: ['Rent', 'Food', 'Travel', 'Other'],
-  datasets: [
+  labels: const ['Rent', 'Food', 'Travel', 'Other'],
+  datasets: const [
     PieDataset(
       label: 'Budget',
       data: [1200, 450, 300, 150],
@@ -1464,14 +1476,23 @@ ChartConfig _pieTypeTyped() => const ChartConfig(
       circumference: 300,
     ),
   ],
-  legend: ChartLegend(
+  legend: const ChartLegend(
     position: .right,
     labelFont: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
   ),
   tooltip: ChartTooltip(
     bodyColor: _yellow,
-    bodyFont: TextStyle(fontSize: 14),
-    footerText: _budgetFooter,
+    bodyFont: const TextStyle(fontSize: 14),
+    callbacks: TooltipCallbacks(
+      footer: (tooltip, arg) {
+        final text = _budgetFooter(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
   ),
 );
 
@@ -1514,7 +1535,9 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
       'tooltip': <String, Object?>{
         'bodyColor': const native_ui.Color.fromRGBO(255, 205, 86, 1),
         'bodyFont': const ChartTextStyle(fontSize: 14),
-        'callbacks': <String, Object?>{'footer': _rawBudgetFooter},
+        'callbacks': TooltipCallbacks(
+          footer: (tooltip, arg) => [jsToString(_rawBudgetFooter(arg))],
+        ),
       },
     },
   },
@@ -1724,10 +1747,10 @@ Object? _rawRadarTitle(Object? items) {
 /// fills to the dataset 0, a radial linear axis with the suggested range,
 /// the angle lines and the point labels, the point and line element styles
 /// and the tooltip with a title text.
-ChartConfig _radarTypeTyped() => const ChartConfig(
+ChartConfig _radarTypeTyped() => ChartConfig(
   type: .radar,
-  labels: ['Speed', 'Power', 'Range', 'Comfort', 'Price', 'Safety'],
-  datasets: [
+  labels: const ['Speed', 'Power', 'Range', 'Comfort', 'Price', 'Safety'],
+  datasets: const [
     RadarDataset(
       label: 'Model A',
       data: [7, 8, 5, 6, 4, 9],
@@ -1750,7 +1773,7 @@ ChartConfig _radarTypeTyped() => const ChartConfig(
       pointBackgroundColor: _orange,
     ),
   ],
-  scales: {
+  scales: const {
     'r': RadialLinearAxis(
       suggestedMin: 0,
       suggestedMax: 10,
@@ -1763,11 +1786,23 @@ ChartConfig _radarTypeTyped() => const ChartConfig(
       pointLabelsPadding: 8,
     ),
   },
-  elements: ChartElements(
+  elements: const ChartElements(
     point: PointElementStyle(hitRadius: 6, borderWidth: 1),
     line: LineElementStyle(borderWidth: 2),
   ),
-  tooltip: ChartTooltip(titleColor: _yellow, titleText: _radarTitle),
+  tooltip: ChartTooltip(
+    titleColor: _yellow,
+    callbacks: TooltipCallbacks(
+      title: (tooltip, arg) {
+        final text = _radarTitle(arg);
+        return text == null
+            ? null
+            : text.isEmpty
+            ? <String>[]
+            : [text];
+      },
+    ),
+  ),
 );
 
 /// The raw twin of `_radarTypeTyped`.
@@ -1840,7 +1875,9 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
     'plugins': <String, Object?>{
       'tooltip': <String, Object?>{
         'titleColor': const native_ui.Color.fromRGBO(255, 205, 86, 1),
-        'callbacks': <String, Object?>{'title': _rawRadarTitle},
+        'callbacks': TooltipCallbacks(
+          title: (tooltip, arg) => [jsToString(_rawRadarTitle(arg))],
+        ),
       },
     },
   },

@@ -270,7 +270,18 @@ void main() {
             ),
           ],
           scales: const {'x': LinearAxis(position: .bottom)},
-          tooltip: const ChartTooltip(labelText: _pointLabel),
+          tooltip: ChartTooltip(
+            callbacks: TooltipCallbacks(
+              label: (tooltip, arg) {
+                final text = _pointLabel(arg);
+                return text == null
+                    ? null
+                    : text.isEmpty
+                    ? <String>[]
+                    : [text];
+              },
+            ),
+          ),
           animation: ChartAnimation.none,
         ),
       ).lower();
@@ -299,14 +310,16 @@ void main() {
           },
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{
-              'callbacks': <String, Object?>{
-                'label': (Object? item) {
+              'callbacks': TooltipCallbacks(
+                label: (tooltip, item) {
                   final parsed =
                       (item! as JsObjectFace)['parsed']! as JsObjectFace;
-                  return '(${(parsed['x']! as num).toInt()}, '
+                  final text =
+                      '(${(parsed['x']! as num).toInt()}, '
                       '${(parsed['y']! as num).toInt()})';
+                  return [text];
                 },
-              },
+              ),
             },
           },
           'animation': false,

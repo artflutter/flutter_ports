@@ -243,6 +243,7 @@ let chartJs = null;
 
 /** The git commit of the build, after loadChartJs(). */
 let buildCommit = null;
+let nativeReferenceColor;
 
 /**
  * The cartesian test controller `scaleTest`: category on the index axis and
@@ -316,6 +317,7 @@ export async function loadChartJs() {
   }
   const commit = checkBuildCommit(fileURLToPath(new URL('..', url)));
   chartJs = await import(url.href);
+  nativeReferenceColor = (await import(new URL('helpers.js', url))).color;
   buildCommit = commit;
   ScaleTestController = cartesianTestController('scaleTest', {
     scales: {_index_: {type: 'category'}, _value_: {type: 'linear'}},
@@ -1208,6 +1210,12 @@ export class DartNumberFormat {
   }
 }
 
+// Native Dart values emitted directly into tooltip reference data.
+class NativeTooltipCallbacks { constructor(value) { this.value = value; } }
+class NativeTooltipStyle { constructor(value) { this.value = value; } }
+class NativeTooltipPointStyle { constructor(value) { this.value = value; } }
+class NativeTooltipPaint { constructor(value) { this.value = value; } }
+
 /** Native padding literal (row adapt-edge-insets-padding). */
 export class DartPadding {
   constructor(value) { this.value = value; }
@@ -1448,6 +1456,16 @@ const POSITIONER_CLASSES = {
  * its row. Another value stays.
  */
 function keyedValue(k, value, owner) {
+  if (k === 'callbacks' && value && value.constructor === Object &&
+      Object.values(value).every(v => typeof v === 'function' || typeof v === 'string' && v.startsWith('fn:'))) {
+    return new NativeTooltipCallbacks(value);
+  }
+  if (k === 'labelColors' && Array.isArray(value)) return value.map(v => new NativeTooltipStyle(v));
+  if (k === 'labelPointStyles' && Array.isArray(value)) return value.map(v => new NativeTooltipPointStyle(v));
+  if (k === 'labelTextColors' && Array.isArray(value)) return value.map(v => new NativeTooltipPaint(v));
+  if (['plugins.tooltip', 'body'].includes(owner) && ['title', 'beforeBody', 'afterBody', 'footer', 'before', 'lines', 'after'].includes(k) && Array.isArray(value)) {
+    return value.map(line => typeof line === 'number' ? String(line) : line);
+  }
   if (k === 'backdropPadding' || (k === 'padding' && ['layout', 'title', 'subtitle', 'tooltip'].includes(owner))) {
     if (typeof value === 'number' || (value && value.constructor === Object)) return new DartPadding(value);
   }
@@ -1595,6 +1613,16 @@ function keyedValue(k, value, owner) {
  * [state.positioners] when it has a positioner class, and [state.strokes]
  * gets the name of each Flutter enum of the literal.
  */
+function nativeNumber(value) {
+  return Number.isInteger(value) && !Object.is(value, -0) ? String(value) : num(value);
+}
+
+function nativeConstant(write) {
+  if (inConst) return write();
+  inConst = true;
+  try { return `const ${write()}`; } finally { inConst = false; }
+}
+
 function dart(v, state, owner) {
   if (v === null) return 'null';
   if (v === undefined) {
@@ -1635,7 +1663,7 @@ function dart(v, state, owner) {
   }
   if (v instanceof DartMode) {
     state.modes = true;
-    return `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`;
+    return constLeaves ? nativeConstant(() => `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`) : `${v.name[0].toUpperCase()}${v.name.slice(1)}InteractionMode()`;
   }
   if (v instanceof DartAlgorithm) {
     const type = DECIMATION_ALGORITHMS[v.name];
@@ -1658,11 +1686,55 @@ function dart(v, state, owner) {
   }
   if (v instanceof DartPointStyle) {
     state.pointStyles = true;
-    return POINT_STYLES[v.name];
+    return constLeaves ? nativeConstant(() => POINT_STYLES[v.name]) : POINT_STYLES[v.name];
   }
   if (v instanceof DartAxis) {
     state.modes = true;
     return `InteractionAxis.${v.name}`;
+  }
+  if (v instanceof NativeTooltipCallbacks) {
+    state.tooltipCallbacks = true;
+    const listHooks = new Set(['beforeTitle','title','afterTitle','beforeBody','afterBody','beforeFooter','footer','afterFooter']);
+    const fields = Object.entries(v.value).map(([key, fn]) => {
+      const name = typeof fn === 'function' ? fn.dartName : fn.slice(3);
+      if (!name) throw new Error(`Unnamed native tooltip callback ${key}`);
+      const result = key === 'labelColor' ? 'TooltipLabelStyle' : key === 'labelTextColor' ? 'ChartPaint' : key === 'labelPointStyle' ? 'TooltipLabelPointStyle' : 'List<String>';
+      const type = listHooks.has(key) ? 'TooltipItemsCallback' : `TooltipItemCallback<${result}>`;
+      return `${key}: functions[${dart(name, state)}]! as ${type}`;
+    });
+    return `TooltipCallbacks(${fields.join(', ')})`;
+  }
+  if (v instanceof NativeTooltipPaint) {
+    state.tooltipValues = true;
+    if (v.value == null || v.value === false) return nativeConstant(() => 'ChartPaint.unchanged()');
+    const color = nativeReferenceColor(v.value);
+    if (!color.valid) throw new Error(`Unsupported reference paint ${v.value}`);
+    const {r, g, b, a} = color.rgb;
+    (state.strokes ??= new Set()).add('Color');
+    return nativeConstant(() => `ChartPaint.solid(Color.fromRGBO(${r}, ${g}, ${b}, ${nativeNumber(a)}))`);
+  }
+  if (v instanceof NativeTooltipStyle) {
+    state.tooltipValues = true;
+    const o = v.value;
+    const width = o.borderWidth && typeof o.borderWidth === 'object' ? Math.max(...Object.values(o.borderWidth)) : o.borderWidth || 1;
+    const fields = [
+      `borderColor: ${dart(new NativeTooltipPaint(o.borderColor), state)}`,
+      `backgroundColor: ${dart(new NativeTooltipPaint(o.backgroundColor), state)}`,
+    ];
+    if (width !== 1) fields.push(`borderWidth: ${nativeNumber(width)}`);
+    if (o.borderDash?.length) fields.push(`borderDash: const <double>[${o.borderDash.map(nativeNumber).join(', ')}]`);
+    if (o.borderDashOffset) fields.push(`borderDashOffset: ${nativeNumber(o.borderDashOffset)}`);
+    const radius = o.borderRadius;
+    if (radius && typeof radius === 'object') {
+      const corners = ['topLeft','topRight','bottomRight','bottomLeft'].filter(k => radius[k]).map(k => `${k}: ${nativeNumber(radius[k])}`);
+      if (corners.length) fields.push(`borderRadius: ${nativeConstant(() => `TooltipCornerRadii(${corners.join(', ')})`)}`);
+    } else if (radius) fields.push(`borderRadius: ${nativeConstant(() => `TooltipCornerRadii.all(${nativeNumber(radius)})`)}`);
+    return `TooltipLabelStyle(${fields.join(', ')})`;
+  }
+  if (v instanceof NativeTooltipPointStyle) {
+    state.tooltipValues = true;
+    return nativeConstant(() => v.value.pointStyle === false ? 'TooltipLabelPointStyle.hidden()' :
+      `TooltipLabelPointStyle.draw(${dart(keyedValue('pointStyle', v.value.pointStyle || 'circle'), state)}${v.value.rotation ? `, rotation: ${nativeNumber(v.value.rotation)}` : ''})`);
   }
   if (v instanceof DartPadding) {
     state.edgeInsets = true;
@@ -1673,7 +1745,7 @@ function dart(v, state, owner) {
     state.textStyles = true;
     if (literal.includes('FontStyle.')) (state.strokes ??= new Set()).add('FontStyle');
     if (literal.includes('FontWeight')) (state.strokes ??= new Set()).add('FontWeight');
-    return literal;
+    return constLeaves ? nativeConstant(() => literal) : literal;
   }
   if (v instanceof DartLocale) {
     (state.strokes ??= new Set()).add('Locale');
@@ -1692,7 +1764,7 @@ function dart(v, state, owner) {
   }
   if (v instanceof DartScaleAxis) {
     state.scaleAxes = true;
-    return `${v.name.toUpperCase()}Axis()`;
+    return constLeaves ? nativeConstant(() => `${v.name.toUpperCase()}Axis()`) : `${v.name.toUpperCase()}Axis()`;
   }
   if (v instanceof DartEnum) {
     if (v.type in STROKE_VALUES) {
@@ -1772,7 +1844,7 @@ function constLiteral(v, owner, write) {
 
 /** Whether the object or array [v] holds a NumberFormat of the Dart data. */
 function hasNumberFormat(v, owner) {
-  if (v instanceof DartNumberFormat) return true;
+  if (v instanceof DartNumberFormat || v instanceof NativeTooltipStyle || v instanceof NativeTooltipCallbacks) return true;
   if (Array.isArray(v)) return v.some((x) => hasNumberFormat(x, owner));
   if (v === null || typeof v !== 'object' || v.constructor !== Object) return false;
   return Object.keys(v).some((k) => hasNumberFormat(keyedValue(k, v[k], owner), k));
@@ -1832,7 +1904,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
   // A NumberFormat has no const constructor: the list is final, and each
   // object or array without a NumberFormat is const, so that its objects of
   // the port (an axis, a font) stay canonical.
-  if (state.numberFormats) {
+  if (state.numberFormats || state.tooltipValues || state.tooltipCallbacks) {
     constLeaves = true;
     try {
       body = writeBody();
@@ -1851,7 +1923,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats ? '\n' : ''}${state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats ? '\n' : ''}${state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.tooltipCallbacks || state.tooltipValues ? "import 'package:flutter_chartjs_port/src/types/chart_paint.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}${state.tooltipCallbacks || state.tooltipValues ? "import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';\n" : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 
@@ -1893,7 +1965,7 @@ typedef ${type}ReferenceWidth = ({
 });
 
 /// The cases.${state.numberFormats ? '\n///\n/// A \`NumberFormat\` of package:intl has no const constructor, so the\n/// list is final.' : ''}
-${state.numberFormats ? 'final' : 'const'} List<${type}ReferenceCase> ${name}Reference = [
+${state.tooltipCallbacks ? '' : (state.numberFormats || state.tooltipValues ? 'final ' : 'const ')}List<${type}ReferenceCase> ${name}Reference${state.tooltipCallbacks ? '(Map<String, Object?> functions) =>' : ' ='} [
 ${body}];
 
 /// Each text that the cases measured, with its font and width.

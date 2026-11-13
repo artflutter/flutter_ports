@@ -27,7 +27,6 @@ library;
 import 'dart:ui' show TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -37,6 +36,7 @@ import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
 /// The option [key] of the options object [options]: `options[key]`, the
 /// shared typed read [readOption] of `helpers.config.dart`.
@@ -244,7 +244,8 @@ extension type const TooltipOptions(Object? object) {
   Object? get boxWidth => optionOf(object, OptionKey.boxWidth);
 
   /// `callbacks`.
-  Object? get callbacks => optionOf(object, OptionKey.callbacks);
+  TooltipCallbacks get callbacks =>
+      tooltipCallbacksOf(optionOf(object, OptionKey.callbacks));
 
   /// `caretPadding`.
   Object? get caretPadding => optionOf(object, OptionKey.caretPadding);

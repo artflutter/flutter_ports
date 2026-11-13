@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/helpers/helpers.config.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-tooltip-callback-objects, native callbacks.
 // DIVERGES(chartjs): adapt-direct-colors, native Color values.
 // DIVERGES(chartjs): adapt-typed-options, typed resolvers of Chart.js ADR 0054.
 
@@ -100,6 +101,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:meta/meta.dart';
 
@@ -2435,6 +2437,14 @@ Object? _resolveScriptable(
 
 Object? _resolveScriptableReturn(String prop, Object? value, Object? proxy) {
   // DIVERGES(chartjs): adapt-text-style-fonts, a returned font merges too.
+  if (value is TooltipCallbacks) {
+    return _mergeTooltipCallbacks(
+      _targetGet(proxy, '_scopes')! as List<Object?>,
+      proxy,
+      prop,
+      value,
+    );
+  }
   if (value is TextStyle) {
     return _mergeTextStyles(
       _targetGet(proxy, '_scopes')! as List<Object?>,
@@ -2738,6 +2748,50 @@ Object _mergeTextStyles(
   return merged;
 }
 
+Object _mergeTooltipCallbacks(
+  List<Object?> parentScopes,
+  Object? resolver,
+  String prop,
+  TooltipCallbacks value,
+) {
+  final rootScopes = _targetGet(resolver, '_rootScopes')! as List<Object?>;
+  final fallback = _resolveFallback(
+    _targetGet(resolver, '_fallback'),
+    prop,
+    value,
+  );
+  final twice = identical(parentScopes, rootScopes);
+  final allScopes = twice
+      ? [...parentScopes]
+      : [...parentScopes, ...rootScopes];
+  final set = <Object?>{value};
+  var key = _addScopesFromKey(
+    set,
+    allScopes,
+    prop,
+    jsTruthy(fallback) ? fallback : prop,
+    value,
+    twice,
+  );
+  if (key == null) {
+    return false;
+  }
+  if (!identical(fallback, undefined) && fallback != prop) {
+    key = _addScopesFromKey(set, allScopes, fallback, key, value, twice);
+    if (key == null) {
+      return false;
+    }
+  }
+  var merged = value;
+  var first = true;
+  for (final style in set.toList().reversed) {
+    if (style is! TooltipCallbacks) continue;
+    merged = first ? style : merged.merge(style);
+    first = false;
+  }
+  return merged;
+}
+
 /// helpers.config.ts:360 `addScopesFromKey`.
 ///
 /// [twice] is the flag of [_addScopes]: [allScopes] stands for itself two
@@ -2802,6 +2856,9 @@ Object? _resolveWithPrefixes(
     );
     if (!identical(value, undefined)) {
       // DIVERGES(chartjs): adapt-text-style-fonts, the fonts merge.
+      if (value is TooltipCallbacks) {
+        return _mergeTooltipCallbacks(scopes, proxy, prop, value);
+      }
       if (value is TextStyle) {
         return _mergeTextStyles(scopes, proxy, prop, value);
       }
