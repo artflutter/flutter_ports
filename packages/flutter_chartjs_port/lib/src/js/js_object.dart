@@ -2,14 +2,12 @@
 
 /// The JavaScript property read `object[key]` (`[[Get]]`) over the Dart
 /// values that stand for JavaScript values (Chart.js ADR 0043), its forms
-/// for a property name and a number index (Chart.js ADR 0036), the frozen
-/// state of `Object.freeze` (Chart.js ADR 0021, section 5), and the `typeof`
-/// operator (Chart.js ADR 0019, section 1).
+/// for a property name and a number index (Chart.js ADR 0036), and the
+/// frozen state of `Object.freeze` (Chart.js ADR 0021, section 5).
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
@@ -251,37 +249,3 @@ T jsObjectFreeze<T>(T value) {
   if (value is JsFreezable) value.freeze();
   return value;
 }
-
-/// `Object.isFrozen(value)` (core.datasetController.tests.js:975, :997,
-/// :1018).
-///
-/// The frozen state of a [JsFreezable]. True for Dart `null`, [undefined], a
-/// number, a string and a boolean, as for a JavaScript primitive. False for
-/// each other value, also for a `Map.unmodifiable`.
-// DIVERGES(chartjs): js-semantics-object-freeze, only a JsFreezable freezes.
-bool jsObjectIsFrozen(Object? value) => switch (value) {
-  final JsFreezable object => object.isFrozen,
-  null || Undefined() || num() || String() || bool() => true,
-  _ => false,
-};
-
-/// `typeof value`: the type name of [value] (ECMAScript 13.5.3).
-///
-/// - The [undefined] sentinel gives `'undefined'`.
-/// - A `bool` gives `'boolean'`, a `num` gives `'number'` and a `String`
-///   gives `'string'`.
-/// - A value for which [jsIsFunction] is true gives `'function'`: a Dart
-///   `Function`, a `JsFunction` and a class value ([JsClass], Chart.js ADR
-///   0020, section 2).
-/// - Dart `null` (JS `null`) and every other value give `'object'`.
-///
-/// `new Animation` selects its interpolator by this name
-/// (core.animation.js:35).
-String jsTypeof(Object? value) => switch (value) {
-  Undefined() => 'undefined',
-  bool() => 'boolean',
-  num() => 'number',
-  String() => 'string',
-  _ when jsIsFunction(value) => 'function',
-  _ => 'object',
-};

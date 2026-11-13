@@ -190,7 +190,7 @@ void main() {
       // The points get the copy of getSharedOptions, which is not frozen
       // (core.datasetController.js:871).
       expect((options! as JsObjectFace)[r'$shared'], isTrue);
-      expect(jsObjectIsFrozen(options), isFalse);
+      expect((options as JsFreezable).isFrozen, isFalse);
       // The hidden unit scales: each point is at the pixels of
       // getPixelForValue of the scales, and x and y are fractions of the
       // chart area.

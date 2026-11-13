@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show ticks;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -37,9 +38,10 @@ import '../support/tick_label.dart';
 // `scales.logarithmic`. The file runs on the VM, because
 // core.controller.dart reaches the platform layer.
 //
-// `typeof x` is `jsTypeof(x)`. The default tick callback is the function
-// `ticks.formatters.logarithmic`, a `TickCallback` (row
-// `adapt-native-tick`). `jasmine.any(Function)` is `jsIsFunction`.
+// `typeof x === 'function'` of a class value is `isA<JsClass>()`. The
+// default tick callback is the function `ticks.formatters.logarithmic`, a
+// `TickCallback` (row `adapt-native-tick`). `jasmine.any(Function)` is
+// `jsIsFunction`.
 //
 // Each chart case has a dataset, also the cases with an empty dataset. Thus
 // each chart case needs the controller of phase 7 for its chart type or its
@@ -161,7 +163,7 @@ void main() {
     test('should register', () {
       final constructor = Chart.registry.getScale('logarithmic');
       expect(constructor, isNot(same(undefined)));
-      expect(jsTypeof(constructor), 'function');
+      expect(constructor, isA<JsClass>());
     });
 
     test('should have the correct default config', () {

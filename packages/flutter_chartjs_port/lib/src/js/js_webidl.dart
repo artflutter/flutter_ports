@@ -14,7 +14,6 @@
 /// - [canvasStyle] for `fillStyle` and `strokeStyle`;
 /// - [canvasNumber] for an `unrestricted double`, for example `lineWidth`
 ///   and `lineDashOffset`;
-/// - [canvasKeyword] for a `DOMString` keyword, for example `textAlign`;
 /// - [canvasLineCap] and [canvasLineJoin] for `lineCap` and `lineJoin`,
 ///   whose values are the Flutter enums `StrokeCap` and `StrokeJoin` (row
 ///   `adapt-flutter-stroke-enums`);
@@ -103,20 +102,6 @@ TextAlign? canvasTextAlign(Object? value) {
   );
   return value is TextAlign ? value : null;
 }
-
-/// The value that a canvas setter with a keyword gets for the option value
-/// [value].
-///
-/// The setters of the DOM take a `DOMString`. They apply `ToString` and
-/// ignore a string that is not a keyword. A `String` gives itself. JS
-/// `null` and the [undefined] sentinel give Dart `null`, which the canvas
-/// layer ignores, as the DOM ignores `'null'` and `'undefined'`. Another
-/// value gives its `ToString` ([jsToString]).
-String? canvasKeyword(Object? value) => switch (value) {
-  final String keyword => keyword,
-  null || Undefined() => null,
-  _ => jsToString(value),
-};
 
 /// The argument that `setLineDash` gets for the option value [value], a
 /// `number[]` (element.arc.ts:327, element.line.js:14).

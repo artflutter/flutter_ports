@@ -997,9 +997,14 @@ String _argKind(Object? value) => identical(value, undefined)
     ? 'absent'
     : value is JsProxyObject
     ? 'resolver'
-    : value is Map || value is JsObjectFace
-    ? 'object'
-    : jsTypeof(value);
+    : switch (value) {
+        Map() || JsObjectFace() => 'object',
+        bool() => 'boolean',
+        num() => 'number',
+        String() => 'string',
+        _ when jsIsFunction(value) => 'function',
+        _ => 'object',
+      };
 
 /// Whether [value] is a JS object of the observation: a Map with `String`
 /// keys or a typed object with a face (Chart.js ADR 0054 §5).

@@ -58,8 +58,8 @@ import '../support/jasmine.dart';
 //   `controller.resolveAnimations(...).properties` (Chart.js ADR 0012).
 //   `toBeInstanceOf(Object)` is `isA<Object>()`. `withContext(text)` is the
 //   `reason` of `expect`.
-// - `opts.$shared` is `jsGet(opts, r'$shared')`. `Object.isFrozen` is
-//   `jsObjectIsFrozen` (Chart.js ADR 0021, section 7).
+// - `opts.$shared` is `jsGet(opts, r'$shared')`. `Object.isFrozen(o)` is
+//   `o.isFrozen` of a `JsFreezable` (Chart.js ADR 0021, section 7).
 // - `delete Chart.defaults.datasets.line.fill` is `remove('fill')`.
 //
 // test/port/core/core.datasetController_test.dart covers the controller with
@@ -1395,7 +1395,7 @@ void main() {
 
         expect(identical(opts0, opts1), isTrue);
         expect(jsGet(opts0, r'$shared'), isTrue);
-        expect(jsObjectIsFrozen(opts0), isTrue);
+        expect((opts0 as JsFreezable).isFrozen, isTrue);
       });
 
       testWidgets('should not cache options when option sharing is disabled', (
@@ -1421,7 +1421,7 @@ void main() {
 
         expect(identical(opts0, opts1), isFalse);
         expect(jsGet(opts0, r'$shared'), isNot(isTrue));
-        expect(jsObjectIsFrozen(opts0), isFalse);
+        expect((opts0 as JsFreezable).isFrozen, isFalse);
       });
 
       testWidgets('should not cache options when functions are used', (
@@ -1448,7 +1448,7 @@ void main() {
 
         expect(identical(opts0, opts1), isFalse);
         expect(jsGet(opts0, r'$shared'), isNot(isTrue));
-        expect(jsObjectIsFrozen(opts0), isFalse);
+        expect((opts0 as JsFreezable).isFrozen, isFalse);
       });
 
       // The fill is a FillTarget (Chart.js ADR 0140): the object `{value}`

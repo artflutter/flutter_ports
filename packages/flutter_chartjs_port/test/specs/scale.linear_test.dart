@@ -14,6 +14,7 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -48,8 +49,9 @@ import '../support/tick_label.dart';
 //   scale is `isNotNull`: Dart null stands for JS undefined.
 // - A property chain of the spec on an option object is a chain of
 //   `jsGet`.
-// - `typeof value` is `jsTypeof`. `jasmine.any(Function)` matches a value
-//   whose `typeof` is `'function'`.
+// - `typeof value === 'function'` is `isA<JsClass>()` for a class value and
+//   `isA<Function>()` for a callback. `jasmine.any(Function)` matches a
+//   value whose `typeof` is `'function'`.
 // - `toBeLessThanOrEqual(x)` is `lessThanOrEqualTo(x)`.
 //
 // - `toBeCloseTo` is `_toBeCloseTo`. `toEqual` is `jasmineEquals`.
@@ -103,14 +105,14 @@ void main() {
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('linear');
       expect(constructor, isNot(same(undefined)));
-      expect(jsTypeof(constructor), 'function');
+      expect(constructor, isA<JsClass>());
     });
 
     test('Should have the correct default config', () {
       final defaultConfig = jsGet(jsGet(Chart.defaults, 'scales'), 'linear');
 
       final ticks = jsGet(defaultConfig, 'ticks');
-      expect(jsTypeof(jsGet(ticks, 'callback')), 'function');
+      expect(jsGet(ticks, 'callback'), isA<Function>());
     });
 
     testWidgets('Should correctly determine the max & min data values', (

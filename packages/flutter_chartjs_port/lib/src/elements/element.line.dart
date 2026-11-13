@@ -245,9 +245,9 @@ LineSegmentStyle? _segment(Object? options) => lineSegmentStyleOf(
 /// ([types.Segment.style]).
 ///
 /// The canvas setters take typed values. A value that the DOM converts is
-/// converted here in the same way, with [canvasKeyword], [canvasLineDash],
-/// [canvasNumber] and [canvasStyle] of `lib/src/js/js_webidl.dart`, as in
-/// the other element classes.
+/// converted here in the same way, with [canvasLineDash], [canvasNumber]
+/// and [canvasStyle] of `lib/src/js/js_webidl.dart`, as in the other
+/// element classes.
 void _setStyle(CanvasRenderingContext2D ctx, Object? options, [Object? style]) {
   if (style == null && options is LineOptions) {
     // `style = options`: `valueOrDefault(options.x, options.x)` is the value

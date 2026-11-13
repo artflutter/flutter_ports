@@ -372,7 +372,10 @@ class CoreDemoState() extends State<CoreDemo> {
               // A web release build minifies runtimeType.
               : '${options is PointOptions ? 'PointOptions' : 'Map'}, '
                     '\$shared ${showJs(options[r'$shared'])}, '
-                    '${jsObjectIsFrozen(options) ? 'frozen' : 'not frozen'}',
+                    '${switch (options) {
+                      JsFreezable(isFrozen: true) => 'frozen',
+                      _ => 'not frozen',
+                    }}',
         ),
         (
           'animator',

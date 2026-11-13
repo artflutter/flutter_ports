@@ -2190,7 +2190,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `jsToString` of a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with
   the V8 zone name on the web and in UTC on the VM (Chart.js ADR 0036, differences.md row
   `platform-date-zone-name`). The conversions of `js_webidl.dart` (`canvasStyle`, `canvasNumber`,
-  `canvasKeyword`, `canvasLineCap`, `canvasLineJoin` and `canvasLineDash`) apply the WebIDL
+  `canvasLineCap`, `canvasLineJoin` and `canvasLineDash`) apply the WebIDL
   conversion of a Canvas 2D setter or of `setLineDash` to an option value (Chart.js ADR 0017 §8).
   The options `borderCapStyle` and `borderJoinStyle` (also their hover keys of a line), and
   `lineCap` and `lineJoin` of the canvas interface and of a legend item, hold the Flutter enums `StrokeCap` and `StrokeJoin` (row
@@ -2210,9 +2210,9 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
     static property follows the superclass chain. `jsConstruct` is `new target(...args)`.
     `jsAssign` is `Object.assign` on a class value or a Map.
   - `jsIsFunction` (`typeof value === 'function'`) is true for a class value. `jsCall` throws an
-    `ArgumentError` for a class value. `jsTypeof` is `typeof`.
-  - `jsObjectFreeze` and `jsObjectIsFrozen` are `Object.freeze` and `Object.isFrozen` (Chart.js
-    ADR 0021 §5). Only a `JsFreezable` freezes. A write into frozen options throws a
+    `ArgumentError` for a class value. A test of `typeof` is a Dart type test.
+  - `jsObjectFreeze` is `Object.freeze`, and `Object.isFrozen` is the `isFrozen` getter of a
+    `JsFreezable` (Chart.js ADR 0021 §5). Only a `JsFreezable` freezes. A write into frozen options throws a
     `TypeError`.
   - `jsOwnPropertyNames` is `Object.getOwnPropertyNames`. For a resolver, it gives the keys of the
     `ownKeys` trap. `jsMapForEach` is `Map.prototype.forEach` while the callback changes the Map.

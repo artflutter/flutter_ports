@@ -1589,7 +1589,7 @@ void main() {
       t.update();
       final cached = t['_cachedAnimations'];
       expect(cached, isA<Animations>());
-      expect(jsObjectIsFrozen(cached), isFalse);
+      expect(cached, isNot(isA<JsFreezable>()));
       expect(t.opacity, 0);
       t
         ..['opacity'] = 1.0

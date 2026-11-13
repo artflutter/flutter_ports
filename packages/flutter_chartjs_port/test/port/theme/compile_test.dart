@@ -823,7 +823,7 @@ void main() {
       for (final path in [border, background]) {
         final list = _at(compiled, path)! as List<Object?>;
         expect(list, isA<JsFreezable>(), reason: path);
-        expect(jsObjectIsFrozen(list), isTrue, reason: path);
+        expect((list as JsFreezable).isFrozen, isTrue, reason: path);
         expect(() => list[0] = 'red', throwsA(isA<TypeError>()));
         expect(() => list.add('red'), throwsA(isA<TypeError>()));
         expect(() => list.length = 0, throwsA(isA<TypeError>()));
@@ -831,7 +831,7 @@ void main() {
       }
       expect(
         _at(compiled, 'plugins.colors'),
-        isA<JsFreezable>().having(jsObjectIsFrozen, 'frozen', isTrue),
+        isA<JsFreezable>().having((o) => o.isFrozen, 'frozen', isTrue),
       );
     });
 
@@ -1226,7 +1226,7 @@ void main() {
       expect(nodes.length, greaterThan(10));
       for (final (path, node) in nodes) {
         expect(node, isA<JsFreezable>(), reason: path);
-        expect(jsObjectIsFrozen(node), isTrue, reason: path);
+        expect((node as JsFreezable).isFrozen, isTrue, reason: path);
       }
     });
 

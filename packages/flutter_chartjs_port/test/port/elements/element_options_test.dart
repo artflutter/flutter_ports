@@ -26,7 +26,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart' show jsAssign;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet, jsObjectFreeze, jsObjectIsFrozen, jsSet;
+    show JsObjectFace, jsGet, jsObjectFreeze, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
     show foreignAudit;
@@ -672,7 +672,6 @@ void _adr0021Tests() {
         expect(identical(first, second), isFalse, reason: id);
         expect(first.ownKeyCount, 0, reason: id);
         expect(first.isFrozen, isFalse, reason: id);
-        expect(jsObjectIsFrozen(first), isFalse, reason: id);
       }
     });
   });
@@ -743,7 +742,6 @@ void _adr0021Tests() {
         final options = source()..freeze();
         final copy = options.clone();
         expect(copy.isFrozen, isFalse);
-        expect(jsObjectIsFrozen(copy), isFalse);
         copy[c.keyA] = 5.0;
         expect(copy[c.keyA], 5.0);
         expect(options[c.keyA], isNull);
@@ -832,10 +830,8 @@ void _adr0021Tests() {
       test('freeze sets the frozen state', () {
         final o = options();
         expect(o.isFrozen, isFalse);
-        expect(jsObjectIsFrozen(o), isFalse);
         expect(jsObjectFreeze(o), same(o));
         expect(o.isFrozen, isTrue);
-        expect(jsObjectIsFrozen(o), isTrue);
       });
 
       test('a write throws a TypeError, also of the same value', () {

@@ -781,7 +781,6 @@ callback
 canvasArcSweep
 canvasBaselineShift
 canvasFontSize
-canvasKeyword
 canvasLineCap
 canvasLineDash
 canvasLineJoin
@@ -952,7 +951,6 @@ jsMaxArity
 jsNumberToString
 jsObjectClass
 jsObjectFreeze
-jsObjectIsFrozen
 jsObjectKeys
 jsObjectOrNull
 jsOrZero
@@ -968,7 +966,6 @@ jsToInt32
 jsToNumber
 jsToString
 jsTruthy
-jsTypeof
 layoutCanvasText
 layouts
 legend
@@ -1233,7 +1230,6 @@ JsObjectFace
 JsProxyObject
 JsStringList
 Undefined
-canvasKeyword
 canvasLineCap
 canvasLineDash
 canvasLineJoin
@@ -1263,7 +1259,6 @@ jsMaxArity
 jsNumberToString
 jsObjectClass
 jsObjectFreeze
-jsObjectIsFrozen
 jsObjectKeys
 jsObjectOrNull
 jsOrZero
@@ -1279,6 +1274,5 @@ jsToInt32
 jsToNumber
 jsToString
 jsTruthy
-jsTypeof
 numberEpsilon
 undefined

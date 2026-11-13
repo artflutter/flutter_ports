@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode;
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' as helpers;
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -98,7 +99,7 @@ void main() {
     group('auto', fixture.specs('controller.bar'));
 
     test('should be registered as dataset controller', () {
-      expect(jsTypeof(Chart.registry.controllers.items['bar']), 'function');
+      expect(Chart.registry.controllers.items['bar'], isA<JsClass>());
     });
 
     testWidgets('should be constructed', (tester) async {

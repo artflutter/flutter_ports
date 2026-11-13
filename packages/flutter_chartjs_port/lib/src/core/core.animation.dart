@@ -137,7 +137,7 @@ Interpolator? _interpolatorNamed(String name) => switch (name) {
 };
 
 /// core.animation.js:35 `interpolators[typeof from]`: `typeof` gives
-/// `'number'` for a number and `'boolean'` for a boolean ([jsTypeof]). No
+/// `'number'` for a number and `'boolean'` for a boolean. No
 /// other `typeof` names an interpolator.
 ///
 /// A color of the port is a `dart:ui` `Color`, not a String. Thus the value

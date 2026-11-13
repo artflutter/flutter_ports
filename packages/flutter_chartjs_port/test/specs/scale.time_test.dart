@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, mergeIf;
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -71,8 +72,8 @@ import '../support/tick_label.dart';
 // - `Chart._adapters._date` is the class value of `DateAdapterBase`
 //   (`adapters['_date']` of core.adapters.dart). Its static `override` is
 //   `DateAdapterBase.override`.
-// - `typeof Constructor` is `jsTypeof(constructor)`. `not.toBe(undefined)`
-//   is `isNot(same(undefined))`.
+// - `typeof Constructor === 'function'` is `isA<JsClass>()`.
+//   `not.toBe(undefined)` is `isNot(same(undefined))`.
 // - A `beforeEach` of a `describe` that writes no chart is a `setUp`.
 //
 // - `moment(value)` is `_moment(value)`, the parse of the default adapter.
@@ -208,7 +209,7 @@ void main() {
     test('should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('time');
       expect(constructor, isNot(same(undefined)));
-      expect(jsTypeof(constructor), 'function');
+      expect(constructor, isA<JsClass>());
     });
 
     test('should have the correct default config', () {
@@ -1343,7 +1344,7 @@ void main() {
         },
       });
 
-      expect(jsTypeof(callbackValue), 'number');
+      expect(callbackValue, isA<num>());
     });
   });
 }

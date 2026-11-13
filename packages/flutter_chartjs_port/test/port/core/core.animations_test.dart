@@ -328,7 +328,7 @@ void main() {
       final copy = point.options! as JsObjectFace;
       expect(copy, isA<PointOptions>());
       expect(copy, isNot(same(shared)));
-      expect(jsObjectIsFrozen(copy), isFalse);
+      expect((copy as JsFreezable).isFrozen, isFalse);
       expect(copy[r'$shared'], isFalse);
       expect(copy['extra'], 'x');
       expect(copy['radius'], 3.0);

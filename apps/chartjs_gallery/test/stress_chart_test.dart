@@ -241,9 +241,9 @@ void main() {
           // chart (Chart.js ADR 0021, section 8).
           final options = points.first.options;
           expect(options, isA<PointOptions>());
-          expect(jsObjectIsFrozen(options), isFalse);
           expect(identical(points[1].options, options), type.sharing);
           expect((options! as JsObjectFace)['radius'], 3);
+          expect((options as JsFreezable).isFrozen, isFalse);
           expect(
             (options as JsObjectFace)['backgroundColor'],
             const ChartPaint.solid(
