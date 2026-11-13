@@ -19,8 +19,8 @@ package.
   [Chart.js ADR 0132](../../flutter_chartjs_port/doc/adr/0132-exports-for-add-on-chart-types.md) is
   the host change for this port.
 - **Host seams:** [host-seams.md](host-seams.md) lists each place where a chart type of another
-  package needs a part of the host. 9 seams connect, 11 need a Dart form in this port that the host
-  API can remove, and 2 are gaps: the typed config has no slot for a chart type of another package,
+  package needs a part of the host. 13 seams connect, 7 need a Dart form in this port that the host
+  API can remove, and 2 are gaps: the typed config has no dataset class of another package,
   and the theme has no extension for its colors.
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.

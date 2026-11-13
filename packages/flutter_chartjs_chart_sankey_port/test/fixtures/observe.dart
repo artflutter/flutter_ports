@@ -17,66 +17,11 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:chartjs_test_utils/pure.dart' show MockContext;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
     show Flow, SankeyController;
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        CanvasRenderingContext2D,
-        Chart,
-        HTMLCanvasElement,
-        LinearChartGradient,
-        TextMetrics;
-
-/// A [MockContext] that records each call and forwards the text state to
-/// the real context [target]: `font`, `save`, `restore`, `measureText`,
-/// `canvas` and `resetTransform`. Thus a label measures in the font of the
-/// real canvas, Liberation Sans, as the context of the generator does. It
-/// draws nothing on [target].
-final class RecordingContext(
-  /// The real context: the context of the chart.
-  final CanvasRenderingContext2D target,
-) extends MockContext {
-  /// A recording context over [target].
-  this;
-
-  @override
-  HTMLCanvasElement get canvas => target.canvas;
-
-  @override
-  TextStyle? get font => target.font;
-
-  @override
-  set font(TextStyle? font) {
-    super.font = font;
-    target.font = font;
-  }
-
-  @override
-  void save() {
-    super.save();
-    target.save();
-  }
-
-  @override
-  void restore() {
-    super.restore();
-    target.restore();
-  }
-
-  @override
-  TextMetrics measureText(String text) {
-    record('measureText', [text]);
-    return target.measureText(text);
-  }
-
-  @override
-  void resetTransform() {
-    record('resetTransform', const []);
-    target.resetTransform();
-  }
-}
+    show Chart, LinearChartGradient;
 
 /// The style [style] of a recorded `setFillStyle` or `setStrokeStyle`: a
 /// color as `#rrggbbaa`, the gradient of a flow as `['linearGradient', x0,

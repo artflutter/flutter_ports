@@ -266,8 +266,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `isPointInArea`, which a ported add-on imports, Chart.js ADR 0108) and `lib/js_semantics.dart`
     (the JS runtime for add-on ports: each library of `lib/src/js/` with each of its names, with
     no `show` list, Chart.js ADR 0132; no other library exports it). `lib/chartjs.dart` also
-    exports the names that a chart type of another package needs (Chart.js ADR 0132):
-    `ParsedItem`, `ElementPoint` and `VisualElementRange`. An app imports the app library next to
+    exports the names that a chart type of another package needs (Chart.js ADRs 0132 and 0133):
+    `ParsedItem`, `ElementPoint`, `VisualElementRange`, and `controllerArgs`, `elementCfgArg` and
+    `scaleCfgArg` for the `construct` closure of a class value. `DatasetController.cachedMeta` is
+    public for a controller of another package (Chart.js ADR 0133). An app imports the app library next to
     `material_ui.dart` with no prefix. `doc/public_api.txt` is the committed list of their export
     names. `test/tool/public_api_test.dart` compares the list, checks that the app library shares
     no name with the Flutter libraries and `dart:ui`, checks the `@internal` rule of Chart.js ADR
@@ -1427,7 +1429,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       of Chart.js ADR 0052 §6 and the point-label closure call of Chart.js ADR 0095. Chart.js ADR
       0132 (exports for add-on chart types) is accepted (2026-11-13): its code passes the tests. It
       supersedes the list of 11 names of `lib/js_semantics.dart` of Chart.js ADR 0108 and the hide of
-      `VisualElementRange` of Chart.js ADR 0048 §6.
+      `VisualElementRange` of Chart.js ADR 0048 §6. Chart.js ADR 0133 (the construct helpers, the
+      meta and a recording context for add-on chart types) is accepted (2026-11-13): its code passes
+      the tests. It supersedes the `@internal` of `DatasetController.cachedMeta` of Chart.js ADR 0048
+      §6.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -1836,14 +1841,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   of another package. Sankey phases 0-4 are done (2026-11-13). `doc/README.md` has the plan and the
   roadmap. Phase 5, next, is the work on the public API of the host for its seams.
   - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
-    libraries (Sankey ADR 0003). Chart.js ADR 0132 is the host change for it.
+    libraries (Sankey ADR 0003). Chart.js ADRs 0132 and 0133 are the host changes for it.
   - `lib/flutter_chartjs_chart_sankey_port.dart`: the public library (port-only). It exports
     `lib/src/index.esm.dart` (`SankeyController`, `Flow`, `SankeyDataPoint`, `SankeyNode`,
     `FromToElement`, `SankeyNodeGap`, `SankeyNodeCallback`, `SankeyParsedCustom` and the six
     enums) and `lib/src/upstream.dart` (`chartjsChartSankeyVersion`, `0.19.1`), and has the
     port-only List `sankeyRegisterables`. An app calls `Chart.register(sankeyRegisterables)` once
-    and gives a `ChartView.raw` the type `sankey`: the typed `ChartConfig` has no chart kind of
-    another package (seam S9). `Flow` is also a Flutter widget name: a library that imports Flutter
+    and gives a `ChartView.raw` the type `sankey`: the typed `ChartConfig` takes no dataset class
+    of another package (seam S9). `Flow` is also a Flutter widget name: a library that imports Flutter
     and names the element imports the port with a prefix (seam S21).
   - `lib/src/`: the files of `src/` at their mapped paths: `types`, `lib/helpers`, `lib/core`,
     `lib/layout`, `labels`, `flow`, `controller` and `index.esm`; `src/index.ts`, the entry that
@@ -2534,9 +2539,9 @@ sankey ADRs are proposed. The doc paths are relative to
 - Each chartjs-chart-sankey test file has `@TestOn('vm')`: `test:web` does not run the package.
   The unit tests of the pure modules use `package:test`. A spec that creates a chart is a
   `testWidgets` case with `acquireChart` of `package:chartjs_test_utils/flutter.dart`. A spec that
-  spies on `chart.ctx.fillRect` puts a mock context of `package:chartjs_test_utils/pure.dart` in
-  `chart.ctx` and calls `controller.draw()`: the mock context has no `resetTransform` for
-  `chart.draw()` (seam S13). A test of an option gives the enum value, a `ChartPaint`, or a
+  spies on `chart.ctx.fillRect` puts a `RecordingContext` of
+  `package:chartjs_test_utils/pure.dart` over the context of the chart in `chart.ctx` and calls
+  `chart.draw()` (Chart.js ADR 0133). A test of an option gives the enum value, a `ChartPaint`, or a
   `SankeyNodeGap`, never the upstream keyword or CSS text. A test that names the element next to a
   Flutter import gives the sankey library a prefix.
 - Each chartjs-plugin-zoom test file has `@TestOn('vm')`: `test:web` does not run the package.

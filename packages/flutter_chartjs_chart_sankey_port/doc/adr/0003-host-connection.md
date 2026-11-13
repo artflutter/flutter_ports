@@ -36,8 +36,7 @@ uses parts of the host API that the zoom port does not use.
    member for each property, and the access by name of `operator []` and `operator []=`. The
    animations of the host write its properties by name.
 6. **The controller.** `SankeyController` overrides `parseObjectData`, `buildOrUpdateElements`,
-   `getMinMax`, `update`, `updateElements` and `draw`, as upstream. It reads `this._cachedMeta`
-   through `getMeta()`.
+   `getMinMax`, `update`, `updateElements` and `draw`, as upstream.
 7. **The typed API.** The typed `ChartConfig` of the host has a closed set of chart kinds and
    dataset classes. A sankey chart runs through `ChartView.raw` (seam S9).
 8. **The JS runtime.** The port takes the JS runtime from

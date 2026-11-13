@@ -4,8 +4,7 @@
 /// charts.
 ///
 /// - The controller extends the `DatasetController` of the host and uses
-///   only the public libraries of the host (ADR 0009). `this._cachedMeta` is
-///   `getMeta()`, which gives the same object.
+///   only the public libraries of the host (ADR 0009).
 /// - A parsed item is a `ParsedItem` of the host with `x`, `y` and a
 ///   [SankeyParsedCustom] as its `custom` (row `adapt-sankey-parsed-item`).
 /// - The static members `defaults`, `overrides` and `descriptors` are Maps.
@@ -28,7 +27,6 @@ import 'package:flutter_chartjs_chart_sankey_port/src/lib/layout.dart';
 import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
     show
-        Chart,
         ChartArea,
         ChartMeta,
         ChartPaint,
@@ -45,6 +43,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
         Undefined,
         XAxis,
         YAxis,
+        controllerArgs,
         undefined;
 import 'package:flutter_chartjs_port/helpers.dart'
     show isNullOrUndef, toFont, valueOrDefault;
@@ -206,14 +205,20 @@ double _getColumnPixel(
 }
 
 /// controller.ts:138 `getColumnPadding`.
+///
+/// Upstream types its third parameter by the members that it reads:
+/// `{chartArea: {bottom, right}, height, width}`. The port gives the three
+/// values.
 double _getColumnPadding(
   double nodeWidth,
   SankeyOrientation orientation,
-  Chart chart,
+  ChartArea chartArea,
+  double chartWidth,
+  double chartHeight,
 ) {
   final trailingSpace = orientation == SankeyOrientation.vertical
-      ? chart.height - chart.chartArea!.bottom
-      : chart.width - chart.chartArea!.right;
+      ? chartHeight - chartArea.bottom
+      : chartWidth - chartArea.right;
   return jsMax(0, nodeWidth + 3 - trailingSpace);
 }
 
@@ -500,12 +505,10 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
       'defaults': defaults,
       'overrides': overrides,
     },
-    // The host gives the dataset index as a number (host-seams.md, seam S2).
-    construct: (newTarget, args) => SankeyController(
-      args[0]! as Chart,
-      (args[1]! as num).toInt(),
-      newTarget,
-    ),
+    construct: (newTarget, args) {
+      final (:chart, :datasetIndex) = controllerArgs(args);
+      return SankeyController(chart, datasetIndex, newTarget);
+    },
   );
 
   /// controller.ts:365 `declare options: SankeyControllerDatasetOptions`:
@@ -631,7 +634,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   ({double min, double max}) getMinMax(Object scale, [bool? canStack]) {
     final vertical = _options.orientation == SankeyOrientation.vertical;
-    final meta = getMeta();
+    final meta = cachedMeta;
     final columnScale = vertical ? meta.yScale : meta.xScale;
     return (max: identical(scale, columnScale) ? _maxX : _maxY, min: 0);
   }
@@ -639,7 +642,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
   /// controller.ts:437 `update(mode)`.
   @override
   void update(String mode) {
-    final data = getMeta().data;
+    final data = cachedMeta.data;
 
     updateElements(data, 0, data.length, mode);
   }
@@ -651,7 +654,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
   /// seam S4).
   @override
   void updateElements(List<Object?> elems, int start, int count, String mode) {
-    final meta = getMeta();
+    final meta = cachedMeta;
     final xScale = meta.xScale as Scale?;
     final yScale = meta.yScale as Scale?;
     if (xScale == null || yScale == null) return;
@@ -665,7 +668,9 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     final columnPadding = _getColumnPadding(
       nodeWidth,
       orientation,
-      chart as Chart,
+      chart.chartArea!,
+      chart.width,
+      chart.height,
     );
     final borderSpace = jsTruthy(borderWidth)
         ? jsToNumber(borderWidth) / 2 + 0.5
@@ -707,7 +712,9 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     final columnPadding = _getColumnPadding(
       nodeWidth,
       orientation,
-      chart as Chart,
+      chart.chartArea!,
+      chart.width,
+      chart.height,
     );
     // `options.font ?? this.chart.options.font ?? Chart.defaults.font`:
     // `toFont` of the host takes `defaults.font` for a value that is no font.
@@ -715,7 +722,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     final defaultFont = datasetFont is TextStyle
         ? datasetFont
         : jsGet(chart.options, 'font');
-    final meta = getMeta();
+    final meta = cachedMeta;
     final xScale = meta.xScale as Scale?;
     final yScale = meta.yScale as Scale?;
 
@@ -785,10 +792,12 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     final columnPadding = _getColumnPadding(
       nodeWidth,
       orientation,
-      chart as Chart,
+      chart.chartArea!,
+      chart.width,
+      chart.height,
     );
     final sizeMethod = validateSizeValue(options.size);
-    final meta = getMeta();
+    final meta = cachedMeta;
     final xScale = meta.xScale as Scale?;
     final yScale = meta.yScale as Scale?;
     final hasBorder = borderWidth != 0 && !borderWidth.isNaN;
@@ -831,7 +840,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void draw() {
     final ctx = chart.ctx!;
-    final data = getMeta().data;
+    final data = cachedMeta.data;
 
     // Set node colors
     final active = <Flow>[];

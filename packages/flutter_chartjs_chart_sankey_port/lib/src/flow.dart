@@ -31,6 +31,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
         Undefined,
         VisualElementRange,
         XAxis,
+        elementCfgArg,
         undefined;
 import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor, toFont;
 import 'package:flutter_chartjs_port/js_semantics.dart'
@@ -262,15 +263,12 @@ class Flow([Map<String, Object?>? cfg])
 
   /// flow.ts:133 `class Flow extends Element` as a value (Chart.js ADR
   /// 0020): its statics are [id], [defaults] and [descriptors], and its
-  /// `construct` calls [Flow.new] with the first argument when it is a Map.
+  /// `construct` calls [Flow.new] with the `cfg` of its arguments.
   static final JsClass jsClass = JsClass(
     'Flow',
     superclass: Element.jsClass,
     statics: {'id': id, 'defaults': defaults, 'descriptors': descriptors},
-    construct: (newTarget, args) => Flow(switch (args) {
-      [final Map<String, Object?> cfg, ...] => cfg,
-      _ => null,
-    }),
+    construct: (newTarget, args) => Flow(elementCfgArg(args)),
   );
 
   static const int _flowBit = 1;
