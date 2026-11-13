@@ -11,6 +11,7 @@ workspace:
   - packages/flutter_d3_port
   - packages/flutter_echarts_port
   - packages/flutter_chartjs_plugin_zoom_port
+  - packages/flutter_chartjs_chart_sankey_port
   - apps/chartjs_gallery
   - apps/chart_benchmark_lab
   - apps/chartjs_docs
@@ -65,16 +66,16 @@ melos:
       description: Run the theme goldens of flutter_chartjs_port (Chart.js ADR 0050). They skip unless CHART_GOLDENS=1. Only the CI job fixtures on ubuntu-24.04 sets it. Options go after "--", for example "dart run melos run test:goldens -- --update-goldens" (write the golden files; only the workflow_dispatch run of CI with update_goldens does this).
 
     # The per-module tools of packages/flutter_chartjs_port/doc/porting-flow.md section 4.
-    # Tools 1-3 also examine the add-on port flutter_chartjs_plugin_zoom_port (ADR 0009 item 6).
+    # Tools 1-3 also examine the add-on ports flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port (ADR 0009 item 6).
     check:lib-imports:
-      run: dart run packages/flutter_chartjs_port/tool/check_lib_imports.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port
-      description: Fail on flutter_chartjs_port imports outside the allowlists (lib/, pure layers, web tests, theme), on chartjs_test_utils pure.dart imports outside the pure layer, and on flutter_chartjs_plugin_zoom_port imports of flutter_chartjs_port/src/ or chartjs_test_utils/src/ (ADR 0009).
+      run: dart run packages/flutter_chartjs_port/tool/check_lib_imports.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port packages/flutter_chartjs_chart_sankey_port
+      description: Fail on flutter_chartjs_port imports outside the allowlists (lib/, pure layers, web tests, theme), on chartjs_test_utils pure.dart imports outside the pure layer, and on flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port imports of flutter_chartjs_port/src/ or chartjs_test_utils/src/ (ADR 0009).
     check:headers:
-      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port
-      description: Fail on flutter_chartjs_port, chartjs_test_utils and flutter_chartjs_plugin_zoom_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. The zoom package runs as its own home package.
+      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_chart_sankey_port
+      description: Fail on flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. Each add-on package runs as its own home package.
     check:js-semantics:
-      run: dart run packages/flutter_chartjs_port/tool/check_js_semantics.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port
-      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs_port, chartjs_test_utils and flutter_chartjs_plugin_zoom_port files.
+      run: dart run packages/flutter_chartjs_port/tool/check_js_semantics.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port packages/flutter_chartjs_chart_sankey_port
+      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port files.
     port:next:check:
       run: dart run packages/flutter_chartjs_port/tool/port_order.dart --check
       description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.
@@ -103,6 +104,9 @@ melos:
     test:fixtures:zoom:
       run: cd packages/flutter_chartjs_plugin_zoom_port && flutter test --tags fixtures test/specs/fixtures_test.dart
       description: Run the 12 upstream fixtures of flutter_chartjs_plugin_zoom_port (the tag fixtures, seam H24) and compare their scale ranges at the snapshot points with test/fixtures/fixtures_reference.dart. Without the submodule third_party/chartjs-plugin-zoom, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
+    test:fixtures:sankey:
+      run: cd packages/flutter_chartjs_chart_sankey_port && flutter test --tags fixtures test/specs/fixtures_test.dart
+      description: Run the 44 upstream fixtures of flutter_chartjs_chart_sankey_port (the tag fixtures) and compare their observations (the nodes, the flows and the draw calls) with test/fixtures/fixtures_reference.dart. Without the submodule third_party/chartjs-chart-sankey, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
     test:zoom:range-only:
       run: cd packages/flutter_chartjs_plugin_zoom_port && flutter test --dart-define=ZOOM_RANGE_ONLY_UPDATES=true
       description: Run the tests of flutter_chartjs_plugin_zoom_port, the fixtures among them, with the zoom option rangeOnlyUpdates true in Chart.defaults.plugins.zoom, so each zoom and pan takes chart.updateRanges (Chart.js ADR 0111). The results are those of the run without it.
@@ -121,10 +125,10 @@ melos:
 
     upstream:
       run: git submodule update --init --depth 1
-      description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils, d3 and the 33 other D3 repositories, Apache ECharts, zrender and chartjs-plugin-zoom). Reference for porting, not shipped.
+      description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils, d3 and the 33 other D3 repositories, Apache ECharts, zrender, chartjs-plugin-zoom and chartjs-chart-sankey). Reference for porting, not shipped.
     upstream:check:
       run: bash tool/check_upstream_pin.sh
-      description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion (for a commit pin <last version>+<sha8>, to a commit that starts with <sha8>), third_party/d3 to the release tag named by d3Version, each other D3 submodule to the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml, third_party/echarts and third_party/zrender to the release tags named by echartsVersion and zrenderVersion, and third_party/chartjs-plugin-zoom to the commit of chartjsPluginZoomVersion (a commit pin <last version>+<sha8>, after the tag v<last version>).
+      description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion (for a commit pin <last version>+<sha8>, to a commit that starts with <sha8>), third_party/d3 to the release tag named by d3Version, each other D3 submodule to the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml, third_party/echarts and third_party/zrender to the release tags named by echartsVersion and zrenderVersion, third_party/chartjs-plugin-zoom to the commit of chartjsPluginZoomVersion (a commit pin <last version>+<sha8>, after the tag v<last version>), and third_party/chartjs-chart-sankey to the release tag named by chartjsChartSankeyVersion.
     upstream:manifest:
       run: cd packages/flutter_chartjs_port && node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
       description: Write packages/flutter_chartjs_port/doc/upstream/manifest.json and fixtures.json from third_party/Chart.js (tool 4). Needs Node.js 22.18 or later (CI uses 24.12.0) and the submodule (melos run upstream).

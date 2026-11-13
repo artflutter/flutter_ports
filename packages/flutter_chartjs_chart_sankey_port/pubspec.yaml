@@ -1,0 +1,47 @@
+name: flutter_chartjs_chart_sankey_port
+description: >-
+  A native Dart port of chartjs-chart-sankey for flutter_chartjs_port. The
+  sankey controller, the flow element and the node layout run as Dart code,
+  with no WebView and no JavaScript. Work in progress.
+version: 0.0.1
+# Remove at the first release.
+publish_to: none
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_chartjs_chart_sankey_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - chartjs
+  - chart
+  - sankey
+  - flow
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # The host port: upstream has the peer dependency chart.js (ADR 0009). A
+  # path dependency until both packages have a release (Sankey ADR 0001).
+  flutter_chartjs_port:
+    path: ../flutter_chartjs_port
+
+dev_dependencies:
+  # The test harness of the host port (ADR 0009, item 7): the chart helpers
+  # and the set-up functions of test/flutter_test_config.dart. A path
+  # dependency: the harness is not on pub.dev.
+  chartjs_test_utils:
+    path: ../chartjs_test_utils
+  # The specs that create a chart are testWidgets tests (Sankey ADR 0002).
+  flutter_test:
+    sdk: flutter
+  # test/port/public_library_test.dart imports the public library next to
+  # the host app library and Material, as an app does (Chart.js ADR 0048).
+  # The constraint is that of flutter_chartjs_port.
+  material_ui: ^1.10.0
+  # test/upstream_test.dart and the unit tests use package:test. The
+  # constraint is the test constraint of flutter_chartjs_port.
+  test: ^1.32.0

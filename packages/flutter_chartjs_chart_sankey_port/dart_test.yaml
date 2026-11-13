@@ -1,0 +1,6 @@
+# The upstream fixtures of test/specs/fixtures_test.dart: each fixture test
+# has the tag `fixtures` of the fixture runner of package:chartjs_test_utils
+# (Chart.js ADR 0029). The melos script `test` excludes them.
+# `test:fixtures:sankey` runs them.
+tags:
+  fixtures:

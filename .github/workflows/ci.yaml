@@ -63,12 +63,14 @@ jobs:
       # files of third_party/echarts and third_party/zrender.
       # packages/flutter_chartjs_plugin_zoom_port/test/upstream_test.dart
       # compares the part of chartjsPluginZoomVersion before "+" with
-      # third_party/chartjs-plugin-zoom/package.json. Each shard runs a part
+      # third_party/chartjs-plugin-zoom/package.json.
+      # packages/flutter_chartjs_chart_sankey_port/test/upstream_test.dart
+      # reads third_party/chartjs-chart-sankey/package.json. Each shard runs a part
       # of the tests of each upstream_test.dart. Thus each ubuntu leg makes
       # the checkout.
-      - name: Check out the Chart.js submodules, third_party/d3, the ECharts submodules and chartjs-plugin-zoom
+      - name: Check out the Chart.js submodules, third_party/d3, the ECharts submodules, chartjs-plugin-zoom and chartjs-chart-sankey
         if: matrix.os == 'ubuntu-latest'
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/echarts third_party/zrender third_party/chartjs-plugin-zoom
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/echarts third_party/zrender third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
       - uses: ./.github/actions/setup
       # Melos gives the options after "--" to each flutter test call.
       # --experimental-faster-testing compiles the test files of a package
@@ -124,7 +126,9 @@ jobs:
     # checkout of third_party/chartjs-plugin-zoom. It then runs the tests of
     # that package, the fixtures among them, with the zoom option
     # rangeOnlyUpdates in the defaults (test:zoom:range-only, Chart.js ADR
-    # 0111).
+    # 0111). It also runs the 44 upstream fixtures of the add-on port
+    # flutter_chartjs_chart_sankey_port (test:fixtures:sankey) with a shallow
+    # checkout of third_party/chartjs-chart-sankey.
     #
     # The job is also the pinned runner of the theme goldens of
     # packages/flutter_chartjs_port/doc/theming.md section 8 test 9 (Chart.js
@@ -145,8 +149,8 @@ jobs:
         run: |
           printf '{\n  "flutter": "%s"\n}\n' "$FLUTTER_VERSION" > .fvmrc
           cat .fvmrc
-      - name: Check out third_party/Chart.js and third_party/chartjs-plugin-zoom
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/chartjs-plugin-zoom
+      - name: Check out third_party/Chart.js, third_party/chartjs-plugin-zoom and third_party/chartjs-chart-sankey
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
       - uses: ./.github/actions/setup
       - if: ${{ !inputs.update_goldens }}
         run: dart run melos run test:fixtures
@@ -155,6 +159,11 @@ jobs:
       - name: Run the zoom fixtures
         if: ${{ !inputs.update_goldens }}
         run: dart run melos run test:fixtures:zoom
+        env:
+          FIXTURES_REQUIRED: "1"
+      - name: Run the sankey fixtures
+        if: ${{ !inputs.update_goldens }}
+        run: dart run melos run test:fixtures:sankey
         env:
           FIXTURES_REQUIRED: "1"
       - name: Run the zoom tests with range-only updates
@@ -192,16 +201,17 @@ jobs:
     # runs the spec tests of flutter_chartjs_port for the case counts.
     # Shallow submodules, so that the header check compares each header path
     # and each "files" entry of tool/port_sources.yaml with the pinned tree.
-    # Tools 1-3 also examine the add-on port flutter_chartjs_plugin_zoom_port
-    # (ADR 0009 item 6). Its tool/port_sources.yaml has no "files" entry, so
-    # the header check reads its source paths from the submodule. The job
-    # checks out only the Chart.js submodules and
-    # third_party/chartjs-plugin-zoom, by path.
+    # Tools 1-3 also examine the add-on ports flutter_chartjs_plugin_zoom_port
+    # and flutter_chartjs_chart_sankey_port (ADR 0009 item 6). Their
+    # tool/port_sources.yaml files have no "files" entry, so the header check
+    # reads their source paths from the submodules. The job checks out only
+    # the Chart.js submodules, third_party/chartjs-plugin-zoom and
+    # third_party/chartjs-chart-sankey, by path.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Check out the Chart.js and chartjs-plugin-zoom submodules
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/chartjs-plugin-zoom
+      - name: Check out the Chart.js, chartjs-plugin-zoom and chartjs-chart-sankey submodules
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
       - uses: ./.github/actions/setup
       - run: dart run melos run check:lib-imports
       - run: dart run melos run check:headers
@@ -280,6 +290,8 @@ jobs:
     # The third_party/chartjs-plugin-zoom gitlink must be the commit of
     # chartjsPluginZoomVersion: for a commit pin "<last version>+<sha8>", a
     # commit that starts with <sha8>, after the tag "v<last version>".
+    # The third_party/chartjs-chart-sankey gitlink must be the commit of the
+    # release tag named by chartjsChartSankeyVersion.
     # Each submodule of .gitmodules must be the pin of a port_sources.yaml
     # entry. Needs no submodule checkout.
     runs-on: ubuntu-latest
