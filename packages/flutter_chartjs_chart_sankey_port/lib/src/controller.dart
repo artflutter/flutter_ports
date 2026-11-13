@@ -81,14 +81,33 @@ SankeyLabelPosition _getAutoLabelPosition(
       : SankeyLabelPosition.left;
 }
 
-/// controller.ts:46 `getAddY`.
-double _getAddY(List<FromToElement> arr, String key, int index) {
-  for (final item in arr) {
-    if (item.key == key && item.index == index) {
-      return item.addY;
+/// controller.ts:46 `getAddY`: the offset of [flow] from the start of its
+/// node, or 0 for no flow.
+///
+/// Upstream scans the flow list of the node for the key and the index of a
+/// data point, for each data point. Each list has one flow for each data
+/// index of its node, with the key of that data point. Thus the flow at the
+/// index ([_flowsByIndex]) is the result of the scan.
+// DIVERGES(sankey): adapt-sankey-flow-by-index, no scan for each data point.
+double _getAddY(FromToElement? flow) => flow?.addY ?? 0;
+
+/// The flow of each data index: the flow out of its source node
+/// (`from.to`), and the flow into its target node (`to.from`).
+({List<FromToElement?> into, List<FromToElement?> out}) _flowsByIndex(
+  Iterable<SankeyNode> nodes,
+  int length,
+) {
+  final out = List<FromToElement?>.filled(length, null);
+  final into = List<FromToElement?>.filled(length, null);
+  for (final node in nodes) {
+    for (final flow in node.to) {
+      out[flow.index] = flow;
+    }
+    for (final flow in node.from) {
+      into[flow.index] = flow;
     }
   }
-  return 0;
+  return (into: into, out: out);
 }
 
 /// `scale.parse(value, index) as number`.
@@ -340,6 +359,21 @@ _resolveNodeLabelStyle(
 // Chart.js must not call their function form with its own scriptable context.
 const Set<String> _nodeScopedOptions = {'nodeMinSize', 'nodePadding'};
 
+/// The hover colors of a flow. Their defaults are functions of the resolved
+/// colors of the flow (flow.ts:148-149).
+///
+/// With upstream, each update calls both functions for each flow, and a
+/// function value keeps the options of the flows out of the shared cache of
+/// the host. No code reads the two keys by their own names: the active mode
+/// reads them as `colorFrom` and `colorTo` through its hover prefix, and
+/// those names are scriptable. Thus the two keys are not scriptable: an
+/// update calls no hover function, and the options of the flows of a
+/// dataset with plain values resolve one time. In the default mode,
+/// `hoverColorFrom` and `hoverColorTo` of the options of a flow hold the
+/// function.
+// DIVERGES(sankey): adapt-sankey-hover-color-keys, not scriptable by name.
+const Set<String> _hoverColorOptions = {'hoverColorFrom', 'hoverColorTo'};
+
 /// The axis of the progress animation: `ctx.dataset.orientation ===
 /// 'vertical' ? 'y' : 'x'` (controller.ts:264-270).
 bool _verticalDataset(Object? ctx) =>
@@ -390,7 +424,9 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
   /// controller.ts:242 `static readonly descriptors`.
   static final Map<String, Object?> descriptors = <String, Object?>{
     '_indexable': false,
-    '_scriptable': (Object? name) => !_nodeScopedOptions.contains(name),
+    '_scriptable': (Object? name) =>
+        !_nodeScopedOptions.contains(name) &&
+        !_hoverColorOptions.contains(name),
     'nodeLabels': <String, Object?>{'_indexable': false, '_scriptable': false},
   };
 
@@ -575,14 +611,15 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
 
     if (xScale == null || yScale == null) return [];
 
+    final flows = _flowsByIndex(nodes.values, sankeyData.length);
     for (var i = 0, ilen = sankeyData.length; i < ilen; ++i) {
       final dataPoint = sankeyData[i];
       final from = nodes[dataPoint.from];
       final to = nodes[dataPoint.to];
       if (from == null || to == null) continue;
 
-      final fromY = _nodeY(from) + _getAddY(from.to, dataPoint.to, i);
-      final toY = _nodeY(to) + _getAddY(to.from, dataPoint.from, i);
+      final fromY = _nodeY(from) + _getAddY(flows.out[i]);
+      final toY = _nodeY(to) + _getAddY(flows.into[i]);
       parsed.add(
         _parseFlow(
           from,

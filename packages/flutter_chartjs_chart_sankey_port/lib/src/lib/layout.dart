@@ -194,27 +194,65 @@ int nodeCount(
   return count;
 }
 
+/// The results of [nodeCount] for the flow lists of the nodes, for one
+/// layout.
+///
+/// `flowByNodeCount` of layout.ts:159 counts both nodes again at each
+/// comparison of a sort. The count of a node is the sum of the lengths of
+/// the flow lists of the nodes that its list reaches. Thus it does not
+/// depend on the order of a list, and no list gets or loses a flow during
+/// the layout: one count for each node and direction gives the same order.
+// DIVERGES(sankey): adapt-sankey-node-count-memo, one count for each node.
+final class _NodeCounts() {
+  final Map<SankeyNode, int> _from = Map.identity();
+  final Map<SankeyNode, int> _to = Map.identity();
+
+  /// `nodeCount(node[prop], prop)`.
+  int of(SankeyNode node, FlowDirection prop) =>
+      (prop == FlowDirection.from ? _from : _to)[node] ??= nodeCount(
+        prop.of(node),
+        prop,
+      );
+}
+
 /// layout.ts:159 `flowByNodeCount`.
 num Function(FromToElement a, FromToElement b) _flowByNodeCount(
   FlowDirection prop,
+  _NodeCounts counts,
 ) => (a, b) {
-  final aFlows = prop.of(a.node);
-  final bFlows = prop.of(b.node);
-  final byCount = nodeCount(aFlows, prop) - nodeCount(bFlows, prop);
-  return byCount != 0 ? byCount : aFlows.length - bFlows.length;
+  final byCount = counts.of(a.node, prop) - counts.of(b.node, prop);
+  return byCount != 0
+      ? byCount
+      : prop.of(a.node).length - prop.of(b.node).length;
 };
 
+/// `list.sort(flowByNodeCount(prop))` (layout.ts:168, :188).
+///
+/// The counts of the nodes of [list] come before the sort: a JavaScript
+/// comparator reads each list as it is before the sort, and the Dart sort
+/// moves the flows of [list] between two comparisons.
+void _sortByNodeCount(
+  List<FromToElement> list,
+  FlowDirection prop,
+  _NodeCounts counts,
+) {
+  for (final flow in list) {
+    counts.of(flow.node, prop);
+  }
+  jsSort(list, _flowByNodeCount(prop, counts));
+}
+
 /// layout.ts:165 `processFrom`.
-double _processFrom(SankeyNode node, double start) {
+double _processFrom(SankeyNode node, double start, _NodeCounts counts) {
   var y = start;
   if (node.from.isEmpty) return y;
 
-  jsSort(node.from, _flowByNodeCount(FlowDirection.from));
+  _sortByNodeCount(node.from, FlowDirection.from, counts);
   for (final flow in node.from) {
     final n = flow.node;
     if (!defined(n.y)) {
       n.y = y;
-      _processFrom(n, _truthy(y) ? y + _smallValue : 0);
+      _processFrom(n, _truthy(y) ? y + _smallValue : 0, counts);
     }
     y = math.max(n.y! + n.outFlow, y);
   }
@@ -226,13 +264,13 @@ bool returnsToNearerColumn(SankeyNode current, [SankeyNode? next]) =>
     next != null && _nodeX(next) < _nodeX(current);
 
 /// layout.ts:183 `processTo`.
-double _processTo(SankeyNode node, double start) {
+double _processTo(SankeyNode node, double start, _NodeCounts counts) {
   var y = start;
   if (node.to.isEmpty) return y;
 
   // Place less-connected branches first so terminal paths stay close to the
   // edge of their source flow and more complex branches can continue inward.
-  jsSort(node.to, _flowByNodeCount(FlowDirection.to));
+  _sortByNodeCount(node.to, FlowDirection.to, counts);
   for (var i = 0; i < node.to.length; i++) {
     final flow = node.to[i];
     final n = flow.node;
@@ -240,7 +278,7 @@ double _processTo(SankeyNode node, double start) {
       // A node may already have been positioned through another branch. Only
       // recurse when this is the first path that reaches it.
       n.y = y;
-      _processTo(n, _truthy(y) ? y + _smallValue : 0);
+      _processTo(n, _truthy(y) ? y + _smallValue : 0, counts);
     }
     if (returnsToNearerColumn(
       n,
@@ -272,7 +310,11 @@ double _setOrGetY(SankeyNode node, double value) {
 }
 
 /// layout.ts:222 `processRest`.
-double _processRest(List<SankeyNode> nodeArray, double maxX) {
+double _processRest(
+  List<SankeyNode> nodeArray,
+  double maxX,
+  _NodeCounts counts,
+) {
   final leftNodes = [
     for (final node in nodeArray)
       if (node.x == 0) node,
@@ -311,12 +353,15 @@ double _processRest(List<SankeyNode> nodeArray, double maxX) {
   if (leftY >= rightY) {
     for (final node in leftToDo) {
       leftY = _setOrGetY(node, leftY);
-      leftY = math.max(leftY + node.outFlow, _processTo(node, leftY));
+      leftY = math.max(leftY + node.outFlow, _processTo(node, leftY, counts));
     }
 
     for (final node in rightToDo) {
       rightY = _setOrGetY(node, rightY);
-      rightY = math.max(rightY + node.inFlow, _processFrom(node, rightY));
+      rightY = math.max(
+        rightY + node.inFlow,
+        _processFrom(node, rightY, counts),
+      );
     }
   } else {
     for (final node in leftToDo) {
@@ -325,7 +370,10 @@ double _processRest(List<SankeyNode> nodeArray, double maxX) {
 
     for (final node in rightToDo) {
       rightY = _setOrGetY(node, rightY);
-      rightY = math.max(rightY + node.inFlow, _processFrom(node, rightY));
+      rightY = math.max(
+        rightY + node.inFlow,
+        _processFrom(node, rightY, counts),
+      );
     }
   }
   for (final node in centerToDo) {
@@ -339,8 +387,8 @@ double _processRest(List<SankeyNode> nodeArray, double maxX) {
           ),
         );
     y = _setOrGetY(node, y);
-    y = math.max(y + node.inFlow, _processFrom(node, y));
-    y = math.max(y + node.outFlow, _processTo(node, y));
+    y = math.max(y + node.inFlow, _processFrom(node, y, counts));
+    y = math.max(y + node.outFlow, _processTo(node, y, counts));
     centerY = math.max(centerY, y);
   }
 
@@ -396,10 +444,11 @@ SankeyNode _findStartNode(List<SankeyNode> nodeArray, double maxX) {
 double calculateY(List<SankeyNode> nodeArray, double maxX) {
   if (nodeArray.isEmpty) return 0;
 
+  final counts = _NodeCounts();
   final start = _findStartNode(nodeArray, maxX)..y = 0;
-  _processFrom(start, 0);
-  _processTo(start, 0);
-  _processRest(nodeArray, maxX);
+  _processFrom(start, 0, counts);
+  _processTo(start, 0, counts);
+  _processRest(nodeArray, maxX, counts);
   return _fixTop(nodeArray, maxX);
 }
 

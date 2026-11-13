@@ -24,6 +24,8 @@ package.
   and the theme has no extension for its colors.
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
+- **Performance:** [performance.md](performance.md), the figures of each form that is faster than
+  the upstream lines, and the open items.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md).
 - **Prior art:** [prior-art/README.md](prior-art/README.md), the survey of the sankey code of
   other Dart and Flutter packages (2026-11-13). No Dart port of this library exists. Prior art is

@@ -94,6 +94,54 @@ Object? _getHoverColorOption(Object? option) =>
 
 const ChartPaint _black = ChartPaint.solid(Color(0xFF000000));
 
+/// The ends, the colors and the alpha of the gradient of a flow.
+typedef _GradientKey = (
+  bool vertical,
+  double start,
+  double end,
+  Color from,
+  Color to,
+  double alpha,
+);
+
+/// The bound of [_gradients].
+const int _maxGradients = 512;
+
+/// The gradients of the last draws, by their ends, colors and alpha.
+///
+/// `setStyle` of flow.ts:61-66 makes a new gradient for each flow at each draw,
+/// and the canvas makes a shader for each new gradient. The flows between
+/// two columns with the same colors have equal gradients. One gradient
+/// object for them paints the same pixels with one shader.
+// DIVERGES(sankey): adapt-sankey-shared-gradients, one object for equal ones.
+final Map<_GradientKey, ChartGradient> _gradients = {};
+
+/// flow.ts:63 `ctx.createLinearGradient` with its two color stops: the
+/// gradient from [from] at [start] to [to] at [end], along x, or along y for
+/// a [vertical] flow.
+ChartGradient _gradient(
+  double start,
+  double end,
+  Color from,
+  Color to,
+  double alpha, {
+  required bool vertical,
+}) {
+  final key = (vertical, start, end, from, to, alpha);
+  final known = _gradients[key];
+  if (known != null) return known;
+  // An animation gives new ends in each frame: the cache starts again.
+  if (_gradients.length >= _maxGradients) _gradients.clear();
+  return _gradients[key] = ChartGradient.linear(
+    vertical ? Offset(0, start) : Offset(start, 0),
+    vertical ? Offset(0, end) : Offset(end, 0),
+    List.unmodifiable([
+      from.withValues(alpha: alpha),
+      to.withValues(alpha: alpha),
+    ]),
+  );
+}
+
 /// flow.ts:51 `setStyle`.
 ///
 /// A `flowColor` that is `undefined` gives the canvas no new style, as the
@@ -114,10 +162,13 @@ void _setStyle(CanvasRenderingContext2D ctx, Flow flow, bool vertical) {
     final from = _solidColor(options.colorFrom);
     final to = _solidColor(options.colorTo);
     if (from != null && to != null) {
-      fill = ChartGradient.linear(
-        vertical ? Offset(0, flow.y) : Offset(flow.x, 0),
-        vertical ? Offset(0, flow.y2) : Offset(flow.x2, 0),
-        [from.withValues(alpha: alpha), to.withValues(alpha: alpha)],
+      fill = _gradient(
+        vertical ? flow.y : flow.x,
+        vertical ? flow.y2 : flow.x2,
+        from,
+        to,
+        alpha,
+        vertical: vertical,
       );
     }
   }
