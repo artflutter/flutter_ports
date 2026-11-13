@@ -363,7 +363,8 @@ Map<String, Object?> _observeDataset(Chart chart, int index) {
     'total': ?total,
     '_drawStart': ?drawStart,
     '_drawCount': ?drawCount,
-    'maxOverflow': controller.getMaxOverflow(),
+    // Dart `null` is the JS `false` (row `adapt-max-overflow`).
+    'maxOverflow': controller.getMaxOverflow() ?? false,
     'datasetOptions': <String, Object?>{
       for (final key in _datasetOptionKeys[type] ?? const <String>[])
         if (jsGet(controller.options, key) case final value

@@ -107,9 +107,9 @@ import 'package:meta/meta.dart';
 ///
 /// `scale && scale.options || {}`: the options of a scale are always an
 /// object. The edges are [allowedOverflow] or 0.
-({Object? start, Object? end}) _scaleClip(
+({double start, double end}) _scaleClip(
   types.Scale? scale,
-  Object? allowedOverflow,
+  double allowedOverflow,
 ) {
   final opts = scale?.options ?? const <String, Object?>{};
   final reverse = readOption(opts, OptionKey.reverse);
@@ -128,13 +128,13 @@ import 'package:meta/meta.dart';
 /// core.datasetController.js:23 `defaultClip`.
 ///
 /// The result is `false` or the object `{top, right, bottom, left}`, a
-/// [_ClipEdges].
+/// [_ClipEdges]. No overflow (Dart `null`, the JS `false`) gives `false`.
 Object? _defaultClip(
   types.Scale? xScale,
   types.Scale? yScale,
-  Object? allowedOverflow,
+  double? allowedOverflow,
 ) {
-  if (allowedOverflow == false) {
+  if (allowedOverflow == null) {
     return false;
   }
   final x = _scaleClip(xScale, allowedOverflow);
@@ -1882,10 +1882,13 @@ class DatasetController(
 
   /// core.datasetController.js:680 `getMaxOverflow()`.
   ///
-  /// @return {number|boolean}
+  /// The pixels that the elements of the dataset can draw outside the chart
+  /// area. Dart `null` is the JS `false`: no overflow, and no default clip
+  /// of the dataset (row `adapt-max-overflow`).
   /// @protected
-  Object? getMaxOverflow() {
-    return false;
+  // DIVERGES(chartjs): adapt-max-overflow, a double or null.
+  double? getMaxOverflow() {
+    return null;
   }
 
   /// core.datasetController.js:687 `getLabelAndValue(index)`.

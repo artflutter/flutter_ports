@@ -600,15 +600,16 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
   /// @protected
   ///
   /// `dataset.options && dataset.options.borderWidth || 0` keeps the raw
-  /// value: a truthy `borderWidth` is the result, also for an empty data.
-  /// `Math.max` applies `ToNumber` to it. The dataset element of a line
-  /// chart is never Dart `null` here: `meta.dataset.options` of `undefined`
-  /// throws a [TypeError] in both. The cast to `types.PointElement` stands
-  /// at the upstream read of `size` (Chart.js ADR 0028, section 1). The
-  /// options of a line are a [LineOptions]; the options of a user element
-  /// type read by name.
+  /// value. For an empty data, upstream gives that raw value, and each
+  /// reader applies `ToNumber` to it: the port gives its `ToNumber` (row
+  /// `adapt-max-overflow`). `Math.max` applies `ToNumber` to it too. The
+  /// dataset element of a line chart is never Dart `null` here:
+  /// `meta.dataset.options` of `undefined` throws a [TypeError] in both. The
+  /// cast to `types.PointElement` stands at the upstream read of `size`
+  /// (Chart.js ADR 0028, section 1). The options of a line are a
+  /// [LineOptions]; the options of a user element type read by name.
   @override
-  Object? getMaxOverflow() {
+  double? getMaxOverflow() {
     final meta = cachedMeta;
     final dataset = meta.dataset;
     final datasetOptions = dataset!.options;
@@ -621,7 +622,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     }
     final data = meta.data;
     if (data.isEmpty) {
-      return border;
+      return jsToNumber(border);
     }
     final firstPoint = (data[0] as types.PointElement).size(
       resolveDataElementOptions(0),

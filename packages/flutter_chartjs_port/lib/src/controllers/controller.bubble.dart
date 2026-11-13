@@ -405,7 +405,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// @protected
   ///
-  /// `max > 0 && max` gives the number or `false`. `Math.max` gives NaN
+  /// `max > 0 && max` gives the number or `false`, that is, Dart `null`
+  /// (row `adapt-max-overflow`). `Math.max` gives NaN
   /// when a size is NaN, and `NaN > 0` is false. The cast to
   /// `types.PointElement` stands at the read of `size` (Chart.js ADR 0028,
   /// section 4).
@@ -415,7 +416,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// options object (row `adapt-bubble-point-options`). An indexed plan keeps
   /// the context refresh of each point.
   @override
-  Object? getMaxOverflow() {
+  double? getMaxOverflow() {
     final data = cachedMeta.data;
 
     var max = 0.0;
@@ -474,7 +475,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
         }
       }
     }
-    return max > 0 ? max : false;
+    return max > 0 ? max : null;
   }
 
   /// controller.bubble.js:96 `getLabelAndValue(index)`.
