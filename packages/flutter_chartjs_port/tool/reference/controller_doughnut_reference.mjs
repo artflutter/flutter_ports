@@ -33,6 +33,7 @@
 import {fileURLToPath} from 'node:url';
 
 import {
+  hitPoints,
   loadChartJs,
   named,
   registerBuiltins,
@@ -117,6 +118,25 @@ const two = (extra1, extra2, options = undefined) => ({
   },
   ...(options === undefined ? {} : {options}),
 });
+
+/**
+ * Three cases hit exact ties on Windows (CI run 43391456447, shard 1).
+ * The midpoint of opposite arc centers ties nearest distances; the center
+ * of a hidden zero-circumference arc lies on the visible arcs' shared edge.
+ * Move only those samples by a fraction of a pixel, keeping every hit query.
+ * Native sin/cos/atan2 may differ in their last bits (Chart.js ADR 0122).
+ */
+function stableTiePoints(chart) {
+  const arcs = chart.getDatasetMeta(0).data;
+  const hiddenCenter = chart.getDataVisibility(1) ? null : arcs[1].getCenterPoint(false);
+  return hitPoints(chart).map(([x, y]) => {
+    if (x === arcs[0].x && y === arcs[0].y) return [x + 0.25, y - 0.125];
+    if (hiddenCenter && x === Math.round(hiddenCenter.x) && y === Math.round(hiddenCenter.y)) {
+      return [x, y + 0.25];
+    }
+    return [x, y];
+  });
+}
 
 // ---------------------------------------------------------------------------
 // The 15 cases of Chart.js ADR 0030, section 7.
@@ -262,7 +282,7 @@ cases.push(
   runControllerCase('parsed: object items with the default key', {
     type: 'doughnut',
     data: {labels: ['a', 'b'], datasets: [{data: [{value: 1}, {value: '3'}]}]},
-  }),
+  }, {hitPoints: stableTiePoints}),
   runControllerCase('parsed: object items with a parsing key', {
     type: 'doughnut',
     data: {
@@ -326,10 +346,12 @@ const legendChart = () => ({
 cases.push(
   runControllerCase('legend: items', legendChart(), {extras: {realLegend}}),
   runControllerCase('legend: click', legendChart(), {
+    hitPoints: stableTiePoints,
     steps: [['clickLegend', 1]],
     extras: {realLegend},
   }),
   runControllerCase('legend: click twice', legendChart(), {
+    hitPoints: stableTiePoints,
     steps: [
       ['clickLegend', 1],
       ['clickLegend', 1],
