@@ -4,7 +4,7 @@
 - Date: 2026-11-13
 - Related: Chart.js ADR 0054 §12 (the typed plugin objects), Chart.js ADR 0108 (the typed plugin API for add-on
   ports), Chart.js ADR 0074 and 0111 (the data-only and range-only capabilities), Chart.js ADR 0125 (native tooltip
-  callbacks), [callback-migration-candidates.md](../callback-migration-candidates.md) (item 1).
+  callbacks).
 
 ## Context
 
