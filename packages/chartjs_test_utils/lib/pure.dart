@@ -44,6 +44,7 @@ export 'src/matchers.dart'
         toBeValidChart,
         toEqualOneOf,
         toEqualOptions;
+export 'src/recording_context.dart' show RecordingContext;
 
 /// Sets up the specs of one pure-layer spec file. Call it first in `main()`.
 ///

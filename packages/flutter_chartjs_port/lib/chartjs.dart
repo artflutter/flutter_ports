@@ -44,7 +44,9 @@
 /// port needs (Chart.js ADR 0132): `ParsedItem`, the parsed item of the
 /// parse functions of `DatasetController`, `ElementPoint`, the result of
 /// `Element.tooltipPosition`, and `VisualElementRange`, the interface of an
-/// element with `getRange`.
+/// element with `getRange`. `controllerArgs`, `elementCfgArg` and
+/// `scaleCfgArg` read the arguments of the `construct` closure of the class
+/// value of a controller, an element or a scale (Chart.js ADR 0133).
 ///
 /// The Dart names of the upstream `_` exports, the other port-only
 /// declarations of `lib/src/types/` and `LayoutItem` stay internal (Chart.js
@@ -67,10 +69,12 @@ export 'package:flutter_chartjs_port/src/core/core.animation.dart'
     show Interpolator;
 export 'package:flutter_chartjs_port/src/core/core.controller.dart'
     show AnimationEventHandler, ChartEventHandler, ChartResizeHandler;
+export 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+    show controllerArgs;
 export 'package:flutter_chartjs_port/src/core/core.element.dart'
-    show ElementPoint;
+    show ElementPoint, elementCfgArg;
 export 'package:flutter_chartjs_port/src/core/core.scale.dart'
-    show PointLabelCallback, ScaleHook, TickCallback;
+    show PointLabelCallback, ScaleHook, TickCallback, scaleCfgArg;
 export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show defaultDateZone, setDefaultDateZone;
 export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'

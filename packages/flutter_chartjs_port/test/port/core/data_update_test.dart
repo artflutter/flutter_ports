@@ -13,11 +13,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart'
     show invalidateCanvasTextMetrics;
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show controllerArgs;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     show defaults, overrides;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet, jsSet;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'

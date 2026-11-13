@@ -937,8 +937,10 @@ void _consoleWarn(String message) {
 /// [TypeError]. Upstream reads `chart.ctx` and calls
 /// `chart.getDatasetMeta`: an object with these members also works there.
 /// The second argument gives its `ToNumber`, NaN for an absent argument.
+///
+/// `chartjs.dart` exports it: the class value of a controller of another
+/// package reads its arguments with it (Chart.js ADR 0133).
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-@internal
 ({types.Chart chart, int datasetIndex}) controllerArgs(List<Object?> args) {
   final chart = args.isEmpty ? undefined : args[0];
   final datasetIndex = args.length < 2 ? undefined : args[1];
@@ -1057,8 +1059,9 @@ class DatasetController(
   final Map<String, Animations> _cachedAnimations = {};
 
   /// core.datasetController.js:260 `_cachedMeta`, the meta of the dataset
-  /// (index.d.ts:632).
-  @internal
+  /// (index.d.ts:632). It is public: a controller of another package reads
+  /// it, as upstream subclasses read the protected `_cachedMeta` (Chart.js
+  /// ADR 0133).
   @override
   late final types.ChartMeta cachedMeta;
 

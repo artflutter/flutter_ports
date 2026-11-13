@@ -650,8 +650,10 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
 /// default of the Dart constructor. A Map gives itself. Another value throws
 /// a [TypeError]. Upstream copies the own enumerable properties of such a
 /// value, for example the characters of a string.
+///
+/// `chartjs.dart` exports it: the class value of an element of another
+/// package reads its argument with it (Chart.js ADR 0133).
 // DIVERGES(chartjs): adapt-component-class-role, a non-Map cfg throws.
-@internal
 AnyObject? elementCfgArg(List<Object?> args) {
   final cfg = args.isEmpty ? undefined : args[0];
   return switch (cfg) {

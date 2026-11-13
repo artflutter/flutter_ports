@@ -8,9 +8,6 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show controllerArgs;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show arrayUnique;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'

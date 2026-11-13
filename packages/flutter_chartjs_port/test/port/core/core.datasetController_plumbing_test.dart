@@ -15,7 +15,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show axisStackOf, controllerArgs, dataItemValue, parsedValueOf, stacksOf;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;

@@ -328,7 +328,7 @@ void main() {
         },
       });
       final controller = chart.getDatasetMeta(0).controller!;
-      final other = RecordingContext(chart.ctx!);
+      final other = ReferenceRecordingContext(chart.ctx!);
       controller.ctx = other;
       addTearDown(() => controller.ctx = chart.ctx);
 

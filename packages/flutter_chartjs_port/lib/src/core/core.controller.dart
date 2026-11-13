@@ -1175,10 +1175,8 @@ class Chart(
               : datasetElementType,
         });
         // DIVERGES(chartjs): adapt-component-class-role, cast throws earlier.
-        meta.controller = jsConstruct(controllerClass, [
-          this,
-          i.toDouble(),
-        ]) as DatasetController;
+        meta.controller =
+            jsConstruct(controllerClass, [this, i]) as DatasetController;
         newControllers.add(meta.controller!);
       }
     }
