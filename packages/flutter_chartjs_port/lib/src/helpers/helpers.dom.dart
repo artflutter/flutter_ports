@@ -29,7 +29,6 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show infinity;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -119,9 +118,9 @@ String getStyle(HTMLCanvasElement el, String property) {
 /// `y` of the chart event. Any other object throws a `TypeError`.
 ///
 /// For a [NativeEvent], the result keeps the `Math.round` of the
-/// coordinates ([jsRound]). The canvas has no padding, border or
-/// `box-sizing`, and the event position is in the logical pixels of the
-/// chart. Thus the factor `/ width * canvas.width / currentDevicePixelRatio`
+/// coordinates (`roundToDouble()`, Chart.js ADR 0138). The canvas has no
+/// padding, border or `box-sizing`, and the event position is in the
+/// logical pixels of the chart. Thus the factor `/ width * canvas.width / currentDevicePixelRatio`
 /// of :128-129 has no port. `retinaScale` gives the canvas
 /// `floor(round1(width * dpr))` device pixels, so the factor is
 /// `floor(round1(width * dpr)) / (width * dpr)`. For a fractional device
@@ -134,7 +133,8 @@ Point getRelativePosition(Object event, Chart chart) {
 
   // DIVERGES(chartjs): platform-relative-position, no CSS, no scale factor.
   final (:x, :y) = _getCanvasPosition(event as NativeEvent);
-  return _RelativePosition(jsRound(x), jsRound(y));
+  // DIVERGES(chartjs): adapt-dart-round, -2.5 gives -3.
+  return _RelativePosition(x.roundToDouble(), y.roundToDouble());
 }
 
 /// The chart event of helpers.dom.ts:110, as a [Point].
@@ -189,7 +189,7 @@ _getContainerSize(HTMLCanvasElement canvas, double? bbWidth, double? bbHeight) {
 }
 
 /// helpers.dom.ts:160 `round1`.
-double _round1(double v) => jsRound(v * 10) / 10;
+double _round1(double v) => (v * 10).roundToDouble() / 10;
 
 /// helpers.dom.ts:163 `getMaximumSize`.
 ///

@@ -1448,6 +1448,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       passes the tests. It supersedes the `jsSquare` parts of Chart.js ADR 0045.
       Chart.js ADR 0137 (trackpad gestures as `wheel` events) is accepted (2026-11-13): its code
       passes the tests. It closes Open 5 of Chart.js ADR 0108.
+      Chart.js ADR 0138 (`Math.round` is `roundToDouble()`) is accepted (2026-11-13): its code passes
+      the tests. It supersedes the `jsRound` parts of Chart.js ADR 0045.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -2100,8 +2102,9 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   index throws a `RangeError`), `jsLessThan` (the operator `a < b` on raw values: two strings
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036) and the
   `undefined` sentinel (Chart.js ADR 0043). `Math.hypot(a, b)` has no runtime function: it is
-  `math.sqrt(a * a + b * b)` (Chart.js ADR 0135). `Math.pow(x, 2)` is `math.pow(x, 2.0)` (Chart.js
-  ADR 0136). `Math.max` and `Math.min` have no
+  `math.sqrt(a * a + b * b)` (Chart.js ADR 0135). `Math.round(x)` is `x.roundToDouble()` (Chart.js
+  ADR 0138), and `Math.pow(x, 2)` is `math.pow(x, 2.0)` (Chart.js ADR 0136). `Math.max` and
+  `Math.min` have no
   runtime function: they are `dart:math` `max` and `min` with the type argument `double`, explicit
   or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), and
   `check:js-semantics` flags a `num` type argument (Chart.js ADR 0134). `lib/js_semantics.dart` exports each

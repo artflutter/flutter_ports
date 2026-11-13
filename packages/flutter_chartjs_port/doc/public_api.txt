@@ -620,7 +620,6 @@ jsOrZero
 jsOwnPropertyNames
 jsParseFloat
 jsPromiseAll
-jsRound
 jsRunWithMicrotaskCheckpoint
 jsSet
 jsSetIndex

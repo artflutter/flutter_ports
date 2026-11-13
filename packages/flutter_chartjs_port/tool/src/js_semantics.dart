@@ -59,14 +59,8 @@ const List<JsSemanticsRule> jsSemanticsRules = [
   JsSemanticsRule(
     '.round()',
     r'\.round\(\)',
-    'Dart round() returns an int, rounds halves away from zero and throws '
-        'on NaN and infinities; JS Math.round rounds halves up. Use jsRound.',
-  ),
-  JsSemanticsRule(
-    '.roundToDouble()',
-    r'\.roundToDouble\(\)',
-    'roundToDouble() rounds halves away from zero; JS Math.round rounds '
-        'halves up. Use jsRound.',
+    'Dart round() returns an int and throws on NaN and infinities. Use '
+        'roundToDouble() (Chart.js ADR 0138).',
   ),
   JsSemanticsRule(
     '.floor()',

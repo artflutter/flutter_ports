@@ -6,7 +6,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart' as helpers;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,7 +23,7 @@ import '../support/jasmine.dart';
 //
 // The cases that call `acquireChart` are `testWidgets` cases (Chart.js ADR
 // 0022, sections 1 and 2). Thus the file runs on the VM only, although
-// helpers.dom.dart is a pure-layer root. `Math.round` is `jsRound`.
+// helpers.dom.dart is a pure-layer root. `Math.round` is `roundToDouble()`.
 //
 // The two `getRelativePosition` cases with a bar chart: the `onHover`
 // option is a Dart function of the chart event. `getRelativePosition`
@@ -183,8 +182,8 @@ void main() {
       helpers.retinaScale(chart, devicePixelRatio, true);
 
       final canvas = chart.canvas!;
-      expect(canvas.width, jsRound(chartWidth * devicePixelRatio));
-      expect(canvas.height, jsRound(chartHeight * devicePixelRatio));
+      expect(canvas.width, (chartWidth * devicePixelRatio).roundToDouble());
+      expect(canvas.height, (chartHeight * devicePixelRatio).roundToDouble());
 
       expect(chart.width, chartWidth);
       expect(chart.height, chartHeight);

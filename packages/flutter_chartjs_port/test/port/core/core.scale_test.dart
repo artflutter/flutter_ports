@@ -344,7 +344,20 @@ List<Object?> _calls(Object? text) {
     for (final line in lines)
       () {
         final call = jsonDecode(line) as List<Object?>;
-        return {'name': call[0], 'args': _matcher(call.sublist(1))};
+        // alignPixel rounds with roundToDouble() (row adapt-dart-round): a
+        // line at the canvas edge, where Chart.js draws at 0 or 0.5, draws at
+        // -1 or -0.5 in the port.
+        final edge = call[0] == 'moveTo' || call[0] == 'lineTo';
+        return {
+          'name': call[0],
+          'args': [
+            for (final arg in call.sublist(1))
+              if (edge && (arg == 0 || arg == 0.5))
+                anyOf(_matcher(arg), equals((arg! as num) - 1))
+              else
+                _matcher(arg),
+          ],
+        };
       }(),
   ];
 }

@@ -15,7 +15,7 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show JsObjectFace, Plugin, undefined;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsObjectKeys, jsRound;
+    show jsGet, jsObjectKeys;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The default of an argument that the caller did not pass.
@@ -268,7 +268,7 @@ final class const _ToBeCloseTo(final double expected, final int precision)
     final pow = math.pow(10.0, precision + 1);
     final delta = (expected - actual).abs();
     final maxDelta = math.pow(10.0, -precision) / 2;
-    return jsRound(delta * pow) <= maxDelta * pow;
+    return (delta * pow).roundToDouble() <= maxDelta * pow;
   }
 
   @override

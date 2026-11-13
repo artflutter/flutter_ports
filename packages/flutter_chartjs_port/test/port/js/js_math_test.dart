@@ -77,37 +77,6 @@ void main() {
     });
   });
 
-  group('jsRound', () {
-    // DDC canonicalizes -0 inside const aggregates; build signed zeros.
-    final negativeZero = -double.parse('0');
-    final cases = <(double, double)>[
-      (0.5, 1),
-      (1.5, 2),
-      (2.5, 3),
-      (-0.5, negativeZero),
-      (-1.5, -1),
-      (-2.5, -2),
-      (0.49999999999999994, 0),
-      (-0.49999999999999994, negativeZero),
-      (4503599627370495.5, 4503599627370496),
-      (-4503599627370495.5, -4503599627370495),
-      (4503599627370497, 4503599627370497),
-      (1e300, 1e300),
-      (0.4, 0),
-      (-0.4, negativeZero),
-      (0, 0),
-      (negativeZero, negativeZero),
-      (double.nan, double.nan),
-      (double.infinity, double.infinity),
-      (double.negativeInfinity, double.negativeInfinity),
-    ];
-    for (final (x, expected) in cases) {
-      test('Math.round($x) is $expected', () {
-        expect(jsRound(x), _isSameNumber(expected));
-      });
-    }
-  });
-
   group('jsToInt32', () {
     final negativeZero = -double.parse('0');
     final cases = <(double, double)>[

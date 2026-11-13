@@ -444,7 +444,9 @@ void main() {
         (12.0, 12.0),
         (10.5, 11.0),
         (10.49, 10.0),
-        (-2.5, -2.0),
+        // roundToDouble() rounds a negative half away from zero, where
+        // Math.round gives -2 (row adapt-dart-round).
+        (-2.5, -3.0),
         (399.6, 400.0),
       ]) {
         final event = NativeEvent(

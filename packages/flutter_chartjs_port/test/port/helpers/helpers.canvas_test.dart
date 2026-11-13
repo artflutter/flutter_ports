@@ -470,10 +470,13 @@ void main() {
       expect(alignPixel(_Chart(1), 10.3, 4), 10);
     });
 
-    test('rounds halves up, as Math.round', () {
+    test('rounds a half away from zero (Chart.js ADR 0138)', () {
       expect(alignPixel(_Chart(2), 10.25, 0), 10.5);
-      // -20.5 rounds to -20: Math.round, not roundToDouble.
-      expect(alignPixel(_Chart(2), -10.25, 0), -10);
+      // -20.5 rounds to -21, where Math.round gives -20.
+      expect(alignPixel(_Chart(2), -10.25, 0), -10.5);
+      // A 1 px line at 0 draws at -0.5, where upstream draws it at 0.5 (row
+      // adapt-dart-round).
+      expect(alignPixel(_Chart(1), 0, 1), -0.5);
     });
 
     test('gives NaN for a NaN width', () {
