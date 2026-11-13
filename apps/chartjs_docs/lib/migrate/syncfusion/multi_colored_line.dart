@@ -26,8 +26,8 @@ const List<(int, Color)> _rainfall = [
 ];
 
 // A segment from point i - 1 to point i takes the color of point i.
-Object? _segmentColor(JsObjectFace segment) =>
-    ChartPaint.solid(_rainfall[(segment['p1DataIndex']! as num).toInt()].$2);
+ChartPaint _segmentColor(ScriptableLineSegmentContext segment) =>
+    ChartPaint.solid(_rainfall[segment.p1DataIndex].$2);
 
 // The marker in the tooltip takes the color of the point.
 TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, TooltipItem item) =>
@@ -75,9 +75,7 @@ final ChartConfig _config = ChartConfig(
       borderWidth: 2,
       pointRadius: 0,
       pointHoverRadius: 0,
-      extra: const {
-        'segment': {'borderColor': _segmentColor},
-      },
+      segment: const LineSegmentStyle(borderColor: _segmentColor),
     ),
   ],
   maintainAspectRatio: false,

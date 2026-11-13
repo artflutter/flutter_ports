@@ -39,6 +39,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' show PointElement;
 import 'package:meta/meta.dart' show internal, protected;
 
 /// helpers.options.ts:43 `numberOrZero`: `+v || 0`.
@@ -999,11 +1000,37 @@ final class ScriptableTooltipContext(super.prototype) extends ContextObject {
 }
 
 /// index.d.ts:35 `ScriptableLineSegmentContext`: `{type: 'segment', p0, p1,
-/// p0DataIndex, p1DataIndex, datasetIndex}` (helpers.segment.js:315).
-final class ScriptableLineSegmentContext(super.prototype)
-    extends ContextObject {
-  /// A segment context with the parent [prototype].
-  this;
+/// p0DataIndex, p1DataIndex, datasetIndex}` (helpers.segment.js:315), the
+/// argument of each function of a `LineSegmentStyle` (Chart.js ADR 0142).
+///
+/// The getters are typed: [p0] and [p1] are the points at the ends of the
+/// part, and the three indexes are `int`. The face (`JsObjectFace`) still
+/// gives the keys by name, in the order of the upstream literal.
+final class ScriptableLineSegmentContext extends ContextObject {
+  /// A segment context with the parent [prototype], with no own key.
+  new(super.prototype);
+
+  /// The context of the part from [p0] to [p1] (helpers.segment.js:315-321),
+  /// with the own keys of the upstream literal in its order. A null
+  /// [datasetIndex] is the `undefined` of a line without one.
+  // DIVERGES(chartjs): adapt-native-line-segment-style, typed fields.
+  new segment(
+    Object? prototype, {
+    required PointElement this._p0,
+    required PointElement this._p1,
+    required int this._p0DataIndex,
+    required int this._p1DataIndex,
+    required int? datasetIndex,
+  }) : _type = 'segment',
+       _datasetIndex = datasetIndex ?? undefined,
+       super._withNames(prototype, [
+         'type',
+         'p0',
+         'p1',
+         'p0DataIndex',
+         'p1DataIndex',
+         'datasetIndex',
+       ]);
 
   Object? _type = _unset;
   Object? _p0 = _unset;
@@ -1012,20 +1039,20 @@ final class ScriptableLineSegmentContext(super.prototype)
   Object? _p1DataIndex = _unset;
   Object? _datasetIndex = _unset;
 
-  /// `p0`.
-  Object? get p0 => _fieldRead(_p0, 'p0');
+  /// `p0`: the point at the start of the part.
+  PointElement get p0 => _fieldRead(_p0, 'p0')! as PointElement;
 
-  /// `p1`.
-  Object? get p1 => _fieldRead(_p1, 'p1');
+  /// `p1`: the point at the end of the part.
+  PointElement get p1 => _fieldRead(_p1, 'p1')! as PointElement;
 
-  /// `p0DataIndex`.
-  Object? get p0DataIndex => _fieldRead(_p0DataIndex, 'p0DataIndex');
+  /// `p0DataIndex`: the data index of [p0].
+  int get p0DataIndex => _fieldRead(_p0DataIndex, 'p0DataIndex')! as int;
 
-  /// `p1DataIndex`.
-  Object? get p1DataIndex => _fieldRead(_p1DataIndex, 'p1DataIndex');
+  /// `p1DataIndex`: the data index of [p1].
+  int get p1DataIndex => _fieldRead(_p1DataIndex, 'p1DataIndex')! as int;
 
-  /// `datasetIndex`.
-  Object? get datasetIndex => _fieldRead(_datasetIndex, 'datasetIndex');
+  /// `datasetIndex`: the index of the dataset of the line.
+  int get datasetIndex => _fieldRead(_datasetIndex, 'datasetIndex')! as int;
 
   @override
   Object? fieldGet(String name) => switch (name) {

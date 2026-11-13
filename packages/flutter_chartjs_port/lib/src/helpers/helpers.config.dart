@@ -77,7 +77,14 @@ import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show capitalize, isArray, isFunction, isObject, resolveObjectKey;
+    show
+        capitalize,
+        isArray,
+        isFunction,
+        isObject,
+        mergeNativeOptionValues,
+        nativeMergeKind,
+        resolveObjectKey;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
@@ -106,7 +113,6 @@ import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:meta/meta.dart';
 
@@ -2421,16 +2427,8 @@ Object? _resolveScriptable(
 
 Object? _resolveScriptableReturn(String prop, Object? value, Object? proxy) {
   // DIVERGES(chartjs): adapt-text-style-fonts, a returned font merges too.
-  if (value is TooltipCallbacks) {
-    return _mergeTooltipCallbacks(
-      _targetGet(proxy, '_scopes')! as List<Object?>,
-      proxy,
-      prop,
-      value,
-    );
-  }
-  if (value is TextStyle) {
-    return _mergeTextStyles(
+  if (value != null && nativeMergeKind(value) != 0) {
+    return _mergeNativeOptions(
       _targetGet(proxy, '_scopes')! as List<Object?>,
       proxy,
       prop,
@@ -2685,11 +2683,15 @@ Object _createSubResolver(
 /// wins in the sub-resolver upstream. The result is a [ChartTextStyle] when
 /// the lowest style is one, or `false` where `createSubResolver` gives
 /// `false`.
-Object _mergeTextStyles(
+///
+/// The other kinds of [nativeMergeKind] merge in the same way: the tooltip
+/// callbacks (Chart.js ADR 0125) and a line segment style (Chart.js ADR
+/// 0142). A value of another kind in a scope takes no part.
+Object _mergeNativeOptions(
   List<Object?> parentScopes,
   Object? resolver,
   String prop,
-  TextStyle value,
+  Object value,
 ) {
   final rootScopes = _targetGet(resolver, '_rootScopes')! as List<Object?>;
   final fallback = _resolveFallback(
@@ -2719,58 +2721,13 @@ Object _mergeTextStyles(
       return false;
     }
   }
-  var merged = value;
-  var first = true;
+  final kind = nativeMergeKind(value);
+  Object? merged;
   for (final style in set.toList().reversed) {
-    if (style is! TextStyle) continue;
-    merged = first ? style : merged.merge(style);
-    first = false;
+    if (nativeMergeKind(style) != kind) continue;
+    merged = merged == null ? style : mergeNativeOptionValues(merged, style);
   }
-  return merged;
-}
-
-Object _mergeTooltipCallbacks(
-  List<Object?> parentScopes,
-  Object? resolver,
-  String prop,
-  TooltipCallbacks value,
-) {
-  final rootScopes = _targetGet(resolver, '_rootScopes')! as List<Object?>;
-  final fallback = _resolveFallback(
-    _targetGet(resolver, '_fallback'),
-    prop,
-    value,
-  );
-  final twice = identical(parentScopes, rootScopes);
-  final allScopes = twice
-      ? [...parentScopes]
-      : [...parentScopes, ...rootScopes];
-  final set = <Object?>{value};
-  var key = _addScopesFromKey(
-    set,
-    allScopes,
-    prop,
-    jsTruthy(fallback) ? fallback : prop,
-    value,
-    twice,
-  );
-  if (key == null) {
-    return false;
-  }
-  if (!identical(fallback, undefined) && fallback != prop) {
-    key = _addScopesFromKey(set, allScopes, fallback, key, value, twice);
-    if (key == null) {
-      return false;
-    }
-  }
-  var merged = value;
-  var first = true;
-  for (final style in set.toList().reversed) {
-    if (style is! TooltipCallbacks) continue;
-    merged = first ? style : merged.merge(style);
-    first = false;
-  }
-  return merged;
+  return merged ?? value;
 }
 
 /// helpers.config.ts:360 `addScopesFromKey`.
@@ -2837,11 +2794,8 @@ Object? _resolveWithPrefixes(
     );
     if (!identical(value, undefined)) {
       // DIVERGES(chartjs): adapt-text-style-fonts, the fonts merge.
-      if (value is TooltipCallbacks) {
-        return _mergeTooltipCallbacks(scopes, proxy, prop, value);
-      }
-      if (value is TextStyle) {
-        return _mergeTextStyles(scopes, proxy, prop, value);
+      if (value != null && nativeMergeKind(value) != 0) {
+        return _mergeNativeOptions(scopes, proxy, prop, value);
       }
       return _needsSubResolver(prop, value)
           ? _createSubResolver(scopes, proxy, prop, value)

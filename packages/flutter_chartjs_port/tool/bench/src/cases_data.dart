@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 
 import 'harness.dart';
 
@@ -207,16 +208,10 @@ List<BenchCase> dataCases() => [
     'segment/compute_1k_styled',
     () {
       final style = _lineStyle();
-      final red = <String, Object?>{
-        ...style,
-        'borderColor': const ChartPaint.solid(ui.Color(0xffff0000)),
-      };
-      final segmentOptions = <String, Object?>{
-        'setContext': (Object? ctx) {
-          final p0 = (ctx! as Map<String, Object?>)['p0']! as PointElement;
-          return p0.y >= 48 ? red : style;
-        },
-      };
+      final segmentOptions = LineSegmentStyle(
+        borderColor: (s) =>
+            s.p0.y >= 48 ? const ChartPaint.solid(ui.Color(0xffff0000)) : null,
+      );
       final line = _Line(_linePoints(1000), style, chart: _Chart());
       return (n) {
         var acc = 0;

@@ -232,6 +232,8 @@ import 'hand/controller.line/segments/gradient.dart'
     as controller_line_segments_gradient;
 import 'hand/controller.line/segments/range.dart'
     as controller_line_segments_range;
+import 'hand/controller.line/segments/single.dart'
+    as controller_line_segments_single;
 import 'hand/controller.line/segments/slope.dart'
     as controller_line_segments_slope;
 import 'hand/controller.line/segments/spanGaps.dart'
@@ -1159,6 +1161,10 @@ final Map<String, HandFixture> handFixtures = {
   'controller.line/segments/range.js': (
     load: controller_line_segments_range.fixture,
     sha256: 'fc55b22345c7',
+  ),
+  'controller.line/segments/single.js': (
+    load: controller_line_segments_single.fixture,
+    sha256: 'c5600276f007',
   ),
   'controller.line/segments/slope.js': (
     load: controller_line_segments_slope.fixture,

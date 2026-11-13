@@ -259,9 +259,8 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'segment',
     section: 'segment',
-    type: 'Map',
-    extra: true,
-    fallback: 'undefined',
+    type: 'LineSegmentStyle',
+    fallback: 'none',
   ),
   DocProperty(
     'shadow',
@@ -720,17 +719,18 @@ DocPageContent lineChartPage() => DocPageContent(
           title: 'Segment',
           body: [
             DocParagraph(
-              'Scriptable options in the `segment` Map change the style of '
-              'a part of the line. All `border*` options and '
-              '`backgroundColor` can go in this Map. The chart resolves '
-              'the styles for each part of the line between two points. A '
-              'function that returns `undefined` keeps the style of the '
-              'line.',
+              'The functions of a `LineSegmentStyle` in `segment` change the '
+              'style of a part of the line. It has a function for each '
+              '`border*` option and for `backgroundColor`. The chart calls '
+              'them for each part of the line between two points. A '
+              'function that returns `null` keeps the style of the line.',
             ),
             DocTip('To style a gap, set `spanGaps` to `true`.'),
-            DocParagraph('The context of a segment function has these keys:'),
+            DocParagraph(
+              'A segment function takes a `ScriptableLineSegmentContext`, '
+              'with these fields:',
+            ),
             DocTable([
-              ('type', "The string `'segment'`."),
               ('p0', 'The first point element.'),
               ('p1', 'The second point element.'),
               ('p0DataIndex', 'The index of the first point in the data.'),
@@ -738,9 +738,8 @@ DocPageContent lineChartPage() => DocPageContent(
               ('datasetIndex', 'The index of the dataset.'),
             ]),
             DocParagraph(
-              'A segment function reads the context by name through '
-              '`JsObjectFace`. This example draws a falling part in red. '
-              'It draws a gap with a dashed gray line.',
+              'This example draws a falling part in red. It draws a gap '
+              'with a dashed gray line.',
             ),
             LiveExample(
               id: 'segment',

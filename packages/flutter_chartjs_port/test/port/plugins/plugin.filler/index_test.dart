@@ -2,10 +2,13 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' show Color;
+
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsLessThan;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
@@ -13,6 +16,7 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -46,9 +50,11 @@ import 'plugin_filler_reference.dart';
 /// The named functions of the configs of the generator, with the same
 /// bodies.
 final Map<String, Object?> _functions = {
-  // (ctx) => (ctx.p0DataIndex < 2 ? 'red' : 'blue')
-  'segStyle': (Object? ctx) =>
-      jsLessThan(jsGet(ctx, 'p0DataIndex'), 2) ? 'red' : 'blue',
+  // (ctx) => (ctx.p0DataIndex < 2 ? 'red' : 'blue'): a function of a
+  // LineSegmentStyle (Chart.js ADR 0142).
+  'segStyle': (ScriptableLineSegmentContext s) => s.p0DataIndex < 2
+      ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
+      : const ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
   // () => false
   'noLayout': () => false,
 };

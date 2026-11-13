@@ -1,20 +1,24 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.line/segments/gradient.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-line-segment-style, a LineSegmentStyle.
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:ui' show Offset;
 
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
-  Object? getGradient(Object? context) {
+  ChartPaint getGradient(ScriptableLineSegmentContext context) {
     // Upstream: const {chart, p0, p1} = context;
-    final p0 = jsGet(context, 'p0')! as Element;
-    final p1 = jsGet(context, 'p1')! as Element;
+    final p0 = context.p0 as Element;
+    final p1 = context.p1 as Element;
     // Upstream: const {x: x0} = p0.getProps(['x'], true);
     final x0 = p0.getProps(const ['x'], true)['x'];
     // Upstream: const {x: x1} = p1.getProps(['x'], true);
@@ -56,7 +60,7 @@ Map<String, Object?> fixture() {
             'pointBorderWidth': 0,
             'pointRadius': 10,
             'borderWidth': 5,
-            'segment': <String, Object?>{'borderColor': getGradient},
+            'segment': LineSegmentStyle(borderColor: getGradient),
           },
         ],
       },

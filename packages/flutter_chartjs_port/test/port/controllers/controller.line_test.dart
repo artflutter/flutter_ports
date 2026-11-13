@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show jsObjectKeys, jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -29,6 +31,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/segment_style.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
 import 'controller_line_reference.dart';
@@ -63,12 +66,14 @@ const String _otherLineCase = 'interfaces: a dataset element of another class';
 /// The named functions of the configs of the generator, with the same
 /// bodies.
 final Map<String, Object?> _functions = {
-  // (ctx) => (ctx.p0DataIndex === 1 ? 'red' : undefined)
-  'segColor': (Object? ctx) => jsGet(ctx, 'p0DataIndex') == 1
+  // (ctx) => (ctx.p0DataIndex === 1 ? 'red' : undefined): a function of a
+  // LineSegmentStyle (Chart.js ADR 0142).
+  'segColor': (ScriptableLineSegmentContext s) => s.p0DataIndex == 1
       ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
-      : undefined,
+      : null,
   // (ctx) => (ctx.p1DataIndex === 3 ? 5 : undefined)
-  'segWidth': (Object? ctx) => jsGet(ctx, 'p1DataIndex') == 3 ? 5.0 : undefined,
+  'segWidth': (ScriptableLineSegmentContext s) =>
+      s.p1DataIndex == 3 ? 5.0 : null,
   // (ctx) => {
   //   if (ctx.dataIndex === 1) ctx.parsed.x = 10;
   //   return 3;
@@ -379,7 +384,9 @@ void main() {
         <Object?>[
           <String, Object?>{
             'data': <Object?>[3.0, 1.0, null, 4.0, 2.0],
-            'segment': <String, Object?>{'borderColor': _functions['segColor']},
+            'segment': nativeSegmentStyle({
+              'borderColor': _functions['segColor'],
+            }),
           },
           <String, Object?>{
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],

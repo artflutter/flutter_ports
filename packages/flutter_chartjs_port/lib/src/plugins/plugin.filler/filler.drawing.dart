@@ -357,8 +357,8 @@ void _fill(
 
   for (final (source: src, target: tgt, :start, :end) in parts) {
     // `const {style: {backgroundColor = color} = {}} = src`. The style of
-    // a segment of `helpers.segment` is a typed `SegmentStyle` (Chart.js
-    // ADR 0054 §9); another object reads by name.
+    // a segment of `helpers.segment` is a `SegmentStyle` (Chart.js ADR
+    // 0142); another object reads by name.
     final style = src.style;
     final backgroundColor = switch (style) {
       null => color,

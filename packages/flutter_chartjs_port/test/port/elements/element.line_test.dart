@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart'
     show InterpolatedPoint;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
@@ -22,6 +21,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -68,22 +68,19 @@ final class _Chart() implements types.Chart {
 }
 
 /// The option `segment` of a reference case: `'empty'` is `{}`, `'style'`
-/// has the `setContext` of the generator.
-AnyObject _segmentOption(String kind) => switch (kind) {
-  'empty' => <String, Object?>{},
-  _ => <String, Object?>{
-    'setContext': (Object? ctx) {
-      final late = jsToNumber(jsGet(ctx, 'p0DataIndex')) >= 2;
-      return <String, Object?>{
-        'borderColor': ChartPaint.solid(
-          late
-              ? const ui.Color.fromRGBO(0, 0, 255, 1)
-              : const ui.Color.fromRGBO(255, 0, 0, 1),
-        ),
-        'borderWidth': late ? 4.0 : 2.0,
-      };
-    },
-  },
+/// has the `setContext` of the generator. The port holds a
+/// [LineSegmentStyle] (Chart.js ADR 0142): `{}` is a style with no function,
+/// and the style of `setContext` is two functions.
+LineSegmentStyle _segmentOption(String kind) => switch (kind) {
+  'empty' => const LineSegmentStyle(),
+  _ => LineSegmentStyle(
+    borderColor: (s) => ChartPaint.solid(
+      s.p0DataIndex >= 2
+          ? const ui.Color.fromRGBO(0, 0, 255, 1)
+          : const ui.Color.fromRGBO(255, 0, 0, 1),
+    ),
+    borderWidth: (s) => s.p0DataIndex >= 2 ? 4.0 : 2.0,
+  ),
 };
 
 /// The point element `{x, y, skip, stop}` of [point]. A null `skip` or

@@ -81,6 +81,8 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillTarget;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show lineSegmentStyleOf;
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
     show dataLabelLinesOf;
 
@@ -377,8 +379,11 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         _setProperty(access, 'points', points);
       }
 
+      // The typed value of the option (Chart.js ADR 0142); a falsy value
+      // stays.
+      final segment = this.options.readKey(OptionKey.segment);
       final options = resolveDatasetElementOptions(mode)
-        ..storeKey(OptionKey.segment, this.options.readKey(OptionKey.segment));
+        ..storeKey(OptionKey.segment, lineSegmentStyleOf(segment) ?? segment);
       updateElement(
         target,
         null,
@@ -474,11 +479,11 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final vAxis = vScale!.axis;
     final options = this.options;
     final spanGaps = options.readKey(OptionKey.spanGaps);
-    final segment = options.readKey(OptionKey.segment);
+    final segment = lineSegmentStyleOf(options.readKey(OptionKey.segment));
     // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:130)
     // and `if (segment)` (:134) test two locals of this call: once here.
     final hasStack = stacked != types.StackMode.off;
-    final hasSegment = jsTruthy(segment);
+    final hasSegment = segment != null;
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)
         : double.infinity;

@@ -1,16 +1,15 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.filler/line/segments/gap.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-line-segment-style, a LineSegmentStyle.
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'dart:ui' show Color;
 
-// `ctx.p0` and `ctx.p1` are point elements. `ctx.p0.skip` is the access by
-// name of the element (Chart.js ADR 0017, section 5): `jsGet` gives
-// `undefined` for an element.
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+
+// `ctx.p0` and `ctx.p1` are point elements: `ctx.p0.skip || ctx.p1.skip`.
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -25,13 +24,12 @@ Map<String, Object?> fixture() => <String, Object?>{
           'backgroundColor': 'black',
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
           'fill': FillTarget.toOrigin,
-          'segment': <String, Object?>{
-            'backgroundColor': (Object? ctx) =>
-                jsTruthy((jsGet(ctx, 'p0')! as Element)['skip']) ||
-                    jsTruthy((jsGet(ctx, 'p1')! as Element)['skip'])
-                ? 'red'
-                : undefined,
-          },
+          'segment': LineSegmentStyle(
+            backgroundColor: (ctx) =>
+                (ctx.p0.skip ?? false) || (ctx.p1.skip ?? false)
+                ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
+                : null,
+          ),
           'spanGaps': true,
         },
       ],

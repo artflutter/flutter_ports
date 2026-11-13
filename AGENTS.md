@@ -402,8 +402,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `+` of `radius` and `hitRadius` (`jsAdd`), a `String` when an option is a string. The hit tests
     and `size` of `PointElement` and the `rAdjust` and `getCenterPoint` of `ArcElement` also add
     their options: two plain typed fields add as numbers, and a foreign or absent value takes
-    `jsAdd`. The style of a segment of `helpers.segment.dart` is a `SegmentStyle`, a typed record
-    with the face. `LineElement.updateControlPoints` takes a `ChartArea?`: Dart `null`
+    `jsAdd`. The style of a segment of `helpers.segment.dart` is a `SegmentStyle`, an immutable
+    object whose `==` is the compare of `styleChanged` (Chart.js ADR 0142). `LineElement.updateControlPoints` takes a `ChartArea?`: Dart `null`
     is the JS `undefined` of a chart without a layout. The `points` setter of `LineElement` takes
     `List<types.Element>` and copies a list that is not a `List<types.PointElement>` (Chart.js ADR 0028), unless its last copy
     holds the same elements (Chart.js ADR 0095). `lib/src/types/index.dart` also has `RadialLinearScale` and `LegendElement` (Chart.js ADR
@@ -1327,13 +1327,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (355 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (356 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
     `cubicInterpolationMode`, the 25 with `pointStyle`, the 142 with a `fill` (Chart.js ADR 0140;
-    the other 18 are moment skips), the 8 with a length and the 35 with an axis letter) also has
-    a hand port, of `<path>.js` or
+    the other 18 are moment skips), the 8 with a length, the 35 with an axis letter and the 1 with
+    a constant `segment` style) also has a hand port, of `<path>.js` or
     `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.
@@ -1470,6 +1470,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0140 (the option `fill` holds a `FillTarget`) is accepted (2026-11-13): its code
       passes the tests. It supersedes the `ChartFill` parts of Chart.js ADR 0052 §1 and the type of
       `FillerSource.fill` and the `source.fill != false` test of Chart.js ADR 0040 §6.
+      Chart.js ADR 0142 (the line option `segment` holds a `LineSegmentStyle`) is accepted
+      (2026-11-13): its code passes the tests. It supersedes, of Chart.js ADR 0054, the internal
+      `ScriptableLineSegmentContext` of §11, the typed record of the segment style of §9 and the
+      scope kind `SegmentOptions` of §2.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -2067,6 +2071,16 @@ The dataset option `clip` holds a `ChartClip` of `lib/src/types/chart_meta.dart`
 `ChartClip(left: 5, right: -2)` sets sides; a null or omitted side has no clip. A number, a bool or a Map stops a debug
 build. The typed API has `Dataset.clip`. The scale option `clip` stays a bool. `getMaxOverflow` of a dataset
 controller gives a `double?`, where Dart `null` is the JS `false` (row `adapt-max-overflow`).
+
+The line option `segment` holds a `LineSegmentStyle` of `lib/src/types/line_segment_style.dart` in raw and typed configs
+(Chart.js ADR 0142, row `adapt-native-line-segment-style`): seven typed functions of a `ScriptableLineSegmentContext`
+(typed `p0`, `p1`, `p0DataIndex`, `p1DataIndex` and `datasetIndex`), for example
+`LineSegmentStyle(borderColor: (s) => s.p0.skip == true ? red : null)`. `_doSplitByStyles` calls them in the key order of
+`readStyle`; a null function or result keeps the line style. The scopes merge with `LineSegmentStyle.merge`, as fonts merge
+(`nativeMergeKind` and `mergeNativeOptionValues` of `helpers.core.dart`, `_mergeNativeOptions` of `helpers.config.dart`).
+A Map or a constant stops a debug build. The typed API has `segment` on `LineDataset`, `ScatterDataset`, `RadarDataset`
+and `LineElementStyle`; `lib/chartjs.dart` exports both classes. The reference tests make the style from the `segment` Maps
+of the generators and compare the names of its functions (`test/support/segment_style.dart`).
 
 ## Porting rules
 

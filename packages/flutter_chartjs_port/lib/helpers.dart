@@ -15,8 +15,10 @@
 /// today, `Resolver` and `ContextResolver`; their class names
 /// `OptionResolver` and `OptionView` stay internal. The typed context
 /// classes (`ScriptableContext` and the others) stay internal too: a
-/// context is a `ContextObject`. So does `SegmentStyle`, the typed style
-/// of a line segment.
+/// context is a `ContextObject`. So does `SegmentStyle`, the style of a
+/// line segment. `ScriptableLineSegmentContext`, the argument of the
+/// functions of a `LineSegmentStyle`, is a name of
+/// `package:flutter_chartjs_port/chartjs.dart` (Chart.js ADR 0142).
 ///
 /// Next to `package:flutter_chartjs_port/chartjs.dart`, import it with a
 /// prefix, as `src/index.umd.ts` keeps the helpers in `Chart.helpers`.
@@ -85,8 +87,10 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         lookupByAxis,
         lookupByKey,
         measureText,
+        mergeNativeOptionValues,
         merger,
         mergerIf,
+        nativeMergeKind,
         nativeSegmentType,
         normalizeAngle,
         numberFormatOf,

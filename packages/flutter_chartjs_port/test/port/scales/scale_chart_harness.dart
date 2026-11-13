@@ -88,6 +88,7 @@ import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/legend_hit_box.dart';
 import '../../support/legend_item.dart';
+import '../../support/segment_style.dart';
 import '../../support/tick_label.dart';
 import '../canvas/path2d_record.dart';
 import '../helpers/rounded_rect_upstream.dart';
@@ -767,7 +768,12 @@ Object? copyReference(
         : throw ArgumentError.value(s, 'value', 'No function of this name'),
   final Map<String, Object?> map => <String, Object?>{
     for (final MapEntry(:key, :value) in map.entries)
-      key: copyReference(value, functions),
+      // The typed segment style of Chart.js ADR 0142.
+      key: key == 'segment' && value is Map<String, Object?>
+          ? nativeSegmentStyle(
+              copyReference(value, functions)! as Map<String, Object?>,
+            )
+          : copyReference(value, functions),
   },
   final List<Object?> list => <Object?>[
     for (final item in list) copyReference(item, functions),

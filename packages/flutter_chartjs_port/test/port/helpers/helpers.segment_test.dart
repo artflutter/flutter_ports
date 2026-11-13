@@ -4,15 +4,16 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/elements/element.point.dart'
     as element_point;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.segment.tests.js does not check
@@ -154,10 +155,6 @@ ChartGradient _gradient() => ChartGradient.linear(
   List<ui.Color>.empty(growable: true),
 );
 
-/// An object of a class, which `JSON.stringify` writes with its own
-/// enumerable properties.
-final class const _Leaf(final double v);
-
 /// SameValue on a number: `-0` does not equal `0`.
 Matcher _sameValue(double expected) => predicate<double>(
   (actual) => actual == expected && actual.isNegative == expected.isNegative,
@@ -165,53 +162,20 @@ Matcher _sameValue(double expected) => predicate<double>(
 );
 
 /// A segment `{start, end, loop, style}`. The default [style] is `isNull`,
-/// the JS `undefined` of [Segment.style].
+/// the JS `undefined` of [Segment.style]. A [SegmentStyle] compares with
+/// its `==`.
 Matcher _segment(double start, double end, bool loop, [Object? style]) =>
     isA<Segment>()
         .having((s) => s.start, 'start', _sameValue(start))
         .having((s) => s.end, 'end', _sameValue(end))
         .having((s) => s.loop, 'loop', loop)
-        .having((s) => _plainStyle(s.style), 'style', style ?? isNull);
-
-/// The style of a segment as a plain Map: the own keys of the typed style
-/// (a typed object with a face, Chart.js ADR 0054 §5) and their values, for
-/// the compare with [_style].
-Object? _plainStyle(Object? style) => style is JsObjectFace
-    ? <String, Object?>{for (final key in style.jsKeys()) key: style[key]}
-    : style;
+        .having((s) => s.style, 'style', style ?? isNull);
 
 /// The base options of the style cases.
 const AnyObject _base = {
   'borderColor': ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
   'borderWidth': 3.0,
 };
-
-/// The `readStyle` object (helpers.segment.js:337) of [_base] with the given
-/// values.
-Matcher _style({
-  Object? backgroundColor = undefined,
-  Object? borderDash = undefined,
-  Object? borderWidth = 3.0,
-  Object? borderColor = const ui.Color.fromRGBO(0, 0, 255, 1),
-}) => equals(<String, Object?>{
-  'backgroundColor': backgroundColor is ui.Color
-      ? ChartPaint.solid(backgroundColor)
-      : backgroundColor,
-  'borderCapStyle': undefined,
-  'borderDash': borderDash,
-  'borderDashOffset': undefined,
-  'borderJoinStyle': undefined,
-  'borderWidth': borderWidth,
-  'borderColor': borderColor is ui.Color
-      ? ChartPaint.solid(borderColor)
-      : borderColor,
-});
-
-/// The point of a segment context: `ctx.p0`.
-PointElement _p0(Object? ctx) => (ctx! as JsObjectFace)['p0']! as PointElement;
-
-/// The data index of a segment context: `ctx.p0DataIndex`.
-Object? _p0DataIndex(Object? ctx) => (ctx! as JsObjectFace)['p0DataIndex'];
 
 void main() {
   group('computeSegments', () {
@@ -512,22 +476,17 @@ void main() {
 
   group('segment styles', () {
     final chart = _Chart();
+    const blue = ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1));
+    const red = ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1));
 
     test('splits the line where the style changes', () {
-      final contexts = <JsObjectFace>[];
-      final segmentOptions = <String, Object?>{
-        'setContext': (JsObjectFace ctx) {
-          contexts.add(ctx);
-          return {
-            ..._base,
-            'borderColor': ChartPaint.solid(
-              _p0(ctx).y >= 2
-                  ? const ui.Color.fromRGBO(255, 0, 0, 1)
-                  : const ui.Color.fromRGBO(0, 0, 255, 1),
-            ),
-          };
+      final contexts = <ScriptableLineSegmentContext>[];
+      final segmentOptions = LineSegmentStyle(
+        borderColor: (s) {
+          contexts.add(s);
+          return s.p0.y >= 2 ? red : blue;
         },
-      };
+      );
       final line = _Line(
         _points('oooooo'),
         options: _base,
@@ -535,13 +494,8 @@ void main() {
         datasetIndex: 1,
       );
       expect(computeSegments(line, segmentOptions), [
-        _segment(0, 2, false, _style()),
-        _segment(
-          2,
-          5,
-          false,
-          _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
-        ),
+        _segment(0, 2, false, const SegmentStyle(borderColor: blue)),
+        _segment(2, 5, false, const SegmentStyle(borderColor: red)),
       ]);
       final ctx = contexts[0];
       expect(jsObjectKeys(ctx), [
@@ -554,56 +508,67 @@ void main() {
       ]);
       expect(ctx['chart'], 'c');
       expect(ctx['type'], 'segment');
+      expect(ctx.p0, same(line.points[0]));
+      expect(ctx.p1, same(line.points[1]));
+      expect(ctx.p0DataIndex, 0);
+      expect(ctx.p1DataIndex, 1);
+      expect(ctx.datasetIndex, 1);
       expect(ctx['p0'], same(line.points[0]));
-      expect(ctx['p1'], same(line.points[1]));
-      expect(ctx['p0DataIndex'], 0);
       expect(ctx['p1DataIndex'], 1);
-      expect(ctx['datasetIndex'], 1);
+      expect(contexts.map((s) => s.p1DataIndex), [1, 2, 3, 4, 5]);
     });
 
     test('gives undefined as the datasetIndex of a line without one', () {
-      final contexts = <JsObjectFace>[];
-      final segmentOptions = <String, Object?>{
-        'setContext': (JsObjectFace ctx) {
-          contexts.add(ctx);
-          return _base;
-        },
-      };
+      final contexts = <ScriptableLineSegmentContext>[];
       computeSegments(
         _Line(_points('ooo'), options: _base, chart: chart),
-        segmentOptions,
+        LineSegmentStyle(
+          borderWidth: (s) {
+            contexts.add(s);
+            return null;
+          },
+        ),
       );
       expect(jsObjectKeys(contexts[0]), contains('datasetIndex'));
       expect(contexts[0]['datasetIndex'], same(undefined));
     });
 
-    test('calls setContext with the segment options as this', () {
-      Object? self;
-      late final AnyObject segmentOptions;
-      segmentOptions = {
-        'setContext': JsFunction((Object? thisArg, Object? ctx) {
-          self = thisArg;
-          return _base;
-        }),
+    test('calls the functions in the key order of readStyle', () {
+      // helpers.segment.js:337-347: the order of the keys of the literal.
+      final calls = <String>[];
+      T? Function(ScriptableLineSegmentContext) record<T>(String name) => (s) {
+        calls.add('$name ${s.p0DataIndex}');
+        return null;
       };
       computeSegments(
         _Line(_points('ooo'), options: _base, chart: chart),
-        segmentOptions,
+        LineSegmentStyle(
+          borderColor: record('borderColor'),
+          backgroundColor: record('backgroundColor'),
+          borderWidth: record('borderWidth'),
+          borderDash: record('borderDash'),
+          borderDashOffset: record('borderDashOffset'),
+          borderCapStyle: record('borderCapStyle'),
+          borderJoinStyle: record('borderJoinStyle'),
+        ),
       );
-      expect(self, same(segmentOptions));
+      expect(calls, [
+        for (final i in [0, 1]) ...[
+          'backgroundColor $i',
+          'borderCapStyle $i',
+          'borderDash $i',
+          'borderDashOffset $i',
+          'borderJoinStyle $i',
+          'borderWidth $i',
+          'borderColor $i',
+        ],
+      ]);
     });
 
     test('moves the style ends off skipped points', () {
-      final redAt2 = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'borderColor': ChartPaint.solid(
-            _p0DataIndex(ctx) == 2
-                ? const ui.Color.fromRGBO(255, 0, 0, 1)
-                : const ui.Color.fromRGBO(0, 0, 255, 1),
-          ),
-        },
-      };
+      final redAt2 = LineSegmentStyle(
+        borderColor: (s) => s.p0DataIndex == 2 ? red : blue,
+      );
       expect(
         computeSegments(
           _Line(
@@ -614,14 +579,9 @@ void main() {
           redAt2,
         ),
         [
-          _segment(0, 1, false, _style()),
-          _segment(
-            1,
-            3,
-            false,
-            _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
-          ),
-          _segment(3, 5, false, _style()),
+          _segment(0, 1, false, const SegmentStyle(borderColor: blue)),
+          _segment(1, 3, false, const SegmentStyle(borderColor: red)),
+          _segment(3, 5, false, const SegmentStyle(borderColor: blue)),
         ],
       );
       expect(
@@ -629,18 +589,14 @@ void main() {
           _Line(_points('oosooo'), options: _base, chart: chart),
           redAt2,
         ),
-        [_segment(0, 1, false, _style()), _segment(3, 5, false, _style())],
+        [
+          _segment(0, 1, false, const SegmentStyle(borderColor: blue)),
+          _segment(3, 5, false, const SegmentStyle(borderColor: blue)),
+        ],
       );
-      final redTo3 = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'borderColor': ChartPaint.solid(
-            (ctx! as JsObjectFace)['p1DataIndex'] == 3
-                ? const ui.Color.fromRGBO(255, 0, 0, 1)
-                : const ui.Color.fromRGBO(0, 0, 255, 1),
-          ),
-        },
-      };
+      final redTo3 = LineSegmentStyle(
+        borderColor: (s) => s.p1DataIndex == 3 ? red : blue,
+      );
       expect(
         computeSegments(
           _Line(
@@ -651,29 +607,14 @@ void main() {
           redTo3,
         ),
         [
-          _segment(0, 1, false, _style()),
-          _segment(
-            1,
-            3,
-            false,
-            _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
-          ),
-          _segment(3, 5, false, _style()),
+          _segment(0, 1, false, const SegmentStyle(borderColor: blue)),
+          _segment(1, 3, false, const SegmentStyle(borderColor: red)),
+          _segment(3, 5, false, const SegmentStyle(borderColor: blue)),
         ],
       );
     });
 
     test('keeps the loop flag of a loop', () {
-      final redAt2 = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'borderColor': ChartPaint.solid(
-            _p0DataIndex(ctx) == 2
-                ? const ui.Color.fromRGBO(255, 0, 0, 1)
-                : const ui.Color.fromRGBO(0, 0, 255, 1),
-          ),
-        },
-      };
       expect(
         computeSegments(
           _Line(
@@ -683,223 +624,182 @@ void main() {
             loop: true,
             fullLoop: true,
           ),
-          redAt2,
+          LineSegmentStyle(borderColor: (s) => s.p0DataIndex == 2 ? red : blue),
         ),
         [
-          _segment(0, 2, true, _style()),
-          _segment(
-            2,
-            3,
-            true,
-            _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
-          ),
+          _segment(0, 2, true, const SegmentStyle(borderColor: blue)),
+          _segment(2, 3, true, const SegmentStyle(borderColor: red)),
         ],
       );
     });
 
-    test('tells null from undefined', () {
-      final nullAt1 = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          if (_p0DataIndex(ctx) == 1) 'borderDash': null,
-        },
-      };
+    test('a null result keeps the line style, as undefined does', () {
+      // A null result is the `undefined` of a key that the segment options
+      // do not resolve: the style holds `undefined`, and the draw takes the
+      // value of the line options.
       expect(
         computeSegments(
           _Line(_points('oooo'), options: _base, chart: chart),
-          nullAt1,
+          LineSegmentStyle(
+            borderDash: (s) => s.p0DataIndex == 1 ? null : [2.0, 3.0],
+          ),
         ),
         [
-          _segment(0, 1, false, _style()),
-          _segment(1, 2, false, _style(borderDash: null)),
-          _segment(2, 3, false, _style()),
+          _segment(0, 1, false, const SegmentStyle(borderDash: [2.0, 3.0])),
+          _segment(1, 2, false, const SegmentStyle()),
+          _segment(2, 3, false, const SegmentStyle(borderDash: [2.0, 3.0])),
         ],
       );
     });
 
-    test('compares the JSON text of the styles', () {
-      // JSON.stringify writes NaN as null.
-      final nanAt1 = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'borderWidth': _p0DataIndex(ctx) == 1 ? double.nan : null,
-        },
-      };
+    test('compares lists item by item, and NaN as NaN', () {
+      // JSON.stringify writes two equal arrays the same, and each NaN as
+      // null.
       expect(
         computeSegments(
-          _Line(
-            _points('oooo'),
-            options: {..._base, 'borderWidth': null},
-            chart: chart,
+          _Line(_points('oooo'), options: _base, chart: chart),
+          LineSegmentStyle(
+            borderDash: (s) => [2.0, 3.0],
+            borderWidth: (s) => double.nan,
           ),
-          nanAt1,
-        ),
-        [_segment(0, 3, false, _style(borderWidth: null))],
-      );
-      final dash = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'borderDash': [2.0, 3.0],
-        },
-      };
-      expect(
-        computeSegments(
-          _Line(
-            _points('oooo'),
-            options: {
-              ..._base,
-              'borderDash': [2.0, 3.0],
-            },
-            chart: chart,
-          ),
-          dash,
         ),
         [
-          _segment(0, 3, false, _style(borderDash: [2.0, 3.0])),
+          _segment(
+            0,
+            3,
+            false,
+            const SegmentStyle(borderDash: [2.0, 3.0], borderWidth: double.nan),
+          ),
         ],
       );
     });
+
+    for (final (name, style) in [
+      (
+        'borderCapStyle',
+        LineSegmentStyle(
+          borderCapStyle: (s) =>
+              s.p0DataIndex == 1 ? ui.StrokeCap.round : ui.StrokeCap.butt,
+        ),
+      ),
+      (
+        'borderJoinStyle',
+        LineSegmentStyle(
+          borderJoinStyle: (s) =>
+              s.p0DataIndex == 1 ? ui.StrokeJoin.round : ui.StrokeJoin.bevel,
+        ),
+      ),
+    ]) {
+      test('splits where only $name changes', () {
+        // JSON.stringify writes the two keywords of upstream apart. The old
+        // JSON emulation of the port wrote `{}` for each enum value, and
+        // gave one segment here.
+        expect(
+          [
+            for (final s in computeSegments(
+              _Line(_points('oooo'), options: _base, chart: chart),
+              style,
+            ))
+              [s.start, s.end, s.loop],
+          ],
+          [
+            [0.0, 1.0, false],
+            [1.0, 2.0, false],
+            [2.0, 3.0, false],
+          ],
+        );
+      });
+    }
+
+    Matcher background(Object paint) => isA<SegmentStyle>().having(
+      (s) => s.backgroundColor,
+      'backgroundColor',
+      same(paint),
+    );
 
     test('compares gradients by identity', () {
       final g1 = _gradient();
       final g2 = _gradient();
-      final gradients = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'backgroundColor': _p0DataIndex(ctx) == 1 ? g2 : g1,
-        },
-      };
       final line = _Line(
         _points('oooo'),
         options: {..._base, 'backgroundColor': g1},
         chart: chart,
       );
-      expect(computeSegments(line, gradients), [
-        _segment(0, 1, false, _style(backgroundColor: same(g1))),
-        _segment(1, 2, false, _style(backgroundColor: same(g2))),
-        _segment(2, 3, false, _style(backgroundColor: same(g1))),
-      ]);
-      final sameGradient = <String, Object?>{
-        'setContext': (Object? ctx) => {..._base, 'backgroundColor': g1},
-      };
-      expect(computeSegments(line, sameGradient), hasLength(1));
-      // The replacer writes the first gradient as its cache index 0.
-      final zero = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'backgroundColor': _p0DataIndex(ctx) == 1 ? 0.0 : g1,
-        },
-      };
-      expect(() => computeSegments(line, zero), throwsArgumentError);
-    });
-
-    test('compares the JSON text of strings with escapes', () {
-      // The style at point 1 is [at1], the style at the other points is
-      // [other]. The result is the start, end and loop of each segment.
-      List<List<Object>> split(
-        AnyObject options,
-        AnyObject at1,
-        AnyObject other,
-      ) {
-        final segmentOptions = <String, Object?>{
-          'setContext': (Object? ctx) => {
-            ..._base,
-            ...(_p0DataIndex(ctx) == 1 ? at1 : other),
-          },
-        };
-        return [
-          for (final s in computeSegments(
-            _Line(
-              _points('oooo'),
-              options: {..._base, ...options},
-              chart: chart,
-            ),
-            segmentOptions,
-          ))
-            [s.start, s.end, s.loop],
-        ];
-      }
-
-      const three = [
-        [0.0, 1.0, false],
-        [1.0, 2.0, false],
-        [2.0, 3.0, false],
-      ];
-      // Without the escape of '"', both styles would give the text
-      // "borderCapStyle":"x","borderDash":"y".
       expect(
-        split(
-          {'borderCapStyle': 'x', 'borderDash': 'y'},
-          {'borderCapStyle': 'x","borderDash":"y'},
-          {'borderCapStyle': 'x', 'borderDash': 'y'},
+        computeSegments(
+          line,
+          LineSegmentStyle(
+            backgroundColor: (s) => s.p0DataIndex == 1 ? g2 : g1,
+          ),
         ),
-        three,
+        [
+          _segment(0, 1, false, background(g1)),
+          _segment(1, 2, false, background(g2)),
+          _segment(2, 3, false, background(g1)),
+        ],
       );
-      // Without the escape of '\', both styles would give "\u0000".
       expect(
-        split({'borderCapStyle': '\u0000'}, {'borderCapStyle': r'\u0000'}, {
-          'borderCapStyle': '\u0000',
-        }),
-        three,
+        computeSegments(line, LineSegmentStyle(backgroundColor: (s) => g1)),
+        hasLength(1),
       );
-      // JSON.stringify writes a lone surrogate as \ud800, not as U+FFFD.
-      expect(
-        split({'borderCapStyle': '\uD800'}, {'borderCapStyle': '�'}, {
-          'borderCapStyle': '\uD800',
-        }),
-        three,
-      );
-      // Equal strings that are not the same object give the same text.
-      for (final value in [
-        'a"b',
-        r'a\b',
-        '\u0000\b\t\n\f\r\u001f\u007f',
-        '\uD800',
-        'x\uDC00',
-        '😀',
-        'é€',
-      ]) {
-        AnyObject copy() => {
-          'borderCapStyle': String.fromCharCodes(value.codeUnits),
-        };
-        expect(split(copy(), copy(), copy()), [
-          [0.0, 3.0, false],
-        ], reason: value);
-      }
     });
 
-    test('does not split without setContext', () {
+    test('a color of the line options that is not a paint throws', () {
+      expect(
+        () => computeSegments(
+          _Line(
+            _points('oooo'),
+            options: {..._base, 'backgroundColor': 0.0},
+            chart: chart,
+          ),
+          LineSegmentStyle(borderWidth: (s) => 1),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not split without a segment style', () {
+      expect(
+        computeSegments(_Line(_points('oooo'), options: _base, chart: chart)),
+        [_segment(0, 3, false)],
+      );
       expect(
         computeSegments(
           _Line(_points('oooo'), options: _base, chart: chart),
-          const <String, Object?>{},
+          const LineSegmentStyle(),
         ),
         [_segment(0, 3, false)],
       );
     });
   });
 
-  group('js-semantics-segment-style-json', () {
-    // In JavaScript, JSON.stringify writes {"v":1} and {"v":2}, and the line
-    // gets three segments. The port writes {} for both leaf objects.
-    test('writes a leaf object as {}', () {
-      final leaves = <String, Object?>{
-        'setContext': (Object? ctx) => {
-          ..._base,
-          'borderDash': _Leaf(_p0DataIndex(ctx) == 1 ? 1 : 2),
-        },
-      };
+  group('SegmentStyle ==', () {
+    test('compares a gradient by identity and a solid paint by color', () {
+      final g = _gradient();
+      expect(SegmentStyle(borderColor: g), SegmentStyle(borderColor: g));
       expect(
-        computeSegments(
-          _Line(
-            _points('oooo'),
-            options: {..._base, 'borderDash': const _Leaf(2)},
-            chart: _Chart(),
-          ),
-          leaves,
-        ),
-        hasLength(1),
+        SegmentStyle(borderColor: g),
+        isNot(SegmentStyle(borderColor: _gradient())),
       );
+      expect(
+        const SegmentStyle(
+          borderColor: ChartPaint.solid(ui.Color.fromRGBO(1, 2, 3, 1)),
+        ),
+        const SegmentStyle(
+          borderColor: ChartPaint.solid(ui.Color.fromRGBO(1, 2, 3, 1)),
+        ),
+      );
+    });
+
+    test('tells undefined from null', () {
+      expect(const SegmentStyle(), isNot(const SegmentStyle(borderDash: null)));
+    });
+
+    test('gives equal hash codes for equal styles', () {
+      const a = SegmentStyle(borderDash: [1.0, 2.0], borderWidth: double.nan);
+      const b = SegmentStyle(borderDash: [1.0, 2.0], borderWidth: double.nan);
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
     });
   });
 }

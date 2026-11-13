@@ -60,6 +60,14 @@
   `ChartLegendItem`. Text is a list of lines, paints use `ChartPaint`, and indexes
   are nullable integers. A missing index has no default visibility action.
 
+- The line option `segment` holds a `LineSegmentStyle` of typed functions, in
+  typed and raw configurations: `LineDataset(segment: LineSegmentStyle(
+  borderColor: (s) => values[s.p1DataIndex] < values[s.p0DataIndex] ? red :
+  null))`. Each function takes a `ScriptableLineSegmentContext` with typed
+  `p0`, `p1`, `p0DataIndex`, `p1DataIndex` and `datasetIndex`, and `null`
+  keeps the line style. `LineDataset`, `ScatterDataset`, `RadarDataset` and
+  `LineElementStyle` have `segment`. A `segment` Map stops a debug build.
+
 - Add `shadow: ChartShadow(...)` to each typed dataset. `ChartView` draws the
   shadow under the lines, points, bars and arcs of the dataset, but not under
   the area fill. A raw dataset sets the key `shadow` to the same

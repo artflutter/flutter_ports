@@ -249,6 +249,26 @@ bool _isFontPath(ScopeKind root, String fontPath) {
 final RegExp _paddingField = RegExp(
   r'^(.+\.(?:padding|backdropPadding))\.(top|right|bottom|left|x|y)$',
 );
+
+/// Whether [path] is the line option `segment` or a key under it. Upstream
+/// it is an object of scriptable options; the port holds a
+/// `LineSegmentStyle` of typed functions, the typed atom `lineSegmentStyle`
+/// (Chart.js ADR 0142). The census of the Map model keeps its rows.
+bool _isSegmentField(String path) {
+  final parts = path.split('.');
+  final i = parts.indexOf('segment');
+  if (i < 0) return false;
+  final prefix = parts.sublist(0, i + 1);
+  final walks = path.startsWith('data.datasets[].')
+      ? [for (final kind in _datasetKinds) _walk(kind, prefix.sublist(2))]
+      : [_walk(ScopeKind.chartConfiguration, prefix)];
+  return walks.any(
+    (w) =>
+        w.shape != null &&
+        w.shape! & ShapeBits.typed == ShapeBits.lineSegmentStyle,
+  );
+}
+
 bool _isPaddingField(ScopeKind root, String path) {
   final match = _paddingField.firstMatch(path);
   if (match == null) return false;
@@ -752,6 +772,7 @@ void main() {
           continue;
         }
         if (_skipped(path) ||
+            _isSegmentField(path) ||
             _isPaddingField(ScopeKind.chartConfiguration, path) ||
             _isFillField(ScopeKind.chartConfiguration, path) ||
             _isCallbackField(ScopeKind.chartConfiguration, path)) {

@@ -117,10 +117,6 @@ enum ScopeKind(
   /// ArcBorderRadius (arc), the radius of each corner.
   borderRadius('BorderRadius'),
 
-  /// Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable
-  /// styles of a line segment.
-  segmentOptions('SegmentOptions'),
-
   /// index.d.ts:96 BarControllerDatasetOptions (index.d.ts:66
   /// ControllerDatasetOptions, BarOptions, CommonHoverOptions,
   /// AnimationOptions) with index.d.ts:149 BarControllerChartOptions, a bar
@@ -301,8 +297,6 @@ enum ScopeKind(
         return GenericElementOptionsScope();
       case ScopeKind.borderRadius:
         return BorderRadiusScope();
-      case ScopeKind.segmentOptions:
-        return SegmentOptionsScope();
       case ScopeKind.barControllerDatasetOptions:
         return BarControllerDatasetOptionsScope();
       case ScopeKind.lineControllerDatasetOptions:
@@ -412,8 +406,6 @@ enum ScopeKind(
         return GenericElementOptionsScope;
       case ScopeKind.borderRadius:
         return BorderRadiusScope;
-      case ScopeKind.segmentOptions:
-        return SegmentOptionsScope;
       case ScopeKind.barControllerDatasetOptions:
         return BarControllerDatasetOptionsScope;
       case ScopeKind.lineControllerDatasetOptions:
@@ -791,16 +783,6 @@ enum ScopeKind(
           OptionKey.outerEnd,
           OptionKey.innerStart,
           OptionKey.innerEnd,
-        ];
-      case ScopeKind.segmentOptions:
-        return const [
-          OptionKey.backgroundColor,
-          OptionKey.borderColor,
-          OptionKey.borderCapStyle,
-          OptionKey.borderDash,
-          OptionKey.borderDashOffset,
-          OptionKey.borderJoinStyle,
-          OptionKey.borderWidth,
         ];
       case ScopeKind.barControllerDatasetOptions:
         return const [
@@ -1668,7 +1650,7 @@ enum ScopeKind(
           case OptionKey.stepped:
             return 2818;
           case OptionKey.segment:
-            return 32;
+            return 5248;
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
@@ -1954,7 +1936,7 @@ enum ScopeKind(
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
-            return 32;
+            return 5248;
           case OptionKey.hoverBorderWidth:
             return 1;
           case OptionKey.hoverBorderColor:
@@ -2077,25 +2059,6 @@ enum ScopeKind(
           case OptionKey.innerStart:
             return 1;
           case OptionKey.innerEnd:
-            return 1;
-          default:
-            return 0;
-        }
-      case ScopeKind.segmentOptions:
-        switch (key) {
-          case OptionKey.backgroundColor:
-            return 4864;
-          case OptionKey.borderColor:
-            return 4864;
-          case OptionKey.borderCapStyle:
-            return 512;
-          case OptionKey.borderDash:
-            return 16;
-          case OptionKey.borderDashOffset:
-            return 1;
-          case OptionKey.borderJoinStyle:
-            return 640;
-          case OptionKey.borderWidth:
             return 1;
           default:
             return 0;
@@ -2256,7 +2219,7 @@ enum ScopeKind(
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
-            return 32;
+            return 5248;
           case OptionKey.borderWidth:
             return 1;
           case OptionKey.borderColor:
@@ -2682,7 +2645,7 @@ enum ScopeKind(
           case OptionKey.spanGaps:
             return 3;
           case OptionKey.segment:
-            return 32;
+            return 5248;
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
@@ -3430,8 +3393,6 @@ enum ScopeKind(
             return ScopeKind.tooltipDatasetOptions;
           case OptionKey.hoverBorderRadius:
             return ScopeKind.borderRadius;
-          case OptionKey.segment:
-            return ScopeKind.segmentOptions;
           default:
             return null;
         }
@@ -3561,12 +3522,7 @@ enum ScopeKind(
       case ScopeKind.pointOptions:
         return null;
       case ScopeKind.lineOptions:
-        switch (key) {
-          case OptionKey.segment:
-            return ScopeKind.segmentOptions;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.barOptions:
         switch (key) {
           case OptionKey.borderRadius:
@@ -3588,8 +3544,6 @@ enum ScopeKind(
       case ScopeKind.genericElementOptions:
         return null;
       case ScopeKind.borderRadius:
-        return null;
-      case ScopeKind.segmentOptions:
         return null;
       case ScopeKind.barControllerDatasetOptions:
         switch (key) {
@@ -3618,8 +3572,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.segment:
-            return ScopeKind.segmentOptions;
           case OptionKey.animation:
             return ScopeKind.animationOptions;
           case OptionKey.animations:
@@ -3692,8 +3644,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.segment:
-            return ScopeKind.segmentOptions;
           case OptionKey.animation:
             return ScopeKind.animationOptions;
           case OptionKey.animations:
@@ -3869,8 +3819,6 @@ enum ScopeKind(
         return 64;
       case ScopeKind.borderRadius:
         return 64;
-      case ScopeKind.segmentOptions:
-        return 64;
       case ScopeKind.barControllerDatasetOptions:
         return 64;
       case ScopeKind.lineControllerDatasetOptions:
@@ -3980,8 +3928,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.borderRadius:
         return null;
-      case ScopeKind.segmentOptions:
-        return null;
       case ScopeKind.barControllerDatasetOptions:
         return null;
       case ScopeKind.lineControllerDatasetOptions:
@@ -4090,8 +4036,6 @@ enum ScopeKind(
       case ScopeKind.genericElementOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.borderRadius:
-        return classifyUnion(raw, 64);
-      case ScopeKind.segmentOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.barControllerDatasetOptions:
         return classifyUnion(raw, 64);

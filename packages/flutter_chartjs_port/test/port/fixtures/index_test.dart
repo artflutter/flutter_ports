@@ -70,6 +70,7 @@ const Set<String> _classValueKeys = {
   'indexAxis',
   'pointStyle',
   'radius',
+  'segment',
 };
 
 /// Whether [value] holds a key of [_classValueKeys] at any depth.

@@ -72,6 +72,8 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
+    show LineSegmentStyle;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
@@ -350,6 +352,10 @@ abstract final class ShapeBits() {
   /// (Chart.js ADR 0139).
   static const int chartShadow = 5120;
 
+  /// `lineSegmentStyle`: a [LineSegmentStyle], the line `segment` (Chart.js
+  /// ADR 0142).
+  static const int lineSegmentStyle = 5248;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -460,6 +466,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.textDirection => classifyTyped<TextDirection>(raw),
   ShapeBits.chartClip => classifyTyped<ChartClip>(raw),
   ShapeBits.chartShadow => classifyTyped<ChartShadow>(raw),
+  ShapeBits.lineSegmentStyle => classifyTyped<LineSegmentStyle>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

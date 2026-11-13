@@ -1,19 +1,23 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.filler/line/segments/slope.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-line-segment-style, a LineSegmentStyle.
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'dart:ui' show Color;
+
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   // Upstream: function slope({p0, p1}). `p0` and `p1` are point elements:
   // `x` and `y` are their number properties (Chart.js ADR 0017).
-  double slope(Object? ctx) {
-    final p0 = jsGet(ctx, 'p0')! as Element;
-    final p1 = jsGet(ctx, 'p1')! as Element;
+  double slope(ScriptableLineSegmentContext ctx) {
+    final p0 = ctx.p0;
+    final p1 = ctx.p1;
     return (p0.y - p1.y) / (p1.x - p0.x);
   }
 
@@ -29,13 +33,13 @@ Map<String, Object?> fixture() {
             'borderColor': 'orange',
             // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
             'fill': FillTarget.toOrigin,
-            'segment': <String, Object?>{
-              'backgroundColor': (Object? ctx) => slope(ctx) > 0
-                  ? 'green'
+            'segment': LineSegmentStyle(
+              backgroundColor: (ctx) => slope(ctx) > 0
+                  ? const ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1))
                   : slope(ctx) < 0
-                  ? 'red'
-                  : undefined,
-            },
+                  ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
+                  : null,
+            ),
           },
         ],
       },
