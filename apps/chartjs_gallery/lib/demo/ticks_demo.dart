@@ -6,9 +6,6 @@ import 'dart:math' as math;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Tick, ticks;
-// Not public: JsFunction and jsCall, the call of a formatter with a `this`.
-import 'package:flutter_chartjs_port/src/js/js_function.dart'
-    show JsFunction, jsCall;
 // Not public: the interfaces types.Chart and types.Scale of the stand-ins.
 import 'package:flutter_chartjs_port/src/types/index.dart' show Chart, Scale;
 import 'package:material_ui/material_ui.dart';
@@ -41,19 +38,13 @@ final class _DemoScale(
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// A tick `{value, significand}`. Linear ticks have no significand.
-final class const _DemoTick(
-  @override final double value, [
-  @override final double? significand,
-]) implements Tick;
-
 /// One tick range of the tab.
 typedef _Range = ({String title, String note, bool log, List<Tick> ticks});
 
 /// Linear ticks `i * step / scale` for `i` in 0..[count]: an exact division,
 /// so that 0.3 is 0.3 and not 0.30000000000000004.
 List<Tick> _linear(int count, double step, double scale) => [
-  for (var i = 0; i <= count; i++) _DemoTick(i * step / scale),
+  for (var i = 0; i <= count; i++) Tick(value: i * step / scale),
 ];
 
 /// Logarithmic ticks from 1 to [maxExp] as `scale.logarithmic.js`
@@ -66,7 +57,7 @@ List<Tick> _logarithmic(int maxExp) {
   var significand = 1.0;
   var value = 1.0;
   while (value < max) {
-    result.add(_DemoTick(value, significand));
+    result.add(Tick(value: value, significand: significand));
     if (significand >= 10) {
       significand = significand < 15 ? 15 : 20;
     } else {
@@ -78,7 +69,7 @@ List<Tick> _logarithmic(int maxExp) {
     }
     value = (significand * math.pow(10, exp)).roundToDouble();
   }
-  result.add(_DemoTick(max, significand));
+  result.add(Tick(value: max, significand: significand));
   return result;
 }
 
@@ -105,7 +96,7 @@ final List<_Range> _ranges = [
     title: 'Linear -0.5 … 0.5, step 0.05',
     note: 'delta 0.05 → two decimals (-floor(log10 delta))',
     log: false,
-    ticks: [for (var i = -10; i <= 10; i++) _DemoTick(i / 20)],
+    ticks: [for (var i = -10; i <= 10; i++) Tick(value: i / 20)],
   ),
   (
     title: 'Logarithmic 1 … 1e9',
@@ -120,10 +111,9 @@ final List<_Range> _ranges = [
 /// Tick labels of the ported `core.ticks` formatters `numeric` and
 /// `logarithmic`, through `helpers.intl` `formatNumber`.
 ///
-/// The formatters are [JsFunction] values that read `this`, the scale. The
-/// tab calls them with [jsCall] and a stand-in scale as `thisArg`, as
-/// `core.scale.js` calls the tick callback. The locale menu sets
-/// `chart.options.locale`.
+/// The formatters are tick callbacks: the scale is the first argument. The
+/// tab calls them with a stand-in scale, as `core.scale.js` calls the tick
+/// callback. The locale menu sets `chart.options.locale`.
 class const TicksDemo({super.key}) extends StatefulWidget {
   /// Creates the tick labels tab.
   this;
@@ -141,14 +131,14 @@ class _TicksDemoState() extends State<TicksDemo> {
       _DemoChart(<String, Object?>{'locale': _locale}),
       <String, Object?>{'ticks': <String, Object?>{}},
     );
-    final formatters = ticks['formatters']! as Map<String, Object?>;
+    final formatters = ticks['formatters']!;
     return DemoPageBody(
       children: [
         DemoCard(
           title: 'Locale',
           source:
-              "jsCall(ticks['formatters']['numeric' | 'logarithmic'], "
-              '[value, index, ticks], thisArg: scale)',
+              "ticks['formatters']['numeric' | 'logarithmic'](scale, value, "
+              'index, ticks)',
           child: Wrap(
             spacing: 16,
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -172,11 +162,13 @@ class _TicksDemoState() extends State<TicksDemo> {
             source: '${range.log ? 'logarithmic' : 'numeric'} · ${range.note}',
             child: _TickLabels(
               ticks: range.ticks,
-              label: (index) => jsCall(
-                formatters[range.log ? 'logarithmic' : 'numeric'],
-                [range.ticks[index].value, index.toDouble(), range.ticks],
-                thisArg: scale,
-              ),
+              label: (index) =>
+                  formatters[range.log ? 'logarithmic' : 'numeric']!(
+                    scale,
+                    range.ticks[index].value,
+                    index,
+                    range.ticks,
+                  )?.join('\n'),
             ),
           ),
       ],

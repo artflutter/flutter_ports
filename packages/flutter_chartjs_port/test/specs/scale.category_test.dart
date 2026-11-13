@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
+import '../support/tick_label.dart';
 
 // The spec reads Chart.registry and Chart.defaults, the static members
 // `Chart.registry` and `Chart.defaults` of core.controller.dart. The
@@ -42,8 +43,8 @@ import '../support/jasmine.dart';
 // - `typeof Constructor` is `jsTypeof(constructor)`. `not.toBe(undefined)`
 //   is `isNot(same(undefined))`.
 // - `toEqual` of an object compares the keys and values. Jasmine compares
-//   functions by identity. A `JsFunction` has the identity equality of
-//   Dart.
+//   functions by identity. The default tick callback is a top-level
+//   function, a `TickCallback` (row `adapt-native-tick`).
 // - `toEqual` of a number is `jasmineEquals`: Jasmine `eq` makes `0` and
 //   `-0` different, and Dart `==` makes them equal.
 // - `toBeLessThan` and `toBeGreaterThan` are `lessThan` and `greaterThan`.
@@ -54,7 +55,7 @@ import '../support/jasmine.dart';
 
 /// scale.category.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
-  for (final t in scale.ticks!) t.label,
+  for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
 void main() {

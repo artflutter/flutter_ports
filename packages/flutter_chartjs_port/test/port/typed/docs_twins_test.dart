@@ -845,12 +845,9 @@ final List<_Twin> _docsTwins = [
 // ---------------------------------------------------------------------------
 // The chart types.
 
-/// The tick format of the bar type chart.
-String? _units(AxisTickInfo tick) => '${tick.value.round()} u';
-
-/// The raw tick callback of `_units`.
-Object? _rawUnits(Object? value, Object? index, Object? ticks) =>
-    '${(value! as num).round()} u';
+/// The tick callback of the bar type chart and of its raw twin.
+List<String>? _units(Scale scale, double value, int index, List<Tick> ticks) =>
+    ['${value.round()} u'];
 
 /// The tooltip label of the bar type chart.
 String? _barLabel(ChartTooltipItem item) =>
@@ -925,7 +922,7 @@ ChartConfig _barTyped() => ChartConfig(
       stacked: true,
       beginAtZero: true,
       suggestedMax: 30,
-      ticks: AxisTicks(stepSize: 5, padding: 6, format: _units),
+      ticks: AxisTicks(stepSize: 5, padding: 6, callback: _units),
       title: AxisTitle(
         display: true,
         text: 'Units',
@@ -1049,7 +1046,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'ticks': <String, Object?>{
           'stepSize': 5,
           'padding': 6,
-          'callback': _rawUnits,
+          'callback': _units,
         },
         'title': <String, Object?>{
           'display': true,

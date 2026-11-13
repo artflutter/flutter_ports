@@ -28,8 +28,9 @@ ChartPaint _colorFor(ChartContext context) => const ChartPaint.solid(_red);
 /// Another scriptable color.
 ChartPaint _otherFor(ChartContext context) => const ChartPaint.solid(_blue);
 
-/// A tick format.
-String? _format(AxisTickInfo tick) => null;
+/// A tick callback.
+List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
+    null;
 
 /// The parameter names of [Dataset] after `data` and `points`.
 const List<String> _style = [
@@ -573,12 +574,12 @@ void main() {
 
     test('a tick format compares with ==', () {
       _expectEqual(
-        const AxisTicks(format: _format),
-        const AxisTicks(format: _format),
+        const AxisTicks(callback: _format),
+        const AxisTicks(callback: _format),
       );
       expect(
-        AxisTicks(format: (tick) => null),
-        isNot(AxisTicks(format: (tick) => null)),
+        AxisTicks(callback: (scale, value, index, ticks) => null),
+        isNot(AxisTicks(callback: (scale, value, index, ticks) => null)),
       );
     });
 

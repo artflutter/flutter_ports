@@ -87,6 +87,7 @@ import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/legend_hit_box.dart';
 import '../../support/legend_item.dart';
+import '../../support/tick_label.dart';
 import '../canvas/path2d_record.dart';
 import '../helpers/rounded_rect_upstream.dart';
 
@@ -458,7 +459,7 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
       'min': s.min,
       'max': s.max,
       'ticks': [
-        for (final t in ticks) [t.value, t.label, t.major ?? false],
+        for (final t in ticks) [t.value, t.label, t.major],
       ],
       'box': [s.left, s.top, s.right, s.bottom],
       'labelRotation': s.labelRotation,
@@ -812,6 +813,14 @@ Object? plainObject(Object? value) => switch (value) {
 /// The keys of the observations that [expectScaleObservations] compares.
 const List<String> _scaleObservationKeys = ['chartArea', 'scales', 'points'];
 
+/// The `ticks` of a reference scale, `[value, label, major]` for each tick,
+/// with the native label of the upstream label (row `adapt-native-tick`): a
+/// string is one line, and an array is its lines.
+Object? _nativeTicks(Object? ticks) => [
+  for (final tick in (ticks! as List<Object?>).cast<List<Object?>>())
+    [tick[0], nativeTickLabel(tick[1]), tick[2]],
+];
+
 /// Expects the observations [observed] (the Map of [observeChart], or a Map
 /// with the same keys) to match [expected], for each key of [expected]:
 /// `chartArea`, `scales` and `points`. A failure names the key:
@@ -858,7 +867,11 @@ void expectScaleObservations(
       for (final key in expectedScale.keys) {
         expect(
           scale[key],
-          referenceMatcher(expectedScale[key]),
+          referenceMatcher(
+            key == 'ticks'
+                ? _nativeTicks(expectedScale[key])
+                : expectedScale[key],
+          ),
           reason: '${prefix}scales.$id.$key',
         );
       }

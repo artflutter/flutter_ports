@@ -57,10 +57,12 @@ final Map<String, Object?> _highLow = {
   },
 };
 
-String? _percent(AxisTickInfo tick) {
-  final value = tick.value;
-  return '${value == value.roundToDouble() ? value.round() : value}%';
-}
+List<String>? _percent(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ['${value == value.roundToDouble() ? value.round() : value}%'];
 
 String? _tooltipLabel(ChartTooltipItem item) =>
     '${item.label} : ${item.formattedValue}%';
@@ -165,7 +167,7 @@ final ChartConfig _config = ChartConfig(
         stepSize: 0.5,
         color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
-        format: _percent,
+        callback: _percent,
       ),
       extra: {
         'border': {'color': ChartPaint.solid(_axisLine)},

@@ -186,7 +186,9 @@ final JsClass _harnessRadialTestController = radialTestController(
 
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'withUnit': (Object? value) => '${jsToString(value)} kg',
+  'withUnit': (Object? scale, double value, int index, Object? ticks) => [
+    '${jsNumberToString(value)} kg',
+  ],
 };
 
 /// The reference text of [calls]: one JSON line `[name, ...args]` for each

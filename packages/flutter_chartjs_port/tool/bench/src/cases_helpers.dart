@@ -45,9 +45,8 @@ final class _Scale(
 }
 
 /// A tick `{value}`.
-final class const _Tick(@override final double value) implements Tick {
-  @override
-  double? get significand => null;
+final class _Tick(double value) extends Tick {
+  this : super(value: value);
 }
 
 /// A point `{x, y}`.

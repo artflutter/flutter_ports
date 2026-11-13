@@ -42,9 +42,16 @@ LineDataset _line(String name, Color color, List<double> values) => LineDataset(
   extra: const {'pointHoverBorderWidth': 2, 'pointHitRadius': 8},
 );
 
-String? _year(AxisTickInfo tick) => '${tick.value.round()}';
+List<String>? _year(Scale scale, double value, int index, List<Tick> ticks) => [
+  '${value.round()}',
+];
 
-String? _percent(AxisTickInfo tick) => '${tick.value.round()}%';
+List<String>? _percent(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ['${value.round()}%'];
 
 String? _tooltipTitle(List<ChartTooltipItem> items) => items.first.datasetLabel;
 
@@ -120,7 +127,7 @@ final ChartConfig _config = ChartConfig(
         stepSize: 2,
         color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
-        format: _year,
+        callback: _year,
         align: .inner,
       ),
       extra: {
@@ -141,7 +148,7 @@ final ChartConfig _config = ChartConfig(
         padding: 8,
         color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
-        format: _percent,
+        callback: _percent,
       ),
       extra: {
         'border': {'display': false},

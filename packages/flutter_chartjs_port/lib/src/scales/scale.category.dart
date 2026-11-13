@@ -32,12 +32,11 @@ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, isNullOrUndef;
+    show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show limitValue;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show JsFunction;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
@@ -46,6 +45,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope, TickOptionsScope;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
 import 'package:meta/meta.dart';
 
 /// An item of `_addedLabels`: the object literal `{index, label}` of
@@ -186,10 +186,9 @@ Object? _labelAt(List<Object?> labels, Object? index) {
 
 /// scale.category.js:25 `_getLabelForValue(value)`.
 ///
-/// The function reads `this`. Here [self] is `this`: the closure of a
-/// [JsFunction] gets `this` as its first parameter. A [self] that is not a
-/// [Scale] throws a [TypeError], as the call `this.getLabels()` throws for
-/// a value without that method.
+/// The function reads `this`. Here [self] is `this`, the first parameter. A
+/// [self] that is not a [Scale] throws a [TypeError], as the call
+/// `this.getLabels()` throws for a value without that method.
 ///
 /// `value >= 0` and `value < labels.length` apply `ToNumber` to [value].
 Object? _getLabelForValue(Object? self, Object? value) {
@@ -200,6 +199,15 @@ Object? _getLabelForValue(Object? self, Object? value) {
   }
   return value;
 }
+
+/// The default tick callback of the category scale: the lines of
+/// [_getLabelForValue] (scale.category.js:25, :43).
+List<String>? _tickLabelForValue(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => labelLinesOf(_getLabelForValue(scale, value));
 
 /// The JavaScript `array.slice(start, end)` (ECMAScript 23.1.3.28): a new
 /// List with the elements of [list] from [start] up to [end], not
@@ -303,17 +311,19 @@ class CategoryScale(super.cfg)
     for (var i = 0, ilen = ticks.length; i < ilen; i++) {
       final tick = ticks[i];
       final cb = opts.callback;
-      if (!identical(cb, const JsFunction(_getLabelForValue))) {
+      if (!identical(cb, _tickLabelForValue)) {
         labels = null;
-        tick.label = callback(cb, [tick.value, i * 1.0, ticks], this);
+        tick.label = tickCallbackOf(cb)?.call(this, tick.value, i, ticks);
         continue;
       }
       final source = labels;
-      tick.label = source == null
-          ? _getLabelForValue(this, tick.value)
-          : tick.value >= 0 && tick.value < source.length
-          ? _labelAt(source, tick.value)
-          : tick.value;
+      tick.label = labelLinesOf(
+        source == null
+            ? _getLabelForValue(this, tick.value)
+            : tick.value >= 0 && tick.value < source.length
+            ? _labelAt(source, tick.value)
+            : tick.value,
+      );
       if (i == 0 &&
           ticks.runtimeType == _nativeTickListType &&
           opts.raw is OptionView &&
@@ -337,12 +347,11 @@ class CategoryScale(super.cfg)
 
   /// scale.category.js:41 `static defaults`.
   ///
-  /// The tick callback is `_getLabelForValue` (scale.category.js:25), a
-  /// function that reads `this`. The object is a typed scope of the kind
-  /// `ScaleOptions` (Chart.js ADR 0054 §3).
+  /// The tick callback is the lines of `_getLabelForValue`
+  /// (scale.category.js:25), a `TickCallback`. The object is a typed scope
+  /// of the kind `ScaleOptions` (Chart.js ADR 0054 §3).
   static final ScaleOptionsScope defaults = ScaleOptionsScope()
-    ..ticks = (TickOptionsScope()
-      ..callback = const JsFunction(_getLabelForValue));
+    ..ticks = (TickOptionsScope()..callback = _tickLabelForValue);
 
   /// scale.category.js:34 `class CategoryScale extends Scale` as a value
   /// (Chart.js ADR 0020, section 3).

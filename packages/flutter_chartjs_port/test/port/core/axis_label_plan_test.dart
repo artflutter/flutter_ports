@@ -394,9 +394,14 @@ void main() {
       ..update();
     var calls = 0;
     var phase = 'first';
-    Object label(double value, double index, List<Tick> ticks) {
+    List<String>? label(
+      Object? scale,
+      double value,
+      int index,
+      List<Tick> ticks,
+    ) {
       calls++;
-      return '$phase $value';
+      return ['$phase $value'];
     }
 
     pair.tickOption('callback', label);
@@ -405,7 +410,13 @@ void main() {
     calls = 0;
     pair.update();
     expect(calls, _n * 2);
-    pair.tickOption('callback', (double v) => ['top $v', 'bottom']);
+    pair.tickOption(
+      'callback',
+      (Object? scale, double v, int index, Object? ticks) => [
+        'top $v',
+        'bottom',
+      ],
+    );
     pair.update();
   });
 
@@ -462,7 +473,12 @@ void main() {
       final scale = chart.scales['x']!;
       final ticks = [for (var i = 0; i < 3; i++) Tick(value: i.toDouble())];
       chart.dataReads = 0;
-      String changedLabel(double value) => 'changed $value';
+      List<String>? changedLabel(
+        Object? scale,
+        double value,
+        int index,
+        Object? ticks,
+      ) => ['changed $value'];
       chart.onDataRead = () {
         if (chart.dataReads == 2) {
           (scale.options.ticks.raw! as OptionView)['callback'] = changedLabel;
@@ -470,9 +486,9 @@ void main() {
       };
       scale.generateTickLabels(ticks);
       expect(ticks.map((tick) => tick.label), [
-        'Point 0',
-        'Point 1',
-        changedLabel(2),
+        ['Point 0'],
+        ['Point 1'],
+        ['changed 2.0'],
       ]);
       expect(chart.dataReads, 2);
     },
@@ -506,9 +522,9 @@ void main() {
     };
     chart.scales['x']!.generateTickLabels(ticks);
     expect(ticks.values.map((tick) => tick.label), [
-      'Point 0',
-      'New 1',
-      'New 2',
+      ['Point 0'],
+      ['New 1'],
+      ['New 2'],
     ]);
   });
 

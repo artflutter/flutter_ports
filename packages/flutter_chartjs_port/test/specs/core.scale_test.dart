@@ -28,6 +28,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
+import '../support/tick_label.dart';
 
 // The spec reads Chart.defaults, which is `defaults` of core.defaults.dart.
 // Its chart cases call `acquireChart`. Thus they are `testWidgets` cases, and
@@ -73,7 +74,7 @@ Object? _member(Object? object, String key) => (object! as JsObjectFace)[key];
 /// core.scale.tests.js:1-3 `getLabels(scale)`: the labels of the ticks of
 /// [scale].
 List<Object?> _getLabels(Scale scale) {
-  return scale.ticks!.map((t) => t.label).toList();
+  return scale.ticks!.map(upstreamTickLabel).toList();
 }
 
 /// core.scale.tests.js:514-519 `class CustomScale extends Chart.Scale`.
@@ -281,7 +282,10 @@ void main() {
             ],
           });
 
-          expect(lastTick(chart).label, jasmineEquals('September 2018'));
+          expect(
+            upstreamTickLabel(lastTick(chart)),
+            jasmineEquals('September 2018'),
+          );
         },
       );
 
@@ -310,7 +314,10 @@ void main() {
             ],
           });
 
-          expect(lastTick(chart).label, jasmineEquals('March 2020'));
+          expect(
+            upstreamTickLabel(lastTick(chart)),
+            jasmineEquals('March 2020'),
+          );
         },
       );
     });

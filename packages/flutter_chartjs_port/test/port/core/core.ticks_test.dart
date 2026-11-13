@@ -3,9 +3,7 @@ import 'dart:ui' show Locale;
 
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:intl/intl.dart';
 import 'package:test/test.dart';
@@ -34,10 +32,9 @@ final class _Scale(
 }
 
 /// A tick object `{value}` or `{value, significand}`.
-final class const _Tick(
-  @override final double value, [
-  @override final double? significand,
-]) implements Tick;
+final class _Tick(double value, [double? significand]) extends Tick {
+  this : super(value: value, significand: significand);
+}
 
 /// `{chart: {options: {locale}}, options: {ticks: {format}}}`.
 _Scale _scale(Locale? locale, [NumberFormat? format]) =>
@@ -50,18 +47,19 @@ List<Tick> _ticks(List<double> values) => [
   for (final value in values) _Tick(value),
 ];
 
-/// `formatters.<name>.apply(scale, [tickValue, index, ticks])`.
-Object? _apply(
-  Object? formatter,
+/// The one line of `formatters.<name>(scale, tickValue, index, ticks)`.
+String _apply(
+  TickFormatter? formatter,
   double tickValue,
-  double index,
+  int index,
   List<Tick> ticks, [
   Scale? scale,
-]) => jsCall(formatter, [
+]) => formatter!(
+  scale ?? _scale(const Locale('en', 'US')),
   tickValue,
   index,
   ticks,
-], thisArg: scale ?? _scale(const Locale('en', 'US')));
+)!.single;
 
 void main() {
   group('formatters', () {
@@ -73,14 +71,13 @@ void main() {
 
     test('logarithmic calls the current formatters.numeric', () {
       // core.ticks.js:77 reads formatters.numeric when logarithmic runs.
-      final numeric = formatters['numeric'];
+      final numeric = formatters['numeric']!;
       final scale = _scale(const Locale('en', 'US'));
       addTearDown(() => formatters['numeric'] = numeric);
-      formatters['numeric'] = JsFunction(
-        (Object? self, double v, double i, List<Tick> ticks) =>
-            'patched ${jsNumberToString(v)} ${jsNumberToString(i)} '
-            '${ticks.length} ${identical(self, scale)}',
-      );
+      formatters['numeric'] = (self, v, i, ticks) {
+        final same = identical(self, scale);
+        return ['patched ${jsNumberToString(v)} $i ${ticks.length} $same'];
+      };
       expect(
         _apply(formatters['logarithmic'], 1, 0, _ticks([1, 2]), scale),
         'patched 1 0 2 true',
@@ -94,28 +91,13 @@ void main() {
   });
 
   group('formatters.values', () {
-    test("passes an array and gives '' + value for other values", () {
-      final values = formatters['values']! as Object? Function(Object?);
-      final array = <Object?>['a', 'b'];
-      expect(values(5), '5');
-      expect(identical(values(array), array), isTrue);
-      expect(values(undefined), 'undefined');
-      expect(values(null), 'null');
-      expect(values(0.1), '0.1');
-      expect(values(1e21), '1e+21');
-      expect(values(<String, Object?>{}), '[object Object]');
-      expect(values('x'), 'x');
-    });
-
-    test('takes the arguments of a tick callback through jsCall', () {
-      expect(
-        jsCall(formatters['values'], [
-          3.0,
-          0.0,
-          _ticks([3]),
-        ]),
-        '3',
-      );
+    test("gives the line '' + value", () {
+      // Row adapt-native-tick: the value of a tick is a number.
+      final values = formatters['values'];
+      expect(_apply(values, 5, 0, _ticks([5])), '5');
+      expect(_apply(values, 0.1, 0, _ticks([0.1])), '0.1');
+      expect(_apply(values, 1e21, 0, _ticks([1e21])), '1e+21');
+      expect(_apply(values, double.nan, 0, _ticks([0])), 'NaN');
     });
   });
 
@@ -226,9 +208,9 @@ void main() {
 
     test('reads a truthy significand of the tick', () {
       List<Tick> ticks(double significand) => [
-        const _Tick(10, 1),
+        _Tick(10, 1),
         _Tick(40, significand),
-        const _Tick(50, 5),
+        _Tick(50, 5),
       ];
       expect(_apply(logarithmic, 40, 1, ticks(4)), '');
       expect(_apply(logarithmic, 40, 1, ticks(5)), '40');
@@ -246,24 +228,15 @@ void main() {
     test('throws a TypeError for an index that is not a tick', () {
       // ticks[index] is undefined, and the read of significand throws.
       final ticks = _ticks([1, 5]);
-      for (final index in <double>[
-        0.5,
-        2,
-        5,
-        -1,
-        double.nan,
-        double.infinity,
-      ]) {
+      for (final index in <int>[2, 5, -1]) {
         expect(
           () => _apply(logarithmic, 5, index, ticks),
           throwsA(isA<TypeError>()),
           reason: '$index',
         );
       }
-      // -0 is the array index 0.
-      expect(_apply(logarithmic, 5, -0, _ticks([5, 6])), '5');
       // A 0 tick returns before the read.
-      expect(_apply(logarithmic, 0, 0.5, ticks), '0');
+      expect(_apply(logarithmic, 0, 5, ticks), '0');
     });
 
     test('formats a shown tick with formatters.numeric', () {

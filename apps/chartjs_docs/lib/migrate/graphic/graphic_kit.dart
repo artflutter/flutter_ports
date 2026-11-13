@@ -38,7 +38,7 @@ Widget graphicBox(Widget chart) => Center(
 
 /// The axis labels of Graphic: gray text of 10 px, 7.5 px from the axis.
 AxisTicks graphicTicks({
-  String? Function(AxisTickInfo tick)? format,
+  TickCallback? callback,
   double? stepSize,
   TickSource? source,
   Map<String, Object?> extra = const {},
@@ -50,14 +50,19 @@ AxisTicks graphicTicks({
   autoSkip: false,
   stepSize: stepSize,
   source: source,
-  format: format,
+  callback: callback,
   // The ticks at the ends of the range are not round numbers: Graphic
   // shows only the round ones.
   extra: {'includeBounds': false, ...extra},
 );
 
 /// The labels of a linear scale of Graphic: the Dart text of a double.
-String? numberLabel(AxisTickInfo tick) => tick.value.toString();
+List<String>? numberLabel(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => [value.toString()];
 
 /// The horizontal axis of Graphic: a line, no grid, 20 px below the region.
 const Map<String, Object?> bottomAxis = {

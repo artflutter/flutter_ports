@@ -576,12 +576,14 @@ void main() {
 
     // The locale formats the numbers of the linear ticks.
     await _tap(tester, 'axes.count.1000');
-    final labels = [for (final tick in _scale(chart, 'x').ticks!) tick.label];
+    final labels = [
+      for (final tick in _scale(chart, 'x').ticks!) tick.label!.single,
+    ];
     expect(labels, contains('1,000'));
     await _tap(tester, 'axes.locale.de-DE');
     expect(chart.options['locale'], const ui.Locale('de', 'DE'));
     expect([
-      for (final tick in _scale(chart, 'x').ticks!) tick.label,
+      for (final tick in _scale(chart, 'x').ticks!) tick.label!.single,
     ], contains('1.000'));
 
     // 1000 days from 2024-01-01. The default date adapter formats the
@@ -590,13 +592,13 @@ void main() {
     await _tap(tester, 'axes.time.unit.day');
     final time = _scale(chart, 'x');
     expect(jsGet(time.options['time'], 'unit'), TimeUnit.day);
-    expect(time.ticks!.first.label, 'Jan 1');
+    expect(time.ticks!.first.label, ['Jan 1']);
     await _tap(tester, 'axes.time.unit.month');
     expect(jsGet(time.options['time'], 'unit'), TimeUnit.month);
-    expect(time.ticks!.first.label, 'Jan 2024');
+    expect(time.ticks!.first.label, ['Jan 2024']);
     await _tap(tester, 'axes.time.unit.year');
     expect(
-      [for (final tick in _scale(chart, 'x').ticks!) tick.label],
+      [for (final tick in _scale(chart, 'x').ticks!) tick.label!.single],
       ['2024', '2025', '2026'],
     );
     expect(tester.takeException(), isNull);

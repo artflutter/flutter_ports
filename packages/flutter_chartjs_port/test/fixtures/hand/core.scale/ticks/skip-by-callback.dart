@@ -4,9 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -28,22 +26,24 @@ Map<String, Object?> fixture() => <String, Object?>{
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'ticks': <String, Object?>{
-            'callback': JsFunction((Object? self, Object? val, Object? index) {
+            // A TickCallback (row adapt-native-tick): the scale is the
+            // first parameter, and null stands for `undefined` and `null`.
+            'callback': (Scale scale, double val, int index, Object? ticks) {
               if (index == 1) {
-                return undefined;
+                return null;
               }
               if (index == 3) {
                 return null;
               }
-              return (self! as Scale).getLabelForValue(val);
-            }),
+              return <String>[jsToString(scale.getLabelForValue(val))];
+            },
           },
         },
         'y': <String, Object?>{
           'ticks': <String, Object?>{
-            'callback': (Object? val, Object? index) {
-              return jsToNumber(index).remainder(2) == 0
-                  ? jsAdd('', val)
+            'callback': (Object? scale, double val, int index, Object? ticks) {
+              return index.remainder(2) == 0
+                  ? <String>[jsNumberToString(val)]
                   : null;
             },
           },

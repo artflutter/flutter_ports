@@ -82,13 +82,18 @@ final Map<String, Object?> _functions = {
   'angleLineEmptyColor': (Object? ctx) => jsGet(ctx, 'index') == 1
       ? ''
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 1)),
-  'tickUnit': (Object? value) => '${jsToString(value)} u',
+  'tickUnit': (Object? scale, double value, int index, Object? ticks) => [
+    '${jsNumberToString(value)} u',
+  ],
   'hideOneAndThree': (Object? chart) {
     (chart! as Chart)
       ..toggleDataVisibility(1)
       ..toggleDataVisibility(3);
   },
-  'tickLines': (Object? value) => <Object?>[value, 'x'],
+  'tickLines': (Object? scale, double value, int index, Object? ticks) => [
+    jsNumberToString(value),
+    'x',
+  ],
   // A font is a ChartTextStyle (row adapt-text-style-fonts).
   'pointLabelFontByIndex': (Object? ctx) =>
       ChartTextStyle(fontSize: 8 + jsToNumber(jsGet(ctx, 'index')) * 2),

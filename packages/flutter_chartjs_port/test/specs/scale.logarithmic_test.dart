@@ -27,6 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
+import '../support/tick_label.dart';
 
 // The spec reads `Chart.registry`, `Chart.defaults` and `Chart.Ticks`.
 // `Chart.registry` and `Chart.defaults` are static fields of `Chart`.
@@ -37,9 +38,9 @@ import '../support/jasmine.dart';
 // `scales.logarithmic`. The file runs on the VM, because
 // core.controller.dart reaches the platform layer.
 //
-// `typeof x` is `jsTypeof(x)`. The default tick callback is the JsFunction
-// `ticks.formatters.logarithmic`, not a Dart Function. Thus
-// `jasmine.any(Function)` is `jsIsFunction`, as in core.ticks_test.dart.
+// `typeof x` is `jsTypeof(x)`. The default tick callback is the function
+// `ticks.formatters.logarithmic`, a `TickCallback` (row
+// `adapt-native-tick`). `jasmine.any(Function)` is `jsIsFunction`.
 //
 // Each chart case has a dataset, also the cases with an empty dataset. Thus
 // each chart case needs the controller of phase 7 for its chart type or its
@@ -67,7 +68,7 @@ import '../support/jasmine.dart';
 
 /// scale.logarithmic.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
-  for (final t in scale.ticks!) t.label,
+  for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
 /// `chart.data.datasets[index]`.
@@ -678,7 +679,7 @@ void main() {
               'type': 'logarithmic',
               'min': 10,
               'max': 1010,
-              'ticks': <String, Object?>{'callback': (Object? value) => value},
+              'ticks': <String, Object?>{'callback': valueTickLabel},
             },
           },
         },
@@ -709,7 +710,7 @@ void main() {
               'type': 'logarithmic',
               'min': -10,
               'max': -1010,
-              'ticks': <String, Object?>{'callback': (Object? value) => value},
+              'ticks': <String, Object?>{'callback': valueTickLabel},
             },
           },
         },
@@ -737,7 +738,7 @@ void main() {
               'type': 'logarithmic',
               'min': 'zero',
               'max': null,
-              'ticks': <String, Object?>{'callback': (Object? value) => value},
+              'ticks': <String, Object?>{'callback': valueTickLabel},
             },
           },
         },
@@ -765,7 +766,7 @@ void main() {
               'type': 'logarithmic',
               'ticks': <String, Object?>{
                 'autoSkip': false,
-                'callback': (Object? value) => value,
+                'callback': valueTickLabel,
               },
             },
           },
@@ -774,7 +775,8 @@ void main() {
 
       final scale = chart.scales['y']! as LogarithmicScale;
       expect(
-        _getLabels(scale),
+        // Row adapt-native-tick: the label is the line of the number.
+        _getLabels(scale).map(jsToNumber).toList(),
         jasmineEquals(<Object?>[
           1,
           2,
@@ -817,7 +819,7 @@ void main() {
           'scales': <String, Object?>{
             'y': <String, Object?>{
               'type': 'logarithmic',
-              'ticks': <String, Object?>{'callback': (Object? value) => value},
+              'ticks': <String, Object?>{'callback': valueTickLabel},
             },
           },
         },
@@ -826,7 +828,8 @@ void main() {
       final scale = chart.scales['y']! as LogarithmicScale;
       // Counts down because the lines are drawn top to bottom
       expect(
-        _getLabels(scale),
+        // Row adapt-native-tick: the label is the line of the number.
+        _getLabels(scale).map(jsToNumber).toList(),
         jasmineEquals(<Object?>[
           0.1,
           0.2,
@@ -872,7 +875,7 @@ void main() {
                 'reverse': true,
                 'ticks': <String, Object?>{
                   'autoSkip': false,
-                  'callback': (Object? value) => value,
+                  'callback': valueTickLabel,
                 },
               },
             },
@@ -881,7 +884,8 @@ void main() {
 
         final scale = chart.scales['y']! as LogarithmicScale;
         expect(
-          _getLabels(scale),
+          // Row adapt-native-tick: the label is the line of the number.
+          _getLabels(scale).map(jsToNumber).toList(),
           jasmineEquals(<Object?>[
             80, 70, 60, 50, 40, 30, 20, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, //
           ]),
@@ -910,9 +914,7 @@ void main() {
               'y': <String, Object?>{
                 'type': 'logarithmic',
                 'reverse': true,
-                'ticks': <String, Object?>{
-                  'callback': (Object? value) => value,
-                },
+                'ticks': <String, Object?>{'callback': valueTickLabel},
               },
             },
           },
@@ -920,7 +922,8 @@ void main() {
 
         final scale = chart.scales['y']! as LogarithmicScale;
         expect(
-          _getLabels(scale),
+          // Row adapt-native-tick: the label is the line of the number.
+          _getLabels(scale).map(jsToNumber).toList(),
           jasmineEquals(<Object?>[
             30, 20, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, //
           ]),
@@ -979,9 +982,7 @@ void main() {
           'scales': <String, Object?>{
             'y': <String, Object?>{
               'type': 'logarithmic',
-              'ticks': <String, Object?>{
-                'callback': (Object? value, Object? index) => jsToString(index),
-              },
+              'ticks': <String, Object?>{'callback': indexTickLabel},
             },
           },
         },

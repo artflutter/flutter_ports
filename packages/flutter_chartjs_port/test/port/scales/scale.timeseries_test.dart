@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
@@ -85,7 +84,9 @@ Map<String, Object?> _timeseriesObservations(Scale scale, Chart chart) {
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
   // `(value, index) => 'T' + index`.
-  'tickIndex': (Object? value, Object? index) => 'T${jsToString(index)}',
+  'tickIndex': (Object? scale, double value, int index, Object? ticks) => [
+    'T$index',
+  ],
 };
 
 /// One day in ms.

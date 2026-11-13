@@ -179,7 +179,9 @@ Object _rangeObserve(Chart chart) => [
   for (final id in const ['x', 'y']) ...[
     chart.scales[id]!.min,
     chart.scales[id]!.max,
-    [for (final t in chart.scales[id]!.ticks!) (t.value, t.label)],
+    [
+      for (final t in chart.scales[id]!.ticks!) [t.value, t.label],
+    ],
     chart.getZoomedScaleBounds()[id],
     chart.getInitialScaleBounds()[id],
   ],

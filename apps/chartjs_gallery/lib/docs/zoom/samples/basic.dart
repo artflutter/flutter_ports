@@ -231,10 +231,11 @@ Map<String, Object?> zoomSampleScales() {
   final scaleOpts = <String, Object?>{
     'reverse': true,
     'ticks': <String, Object?>{
-      'callback': (Object? val, Object? index, Object? ticks) =>
-          index == 0 || index == (ticks! as List<Object?>).length - 1
+      // A TickCallback: the scale, the value, the index and the ticks.
+      'callback': (Object? scale, double val, int index, List<Object?> ticks) =>
+          index == 0 || index == ticks.length - 1
           ? null
-          : val,
+          : [jsNumberToString(val)],
     },
     'grid': <String, Object?>{
       'borderColor': ChartPaint.solid(_grey(1)),

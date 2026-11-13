@@ -162,7 +162,9 @@ Map<String, Object?> _logObservations(Scale scale, Chart chart) {
 
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'withUnit': (Object? value) => '${jsToString(value)} kg',
+  'withUnit': (Object? scale, double value, int index, Object? ticks) => [
+    '${jsNumberToString(value)} kg',
+  ],
 };
 
 /// The dataset [index] of [chart].

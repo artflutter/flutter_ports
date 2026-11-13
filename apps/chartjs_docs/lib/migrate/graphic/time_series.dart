@@ -11,8 +11,12 @@ String _two(int value) => value.toString().padLeft(2, '0');
 /// The `MM-dd` format of the demo.
 String _monthDay(DateTime time) => '${_two(time.month)}-${_two(time.day)}';
 
-String? _timeLabel(AxisTickInfo tick) =>
-    _monthDay(DateTime.fromMillisecondsSinceEpoch(tick.value.round()));
+List<String>? _timeLabel(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => [_monthDay(DateTime.fromMillisecondsSinceEpoch(value.round()))];
 
 /// The `TimeScale` of Graphic adds 10% of the range on each side.
 final DateTime _first = timeSeriesSales.first.time;
@@ -58,14 +62,14 @@ final ChartConfig _config = ChartConfig(
       min: _min,
       max: _max,
       grid: noGrid,
-      ticks: graphicTicks(format: _timeLabel, source: .labels),
+      ticks: graphicTicks(callback: _timeLabel, source: .labels),
       extra: bottomAxis,
     ),
     'y': LinearAxis(
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
-      ticks: graphicTicks(format: numberLabel, stepSize: 20),
+      ticks: graphicTicks(callback: numberLabel, stepSize: 20),
       extra: leftAxis,
     ),
   },

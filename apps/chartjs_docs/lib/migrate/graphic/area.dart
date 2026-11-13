@@ -14,9 +14,13 @@ final ({double min, double max}) _range = graphicRange([
 ]);
 
 /// `OrdinalScale(tickCount: 5)`: 5 labels at a regular step.
-String? _dateLabel(AxisTickInfo tick) =>
-    ordinalTick(tick.index, invalidData.length, 5)
-    ? invalidData[tick.index].date
+List<String>? _dateLabel(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ordinalTick(index, invalidData.length, 5)
+    ? [invalidData[index].date]
     : null;
 
 String? _date(List<ChartTooltipItem> items) =>
@@ -42,7 +46,7 @@ final ChartConfig _config = ChartConfig(
   scales: {
     'x': CategoryAxis(
       grid: noGrid,
-      ticks: graphicTicks(format: _dateLabel),
+      ticks: graphicTicks(callback: _dateLabel),
       // An ordinal scale of Graphic puts each value in the middle of a band.
       extra: const {...bottomAxis, 'offset': true},
     ),
@@ -50,7 +54,7 @@ final ChartConfig _config = ChartConfig(
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
-      ticks: graphicTicks(format: numberLabel, stepSize: 10),
+      ticks: graphicTicks(callback: numberLabel, stepSize: 10),
       extra: leftAxis,
     ),
   },

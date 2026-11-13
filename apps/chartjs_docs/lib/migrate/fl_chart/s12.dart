@@ -140,11 +140,11 @@ class _Sample12State() extends State<Sample12> {
             maxRotation: 45,
             color: const ChartPaint.solid(Fl.green),
             font: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-            format: (t) {
-              final index = t.value.toInt();
-              if (_history == null || index >= _history!.length) return '';
+            callback: (scale, value, _, ticks) {
+              final index = value.toInt();
+              if (_history == null || index >= _history!.length) return [''];
               final date = _history![index].$1;
-              return '${date.month}/${date.day}';
+              return ['${date.month}/${date.day}'];
             },
             extra: const {'minRotation': 45},
           ),

@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -307,11 +306,12 @@ final Map<String, void Function(Chart chart)> _actions = {
 
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'upperLabel': JsFunction(
-    (Object? self, Object? value) =>
-        jsToString((self! as Scale).getLabelForValue(value)).toUpperCase(),
-  ),
-  'indexLabel': jsToString,
+  'upperLabel': (Object? scale, double value, int index, Object? ticks) => [
+    jsToString((scale! as Scale).getLabelForValue(value)).toUpperCase(),
+  ],
+  'indexLabel': (Object? scale, double value, int index, Object? ticks) => [
+    jsNumberToString(value),
+  ],
 };
 
 /// A chart of the test controller with the labels A, B and C, and the

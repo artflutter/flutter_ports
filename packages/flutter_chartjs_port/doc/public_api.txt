@@ -132,6 +132,7 @@ TRBLCorners
 TextMetrics
 Tick
 TickAlign
+TickCallback
 TickCrossAlign
 TickSource
 TimeScale
@@ -193,7 +194,6 @@ ArcElementStyle
 ArcSpacingMode
 AverageTooltipPositioner
 AxisGrid
-AxisTickInfo
 AxisTicks
 AxisTitle
 BackdropOptions
@@ -384,6 +384,7 @@ TensionAnimation
 TextMetrics
 Tick
 TickAlign
+TickCallback
 TickCrossAlign
 TickSource
 TimeAxis

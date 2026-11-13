@@ -18,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
+import '../support/tick_label.dart';
 
 // The spec reads Chart.layouts, which src/index.umd.ts sets to the default
 // export of core.layouts.js. Here it is the record `layouts` of
@@ -41,7 +42,7 @@ import '../support/jasmine.dart';
 
 /// core.layouts.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
-  for (final t in scale.ticks!) t.label,
+  for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
 /// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:

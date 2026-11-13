@@ -19,6 +19,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/core/core.scale.dart'
+    show Scale, Tick, TickCallback;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
@@ -821,6 +823,14 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
               return value.labelPointStyle!(tooltip, arg);
             },
     );
+  }
+  // The explicit scale is the former JS this; trace the value and the index
+  // (row adapt-native-tick).
+  if (value is TickCallback) {
+    return (Scale scale, double tickValue, int index, List<Tick> ticks) {
+      trace.add(_traceLine(path, [tickValue, index.toDouble()]));
+      return value(scale, tickValue, index, ticks);
+    };
   }
   switch (value) {
     case final JsFunction f:

@@ -172,7 +172,7 @@ Object? Function(Object?) _examine(
             ).year.toString().padLeft(4, '0')
           : null;
       expect(
-        year != null && label is String && label.contains(year),
+        year != null && label != null && label.single.contains(year),
         isTrue,
         reason:
             '$path: the scale $id has the tick ${tick.value} with '

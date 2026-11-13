@@ -15,6 +15,14 @@
   `strokeColor` are a `ChartPaint`, not an `Object?`:
   `RenderTextOpts(color: ChartPaint.solid(Color(0xFF666666)))`.
 
+- Migrate ticks to the public extensible `Tick` class: `label` is the list of
+  its lines (`List<String>?`), and `major` is a `bool`. The option
+  `ticks.callback` holds a `TickCallback`, also in a raw configuration:
+  `(scale, value, index, ticks) => ['${value.round()} kg']`. The scale is the
+  first argument, `null` removes the tick and `[]` keeps it with no label.
+  `AxisTicks.callback` replaces `AxisTicks.format` and `AxisTickInfo`. The
+  three tick formatters are functions of the same type.
+
 - Migrate legend hit boxes to the public extensible `LegendHitBox` class.
   Layout, pointer and keyboard handling share native mutable geometry and
   integer row/column membership. Hit testing, centers, copying and merging

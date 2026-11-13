@@ -27,9 +27,11 @@ Map<String, Object?> fixture() => <String, Object?>{
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
           'position': ChartPosition.left,
           'ticks': <String, Object?>{
-            'callback': (Object? value) {
-              return jsAdd(value, ' very long unit!');
-            },
+            // A TickCallback (row adapt-native-tick).
+            'callback':
+                (Object? scale, double value, int index, Object? ticks) {
+                  return <String>['${jsNumberToString(value)} very long unit!'];
+                },
           },
         },
         'y1': <String, Object?>{

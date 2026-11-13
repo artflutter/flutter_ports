@@ -9,7 +9,6 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -149,12 +148,15 @@ final Map<String, void Function(Chart chart)> _actions = {
 
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'indexLabel': (Object? value, Object? index) => jsToString(index),
-  'withUnit': (Object? value) => '${jsToString(value)} kg',
-  'labelOfThis': JsFunction(
-    (Object? self, Object? value) =>
-        '[${jsToString((self! as Scale).getLabelForValue(value))}]',
-  ),
+  'indexLabel': (Object? scale, double value, int index, Object? ticks) => [
+    '$index',
+  ],
+  'withUnit': (Object? scale, double value, int index, Object? ticks) => [
+    '${jsNumberToString(value)} kg',
+  ],
+  'labelOfThis': (Object? scale, double value, int index, Object? ticks) => [
+    '[${jsToString((scale! as Scale).getLabelForValue(value))}]',
+  ],
 };
 
 /// A chart of the test controller `linearTest` with the points [points]
