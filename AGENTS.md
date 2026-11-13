@@ -1144,6 +1144,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `style.touchAction`, `style.userSelect` and `removeProperty`. See
     `test/port/platform/chart_host_test.dart` (groups `canvas event target`, `document target`,
     `getBoundingClientRect`, `touch sequence`) and `native_event_test.dart`.
+    Chart.js ADR 0137: a trackpad scroll gives a `wheel` with the scroll deltas, and a trackpad
+    pinch a `wheel` with `ctrlKey` and `deltaY` -100 times the natural log of the scale step, as
+    Chrome sends them. A prevented `wheel` takes the gesture from the arena.
+    `ChartView.trackpadGestures` (default true) turns it off. See the trackpad cases of
+    `chart_host_test.dart`.
   - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` and
     the deep freeze. `compileChartTheme` takes the typed tokens as named
     parameters (Chart.js ADR 0117): 6 `Color?` tokens, 2 `TextStyle?` fonts, `palette` and
@@ -1439,6 +1444,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0135 (`Math.hypot` is `math.sqrt(a * a + b * b)`) is accepted (2026-11-13): its
       code passes the tests. It supersedes §2 of Chart.js ADR 0108 (`jsHypot`) and its rejected
       alternative.
+      Chart.js ADR 0137 (trackpad gestures as `wheel` events) is accepted (2026-11-13): its code
+      passes the tests. It closes Open 5 of Chart.js ADR 0108.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -1651,8 +1658,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   one flow for each item between nodes in three columns, and `_chartJsSankey` of the
   adapter registers `sankeyRegisterables` once and draws a `ChartView.raw` (the typed
   config takes no dataset of another package), so each tick is a full update. The
-  sankey chart has no axes, no zoom and no shadow (`ChartType.hasShadow`,
-  `BenchmarkConfig.shadows`).
+  sankey chart has no visible axes and no shadow (`ChartType.hasShadow`,
+  `BenchmarkConfig.shadows`); its zoom and pan act on its hidden x scale, the node columns.
   `ChartLibrary.runs` applies the same rule to the series shadow: fl_chart draws it
   only on a line chart, Graphic only as a blurred Material elevation of a filled
   mark, and Syncfusion not at all. The settings hide a feature that the chart type
@@ -1664,7 +1671,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times. The
   adapter claims each wheel over a chart with zoom, so the page does not scroll
   and a test goes on. A desktop trackpad differs by library (the host of the
-  Chart.js port maps no pan-zoom event, seam H27): `zoomsWith` states it.
+  Chart.js port maps it to `wheel` events while the toggle "Trackpad gestures",
+  `BenchmarkConfig.trackpad`, is on): `zoomsWith` states it.
   Run `dart run melos run benchmark:macos` for profile measurements. Dependencies
   are pinned; Syncfusion is included under the owner's confirmed eligible license.
   Shared seeded data and controls live in `lib/benchmark`, adapters in

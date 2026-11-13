@@ -189,6 +189,7 @@ class ChartView extends StatefulWidget {
     this.autofocus = false,
     this.semanticLabel,
     this.excludeFromSemantics = false,
+    this.trackpadGestures = true,
     super.key,
   }) : rawConfig = null;
 
@@ -205,6 +206,7 @@ class ChartView extends StatefulWidget {
     this.autofocus = false,
     this.semanticLabel,
     this.excludeFromSemantics = false,
+    this.trackpadGestures = true,
     super.key,
   }) : rawConfig = config,
        config = null,
@@ -315,6 +317,14 @@ class ChartView extends StatefulWidget {
   /// effect.
   final bool excludeFromSemantics;
 
+  /// Whether a trackpad scroll and a trackpad pinch give the chart `wheel`
+  /// events, as in Chrome (Chart.js ADR 0137). A scroll gives its deltas,
+  /// and a pinch gives a `wheel` with `ctrlKey`. Thus a wheel listener, for
+  /// example the zoom plugin, also acts on a trackpad of macOS, Windows and
+  /// Linux. A listener that prevents the default takes the gesture from a
+  /// scrollable ancestor.
+  final bool trackpadGestures;
+
   @override
   State<ChartView> createState() => _ChartViewState();
 
@@ -371,6 +381,13 @@ class ChartView extends StatefulWidget {
           'excludeFromSemantics',
           value: excludeFromSemantics,
           ifTrue: 'excluded from semantics',
+        ),
+      )
+      ..add(
+        FlagProperty(
+          'trackpadGestures',
+          value: trackpadGestures,
+          ifFalse: 'no trackpad gestures',
         ),
       );
   }
@@ -871,6 +888,7 @@ class _ChartViewState() extends State<ChartView> {
         canvas: _canvas,
         onTickerModeChanged: _onTickerModeChanged,
         onFirstLayout: _onFirstLayout,
+        trackpadGestures: widget.trackpadGestures,
       ),
     );
     if (widget.excludeFromSemantics) return ExcludeSemantics(child: focus);
