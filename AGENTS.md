@@ -943,11 +943,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin `legend`. The items of the
       built-in `generateLabels`, the hit boxes (`legendHitBoxes`, also a port-only member of
       `types.LegendElement`, which the keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the
-      column sizes use the shared native `LegendItem`, and the typed records `LegendHitBox`
-      and `LegendColumnSize`. `LegendItem` is extensible, with mutable native fields and
+      column sizes use the shared native `LegendItem` and `LegendHitBox`, and the typed record
+      `LegendColumnSize`. `LegendItem` is extensible, with mutable native fields and
       overridable `copyWith`/`merge` methods (doc/native-legend-item-design-draft.md).
       Generators, rendering and events share that object by identity. Map items, `TypedLegendItem`
-      and `ChartLegendItem` are removed. `LegendHitBox` keeps `types.TypedLegendHitBox`.
+      and `ChartLegendItem` are removed. `LegendHitBox` replaces `types.TypedLegendHitBox`: mutable
+      double geometry, fixed integer row/column membership, and overridable `contains`, `center`,
+      `copyWith` and `merge` (doc/native-legend-hit-box-design-draft.md). Pointer and keyboard
+      consumers use the same boxes. `LegendHitBoxX.equalsTo` lives beside the class,
+      compares shared fields with the reference-test numeric tolerance, and preserves identity `==`/hashing.
       Tooltip items keep `types.TypedTooltipItem` and the promoted `ChartTooltipItem` view.
       Legend indexes are nullable integers; a descriptive item has no default click action
       (row `adapt-native-legend-item`).

@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.legend/horizontal-rtl-hitbox.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-legend-hit-box, native geometry reads.
 // DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
@@ -60,10 +61,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           final legend = chart.legend! as Legend;
           for (final box in legend.legendHitBoxes) {
             ctx.strokeRect(
-              box['left']! as double,
-              box['top']! as double,
-              box['width']! as double,
-              box['height']! as double,
+              box.left,
+              box.top,
+              box.width,
+              box.height,
             );
           }
 

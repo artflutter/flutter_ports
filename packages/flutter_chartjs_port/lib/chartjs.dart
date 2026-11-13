@@ -132,7 +132,6 @@ export 'package:flutter_chartjs_port/src/types.dart'
         ScaleCache,
         ScaleRanges,
         SimpleArc,
-        TypedLegendHitBox,
         TypedTooltipItem,
         VisualElementRange,
         adapters,
@@ -154,6 +153,7 @@ export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show SplinePoint, TRBLCorners;
 export 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition, ScaleValuePosition;
+export 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 export 'package:flutter_chartjs_port/src/types/legend_item.dart';
 export 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;

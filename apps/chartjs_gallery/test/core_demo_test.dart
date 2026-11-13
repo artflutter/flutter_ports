@@ -773,13 +773,7 @@ void main() {
     // 645-655), and the dataset segment reads the new state.
     Future<void> tapItem(int index) async {
       final box = legend.legendHitBoxes[index];
-      final left = jsGet(box, 'left')! as double;
-      final top = jsGet(box, 'top')! as double;
-      final width = jsGet(box, 'width')! as double;
-      final height = jsGet(box, 'height')! as double;
-      await tester.tapAt(
-        tester.getTopLeft(_host) + Offset(left + width / 2, top + height / 2),
-      );
+      await tester.tapAt(tester.getTopLeft(_host) + box.center);
       await _frames(tester);
     }
 

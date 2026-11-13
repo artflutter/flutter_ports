@@ -41,6 +41,7 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
         hasCanvasEventListener;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 
 /// The group of the legend targets. A data group has its dataset index.
 const int _legendGroup = -1;
@@ -56,16 +57,6 @@ typedef _Rect = ({double left, double top, double width, double height});
 /// 0051, section 3). At the target point, the legend keeps its hovered item
 /// and calls no `onLeave` (`plugin.legend.js:537-544`).
 const _Point _outside = (x: -1.0, y: -1.0);
-
-/// The `left`, `top`, `width` and `height` of a legend hit box: the typed
-/// fields of a hit box of the legend plugin ([types.TypedLegendHitBox],
-/// Chart.js ADR 0054 §12).
-_Rect _hitBox(types.TypedLegendHitBox box) => (
-  left: box.left,
-  top: box.top,
-  width: box.width,
-  height: box.height,
-);
 
 /// The keyboard state of the chart of one `ChartView` (Chart.js ADR 0051,
 /// sections 2 to 6): the target, the virtual mouse, the key events of
@@ -303,10 +294,10 @@ final class ChartKeyboard {
     if (group == _legendGroup) {
       final boxes = _legendBoxes(chart);
       if (boxes == null) return null;
-      return [
-        for (final box in boxes.map(_hitBox))
-          (x: box.left + box.width / 2, y: box.top + box.height / 2),
-      ];
+      return boxes.map((box) {
+        final center = box.center;
+        return (x: center.dx, y: center.dy);
+      }).toList();
     }
     final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List ||
@@ -333,7 +324,7 @@ final class ChartKeyboard {
   /// The hit boxes of the legend (plugin.legend.js:52), or Dart `null`
   /// when the chart has no legend, the legend does not show, or it has no
   /// hit box. A hidden legend keeps the hit boxes of its last fit.
-  static List<types.TypedLegendHitBox>? _legendBoxes(types.Chart chart) {
+  static List<LegendHitBox>? _legendBoxes(types.Chart chart) {
     final legend = chart.legend;
     if (legend == null ||
         !jsTruthy(readOption(legend.options, OptionKey.display))) {
@@ -366,7 +357,7 @@ final class ChartKeyboard {
     if (group != _legendGroup) return null;
     final boxes = _legendBoxes(chart);
     if (boxes == null) return null;
-    final box = _hitBox(boxes[math.min(_item, boxes.length - 1)]);
+    final box = boxes[math.min(_item, boxes.length - 1)];
     return (
       left: box.left - 3,
       top: box.top - 3,
