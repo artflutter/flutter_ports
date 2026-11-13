@@ -7,8 +7,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart' hide Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 

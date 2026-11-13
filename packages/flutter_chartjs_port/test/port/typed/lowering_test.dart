@@ -9,11 +9,6 @@ import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'

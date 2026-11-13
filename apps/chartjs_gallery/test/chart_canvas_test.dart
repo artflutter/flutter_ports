@@ -5,8 +5,6 @@ import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: UiCanvasElement, the canvas of the internal host.
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
-    show UiCanvasElement;
 import 'package:flutter_test/flutter_test.dart';
 
 /// Pumps [count] frames of 16 ms, the frame interval of a browser.

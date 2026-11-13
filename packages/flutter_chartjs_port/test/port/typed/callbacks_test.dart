@@ -10,9 +10,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart'
     as animator
     show AnimationEvent;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';

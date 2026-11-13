@@ -9,9 +9,6 @@ import 'dart:ui' show Color;
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';

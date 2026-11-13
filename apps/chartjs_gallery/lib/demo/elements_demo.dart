@@ -1,6 +1,3 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -11,12 +8,7 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor;
-// Not public: the typed element options of Chart.js ADR 0018.
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ArcOptions, BarOptions, LineOptions, PointOptions;
 // Not public: jsOrZero, the JS `value || 0` (Chart.js ADR 0017, section 8).
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsOrZero;
 import 'package:material_ui/material_ui.dart';
 
 /// The event types of the elements chart: the Chart.js default `events`

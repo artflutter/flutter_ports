@@ -36,7 +36,6 @@ library;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 

@@ -65,18 +65,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, PanAmount, ScaleRange, ZoomAmount, ZoomChart, zoomPlugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: UiCanvasElement, the canvas of a chart with no host.
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 // Not public: FilterCallback, the filter of the notifyPlugins override.
 import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
     show FilterCallback;
-// Not public: jsDateNow, the Date.now() of the chart (a test clock sets it).
-import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
-// Not public: jsGet, the reads of the scriptable delay of motion.line.delay.
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-// Not public: fromNativeEvent, the chart event of a NativeEvent.
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
-    show fromNativeEvent;
 // Not public: ChartThemeSwitch, the theme switch of ChartView (Chart.js ADR
 // 0050), which the cases of the mode theme run without a widget.
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';

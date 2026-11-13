@@ -5,20 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     hide Chart, ChartMeta, Scale;
 import 'package:flutter_chartjs_port/helpers.dart'
-    show DrawPointOptions, clearCanvas, retinaScale;
-import 'package:flutter_chartjs_port/helpers.dart'
     as helpers
     show isPointInArea;
-// Not public: UiCanvasElement, a canvas with no chart (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-// Not public: ChartHost, the host of a canvas with no chart.
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-// Not public: _detectPlatform, an upstream `_` export (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/platform/index.dart'
-    show detectPlatform;
-// Not exported: RoundedRect, SplinePoint, TRBLCorners (Chart.js ADR 0048 §5).
-import 'package:flutter_chartjs_port/src/types/geometric.dart'
-    show RoundedRect, SplinePoint, TRBLCorners;
 // Not public: the interfaces types.Chart and others that DemoChart implements.
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 

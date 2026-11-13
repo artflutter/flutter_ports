@@ -1,15 +1,9 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/helpers.dart' show toFont, toPadding;
 // The demo calls pure resolvers without constructing a Chart first.
 // Not public: _createResolver and _attachContext, upstream `_` helpers.
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show attachContext, createResolver;
 import 'package:material_ui/material_ui.dart';
 
 /// One dataset scope of the three-state table.

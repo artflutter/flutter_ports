@@ -12,24 +12,11 @@ import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show ZoomChart;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: UiCanvasElement, the canvas of the internal host.
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
-    show UiCanvasElement;
 // Not public: Animation, the class of the animations of an element. The
 // prefix keeps it apart from the Animation of Flutter.
 import 'package:flutter_chartjs_port/src/core/core.animation.dart'
     as port
     show Animation;
-// Not public: jsToNumber, the JS ToNumber of a raw chart value.
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-// Not public: jsGet, the JS property read of the chart values.
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-// Not public: fillerSourceOf, the source of `meta.$filler`.
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show fillerSourceOf;
-// Not public: Legend, the element class of plugin.legend (hit boxes).
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
 // Not public: Title, the element class of plugin.title.
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
 // Not public: Tooltip, the element class of plugin.tooltip.

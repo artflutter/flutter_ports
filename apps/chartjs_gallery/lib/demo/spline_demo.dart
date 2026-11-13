@@ -1,12 +1,7 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: _updateBezierControlPoints, an upstream `_` helper.
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show updateBezierControlPoints;
 import 'package:material_ui/material_ui.dart';
 
 /// A point `{x, y}` whose control points the curve helpers write, as the
@@ -436,7 +431,7 @@ class _PointDragRecognizer({super.debugOwner})
     if (_pointer != null || onDown?.call(event.localPosition) != true) return;
     _pointer = event.pointer;
     startTrackingPointer(event.pointer, event.transform);
-    resolve(GestureDisposition.accepted);
+    this.resolve(GestureDisposition.accepted);
   }
 
   @override
