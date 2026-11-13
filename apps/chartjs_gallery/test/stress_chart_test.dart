@@ -15,18 +15,7 @@ import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: UiCanvasElement, the canvas of the internal host.
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
-    show UiCanvasElement;
-// Not public: the typed element options of Chart.js ADR 0018.
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions;
-// Not public: jsGet and jsObjectIsFrozen, the JS reads of the values.
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsObjectIsFrozen;
 // Not public: Legend, the element class of plugin.legend (hit boxes).
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 

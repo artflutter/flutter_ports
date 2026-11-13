@@ -10,7 +10,6 @@ import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: jsToNumber, the JS ToNumber of a raw chart value.
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 

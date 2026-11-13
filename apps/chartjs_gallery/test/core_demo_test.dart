@@ -6,18 +6,6 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: the typed element options of Chart.js ADR 0018.
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions;
-// Not public: jsGet and jsObjectIsFrozen, the JS reads of the values.
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsObjectIsFrozen;
-// Not public: ChartHost, the internal host of ChartView (a white-box test).
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show ChartHost;
-// Not public: Legend, the element class of plugin.legend (hit boxes).
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
 // Not public: Tooltip, the element class of plugin.tooltip.
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     as plugin_tooltip;

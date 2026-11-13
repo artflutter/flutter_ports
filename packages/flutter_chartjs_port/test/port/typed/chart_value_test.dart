@@ -5,11 +5,6 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show createContext;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 

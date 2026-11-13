@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';

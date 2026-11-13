@@ -5,9 +5,6 @@ library;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // `ChartConfig.animations` is a List of ready classes, one class for each

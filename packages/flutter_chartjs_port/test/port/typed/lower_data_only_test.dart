@@ -6,10 +6,6 @@ import 'dart:ui' show Color, Locale;
 
 import 'package:flutter/widgets.dart' show EdgeInsets, ValueKey;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptValue;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';

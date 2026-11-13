@@ -6,7 +6,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, section 9: the change test of a typed config is

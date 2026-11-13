@@ -10,14 +10,6 @@ import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: jsGet, the JS property read of the chart values.
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-// Not public: fillerSourceOf, the source of `meta.$filler`.
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show fillerSourceOf;
-// Not public: Legend, the element class of plugin.legend (hit boxes).
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
 // Not public: Title, the element class of plugin.title.
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart'
     as title_plugin;

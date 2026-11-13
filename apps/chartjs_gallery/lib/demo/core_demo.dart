@@ -1,8 +1,5 @@
 // Original code, not ported from Chart.js: the gallery demo of phase 5.
 
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -10,12 +7,7 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: the typed options of Chart.js ADR 0018 in the readout.
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions;
 // Not public: the frozen state of the options (Chart.js ADR 0021, §5).
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsObjectIsFrozen;
 import 'package:material_ui/material_ui.dart';
 
 /// A mode of the selector: the id of its segment, the short text of the

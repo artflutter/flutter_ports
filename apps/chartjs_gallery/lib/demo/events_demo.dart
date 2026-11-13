@@ -1,6 +1,3 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/canvas_demo.dart'
@@ -8,14 +5,9 @@ import 'package:chartjs_gallery/demo/canvas_demo.dart'
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/helpers.dart'
-    show drawPoint, getRelativePosition, renderText, toFont;
-// Not public: _getParentNode, an upstream `_` helper (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/helpers/index.dart' show getParentNode;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    hide PointOptions;
 // Not public: the DOM listeners of the internal chart host.
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show addCanvasEventListener, removeCanvasEventListener;
 import 'package:material_ui/material_ui.dart';
 
 /// The event types of the demo chart: the Chart.js default `events` option

@@ -6,8 +6,6 @@ import 'dart:ui' show Color, Offset;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;

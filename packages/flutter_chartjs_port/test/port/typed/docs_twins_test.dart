@@ -7,7 +7,6 @@ import 'dart:ui' as native_ui;
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'chart_twin.dart';

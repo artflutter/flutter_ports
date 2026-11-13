@@ -364,6 +364,7 @@ class Legend(
   /// core.layouts.js:301 `_layers`. Dart `null` stands for JS `undefined`,
   /// the start value: `layouts.addBox` writes the default layer.
   @override
+  @internal
   List<LayoutLayer> Function()? layers;
 
   /// core.layouts.js:15 `box.axis`. The legend has no axis: Dart `null`

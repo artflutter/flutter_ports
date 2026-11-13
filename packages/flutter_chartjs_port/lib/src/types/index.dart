@@ -1097,17 +1097,21 @@ final class ScaleCache() {
 
   /// scale.time.js:627-648 `_cache.data`: the sorted unique parsed values
   /// of the visible datasets.
+  @internal
   List<double>? data;
 
   /// scale.time.js:651-668 `_cache.labels`: the timestamps of the labels.
+  @internal
   List<double?>? labels;
 
   /// scale.timeseries.js:137-157 `_cache.all`: the timestamps of the
   /// lookup table.
+  @internal
   List<double?>? all;
 
   /// controller.bar.js:7-20 `_cache.$bar`: the sorted unique values of the
   /// bar datasets of the scale.
+  @internal
   List<double>? bar;
 }
 

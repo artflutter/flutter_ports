@@ -54,6 +54,7 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:meta/meta.dart' show internal;
 
 /// plugin.title.js:7 `class Title extends Element`.
 ///
@@ -146,6 +147,7 @@ class Title(
   /// core.layouts.js:301 `_layers`. Dart `null` stands for JS `undefined`,
   /// the start value: `layouts.addBox` writes the default layer.
   @override
+  @internal
   List<LayoutLayer> Function()? layers;
 
   /// core.layouts.js:15 `box.axis`. The title has no axis: Dart `null`

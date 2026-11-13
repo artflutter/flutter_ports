@@ -5,12 +5,7 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: the typed element options of Chart.js ADR 0018.
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ArcOptions, BarOptions, LineOptions, PointOptions;
 // Not public: ChartHost, the internal host of ChartView (a white-box test).
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show ChartHost;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 

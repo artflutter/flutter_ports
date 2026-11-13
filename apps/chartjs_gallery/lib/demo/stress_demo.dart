@@ -24,16 +24,12 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/helpers.dart'
-    show drawPoint, renderText, requestAnimFrame, toFont;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    hide PointOptions;
 // Not public: the typed options of Chart.js ADR 0018. The prefix keeps them
 // apart from the PointOptions of demo_chart.dart (the primitives mode).
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     as element_options;
-// Not public: fromNativeEvent, the chart event of a NativeEvent.
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
-    show fromNativeEvent;
 import 'package:material_ui/material_ui.dart';
 
 export 'package:chartjs_gallery/demo/stress_chart_config.dart'

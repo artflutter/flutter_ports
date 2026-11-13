@@ -35,7 +35,7 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/internal.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 /// plugin.colors.ts:14 `BORDER_COLORS`.
@@ -300,7 +300,9 @@ bool _isDefaultColor(Object? input) {
 /// `chart.config.data.datasets` is a read of the data of the user, by name.
 /// The options of the config are read through their typed keys
 /// ([optionOf]), by name for a Map of the user.
-void _beforeLayout(Chart chart, Object _, Object options) {
+void _beforeLayout(Object hookChart, Object _, Object options) {
+  // The core gives its Chart: the hook type names the chart interface.
+  final chart = hookChart as Chart;
   final opts = ColorsPluginOptions(options);
   if (!opts.enabled) {
     return;

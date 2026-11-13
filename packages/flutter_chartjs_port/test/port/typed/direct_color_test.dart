@@ -9,13 +9,10 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/chartjs.dart' as core show Animation;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     as numerical;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
