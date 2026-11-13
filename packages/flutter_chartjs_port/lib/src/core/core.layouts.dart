@@ -14,14 +14,17 @@
 /// is a field with a start value that the readers treat as upstream treats
 /// `undefined`.
 ///
-/// The numbers are `double` (Chart.js ADR 0045). `Math.max` is [jsMax]. The
-/// form `a || b` of two numbers is [_or].
+/// The numbers are `double` (Chart.js ADR 0045). `Math.max` is `dart:math`
+/// `max` with `double` operands (Chart.js ADR 0134). The form `a || b` of
+/// two numbers is [_or].
 ///
 /// This library is a pure layer. It imports `helpers.config.dart`
 /// (`readOption`, the typed read of the options of a box, Chart.js ADR 0054
 /// §4), `helpers.core.dart`, `helpers.options.dart`, the JS runtime, the
 /// option keys and the type libraries.
 library;
+
+import 'dart:math' as math;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
@@ -32,7 +35,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toPadding;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -523,17 +525,17 @@ double _getCombinedMax(
   ChartPosition a,
   ChartPosition b,
 ) {
-  return jsMax(maxPadding[a], chartArea[a]) +
-      jsMax(maxPadding[b], chartArea[b]);
+  return math.max(maxPadding[a], chartArea[a]) +
+      math.max<double>(maxPadding[b], chartArea[b]);
 }
 
 /// core.layouts.js:109 `updateMaxPadding`.
 void _updateMaxPadding(_Edges maxPadding, TRBL boxPadding) {
   maxPadding
-    ..top = jsMax(maxPadding.top, boxPadding.top)
-    ..left = jsMax(maxPadding.left, boxPadding.left)
-    ..bottom = jsMax(maxPadding.bottom, boxPadding.bottom)
-    ..right = jsMax(maxPadding.right, boxPadding.right);
+    ..top = math.max(maxPadding.top, boxPadding.top)
+    ..left = math.max(maxPadding.left, boxPadding.left)
+    ..bottom = math.max(maxPadding.bottom, boxPadding.bottom)
+    ..right = math.max(maxPadding.right, boxPadding.right);
 }
 
 /// core.layouts.js:116 `updateDims`.
@@ -557,7 +559,10 @@ void _updateMaxPadding(_Edges maxPadding, TRBL boxPadding) {
     }
     final stack =
         stacks[layout.stack] ?? _Stack(count: 1, placed: 0, weight: 0);
-    stack.size = jsMax(stack.size, layout.horizontal ? box.height : box.width);
+    stack.size = math.max(
+      stack.size,
+      layout.horizontal ? box.height : box.width,
+    );
     layout.size = stack.size / stack.count;
     chartArea[pos] += layout.size;
   }
@@ -566,7 +571,7 @@ void _updateMaxPadding(_Edges maxPadding, TRBL boxPadding) {
     _updateMaxPadding(maxPadding, box.getPadding());
   }
 
-  final newWidth = jsMax(
+  final newWidth = math.max<double>(
     0,
     params.outerWidth -
         _getCombinedMax(
@@ -576,7 +581,7 @@ void _updateMaxPadding(_Edges maxPadding, TRBL boxPadding) {
           ChartPosition.right,
         ),
   );
-  final newHeight = jsMax(
+  final newHeight = math.max<double>(
     0,
     params.outerHeight -
         _getCombinedMax(
@@ -603,7 +608,7 @@ void _handleMaxPadding(_LayoutArea chartArea) {
   final maxPadding = chartArea.maxPadding;
 
   double updatePos(ChartPosition pos) {
-    final change = jsMax(maxPadding[pos] - chartArea[pos], 0);
+    final change = math.max<double>(maxPadding[pos] - chartArea[pos], 0);
     chartArea[pos] += change;
     return change;
   }
@@ -622,7 +627,7 @@ TRBL _getMargins(bool horizontal, _LayoutArea chartArea) {
   _Edges marginForPositions(List<ChartPosition> positions) {
     final margin = _Edges(left: 0, top: 0, right: 0, bottom: 0);
     for (final pos in positions) {
-      margin[pos] = jsMax(chartArea[pos], maxPadding[pos]);
+      margin[pos] = math.max(chartArea[pos], maxPadding[pos]);
     }
     return margin;
   }
@@ -860,8 +865,8 @@ void _update(
   final padding = paddingOption(
     readOption(readOption(chart.options, OptionKey.layout), OptionKey.padding),
   );
-  final availableWidth = jsMax(width - padding.horizontal, 0);
-  final availableHeight = jsMax(height - padding.vertical, 0);
+  final availableWidth = math.max<double>(width - padding.horizontal, 0);
+  final availableHeight = math.max<double>(height - padding.vertical, 0);
   final boxes = _buildLayoutBoxes(chart.boxes);
   final verticalBoxes = boxes.vertical;
   final horizontalBoxes = boxes.horizontal;

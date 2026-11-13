@@ -18,7 +18,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show log10;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -92,7 +91,7 @@ List<String>? _numeric(
 
   if (ticks.length > 1) {
     // all ticks are small or there huge numbers; use scientific notation
-    final maxTick = jsMax(
+    final maxTick = math.max(
       ticks[0].value.abs(),
       ticks[ticks.length - 1].value.abs(),
     );
@@ -113,7 +112,10 @@ List<String>? _numeric(
   // toFixed has a max of 20 decimal places
   final numDecimal = logDelta.isNaN
       ? 1.0
-      : jsMax(jsMin(-1 * logDelta.floorToDouble(), 20), 0);
+      : math.max<double>(
+          math.min<double>(-1 * logDelta.floorToDouble(), 20),
+          0,
+        );
 
   // DIVERGES(chartjs): adapt-intl-number-format, a NumberFormat formats the
   // tick as it is: Dart cannot copy it to merge the digits of the tick.

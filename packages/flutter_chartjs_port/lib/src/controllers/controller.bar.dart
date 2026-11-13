@@ -40,6 +40,7 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
@@ -78,7 +79,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show jsObjectKeys, jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
@@ -182,7 +182,7 @@ double _computeMinSampleSize(types.ChartMeta meta) {
     if (defined(prev)) {
       // curr - prev === 0 is ignored
       final difference = (jsToNumber(curr) - jsToNumber(prev)).abs();
-      min = jsMin(min, jsTruthy(difference) ? difference : min);
+      min = math.min(min, jsTruthy(difference) ? difference : min);
     }
     prev = curr;
   }
@@ -275,7 +275,8 @@ _CategoryTraits _computeFlexCategoryTraits(
   // last data: its size is also double based on the previous point.
   next ??= curr + curr - prev;
 
-  final start = curr - (curr - jsMin(prev, next)) / 2 * jsToNumber(percent);
+  final start =
+      curr - (curr - math.min<double>(prev, next)) / 2 * jsToNumber(percent);
   final size = (next - prev).abs() / 2 * jsToNumber(percent);
 
   return (
@@ -293,8 +294,8 @@ _CategoryTraits _computeFlexCategoryTraits(
 void _parseFloatBar(Object? entry, ParsedItem item, types.Scale vScale, int i) {
   final startValue = vScale.parse(jsGetIndex(entry, 0), i);
   final endValue = vScale.parse(jsGetIndex(entry, 1), i);
-  final min = jsMin(jsToNumber(startValue), jsToNumber(endValue));
-  final max = jsMax(jsToNumber(startValue), jsToNumber(endValue));
+  final min = math.min(jsToNumber(startValue), jsToNumber(endValue));
+  final max = math.max(jsToNumber(startValue), jsToNumber(endValue));
   var barStart = min;
   var barEnd = max;
 
@@ -800,12 +801,18 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       // float bar: only one end of the bar is considered by `super`
       if (custom is FloatingBar) {
         range
-          ..min = jsMin(range.min, custom.min)
-          ..max = jsMax(range.max, custom.max);
+          ..min = math.min(range.min, custom.min)
+          ..max = math.max(range.max, custom.max);
       } else {
         range
-          ..min = jsMin(range.min, jsToNumber(_userCustomValue(custom, 'min')))
-          ..max = jsMax(range.max, jsToNumber(_userCustomValue(custom, 'max')));
+          ..min = math.min(
+            range.min,
+            jsToNumber(_userCustomValue(custom, 'min')),
+          )
+          ..max = math.max(
+            range.max,
+            jsToNumber(_userCustomValue(custom, 'max')),
+          );
       }
     }
   }
@@ -1113,7 +1120,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       ratio = settings.barPercentage;
     }
     final chunk = size / stacks;
-    final breadth = jsMin(settings.maxThickness, chunk * ratio);
+    final breadth = math.min(settings.maxThickness, chunk * ratio);
     if (!size.isFinite || !chunk.isFinite || !breadth.isFinite) return false;
     final basePixel = valueScale.getPixelForValue(settings.base);
     final actualBase = settings.base == 0 ? 0.0 : settings.base;
@@ -1519,9 +1526,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       }
       final startPixel = vScale.getPixelForDecimal(0);
       final endPixel = vScale.getPixelForDecimal(1);
-      final min = jsMin(startPixel, endPixel);
-      final max = jsMax(startPixel, endPixel);
-      base = jsMax(jsMin(base, max), min);
+      final min = math.min(startPixel, endPixel);
+      final max = math.max(startPixel, endPixel);
+      base = math.max(math.min(base, max), min);
       head = base + size;
 
       if (stacked != types.StackMode.off && !floating) {
@@ -1622,14 +1629,14 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
             axisNumber;
       }
       center = range.start + (range.chunk * stackIndex) + (range.chunk / 2);
-      size = jsMin(maxBarThickness, range.chunk * jsToNumber(range.ratio));
+      size = math.min(maxBarThickness, range.chunk * jsToNumber(range.ratio));
     } else {
       // For non-grouped bar charts, exact pixel values are used
       center = scale.getPixelForValue(
         _axisValueOf(getParsed(index), scale),
         index,
       );
-      size = jsMin(maxBarThickness, jsToNumber(ruler.min) * ruler.ratio);
+      size = math.min(maxBarThickness, jsToNumber(ruler.min) * ruler.ratio);
     }
 
     return (

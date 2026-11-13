@@ -74,7 +74,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScaleContext, addGrace, createContext, toFont;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -130,7 +129,7 @@ double _offsetFromEdge(Scale scale, Object? edge, double offset) {
 /// core.scale.js:11 `getTicksLimit`.
 ///
 /// `maxTicksLimit || ticksLength` tests the raw option value.
-double _getTicksLimit(int ticksLength, Object? maxTicksLimit) => jsMin(
+double _getTicksLimit(int ticksLength, Object? maxTicksLimit) => math.min(
   jsTruthy(maxTicksLimit) ? jsToNumber(maxTicksLimit) : ticksLength.toDouble(),
   ticksLength.toDouble(),
 );
@@ -246,7 +245,7 @@ double? _getPixelForGridLine(Scale scale, int index, Object? offsetGridLines) {
 
   if (jsTruthy(offsetGridLines)) {
     if (length == 1) {
-      offset = jsMax(lineValue - start, end - lineValue);
+      offset = math.max(lineValue - start, end - lineValue);
     } else if (index == 0) {
       offset = ((scale.getPixelForTick(1) ?? 0) - lineValue) / 2;
     } else {
@@ -991,10 +990,10 @@ class Scale(AnyObject cfg)
     for (var i = 0, ilen = metas.length; i < ilen; ++i) {
       range = metas[i].controller!.getMinMax(this, canStack);
       if (!minDefined) {
-        min = jsMin(min, range.min);
+        min = math.min(min, range.min);
       }
       if (!maxDefined) {
-        max = jsMax(max, range.max);
+        max = math.max(max, range.max);
       }
     }
 
@@ -1450,7 +1449,7 @@ class Scale(AnyObject cfg)
       // The local `labelRotation` holds the raw option value until here.
       // Thus the calculated degrees have their own local.
       final degrees = toDegrees(
-        jsMin(
+        math.min(
           math.asin(
             limitValue((labelSizes.highest.height + 6) / tickWidth, -1, 1),
           ),
@@ -1458,9 +1457,9 @@ class Scale(AnyObject cfg)
               math.asin(limitValue(maxLabelHeight / maxLabelDiagonal, -1, 1)),
         ),
       );
-      labelRotation = jsMax(
+      labelRotation = math.max<double>(
         jsToNumber(minRotation),
-        jsMin(jsToNumber(maxRotation), degrees),
+        math.min<double>(jsToNumber(maxRotation), degrees),
       );
     }
 
@@ -1545,7 +1544,7 @@ class Scale(AnyObject cfg)
           final labelHeight = tickOpts.mirror
               ? 0.0
               : sin * widest.width + cos * highest.height;
-          minSizeHeight = jsMin(
+          minSizeHeight = math.min<double>(
             maxHeight,
             jsToNumber(jsAdd(jsAdd(minSizeHeight, labelHeight), tickPadding)),
           );
@@ -1557,7 +1556,7 @@ class Scale(AnyObject cfg)
               ? 0.0
               : cos * widest.width + sin * highest.height;
 
-          minSizeWidth = jsMin(
+          minSizeWidth = math.min<double>(
             maxWidth,
             jsToNumber(jsAdd(jsAdd(minSizeWidth, labelWidth), tickPadding)),
           );
@@ -1627,13 +1626,13 @@ class Scale(AnyObject cfg)
       }
 
       // Adjust padding taking into account changes in offsets
-      this.paddingLeft = jsMax(
+      this.paddingLeft = math.max(
         jsToNumber(jsAdd(paddingLeft - offsetLeft, padding)) *
             width /
             (width - offsetLeft),
         0,
       );
-      this.paddingRight = jsMax(
+      this.paddingRight = math.max(
         jsToNumber(jsAdd(paddingRight - offsetRight, padding)) *
             width /
             (width - offsetRight),
@@ -1665,10 +1664,10 @@ class Scale(AnyObject cfg)
   void _handleMargins() {
     final margins = _margins;
     margins
-      ..left = jsMax(paddingLeft, margins.left)
-      ..top = jsMax(jsToNumber(paddingTop), margins.top)
-      ..right = jsMax(paddingRight, margins.right)
-      ..bottom = jsMax(jsToNumber(paddingBottom), margins.bottom);
+      ..left = math.max(paddingLeft, margins.left)
+      ..top = math.max(jsToNumber(paddingTop), margins.top)
+      ..right = math.max(paddingRight, margins.right)
+      ..bottom = math.max(jsToNumber(paddingBottom), margins.bottom);
   }
 
   /// core.scale.js:752 `afterFit()`.
@@ -1852,8 +1851,8 @@ class Scale(AnyObject cfg)
       }
       widths.add(width);
       heights.add(height);
-      widestLabelSize = jsMax(width, widestLabelSize);
-      highestLabelSize = jsMax(height, highestLabelSize);
+      widestLabelSize = math.max(width, widestLabelSize);
+      highestLabelSize = math.max(height, highestLabelSize);
     }
     _garbageCollect(caches, length);
 
@@ -2176,7 +2175,10 @@ class Scale(AnyObject cfg)
     }
 
     final limit = valueOrDefault(options.ticks.maxTicksLimit, ticksLength);
-    final step = jsMax(1, (ticksLength / jsToNumber(limit)).ceilToDouble());
+    final step = math.max<double>(
+      1,
+      (ticksLength / jsToNumber(limit)).ceilToDouble(),
+    );
     // The step is a number: Infinity or NaN for an odd `maxTicksLimit`
     // ends the loop after its first index.
     for (i = 0; i < ticksLength; i += step) {

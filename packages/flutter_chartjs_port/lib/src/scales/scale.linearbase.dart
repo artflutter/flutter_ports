@@ -192,7 +192,7 @@ List<Tick> _generateTicks(
     // Note that we round here to handle the case where almostWhole translated
     // an FP error
     numSpaces = jsRound(
-      jsMin((jsToNumber(max) - jsToNumber(min)) / spacing, maxTicks),
+      math.min((jsToNumber(max) - jsToNumber(min)) / spacing, maxTicks),
     );
     spacing = (jsToNumber(max) - jsToNumber(min)) / numSpaces;
     niceMin = min;
@@ -222,7 +222,7 @@ List<Tick> _generateTicks(
   // be computed until this point
   // The upstream name of the local is the name of the function
   // `decimalPlaces` of helpers.math. `Math.max(undefined, n)` is NaN.
-  final decimalPlaces_ = jsMax(
+  final decimalPlaces_ = math.max(
     decimalPlaces(spacing) ?? double.nan,
     decimalPlaces(niceMin) ?? double.nan,
   );
@@ -302,7 +302,7 @@ double _relativeLabelSize(
   final sinOrCos = horizontal ? math.sin(rad) : math.cos(rad);
   final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
   final length = 0.75 * minSpacing * jsToString(value).length;
-  return jsMin(minSpacing / ratio, length);
+  return math.min(minSpacing / ratio, length);
 }
 
 /// `console.warn(message)`.
@@ -448,7 +448,7 @@ class LinearScaleBase(super.cfg) extends Scale {
     }
 
     if (jsTruthy(maxTicksLimit)) {
-      maxTicks = jsMin(jsToNumber(maxTicksLimit), maxTicks);
+      maxTicks = math.min(jsToNumber(maxTicksLimit), maxTicks);
     }
 
     return maxTicks;
@@ -474,7 +474,7 @@ class LinearScaleBase(super.cfg) extends Scale {
     // We also limit the maximum number of ticks to 11 which gives a nice 10
     // squares on the graph. Make sure we always have at least 2 ticks
     var maxTicks = getTickLimit();
-    maxTicks = jsMax(2, maxTicks);
+    maxTicks = math.max(2, maxTicks);
 
     final numericGeneratorOptions = (
       maxTicks: maxTicks,
@@ -530,7 +530,8 @@ class LinearScaleBase(super.cfg) extends Scale {
     super.configure();
 
     if (options.offset && ticks!.isNotEmpty) {
-      final offset = (end - start) / jsMax(ticks.length - 1.0, 1) / 2;
+      final offset =
+          (end - start) / math.max<double>(ticks.length - 1.0, 1) / 2;
       start -= offset;
       end += offset;
     }

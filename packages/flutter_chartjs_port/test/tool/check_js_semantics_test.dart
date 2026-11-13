@@ -285,7 +285,7 @@ void main() {
     expect(await resolvedSites(const []), isEmpty);
   });
 
-  test('flags dart:math max and min with double or num operands', () async {
+  test('flags dart:math max and min with num operands', () async {
     final tree = FileTree()
       ..write('lib/a.dart', [
         _ported,
@@ -298,6 +298,9 @@ void main() {
         'int e(int i, int j) => math.max(i, j) + max<int>(0, j);',
         'int f(List<int> l) => l.fold(0, math.max);',
         'double g(double x, double y) => max(x, y);',
+        'num h(double x) => max(0, x);',
+        'num i(List<num> l) => l.fold(0, math.max);',
+        'double j(double x) => math.max(0.0, x);',
       ]);
     final sites = await resolvedSites([tree.path('lib/a.dart')]);
     expect(
@@ -305,14 +308,11 @@ void main() {
         for (final site in sites[tree.path('lib/a.dart')]!)
           '${site.line} ${site.name}',
       ],
-      ['4 max(', '5 min(', '6 min(', '7 min(', '10 max('],
+      ['5 min(', '11 max(', '12 max('],
     );
     expect(
       sites.values.first.first.message,
-      contains(
-        'Call jsMax of the JS runtime (lib/src/js/, or '
-        'package:flutter_chartjs_port/js_semantics.dart in an add-on)',
-      ),
+      contains('Call min<double> or give it double operands'),
     );
   });
 

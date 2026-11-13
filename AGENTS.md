@@ -1432,7 +1432,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `VisualElementRange` of Chart.js ADR 0048 §6. Chart.js ADR 0133 (the construct helpers, the
       meta and a recording context for add-on chart types) is accepted (2026-11-13): its code passes
       the tests. It supersedes the `@internal` of `DatasetController.cachedMeta` of Chart.js ADR 0048
-      §6.
+      §6. Chart.js ADR 0134 (`Math.max` and `Math.min` are `dart:math` `max` and `min` on doubles) is
+      accepted (2026-11-13): its code passes the tests. It supersedes the `jsMax`, `jsMin` and
+      `jsMaxMinCompare` parts of Chart.js ADR 0045 (§4, §8, the tests, an alternative and a
+      consequence).
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -2079,7 +2082,10 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036), `jsHypot` (`Math.hypot` of two doubles in the
   V8 form: the infinities first, then NaN, then the operands scaled by the larger magnitude;
   `math.sqrt(a * a + b * b)` differs in the last bit for about one pair in three, Chart.js ADR
-  0108) and the `undefined` sentinel (Chart.js ADR 0043). `lib/js_semantics.dart` exports each
+  0108) and the `undefined` sentinel (Chart.js ADR 0043). `Math.max` and `Math.min` have no
+  runtime function: they are `dart:math` `max` and `min` with the type argument `double`, explicit
+  or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), and
+  `check:js-semantics` flags a `num` type argument (Chart.js ADR 0134). `lib/js_semantics.dart` exports each
   name of `lib/src/js/` for add-on ports (Chart.js ADR 0132). `JsStringList` of `js_array.dart` is a string
   as an array-like value: the reads `s[i]` and `s.length`, and a `TypeError` for each write.
   `_dataCheck` keeps a string `data` in it.

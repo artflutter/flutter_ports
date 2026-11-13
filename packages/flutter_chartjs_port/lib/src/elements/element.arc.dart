@@ -68,7 +68,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -232,7 +231,7 @@ void _clipSelf(
   final borderWidth = _number(options, OptionKey.borderWidth);
   // Compared with strings only: JS undefined and JS null give one result.
   final borderJoinStyle = _borderJoinStyle(options);
-  final outerAngleClip = jsMin(
+  final outerAngleClip = math.min(
     borderWidth / outerRadius,
     normalizeAngle(startAngle - endAngle),
   );
@@ -247,7 +246,7 @@ void _clipSelf(
     );
 
   if (innerRadius > 0) {
-    final innerAngleClip = jsMin(
+    final innerAngleClip = math.min(
       borderWidth / innerRadius,
       normalizeAngle(startAngle - endAngle),
     );
@@ -260,7 +259,7 @@ void _clipSelf(
       true,
     );
   } else {
-    final clipWidth = jsMin(
+    final clipWidth = math.min(
       borderWidth / 2,
       outerRadius * normalizeAngle(startAngle - endAngle),
     );
@@ -380,7 +379,7 @@ _BorderRadius _parseBorderRadius(
   // _borderRadius throws a TypeError for undefined options, as `!` did.
   final o = _toRadiusCorners(_borderRadius(arc.options));
   final halfThickness = (outerRadius - innerRadius) / 2;
-  final innerLimit = jsMin(halfThickness, angleDelta * innerRadius / 2);
+  final innerLimit = math.min(halfThickness, angleDelta * innerRadius / 2);
 
   // Outer limits are complicated. We want to compute the available angular
   // distance at a radius of outerRadius - borderRadius because for small
@@ -395,8 +394,8 @@ _BorderRadius _parseBorderRadius(
   // point
   double computeOuterLimit(double val) {
     final outerArcLimit =
-        (outerRadius - jsMin(halfThickness, val)) * angleDelta / 2;
-    return limitValue(val, 0, jsMin(halfThickness, outerArcLimit));
+        (outerRadius - math.min<double>(halfThickness, val)) * angleDelta / 2;
+    return limitValue(val, 0, math.min(halfThickness, outerArcLimit));
   }
 
   return (
@@ -434,7 +433,7 @@ void _pathFullCircle(
     :pixelMargin,
     innerRadius: innerR,
   ) = element;
-  final outerRadius = jsMax(
+  final outerRadius = math.max<double>(
     element.outerRadius + spacing + offset - pixelMargin,
     0,
   );
@@ -521,7 +520,7 @@ void _pathArc(
     return;
   }
 
-  final outerRadius = jsMax(
+  final outerRadius = math.max<double>(
     element.outerRadius + spacing + offset - pixelMargin,
     0,
   );
@@ -530,7 +529,7 @@ void _pathArc(
   var outerSpacingOffset = 0.0;
   var innerSpacingOffset = 0.0;
   final beta = outerRadius > 0
-      ? jsMax(0.001, alpha * outerRadius - offset / pi) / outerRadius
+      ? math.max(0.001, alpha * outerRadius - offset / pi) / outerRadius
       : 0.001;
   final angleOffset = (alpha - beta) / 2;
 
@@ -549,12 +548,12 @@ void _pathArc(
         : alpha;
     final proportionalOffset = (alpha - adjustedAngle) / 2;
     final angularOffset = avgNoSpacingRadius > 0
-        ? math.asin(jsMin(1, spacing / avgNoSpacingRadius))
+        ? math.asin(math.min<double>(1, spacing / avgNoSpacingRadius))
         : 0.0;
 
     // Keep spacing trims below half the available span after base offset
     // trimming.
-    final maxOffset = jsMax(0, beta / 2 - 0.001);
+    final maxOffset = math.max<double>(0, beta / 2 - 0.001);
     final maxOffsetSin = math.sin(maxOffset);
 
     if (spacingMode == ArcSpacingMode.parallel) {
@@ -563,30 +562,30 @@ void _pathArc(
         // width.
         // Raise the root just enough for the available angular span.
         final minInnerRadius = spacing / maxOffsetSin;
-        final maxInnerRadius = jsMax(0, outerRadius - 0.001);
-        innerRadius = jsMin(minInnerRadius, maxInnerRadius);
+        final maxInnerRadius = math.max<double>(0, outerRadius - 0.001);
+        innerRadius = math.min(minInnerRadius, maxInnerRadius);
       }
 
       // Use one bounded spacing value for both radii so large spacing keeps
       // stable geometry.
-      final maxParallelSpacing = jsMin(
+      final maxParallelSpacing = math.min(
         outerRadius > 0 ? outerRadius * maxOffsetSin : double.infinity,
         innerRadius > 0 ? innerRadius * maxOffsetSin : double.infinity,
       );
-      final parallelSpacing = jsMin(spacing, maxParallelSpacing);
+      final parallelSpacing = math.min(spacing, maxParallelSpacing);
 
       outerSpacingOffset = outerRadius > 0
-          ? math.asin(jsMin(1, parallelSpacing / outerRadius))
-          : jsMin(maxOffset, angularOffset);
+          ? math.asin(math.min<double>(1, parallelSpacing / outerRadius))
+          : math.min(maxOffset, angularOffset);
       innerSpacingOffset = innerRadius > 0
-          ? math.asin(jsMin(1, parallelSpacing / innerRadius))
+          ? math.asin(math.min<double>(1, parallelSpacing / innerRadius))
           : outerSpacingOffset;
     } else if (spacingMode == ArcSpacingMode.proportional) {
-      outerSpacingOffset = jsMin(maxOffset, proportionalOffset);
-      innerSpacingOffset = jsMin(maxOffset, proportionalOffset);
+      outerSpacingOffset = math.min(maxOffset, proportionalOffset);
+      innerSpacingOffset = math.min(maxOffset, proportionalOffset);
     } else {
-      outerSpacingOffset = jsMin(maxOffset, angularOffset);
-      innerSpacingOffset = jsMin(maxOffset, angularOffset);
+      outerSpacingOffset = math.min(maxOffset, angularOffset);
+      innerSpacingOffset = math.min(maxOffset, angularOffset);
     }
   }
 
@@ -594,7 +593,7 @@ void _pathArc(
   final outerEndAngle = end - angleOffset - outerSpacingOffset;
   final innerStartAngle = start + angleOffset + innerSpacingOffset;
   final innerEndAngle = end - angleOffset - innerSpacingOffset;
-  final angleDelta = jsMin(
+  final angleDelta = math.min(
     outerEndAngle - outerStartAngle,
     innerEndAngle - innerStartAngle,
   );
@@ -1453,7 +1452,7 @@ class ArcElement([AnyObject? cfg])
     if (!(alpha > 0) || alpha >= tau - 1e-4 || !(outer > 0)) return false;
     final innerR = innerRadius;
     final inner = innerR > 0 ? innerR : 0.0;
-    final beta = jsMax(0.001, alpha * outer) / outer;
+    final beta = math.max(0.001, alpha * outer) / outer;
     final angleOffset = (alpha - beta) / 2;
     return ctx.tryDrawArcSector(
       x: x,
@@ -1517,7 +1516,10 @@ class ArcElement([AnyObject? cfg])
     var radiusOffset = 0.0;
     if (offset != 0 || circumference == double.negativeInfinity) {
       final fix =
-          1 - math.sin(jsMin(pi, jsTruthy(circumference) ? circumference : 0));
+          1 -
+          math.sin(
+            math.min<double>(pi, jsTruthy(circumference) ? circumference : 0),
+          );
       radiusOffset = offset * fix;
     }
 

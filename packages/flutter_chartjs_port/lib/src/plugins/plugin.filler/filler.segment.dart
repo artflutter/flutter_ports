@@ -16,13 +16,14 @@
 library;
 
 // DIVERGES(chartjs): adapt-line-points-elements, the wraps make point elements.
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/elements/element.point.dart'
     show PointElement;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show normalizeAngle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
     show boundSegment, boundSegments;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 // DIVERGES(chartjs): adapt-boundary-segment-search, per-draw private boundary.
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -107,10 +108,10 @@ List<FillPart> segments(
           target: tgt,
           // DIVERGES(chartjs): adapt-line-points-elements, an edge point.
           start: PointElement()
-            ..[property] = _getEdge(bounds, subBounds, 'start', jsMax),
+            ..[property] = _getEdge(bounds, subBounds, 'start', math.max),
           // DIVERGES(chartjs): adapt-line-points-elements, an edge point.
           end: PointElement()
-            ..[property] = _getEdge(bounds, subBounds, 'end', jsMin),
+            ..[property] = _getEdge(bounds, subBounds, 'end', math.min),
         ));
       }
     }

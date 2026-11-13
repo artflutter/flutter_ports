@@ -61,8 +61,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, log10, setMinAndMaxByKey;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsMax, jsMin, jsRound;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -111,7 +110,7 @@ double _startExp(double min, double max) {
   while (_steps(min, max, rangeExp) < 10) {
     rangeExp--;
   }
-  return jsMin(rangeExp, _log10Floor(min));
+  return math.min(rangeExp, _log10Floor(min));
 }
 
 /// The object `generationOptions` of [_generateTicks]
@@ -280,8 +279,8 @@ class LogarithmicScale(super.cfg) extends Scale {
   void determineDataLimits() {
     final (:min, :max) = getMinMax(true);
 
-    this.min = isFinite(min) ? jsMax(0, min) : double.nan;
-    this.max = isFinite(max) ? jsMax(0, max) : double.nan;
+    this.min = isFinite(min) ? math.max(0, min) : double.nan;
+    this.max = isFinite(max) ? math.max(0, max) : double.nan;
 
     if (options.beginAtZero) {
       _zero = true;

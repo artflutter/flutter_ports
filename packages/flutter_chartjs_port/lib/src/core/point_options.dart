@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: native point-option loop contracts.
 
 import 'dart:collection' show LinkedHashMap;
+import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
     show BulkBarScale;
@@ -11,7 +12,6 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
@@ -124,7 +124,7 @@ bool _truthy(double value) => value != 0 && !value.isNaN;
 @pragma('wasm:prefer-inline')
 double nativePointSize(double radius, double hoverRadius, double borderWidth) {
   final r = _truthy(radius) ? radius : 0.0;
-  final biggest = jsMax(
+  final biggest = math.max<double>(
     r,
     _truthy(r) && _truthy(hoverRadius) ? hoverRadius : 0,
   );

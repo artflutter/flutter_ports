@@ -298,7 +298,7 @@ void splineCurveMonotone(
 
 /// helpers.curve.ts:157 `capControlPoint`.
 double _capControlPoint(double pt, double min, double max) {
-  return jsMax(jsMin(pt, max), min);
+  return math.max(math.min(pt, max), min);
 }
 
 /// helpers.curve.ts:161 `capBezierPoints`.

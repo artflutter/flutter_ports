@@ -33,6 +33,7 @@
 /// a pure layer.
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' show Size;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -86,7 +87,6 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet, jsGetIndex;
@@ -1265,7 +1265,10 @@ class Chart(
       // New controllers will be reset after the layout pass, so we only want
       // to modify elements added to new datasets
       controller!.buildOrUpdateElements(reset);
-      minPadding = jsMax(jsToNumber(controller.getMaxOverflow()), minPadding);
+      minPadding = math.max(
+        jsToNumber(controller.getMaxOverflow()),
+        minPadding,
+      );
     }
     minPadding = _minPadding =
         jsTruthy(
@@ -1505,7 +1508,7 @@ class Chart(
       var padding = 0.0;
       for (final controller in controllers) {
         controller.buildOrUpdateElements(false);
-        padding = jsMax(jsToNumber(controller.getMaxOverflow()), padding);
+        padding = math.max(jsToNumber(controller.getMaxOverflow()), padding);
       }
       padding =
           jsTruthy(
@@ -1712,7 +1715,10 @@ class Chart(
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
       final controller = getDatasetMeta(i).controller!
         ..buildOrUpdateElements(!animsDisabled);
-      minPadding = jsMax(jsToNumber(controller.getMaxOverflow()), minPadding);
+      minPadding = math.max(
+        jsToNumber(controller.getMaxOverflow()),
+        minPadding,
+      );
     }
     minPadding = _minPadding =
         jsTruthy(

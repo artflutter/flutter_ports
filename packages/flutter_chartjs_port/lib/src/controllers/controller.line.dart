@@ -38,6 +38,8 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
@@ -55,7 +57,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
@@ -628,7 +629,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     final lastPoint = (data[data.length - 1] as types.PointElement).size(
       resolveDataElementOptions(data.length - 1),
     );
-    return jsMax(jsMax(jsToNumber(border), firstPoint), lastPoint) / 2;
+    return math.max(math.max(jsToNumber(border), firstPoint), lastPoint) / 2;
   }
 
   /// controller.line.js:138 `draw()`.

@@ -25,7 +25,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, pi, quarterPi, radPerDeg, tau, twoThirdsPi;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsRound;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -187,7 +187,7 @@ double longestText(
 /// `Math.round` is [jsRound]: the result places the grid lines and ticks.
 double alignPixel(Chart chart, double pixel, double width) {
   final devicePixelRatio = chart.currentDevicePixelRatio;
-  final halfWidth = width != 0 ? jsMax(width / 2, 0.5) : 0.0;
+  final halfWidth = width != 0 ? math.max(width / 2, 0.5) : 0.0;
   return jsRound((pixel - halfWidth) * devicePixelRatio) / devicePixelRatio +
       halfWidth;
 }

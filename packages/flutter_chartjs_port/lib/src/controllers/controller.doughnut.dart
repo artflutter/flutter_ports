@@ -69,7 +69,6 @@ import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsSetIndex;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex;
@@ -128,11 +127,11 @@ _RatioAndOffset _getRatioAndOffset(
     double calcMax(double angle, double a, double b) =>
         angleBetween(angle, startAngle, endAngle, true)
         ? 1
-        : jsMax(jsMax(jsMax(a, a * cutout), b), b * cutout);
+        : math.max(math.max(math.max(a, a * cutout), b), b * cutout);
     double calcMin(double angle, double a, double b) =>
         angleBetween(angle, startAngle, endAngle, true)
         ? -1
-        : jsMin(jsMin(jsMin(a, a * cutout), b), b * cutout);
+        : math.min(math.min(math.min(a, a * cutout), b), b * cutout);
     final maxX = calcMax(0, startX, endX);
     final maxY = calcMax(halfPi, startY, endY);
     final minX = calcMin(pi, startX, endX);
@@ -421,8 +420,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
         final rotation = controller._getRotation();
         final circumference = controller._getCircumference();
 
-        min = jsMin(min, rotation);
-        max = jsMax(max, rotation + circumference);
+        min = math.min(min, rotation);
+        max = math.max(max, rotation + circumference);
       }
     }
 
@@ -459,12 +458,12 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       _scansMayStop = false;
     }
     final spacing = jsAdd(scans, options.readKey(OptionKey.spacing));
-    final maxSize = jsMax(
-      (jsMin(chartArea.width, chartArea.height) - jsToNumber(spacing)) / 2,
+    final maxSize = math.max<double>(
+      (math.min(chartArea.width, chartArea.height) - jsToNumber(spacing)) / 2,
       0,
     );
     // DIVERGES(chartjs): adapt-length-objects, the length computes itself.
-    final cutout = jsMin(
+    final cutout = math.min<double>(
       _radiusLength(options.readKey(OptionKey.cutout)).fractionOf(maxSize),
       1,
     );
@@ -482,11 +481,11 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     );
     final maxWidth = (chartArea.width - jsToNumber(spacing)) / ratioX;
     final maxHeight = (chartArea.height - jsToNumber(spacing)) / ratioY;
-    final maxRadius = jsMax(jsMin(maxWidth, maxHeight) / 2, 0);
+    final maxRadius = math.max<double>(math.min(maxWidth, maxHeight) / 2, 0);
     // DIVERGES(chartjs): adapt-length-objects, the length computes itself.
     final outerRadius = _radiusLength(options.readKey(OptionKey.radius))
         .pixelsOf(maxRadius);
-    final innerRadius = jsMax(outerRadius * cutout, 0);
+    final innerRadius = math.max<double>(outerRadius * cutout, 0);
     final radiusLength =
         (outerRadius - innerRadius) / _getVisibleDatasetWeightTotal();
     this.offsetX = offsetX * outerRadius;
@@ -495,7 +494,10 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     total = calculateTotal();
 
     this.outerRadius = outerRadius - radiusLength * _getRingWeightOffset(index);
-    this.innerRadius = jsMax(this.outerRadius! - radiusLength * chartWeight, 0);
+    this.innerRadius = math.max(
+      this.outerRadius! - radiusLength * chartWeight,
+      0,
+    );
 
     updateElements(arcs, 0, arcs.length, mode);
   }
@@ -804,8 +806,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
       if (ArcBorderAlign.of(readOption(options, OptionKey.borderAlign)) !=
           ArcBorderAlign.inner) {
-        max = jsMax(
-          jsMax(max, jsOrZero(readOption(options, OptionKey.borderWidth))),
+        max = math.max(
+          math.max(max, jsOrZero(readOption(options, OptionKey.borderWidth))),
           jsOrZero(readOption(options, OptionKey.hoverBorderWidth)),
         );
       }
@@ -824,8 +826,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 
     for (var i = 0, ilen = arcs.length; i < ilen; ++i) {
       final options = resolveDataElementOptions(i);
-      max = jsMax(
-        jsMax(max, jsOrZero(options.valueOf(OptionKey.offset))),
+      max = math.max(
+        math.max(max, jsOrZero(options.valueOf(OptionKey.offset))),
         jsOrZero(options.valueOf(OptionKey.hoverOffset)),
       );
       // DIVERGES(chartjs): adapt-arc-native-options, the rest must repeat.
@@ -859,7 +861,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// `weight`. An absent dataset throws a [TypeError], as the property read
   /// of `undefined` does.
   double _getRingWeight(int datasetIndex) {
-    return jsMax(
+    return math.max(
       jsToNumber(
         valueOrDefault(
           // The dataset object of the user, in the data object of the user.

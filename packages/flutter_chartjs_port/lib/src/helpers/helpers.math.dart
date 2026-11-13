@@ -163,8 +163,8 @@ void setMinAndMaxByKey(List<Object?> array, MinMax target, String property) {
         : jsGet(item, property);
     if (!jsIsNaN(value)) {
       target
-        ..min = jsMin(target.min, jsToNumber(value))
-        ..max = jsMax(target.max, jsToNumber(value));
+        ..min = math.min(target.min, jsToNumber(value))
+        ..max = math.max(target.max, jsToNumber(value));
     }
   }
 }
@@ -280,7 +280,7 @@ bool angleBetween(
 ///
 /// Limit `value` between `min` and `max`
 double limitValue(double value, double min, double max) {
-  return jsMax(min, jsMin(max, value));
+  return math.max(min, math.min(max, value));
 }
 
 /// helpers.math.ts:194 `_int16Range`.
@@ -295,6 +295,6 @@ bool isBetween(
   double end, [
   double epsilon = 1e-6,
 ]) {
-  return value >= jsMin(start, end) - epsilon &&
-      value <= jsMax(start, end) + epsilon;
+  return value >= math.min(start, end) - epsilon &&
+      value <= math.max(start, end) + epsilon;
 }

@@ -33,6 +33,8 @@
 /// neither `dart:ui` nor `package:flutter`.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
@@ -48,7 +50,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext, toTRBL, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -181,16 +182,16 @@ _Bounds _getBarBounds(BarElement bar, [bool? useFinalPosition]) {
 
   if (bar.horizontal == true) {
     half = height / 2;
-    left = jsMin(x, base);
-    right = jsMax(x, base);
+    left = math.min(x, base);
+    right = math.max(x, base);
     top = y - half;
     bottom = y + half;
   } else {
     half = width / 2;
     left = x - half;
     right = x + half;
-    top = jsMin(y, base);
-    bottom = jsMax(y, base);
+    top = math.min(y, base);
+    bottom = math.max(y, base);
   }
 
   return (left: left, top: top, right: right, bottom: bottom);
@@ -233,7 +234,7 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
   final enableBorderRadius = bar.enableBorderRadius ?? false;
   final value = _borderRadius(bar.options);
   final o = toTRBLCorners(value);
-  final maxR = jsMin(maxW, maxH);
+  final maxR = math.min(maxW, maxH);
   final skip = bar.borderSkipped;
 
   // If the value is an object, assume the user knows what they are doing
@@ -288,10 +289,22 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
       w: width - border.l - border.r,
       h: height - border.t - border.b,
       radius: _Corners(
-        topLeft: jsMax(0, radius.topLeft - jsMax(border.t, border.l)),
-        topRight: jsMax(0, radius.topRight - jsMax(border.t, border.r)),
-        bottomLeft: jsMax(0, radius.bottomLeft - jsMax(border.b, border.l)),
-        bottomRight: jsMax(0, radius.bottomRight - jsMax(border.b, border.r)),
+        topLeft: math.max(
+          0,
+          radius.topLeft - math.max<double>(border.t, border.l),
+        ),
+        topRight: math.max(
+          0,
+          radius.topRight - math.max<double>(border.t, border.r),
+        ),
+        bottomLeft: math.max(
+          0,
+          radius.bottomLeft - math.max<double>(border.b, border.l),
+        ),
+        bottomRight: math.max(
+          0,
+          radius.bottomRight - math.max<double>(border.b, border.r),
+        ),
       ),
     ),
   );
@@ -821,10 +834,10 @@ class BarElement([AnyObject? cfg])
     final base = _base;
     final horizontal = _horizontal == true;
     final half = (horizontal ? _height : _width) / 2;
-    final left = horizontal ? jsMin(x, base) : x - half;
-    final right = horizontal ? jsMax(x, base) : x + half;
-    final top = horizontal ? y - half : jsMin(y, base);
-    final bottom = horizontal ? y + half : jsMax(y, base);
+    final left = horizontal ? math.min(x, base) : x - half;
+    final right = horizontal ? math.max(x, base) : x + half;
+    final top = horizontal ? y - half : math.min(y, base);
+    final bottom = horizontal ? y + half : math.max(y, base);
     final width = right - left;
     final height = bottom - top;
     if (!left.isFinite ||

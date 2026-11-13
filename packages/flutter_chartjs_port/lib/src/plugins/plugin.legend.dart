@@ -35,6 +35,7 @@
 /// Not a pure layer: it imports `helpers.extras`.
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'dart:ui' show TextAlign;
 
@@ -86,7 +87,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsObjectOrNull;
@@ -158,17 +158,17 @@ const double _sqrt2 = 1.4142135623730951;
       : jsToNumber(rawWidth);
 
   if (labelOpts.usePointStyle) {
-    boxHeight = jsMin(boxHeight, fontSize);
+    boxHeight = math.min(boxHeight, fontSize);
     final pointStyleWidth = labelOpts.pointStyleWidth;
     boxWidth = jsTruthy(pointStyleWidth)
         ? jsToNumber(pointStyleWidth)
-        : jsMin(boxWidth, fontSize);
+        : math.min(boxWidth, fontSize);
   }
 
   return (
     boxWidth: boxWidth,
     boxHeight: boxHeight,
-    itemHeight: jsMax(fontSize, boxHeight),
+    itemHeight: math.max(fontSize, boxHeight),
   );
 }
 
@@ -681,11 +681,11 @@ class Legend(
 
     final maxWidthOption = options.maxWidth;
     final maxHeightOption = options.maxHeight;
-    this.width = jsMin(
+    this.width = math.min(
       width,
       jsTruthy(maxWidthOption) ? jsToNumber(maxWidthOption) : maxWidth,
     );
-    this.height = jsMin(
+    this.height = math.min(
       height,
       jsTruthy(maxHeightOption) ? jsToNumber(maxHeightOption) : maxHeight,
     );
@@ -809,7 +809,7 @@ class Legend(
       );
 
       // Get max width
-      currentColWidth = jsMax(currentColWidth, itemWidth);
+      currentColWidth = math.max(currentColWidth, itemWidth);
       currentColHeight += itemHeight + padding;
     }
 
@@ -1018,7 +1018,7 @@ class Legend(
       } else {
         // Draw box as legend symbol
         // Adjust position when boxHeight < fontSize (want it centered)
-        final yBoxTop = y + jsMax((fontSize - boxHeight) / 2, 0);
+        final yBoxTop = y + math.max<double>((fontSize - boxHeight) / 2, 0);
         final xBoxLeft = rtlHelper.leftForLtr(x, boxWidth);
         final borderRadius = legendItem.borderRadius ?? toTRBLCorners(0);
 
@@ -1215,7 +1215,7 @@ class Legend(
 
     if (isHorizontal()) {
       // Move left / right so that the title is above the legend lines
-      maxWidth = lineWidths!.fold(double.negativeInfinity, jsMax);
+      maxWidth = lineWidths!.fold(double.negativeInfinity, math.max);
       y = top + topPaddingPlusHalfFontSize;
       left = alignStartEnd(opts.align, left, right - maxWidth);
     } else {
@@ -1223,7 +1223,7 @@ class Legend(
       // alignment
       final maxHeight = columnSizes!.fold<double>(
         0,
-        (acc, size) => jsMax(acc, size.height),
+        (acc, size) => math.max(acc, size.height),
       );
       y =
           topPaddingPlusHalfFontSize +

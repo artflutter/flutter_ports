@@ -19,6 +19,7 @@
 /// @module index
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
@@ -47,7 +48,10 @@ import 'package:flutter_chartjs_port/src/kurkle_color/srgb.dart' as srgb_js;
 void _modHSL(RGBA? v, int i, double ratio) {
   if (v != null) {
     var tmp = rgb2hsl(v);
-    tmp[i] = jsMax(0, jsMin(tmp[i] + tmp[i] * ratio, i == 0 ? 360 : 1));
+    tmp[i] = math.max(
+      0,
+      math.min(tmp[i] + tmp[i] * ratio, i == 0 ? 360.0 : 1.0),
+    );
     // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
     tmp = hsl2rgb(tmp[0], tmp[1], tmp[2]);
     v

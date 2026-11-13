@@ -26,6 +26,8 @@
 /// neither `dart:ui` nor `package:flutter`.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
 import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
@@ -39,7 +41,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show tau;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsSquare;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSquare;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -586,7 +588,7 @@ class PointElement([AnyObject? cfg])
     // number is 0, such as '0', still adds the hover radius.
     final rawRadius = _raw(options, OptionKey.radius);
     final rawTruthy = jsTruthy(rawRadius);
-    final radius = jsMax(
+    final radius = math.max<double>(
       rawTruthy ? jsToNumber(rawRadius) : 0,
       rawTruthy ? jsOrZero(_raw(options, OptionKey.hoverRadius)) : 0,
     );

@@ -11,6 +11,8 @@
 /// @module utils
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -29,11 +31,16 @@ final RegExp _hueRe = RegExp(
 /// saturation [0..1] and [l] the lightness [0..1]. The result is
 /// `[r, g, b]`, each normalized to [0..1].
 List<double> _hsl2rgbn(double h, double s, double l) {
-  final a = s * jsMin(l, 1 - l);
+  final a = s * math.min<double>(l, 1 - l);
   // Upstream gives f a default parameter k, and no caller passes k.
   double f(double n) {
     final k = (n + h / 30).remainder(12);
-    return l - a * jsMax(jsMin(k - 3, jsMin(9 - k, 1)), -1);
+    return l -
+        a *
+            math.max<double>(
+              math.min<double>(k - 3, math.min<double>(9 - k, 1)),
+              -1,
+            );
   }
 
   return [f(0), f(8), f(4)];
@@ -48,7 +55,13 @@ List<double> _hsv2rgbn(double h, double s, double v) {
   // Upstream gives f a default parameter k, and no caller passes k.
   double f(double n) {
     final k = (n + h / 60).remainder(6);
-    return v - v * s * jsMax(jsMin(k, jsMin(4 - k, 1)), 0);
+    return v -
+        v *
+            s *
+            math.max<double>(
+              math.min<double>(k, math.min<double>(4 - k, 1)),
+              0,
+            );
   }
 
   return [f(5), f(3), f(1)];
@@ -96,8 +109,8 @@ List<double> rgb2hsl(RGBA v) {
   final r = v.r / range;
   final g = v.g / range;
   final b = v.b / range;
-  final max = jsMax(r, jsMax(g, b));
-  final min = jsMin(r, jsMin(g, b));
+  final max = math.max(r, math.max(g, b));
+  final min = math.min(r, math.min(g, b));
   final l = (max + min) / 2;
   double? h;
   double? s;

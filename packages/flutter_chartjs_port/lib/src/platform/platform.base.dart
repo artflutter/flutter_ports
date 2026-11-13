@@ -10,9 +10,10 @@
 /// the type libraries.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -106,11 +107,14 @@ class BasePlatform() implements types.BasePlatform {
     double? height,
     double? aspectRatio,
   ]) {
-    final w = jsMax(0, jsTruthy(width) ? width! : element.width.toDouble());
+    final w = math.max<double>(
+      0,
+      jsTruthy(width) ? width! : element.width.toDouble(),
+    );
     final h = jsTruthy(height) ? height! : element.height.toDouble();
     return (
       width: w,
-      height: jsMax(
+      height: math.max(
         0,
         jsTruthy(aspectRatio) ? (w / aspectRatio!).floorToDouble() : h,
       ),

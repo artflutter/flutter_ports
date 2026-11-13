@@ -25,6 +25,8 @@
 /// 0054 §4).
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Tick;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -52,7 +54,7 @@ List<Tick> autoSkip(types.Scale scale, List<Tick> ticks) {
   final tickOpts = TickOptions(readOption(scale.options, OptionKey.ticks));
   final determinedMaxTicks = _determineMaxTicks(scale);
   final maxTicksLimit = tickOpts.maxTicksLimit;
-  final ticksLimit = jsMin(
+  final ticksLimit = math.min(
     jsTruthy(maxTicksLimit) ? jsToNumber(maxTicksLimit) : determinedMaxTicks,
     determinedMaxTicks,
   );
@@ -108,7 +110,7 @@ double _determineMaxTicks(types.Scale scale) {
   final tickLength = scale.tickSize();
   final maxScale = scale.length / tickLength + (jsTruthy(offset) ? 0 : 1);
   final maxChart = scale.maxLength / tickLength;
-  return jsMin(maxScale, maxChart).floorToDouble();
+  return math.min(maxScale, maxChart).floorToDouble();
 }
 
 /// core.scale.autoskip.js:62 `calculateSpacing`.
@@ -127,7 +129,7 @@ double _calculateSpacing(
   // If the major ticks are evenly spaced apart, place the minor ticks
   // so that they divide the major ticks into even chunks
   if (!jsTruthy(evenMajorSpacing)) {
-    return jsMax(spacing, 1);
+    return math.max(spacing, 1);
   }
 
   final factors = factorize(evenMajorSpacing as double);
@@ -137,7 +139,7 @@ double _calculateSpacing(
       return factor;
     }
   }
-  return jsMax(spacing, 1);
+  return math.max(spacing, 1);
 }
 
 /// core.scale.autoskip.js:85 `getMajorIndices`.
@@ -202,7 +204,7 @@ void _skip(
   double? majorEnd,
 ]) {
   final start = majorStart ?? 0;
-  final end = jsMin(
+  final end = math.min(
     majorEnd ?? ticks.length.toDouble(),
     ticks.length.toDouble(),
   );
@@ -231,7 +233,7 @@ void _skip(
     next = jsRound(start + count * spacing);
   }
 
-  for (i = jsMax(start, 0); i < end; i++) {
+  for (i = math.max(start, 0); i < end; i++) {
     if (i == next) {
       // `i === next` and `next` is an integer: `i` is an index in range.
       newTicks.add(ticks[i.toInt()]);
