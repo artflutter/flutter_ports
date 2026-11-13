@@ -7,9 +7,10 @@
 /// are the extension point of upstream: an app adds a function for a custom
 /// scale type. They keep the upstream key order.
 ///
-/// The range reaches a scale, so the JavaScript `Math` functions are the
-/// JavaScript runtime of the host (`jsRound`, `jsMin`, `jsMax`, Chart.js ADR
-/// 0034). `Math.log10` is `log10` of the helpers. `Math.pow(10, x)` is
+/// The range reaches a scale, so `Math.round` is `jsRound` of the JavaScript
+/// runtime of the host (Chart.js ADR 0034). `Math.min` and `Math.max` are
+/// `dart:math` `min` and `max` with `double` operands (Chart.js ADR 0134).
+/// `Math.log10` is `log10` of the helpers. `Math.pow(10, x)` is
 /// `dart:math` `pow` with double operands, the rule of Chart.js ADR 0045.
 library;
 
@@ -23,7 +24,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
 import 'package:flutter_chartjs_port/helpers.dart'
     show almostEquals, isNullOrUndef, isNumber, log10, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsMax, jsMin, jsRound, jsToNumber, jsTruthy;
+    show jsGet, jsRound, jsToNumber, jsTruthy;
 
 /// scale.types.ts:7 `ZoomFunction`: zooms [scale] by the factor [zoom]
 /// around [center], within [limits]. The result is true if the range
@@ -67,7 +68,7 @@ bool _isNotNumber(double? value) => value == null || value.isNaN;
 /// (0 or NaN) puts [newRange] above the value.
 ScaleRange zoomDelta(double? val, double? min, double range, double newRange) {
   final minPercent = jsTruthy(range) && isNumber(val) && isNumber(min)
-      ? jsMax(0, jsMin(1, (val! - min!) / range))
+      ? math.max<double>(0, math.min<double>(1, (val! - min!) / range))
       : 0.0;
   final maxPercent = 1 - minPercent;
 
@@ -176,7 +177,7 @@ double _getLimit(
 ScaleRange _linearRange(Scale scale, double pixel0, double pixel1) {
   final v0 = scale.getValueForPixel(pixel0) ?? scale.min;
   final v1 = scale.getValueForPixel(pixel1) ?? scale.max;
-  return (min: jsMin(v0, v1), max: jsMax(v0, v1));
+  return (min: math.min(v0, v1), max: math.max(v0, v1));
 }
 
 /// The limits `{ min: 'original', max: 'original' }` of
@@ -221,10 +222,10 @@ ScaleRange _fixRange(
   // Apply limits
   if (min < minLimit) {
     min = minLimit;
-    max = jsMin(minLimit + range, maxLimit);
+    max = math.min(minLimit + range, maxLimit);
   } else if (max > maxLimit) {
     max = maxLimit;
-    min = jsMax(maxLimit - range, minLimit);
+    min = math.max(maxLimit - range, minLimit);
   }
 
   return (min: min, max: max);
@@ -271,7 +272,7 @@ bool updateRange(
   }
 
   final scaleRange = scale.max - scale.min;
-  final range = zoom ? jsMax(max - min, minRange) : scaleRange;
+  final range = zoom ? math.max(max - min, minRange) : scaleRange;
 
   if (zoom && range == minRange && scaleRange <= minRange) {
     // At range limit: No change but return true to indicate no need to store
@@ -334,8 +335,8 @@ bool _zoomRectNumericalScale(
 double _integerChange(double v) => v == 0 || v.isNaN
     ? 0
     : v < 0
-    ? jsMin(jsRound(v), -1)
-    : jsMax(jsRound(v), 1);
+    ? math.min(jsRound(v), -1)
+    : math.max(jsRound(v), 1);
 
 /// scale.types.ts:190 `existCategoryFromMaxZoom(scale)`.
 void _existCategoryFromMaxZoom(Scale scale) {
@@ -381,20 +382,20 @@ bool _panCategoryScale(Scale scale, double delta, LimitOptions limits) {
   var min = scale.min;
   var max = scale.max;
   // The visible range. Ticks can be skipped, and thus not reliable.
-  final range = jsMax(max - min, 1);
+  final range = math.max<double>(max - min, 1);
   // How many pixels of delta is required before making a step. stepSize, but
   // limited to max 1/10 of the scale length.
   // Intentionally kept fractional.
-  final stepDelta = _scaleLength(scale) / jsMax(range, 10);
+  final stepDelta = _scaleLength(scale) / math.max<double>(range, 10);
   final stepSize = jsRound((delta / stepDelta).abs());
   // `let applied`: `Boolean(undefined)` is false.
   var applied = false;
   if (delta < -stepDelta) {
-    max = jsMin(max + stepSize, lastLabelIndex);
+    max = math.min(max + stepSize, lastLabelIndex);
     min = range == 1 ? max : max - range;
     applied = max == lastLabelIndex;
   } else if (delta > stepDelta) {
-    min = jsMax(0, min - stepSize);
+    min = math.max(0, min - stepSize);
     max = range == 1 ? min : min + range;
     applied = min == 0;
   }

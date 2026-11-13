@@ -10,6 +10,8 @@
 /// (`scale.options['min'] = value`, `jsDelete`, seam H14).
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
@@ -19,7 +21,7 @@ import 'package:flutter_chartjs_port/chartjs.dart' show Chart, Scale;
 import 'package:flutter_chartjs_port/helpers.dart'
     show isNumber, sign, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsMax, jsMin, jsObjectKeys, jsRound, jsToNumber, jsTruthy;
+    show jsObjectKeys, jsRound, jsToNumber, jsTruthy;
 
 /// The values of [scales] in the order of `Object.values`: the order of
 /// `Object.keys`, with the array index keys first.
@@ -276,8 +278,8 @@ double getZoomLevel(Chart chart) {
     final origRange = _getOriginalRange(state, scale.id);
     if (jsTruthy(origRange)) {
       final level = jsRound((origRange! / (scale.max - scale.min)) * 100) / 100;
-      min = jsMin(min, level);
-      max = jsMax(max, level);
+      min = math.min(min, level);
+      max = math.max(max, level);
     }
   }
   return min < 1 ? min : max;
