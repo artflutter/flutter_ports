@@ -39,13 +39,14 @@ import 'package:flutter_chartjs_port/helpers.dart'
         sign,
         valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsMax, jsMin, jsToNumber, jsTruthy;
+    show jsToNumber, jsTruthy;
 
 /// `value ?? {}`: [emptyObject] for `null` and `undefined`.
 Object? _orEmpty(Object? value) => isNullOrUndef(value) ? emptyObject : value;
 
 /// handlers.ts:9 `clamp(x, from, to)`.
-double _clamp(double x, double from, double to) => jsMin(to, jsMax(from, x));
+double _clamp(double x, double from, double to) =>
+    math.min(to, math.max(from, x));
 
 /// handlers.ts:11 `removeHandler(chart, type)`: removes the listener
 /// [type] of [chart] from its target.
@@ -254,12 +255,20 @@ void _applyMinMaxProps(
   final _Points(:begin, :end) = points;
   if (prop == 'x') {
     rect
-      ..left = _clamp(jsMin(begin.x, end.x), chartArea.left, chartArea.right)
-      ..right = _clamp(jsMax(begin.x, end.x), chartArea.left, chartArea.right);
+      ..left = _clamp(math.min(begin.x, end.x), chartArea.left, chartArea.right)
+      ..right = _clamp(
+        math.max(begin.x, end.x),
+        chartArea.left,
+        chartArea.right,
+      );
   } else {
     rect
-      ..top = _clamp(jsMin(begin.y, end.y), chartArea.top, chartArea.bottom)
-      ..bottom = _clamp(jsMax(begin.y, end.y), chartArea.top, chartArea.bottom);
+      ..top = _clamp(math.min(begin.y, end.y), chartArea.top, chartArea.bottom)
+      ..bottom = _clamp(
+        math.max(begin.y, end.y),
+        chartArea.top,
+        chartArea.bottom,
+      );
   }
 }
 
@@ -496,7 +505,8 @@ void wheel(Chart chart, NativeEvent event) {
     final HTMLCanvasElement target => target.getBoundingClientRect(),
     _ => null,
   };
-  final delta = sign(event.deltaY) * jsMin(_maxDelta, event.deltaY.abs());
+  final delta =
+      sign(event.deltaY) * math.min<double>(_maxDelta, event.deltaY.abs());
   // zoomOptions?.wheel?.speed ?? 0.1
   final wheelOptions = zoomOptions.isNullish ? null : zoomOptions.wheel;
   final speedOption = wheelOptions == null || wheelOptions.isNullish
