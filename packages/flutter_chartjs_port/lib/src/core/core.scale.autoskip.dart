@@ -148,7 +148,7 @@ double _calculateSpacing(
 List<double> _getMajorIndices(List<Tick> ticks) {
   final result = <double>[];
   for (var i = 0, ilen = ticks.length; i < ilen; i++) {
-    if (ticks[i].major ?? false) {
+    if (ticks[i].major) {
       result.add(i.toDouble());
     }
   }

@@ -9,13 +9,12 @@ import 'package:chartjs_test_utils/flutter.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' as core;
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show ticks;
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
+import '../support/tick_label.dart';
 
 // The spec reads `Chart.Ticks`, which src/index.umd.ts:43 sets. Here it is
 // `ticks` of core.ticks.dart. The two tick generator cases acquire a line
@@ -24,13 +23,14 @@ import '../support/jasmine.dart';
 // its charts need the built-in components.
 //
 // The spec forms:
-// - `value.toString()` of a tick callback is the tear-off `jsToString`.
+// - `value.toString()` of a tick callback is `valueTickLabel`, a
+//   `TickCallback` (row `adapt-native-tick`).
 // - `chart.scales.x` is `chart.scales['x']!`.
 // - `toEqual` of an array is `jasmineEquals`.
 
 /// core.ticks.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(core.Scale scale) => [
-  for (final t in scale.ticks!) t.label,
+  for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
 /// The `chart` of the JavaScript object literal
@@ -54,14 +54,9 @@ final class _Scale(
 }
 
 /// A JavaScript object literal `{value}`, passed as a [Tick].
-final class const _Tick(@override final double value) implements Tick {
-  @override
-  double? get significand => null;
+final class _Tick(double value) extends Tick {
+  this : super(value: value);
 }
-
-/// The member read `object.key` of the object literal [object].
-Object? _member(Object? object, String key) =>
-    (object! as Map<String, Object?>)[key];
 
 void main() {
   group('Test tick generators', () {
@@ -73,9 +68,9 @@ void main() {
       expect(ticks, isNotNull);
       final formatters = ticks['formatters'];
       expect(formatters, isNotNull);
-      // typeof value === 'function' is jsIsFunction.
-      expect(jsIsFunction(_member(formatters, 'values')), isTrue);
-      expect(jsIsFunction(_member(formatters, 'numeric')), isTrue);
+      // typeof value === 'function': each formatter is a function.
+      expect(formatters!['values'], isA<Function>());
+      expect(formatters['numeric'], isA<Function>());
     });
 
     testWidgets('Should generate linear spaced ticks with correct precision', (
@@ -94,11 +89,11 @@ void main() {
             'x': <String, Object?>{
               'type': 'linear',
               'position': ChartPosition.bottom,
-              'ticks': <String, Object?>{'callback': jsToString},
+              'ticks': <String, Object?>{'callback': valueTickLabel},
             },
             'y': <String, Object?>{
               'type': 'linear',
-              'ticks': <String, Object?>{'callback': jsToString},
+              'ticks': <String, Object?>{'callback': valueTickLabel},
             },
           },
         },
@@ -143,7 +138,7 @@ void main() {
                 'max': 1,
                 'ticks': <String, Object?>{
                   'autoSkip': false,
-                  'callback': jsToString,
+                  'callback': valueTickLabel,
                 },
               },
               'y': <String, Object?>{
@@ -152,7 +147,7 @@ void main() {
                 'max': 1,
                 'ticks': <String, Object?>{
                   'autoSkip': false,
-                  'callback': jsToString,
+                  'callback': valueTickLabel,
                 },
               },
             },
@@ -181,25 +176,12 @@ void main() {
           _Chart(<String, Object?>{'locale': const Locale('en')}),
           <String, Object?>{'ticks': <String, Object?>{}},
         );
-        // numeric.apply(scale, args) is jsCall with scale as thisArg.
-        final numeric = _member(ticks['formatters'], 'numeric');
-        expect(jsCall(numeric, [1.0, 0.0, <Tick>[]], thisArg: scale), '1');
-        expect(
-          jsCall(numeric, [
-            1.0,
-            0.0,
-            <Tick>[const _Tick(1)],
-          ], thisArg: scale),
-          '1',
-        );
-        expect(
-          jsCall(numeric, [
-            1.0,
-            0.0,
-            <Tick>[const _Tick(1), const _Tick(1.01)],
-          ], thisArg: scale),
-          '1.00',
-        );
+        // numeric.apply(scale, args): the scale is the first argument,
+        // and the result is the one line of the label.
+        final numeric = ticks['formatters']!['numeric']!;
+        expect(numeric(scale, 1, 0, <Tick>[]), ['1']);
+        expect(numeric(scale, 1, 0, <Tick>[_Tick(1)]), ['1']);
+        expect(numeric(scale, 1, 0, <Tick>[_Tick(1), _Tick(1.01)]), ['1.00']);
       });
     });
   });

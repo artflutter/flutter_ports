@@ -52,8 +52,12 @@ LineDataset _band(int type) => LineDataset(
 );
 
 /// `OrdinalScale(tickCount: 5)`.
-String? _dateLabel(AxisTickInfo tick) =>
-    ordinalTick(tick.index, _dates.length, 5) ? _dates[tick.index] : null;
+List<String>? _dateLabel(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ordinalTick(index, _dates.length, 5) ? [_dates[index]] : null;
 
 /// `multiTuples: true`: the date, then one line for each type.
 String? _date(List<ChartTooltipItem> items) => _dates[items.first.dataIndex];
@@ -82,14 +86,14 @@ final ChartConfig _config = ChartConfig(
   scales: {
     'x': CategoryAxis(
       grid: noGrid,
-      ticks: graphicTicks(format: _dateLabel),
+      ticks: graphicTicks(callback: _dateLabel),
       extra: const {...bottomAxis, 'offset': true},
     ),
     'y': LinearAxis(
       min: -120,
       max: 120,
       grid: lineGrid,
-      ticks: graphicTicks(format: numberLabel, stepSize: 40),
+      ticks: graphicTicks(callback: numberLabel, stepSize: 40),
       extra: leftAxis,
     ),
   },

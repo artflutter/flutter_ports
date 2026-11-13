@@ -15,7 +15,6 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
@@ -29,6 +28,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/tick_label.dart';
 import 'scale_chart_harness.dart';
 import 'scale_time_harness.dart';
 import 'scale_time_reference.dart';
@@ -81,18 +81,25 @@ final JsClass _timeTestController = cartesianTestController('timeTest', {
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
   // `(value, index) => 'T' + index`.
-  'tickIndex': (Object? value, Object? index) => 'T${jsToString(index)}',
+  'tickIndex': (Object? scale, double value, int index, Object? ticks) => [
+    'T$index',
+  ],
   // `index % 2 ? '' : this.format(value, 'HH:mm')`.
-  'hourOrEmpty': JsFunction(
-    (Object? self, Object? value, Object? index) =>
-        jsTruthy(jsToNumber(index) % 2)
-        ? ''
-        : (self! as TimeScale).format(value, 'HH:mm'),
-  ),
+  'hourOrEmpty': (Object? scale, double value, int index, Object? ticks) => [
+    if (index.isOdd)
+      ''
+    else
+      jsToString((scale! as TimeScale).format(value, 'HH:mm')),
+  ],
   // `(value) => value * 1000`.
   'seconds': (Object? value) => jsToNumber(value) * 1000,
-  // `(value) => String(value)`.
-  'valueString': jsToString,
+  // `(value) => String(value)`. The callback of upstream gets null for the
+  // tick of a label that does not parse. A TickCallback gets NaN, the value
+  // of that tick (row adapt-native-tick): the twin gives the label `null` of
+  // upstream for it.
+  'valueString': (Object? scale, double value, int index, Object? ticks) => [
+    if (value.isNaN) 'null' else jsNumberToString(value),
+  ],
 };
 
 /// The case of the generator whose times depend on the local date of the
@@ -176,7 +183,7 @@ double _ms(String value, [String? format]) =>
 
 /// scale.time.tests.js:27-29 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
-  for (final tick in scale.ticks!) tick.label,
+  for (final tick in scale.ticks!) upstreamTickLabel(tick),
 ];
 
 /// `chart.options.scales.x` of scale.time.tests.js. A write goes into the
@@ -505,7 +512,7 @@ void main() {
       // tick back as null: the adapter formats null as an invalid date, and
       // getDecimalForValue gives NaN for null.
       expect(ticks.first.value, isNaN);
-      expect(ticks.first.label, 'Invalid date');
+      expect(ticks.first.label, ['Invalid date']);
       expect(x.getPixelForTick(0), isNaN);
       expect(
         [for (final tick in ticks.skip(1)) tick.value],
@@ -513,22 +520,24 @@ void main() {
       );
     });
 
-    testWidgets('the tick callback gets null for a null tick', (tester) async {
-      final values = <Object?>[];
+    testWidgets('the tick callback gets NaN for a null tick', (tester) async {
+      // Row adapt-native-tick: the value of a TickCallback is a double.
+      // Upstream gives the callback the null.
+      final values = <double>[];
       final x = _x(
         labelsChart({
           'ticks': <String, Object?>{
             'source': TickSource.labels,
-            'callback': (Object? value) {
-              values.add(value);
-              return jsToString(value);
-            },
+            'callback':
+                (Object? scale, double value, int index, Object? ticks) {
+                  values.add(value);
+                  return [jsNumberToString(value)];
+                },
           },
         }),
       );
-      expect(values, contains(null));
-      expect(values, everyElement(isNot(isNaN)));
-      expect(x.ticks!.first.label, 'null');
+      expect(values, contains(isNaN));
+      expect(x.ticks!.first.label, ['NaN']);
     });
 
     testWidgets('afterAutoSkip reads a null tick value as 0', (tester) async {

@@ -1539,7 +1539,9 @@ class RadialLinearScale(super.cfg)
 
       if (optsAtIndex.showLabelBackdrop) {
         ctx.font = tickFont;
-        final width = ctx.measureText(jsToString(tick.label)).width;
+        // The text of some lines is the lines with commas, the `ToString`
+        // of the array of upstream.
+        final width = ctx.measureText(tick.label?.join(',') ?? '').width;
         ctx.fillStyle = optsAtIndex.backdropColor;
 
         final padding = optsAtIndex.backdropPadding;

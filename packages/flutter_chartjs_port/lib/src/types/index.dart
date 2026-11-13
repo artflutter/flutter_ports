@@ -57,11 +57,13 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/tick.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show ChartArea, Point, TRBL;
 export 'package:flutter_chartjs_port/src/types/layout.dart' show LayoutItem;
+export 'package:flutter_chartjs_port/src/types/tick.dart' show Tick;
 
 /// index.d.ts:463 `ChartMetaClip`, the type of `ChartMeta._clip`.
 ///
@@ -651,18 +653,6 @@ abstract interface class Defaults() {
   ///
   /// Routes the named defaults to fallback to another scope/name.
   void route(String scope, String name, String targetScope, String targetName);
-}
-
-/// index.d.ts:1194 `Tick`.
-abstract interface class Tick() {
-  /// index.d.ts:1195 `value: number`.
-  double get value;
-
-  /// scale.logarithmic.js:55 `significand`. `index.d.ts` does not declare
-  /// it. `core.ticks.js:75` reads it. Dart `null` stands for JS `undefined`
-  /// (Chart.js ADR 0043): the ticks of other scales do not set it. JS `null`
-  /// never reaches it.
-  double? get significand;
 }
 
 /// index.d.ts:1303 `Scale`.

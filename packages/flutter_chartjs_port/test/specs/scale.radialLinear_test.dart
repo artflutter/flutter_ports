@@ -28,6 +28,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
+import '../support/tick_label.dart';
 
 // `Chart.registry` and `Chart.defaults` are the statics of Chart of
 // core.controller.dart. The two cases without a chart read only the
@@ -58,8 +59,8 @@ import '../support/jasmine.dart';
 //   `undefined` sentinel. Functions compare by identity.
 // - `jasmine.any(Function)` is [_anyFunction], which uses `jsIsFunction`. A
 //   value with `typeof` `'function'` is a Dart `Function`, a `JsFunction`
-//   or a `JsClass`. `ticks.callback` is the JsFunction `formatters.numeric`,
-//   which reads `this`. Thus `isA<Function>()` does not match it.
+//   or a `JsClass`. `ticks.callback` is the function `formatters.numeric`,
+//   a `TickCallback` (row `adapt-native-tick`).
 //
 // - The chart cases read `_pointLabels` and `_pointLabelItems` as
 //   `pointLabels` and `pointLabelItems` (Chart.js ADR 0012, Underscore
@@ -83,7 +84,7 @@ final Matcher _anyFunction = predicate(jsIsFunction, 'any Function');
 
 /// scale.radialLinear.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
-  for (final t in scale.ticks!) t.label,
+  for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
 /// `chart.scales.r`, the radial linear scale of [chart].
@@ -551,9 +552,7 @@ void main() {
         'options': <String, Object?>{
           'scales': <String, Object?>{
             'r': <String, Object?>{
-              'ticks': <String, Object?>{
-                'callback': (Object? value, Object? index) => jsToString(index),
-              },
+              'ticks': <String, Object?>{'callback': indexTickLabel},
             },
           },
         },

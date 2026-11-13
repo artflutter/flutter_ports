@@ -1368,7 +1368,7 @@ const Map<String, String> observationDigests = {
   'fixture core.layouts/hidden-vertical-boxes.js (plain)':
       'e62d8e7ce71561bb237406c8345d631c65c0840a9648cc68746d73cc9b48abe6',
   'fixture core.layouts/hidden-vertical-boxes.js (trace)':
-      '8f4a06e3312cd5946e1f790d6af0edb634c4f19552a19ad580ca59dd6644dd19',
+      '9bc7a50721627b9470dabd106abf7dd9700f5a69cc03e65c880bd2e20062454e',
   'fixture core.layouts/long-labels.js (plain)':
       '4fd6ef2be6af8d0f9cb920ed6a44cff78d16777c4a8502e687dd2f5dad4103f7',
   'fixture core.layouts/long-labels.js (trace)':
@@ -2440,7 +2440,7 @@ const Map<String, String> observationDigests = {
   'fixture scale.linear/tick-count-data-limits.js (plain)':
       '68defb14c1c64996bd5fc7776e6e4efa3b619975620e1808e0dc1c01762da34d',
   'fixture scale.linear/tick-count-data-limits.js (trace)':
-      '6eb3ba4deb3d28d041a1e81fe3690af9ff586891b2c0ae2032fa0ff15b29f72d',
+      '909479d755017c633f52d1992559cf296e67aea5aa51918a21178432ed01f031',
   'fixture scale.linear/tick-count-min-max-not-aligned.js (plain)':
       'e1b5489a48fd0544f71a4b37100b446af7f000a9dcca49a3d1cf99f57bf6c22c',
   'fixture scale.linear/tick-count-min-max-not-aligned.js (trace)':
@@ -2564,7 +2564,7 @@ const Map<String, String> observationDigests = {
   'fixture scale.radialLinear/ticks-below-zero.js (plain)':
       '7d8cea288714b703302feff64510ab397f457628deb31276e65f950c1930b32f',
   'fixture scale.radialLinear/ticks-below-zero.js (trace)':
-      'cea4d40a2d3294acf07e56e0c2f97ca6137713ed2d7a752bc5e00c64a61cf84d',
+      'b0b2117d43f5989e25641a589a2b4a1b9da7a28f280a59491ed74113a85e320f',
   'fixture scale.time/autoskip-major.js (plain)':
       '188a01baab0ab5b314c36dc36ee4b3dfc0e62336b97d87c8e7a7665590e4ae9b',
   'fixture scale.time/autoskip-major.js (trace)':

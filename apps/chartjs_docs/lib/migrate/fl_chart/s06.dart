@@ -38,7 +38,12 @@ const Map<String, Map<String, Object>> _visibleBorder = {
   },
 };
 
-String? _hideBottom(AxisTickInfo t) => t.value == 6 ? '' : '${t.value.toInt()}';
+List<String>? _hideBottom(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => [if (value == 6) '' else '${value.toInt()}'];
 
 final ChartConfig _config = fills(
   ChartConfig(
@@ -87,7 +92,7 @@ final ChartConfig _config = fills(
           stepSize: 1,
           color: ChartPaint.solid(_orange),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          format: _hideBottom,
+          callback: _hideBottom,
         ),
       ),
       'y2': const LinearAxis(
@@ -101,7 +106,7 @@ final ChartConfig _config = fills(
           stepSize: 1,
           color: ChartPaint.solid(Fl.blue),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          format: _hideBottom,
+          callback: _hideBottom,
         ),
       ),
     },

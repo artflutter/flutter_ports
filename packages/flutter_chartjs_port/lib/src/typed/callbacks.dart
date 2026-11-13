@@ -2,9 +2,9 @@
 
 /// The callback types of the typed API (Chart.js ADR 0052, section 6).
 ///
-/// - The details objects [ChartEventDetails], [ChartLegendEventDetails],
-///   [ChartAnimationDetails] and [AxisTickInfo] hold the arguments of one
-///   call. A new field is an addition that breaks no callback.
+/// - The details objects [ChartEventDetails], [ChartLegendEventDetails]
+///   and [ChartAnimationDetails] hold the arguments of one call. A new
+///   field is an addition that breaks no callback.
 /// - [ChartHit] and [ChartContext] are views over the chart objects.
 ///   `ChartTooltipItem` is the shared core view. [LegendItem] is the shared
 ///   native mutable object; legend event details preserve its identity.
@@ -18,12 +18,11 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableChartContext, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/types/index.dart'
-    show ActiveElement, ChartEvent, LegendElement, Tick;
+    show ActiveElement, ChartEvent, LegendElement;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:meta/meta.dart' show immutable;
 
@@ -100,31 +99,6 @@ final class const ChartAnimationDetails({
   final double? currentStep,
 }) {
   /// The details of one animation step.
-  this;
-}
-
-/// The arguments of the tick label callback of an axis: the arguments
-/// `value`, `index` and `ticks` and the `this` of the Chart.js `callback`
-/// (`core.scale.js:574`).
-@immutable
-final class const AxisTickInfo({
-  /// The value of the tick: a number of a linear or a logarithmic axis, the
-  /// index of the label of a category axis, or the time value of a time
-  /// axis in milliseconds.
-  required final double value,
-
-  /// The index of the tick in [ticks].
-  required final int index,
-
-  /// All ticks of the axis.
-  required final List<Tick> ticks,
-
-  /// The scale of the axis. `scale.getLabelForValue(value)` gives the
-  /// label of a category tick, as `this.getLabelForValue(value)` does in
-  /// the Chart.js docs.
-  required final Scale scale,
-}) {
-  /// The details of one tick.
   this;
 }
 

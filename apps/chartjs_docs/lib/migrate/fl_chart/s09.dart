@@ -87,7 +87,9 @@ final ChartConfig _config = fills(
           color: const ChartPaint.solid(Fl.yellow),
           font: _font,
           padding: 16,
-          format: (t) => t.value % 1 == 0 ? '${t.value.toInt()}' : '${t.value}',
+          callback: (scale, value, index, ticks) => [
+            if (value % 1 == 0) '${value.toInt()}' else '$value',
+          ],
         ),
       ),
     },

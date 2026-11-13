@@ -13,10 +13,10 @@ import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
+import 'package:flutter_chartjs_port/src/core/core.scale.dart'
+    show TickCallback;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show JsFunction;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -28,13 +28,10 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleTitleOptionsScope,
         TickOptionsScope,
         TimeScaleTimeOptionsScope;
-import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show AxisTickInfo;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' show Tick;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart' show internal;
 
@@ -51,7 +48,7 @@ import 'package:meta/meta.dart' show internal;
 /// Chart.js. The keys that this class does not have go through [extra].
 ///
 /// An axis is immutable. `==` compares the parameters: [CategoryAxis.labels]
-/// by identity, and [AxisTicks.format] with `==`.
+/// by identity, and [AxisTicks.callback] with `==`.
 @immutable
 abstract final class const ChartAxis({
   /// Whether the chart shows the axis: `display`. The default is `true`.
@@ -836,12 +833,13 @@ final class const AxisTicks({
   /// The label of each tick: `callback` (`docs/axes/labelling.md`,
   /// "Creating Custom Tick Formats").
   ///
-  /// It gets the tick, its index, all ticks and the scale, and gives the
-  /// label. `null` hides the label. For a category axis, the value is the
-  /// index of the label: `tick.scale.getLabelForValue(tick.value)` gives
-  /// the label. Use a method tear-off or a function in a field: a new
-  /// closure in each build is a new value, and the chart then updates.
-  final String? Function(AxisTickInfo tick)? format,
+  /// It gets the scale, the value of the tick, its index and all ticks, and
+  /// gives the lines of the label. `null` removes the tick, and an empty
+  /// List keeps the tick with no label. For a category axis, the value is
+  /// the index of the label: `scale.getLabelForValue(value)` gives the
+  /// label. Use a method tear-off or a function in a field: a new closure
+  /// in each build is a new value, and the chart then updates.
+  final TickCallback? callback,
 
   /// The Chart.js tick options that have no parameter, for example
   /// `{'precision': 0}`. The rules of [ChartAxis.extra] apply.
@@ -863,7 +861,7 @@ final class const AxisTicks({
     TickAlign? align,
     TickCrossAlign? crossAlign,
     TickSource? source,
-    String? Function(AxisTickInfo tick)? format,
+    TickCallback? callback,
     Map<String, Object?>? extra,
   }) => AxisTicks(
     display: display ?? this.display,
@@ -876,7 +874,7 @@ final class const AxisTicks({
     align: align ?? this.align,
     crossAlign: crossAlign ?? this.crossAlign,
     source: source ?? this.source,
-    format: format ?? this.format,
+    callback: callback ?? this.callback,
     extra: extra ?? this.extra,
   );
 
@@ -891,7 +889,7 @@ final class const AxisTicks({
     ('align', align),
     ('crossAlign', crossAlign),
     ('source', source),
-    ('format', format),
+    ('callback', callback),
     ('extra', byEntries(extra)),
   ];
 
@@ -913,7 +911,6 @@ final class const AxisTicks({
 /// The `ticks` scope of [ticks], or Dart `null`.
 TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   if (ticks == null) return null;
-  final format = ticks.format;
   final scope = TickOptionsScope();
   put(scope, OptionKey.display, ticks.display);
   put(scope, OptionKey.color, ticks.color);
@@ -925,24 +922,9 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   put(scope, OptionKey.align, ticks.align);
   put(scope, OptionKey.crossAlign, ticks.crossAlign);
   put(scope, OptionKey.source, ticks.source);
-  put(scope, OptionKey.callback, format == null ? null : _tickCallback(format));
+  put(scope, OptionKey.callback, ticks.callback);
   return mergeExtra(scope, ticks.extra);
 }
-
-/// The tick `callback` of [format]: a [JsFunction], so that the scale is
-/// the `this` of the call (`core.scale.js:574`). The arguments are the
-/// value, the index as a number and the ticks.
-JsFunction _tickCallback(String? Function(AxisTickInfo tick) format) =>
-    JsFunction(
-      (Object? scale, Object? value, Object? index, Object? ticks) => format(
-        AxisTickInfo(
-          value: (value! as num).toDouble(),
-          index: (index! as num).toInt(),
-          ticks: ticks! as List<Tick>,
-          scale: scale! as Scale,
-        ),
-      ),
-    );
 
 /// The grid lines of an axis: `grid` (`docs/axes/styling.md`, "Grid Line
 /// Configuration").

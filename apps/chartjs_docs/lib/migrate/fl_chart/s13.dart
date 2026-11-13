@@ -151,12 +151,15 @@ class _Sample13State() extends State<Sample13> {
             autoSkip: false,
             maxRotation: 0,
             font: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-            format: (t) {
-              if (t.value == 31) return '';
-              final day = t.value.toInt() + 1;
-              return day % 5 == 0 || day == 1 || day - 1 == _hovered
-                  ? '$day'
-                  : '';
+            callback: (scale, value, index, ticks) {
+              if (value == 31) return [''];
+              final day = value.toInt() + 1;
+              return [
+                if (day % 5 == 0 || day == 1 || day - 1 == _hovered)
+                  '$day'
+                else
+                  '',
+              ];
             },
             extra: {
               'color': (JsObjectFace c) => ChartPaint.solid(
@@ -186,7 +189,7 @@ class _Sample13State() extends State<Sample13> {
           ticks: AxisTicks(
             stepSize: 5,
             color: const ChartPaint.solid(Colors.white),
-            format: (t) => '${t.value.toInt()}°',
+            callback: (scale, value, index, ticks) => ['${value.toInt()}°'],
           ),
         ),
       },

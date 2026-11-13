@@ -3,8 +3,6 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
@@ -32,19 +30,21 @@ Map<String, Object?> fixture() => <String, Object?>{
             'display': true,
             'autoSkip': false,
             'stepSize': 0.2,
-            'callback': (Object? value) {
-              if (value == 0.8) {
-                return 'Strong';
-              }
-              if (value == 0.4) {
-                return 'Weak';
-              }
-              if (value == 0) {
-                return 'No';
-              }
-              // The JS function ends without a return: undefined.
-              return undefined;
-            },
+            // A TickCallback (row adapt-native-tick).
+            'callback':
+                (Object? scale, double value, int index, Object? ticks) {
+                  if (value == 0.8) {
+                    return <String>['Strong'];
+                  }
+                  if (value == 0.4) {
+                    return <String>['Weak'];
+                  }
+                  if (value == 0) {
+                    return <String>['No'];
+                  }
+                  // The JS function ends without a return: undefined.
+                  return null;
+                },
           },
         },
       },

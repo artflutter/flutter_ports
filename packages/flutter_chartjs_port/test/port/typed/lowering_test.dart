@@ -12,8 +12,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show createContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart'
-    show JsFunction, jsCall;
+import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
@@ -394,8 +393,9 @@ final DateTime _end = DateTime.utc(2021);
 /// The function of a twin: the lowered value is a function too.
 Object? _function([Object? a, Object? b, Object? c]) => null;
 
-/// A tick format.
-String? _format(AxisTickInfo tick) => '${tick.value}';
+/// A tick callback.
+List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
+    ['$value'];
 
 /// A legend handler.
 void _onLegend(ChartLegendEventDetails details) {}
@@ -1943,13 +1943,13 @@ void main() {
         });
       }
 
-      test('format, a JsFunction', () {
+      test('callback, the TickCallback itself', () {
         final lowered = lowerAxis(
-          const LinearAxis(ticks: AxisTicks(format: _format)),
+          const LinearAxis(ticks: AxisTicks(callback: _format)),
         );
         final ticks = lowered['ticks']!;
         expect(jsObjectKeys(ticks), ['callback']);
-        expect(jsGet(ticks, 'callback'), isA<JsFunction>());
+        expect(jsGet(ticks, 'callback'), same(_format));
       });
     });
 

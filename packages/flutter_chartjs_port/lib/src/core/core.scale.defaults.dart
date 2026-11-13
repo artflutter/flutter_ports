@@ -102,7 +102,7 @@ void applyScaleDefaults(Defaults defaults) {
           ..labelOffset = 0.0
           // We pass through arrays to be rendered as multiline labels, we
           // convert Others to strings here.
-          ..callback = (ticks['formatters']! as Map<String, Object?>)['values']!
+          ..callback = ticks['formatters']!['values']!
           ..minor = MinorTickOptionsScope()
           ..major = MajorTickOptionsScope()
           // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.

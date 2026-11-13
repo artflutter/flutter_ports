@@ -51,7 +51,6 @@ export 'package:flutter_chartjs_port/src/typed/axes.dart'
         TimeSeriesAxis;
 export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show
-        AxisTickInfo,
         ChartAnimationDetails,
         ChartContext,
         ChartEventDetails,

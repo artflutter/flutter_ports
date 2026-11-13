@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/tick_label.dart';
 import 'scale_chart_harness.dart';
 import 'scale_linearbase_reference.dart';
 
@@ -127,7 +128,9 @@ final JsClass _linearBaseChartController = cartesianTestController(
 
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'withUnit': (Object? value) => '${jsToString(value)} kg',
+  'withUnit': (Object? scale, double value, int index, Object? ticks) => [
+    '${jsNumberToString(value)} kg',
+  ],
 };
 
 /// The prints of the current case: the messages of `console.warn`.
@@ -312,7 +315,7 @@ void main() {
       // The numeric formatter compares the string value with its floor
       // (core.ticks.js:91), and the delta becomes 0.
       expect(
-        [for (final t in scale.ticks!) t.label],
+        [for (final t in scale.ticks!) upstreamTickLabel(t)],
         ['-15', '0', '20', '40', '60', '80', '100', '110'],
       );
     });
@@ -341,7 +344,7 @@ void main() {
         expect(tickValues.sublist(1, 6), everyElement(isNaN));
         // The labels of upstream.
         expect(
-          [for (final t in scale.ticks!) t.label],
+          [for (final t in scale.ticks!) upstreamTickLabel(t)],
           ['-15.0', 'NaN', 'NaN', 'NaN', 'NaN', 'NaN', '110.0'],
         );
       });
@@ -354,7 +357,7 @@ void main() {
         }),
       );
       expect(
-        [for (final t in chart.scales['y']!.ticks!) t.label],
+        [for (final t in chart.scales['y']!.ticks!) upstreamTickLabel(t)],
         ['-15', '0', '20', '40', '60', '80', '100', '110'],
       );
     });

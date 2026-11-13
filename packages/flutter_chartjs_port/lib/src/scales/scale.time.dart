@@ -51,7 +51,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, isFinite, isNullOrUndef, mergeIf, valueOrDefault;
+    show isFinite, isNullOrUndef, mergeIf, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber, limitValue, toRadians;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
@@ -75,6 +75,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart'
     as types
     show ScaleCache;
+import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
 import 'package:meta/meta.dart';
 
 /// scale.time.js:9 `Interval`: `{common: boolean, size: number, steps?:
@@ -325,7 +326,7 @@ List<Tick> _ticksFromTimestamps(
     map[value] = i;
 
     // DIVERGES(chartjs): adapt-time-null-timestamp, a null tick value is NaN.
-    final tick = Tick(value: value ?? double.nan, major: false);
+    final tick = Tick(value: value ?? double.nan);
     if (value == null) _nullValueTicks[tick] = true;
     ticks.add(tick);
   }
@@ -866,21 +867,23 @@ class TimeScale(super.cfg) extends Scale {
   ///
   /// Function to format an individual tick mark
   ///
-  /// The tick `callback` gets the time, the index as a number and the
-  /// ticks, with the scale as `this`. Dart `null` for [time] is the JS
-  /// `null` value of a tick ([_tickValue]). Dart `null` for [format] stands
-  /// for JS `undefined`.
-  Object? _tickFormatFunction(
+  /// The tick callback is a `TickCallback`: it gets the scale, the time,
+  /// the index and the ticks. Dart `null` for [time] is the JS `null` value
+  /// of a tick ([_tickValue]): the callback gets NaN, the value of that
+  /// tick, and the adapter gets the `null`. Dart `null` for [format] stands
+  /// for JS `undefined`. The result is the lines of the label.
+  List<String>? _tickFormatFunction(
     double? time,
     int index,
     List<Tick> ticks, [
     Object? format,
   ]) {
     final options = this.options;
-    final formatter = options.ticks.callback;
+    final formatter = tickCallbackOf(options.ticks.callback);
 
-    if (jsTruthy(formatter)) {
-      return callback(formatter, [time, index * 1.0, ticks], this);
+    if (formatter != null) {
+      // DIVERGES(chartjs): adapt-native-tick, a TickCallback with the scale.
+      return formatter(this, time ?? double.nan, index, ticks);
     }
 
     final formats = options.time.displayFormats;
@@ -893,11 +896,13 @@ class TimeScale(super.cfg) extends Scale {
         majorUnit != null &&
         jsTruthy(majorFormat) &&
         tick != null &&
-        jsTruthy(tick.major);
+        tick.major;
 
-    return adapter.format(
-      time,
-      jsTruthy(format) ? format : (major ? majorFormat : minorFormat),
+    return labelLinesOf(
+      adapter.format(
+        time,
+        jsTruthy(format) ? format : (major ? majorFormat : minorFormat),
+      ),
     );
   }
 
@@ -968,11 +973,13 @@ class TimeScale(super.cfg) extends Scale {
 
   /// scale.time.js:591 `_getLabelSize(label)`.
   ///
-  /// The canvas measures the `ToString` of [label] in its current font, as
-  /// upstream: the scale sets no font before the measure.
-  ({double w, double h}) _getLabelSize(Object? label) {
+  /// The canvas measures the text of [label] in its current font, as
+  /// upstream: the scale sets no font before the measure. The text of a
+  /// label of some lines is the lines with commas, the `ToString` of the
+  /// array of upstream. No label measures as the empty text.
+  ({double w, double h}) _getLabelSize(List<String>? label) {
     final ticksOpts = options.ticks;
-    final tickLabelWidth = ctx!.measureText(jsToString(label)).width;
+    final tickLabelWidth = ctx!.measureText(label?.join(',') ?? '').width;
     final angle = toRadians(
       jsToNumber(
         isHorizontal() ? ticksOpts.maxRotation : ticksOpts.minRotation,

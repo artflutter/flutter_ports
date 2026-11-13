@@ -29,6 +29,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
+import '../support/tick_label.dart';
 
 // The spec reads Chart.registry and Chart.defaults, the static members
 // `Chart.registry` and `Chart.defaults` of core.controller.dart.
@@ -120,7 +121,7 @@ Scale _createScale(
 
 /// scale.time.tests.js:27-29 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
-  for (final t in scale.ticks!) t.label,
+  for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
 /// The default date adapter, the `moment` of the spec (Chart.js ADR 0024).
@@ -539,7 +540,7 @@ void main() {
           expect(
             scale.getValueForPixel(scale.left + offset),
             _toBeCloseToTime(
-              _moment(jsAdd(ticks[i].label, '-01-01')),
+              _moment('${ticks[i].label!.single}-01-01'),
               TimeUnit.day,
               1,
             ),
@@ -630,7 +631,12 @@ void main() {
                   'displayFormats': <String, Object?>{'second': 'h:mm:ss'},
                 },
                 'ticks': <String, Object?>{
-                  'callback': (Object? _, Object? i) => '<${jsToString(i)}>',
+                  'callback': (
+                    Object? scale,
+                    double value,
+                    int i,
+                    Object? ticks,
+                  ) => ['<$i>'],
                 },
               },
             },
@@ -650,7 +656,12 @@ void main() {
 
       testWidgets('should update ticks.callback correctly', (tester) async {
         beforeEach();
-        String callback(Object? _, Object? i) => '{${jsToString(i)}}';
+        List<String>? callback(
+          Object? scale,
+          double value,
+          int i,
+          Object? ticks,
+        ) => ['{$i}'];
         (jsGet(_scaleOptionsX(chart), 'ticks')! as JsObjectFace)['callback'] =
             callback;
         chart.update();
@@ -1320,10 +1331,11 @@ void main() {
             'x': <String, Object?>{
               'type': 'time',
               'ticks': <String, Object?>{
-                'callback': (Object? value) {
-                  callbackValue = value;
-                  return value;
-                },
+                'callback':
+                    (Object? scale, double value, int index, Object? ticks) {
+                      callbackValue = value;
+                      return [jsNumberToString(value)];
+                    },
               },
             },
           },

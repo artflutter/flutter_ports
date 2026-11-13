@@ -50,7 +50,7 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       '`CategoryAxis`, `LinearAxis`, `TimeAxis`',
     ),
     ('minimum, maximum, interval', '`min`, `max` and `ticks.stepSize`'),
-    ('labelFormat', 'a tick `format` callback'),
+    ('labelFormat', 'a tick `callback`'),
     ('edgeLabelPlacement: shift', '`align: .inner` of `AxisTicks`'),
     ('majorGridLines, axisLine', 'the `grid` and the `border` of each axis'),
     ('ChartTitle', '`title: ChartTitle(...)`'),

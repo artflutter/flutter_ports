@@ -53,8 +53,12 @@ final Map<String, Object?> _fadeOtherGroups = {
 };
 
 /// `OrdinalScale(tickCount: 5, inflate: true)`.
-String? _dateLabel(AxisTickInfo tick) =>
-    ordinalTick(tick.index, _dates.length, 5) ? _dates[tick.index] : null;
+List<String>? _dateLabel(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ordinalTick(index, _dates.length, 5) ? [_dates[index]] : null;
 
 final ({double min, double max}) _range = graphicRange(_points.values);
 
@@ -72,14 +76,14 @@ final ChartConfig _config = ChartConfig(
   scales: {
     'x': CategoryAxis(
       grid: noGrid,
-      ticks: graphicTicks(format: _dateLabel),
+      ticks: graphicTicks(callback: _dateLabel),
       extra: bottomAxis,
     ),
     'y': LinearAxis(
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
-      ticks: graphicTicks(format: numberLabel, stepSize: 25),
+      ticks: graphicTicks(callback: numberLabel, stepSize: 25),
       extra: leftAxis,
     ),
   },

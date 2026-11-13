@@ -59,6 +59,8 @@ export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
         TextMetrics;
 export 'package:flutter_chartjs_port/src/core/core.controller.dart'
     show ChartMeta;
+export 'package:flutter_chartjs_port/src/core/core.scale.dart'
+    show TickCallback;
 export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show defaultDateZone, setDefaultDateZone;
 export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'

@@ -68,21 +68,26 @@ final List<LineDataset> _second = [
   ),
 ];
 
-String? _bottom(AxisTickInfo t) => switch (t.value.toInt()) {
-  2 => 'SEPT',
-  7 => 'OCT',
-  12 => 'DEC',
-  _ => '',
-};
+List<String>? _bottom(Scale scale, double value, int index, List<Tick> ticks) =>
+    [
+      switch (value.toInt()) {
+        2 => 'SEPT',
+        7 => 'OCT',
+        12 => 'DEC',
+        _ => '',
+      },
+    ];
 
-String? _left(AxisTickInfo t) => switch (t.value.toInt()) {
-  1 => '1m',
-  2 => '2m',
-  3 => '3m',
-  4 => '5m',
-  5 => '6m',
-  _ => '',
-};
+List<String>? _left(Scale scale, double value, int index, List<Tick> ticks) => [
+  switch (value.toInt()) {
+    1 => '1m',
+    2 => '2m',
+    3 => '3m',
+    4 => '5m',
+    5 => '6m',
+    _ => '',
+  },
+];
 
 ChartConfig _config(bool main) => fills(
   ChartConfig(
@@ -118,7 +123,7 @@ ChartConfig _config(bool main) => fills(
           maxRotation: 0,
           color: .solid(Colors.white),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          format: _bottom,
+          callback: _bottom,
         ),
       ),
       'y': LinearAxis(
@@ -131,7 +136,7 @@ ChartConfig _config(bool main) => fills(
           autoSkip: false,
           color: .solid(Colors.white),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-          format: _left,
+          callback: _left,
         ),
       ),
     },

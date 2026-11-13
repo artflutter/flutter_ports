@@ -644,7 +644,7 @@ Map<String, Object?> fixture() {
               // DIVERGES(chartjs): adapt-text-style-fonts, a style.
               'font': (Object? context) {
                 return jsTruthy(jsGet(context, 'tick')) &&
-                        jsTruthy((jsGet(context, 'tick')! as Tick).major)
+                        (jsGet(context, 'tick')! as Tick).major
                     ? const ChartTextStyle(fontWeight: FontWeight.bold)
                     : undefined;
               },

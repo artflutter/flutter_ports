@@ -54,7 +54,9 @@ class _Sample11State() extends State<Sample11> {
     ticks: AxisTicks(
       autoSkip: false,
       maxRotation: 0,
-      format: (t) => t.value.toStringAsFixed(t.value % 1 == 0 ? 0 : 1),
+      callback: (scale, value, index, ticks) => [
+        value.toStringAsFixed(value % 1 == 0 ? 0 : 1),
+      ],
       extra: {
         'color': (JsObjectFace c) => ChartPaint.solid(
           (tickOf(c) - base).abs() <= 0.1 ? Colors.white : Colors.white60,

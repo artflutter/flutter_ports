@@ -517,8 +517,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `MediaQuery.maybeDisableAnimationsOf`. `_createAnimations` of `core.animations.dart` reads
       it: with the flag, it reads no animation config (row `platform-reduced-motion`). No spec and
       no reference test sets it.
-    - `core.scale.dart` has `Scale`, `Scale.jsClass` and the port-only `Tick` class of the typedef
-      at `core.scale.js:15`. `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
+    - `core.scale.dart` has `Scale`, `Scale.jsClass` and the typedef `TickCallback`. The typedef
+      `Tick` of `core.scale.js:15` is the native class `Tick` of `lib/src/types/tick.dart` (row
+      `adapt-native-tick`). `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
       `Scale` implements `MinMax`. Its value methods take `Object?` (Chart.js ADR 0025).
       `Scale._alignToPixels` is a `bool`, the `ToBoolean` of the option at its write in
@@ -1144,7 +1145,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 74 names. 26 of them are the classes of
+    `typed.dart` is its export list of 71 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1813,6 +1814,16 @@ is a core view over the original item. Result paints/styles are native values; d
 rendered forms. The typed API uses `ChartTooltip.callbacks` and `Dataset.tooltipCallbacks`; the old `titleText`,
 `labelText` and `footerText` parameters are removed. Reference generators emit native expected values; no callback
 Map adapter is present in the runtime.
+
+A tick is the native extensible class `Tick` of `lib/src/types/tick.dart` (row `adapt-native-tick`,
+doc/native-tick-design-draft.md): `value` is a `double`, `label` is the `List<String>?` of its lines, `major` is a
+`bool`. The option `ticks.callback` holds a `TickCallback` of `core.scale.dart`, also in a raw config:
+`List<String>? Function(Scale scale, double value, int index, List<Tick> ticks)`. The scale is the first
+argument, null removes the tick, and an empty list keeps it with no line. A function of another type stops a
+debug build; `false` stays no callback. The three formatters of `core.ticks.dart` are functions of that type.
+The typed API has `AxisTicks.callback`; `AxisTicks.format` and `AxisTickInfo` are removed. In the tests,
+`test/support/tick_label.dart` gives the upstream form of a native label (`upstreamTickLabel`) and the native
+label of a reference label (`nativeTickLabel`); a tick callback of a test is a native function.
 
 Text direction options hold `dart:ui.TextDirection` in raw and typed configs (Chart.js ADR 0124). The canvas
 `direction` is nullable: null selects inherited element direction. `overrideTextDirection` returns the previous

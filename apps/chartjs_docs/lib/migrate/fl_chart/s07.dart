@@ -63,7 +63,7 @@ final ChartConfig _config = fills(
           autoSkip: false,
           color: const ChartPaint.solid(Colors.white),
           font: const TextStyle(fontSize: 10),
-          format: (t) => '\$ ${t.value + 0.5}',
+          callback: (scale, value, index, ticks) => ['\$ ${value + 0.5}'],
         ),
       ),
     },

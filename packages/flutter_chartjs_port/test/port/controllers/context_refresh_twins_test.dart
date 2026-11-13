@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show controllerArgs;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/options/props.dart' show BorderSkipped;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -333,7 +332,7 @@ Map<String, Object?> _config(
   List<Object?> plugins = const [],
   Map<String, Object?> dataset = const {},
   Map<String, Object?> options = const {},
-  Object? Function(Object?, Object?, Object?)? tickCallback,
+  List<String>? Function(Object?, double, int, Object?)? tickCallback,
   int length = _length,
   int datasets = 1,
 }) {
@@ -463,9 +462,9 @@ List<String> _run(
     options: options,
     datasets: datasets,
     tickCallback: ticks
-        ? (value, index, all) {
+        ? (scale, value, index, all) {
             if (created) trace.add('tick $index ${_state(chart)}');
-            return jsToString(value);
+            return ['$value'];
           }
         : null,
   );

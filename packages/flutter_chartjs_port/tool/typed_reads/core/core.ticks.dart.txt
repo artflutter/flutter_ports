@@ -1,7 +1,7 @@
 # Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
-# - stringIndex 1, jsCall 1: `formatters.numeric.apply(this, ...)`
-#   (core.ticks.js:77): `formatters` is the mutable object of core.ticks.js:9,
-#   and the logarithmic formatter reads `numeric` at the call, so that a
-#   replaced `numeric` formats too.
+# - stringIndex 1: `formatters.numeric` (core.ticks.js:77): `formatters` is
+#   the mutable object of core.ticks.js:9, and the logarithmic formatter
+#   reads `numeric` at the call, so that a replaced `numeric` formats too.
+#   The call is a direct call of the `TickFormatter` (row
+#   `adapt-native-tick`).
 stringIndex 1
-jsCall 1

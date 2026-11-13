@@ -66,13 +66,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextProxy, OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show
-        callback,
-        finiteOrDefault,
-        isArray,
-        isFinite,
-        isNullOrUndef,
-        valueOrDefault;
+    show callback, finiteOrDefault, isArray, isFinite, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, toLeftRightCenter;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -101,7 +95,10 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
         LayoutLayer;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, ScaleValuePosition;
+import 'package:flutter_chartjs_port/src/types/tick.dart';
 import 'package:meta/meta.dart';
+
+export 'package:flutter_chartjs_port/src/types/tick.dart' show Tick;
 
 /// core.scale.js:9 `reverseAlign`.
 // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
@@ -158,78 +155,33 @@ bool _jsGreaterOrEqual(Object? a, Object? b) {
   return jsToNumber(pa) >= jsToNumber(pb);
 }
 
-/// core.scale.js:15 the typedef `Tick`:
-/// `{value:number | string, label?:string, major?:boolean, $context?:any}`.
+/// The tick label callback: the option `ticks.callback` of a scale
+/// (core.scale.js:574, index.d.ts:3130).
 ///
-/// Upstream makes a tick as an object literal, for example `{value}`
-/// (scale.category.js:111) or `{value, major}` (scale.time.js:188-191). The
-/// port makes a [Tick]. The scales of phase 6 construct it. `buildTicks`
-/// returns a list of them, and the `afterBuildTicks` callback can replace the
-/// list. The value is a number (`index.d.ts:1195`).
-final class Tick({
-  /// `value`, the value of the tick.
-  @override required var double value,
+/// The scale is the first argument, where upstream gives it as `this`. The
+/// result is the lines of the label. Null removes the tick, and an empty
+/// List keeps the tick with no line.
+typedef TickCallback = List<String>? Function(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+);
 
-  /// `label`, the label that `generateTickLabels` writes
-  /// (core.scale.js:574): the result of the tick `callback`.
-  ///
-  /// A label is a `String`, a `List` of lines or another value of the
-  /// callback. Dart `null` stands for both JS `null` and `undefined`, the
-  /// start value: every reader tests the label with `isNullOrUndef` or
-  /// `isArray` (core.scale.js:783, :829, :836, :839), so the two values give
-  /// the same result. A callback that returns the [undefined] sentinel keeps
-  /// it.
-  var Object? label,
-
-  /// `major`, whether the tick is a major tick. Dart `null` stands for JS
-  /// `undefined`, the start value. The readers test it for truthiness
-  /// (core.scale.autoskip.js:89).
-  var bool? major,
-
-  /// scale.logarithmic.js:55 `significand`. Dart `null` stands for JS
-  /// `undefined`: the ticks of the other scales do not set it.
-  @override var double? significand,
-}) implements types.Tick {
-  /// The object literal `{value, label, major, significand}`. Dart `null`
-  /// stands for an absent key, JS `undefined`.
-  this;
-
-  /// `$context`, the scriptable context of the tick that [Scale.getContext]
-  /// makes (core.scale.js:966-967). Dart `null` stands for JS `undefined`,
-  /// the start value. It is the typed context of index.d.ts:1419 (Chart.js
-  /// ADR 0054 §11).
-  ScriptableScaleContext? get $context {
-    final parent = _contextParent;
-    if (parent != null) {
-      _contextParent = null;
-      _context = ScriptableScaleContext.tick(
-        parent,
-        this,
-        _contextIndex.toDouble(),
-      );
-    }
-    return _context;
-  }
-
-  set $context(ScriptableScaleContext? value) {
-    _contextParent = null;
-    _context = value;
-  }
-
-  ScriptableScaleContext? _context;
-  ScriptableScaleContext? _contextParent;
-  int _contextIndex = 0;
-
-  /// Make the same fresh context available on first access after a static
-  /// measurement-plan hit. Capture the original parent/index before auto-skip;
-  /// a hook-supplied context or an earlier preparation always wins.
-  @internal
-  void prepareContextForLayout(ScriptableScaleContext parent, int index) {
-    // DIVERGES(chartjs): adapt-lazy-tick-context, materialize on observation.
-    if (_context != null || _contextParent != null) return;
-    _contextIndex = index;
-    _contextParent = parent;
-  }
+/// The option `ticks.callback` as a [TickCallback], or null for no
+/// callback.
+///
+/// Upstream calls only a function (helpers.core.ts:138). `false`, the
+/// default of a time scale, and an absent value are no callback. A function
+/// of another type stops a debug build.
+@internal
+TickCallback? tickCallbackOf(Object? value) {
+  if (value is TickCallback) return value;
+  assert(
+    value == null || value == false || identical(value, undefined),
+    'A tick callback is a TickCallback, not $value.',
+  );
+  return null;
 }
 
 /// core.scale.js:23 `sample`.
@@ -464,7 +416,9 @@ final class _AxisLabelPlan(
     if (font != currentFont || labels.length != ticks.length) return false;
     for (var i = 0; i < labels.length; i++) {
       final label = ticks[i].label;
-      if (label is! String || label != labels[i]) return false;
+      if (label == null || label.length != 1 || label[0] != labels[i]) {
+        return false;
+      }
     }
     return true;
   }
@@ -473,8 +427,8 @@ final class _AxisLabelPlan(
     final labels = <String>[];
     for (final tick in ticks) {
       final label = tick.label;
-      if (label is! String) return null;
-      labels.add(label);
+      if (label == null || label.length != 1) return null;
+      labels.add(label[0]);
     }
     return labels;
   }
@@ -1370,17 +1324,14 @@ class Scale(AnyObject cfg)
   /// Convert ticks to label strings
   /// @param {Tick[]} ticks
   ///
-  /// The tick `callback` gets the value, the index as a number and the
-  /// list, with the scale as `this`.
+  /// The tick callback is a [TickCallback]: it gets the scale, the value,
+  /// the index and the list.
   void generateTickLabels(List<Tick> ticks) {
     final tickOpts = options.ticks;
     for (var i = 0, ilen = ticks.length; i < ilen; i++) {
       final tick = ticks[i];
-      tick.label = callback(tickOpts.callback, [
-        tick.value,
-        i.toDouble(),
-        ticks,
-      ], this);
+      tick.label = tickCallbackOf(tickOpts.callback)
+          ?.call(this, tick.value, i, ticks);
     }
   }
 
@@ -1723,7 +1674,7 @@ class Scale(AnyObject cfg)
     // Ticks should be skipped when callback returns null or undef, so lets
     // remove those.
     for (var i = 0, ilen = ticks.length; i < ilen; i++) {
-      if (isNullOrUndef(ticks[i].label)) {
+      if (ticks[i].label == null) {
         ticks.removeAt(i);
         ilen--;
         i--;
@@ -1810,13 +1761,12 @@ class Scale(AnyObject cfg)
     var widestLabelSize = 0.0;
     var highestLabelSize = 0.0;
     double i;
-    Object? label;
+    List<String>? label;
     ChartTextStyle tickFont;
     _TextCache cache;
     double lineHeight;
     double width;
     double height;
-    Object? nestedLabel;
 
     for (i = 0; i < length; i += increment) {
       final index = i.toInt();
@@ -1831,8 +1781,8 @@ class Scale(AnyObject cfg)
           identical(ticks, this.ticks) &&
           identical(options, planOptions) &&
           identical(options.ticks.raw, planTicks) &&
-          label is String &&
-          label == ticks[0].label) {
+          label != null &&
+          label.length == 1) {
         final inputs = TickFontCache.staticInputs(planTicks);
         planFont =
             inputs != null && TickFontCache.matchesResolved(inputs, tickFont)
@@ -1854,32 +1804,11 @@ class Scale(AnyObject cfg)
       cache = caches[tickFont] ??= _TextCache();
       lineHeight = tickFont.lineHeight!;
       width = height = 0;
-      // Undefined labels and arrays should not be measured
-      if (!isNullOrUndef(label) && !isArray(label)) {
-        width = measureText(
-          ctx,
-          cache.data,
-          cache.gc,
-          width,
-          jsToString(label),
-        );
-        height = lineHeight;
-      } else if (isArray(label)) {
-        // if it is an array let's measure each element
-        final lines = label! as List<Object?>;
-        for (var j = 0, jlen = lines.length; j < jlen; ++j) {
-          nestedLabel = lines[j];
-          // Undefined labels and arrays should not be measured
-          if (!isNullOrUndef(nestedLabel) && !isArray(nestedLabel)) {
-            width = measureText(
-              ctx,
-              cache.data,
-              cache.gc,
-              width,
-              jsToString(nestedLabel),
-            );
-            height += lineHeight;
-          }
+      // DIVERGES(chartjs): adapt-native-tick, the label is a List of lines.
+      if (label != null) {
+        for (var j = 0, jlen = label.length; j < jlen; ++j) {
+          width = measureText(ctx, cache.data, cache.gc, width, label[j]);
+          height += lineHeight;
         }
       }
       widths.add(width);
@@ -2310,7 +2239,7 @@ class Scale(AnyObject cfg)
     final rotation = -_rotationRadians;
     final items = <types.LabelItem>[];
     Tick tick;
-    Object? label;
+    List<String>? label;
     Object x = double.nan;
     Object y = double.nan;
     // DIVERGES(chartjs): adapt-flutter-text-align, a TextAlign, or the
@@ -2382,7 +2311,7 @@ class Scale(AnyObject cfg)
       pixel = jsAdd(getPixelForTick(i), optionTicks.labelOffset);
       font = resolveTickFontOptions(i);
       lineHeight = font.lineHeight!;
-      lineCount = isArray(label) ? (label! as List<Object?>).length : 1;
+      lineCount = label == null ? 1 : label.length;
       final halfCount = lineCount / 2;
       final color = optsAtIndex.color;
       final strokeColor = optsAtIndex.textStrokeColor;

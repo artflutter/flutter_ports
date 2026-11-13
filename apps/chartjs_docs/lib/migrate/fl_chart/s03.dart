@@ -158,7 +158,9 @@ class _Sample3State() extends State<Sample3> {
             stepSize: 1,
             color: ChartPaint.solid(Fl.white54.withValues(alpha: 0.5)),
             font: const TextStyle(fontSize: 10),
-            format: (t) => t.value == 0 ? '' : '${t.value.toInt()}k calories',
+            callback: (scale, value, index, ticks) => [
+              if (value == 0) '' else '${value.toInt()}k calories',
+            ],
             align: _fitLeft ? TickAlign.inner : TickAlign.center,
           ),
         ),

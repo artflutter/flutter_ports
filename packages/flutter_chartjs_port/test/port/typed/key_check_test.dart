@@ -116,7 +116,8 @@ const EdgeInsets _padding = EdgeInsets.all(4);
 
 String? _text(List<ChartTooltipItem> items) => null;
 String? _label(ChartTooltipItem item) => null;
-String? _format(AxisTickInfo tick) => null;
+List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
+    null;
 ChartPaint _colorFor(ChartContext context) => const ChartPaint.solid(_red);
 void _onEvent(ChartEventDetails details) {}
 void _onLegend(ChartLegendEventDetails details) {}
@@ -130,7 +131,7 @@ const AxisTicks _ticks = AxisTicks(
   stepSize: 1,
   maxRotation: 0,
   autoSkip: true,
-  format: _format,
+  callback: _format,
 );
 const AxisGrid _grid = AxisGrid(
   display: true,

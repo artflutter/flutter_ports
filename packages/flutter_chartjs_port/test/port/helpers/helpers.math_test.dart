@@ -21,9 +21,8 @@ final class _Target(@override var double min, @override var double max)
     implements math.MinMax;
 
 /// A tick `{value}` of a scale, passed as a [types.Tick].
-final class _Tick(@override final double value) implements types.Tick {
-  @override
-  double? get significand => null;
+final class _Tick(double value) extends types.Tick {
+  this : super(value: value);
 }
 
 /// Matches a double with the same value as [expected], where -0 differs from

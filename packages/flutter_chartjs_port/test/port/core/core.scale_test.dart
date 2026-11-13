@@ -17,7 +17,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, createContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -33,6 +32,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/font_record.dart';
+import '../../support/tick_label.dart';
 import 'scale_reference.dart';
 
 // The chart cases of core.scale.tests.js need a chart controller (phase 7).
@@ -197,7 +197,7 @@ final class _TestScale(super.cfg, final AnyObject spec) extends Scale {
           in (spec['ticks']! as List<Object?>).cast<List<Object?>>())
         Tick(
           value: _number(tick[0]),
-          major: tick.length > 1 ? tick[1]! as bool : null,
+          major: tick.length > 1 && tick[1]! as bool,
         ),
     ];
   }
@@ -249,19 +249,26 @@ final Map<String, Object> _functions = {
     'hook:$name': (Object? scale) {
       _log.add('cb:$name:${_tickState(scale! as Scale)}');
     },
-  'nullOdd': (Object? value, Object? index) =>
-      jsTruthy(jsToNumber(index).remainder(2)) ? null : 'L${jsToString(value)}',
-  'undefinedLast': (Object? value, Object? index, Object? ticks) =>
-      jsToNumber(index) == (ticks! as List<Object?>).length - 1
-      ? undefined
-      : 'v${jsToString(value)}',
-  'arrayLabel': (Object? value) => ['a${jsToString(value)}', 'second line'],
-  'longLabel': (Object? value) => 'Label number ${jsToString(value)}',
-  'numberLabel': (Object? value) => jsToNumber(value) * 10,
-  'thisType': JsFunction(
-    (Object? self, Object? value) =>
-        '${(self! as Scale).type}${jsToString(value)}',
-  ),
+  // The tick callbacks are `TickCallback`s (row `adapt-native-tick`): the
+  // result is the lines of the label, and null for the `null` and the
+  // `undefined` of the generator.
+  'nullOdd': (Scale scale, double value, int index, List<Tick> ticks) =>
+      index.isOdd ? null : ['L${jsNumberToString(value)}'],
+  'undefinedLast': (Scale scale, double value, int index, List<Tick> ticks) =>
+      index == ticks.length - 1 ? null : ['v${jsNumberToString(value)}'],
+  'arrayLabel': (Scale scale, double value, int index, List<Tick> ticks) => [
+    'a${jsNumberToString(value)}',
+    'second line',
+  ],
+  'longLabel': (Scale scale, double value, int index, List<Tick> ticks) => [
+    'Label number ${jsNumberToString(value)}',
+  ],
+  'numberLabel': (Scale scale, double value, int index, List<Tick> ticks) => [
+    jsNumberToString(value * 10),
+  ],
+  'thisType': (Scale scale, double value, int index, List<Tick> ticks) => [
+    '${scale.type}${jsNumberToString(value)}',
+  ],
   'colorByIndex': (Object? ctx) =>
       jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2))
       ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
@@ -277,7 +284,7 @@ final Map<String, Object> _functions = {
   ),
   'colorByMajor': (Object? ctx) {
     final tick = jsGet(ctx, 'tick');
-    return tick is Tick && (tick.major ?? false)
+    return tick is Tick && tick.major
         ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
         : const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1));
   },
@@ -384,6 +391,19 @@ List<Object?> _ticksOf(Scale scale) => [
   for (final tick in scale.ticks!) [tick.value, tick.label],
 ];
 
+/// The `[value, label]` pairs of the reference with native labels (row
+/// `adapt-native-tick`).
+List<Object?> _nativeTicks(Object? ticks) => [
+  for (final tick in (ticks! as List<Object?>).cast<List<Object?>>())
+    [tick[0], nativeTickLabel(tick[1])],
+];
+
+/// The label items of the reference with native labels.
+List<Object?> _nativeLabelItems(List<Object?> items) => [
+  for (final item in items.cast<Map<String, Object?>>())
+    {...item, 'label': nativeTickLabel(item['label'])},
+];
+
 /// The resolver of the scale options of a case: the user options,
 /// `defaults.scale` and `descriptors.scale`, with the chart context.
 ContextResolver _scaleOptions(AnyObject options, _Chart chart) => attachContext(
@@ -425,7 +445,11 @@ void _run(ScaleReferenceCase c) {
   expect(ctx.getCalls(), _calls(expected['updateCalls']), reason: 'update');
   ctx.resetCalls();
 
-  expect(_ticksOf(scale), _matcher(expected['ticks']), reason: 'ticks');
+  expect(
+    _ticksOf(scale),
+    _matcher(_nativeTicks(expected['ticks'])),
+    reason: 'ticks',
+  );
   for (final (name, value) in [
     ('labelRotation', scale.labelRotation),
     ('width', scale.width),
@@ -493,7 +517,7 @@ void _run(ScaleReferenceCase c) {
   }
   expect(
     [for (final item in scale.getLabelItems()) _labelItem(item)],
-    _matcher(_jsonLines(expected['labelItems'])),
+    _matcher(_nativeLabelItems(_jsonLines(expected['labelItems']))),
     reason: 'labelItems',
   );
   expect(_log, expected['queryLog'], reason: 'queryLog');
@@ -512,7 +536,11 @@ void _run(ScaleReferenceCase c) {
     scale.update(maxWidth, maxHeight, marginsArea);
     expect(_log, second['hooks'], reason: 'second hooks');
     expect(ctx.getCalls(), _calls(second['calls']), reason: 'second update');
-    expect(_ticksOf(scale), _matcher(second['ticks']), reason: 'second');
+    expect(
+      _ticksOf(scale),
+      _matcher(_nativeTicks(second['ticks'])),
+      reason: 'second',
+    );
   }
 }
 

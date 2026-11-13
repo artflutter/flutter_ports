@@ -12,8 +12,7 @@ import 'package:flutter_chartjs_port/src/core/core.animator.dart'
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show createContext;
-import 'package:flutter_chartjs_port/src/js/js_function.dart'
-    show JsFunction, jsCall;
+import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
@@ -400,32 +399,25 @@ void main() {
     });
   });
 
-  group('AxisTickInfo', () {
-    testWidgets('a tick callback with the scale as this gets the tick', (
-      tester,
-    ) async {
-      final infos = <AxisTickInfo>[];
+  group('TickCallback', () {
+    testWidgets('a tick callback gets the scale and the tick', (tester) async {
+      final calls =
+          <({Scale scale, double value, int index, List<Tick> ticks})>[];
       final chart = acquireChart(
         _bar(<String, Object?>{
           'scales': <String, Object?>{
             'y': <String, Object?>{
               'ticks': <String, Object?>{
-                'callback': JsFunction((
-                  Object? scale,
-                  Object? value,
-                  Object? index,
-                  Object? ticks,
-                ) {
-                  infos.add(
-                    AxisTickInfo(
-                      value: value! as double,
-                      index: (index! as num).toInt(),
-                      ticks: ticks! as List<Tick>,
-                      scale: scale! as Scale,
-                    ),
-                  );
-                  return 'T';
-                }),
+                'callback':
+                    (Scale scale, double value, int index, List<Tick> ticks) {
+                      calls.add((
+                        scale: scale,
+                        value: value,
+                        index: index,
+                        ticks: ticks,
+                      ));
+                      return ['T'];
+                    },
               },
             },
           },
@@ -433,10 +425,10 @@ void main() {
       );
 
       final scale = chart.scales['y']!;
-      final last = infos.where((info) => identical(info.scale, scale)).last;
+      final last = calls.where((call) => identical(call.scale, scale)).last;
       expect(last.index, last.ticks.length - 1);
       expect(last.value, last.ticks[last.index].value);
-      expect(last.value, isA<double>());
+      expect(scale.ticks!.first.label, ['T']);
     });
   });
 
@@ -599,54 +591,44 @@ void main() {
       ]);
     });
 
-    testWidgets('a tick format gets the scale, as a raw JsFunction', (
+    testWidgets('a tick callback is the callback of the raw config', (
       tester,
     ) async {
-      final infos = <AxisTickInfo>[];
+      final scales = <Scale>[];
+      List<String>? callback(
+        Scale scale,
+        double value,
+        int index,
+        List<Tick> ticks,
+      ) {
+        scales.add(scale);
+        return index.isEven ? ['$value'] : null;
+      }
+
       final typed = acquireChartRoot(
         ChartConfigLowering(
           typedBar(
-            scales: {
-              'y': LinearAxis(
-                ticks: AxisTicks(
-                  format: (tick) {
-                    infos.add(tick);
-                    return tick.index.isEven ? '${tick.value}' : null;
-                  },
-                ),
-              ),
-            },
+            scales: {'y': LinearAxis(ticks: AxisTicks(callback: callback))},
           ),
         ).lower(),
       );
+      final scale = typed.scales['y']!;
+      expect(scales.last, same(scale));
       final twin = acquireChart(
         _bar(<String, Object?>{
           'scales': <String, Object?>{
             'y': <String, Object?>{
               'type': 'linear',
-              'ticks': <String, Object?>{
-                'callback': JsFunction((
-                  Object? scale,
-                  Object? value,
-                  Object? index,
-                  Object? ticks,
-                ) {
-                  return (index! as num).toInt().isEven ? '$value' : null;
-                }),
-              },
+              'ticks': <String, Object?>{'callback': callback},
             },
           },
         }),
       );
 
-      final scale = typed.scales['y']!;
-      expect(infos.last.scale, same(scale));
-      expect([
-        for (final info in infos) info.value,
-      ], everyElement(isA<double>()));
       List<Object?> labels(Chart chart) => [
         for (final tick in chart.scales['y']!.ticks!) tick.label,
       ];
+      expect(labels(typed), isNotEmpty);
       expect(labels(typed), labels(twin));
     });
 

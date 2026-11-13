@@ -111,8 +111,9 @@ final ChartConfig _config = fills(
           stepSize: 2,
           autoSkip: false,
           font: const TextStyle(fontFamily: 'MaterialIcons', fontSize: 32),
-          format: (t) =>
-              String.fromCharCode(_icons[t.value.toInt()]!.$1.codePoint),
+          callback: (scale, value, index, ticks) => [
+            String.fromCharCode(_icons[value.toInt()]!.$1.codePoint),
+          ],
           extra: {
             'color': (JsObjectFace c) =>
                 ChartPaint.solid(_icons[tickOf(c).toInt()]!.$2),

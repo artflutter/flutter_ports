@@ -42,7 +42,9 @@ Object? _zones(JsObjectFace context) {
   );
 }
 
-String? _mm(AxisTickInfo tick) => '${tick.value.round()}mm';
+List<String>? _mm(Scale scale, double value, int index, List<Tick> ticks) => [
+  '${value.round()}mm',
+];
 
 String? _tooltipLabel(ChartTooltipItem item) =>
     '${item.label} : ${item.formattedValue}mm';
@@ -163,7 +165,7 @@ final ChartConfig _config = ChartConfig(
         padding: 8,
         color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
-        format: _mm,
+        callback: _mm,
       ),
       extra: {
         'border': {'display': false},

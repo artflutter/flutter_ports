@@ -261,20 +261,26 @@ ChartConfig(
     'x': CategoryAxis(grid: AxisGrid(display: false)),
     'y': LinearAxis(
       beginAtZero: true,
-      ticks: AxisTicks(stepSize: 5, format: formatVotes),
+      ticks: AxisTicks(stepSize: 5, callback: formatVotes),
       title: AxisTitle(display: true, text: 'Votes'),
     ),
   },
 )
 ```
 
-with a top-level function or a method as the tick format:
+with a top-level function or a method as the tick callback:
 
 ```dart
-String? formatVotes(AxisTickInfo tick) => '${tick.value.round()} votes';
+List<String>? formatVotes(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ['${value.round()} votes'];
 ```
 
-A `null` result hides the label. The axes are `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`,
+The result is the lines of the label. A `null` result removes the tick, and an empty list keeps
+the tick with no label. The same `TickCallback` is the value of `ticks.callback` in a raw config. The axes are `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`,
 `TimeAxis`, `TimeSeriesAxis` and `RadialLinearAxis` (the axis `r` of a radar or polar area chart).
 A `TimeAxis` takes `DateTime` limits and a `unit`, for example `TimeAxis(unit: .day)`.
 
@@ -385,7 +391,8 @@ class _VotesPageState() extends State<VotesPage> {
   hooks return a list of lines: `null` requests the built-in default and `[]` emits no text.
   Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`
   override the six per-item hooks. Callback objects merge field by field with `merge`.
-- `AxisTicks.format` gives the tick label, and `ChartAnimation.onProgress` and `onComplete` get
+- `AxisTicks.callback` is a `TickCallback`: it gets the scale, the value, the index and all ticks,
+  and gives the lines of the tick label. `ChartAnimation.onProgress` and `onComplete` get
   `ChartAnimationDetails`.
 - A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColor: .resolver(...)` get a
   `ChartContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `chart`)
@@ -459,7 +466,7 @@ class _ScoresState() extends State<Scores> {
   ```
 - The event and text callbacks (`onClick`, `onHover`, the legend handlers, the tooltip texts and
   the animation callbacks) can be new closures in each build: the chart calls the callback of the
-  newest config. A scriptable color (`ChartValue.resolver(...)`) and a tick format
+  newest config. A scriptable color (`ChartValue.resolver(...)`) and a tick callback
   are values of the config: give a method tear-off or a top-level function, because
   a new closure in each build is a new value and updates the chart.
 - Change the config, not the Maps of the chart (`chart.data`, `chart.options`): the next config

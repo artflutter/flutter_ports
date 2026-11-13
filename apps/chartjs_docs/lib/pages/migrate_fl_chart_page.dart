@@ -85,7 +85,7 @@ const List<(List<String>, Widget)> _samples = [
   (
     [
       'Three curved datasets with `tension`, and labels of chosen ticks from '
-          'a tick `format` callback.',
+          'a tick `callback`.',
       'The refresh button gives a new `ChartConfig` in `setState`. The '
           'chart animates to the new values.',
     ],
@@ -111,7 +111,7 @@ const List<(List<String>, Widget)> _samples = [
     [
       'One area fill with two colors: `fill` with a `target` value and the '
           'colors `above` and `below`, in `extra`.',
-      'A tick `format` callback writes the labels of the y axis.',
+      'A tick `callback` writes the labels of the y axis.',
     ],
     Sample4(),
   ),

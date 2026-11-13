@@ -101,7 +101,7 @@ DocPageContent graphicMigrationPage() => migrationPage(
         'A `null` or a `double.nan` value breaks the line and the area, as '
             'in Graphic.',
         'An `OrdinalScale` is a `CategoryAxis` with `offset: true`. The '
-            'tick `format` shows 5 labels at the steps of Graphic.',
+            'tick `callback` shows 5 labels at the steps of Graphic.',
       ],
       replica: (_) => const GraphicArea(),
     ),

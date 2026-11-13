@@ -25,7 +25,9 @@ Map<String, Object?> fixture() => <String, Object?>{
             'count': 21,
             // (v) => v.toString(): a tick value is a number, thus
             // Number.prototype.toString.
-            'callback': (Object? v) => jsNumberToString(v! as num),
+            // A TickCallback (row adapt-native-tick).
+            'callback': (Object? scale, double v, int index, Object? ticks) =>
+                <String>[jsNumberToString(v)],
           },
         },
         'x': <String, Object?>{'display': false},

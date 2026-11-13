@@ -1797,9 +1797,9 @@ void main() {
 
       test('a tick callback of the overrides waits for a full update', () {
         var calls = 0;
-        Object? tick(Object? value, Object? _, Object? _) {
+        List<String>? tick(Object? scale, double value, int _, Object? _) {
           calls++;
-          return '$value';
+          return ['$value'];
         }
 
         defaults.override('bar', <String, Object?>{

@@ -11,19 +11,24 @@ const _gridColor = Color(0xff37434d);
 
 final Color _avg = Color.lerp(Fl.cyan, Fl.blue, 0.2)!;
 
-String? _bottom(AxisTickInfo t) => switch (t.value.toInt()) {
-  2 => 'MAR',
-  5 => 'JUN',
-  8 => 'SEP',
-  _ => '',
-};
+List<String>? _bottom(Scale scale, double value, int index, List<Tick> ticks) =>
+    [
+      switch (value.toInt()) {
+        2 => 'MAR',
+        5 => 'JUN',
+        8 => 'SEP',
+        _ => '',
+      },
+    ];
 
-String? _left(AxisTickInfo t) => switch (t.value.toInt()) {
-  1 => '10K',
-  3 => '30k',
-  5 => '50k',
-  _ => '',
-};
+List<String>? _left(Scale scale, double value, int index, List<Tick> ticks) => [
+  switch (value.toInt()) {
+    1 => '10K',
+    3 => '30k',
+    5 => '50k',
+    _ => '',
+  },
+];
 
 ChartConfig _config(List<num> ys, {required bool average}) {
   final colors = average ? [_avg, _avg] : _colors;
@@ -68,7 +73,7 @@ ChartConfig _config(List<num> ys, {required bool average}) {
             maxRotation: 0,
             color: ChartPaint.solid(Colors.white),
             font: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            format: _bottom,
+            callback: _bottom,
           ),
         ),
         'y': LinearAxis(
@@ -83,7 +88,7 @@ ChartConfig _config(List<num> ys, {required bool average}) {
             autoSkip: false,
             color: ChartPaint.solid(Colors.white),
             font: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            format: _left,
+            callback: _left,
           ),
         ),
       },
