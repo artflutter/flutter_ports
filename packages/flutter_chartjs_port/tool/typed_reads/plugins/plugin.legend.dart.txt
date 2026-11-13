@@ -1,6 +1,4 @@
 # Native legend items read fields directly. Remaining user-object reads:
 # jsGet: the class-value config (3), a foreign context chart (1),
 # chart.data.datasets (1), and the application dataset label (1).
-# jsCall: filter and sort callbacks, which retain their current JS arity.
 jsGet 6
-jsCall 2

@@ -57,7 +57,7 @@ void main() {
           'options': <String, Object?>{
             'animation': <String, Object?>{
               'duration': 50,
-              'onComplete': () {
+              'onComplete': (_) {
                 // The dataset element reads `_path` by name, which gives
                 // the `undefined` sentinel.
                 final line = chart.getDatasetMeta(0).dataset! as LineElement;

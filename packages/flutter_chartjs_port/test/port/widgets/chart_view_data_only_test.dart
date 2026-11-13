@@ -1914,11 +1914,11 @@ void main() {
         final labels = _newLabels();
         var armed = false;
         var nested = 0;
-        void onHover(ChartEventDetails details) {
+        void onHover(ChartEvent event, List<ActiveElement> hits, Chart chart) {
           if (!armed) return;
           armed = false;
           nested++;
-          details.chart.update('none');
+          chart.update('none');
         }
 
         Widget view(int step) => _view(

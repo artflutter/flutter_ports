@@ -119,9 +119,9 @@ String? _label(TooltipItem item) => null;
 List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
     null;
 ChartPaint _colorFor(ChartContext context) => const ChartPaint.solid(_red);
-void _onEvent(ChartEventDetails details) {}
-void _onLegend(ChartLegendEventDetails details) {}
-void _onAnimation(ChartAnimationDetails details) {}
+void _onEvent(ChartEvent event, List<ActiveElement> hits, Chart chart) {}
+void _onLegend(ChartEvent event, LegendItem item, LegendElement legend) {}
+void _onAnimation(AnimationEvent event) {}
 
 const AxisTicks _ticks = AxisTicks(
   display: true,

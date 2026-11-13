@@ -57,8 +57,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
-import 'package:flutter_chartjs_port/src/js/js_function.dart'
-    show jsCall, jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
@@ -124,15 +122,21 @@ double _sorter(double? a, double? b) {
   return jsToNumber(a) - jsToNumber(b);
 }
 
+/// The time option `parser` as a function (index.d.ts:3433): the value of
+/// the app in, a timestamp or a value that the date adapter parses out.
+/// The text form of `parser` is a format of the date adapter (Chart.js ADR
+/// 0130).
+typedef TimeParser = Object? Function(Object? value);
+
 /// scale.time.js:46 `parse(scale, input)`.
 ///
 /// The method [TimeScale.parse] has the name `parse` too. Thus the Dart
 /// name of this function has an underscore.
 ///
 /// It gives the timestamp of [input], or Dart `null` for JS `null`.
-/// `typeof parser === 'function'` is [jsIsFunction], and the call
-/// `parser(value)` is [jsCall] with no `this`. A [DateTime] value is a JS
-/// `Date`: it is not a finite number, so the adapter parses it.
+/// `typeof parser === 'function'` is a [TimeParser], called directly
+/// (Chart.js ADR 0130). A [DateTime] value is a JS `Date`: it is not a finite
+/// number, so the adapter parses it.
 double? _parse(TimeScale scale, Object? input) {
   if (isNullOrUndef(input)) {
     return null;
@@ -142,8 +146,14 @@ double? _parse(TimeScale scale, Object? input) {
   final (:parser, :round, :isoWeekday) = scale._parseOpts;
   var value = input;
 
-  if (jsIsFunction(parser)) {
-    value = jsCall(parser, [value]);
+  // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
+  if (parser is TimeParser) {
+    value = parser(value);
+  } else {
+    assert(
+      parser is! Function,
+      'The option parser holds a TimeParser (Chart.js ADR 0130), not $parser.',
+    );
   }
 
   // Only parse if it's not a timestamp already

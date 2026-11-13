@@ -40,8 +40,9 @@
 /// Internal: no public library exports it.
 library;
 
-import 'package:flutter/foundation.dart' show Key, ValueChanged, listEquals;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
+import 'package:flutter/foundation.dart' show Key, listEquals;
+import 'package:flutter_chartjs_port/src/core/core.controller.dart'
+    show AnimationEventHandler, ChartEventHandler;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptScope, OptionKey, OptionScope, ScopeKind;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -54,8 +55,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
-import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show ChartAnimationDetails, ChartEventDetails, ChartLegendEventDetails;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart'
@@ -72,11 +71,8 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
         lowerTooltip,
         lowerTransitions;
 import 'package:flutter_chartjs_port/src/typed/props.dart' show byEntries;
-import 'package:flutter_chartjs_port/src/types/animation.dart'
-    show AnimationEvent;
-import 'package:flutter_chartjs_port/src/types/index.dart'
-    show ActiveElement, ChartEvent, LegendElement;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart'
+    show LegendEventHandler;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
@@ -519,58 +515,27 @@ TooltipCallbacks tooltipCallbacksTrampoline(
 ///
 /// Chart.js calls it with the event, the active elements and the chart
 /// (`core.controller.js:1222-1226`). It calls the callback of the newest
-/// config with a [ChartEventDetails]. The active elements are the List of
-/// the chart, with no copy.
-Object? Function(Object?, Object?, Object?) eventTrampoline(
-  ValueChanged<ChartEventDetails>? Function() newest,
-) => (event, active, chart) {
-  newest()?.call(
-    ChartEventDetails(
-      event: event! as ChartEvent,
-      hits: active! as List<ActiveElement>,
-      chart: chart! as Chart,
-    ),
-  );
-  return null;
-};
+/// config with the same arguments.
+ChartEventHandler eventTrampoline(ChartEventHandler? Function() newest) =>
+    (event, elements, chart) => newest()?.call(event, elements, chart);
 
 /// The trampoline of the legend handler that [newest] reads: `onClick`,
 /// `onHover` or `onLeave` of `plugins.legend`.
 ///
 /// The legend calls it with the event, the legend item and the legend
 /// (`plugin.legend.js:539-550`).
-Object? Function(Object?, Object?, Object?) legendTrampoline(
-  ValueChanged<ChartLegendEventDetails>? Function() newest,
-) => (event, item, legend) {
-  newest()?.call(
-    ChartLegendEventDetails(
-      event: event! as ChartEvent,
-      item: item! as LegendItem,
-      legend: legend! as LegendElement,
-    ),
-  );
-  return null;
-};
+LegendEventHandler legendTrampoline(LegendEventHandler? Function() newest) =>
+    (event, item, legend) => newest()?.call(event, item, legend);
 
 /// The trampoline of the animation callback that [newest] reads:
 /// `onProgress` or `onComplete` of `options.animation`.
 ///
 /// The chart calls it with the `AnimationEvent` of the animator
 /// (`core.controller.js:33-46`).
-Object? Function(Object?) animationTrampoline(
-  ValueChanged<ChartAnimationDetails>? Function() newest,
-) => (event) {
-  final animation = event! as AnimationEvent;
-  newest()?.call(
-    ChartAnimationDetails(
-      chart: animation.chart as Chart,
-      initial: animation.initial ?? false,
-      numSteps: animation.numSteps,
-      currentStep: animation.currentStep,
-    ),
-  );
-  return null;
-};
+AnimationEventHandler animationTrampoline(
+  AnimationEventHandler? Function() newest,
+) =>
+    (event) => newest()?.call(event);
 
 /// The option value of [duration]: the milliseconds, with the fraction of
 /// the microseconds. Dart `null` for `null`.

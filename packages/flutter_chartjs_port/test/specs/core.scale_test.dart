@@ -627,7 +627,7 @@ void main() {
               'x': <String, Object?>{
                 'type': 'category',
                 'labels': labels,
-                'afterBuildTicks': () {},
+                'afterBuildTicks': (_) {},
               },
             },
           },

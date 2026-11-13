@@ -428,7 +428,7 @@ void main() {
           'plugins': <String, Object?>{
             'legend': <String, Object?>{
               'labels': <String, Object?>{
-                'sort': (Object? a, Object? b) =>
+                'sort': (Object? a, Object? b, Object? data) =>
                     ((b! as LegendItem).datasetIndex! as num) >
                         ((a! as LegendItem).datasetIndex! as num)
                     ? 1
@@ -877,7 +877,7 @@ void main() {
         },
         'options': <String, Object?>{
           'responsive': true,
-          'onClick': () {},
+          'onClick': (_, _, _) {},
           'plugins': <String, Object?>{
             'legend': <String, Object?>{'display': true},
           },
@@ -1022,13 +1022,13 @@ void main() {
 
           final chart = acquireChart(
             _lineChart(<String, Object?>{
-              'onClick': (Object? _, Object? item) {
+              'onClick': (Object? _, Object? item, Object? _) {
                 clickItem = item;
               },
-              'onHover': (Object? _, Object? item) {
+              'onHover': (Object? _, Object? item, Object? _) {
                 hoverItem = item;
               },
-              'onLeave': (Object? _, Object? item) {
+              'onLeave': (Object? _, Object? item, Object? _) {
                 leaveItem = item;
               },
             }),
@@ -1060,10 +1060,10 @@ void main() {
 
         final chart = acquireChart(
           _lineChart(<String, Object?>{
-            'onHover': (Object? _, Object? item) {
+            'onHover': (Object? _, Object? item, Object? _) {
               hoverItem = item;
             },
-            'onLeave': (Object? _, Object? item) {
+            'onLeave': (Object? _, Object? item, Object? _) {
               leaveItem = item;
             },
           }),
@@ -1102,7 +1102,7 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'legend': <String, Object?>{
-                'onClick': (Object? _, Object? item) {
+                'onClick': (Object? _, Object? item, Object? _) {
                   clickItem = item;
                 },
               },

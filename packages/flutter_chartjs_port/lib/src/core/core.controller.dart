@@ -33,6 +33,8 @@
 /// a pure layer.
 library;
 
+import 'dart:ui' show Size;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
@@ -55,10 +57,9 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, attachContext, readOption;
+    show OptionView, attachContext, functionOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show
-        callback,
         each,
         elementsEqual,
         isClickEvent,
@@ -98,6 +99,9 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show OverridesByTypeScope;
 import 'package:flutter_chartjs_port/src/platform/index.dart'
     show BasePlatform, detectPlatform;
+import 'package:flutter_chartjs_port/src/types/animation.dart'
+    as animation_types
+    show AnimationEvent;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartMeta;
@@ -153,35 +157,60 @@ num Function(T a, T b) _compare2Level<T>(
   return (a, b) => l1(a) == l1(b) ? l2(a) - l2(b) : l1(a) - l1(b);
 }
 
+/// The chart options `onClick` and `onHover` (index.d.ts:1728, :1733,
+/// core.controller.js:1222-1226): the chart event, the active elements of
+/// the event in the order of the interaction mode, and the chart. Chart.js
+/// also gives the chart as `this` (Chart.js ADR 0130).
+typedef ChartEventHandler = void Function(
+  types.ChartEvent event,
+  List<types.ActiveElement> elements,
+  Chart chart,
+);
+
+/// The chart option `onResize` (index.d.ts:1707, core.controller.js:294):
+/// the chart and its new size in pixels. Chart.js gives the size as the
+/// object `{width, height}` and the chart also as `this` (Chart.js ADR
+/// 0130).
+typedef ChartResizeHandler = void Function(Chart chart, Size size);
+
+/// The animation options `onProgress` and `onComplete` (index.d.ts:1802,
+/// :1806, core.controller.js:33-46): the event of the animator. Chart.js
+/// also gives the chart as `this` (Chart.js ADR 0130).
+typedef AnimationEventHandler = void Function(
+  animation_types.AnimationEvent event,
+);
+
+/// The callback [key] of the animation options [animationOptions]:
+/// `animationOptions && animationOptions[key]`. A falsy `animation` option
+/// is no callback.
+AnimationEventHandler? _animationCallback(
+  Object? animationOptions,
+  OptionKey key,
+) => jsTruthy(animationOptions)
+    ? functionOption<AnimationEventHandler>(
+        readOption(animationOptions, key),
+        key,
+      )
+    : null;
+
 /// core.controller.js:33 `onAnimationsComplete(context)`.
-///
-/// `animationOptions && animationOptions.onComplete` gives the falsy
-/// `animationOptions` itself, which is not a function.
 void _onAnimationsComplete(AnimationEvent context) {
   final chart = context.chart;
   final animationOptions = readOption(chart.options, OptionKey.animation);
 
   chart.notifyPlugins('afterRender');
-  callback(
-    jsTruthy(animationOptions)
-        ? readOption(animationOptions, OptionKey.onComplete)
-        : animationOptions,
-    [context],
-    chart,
-  );
+  // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
+  _animationCallback(animationOptions, OptionKey.onComplete)?.call(context);
 }
 
 /// core.controller.js:41 `onAnimationProgress(context)`.
 void _onAnimationProgress(AnimationEvent context) {
-  final chart = context.chart;
-  final animationOptions = readOption(chart.options, OptionKey.animation);
-  callback(
-    jsTruthy(animationOptions)
-        ? readOption(animationOptions, OptionKey.onProgress)
-        : animationOptions,
-    [context],
-    chart,
+  final animationOptions = readOption(
+    context.chart.options,
+    OptionKey.animation,
   );
+  // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
+  _animationCallback(animationOptions, OptionKey.onProgress)?.call(context);
 }
 
 /// core.controller.js:51 `getCanvas(item)`.
@@ -912,7 +941,11 @@ class Chart(
     // DIVERGES(chartjs): adapt-typed-plugins, the typed hook arguments.
     notifyPlugins('resize', ResizeHookArgs(size: newSize));
 
-    callback(options.readKey(OptionKey.onResize), [this, newSize], this);
+    // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
+    functionOption<ChartResizeHandler>(
+      options.readKey(OptionKey.onResize),
+      OptionKey.onResize,
+    )?.call(this, Size(newSize.width, newSize.height));
 
     if (attached) {
       if (_doResize(mode) != 0) {
@@ -2845,10 +2878,17 @@ class Chart(
       this.lastEvent = null;
 
       // Invoke onHover hook
-      callback(options.readKey(OptionKey.onHover), [e, active, this], this);
+      // DIVERGES(chartjs): adapt-native-callbacks, the typed functions.
+      functionOption<ChartEventHandler>(
+        options.readKey(OptionKey.onHover),
+        OptionKey.onHover,
+      )?.call(e, active, this);
 
       if (isClick) {
-        callback(options.readKey(OptionKey.onClick), [e, active, this], this);
+        functionOption<ChartEventHandler>(
+          options.readKey(OptionKey.onClick),
+          OptionKey.onClick,
+        )?.call(e, active, this);
       }
     }
 

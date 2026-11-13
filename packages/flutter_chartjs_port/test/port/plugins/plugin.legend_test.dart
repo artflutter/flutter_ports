@@ -106,10 +106,10 @@ final Map<String, Object?> _functions = {
   'logLeave': (Object? e, Object? item, types.LegendElement legend) =>
       _log('onLeave', e, item, legend),
   // (item) => !String(item.text).endsWith('2')
-  'legendFilter': (Object? item) =>
+  'legendFilter': (Object? item, Object? _) =>
       !jsToString((item! as LegendItem).text).endsWith('2'),
   // (a, b) => b.datasetIndex - a.datasetIndex
-  'legendSort': (Object? a, Object? b) =>
+  'legendSort': (Object? a, Object? b, Object? _) =>
       (b! as LegendItem).datasetIndex! - (a! as LegendItem).datasetIndex!,
 };
 
@@ -654,7 +654,7 @@ void main() {
     }) {
       final config = _line(<String, Object?>{
         'labels': <String, Object?>{
-          'generateLabels': (Object? chart) => <Object?>[
+          'generateLabels': (Object? chart) => <LegendItem>[
             LegendItem(text: ['item'], datasetIndex: 0),
           ],
         },
@@ -721,27 +721,13 @@ void main() {
     });
   });
 
-  // The groups `js-semantics-legend-items`, `adapt-legend-items-list` and
-  // `sort` pin the writes into the legend items and the result of a user
+  // The groups `native legend items`, `adapt-native-callbacks` and `sort`
+  // pin the writes into the legend items and the result of a user
   // `generateLabels`. Each upstream value in a comment comes from a probe on
   // the pinned build in Node.js v24.12.0 on x64 (controller_chart_common.mjs:
   // loadChartJs, registerBuiltins, makeChart) with the chart of [_line], the
   // other plugins `false` and a canvas of 400 x 300.
   group('native legend items', () {
-    testWidgets('Map items are rejected', (tester) async {
-      expect(
-        () => acquireChart(
-          _line({
-            'labels': {
-              'generateLabels': (Object? chart) => [
-                {'text': 'Apples'},
-              ],
-            },
-          }),
-        ),
-        throwsA(isA<TypeError>()),
-      );
-    });
     testWidgets('the default click mutates the native item', (tester) async {
       final chart = acquireChart(_line({}));
       final item = LegendItem(text: ['Apples'], datasetIndex: 0);
@@ -755,38 +741,36 @@ void main() {
     });
   });
 
-  group('adapt-legend-items-list', () {
-    // plugin.legend.js:104-121. The probe with `display: false`: no throw,
-    // and `legendItems` is the value ('abc', {}, 5 or true). With
-    // `display: true`, each value throws `TypeError:
-    // this.legendItems.forEach is not a function`. The port casts the value
-    // to a List and throws a TypeError in both cases.
-    for (final (name, value) in <(String, Object Function())>[
-      ('a string', () => 'abc'),
-      ('an object', () => <String, Object?>{}),
-      ('a number', () => 5),
-      ('true', () => true),
+  group('adapt-native-callbacks', () {
+    // Chart.js ADR 0130: `generateLabels` holds a `LegendLabelsGenerator`,
+    // which gives a `List<LegendItem>`. A function of another type (a Map
+    // item, `undefined`, a value that is not a List) stops a debug build.
+    for (final (name, generator) in <(String, Object)>[
+      (
+        'Map items',
+        (Object? chart) => [
+          {'text': 'Apples'},
+        ],
+      ),
+      ('undefined items', (Object? chart) => [undefined]),
+      ('a string', (Object? chart) => 'abc'),
+      ('an object', (Object? chart) => <String, Object?>{}),
+      ('a number', (Object? chart) => 5),
+      ('true', (Object? chart) => true),
     ]) {
-      for (final display in [false, true]) {
-        testWidgets('$name with display $display throws a TypeError', (
-          tester,
-        ) async {
-          expect(
-            () => acquireChart(
-              _line(<String, Object?>{
-                'display': display,
-                'labels': <String, Object?>{
-                  'generateLabels': (Object? chart) => value(),
-                },
-              }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'width': 400, 'height': 300},
-              },
-            ),
-            throwsA(isA<TypeError>()),
-          );
-        });
-      }
+      testWidgets('a generator of $name stops a debug build', (tester) async {
+        expect(
+          () => acquireChart(
+            _line(<String, Object?>{
+              'labels': <String, Object?>{'generateLabels': generator},
+            }),
+            <String, Object?>{
+              'canvas': <String, Object?>{'width': 400, 'height': 300},
+            },
+          ),
+          throwsA(isA<AssertionError>()),
+        );
+      });
     }
   });
 
@@ -807,18 +791,6 @@ void main() {
         }),
       );
       expect(chart.legend!.legendItems, [same(a), same(b), same(c)]);
-    });
-    testWidgets('undefined entries are rejected', (tester) async {
-      expect(
-        () => acquireChart(
-          _line({
-            'labels': {
-              'generateLabels': (Object? chart) => [undefined],
-            },
-          }),
-        ),
-        throwsA(isA<TypeError>()),
-      );
     });
   });
 

@@ -105,5 +105,8 @@ bool _animationScriptable(String name) =>
     name != 'onProgress' && name != 'onComplete' && name != 'fn';
 
 /// core.animations.defaults.js:67 the `fn` of the `visible` animation of
-/// `transitions.hide`: `v => v | 0`. `v | 0` is ToInt32 of ToNumber.
-double _visibleFn(Object? v) => jsToInt32(jsToNumber(v));
+/// `transitions.hide`: `v => v | 0`. `v | 0` is ToInt32 of ToNumber. The
+/// option holds an `Interpolator` (Chart.js ADR 0130): `v` is [from].
+// DIVERGES(chartjs): adapt-native-callbacks, the three parameters.
+double _visibleFn(Object? from, Object? to, double factor) =>
+    jsToInt32(jsToNumber(from));

@@ -174,7 +174,9 @@ void main() {
           },
         },
       }),
-      throwsA(isA<TypeError>()),
+      // Chart.js ADR 0130: a generator of Map items is not a
+      // LegendLabelsGenerator.
+      throwsA(isA<AssertionError>()),
     );
   });
 }

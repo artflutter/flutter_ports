@@ -5,10 +5,10 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter/foundation.dart' show ValueChanged;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart'
+    as animator
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show createContext;
@@ -67,17 +67,17 @@ Map<String, Object?> _legendBox(Chart chart, int index) {
 }
 
 void main() {
-  group('ActiveElement and ChartEventDetails', () {
+  group('ActiveElement and ChartEventHandler', () {
     testWidgets('onClick gets the hits with int indexes and no copy', (
       tester,
     ) async {
       Object? active;
-      ChartEventDetails? details;
+      ({ChartEvent event, List<ActiveElement> hits, Chart chart})? details;
       final chart = acquireChart(
         _bar(<String, Object?>{
           'onClick': (Object? event, Object? elements, Object? chart) {
             active = elements;
-            details = ChartEventDetails(
+            details = (
               event: event! as ChartEvent,
               hits: elements! as List<ActiveElement>,
               chart: chart! as Chart,
@@ -337,15 +337,15 @@ void main() {
     });
   });
 
-  group('LegendItem and ChartLegendEventDetails', () {
+  group('LegendItem and LegendEventHandler', () {
     testWidgets('a legend onClick gets a dataset item', (tester) async {
-      ChartLegendEventDetails? details;
+      ({ChartEvent event, LegendItem item, LegendElement legend})? details;
       final chart = acquireChart(
         _bar(<String, Object?>{
           'plugins': <String, Object?>{
             'legend': <String, Object?>{
               'onClick': (Object? event, Object? item, Object? legend) {
-                details = ChartLegendEventDetails(
+                details = (
                   event: event! as ChartEvent,
                   item: item! as LegendItem,
                   legend: legend! as LegendElement,
@@ -452,8 +452,8 @@ void main() {
     /// A typed bar chart with the labels `a`, `b`, `c` and the datasets `A`
     /// and `B`, with no animation, as [_bar].
     ChartConfig typedBar({
-      ValueChanged<ChartEventDetails>? onClick,
-      ValueChanged<ChartEventDetails>? onHover,
+      ChartEventHandler? onClick,
+      ChartEventHandler? onHover,
       ChartLegend? legend,
       ChartTooltip? tooltip,
       Map<String, ChartAxis>? scales,
@@ -475,37 +475,41 @@ void main() {
     testWidgets('onClick gets int hits, from the newest config', (
       tester,
     ) async {
-      final calls = <(String, ChartEventDetails)>[];
+      final calls = <(String, List<ActiveElement>, Chart, ChartEvent)>[];
       final lowering = ChartConfigLowering(
-        typedBar(onClick: (details) => calls.add(('first', details))),
+        typedBar(
+          onClick: (event, hits, chart) =>
+              calls.add(('first', hits, chart, event)),
+        ),
       );
       final chart = acquireChartRoot(lowering.lower());
       final element = chart.getDatasetMeta(1).data[2];
       await triggerMouseEvent(chart, 'click', element);
 
-      final (name, details) = calls.single;
+      final (name, hits, eventChart, event) = calls.single;
       expect(name, 'first');
-      final hit = details.hits.single;
+      final hit = hits.single;
       expect(hit.datasetIndex, isA<int>());
       expect([hit.datasetIndex, hit.index], [1, 2]);
       expect(hit.element, same(element));
-      expect(details.chart, same(chart));
-      expect(details.event.type, 'click');
+      expect(eventChart, same(chart));
+      expect(event.type, 'click');
 
       // A new config with another closure: the trampoline of the chart
       // calls it with no new lowering.
       lowering.config = typedBar(
-        onClick: (details) => calls.add(('second', details)),
+        onClick: (event, hits, chart) =>
+            calls.add(('second', hits, chart, event)),
       );
       await triggerMouseEvent(chart, 'click', element);
-      expect([for (final (name, _) in calls) name], ['first', 'second']);
+      expect([for (final (name, _, _, _) in calls) name], ['first', 'second']);
     });
 
     testWidgets('onHover gets the hits of a move', (tester) async {
       final hits = <List<ActiveElement>>[];
       final chart = acquireChartRoot(
         ChartConfigLowering(
-          typedBar(onHover: (details) => hits.add(details.hits)),
+          typedBar(onHover: (event, elements, chart) => hits.add(elements)),
         ).lower(),
       );
       await triggerMouseEvent(
@@ -524,7 +528,9 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           typedBar(
-            legend: ChartLegend(onClick: (details) => items.add(details.item)),
+            legend: ChartLegend(
+              onClick: (event, item, legend) => items.add(item),
+            ),
           ),
         ).lower(),
       );
@@ -648,10 +654,8 @@ void main() {
       expect(labels(typed), labels(twin));
     });
 
-    testWidgets('an animation callback gets the details of the event', (
-      tester,
-    ) async {
-      final details = <ChartAnimationDetails>[];
+    testWidgets('an animation callback gets the event', (tester) async {
+      final details = <AnimationEvent>[];
       final lowering = ChartConfigLowering(
         ChartConfig(
           type: .bar,
@@ -663,14 +667,14 @@ void main() {
       final onComplete = (options['animation']! as JsObjectFace)['onComplete'];
       final chart = acquireChart(_bar(const <String, Object?>{}));
       jsCall(onComplete, [
-        AnimationEvent(
+        animator.AnimationEvent(
           chart: chart,
           initial: true,
           numSteps: 1000,
           currentStep: 250,
         ),
       ]);
-      jsCall(onComplete, [AnimationEvent(chart: chart)]);
+      jsCall(onComplete, [animator.AnimationEvent(chart: chart)]);
       expect(
         [
           for (final d in details)
@@ -678,7 +682,7 @@ void main() {
         ],
         [
           [true, true, 1000, 250],
-          [true, false, null, null],
+          [true, null, null, null],
         ],
       );
     });

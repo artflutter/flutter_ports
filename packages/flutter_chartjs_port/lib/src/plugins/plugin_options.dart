@@ -30,8 +30,12 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show boolOption, paddingOption, readOption, textDirectionOption;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+    show
+        boolOption,
+        functionOption,
+        paddingOption,
+        readOption,
+        textDirectionOption;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
@@ -39,22 +43,8 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, chartPaintOf;
+import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
-
-/// The function of the type [T] in the option [key], or Dart `null` for no
-/// function.
-///
-/// Upstream tests the option for truthiness and calls it. `false`, JS
-/// `null` and an absent value are no function. A function of another type
-/// stops a debug build, and a release build makes no call.
-T? _functionOption<T extends Function>(Object? value, OptionKey key) {
-  if (value is T) return value;
-  assert(
-    value == null || value == false || identical(value, undefined),
-    'The option ${key.jsName} holds a $T, not $value.',
-  );
-  return null;
-}
 
 /// The option [key] of the options object [options]: `options[key]`, the
 /// shared typed read [readOption] of `helpers.config.dart`.
@@ -121,14 +111,26 @@ extension type const LegendOptions(Object? object) {
   /// `maxWidth`.
   Object? get maxWidth => optionOf(object, OptionKey.maxWidth);
 
-  /// `onClick`.
-  Object? get onClick => optionOf(object, OptionKey.onClick);
+  /// `onClick`: the function itself, or Dart `null` for no function (Chart.js
+  /// ADR 0130).
+  LegendEventHandler? get onClick => functionOption<LegendEventHandler>(
+    optionOf(object, OptionKey.onClick),
+    OptionKey.onClick,
+  );
 
-  /// `onHover`.
-  Object? get onHover => optionOf(object, OptionKey.onHover);
+  /// `onHover`: the function itself, or Dart `null` for no function (Chart.js
+  /// ADR 0130).
+  LegendEventHandler? get onHover => functionOption<LegendEventHandler>(
+    optionOf(object, OptionKey.onHover),
+    OptionKey.onHover,
+  );
 
-  /// `onLeave`.
-  Object? get onLeave => optionOf(object, OptionKey.onLeave);
+  /// `onLeave`: the function itself, or Dart `null` for no function (Chart.js
+  /// ADR 0130).
+  LegendEventHandler? get onLeave => functionOption<LegendEventHandler>(
+    optionOf(object, OptionKey.onLeave),
+    OptionKey.onLeave,
+  );
 
   /// `position`.
   Object? get position => optionOf(object, OptionKey.position);
@@ -164,13 +166,18 @@ extension type const LegendLabelOptions(Object? object) {
   /// `color`.
   Object? get color => optionOf(object, OptionKey.color);
 
-  /// `filter`.
-  Object? get filter => optionOf(object, OptionKey.filter);
+  /// `filter`: the function itself, or Dart `null` for no function (Chart.js
+  /// ADR 0130).
+  LegendItemFilter? get filter => functionOption<LegendItemFilter>(
+    optionOf(object, OptionKey.filter),
+    OptionKey.filter,
+  );
 
   /// `font`.
   Object? get font => optionOf(object, OptionKey.font);
 
-  /// `generateLabels`.
+  /// `generateLabels`, the raw value: `plugin.legend.dart` reads it as a
+  /// `LegendLabelsGenerator`, which takes the chart class.
   Object? get generateLabels => optionOf(object, OptionKey.generateLabels);
 
   /// `padding`.
@@ -182,8 +189,12 @@ extension type const LegendLabelOptions(Object? object) {
   /// `pointStyleWidth`.
   Object? get pointStyleWidth => optionOf(object, OptionKey.pointStyleWidth);
 
-  /// `sort`.
-  Object? get sort => optionOf(object, OptionKey.sort);
+  /// `sort`: the function itself, or Dart `null` for no function (Chart.js
+  /// ADR 0130).
+  LegendItemComparator? get sort => functionOption<LegendItemComparator>(
+    optionOf(object, OptionKey.sort),
+    OptionKey.sort,
+  );
 
   /// `textAlign`.
   Object? get textAlign => optionOf(object, OptionKey.textAlign);
@@ -287,14 +298,14 @@ extension type const TooltipOptions(Object? object) {
 
   /// `external`: the function itself, or Dart `null` for no function (row
   /// `adapt-native-tooltip-item`).
-  TooltipExternal? get external => _functionOption<TooltipExternal>(
+  TooltipExternal? get external => functionOption<TooltipExternal>(
     optionOf(object, OptionKey.external),
     OptionKey.external,
   );
 
   /// `filter`: the function itself, or Dart `null` for no function (row
   /// `adapt-native-tooltip-item`).
-  TooltipItemFilter? get filter => _functionOption<TooltipItemFilter>(
+  TooltipItemFilter? get filter => functionOption<TooltipItemFilter>(
     optionOf(object, OptionKey.filter),
     OptionKey.filter,
   );
@@ -316,7 +327,7 @@ extension type const TooltipOptions(Object? object) {
 
   /// `itemSort`: the function itself, or Dart `null` for no function (row
   /// `adapt-native-tooltip-item`).
-  TooltipItemComparator? get itemSort => _functionOption<TooltipItemComparator>(
+  TooltipItemComparator? get itemSort => functionOption<TooltipItemComparator>(
     optionOf(object, OptionKey.itemSort),
     OptionKey.itemSort,
   );

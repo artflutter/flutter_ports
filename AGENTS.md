@@ -1182,8 +1182,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element
     styles. `values.dart` has the name types: extension types with `const` constants, for the dot
-    shorthands. `callbacks.dart` has the details classes and the views with `int` indexes;
-    `ChartContext` is a view over the typed contexts. Each
+    shorthands. `callbacks.dart` has `ChartScript` and the views with `int` indexes;
+    `ChartContext` is a view over the typed contexts. The event callbacks take the function types
+    of the core (Chart.js ADR 0130). Each
     config class is `@immutable` and `final`, with a `const` constructor, `copyWith`, and `==`
     from its `_props` list (`props.dart`). Each class has `extra`, the Chart.js options with no
     parameter. `lower.dart` (internal) gives the typed option scopes of the chart for a config
@@ -1402,7 +1403,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       tests. Chart.js ADR 0129 (an index is an int) is accepted (2026-11-13): its code passes the
       tests. It supersedes the index rule of Chart.js ADR 0045 section 7 and Chart.js ADR 0052
       section 10. Chart.js ADR 0126 (a native plugin contract) is proposed (2026-11-13): it waits for
-      the review of the maintainer, and no code implements it.
+      the review of the maintainer, and no code implements it. Chart.js ADR 0130 (native callback
+      options) is accepted (2026-11-13): its code passes the tests. It supersedes the details objects
+      of Chart.js ADR 0052 §6 and the point-label closure call of Chart.js ADR 0095.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -1813,6 +1816,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     JS runtime and port tools) is proposed. The gate of ADR 0008 is D3 phase 1. ADR 0009 (ports of
     add-on libraries) is proposed. Its gate is zoom phase 0. An add-on port depends on its host
     port and imports only the public libraries of the host. ADR 0008 item 1 has the clause for it.
+
+The other callback options hold typed functions in raw and typed configs (Chart.js ADR 0130, row
+`adapt-native-callbacks`): the chart `onClick` and `onHover` (`ChartEventHandler`) and `onResize`
+(`ChartResizeHandler`, a Flutter `Size`), the animation `onProgress` and `onComplete`
+(`AnimationEventHandler`) and `fn` (`Interpolator`), the 14 scale hooks (`ScaleHook`), the legend
+`onClick`, `onHover` and `onLeave` (`LegendEventHandler`), `labels.generateLabels`
+(`LegendLabelsGenerator`, a `List<LegendItem>` out), `labels.filter` (`LegendItemFilter`) and
+`labels.sort` (`LegendItemComparator`), the function form of the time `parser` (`TimeParser`) and the
+radial `pointLabels.callback` (`PointLabelCallback`, an `int` index). The port calls each one directly,
+with no `this` and no JS arity; `functionOption` of `helpers.config.dart` reads it. A function of
+another type, also one with another parameter count, stops a debug build, and a release build makes no
+call. The typed API takes the same types; `ChartEventDetails`, `ChartLegendEventDetails` and
+`ChartAnimationDetails` are removed. A test closure with `Object?` parameters stays valid. The recorder
+of the oracle O1 wraps the three legend label callbacks in typed closures.
 
 Tooltip callbacks use the native `TooltipCallbacks` object in chart and dataset configs (Chart.js ADR 0125).
 Its 14 hooks are typed functions with an explicit tooltip argument. Text hooks return `List<String>?`: null invokes

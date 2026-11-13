@@ -51,12 +51,12 @@ class _Sample3State() extends State<Sample3> {
   bool _fitLeft = false;
   bool _fitBottom = true;
 
-  void _hover(ChartEventDetails details) {
-    final index = details.hits.isEmpty ? -1 : details.hits.first.index;
+  void _hover(ChartEvent event, List<ActiveElement> hits, Chart chart) {
+    final index = hits.isEmpty ? -1 : hits.first.index;
     final next = index == 0 || index == 6 ? -1 : index;
     if (next == _touched) return;
     _touched = next;
-    details.chart.update('none');
+    chart.update('none');
   }
 
   ChartPaint _bottomColor(JsObjectFace c) =>

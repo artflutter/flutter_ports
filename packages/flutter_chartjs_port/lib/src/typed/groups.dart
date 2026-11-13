@@ -15,8 +15,10 @@ import 'dart:ui' show TextDirection;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
-    show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
+    show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter_chartjs_port/src/core/core.controller.dart'
+    show AnimationEventHandler;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/options/opt.dart'
@@ -40,8 +42,6 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show ChartAnimationDetails, ChartLegendEventDetails;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
@@ -50,6 +50,8 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show TooltipItem, TooltipModel;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart'
+    show LegendEventHandler;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
@@ -101,13 +103,13 @@ final class const ChartLegend({
 
   /// The function of a click on an item: `onClick`. It replaces the
   /// default toggle of the visibility.
-  final ValueChanged<ChartLegendEventDetails>? onClick,
+  final LegendEventHandler? onClick,
 
   /// The function of a pointer that moves onto an item: `onHover`.
-  final ValueChanged<ChartLegendEventDetails>? onHover,
+  final LegendEventHandler? onHover,
 
   /// The function of a pointer that leaves an item: `onLeave`.
-  final ValueChanged<ChartLegendEventDetails>? onLeave,
+  final LegendEventHandler? onLeave,
 
   /// The text direction during drawing. Null keeps the canvas direction.
   final TextDirection? textDirection,
@@ -137,9 +139,9 @@ final class const ChartLegend({
     double? boxHeight,
     double? labelPadding,
     bool? usePointStyle,
-    ValueChanged<ChartLegendEventDetails>? onClick,
-    ValueChanged<ChartLegendEventDetails>? onHover,
-    ValueChanged<ChartLegendEventDetails>? onLeave,
+    LegendEventHandler? onClick,
+    LegendEventHandler? onHover,
+    LegendEventHandler? onLeave,
     TextDirection? textDirection,
     Map<String, Object?>? extra,
   }) => ChartLegend(
@@ -762,10 +764,10 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
   static const ChartAnimation none = ChartAnimation._none();
 
   /// The function of each step of the animations: `onProgress`.
-  final ValueChanged<ChartAnimationDetails>? onProgress;
+  final AnimationEventHandler? onProgress;
 
   /// The function of the end of the animations: `onComplete`.
-  final ValueChanged<ChartAnimationDetails>? onComplete;
+  final AnimationEventHandler? onComplete;
 
   /// The Chart.js animation options that have no parameter. The rules of
   /// [ChartLegend.extra] apply.
@@ -781,8 +783,8 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     Duration? delay,
     Curve? easing,
     bool? loop,
-    ValueChanged<ChartAnimationDetails>? onProgress,
-    ValueChanged<ChartAnimationDetails>? onComplete,
+    AnimationEventHandler? onProgress,
+    AnimationEventHandler? onComplete,
     Map<String, Object?>? extra,
   }) => _none
       ? none

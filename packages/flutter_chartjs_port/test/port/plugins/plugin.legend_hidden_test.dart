@@ -28,7 +28,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsDeleteKey, jsGet, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
@@ -896,7 +895,7 @@ void main() {
             labels: {
               'generateLabels': (Object? chart) {
                 calls++;
-                return <Object?>[
+                return <LegendItem>[
                   LegendItem(text: ['x']),
                 ];
               },
@@ -1403,7 +1402,7 @@ void main() {
             change: (chart, count) =>
                 _labelOptionsOf(chart)['generateLabels'] = (chart) {
                   count();
-                  return <Object?>[
+                  return <LegendItem>[
                     LegendItem(text: ['u']),
                   ];
                 },
@@ -1504,7 +1503,7 @@ void main() {
           each.update();
           _labelOptionsOf(each)['generateLabels'] = (legendChart) {
             seen.add(_texts(each));
-            return <Object?>[
+            return <LegendItem>[
               LegendItem(text: ['u']),
             ];
           };
@@ -1643,7 +1642,7 @@ void main() {
                 type,
                 legend: {'display': display},
                 labels: {
-                  'generateLabels': (Object? chart) => <Object?>[
+                  'generateLabels': (Object? chart) => <LegendItem>[
                     LegendItem(text: ['x']),
                   ],
                 },
@@ -1686,7 +1685,7 @@ void main() {
         _config(
           'pie',
           labels: {
-            'generateLabels': (Object? chart) => <Object?>[
+            'generateLabels': (Object? chart) => <LegendItem>[
               LegendItem(text: ['x']),
             ],
           },
@@ -1727,7 +1726,7 @@ void main() {
           labels: {
             'generateLabels': (Object? chart) {
               _labelOptionsOf(chart! as Chart)['color'] = _green;
-              return jsCall(builtIn, [chart]);
+              return (builtIn! as LegendLabelsGenerator)(chart as Chart);
             },
           },
         ),
@@ -3159,7 +3158,7 @@ void main() {
           {
             'generateLabels': (Object? chart) {
               generators++;
-              return <Object?>[
+              return <LegendItem>[
                 LegendItem(text: ['x']),
               ];
             },

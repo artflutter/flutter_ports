@@ -6,13 +6,13 @@
 library;
 
 import 'package:flutter/foundation.dart'
-    show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
+    show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/core/core.controller.dart'
+    show ChartEventHandler;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
     show ChartTransition, PropertyAnimation;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show ChartAxis;
-import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show ChartEventDetails;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show Dataset;
 import 'package:flutter_chartjs_port/src/typed/elements.dart'
     show ChartElements;
@@ -158,13 +158,13 @@ final class const ChartConfig({
   /// `ChartElements(line: LineElementStyle(borderWidth: 3))`.
   final ChartElements? elements,
 
-  /// The function of a click on the chart: `options.onClick`. The details
-  /// give the elements under the pointer, with `int` indexes
+  /// The function of a click on the chart: `options.onClick`. It gets the
+  /// event, the elements under the pointer with `int` indexes and the chart
   /// (`docs/configuration/interactions.md`, "Events").
-  final ValueChanged<ChartEventDetails>? onClick,
+  final ChartEventHandler? onClick,
 
   /// The function of a pointer move on the chart: `options.onHover`.
-  final ValueChanged<ChartEventDetails>? onHover,
+  final ChartEventHandler? onHover,
 
   /// The inline plugins of the chart: `plugins`, each a plugin Map with an
   /// `id` and its hooks (`docs/developers/plugins.md`). The List goes to
@@ -209,8 +209,8 @@ final class const ChartConfig({
     List<PropertyAnimation>? animations,
     List<ChartTransition>? transitions,
     ChartElements? elements,
-    ValueChanged<ChartEventDetails>? onClick,
-    ValueChanged<ChartEventDetails>? onHover,
+    ChartEventHandler? onClick,
+    ChartEventHandler? onHover,
     List<Map<String, Object?>>? plugins,
     Map<String, Object?>? extra,
   }) => ChartConfig(

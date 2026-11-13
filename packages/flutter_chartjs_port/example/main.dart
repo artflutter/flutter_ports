@@ -58,8 +58,8 @@ class _VotesPageState() extends State<VotesPage> {
   });
 
   /// A click on a bar shows its votes. The indexes of a hit are `int`s.
-  void _onClick(ChartEventDetails details) {
-    final hit = details.hits.firstOrNull;
+  void _onClick(ChartEvent event, List<ActiveElement> hits, Chart chart) {
+    final hit = hits.firstOrNull;
     if (hit == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${_votes[hit.index].round()} votes')),

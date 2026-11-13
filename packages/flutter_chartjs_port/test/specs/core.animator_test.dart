@@ -3,7 +3,10 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+import 'package:flutter_chartjs_port/src/core/core.animator.dart'
+    hide AnimationEvent;
+import 'package:flutter_chartjs_port/src/types/animation.dart'
+    show AnimationEvent;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -53,7 +56,7 @@ void main() {
               'animation': <String, Object?>{
                 'duration': 250,
                 'onProgress': progress,
-                'onComplete': () {
+                'onComplete': (_) {
                   expect(count, drawCount);
                   done();
                 },

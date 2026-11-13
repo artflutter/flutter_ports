@@ -1,6 +1,8 @@
 [lib/chartjs.dart]
 ActiveElement
 Animation
+AnimationEvent
+AnimationEventHandler
 Animations
 ArcBorderAlign
 ArcElement
@@ -29,11 +31,13 @@ ChartArea
 ChartClip
 ChartConfiguration
 ChartEvent
+ChartEventHandler
 ChartGradient
 ChartMeta
 ChartPaint
 ChartPattern
 ChartPosition
+ChartResizeHandler
 ChartShaderPaint
 ChartTextStyle
 CirclePointStyle
@@ -65,14 +69,19 @@ IndexInteractionMode
 Interaction
 InteractionAxis
 InteractionMode
+Interpolator
 JsClass
 JsObjectFace
 LabelItem
 LayoutPosition
 LegendElement
+LegendEventHandler
 LegendHitBox
 LegendHitBoxX
 LegendItem
+LegendItemComparator
+LegendItemFilter
+LegendLabelsGenerator
 LineController
 LineElement
 LinePointStyle
@@ -100,6 +109,7 @@ PluginHookFunction
 Point
 PointElement
 PointInteractionMode
+PointLabelCallback
 PointStyle
 PolarAreaController
 RAxis
@@ -116,6 +126,7 @@ ResizeHookArgs
 Scale
 ScaleAxis
 ScaleBounds
+ScaleHook
 ScaleValuePosition
 ScatterController
 Segment
@@ -133,6 +144,7 @@ TickAlign
 TickCallback
 TickCrossAlign
 TickSource
+TimeParser
 TimeScale
 TimeSeriesScale
 TimeUnit
@@ -189,6 +201,8 @@ undefined
 
 [lib/flutter_chartjs_port.dart]
 ActiveElement
+AnimationEvent
+AnimationEventHandler
 Animations
 ArcBorderAlign
 ArcElement
@@ -226,7 +240,6 @@ CategoryScale
 Chart
 ChartAlign
 ChartAnimation
-ChartAnimationDetails
 ChartArea
 ChartAxis
 ChartClip
@@ -236,7 +249,7 @@ ChartConstant
 ChartContext
 ChartElements
 ChartEvent
-ChartEventDetails
+ChartEventHandler
 ChartFill
 ChartFiller
 ChartGradient
@@ -244,11 +257,11 @@ ChartIndexed
 ChartInteraction
 ChartKind
 ChartLegend
-ChartLegendEventDetails
 ChartMeta
 ChartPaint
 ChartPattern
 ChartPosition
+ChartResizeHandler
 ChartResolver
 ChartScript
 ChartShaderPaint
@@ -299,14 +312,19 @@ InnerRadiusAnimation
 Interaction
 InteractionAxis
 InteractionMode
+Interpolator
 JsClass
 JsObjectFace
 LabelItem
 LayoutPosition
 LegendElement
+LegendEventHandler
 LegendHitBox
 LegendHitBoxX
 LegendItem
+LegendItemComparator
+LegendItemFilter
+LegendLabelsGenerator
 LineController
 LineDataset
 LineElement
@@ -342,6 +360,7 @@ Point
 PointElement
 PointElementStyle
 PointInteractionMode
+PointLabelCallback
 PointStyle
 PolarAreaController
 PolarAreaDataset
@@ -365,6 +384,7 @@ ResizeTransition
 Scale
 ScaleAxis
 ScaleBounds
+ScaleHook
 ScaleValuePosition
 ScatterController
 ScatterDataset
@@ -388,6 +408,7 @@ TickCallback
 TickCrossAlign
 TickSource
 TimeAxis
+TimeParser
 TimeScale
 TimeSeriesAxis
 TimeSeriesScale

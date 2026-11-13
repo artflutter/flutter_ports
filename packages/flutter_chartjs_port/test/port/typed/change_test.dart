@@ -59,7 +59,7 @@ class const _Parent({required final List<num?> data}) extends StatefulWidget {
 class _ParentState() extends State<_Parent> {
   late List<num?> data = widget.data;
   String? title;
-  ValueChanged<ChartEventDetails>? onClick;
+  ChartEventHandler? onClick;
   ChartScript<ChartPaint>? colorFor;
   String label = '';
 
@@ -67,7 +67,7 @@ class _ParentState() extends State<_Parent> {
   void show({
     List<num?>? data,
     String? title,
-    ValueChanged<ChartEventDetails>? onClick,
+    ChartEventHandler? onClick,
     ChartScript<ChartPaint>? colorFor,
   }) => setState(() {
     this.data = data ?? this.data;
@@ -402,7 +402,7 @@ void main() {
       final point = _barPoint(tester, chart, 1);
 
       parent.show(
-        onClick: (details) => parent.write('first ${details.hits.length}'),
+        onClick: (_, hits, _) => parent.write('first ${hits.length}'),
       );
       await tester.pump();
       // The presence of onClick changed: one update.
@@ -413,8 +413,8 @@ void main() {
       expect(find.text('first 1'), findsOneWidget);
 
       parent.show(
-        onClick: (details) {
-          final hit = details.hits.single;
+        onClick: (_, hits, _) {
+          final hit = hits.single;
           final index = hit.index;
           final datasetIndex = hit.datasetIndex;
           parent.write('second $datasetIndex $index');
@@ -441,9 +441,9 @@ void main() {
           BarDataset(label: 'B', data: [3, 4]),
         ],
         legend: ChartLegend(
-          onClick: (details) => clicks.add(
-            '$name ${details.item.text.join('\n')} '
-            '${details.item.datasetIndex}',
+          onClick: (_, item, _) => clicks.add(
+            '$name ${item.text.join('\n')} '
+            '${item.datasetIndex}',
           ),
         ),
         animation: ChartAnimation.none,

@@ -61,11 +61,11 @@ class _Sample5State() extends State<Sample5> {
     },
   };
 
-  void _click(ChartEventDetails details) {
-    if (details.hits.isEmpty) return;
-    final index = details.hits.first.index;
+  void _click(ChartEvent event, List<ActiveElement> hits, Chart chart) {
+    if (hits.isEmpty) return;
+    final index = hits.first.index;
     if (!_shown.remove(index)) _shown.add(index);
-    details.chart.render();
+    chart.render();
   }
 
   late final ChartConfig _config = fills(

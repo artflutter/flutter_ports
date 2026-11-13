@@ -124,7 +124,6 @@ const Map<String, String> _notExported = {
       'the plugin object, the export tooltip',
   // Not in the export list of Chart.js ADR 0048, section 5: a later export
   // is an addition (Open point of the phase 9 report).
-  'AnimationEvent': 'not in the ADR 0048 export list',
   'AnimationSpec': 'not in the ADR 0048 export list',
   'Animator': 'not in the ADR 0048 export list',
   'AnyObject': 'not in the ADR 0048 export list',
