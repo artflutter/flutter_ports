@@ -40,6 +40,12 @@
 /// and `getBoundingClientRect()`) and the extension `CssStyleProperties`
 /// (`style.touchAction`, `style.userSelect` and `removeProperty`).
 ///
+/// It also exports the names that a chart type of user code or of an add-on
+/// port needs (Chart.js ADR 0132): `ParsedItem`, the parsed item of the
+/// parse functions of `DatasetController`, `ElementPoint`, the result of
+/// `Element.tooltipPosition`, and `VisualElementRange`, the interface of an
+/// element with `getRange`.
+///
 /// The Dart names of the upstream `_` exports, the other port-only
 /// declarations of `lib/src/types/` and `LayoutItem` stay internal (Chart.js
 /// ADR 0048, section 6).
@@ -61,6 +67,8 @@ export 'package:flutter_chartjs_port/src/core/core.animation.dart'
     show Interpolator;
 export 'package:flutter_chartjs_port/src/core/core.controller.dart'
     show AnimationEventHandler, ChartEventHandler, ChartResizeHandler;
+export 'package:flutter_chartjs_port/src/core/core.element.dart'
+    show ElementPoint;
 export 'package:flutter_chartjs_port/src/core/core.scale.dart'
     show PointLabelCallback, ScaleHook, TickCallback;
 export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
@@ -96,6 +104,7 @@ export 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 export 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart'
     show Undefined, undefined;
+export 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 export 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show CanvasEventTarget;
 export 'package:flutter_chartjs_port/src/platform/native_event.dart'
@@ -136,7 +145,6 @@ export 'package:flutter_chartjs_port/src/types.dart'
         ScaleCache,
         ScaleRanges,
         SimpleArc,
-        VisualElementRange,
         adapters,
         detectPlatform;
 export 'package:flutter_chartjs_port/src/types/align.dart'
