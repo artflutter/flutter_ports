@@ -448,7 +448,8 @@ void main() {
         ],
         legend: ChartLegend(
           onClick: (details) => clicks.add(
-            '$name ${details.item.text} ${details.item.datasetIndex}',
+            '$name ${details.item.text.join('\n')} '
+            '${details.item.datasetIndex}',
           ),
         ),
         animation: ChartAnimation.none,

@@ -762,7 +762,7 @@ void main() {
     expect(jsGet(legend.options, 'display'), true);
     expect(
       [
-        for (final item in legend.legendItems!) jsGet(item, 'text'),
+        for (final item in legend.legendItems!) item.text.single,
       ],
       ['A', 'B'],
     );
@@ -786,7 +786,7 @@ void main() {
     expect(_selected(tester, 'core.dataset.1'), isTrue);
     await tapItem(1);
     expect(chart.isDatasetVisible(1), isFalse);
-    expect(jsGet(legend.legendItems![1], 'hidden'), true);
+    expect(legend.legendItems![1].hidden, true);
     expect(_selected(tester, 'core.dataset.1'), isFalse);
     await _frames(tester, 70);
     await tapItem(1);

@@ -51,6 +51,7 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show Defaults;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show DataUpdateShape, nativeDataUpdateList;
+import 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
     show nativePointChart, nativePointList;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -90,6 +91,7 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 
 /// controller.doughnut.js:34 the object `{ratioX, ratioY, offsetX,
 /// offsetY}` of `getRatioAndOffset` (Chart.js ADR 0003).
@@ -885,8 +887,9 @@ class DoughnutController extends DatasetController {
 /// `const {labels: {pointStyle, textAlign, color, useBorderRadius,
 /// borderRadius}} = chart.legend.options;` reads the keys in this order. A
 /// Dart `null` legend throws a [TypeError], as `undefined.options` does. A
-/// legend item is a Map with the keys in the order of the upstream literal.
-List<Object?> _generateLabels(types.Chart chart) {
+/// legend item is the shared native object.
+// DIVERGES(chartjs): adapt-native-legend-item, native legend entries.
+List<LegendItem> _generateLabels(types.Chart chart) {
   final data = chart.data;
   final labelsOptions = readOption(chart.legend!.options, OptionKey.labels);
   final pointStyle = readOption(labelsOptions, OptionKey.pointStyle);
@@ -916,7 +919,7 @@ List<Object?> _generateLabels(types.Chart chart) {
         ),
     ];
   }
-  return <Object?>[];
+  return <LegendItem>[];
 }
 
 /// The callback of `data.labels.map((label, i) => ...)`
@@ -926,8 +929,8 @@ List<Object?> _generateLabels(types.Chart chart) {
 /// Each style value is a raw read of the [ElementOptions] of the style
 /// ([readOption]): an absent key gives [undefined], for example `lineJoin`
 /// of the default `borderJoinStyle`. `index` is a number (Chart.js ADR
-/// 0045). The legend item stays a Map: the legend plugin reads Map items.
-Map<String, Object?> _labelItem(
+/// 0045). The native item stores the integer index.
+LegendItem _labelItem(
   types.Chart chart,
   Object? label,
   double i,
@@ -940,37 +943,38 @@ Map<String, Object?> _labelItem(
   final meta = chart.getDatasetMeta(0);
   final style = meta.controller!.getStyle(i);
 
-  return <String, Object?>{
-    'text': label,
-    'fillStyle': readOption(style, OptionKey.backgroundColor),
-    'fontColor': color,
-    'hidden': !chart.getDataVisibility(i),
-    'lineDash': readOption(style, OptionKey.borderDash),
-    'lineDashOffset': readOption(style, OptionKey.borderDashOffset),
-    'lineJoin': readOption(style, OptionKey.borderJoinStyle),
-    'lineWidth': readOption(style, OptionKey.borderWidth),
-    'strokeStyle': readOption(style, OptionKey.borderColor),
-    'textAlign': textAlign,
-    'pointStyle': pointStyle,
+  return legendItemFromOptions(
+    text: label,
+    fillStyle: readOption(style, OptionKey.backgroundColor),
+    fontColor: color,
+    hidden: !chart.getDataVisibility(i),
+    lineDash: readOption(style, OptionKey.borderDash),
+    lineDashOffset: readOption(style, OptionKey.borderDashOffset),
+    lineJoin: readOption(style, OptionKey.borderJoinStyle),
+    lineWidth: readOption(style, OptionKey.borderWidth),
+    strokeStyle: readOption(style, OptionKey.borderColor),
+    textAlign: textAlign,
+    pointStyle: pointStyle,
     // `useBorderRadius && (borderRadius || style.borderRadius)`
-    'borderRadius': jsTruthy(useBorderRadius)
+    borderRadius: jsTruthy(useBorderRadius)
         ? (jsTruthy(borderRadius)
               ? borderRadius
               : readOption(style, OptionKey.borderRadius))
         : useBorderRadius,
     // Extra data used for toggling the correct item
-    'index': i,
-  };
+    index: i.toInt(),
+  );
 }
 
 /// controller.doughnut.js:125 `onClick(e, legendItem, legend)` of
 /// `overrides.plugins.legend` (Chart.js ADR 0028, section 6).
 ///
-/// `toggleDataVisibility(legendItem.index)` gives the raw item index to
-/// `types.Chart.toggleDataVisibility`, which writes the property key
-/// `ToString(index)` (core.controller.js:881-883), as upstream.
-void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
-  legend.chart.toggleDataVisibility(jsGet(legendItem, 'index'));
+/// A native item identifies a data entry with an integer. A descriptive
+/// item has no index and leaves visibility unchanged.
+void _onClick(Object? e, LegendItem legendItem, types.LegendElement legend) {
+  final index = legendItem.index;
+  if (index == null) return;
+  legend.chart.toggleDataVisibility(index);
   legend.chart.update();
 }
 

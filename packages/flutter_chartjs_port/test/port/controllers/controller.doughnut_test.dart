@@ -9,7 +9,6 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     show overrides;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -17,6 +16,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -102,16 +102,12 @@ List<Object?> _generateLabels(Chart chart) =>
 /// the real legend. It reads `legendItems` through `types.LegendElement`
 /// (Chart.js ADR 0028 Open 2), and `legendHitBoxes` through a cast to
 /// [Legend]: the member is not in index.d.ts (Chart.js ADR 0038, section 6;
-/// Chart.js ADR 0041, section 5). `keys` is the key list of each item in
-/// order (`Object.keys`): the harness compares only the expected keys of a
-/// Map.
+/// Chart.js ADR 0041, section 5). Items remain native for field comparisons;
+/// upstream own-key enumeration is outside the native item contract.
 Object? _realLegend(Chart chart) {
   final legend = chart.legend!;
   return <String, Object?>{
     'items': legend.legendItems,
-    'keys': [
-      for (final item in legend.legendItems!) jsObjectKeys(item),
-    ],
     'hitBoxes': (legend as Legend).legendHitBoxes,
   };
 }
@@ -433,48 +429,36 @@ void main() {
 
       jsCall(jsGet(_legendOverrides(), 'onClick'), [
         <String, Object?>{},
-        <String, Object?>{'index': 1.0},
+        LegendItem(text: ['item'], index: 1),
         legend,
       ]);
 
       expect(updates, before + 1);
       expect(chart.getDataVisibility(1), isFalse);
       expect(
-        [for (final item in _generateLabels(chart)) jsGet(item, 'hidden')],
+        [
+          for (final item in _generateLabels(chart))
+            (item! as LegendItem).hidden,
+        ],
         [false, true, false],
       );
     });
 
-    // The key `ToString(index)` of core.controller.js:882 (Chart.js ADR 0028
-    // §6). The visibility of the data indices 0, 1 and 2
-    // after one onClick, from an x64 Node.js probe on the build at the pin.
-    for (final (name, index, visible) in <(String, Object?, String)>[
+    // Native items expose integer indexes; a missing index is descriptive.
+    for (final (name, index, visible) in <(String, int?, String)>[
       ('null', null, '111'),
-      ('undefined', undefined, '111'),
-      ('true', true, '111'),
-      ('false', false, '111'),
-      ("''", '', '111'),
-      ("'01'", '01', '111'),
-      ("'1'", '1', '101'),
-      ("'1.0'", '1.0', '111'),
-      ("' 1'", ' 1', '111'),
-      ("'2'", '2', '110'),
-      ('NaN', double.nan, '111'),
-      ('-0', -0.0, '011'),
-      ("'-0'", '-0', '111'),
-      ('[2]', <Object?>[2.0], '110'),
-      ('{}', <String, Object?>{}, '111'),
-      ('1', 1.0, '101'),
-      ('1.5', 1.5, '111'),
+      ('0', 0, '011'),
+      ('1', 1, '101'),
+      ('2', 2, '110'),
     ]) {
-      testWidgets('onClick with the index $name toggles the upstream key', (
+      testWidgets('onClick with the index $name uses the native index', (
         tester,
       ) async {
         final chart = acquireChart(_one(const {}, <Object?>[1.0, 2.0, 3.0]));
         final legend = chart.legend!;
         jsCall(jsGet(_legendOverrides(), 'onClick'), [
           <String, Object?>{},
-          <String, Object?>{'index': index},
+          LegendItem(text: ['item'], index: index),
           legend,
         ]);
         expect(
@@ -487,23 +471,11 @@ void main() {
       });
     }
 
-    // The key after a data insert or remove (Chart.js ADR 0028 §6).
-    // `_updateHiddenIndices` moves
-    // each key whose `+key` is a number at or after the start
-    // (core.controller.js:72-84). Thus the key '01' moves, and the key 'null'
-    // does not. The visibility of each data index after onClick on the data
-    // [1, 2, 3, 4], the change and `chart.update()`, from an x64 Node.js
-    // probe on the build at the pin.
+    // A data insertion or removal moves integer visibility indexes.
     for (final (name, index, unshift, shift, push)
-        in <(String, Object?, String, String, String)>[
-          ("'01'", '01', '11011', '011', '11111'),
-          ("''", '', '10111', '111', '11111'),
+        in <(String, int?, String, String, String)>[
           ('null', null, '11111', '111', '11111'),
-          ('true', true, '11111', '111', '11111'),
-          ("' 1'", ' 1', '11011', '011', '11111'),
-          ("'1.0'", '1.0', '11011', '011', '11111'),
-          ('1', 1.0, '11011', '011', '10111'),
-          ("'1'", '1', '11011', '011', '10111'),
+          ('1', 1, '11011', '011', '10111'),
         ]) {
       for (final (change, visible) in [
         ('unshift', unshift),
@@ -511,14 +483,14 @@ void main() {
         ('push', push),
       ]) {
         testWidgets('onClick with the index $name, then $change, moves the '
-            'upstream key', (tester) async {
+            'visibility index', (tester) async {
           final chart = acquireChart(
             _one(const {}, <Object?>[1.0, 2.0, 3.0, 4.0]),
           );
           final legend = chart.legend!;
           jsCall(jsGet(_legendOverrides(), 'onClick'), [
             <String, Object?>{},
-            <String, Object?>{'index': index},
+            LegendItem(text: ['item'], index: index),
             legend,
           ]);
           final data = _dataset(chart, 0)['data']! as List<Object?>;

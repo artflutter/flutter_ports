@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -568,7 +569,7 @@ void main() {
           colors: true,
           legendLabels: <String, Object?>{
             'generateLabels': (Object? chart) => <Object?>[
-              <String, Object?>{'text': 'x', 'datasetIndex': 0},
+              LegendItem(text: ['x'], datasetIndex: 0),
             ],
           },
         ),

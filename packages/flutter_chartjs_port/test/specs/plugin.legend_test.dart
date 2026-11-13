@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.legend.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-legend-item, native item access.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -348,7 +349,7 @@ void main() {
                 'filter': (Object? legendItem, Object? data) {
                   final dataset = jsGetIndex(
                     jsGet(data, 'datasets'),
-                    (jsGet(legendItem, 'datasetIndex')! as num).toDouble(),
+                    (legendItem! as LegendItem).datasetIndex!.toDouble(),
                   );
                   return !jsTruthy(jsGet(dataset, 'legendHidden'));
                 },
@@ -395,8 +396,8 @@ void main() {
             'legend': <String, Object?>{
               'labels': <String, Object?>{
                 'sort': (Object? a, Object? b) =>
-                    (jsGet(b, 'datasetIndex')! as num) >
-                        (jsGet(a, 'datasetIndex')! as num)
+                    ((b! as LegendItem).datasetIndex! as num) >
+                        ((a! as LegendItem).datasetIndex! as num)
                     ? 1
                     : -1,
               },

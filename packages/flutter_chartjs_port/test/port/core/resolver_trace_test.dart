@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show ElementPropertyRead;
 import 'package:flutter_test/flutter_test.dart';
@@ -34,6 +35,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+
 import '../controllers/controller_chart_harness.dart' show ReferenceEvent;
 import '../scales/scale_chart_harness.dart'
     show copyReference, referenceMatcher, testReferenceOrigin;
@@ -219,7 +221,11 @@ Object? _applyStep(Chart chart, List<Object?> step) {
     case ['legendItems', final String key]:
       return [
         for (final item in chart.legend!.legendItems!)
-          _valueOf(jsGet(item, key), 1),
+          _valueOf(switch (key) {
+            'strokeStyle' => chartPaintValue(item.strokeStyle),
+            'fontColor' => chartPaintValue(item.fontColor),
+            _ => throw StateError('Unknown legend trace field: $key'),
+          }, 1),
       ];
     case ['hitNear', final num d, final num i, final num dx, final num dy]:
       final element =

@@ -86,7 +86,7 @@ final Expando<List<String>> _logs = Expando<List<String>>('legend log');
 void _log(String name, Object? e, Object? item, types.LegendElement legend) {
   (_logs[legend.chart] ??= <String>[]).add(
     '$name ${(e! as types.ChartEvent).type} '
-    '${jsToString(jsGet(item, 'text'))}',
+    '${jsToString((item! as LegendItem).text)}',
   );
 }
 
@@ -104,11 +104,10 @@ final Map<String, Object?> _functions = {
       _log('onLeave', e, item, legend),
   // (item) => !String(item.text).endsWith('2')
   'legendFilter': (Object? item) =>
-      !jsToString(jsGet(item, 'text')).endsWith('2'),
+      !jsToString((item! as LegendItem).text).endsWith('2'),
   // (a, b) => b.datasetIndex - a.datasetIndex
   'legendSort': (Object? a, Object? b) =>
-      jsToNumber(jsGet(b, 'datasetIndex')) -
-      jsToNumber(jsGet(a, 'datasetIndex')),
+      (b! as LegendItem).datasetIndex! - (a! as LegendItem).datasetIndex!,
 };
 
 /// The plain copy [value] without the keys whose values are functions
@@ -214,13 +213,16 @@ Object? _parseItemColors(Object? legend) => switch (legend) {
     ...map,
     'legendItems': switch (map['legendItems']) {
       final List<Object?> items => [
-        for (final item in items.cast<AnyObject>())
-          <String, Object?>{
-            for (final MapEntry(:key, :value) in item.entries)
-              key: key == 'fillStyle' || key == 'strokeStyle'
-                  ? _parseColor(value)
-                  : value,
-          },
+        for (final item in items)
+          if (item is! AnyObject)
+            item
+          else
+            <String, Object?>{
+              for (final MapEntry(:key, :value) in item.entries)
+                key: key == 'fillStyle' || key == 'strokeStyle'
+                    ? _parseColor(value)
+                    : value,
+            },
       ],
       final other => other,
     },
@@ -652,7 +654,7 @@ void main() {
       final config = _line(<String, Object?>{
         'labels': <String, Object?>{
           'generateLabels': (Object? chart) => <Object?>[
-            <String, Object?>{'text': 'item', 'datasetIndex': 0},
+            LegendItem(text: ['item'], datasetIndex: 0),
           ],
         },
       });
@@ -682,8 +684,8 @@ void main() {
     /// the mock context), and the box reads the singleton `defaults.color`
     /// (plugin.legend.js:286, :314 and :319), not the chart option.
     const expected = [
-      ['setStrokeStyle', null],
-      ['setFillStyle', null],
+      ['setStrokeStyle', native_ui.Color.fromRGBO(0, 128, 0, 1)],
+      ['setFillStyle', native_ui.Color.fromRGBO(0, 128, 0, 1)],
       ['setFillStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
       ['setStrokeStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
     ];
@@ -718,78 +720,31 @@ void main() {
   // the pinned build in Node.js v24.12.0 on x64 (controller_chart_common.mjs:
   // loadChartJs, registerBuiltins, makeChart) with the chart of [_line], the
   // other plugins `false` and a canvas of 400 x 300.
-  group('js-semantics-legend-items', () {
-    /// A chart with the legend options [legend] on a canvas of 400 x 300.
-    Chart legendChart(AnyObject legend) =>
-        acquireChart(_line(legend), <String, Object?>{
-          'canvas': <String, Object?>{'width': 400, 'height': 300},
-        });
-
-    testWidgets('a Map<String, String> item throws a TypeError at the first '
-        'draw', (tester) async {
-      // plugin.legend.js:399 writes `textAlign`. The probe: no throw, and the
-      // keys of the item are [text, fillStyle, textAlign]. The port writes
-      // `undefined` into a Map<String, String>.
-      final items = [
-        <String, String>{'text': 'Apples'},
-      ];
+  group('native legend items', () {
+    testWidgets('Map items are rejected', (tester) async {
       expect(
-        () => legendChart(<String, Object?>{
-          'labels': <String, Object?>{
-            'generateLabels': (Object? chart) => items,
-          },
-        }),
+        () => acquireChart(
+          _line({
+            'labels': {
+              'generateLabels': (Object? chart) => [
+                {'text': 'Apples'},
+              ],
+            },
+          }),
+        ),
         throwsA(isA<TypeError>()),
       );
     });
-
-    testWidgets('a Map<String, Object?> item takes the textAlign write', (
-      tester,
-    ) async {
-      // The probe: the keys [text, fillStyle, textAlign], and textAlign is
-      // undefined.
-      final item = <String, Object?>{
-        'text': 'Apples',
-        'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-      };
-      legendChart(<String, Object?>{
-        'labels': <String, Object?>{
-          'generateLabels': (Object? chart) => <Object?>[item],
-        },
-      });
-      expect(jsObjectKeys(item), ['text', 'fillStyle', 'textAlign']);
-      expect(item['textAlign'], same(undefined));
-    });
-
-    testWidgets('the default onClick with a Map<String, String> item hides '
-        'the dataset and then throws a TypeError', (tester) async {
-      // plugin.legend.js:645-655. The probe: no throw, `hidden` true, and
-      // the dataset 0 is hidden. The port hides the dataset, and the write
-      // of `hidden` into the Map<String, String> throws.
-      final chart = legendChart(<String, Object?>{});
-      final onClick = jsGet(chart.legend!.options, 'onClick');
-      final item = {'text': 'Apples', 'datasetIndex': '0'};
-      expect(
-        () => jsCall(onClick, [null, item, chart.legend]),
-        throwsA(isA<TypeError>()),
-      );
+    testWidgets('the default click mutates the native item', (tester) async {
+      final chart = acquireChart(_line({}));
+      final item = LegendItem(text: ['Apples'], datasetIndex: 0);
+      jsCall(jsGet(chart.legend!.options, 'onClick'), [
+        null,
+        item,
+        chart.legend,
+      ]);
+      expect(item.hidden, isTrue);
       expect(chart.isDatasetVisible(0), isFalse);
-      expect(item.containsKey('hidden'), isFalse);
-    });
-
-    testWidgets('a const item throws an UnsupportedError at the first draw', (
-      tester,
-    ) async {
-      expect(
-        () => legendChart(<String, Object?>{
-          'labels': <String, Object?>{
-            'generateLabels': (Object? chart) => <Object?>[
-              const <String, Object?>{'text': 'Apples'},
-            ],
-          },
-        }),
-        throwsA(isA<UnsupportedError>()),
-      );
     });
   });
 
@@ -829,77 +784,32 @@ void main() {
   });
 
   group('sort', () {
-    // plugin.legend.js:113 and the SortCompare of Array.prototype.sort: an
-    // undefined item goes to the end, and the comparator never gets it.
-    // The probe of [a, undefined, b] with `display: false`: the comparator
-    // `() => 0` gives the texts [a, b, undefined] and gets no undefined;
-    // the comparator `a.text < b.text ? 1 : -1` gives [b, a, undefined]
-    // and gets no undefined. With `display: true`, `() => 0` throws
-    // `TypeError: Cannot read properties of undefined (reading 'text')`.
-    AnyObject item(String text) => <String, Object?>{
-      'text': text,
-      'datasetIndex': 0,
-    };
-
-    /// The legend items and whether the comparator [compare] got an
-    /// `undefined` item, for the `generateLabels` result
-    /// [a, undefined, b] with `display` [display].
-    (List<Object?>, bool) sorted(
-      Object? Function(Object? a, Object? b) compare, {
-      bool display = false,
-    }) {
-      var gotUndefined = false;
+    testWidgets('native items sort stably and keep their identity', (
+      tester,
+    ) async {
+      final a = LegendItem(text: ['a']);
+      final b = LegendItem(text: ['b']);
+      final c = LegendItem(text: ['c']);
       final chart = acquireChart(
-        _line(<String, Object?>{
-          'display': display,
-          'labels': <String, Object?>{
-            'generateLabels': (Object? chart) => <Object?>[
-              item('a'),
-              undefined,
-              item('b'),
-            ],
-            'sort': (Object? a, Object? b, Object? data) {
-              if (identical(a, undefined) || identical(b, undefined)) {
-                gotUndefined = true;
-              }
-              return compare(a, b);
-            },
+        _line({
+          'display': false,
+          'labels': {
+            'generateLabels': (Object? chart) => [a, b, c],
+            'sort': (LegendItem x, LegendItem y, Object? data) => 0,
           },
         }),
-        <String, Object?>{
-          'canvas': <String, Object?>{'width': 400, 'height': 300},
-        },
       );
-      return (chart.legend!.legendItems!, gotUndefined);
-    }
-
-    /// The texts of [items], with `undefined` for an undefined item.
-    List<Object?> texts(List<Object?> items) => [
-      for (final i in items)
-        if (identical(i, undefined)) undefined else jsGet(i, 'text'),
-    ];
-
-    testWidgets('an undefined item goes to the end', (tester) async {
-      final (items, gotUndefined) = sorted((a, b) => 0);
-      expect(texts(items), ['a', 'b', same(undefined)]);
-      expect(gotUndefined, isFalse);
+      expect(chart.legend!.legendItems, [same(a), same(b), same(c)]);
     });
-
-    testWidgets('a comparator that reads the text does not throw', (
-      tester,
-    ) async {
-      final (items, gotUndefined) = sorted(
-        (a, b) => jsLessThan(jsGet(a, 'text'), jsGet(b, 'text')) ? 1 : -1,
-      );
-      expect(texts(items), ['b', 'a', same(undefined)]);
-      expect(gotUndefined, isFalse);
-    });
-
-    testWidgets('display true throws a TypeError at the undefined item', (
-      tester,
-    ) async {
+    testWidgets('undefined entries are rejected', (tester) async {
       expect(
-        () => sorted((a, b) => 0, display: true),
+        () => acquireChart(
+          _line({
+            'labels': {
+              'generateLabels': (Object? chart) => [undefined],
+            },
+          }),
+        ),
         throwsA(isA<TypeError>()),
       );
     });
@@ -980,140 +890,31 @@ void main() {
     });
   });
 
-  group('adapt-legend-dataset-index', () {
-    /// The modes of `beforeDatasetUpdate` of each dataset after the default
-    /// `onClick` with the item of dataset 1 and the index [datasetIndex].
-    Future<Map<String, Object?>> modes(Object? datasetIndex) async {
-      final seen = <List<Object?>>[];
-      final spy = <String, Object?>{
-        'id': 'spy',
-        'beforeDatasetUpdate': (Object? chart, Object? args) =>
-            seen.add([jsGet(args, 'index'), jsGet(args, 'mode')]),
-      };
-      final chart = acquireChart(
-        _line(<String, Object?>{}, plugins: <Object?>[spy]),
-      );
-      final onClick = jsGet(chart.legend!.options, 'onClick');
-      final item = <String, Object?>{
-        ..._plainItem(chart.legend!.legendItems![1]!),
-        'datasetIndex': datasetIndex,
-      };
-      seen.clear();
-      jsCall(onClick, [null, item, chart.legend]);
-      final first = [...seen];
-      final hidden = item['hidden'];
-      final visible = [chart.isDatasetVisible(0), chart.isDatasetVisible(1)];
-      seen.clear();
-      jsCall(onClick, [null, item, chart.legend]);
-      return <String, Object?>{
-        'modes': first,
-        'hidden': hidden,
-        'visible': visible,
-        'modes2': [...seen],
-        'hidden2': item['hidden'],
-        'visible2': [chart.isDatasetVisible(0), chart.isDatasetVisible(1)],
-      };
-    }
-
-    testWidgets('a number index gives the upstream result', (tester) async {
-      // The probe onClickNumber: modes [[0, undefined], [1, 'hide']], then
-      // [[0, undefined], [1, 'show']].
-      final r = await modes(1.0);
-      expect((r['modes']! as List<Object?>).map((m) => (m! as List)[1]), [
-        same(undefined),
-        'hide',
-      ]);
-      expect(r['hidden'], true);
-      expect(r['visible'], [true, false]);
-      expect((r['modes2']! as List<Object?>).map((m) => (m! as List)[1]), [
-        same(undefined),
-        'show',
-      ]);
-      expect(r['hidden2'], false);
-      expect(r['visible2'], [true, true]);
-    });
-
-    testWidgets('a string index hides the dataset with the mode of a number '
-        'index', (tester) async {
-      // Upstream (probe onClickString): the same visibility and `hidden`,
-      // but each mode is undefined, because `ctx.datasetIndex === '1'` is
-      // false (core.controller.js:904). The port converts the index with
-      // ToNumber (differences.md adapt-legend-dataset-index).
-      final r = await modes('1');
-      expect((r['modes']! as List<Object?>).map((m) => (m! as List)[1]), [
-        same(undefined),
-        'hide',
-      ]);
-      expect(r['hidden'], true);
-      expect(r['visible'], [true, false]);
-      expect(r['hidden2'], false);
-      expect(r['visible2'], [true, true]);
-    });
-
-    testWidgets('an index key of a dataset finds the dataset', (tester) async {
-      // Upstream reads `datasets[ToString(index)]` (core.controller.js:864,
-      // :830). The probe fix-dataset-index.mjs (fix-dataset-index.out): '0'
-      // and -0 hide dataset 0, [1] hides dataset 1, and `hidden` becomes
-      // true. -0 gives the modes [[0, 'hide'], [1, undefined]]. '0' and [1]
-      // give the mode undefined for each dataset, the port gives the mode
-      // of a number index (differences.md adapt-legend-dataset-index).
-      for (final (index, visible) in <(Object?, List<bool>)>[
-        ('0', [false, true]),
-        (-0.0, [false, true]),
-        (<Object?>[1], [true, false]),
-      ]) {
-        final r = await modes(index);
-        expect(r['hidden'], true, reason: '$index');
-        expect(r['visible'], visible, reason: '$index');
-        expect(r['hidden2'], false, reason: '$index');
-        expect(r['visible2'], [true, true], reason: '$index');
-      }
-      final r = await modes(-0.0);
-      expect((r['modes']! as List<Object?>).map((m) => (m! as List)[1]), [
-        'hide',
-        same(undefined),
-      ]);
-    });
-
-    testWidgets('an index with no dataset key throws a TypeError', (
+  group('native legend dataset index', () {
+    testWidgets('an integer index toggles the selected dataset', (
       tester,
     ) async {
-      // The probes onClickUndefined and onClickFloat, and the probe
-      // fix-dataset-index.mjs (fix-dataset-index.out): the key
-      // `ToString(index)` names no dataset (core.controller.js:864, :830),
-      // so the read `meta.controller._resolveAnimations` of the new meta
-      // throws a TypeError (core.controller.js:895). `hidden` stays false,
-      // and both datasets stay visible.
-      for (final index in <Object?>[
-        undefined,
-        1.5,
+      final chart = acquireChart(_line({}));
+      final item = chart.legend!.legendItems![1];
+      final click = jsGet(chart.legend!.options, 'onClick');
+      jsCall(click, [null, item, chart.legend]);
+      expect(item.hidden, isTrue);
+      expect(chart.isDatasetVisible(1), isFalse);
+      jsCall(click, [null, item, chart.legend]);
+      expect(item.hidden, isFalse);
+      expect(chart.isDatasetVisible(1), isTrue);
+    });
+    testWidgets('a descriptive item does not toggle a dataset', (tester) async {
+      final chart = acquireChart(_line({}));
+      final item = LegendItem(text: ['description']);
+      jsCall(jsGet(chart.legend!.options, 'onClick'), [
         null,
-        true,
-        false,
-        '',
-        '01',
-        '1.0',
-        ' 1',
-        'x',
-      ]) {
-        final chart = acquireChart(_line(<String, Object?>{}));
-        final onClick = jsGet(chart.legend!.options, 'onClick');
-        final item = <String, Object?>{
-          ..._plainItem(chart.legend!.legendItems![1]!),
-          'datasetIndex': index,
-        };
-        expect(
-          () => jsCall(onClick, [null, item, chart.legend]),
-          throwsA(isA<TypeError>()),
-          reason: '$index',
-        );
-        expect(item['hidden'], false, reason: '$index');
-        expect(
-          [chart.isDatasetVisible(0), chart.isDatasetVisible(1)],
-          [true, true],
-          reason: '$index',
-        );
-      }
+        item,
+        chart.legend,
+      ]);
+      expect(item.hidden, isFalse);
+      expect(chart.isDatasetVisible(0), isTrue);
+      expect(chart.isDatasetVisible(1), isTrue);
     });
   });
 
@@ -1127,13 +928,13 @@ void main() {
         'align': ChartAlign.start,
         'labels': <String, Object?>{'padding': 0},
         'onClick': (Object? e, Object? item, Object? l) => log.add(
-          'click ${jsToString(jsGet(item, 'text'))}',
+          'click ${jsToString((item! as LegendItem).text)}',
         ),
         'onHover': (Object? e, Object? item, Object? l) => log.add(
-          'hover ${jsToString(jsGet(item, 'text'))}',
+          'hover ${jsToString((item! as LegendItem).text)}',
         ),
         'onLeave': (Object? e, Object? item, Object? l) => log.add(
-          'leave ${jsToString(jsGet(item, 'text'))}',
+          'leave ${jsToString((item! as LegendItem).text)}',
         ),
       }),
     );
@@ -1206,11 +1007,11 @@ void main() {
         _line(<String, Object?>{
           'onHover': (Object? e, Object? item, Object? l) => log.add(
             'hover ${(e! as types.ChartEvent).type} '
-            '${jsToString(jsGet(item, 'text'))}',
+            '${jsToString((item! as LegendItem).text)}',
           ),
           'onLeave': (Object? e, Object? item, Object? l) => log.add(
             'leave ${(e! as types.ChartEvent).type} '
-            '${jsToString(jsGet(item, 'text'))}',
+            '${jsToString((item! as LegendItem).text)}',
           ),
         }),
       );
@@ -1281,10 +1082,3 @@ final class _Margins implements TRBL {
   @override
   final double bottom;
 }
-
-/// The own keys and values of the legend item [item] (a typed item of the
-/// plugin, Chart.js ADR 0054 §12) as a new plain Map, as the object spread
-/// `{...item}` gives them.
-Map<String, Object?> _plainItem(Object item) => <String, Object?>{
-  for (final key in jsObjectKeys(item)) key: jsGet(item, key),
-};

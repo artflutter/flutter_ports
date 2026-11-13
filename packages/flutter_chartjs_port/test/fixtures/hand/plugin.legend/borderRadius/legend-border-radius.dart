@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.legend/borderRadius/legend-border-radius.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-native-legend-item, native item access.
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
@@ -6,6 +7,8 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -54,10 +57,10 @@ Map<String, Object?> fixture() => <String, Object?>{
                         ),
                         [chart],
                       )!
-                      as List<Object?>;
+                      as List<LegendItem>;
 
               for (final item in items) {
-                (item! as JsObjectFace)['borderRadius'] = 5;
+                item.borderRadius = const TooltipCornerRadii.all(5);
               }
 
               return items;
