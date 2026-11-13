@@ -54,6 +54,10 @@ import 'controller_scatter_reference.dart';
 // flutter_test_config.dart registers the scatter controller with the
 // built-in components before main() (Chart.js ADR 0030, section 3 item 4).
 
+/// The reference case with a string side of the clip.
+const String _stringClipCase =
+    "parsed: showLine with no data returns the borderWidth '3'";
+
 /// The named functions of the configs of the generator, with the same
 /// bodies.
 final Map<String, Object?> _functions = {
@@ -144,7 +148,32 @@ void main() {
     expect(names.skip(6).where((n) => !prefixed(n)), isEmpty);
   });
 
-  testControllerChartCases(controllerScatterReference, functions: _functions);
+  // A side of the clip is a number (row `adapt-native-chart-meta`): this
+  // case keeps a string side upstream. The group `adapt-native-chart-meta`
+  // pins the port.
+  testControllerChartCases([
+    for (final c in controllerScatterReference)
+      if (c.name != _stringClipCase) c,
+  ], functions: _functions);
+
+  group('adapt-native-chart-meta', () {
+    // Upstream keeps the string '3' of the borderWidth as each side of the
+    // clip and adds it to the area as text (helpers.dataset.ts:28-31). A
+    // side of the port is its ToNumber.
+    testWidgets("the clip of the borderWidth '3' is 3 on each side", (
+      tester,
+    ) async {
+      final c = controllerScatterReference.firstWhere(
+        (c) => c.name == _stringClipCase,
+      );
+      final chart = acquireChart(
+        copyReference(c.config, _functions)! as AnyObject,
+        copyReference(c.options)! as AnyObject,
+      );
+      final clip = chart.getDatasetMeta(0).clip;
+      expect([clip.left, clip.top, clip.right, clip.bottom], [3, 3, 3, 3]);
+    });
+  });
 
   group('theming.md §8 test 3: the light preset', () {
     testControllerChartCases(

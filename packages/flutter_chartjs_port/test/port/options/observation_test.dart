@@ -490,7 +490,7 @@ void _observe(
   for (var i = 0; i < count; i++) {
     final meta = chart.getDatasetMeta(i);
     out.writeln(
-      'dataset $i type ${_canon(meta['type'])} visible '
+      'dataset $i type ${_canon(meta.type)} visible '
       '${chart.isDatasetVisible(i)}',
     );
     final dataset = meta.dataset;

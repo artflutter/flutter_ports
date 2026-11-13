@@ -24,6 +24,9 @@ import 'package:flutter_chartjs_port/src/core/core.animation.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 // Not public: jsGet, the JS property read of the chart values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+// Not public: fillerSourceOf, the source of `meta.$filler`.
+import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
+    show fillerSourceOf;
 // Not public: Legend, the element class of plugin.legend (hit boxes).
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
@@ -1162,7 +1165,7 @@ void main() {
               }
               // The filler made the source of each dataset.
               expect(
-                chart.getDatasetMeta(k)[r'$filler'],
+                fillerSourceOf(chart.getDatasetMeta(k)),
                 isNotNull,
                 reason: '$reason $k',
               );
@@ -1690,7 +1693,6 @@ void main() {
         expect(chart.scales['x']!.type, 'category');
         // The parse gives new parsed items: x is the index, y the number.
         // The parsed items of the meta (core.datasetController.js:353).
-        // ignore: invalid_use_of_internal_member
         final parsed = meta.parsed.first! as JsObjectFace;
         expect(parsed['x'], 0);
         expect(parsed['y'], isA<double>());

@@ -290,7 +290,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     final meta = cachedMeta;
     final line = meta.dataset;
     final points = meta.data;
-    final dataset = meta.dataset_;
+    final dataset = meta.datasetConfig;
     final animationsDisabled = chart.animationsDisabled;
     var (:start, :count) = getStartAndCountOfVisiblePoints(
       meta,
@@ -386,7 +386,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     final iScale = meta.iScale;
     final vScale = meta.vScale;
     final stacked = meta.stacked;
-    final dataset = meta.dataset_;
+    final dataset = meta.datasetConfig;
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     final iAxis = iScale!.axis;
     final vAxis = vScale!.axis;
@@ -395,7 +395,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     final segment = options.readKey(OptionKey.segment);
     // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:101)
     // and `if (segment)` (:105) test two locals of this call: once here.
-    final hasStack = jsTruthy(stacked);
+    final hasStack = stacked != types.StackMode.off;
     final hasSegment = jsTruthy(segment);
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)

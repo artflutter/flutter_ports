@@ -277,7 +277,12 @@ void main() {
           armed = true;
           Type? error;
           try {
-            meta.controller!.updateElements(meta.data, 0, 8, 'none');
+            (meta.controller! as DatasetController).updateElements(
+              meta.data,
+              0,
+              8,
+              'none',
+            );
           } on Object catch (e) {
             error = e.runtimeType;
           }

@@ -343,7 +343,12 @@ Object _observe(Chart chart, Map<String, Object?> cfg) {
   return [
     for (var d = 0; d < datasets; d++)
       [
-        _plain(chart.getDatasetMeta(d).total),
+        // controller.doughnut.js:235 `meta.total`, a field of the doughnut
+        // controller (row `adapt-native-chart-meta`).
+        _plain(switch (chart.getDatasetMeta(d).controller) {
+          final DoughnutController doughnut => doughnut.total,
+          _ => undefined,
+        }),
         for (final element in chart.getDatasetMeta(d).data)
           _observeElement(element),
       ],

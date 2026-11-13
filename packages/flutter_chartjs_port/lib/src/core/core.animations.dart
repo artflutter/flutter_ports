@@ -540,11 +540,14 @@ Object? _optionsOf(TypedRecord values) => switch (values) {
 };
 
 /// `target.$animations || (target.$animations = {})` (core.animations.js:
-/// 71): the running animations of [target]. An [Element] keeps them in its
-/// typed member. Another target reads and writes them by name.
+/// 71): the running animations of [target]. An [Element] and a meta keep
+/// them in a typed member. Another target reads and writes them by name.
 Map<String, Object?> _runningOf(Object target) {
   if (target is Element) {
     return target.$animations ??= <String, Animation>{};
+  }
+  if (target is types.ChartMeta) {
+    return target.animations ??= <String, Animation>{};
   }
   var running = readProperty(target, r'$animations');
   if (!jsTruthy(running)) {

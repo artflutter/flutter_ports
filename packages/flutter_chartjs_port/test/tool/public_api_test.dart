@@ -33,7 +33,8 @@ import '../../tool/src/js_semantics.dart' show dartSdkPath;
 //    member (the form "<file>:<line> `_name`") has `@internal`, because the
 //    analyzer then reports a use from another package
 //    (`invalid_use_of_internal_member`). `_internalFalseHits` lists the
-//    members whose `_` name is not the member itself.
+//    members whose `_` name is not the member itself, and `_publicUnderscore`
+//    the members that are public by design.
 // 4. `chartjs.dart` covers each runtime export of `src/index.ts` and each
 //    declaration of `src/types/*.d.ts` that a file of `lib/src/` declares as
 //    a type of the same name, and `helpers.dart` covers each runtime export of
@@ -176,6 +177,20 @@ const Map<String, String> _notExported = {
 /// member itself, each with its reason.
 const Map<String, String> _internalFalseHits = {};
 
+/// The members of an exported concrete class with an upstream `_` name that
+/// are public by design, each with its reason.
+const Map<String, String> _publicUnderscore = {
+  'ChartMeta.clip': _metaParseState,
+  'ChartMeta.parsed': _metaParseState,
+  'ChartMeta.sorted': _metaParseState,
+  'ChartMeta.stacked': _metaParseState,
+};
+
+/// The reason of the public parse state of the meta.
+const String _metaParseState =
+    'an add-on controller writes the parse state of the meta '
+    '(row adapt-native-chart-meta)';
+
 /// The first line of a doc comment that names an upstream `_` member:
 /// `/// <file>:<line> \`_name...\``.
 final RegExp _underscoreDoc = RegExp(
@@ -310,6 +325,7 @@ void main() {
           if (match == null) continue;
           final key = '$name.${member.displayName}';
           if (_internalFalseHits.containsKey(key)) continue;
+          if (_publicUnderscore.containsKey(key)) continue;
           if (!member.metadata.hasInternal) {
             findings.add('$key (upstream ${match[1]}) has no @internal');
           }

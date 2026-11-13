@@ -15,9 +15,9 @@
 /// - `resize` and `_eventHandler` are fields that hold a function
 ///   (`harness-method-fields`, Chart.js ADR 0022, section 5). A test
 ///   replaces the function of one chart, as it replaces a JS own property.
-/// - The dataset meta, the object literal of `getDatasetMeta`, is a
-///   [ChartMeta]. It is a `types.PropertyAccess`, because the animations
-///   write its `visible` by name (Chart.js ADR 0019, section 9).
+/// - The dataset meta, the object literal of `getDatasetMeta`, is the
+///   native [ChartMeta] of `lib/src/types/chart_meta.dart` (row
+///   `adapt-native-chart-meta`).
 /// - `Object.keys` is [jsObjectKeys], `Array.prototype.sort` is [jsSort],
 ///   and `delete this._metasets[i]` leaves Dart `null` for the hole of the
 ///   array.
@@ -41,7 +41,7 @@ import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show Config, datasetIndexAxis, determineAxis;
+    show Config, datasetIndexAxis, determineAxis, getIndexAxis;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
@@ -100,6 +100,7 @@ import 'package:flutter_chartjs_port/src/platform/index.dart'
     show BasePlatform, detectPlatform;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartMeta;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutItem, LayoutItemConfigure, LayoutLayer;
@@ -290,314 +291,6 @@ types.ChartEvent? _determineLastEvent(
     return lastEvent;
   }
   return e;
-}
-
-/// core.controller.js:835-848 the dataset meta: the object literal of
-/// `getDatasetMeta`, the `ChartMeta` of index.d.ts:507.
-///
-/// The fields have the upstream names. The `_` properties that other
-/// modules read drop the underscore (Chart.js ADR 0012): `_parsed` is
-/// [parsed], `_sorted` is [sorted], `_stacked` is [stacked], `_clip` is
-/// [clip] and `_scaleRanges` is [scaleRanges]. `_dataset` is [dataset_],
-/// because [dataset] has the name without the underscore (Chart.js ADR
-/// 0023).
-///
-/// The meta is also a `types.PropertyAccess`: the access by name of the JS
-/// object. The animations read and write [visible] and `$animations` by name
-/// (core.controller.js:903, Chart.js ADR 0019, section 9). A name that the
-/// meta does not declare goes to a Map of extra properties.
-final class ChartMeta._({
-  /// core.controller.js:843 `order: dataset && dataset.order || 0`.
-  required var double order,
-
-  /// core.controller.js:844 `index: datasetIndex`.
-  @override required var int index,
-
-  /// core.controller.js:845 `_dataset: dataset`, the dataset object of the
-  /// meta. The name has a trailing underscore, because [dataset] has the
-  /// name without the leading underscore (Chart.js ADR 0023). The specs read
-  /// it (core.controller.tests.js:1973).
-  @internal @override required final Object? dataset_,
-}) implements types.ChartMeta, types.ChartMetaFiller, types.PropertyAccess {
-  /// core.controller.js:836 `type: null`, then the dataset type
-  /// (core.controller.js:431). Dart `null` is the JS `null`. The value is
-  /// `dataset.type || this.config.type`, which can be `undefined`.
-  Object? _type;
-
-  /// core.controller.js:836 `type`, as a `String`.
-  ///
-  /// `buildOrUpdateControllers` writes the dataset type before it
-  /// constructs the controller (core.controller.js:431). The readers of
-  /// other modules read it after that write. A read of another value throws
-  /// a [TypeError].
-  @override
-  String get type => _type! as String;
-
-  /// core.controller.js:837 `data: []`, the data elements.
-  @override
-  final List<types.Element> data = [];
-
-  /// core.controller.js:838 `dataset: null`, the dataset element. Dart
-  /// `null` stands for JS `null` and `undefined`.
-  @override
-  types.Element? dataset;
-
-  /// core.controller.js:839 `controller: null`. Dart `null` stands for JS
-  /// `null`.
-  @override
-  DatasetController? controller;
-
-  /// core.controller.js:840 `hidden: null`. See [Chart.isDatasetVisible].
-  @override
-  bool? hidden;
-
-  /// core.controller.js:841 `xAxisID: null`.
-  @override
-  Object? xAxisID;
-
-  /// core.controller.js:842 `yAxisID: null`.
-  @override
-  Object? yAxisID;
-
-  /// core.controller.js:846 `_parsed: []`.
-  @internal
-  @override
-  List<Object?> parsed = <Object?>[];
-
-  /// core.controller.js:847 `_sorted: false`.
-  @internal
-  @override
-  bool sorted = false;
-
-  /// core.controller.js:432 `indexAxis`. Dart `null` stands for JS
-  /// `undefined`, the value before `buildOrUpdateControllers`. The axis is
-  /// a class (row `adapt-axis-objects`).
-  @override
-  ScaleAxis? indexAxis;
-
-  /// core.controller.js:435 `meta.label = '' + dataset.label`. Dart `null`
-  /// stands for JS `undefined`, the value before `buildOrUpdateControllers`.
-  String? label;
-
-  /// core.controller.js:436 `visible`, the result of
-  /// [Chart.isDatasetVisible].
-  ///
-  /// The `hide` animation writes the numbers 1 and 0 of `v => v | 0`
-  /// (core.animations.defaults.js:64-68). The readers apply ToBoolean
-  /// (core.controller.js:744). The [undefined] sentinel is the value before
-  /// `buildOrUpdateControllers`.
-  @override
-  Object? visible = undefined;
-
-  /// core.datasetController.js:420 `stack`. See `types.ChartMeta.stack`.
-  @override
-  Object? stack = undefined;
-
-  /// core.datasetController.js:284 `_stacked`. See
-  /// `types.ChartMeta.stacked`.
-  @internal
-  @override
-  Object? stacked;
-
-  /// core.datasetController.js:308 `rAxisID`.
-  @override
-  Object? rAxisID;
-
-  /// core.datasetController.js:310 `iAxisID`.
-  @override
-  Object? iAxisID;
-
-  /// core.datasetController.js:311 `vAxisID`.
-  @override
-  Object? vAxisID;
-
-  /// core.datasetController.js:312 `xScale`.
-  @override
-  types.Scale? xScale;
-
-  /// core.datasetController.js:313 `yScale`.
-  @override
-  types.Scale? yScale;
-
-  /// core.datasetController.js:314 `rScale`.
-  @override
-  types.Scale? rScale;
-
-  /// core.datasetController.js:315 `iScale`.
-  @override
-  types.Scale? iScale;
-
-  /// core.datasetController.js:316 `vScale`.
-  @override
-  types.Scale? vScale;
-
-  /// core.datasetController.js:704 `_clip`.
-  ///
-  /// The literal of `_getMetaForDataset` has no `_clip`
-  /// (core.controller.js:836-853). Thus a read before the first `_update`
-  /// throws a [TypeError], as the upstream readers throw for the property
-  /// of `undefined`. The read by name gives [undefined] then ([operator
-  /// []]).
-  @internal
-  @override
-  types.ChartMetaClip get clip => _clip ?? (throw TypeError());
-
-  @internal
-  @override
-  set clip(types.ChartMetaClip value) => _clip = value;
-
-  /// The value of [clip], or Dart `null` for its JS `undefined` start
-  /// value.
-  types.ChartMetaClip? _clip;
-
-  /// helpers.extras.ts:153 `_scaleRanges`.
-  @internal
-  @override
-  types.ScaleRanges? scaleRanges;
-
-  /// index.d.ts:374 `DoughnutMetaExtensions.total`: the total of the
-  /// doughnut or pie dataset. Dart `null` stands for JS `undefined`, the
-  /// start value. controller.doughnut.js:235 writes it.
-  @override
-  double? total;
-
-  /// core.animations.js:71 `$animations`, the running animations of the
-  /// meta. The [undefined] sentinel is the absent property.
-  Object? _animations = undefined;
-
-  /// plugin.filler/index.js:37 `meta.$filler`: the source of the filler
-  /// plugin (its `FillerSource`), or the [undefined] sentinel, the absent
-  /// property. The access by name reads and writes it ([operator []],
-  /// [operator []=]), because the specs read `meta[r'$filler']`.
-  @override
-  Object? $filler = undefined;
-
-  /// The extra properties of the access by name. Dart `null` until the
-  /// first write of such a property.
-  Map<String, Object?>? _extras;
-
-  /// The JS property read `meta[prop]`.
-  ///
-  /// The names of the literal and of the later writes read their fields.
-  /// Dart `null` stands for the JS `null` of a start value. [total] gives
-  /// [undefined] for Dart `null`. Another name reads the Map of extra
-  /// properties, and gives [undefined] for an absent property.
-  @override
-  Object? operator [](String prop) => switch (prop) {
-    'type' => _type,
-    'data' => data,
-    'dataset' => dataset,
-    'controller' => controller,
-    'hidden' => hidden,
-    'xAxisID' => xAxisID,
-    'yAxisID' => yAxisID,
-    'order' => order,
-    'index' => index,
-    '_dataset' => dataset_,
-    '_parsed' => parsed,
-    '_sorted' => sorted,
-    'indexAxis' => indexAxis ?? undefined,
-    'label' => label ?? undefined,
-    'visible' => visible,
-    'stack' => stack,
-    '_stacked' => stacked ?? undefined,
-    'rAxisID' => rAxisID ?? undefined,
-    'iAxisID' => iAxisID ?? undefined,
-    'vAxisID' => vAxisID ?? undefined,
-    'xScale' => xScale ?? undefined,
-    'yScale' => yScale ?? undefined,
-    'rScale' => rScale ?? undefined,
-    'iScale' => iScale ?? undefined,
-    'vScale' => vScale ?? undefined,
-    '_scaleRanges' => scaleRanges ?? undefined,
-    '_clip' => _clip ?? undefined,
-    'total' => total ?? undefined,
-    r'$animations' => _animations,
-    r'$filler' => $filler,
-    _ => _extra(prop),
-  };
-
-  /// The value of an extra property, or [undefined].
-  Object? _extra(String prop) {
-    final extras = _extras;
-    if (extras == null || !extras.containsKey(prop)) {
-      return undefined;
-    }
-    return extras[prop];
-  }
-
-  /// The JS property write `meta[prop] = value`.
-  ///
-  /// `visible`, `$animations`, `type`, `label` and the extra properties take
-  /// any value. A typed field takes a value of its type: another value
-  /// throws a [TypeError]. [total] takes a number or [undefined]. `data` and
-  /// `_dataset` are final: a write throws an [UnsupportedError]. No ported
-  /// code writes them by name.
-  @override
-  void operator []=(String prop, Object? value) {
-    switch (prop) {
-      case 'visible':
-        visible = value;
-      case r'$animations':
-        _animations = value;
-      case r'$filler':
-        $filler = value;
-      case 'type':
-        _type = value;
-      case 'label':
-        label = value is Undefined ? null : value as String?;
-      case 'dataset':
-        dataset = value is Undefined ? null : value as types.Element?;
-      case 'controller':
-        controller = value is Undefined ? null : value as DatasetController?;
-      case 'hidden':
-        hidden = value is Undefined ? null : value as bool?;
-      case 'xAxisID':
-        xAxisID = value is Undefined ? null : value;
-      case 'yAxisID':
-        yAxisID = value is Undefined ? null : value;
-      case 'rAxisID':
-        rAxisID = value is Undefined ? null : value;
-      case 'iAxisID':
-        iAxisID = value is Undefined ? null : value;
-      case 'vAxisID':
-        vAxisID = value is Undefined ? null : value;
-      case 'order':
-        order = jsToNumber(value);
-      case 'index':
-        index = (value! as num).toInt();
-      case 'indexAxis':
-        indexAxis = value is Undefined ? null : value as ScaleAxis?;
-      case 'stack':
-        stack = value;
-      case '_stacked':
-        stacked = value is Undefined ? null : value;
-      case '_parsed':
-        parsed = value! as List<Object?>;
-      case '_sorted':
-        sorted = value! as bool;
-      case 'xScale':
-        xScale = value is Undefined ? null : value as types.Scale?;
-      case 'yScale':
-        yScale = value is Undefined ? null : value as types.Scale?;
-      case 'rScale':
-        rScale = value is Undefined ? null : value as types.Scale?;
-      case 'iScale':
-        iScale = value is Undefined ? null : value as types.Scale?;
-      case 'vScale':
-        vScale = value is Undefined ? null : value as types.Scale?;
-      case '_clip':
-        clip = value! as types.ChartMetaClip;
-      case '_scaleRanges':
-        scaleRanges = value is Undefined ? null : value as types.ScaleRanges?;
-      case 'total':
-        total = value is Undefined ? null : (value as num?)?.toDouble();
-      case 'data' || '_dataset':
-        throw UnsupportedError('The meta keeps its $prop.');
-      default:
-        (_extras ??= <String, Object?>{})[prop] = value;
-    }
-  }
 }
 
 Config _colorConfig(Object? userConfig) {
@@ -842,7 +535,7 @@ class Chart(
   /// (core.controller.js:924). The specs read it
   /// (core.controller.tests.js:1969).
   @internal
-  final List<ChartMeta?> metasets = [];
+  final List<ChartMeta<DatasetController>?> metasets = [];
 
   /// core.controller.js:156 `_stacks = undefined`. See `types.Chart.stacks`.
   @internal
@@ -888,7 +581,7 @@ class Chart(
   /// core.controller.js:165 `_sortedMetasets = []`: the metas in the drawing
   /// order. The specs read it (core.controller.tests.js:1984).
   @internal
-  List<ChartMeta?> sortedMetasets = [];
+  List<ChartMeta<DatasetController>?> sortedMetasets = [];
 
   /// core.controller.js:166 `scales = {}`: the scales by id.
   @override
@@ -1018,8 +711,9 @@ class Chart(
   bool get supportsNativePointOptions => super.runtimeType == Chart;
 
   final _barScaleKeys = BarScaleKeys();
-  static final Type _nativeMetaListType = <ChartMeta?>[].runtimeType;
-  List<ChartMeta?>? _barMetaList;
+  static final Type _nativeMetaListType =
+      <ChartMeta<DatasetController>?>[].runtimeType;
+  List<ChartMeta<DatasetController>?>? _barMetaList;
   bool _barMetaListNative = false;
 
   /// Recheck live topology at the original observation point. There is no
@@ -1061,14 +755,6 @@ class Chart(
         !identical(meta.controller, controller) ||
         !identical(meta.iScale, scale) ||
         meta.type != 'bar') {
-      return false;
-    }
-    final name = meta.stack;
-    if (!(name == null ||
-        name is String ||
-        name is num ||
-        name is bool ||
-        identical(name, undefined))) {
       return false;
     }
     final grouped = controller.options;
@@ -1360,7 +1046,10 @@ class Chart(
     final numData = _datasets.length;
     final numMeta = metasets.length;
 
-    jsSort(metasets, _holesLast<ChartMeta>((a, b) => a.index - b.index));
+    jsSort(
+      metasets,
+      _holesLast<ChartMeta<DatasetController>>((a, b) => a.index - b.index),
+    );
     if (numMeta > numData) {
       for (var i = numData; i < numMeta; ++i) {
         _destroyDatasetMeta(i);
@@ -1370,7 +1059,10 @@ class Chart(
     sortedMetasets = jsSort(
       List.of(metasets),
       _holesLast(
-        _compare2Level<ChartMeta>((meta) => meta.order, (meta) => meta.index),
+        _compare2Level<ChartMeta<DatasetController>>(
+          (meta) => meta.order,
+          (meta) => meta.index,
+        ),
       ),
     );
   }
@@ -1389,7 +1081,7 @@ class Chart(
     for (var index = 0, length = metasets.length; index < length; index++) {
       final meta = index < metasets.length ? metasets[index] : null;
       if (meta == null) continue;
-      if (!datasets.any((x) => identical(x, meta.dataset_))) {
+      if (!datasets.any((x) => identical(x, meta.datasetConfig))) {
         _destroyDatasetMeta(index);
       }
     }
@@ -1410,19 +1102,18 @@ class Chart(
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
       final dataset = jsGetIndex(datasets, i);
       var meta = getDatasetMeta(i);
-      final datasetType = readOption(dataset, OptionKey.type);
-      final type = jsTruthy(datasetType) ? datasetType : config.type;
+      final (:type, :label, :indexAxis) = _metaFields(dataset);
 
-      if (jsTruthy(meta._type) && meta._type != type) {
+      // DIVERGES(chartjs): adapt-native-chart-meta, the type at creation.
+      if (meta.type != type) {
         _destroyDatasetMeta(i);
         meta = getDatasetMeta(i);
       }
       meta
-        .._type = type
-        ..indexAxis = datasetIndexAxis(dataset, type, options)
+        ..indexAxis = indexAxis
         ..order = jsOrZero(readOption(dataset, OptionKey.order))
         ..index = i
-        ..label = jsToString(readOption(dataset, OptionKey.label))
+        ..label = label
         ..visible = isDatasetVisible(i);
 
       final controller = meta.controller;
@@ -1434,7 +1125,7 @@ class Chart(
         final controllerClass = registry.getController(type);
         final datasetDefaults = _defaultsValue(
           _defaultsValue(defaults, OptionKey.datasets),
-          type is String ? type : jsToString(type),
+          type,
         );
         final datasetElementType = _defaultsValue(
           datasetDefaults,
@@ -2333,13 +2024,13 @@ class Chart(
   /// throws a [TypeError], as the read `meta.visible` of `undefined` does.
   @internal
   @override
-  List<ChartMeta> getSortedDatasetMetas(bool filterVisible) {
+  List<ChartMeta<DatasetController>> getSortedDatasetMetas(bool filterVisible) {
     final metasets = sortedMetasets;
-    final result = <ChartMeta>[];
+    final result = <ChartMeta<DatasetController>>[];
 
     for (var i = 0, ilen = metasets.length; i < ilen; ++i) {
       final meta = metasets[i]!;
-      if (!filterVisible || jsTruthy(meta.visible)) {
+      if (!filterVisible || meta.visible) {
         result.add(meta);
       }
     }
@@ -2352,7 +2043,7 @@ class Chart(
   /// Gets the visible dataset metas in drawing order
   /// @return {object[]}
   @override
-  List<ChartMeta> getSortedVisibleDatasetMetas() {
+  List<ChartMeta<DatasetController>> getSortedVisibleDatasetMetas() {
     return getSortedDatasetMetas(true);
   }
 
@@ -2387,7 +2078,7 @@ class Chart(
   /// @private
   ///
   /// `getDatasetClipArea` gives Dart `null` for the upstream `false`.
-  void _drawDataset(ChartMeta meta) {
+  void _drawDataset(ChartMeta<DatasetController> meta) {
     final ctx = this.ctx;
     final args = DatasetDrawHookArgs(
       meta: meta,
@@ -2455,27 +2146,32 @@ class Chart(
   /// the dataset object, by [identical].
   @override
   // DIVERGES(chartjs): adapt-int-indexes, an index is an int.
-  ChartMeta getDatasetMeta(int datasetIndex) {
+  ChartMeta<DatasetController> getDatasetMeta(int datasetIndex) {
     final index = datasetIndex;
     final dataset = jsGetIndex(_datasets, index);
     final metasets = this.metasets;
-    ChartMeta? meta;
+    ChartMeta<DatasetController>? meta;
     for (var i = metasets.length - 1; i >= 0; i--) {
       final x = metasets[i];
-      if (x != null && identical(x.dataset_, dataset)) {
+      if (x != null && identical(x.datasetConfig, dataset)) {
         meta = x;
         break;
       }
     }
 
     if (meta == null) {
-      meta = ChartMeta._(
+      // DIVERGES(chartjs): adapt-native-chart-meta, the type at creation.
+      final (:type, :label, :indexAxis) = _metaFields(dataset);
+      meta = ChartMeta<DatasetController>(
         // See isDatasetVisible() comment
         order: jsTruthy(dataset)
             ? jsOrZero(readOption(dataset, OptionKey.order))
             : 0,
         index: index,
-        dataset_: dataset,
+        datasetConfig: dataset,
+        type: type,
+        label: label,
+        indexAxis: indexAxis,
       );
       metasets.add(meta);
     }
@@ -2483,17 +2179,44 @@ class Chart(
     return meta;
   }
 
+  /// core.controller.js:431-435 the `type`, the `label` and the `indexAxis`
+  /// of the meta of [dataset]: `dataset.type || this.config.type`,
+  /// `'' + dataset.label` and `dataset.indexAxis || getIndexAxis(type,
+  /// this.options)`. [getDatasetMeta] gives them to a new meta, and
+  /// [buildOrUpdateControllers] writes the label and the axis again (row
+  /// `adapt-native-chart-meta`). A type that is not a string is its string
+  /// form, as the template of the registry error gives it.
+  ({String type, String label, ScaleAxis indexAxis}) _metaFields(
+    Object? dataset,
+  ) {
+    final hasDataset = jsTruthy(dataset);
+    final datasetType = hasDataset
+        ? readOption(dataset, OptionKey.type)
+        : undefined;
+    final rawType = jsTruthy(datasetType) ? datasetType : config.type;
+    final type = rawType is String ? rawType : jsToString(rawType);
+    return (
+      type: type,
+      label: hasDataset
+          ? jsToString(readOption(dataset, OptionKey.label))
+          : 'undefined',
+      indexAxis: hasDataset
+          ? datasetIndexAxis(dataset, type, options)
+          : getIndexAxis(type, options),
+    );
+  }
+
   /// The meta that [getDatasetMeta] finds, or Dart `null`: this read adds no
   /// meta (Chart.js ADR 0092). The caller has checked the List of the datasets.
   @override
   @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, a read with no write.
-  ChartMeta? existingDatasetMeta(int datasetIndex) {
+  ChartMeta<DatasetController>? existingDatasetMeta(int datasetIndex) {
     final dataset = jsGetIndex(_datasets, datasetIndex);
     final metasets = this.metasets;
     for (var i = metasets.length - 1; i >= 0; i--) {
       final x = metasets[i];
-      if (x != null && identical(x.dataset_, dataset)) return x;
+      if (x != null && identical(x.datasetConfig, dataset)) return x;
     }
     return null;
   }
@@ -2814,7 +2537,7 @@ class Chart(
     bool enabled,
   ) {
     final prefix = enabled ? 'set' : 'remove';
-    ChartMeta meta;
+    ChartMeta<DatasetController> meta;
 
     // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode object.
     if (mode is DatasetInteractionMode) {

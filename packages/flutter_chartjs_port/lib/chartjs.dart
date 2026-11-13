@@ -57,8 +57,6 @@ export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
         HTMLCanvasElement,
         Path2D,
         TextMetrics;
-export 'package:flutter_chartjs_port/src/core/core.controller.dart'
-    show ChartMeta;
 export 'package:flutter_chartjs_port/src/core/core.scale.dart'
     show TickCallback;
 export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
@@ -118,8 +116,6 @@ export 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
 export 'package:flutter_chartjs_port/src/types.dart'
     hide
         ArcElementWrites,
-        ChartMeta,
-        ChartMetaFiller,
         ElementPropertyRead,
         LayoutItem,
         LineElementWrites,

@@ -12,9 +12,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: jsGet, the JS property read of the chart values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-// Not public: FillerSource, the source of `meta.$filler`.
+// Not public: fillerSourceOf, the source of `meta.$filler`.
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show FillerSource;
+    show fillerSourceOf;
 // Not public: Legend, the element class of plugin.legend (hit boxes).
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
@@ -491,7 +491,7 @@ void main() {
         );
         // `_decodeFill` keeps each of these values (filler.options.js:60),
         // and the filler stores it (plugin.filler/index.js:29).
-        final source = chart.getDatasetMeta(0)[r'$filler']! as FillerSource;
+        final source = fillerSourceOf(chart.getDatasetMeta(0))!;
         expect(source.fill, fill, reason: variant.key);
         expect(tester.takeException(), isNull, reason: variant.key);
       }

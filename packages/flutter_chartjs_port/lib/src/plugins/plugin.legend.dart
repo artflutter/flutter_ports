@@ -1734,7 +1734,7 @@ LegendItem _datasetItem(
     text: jsGet(jsGetIndex(datasets, meta.index), 'label'),
     fillStyle: optionOf(style, OptionKey.backgroundColor),
     fontColor: color,
-    hidden: !jsTruthy(meta.visible),
+    hidden: !meta.visible,
     lineCap: optionOf(style, OptionKey.borderCapStyle),
     lineDash: optionOf(style, OptionKey.borderDash),
     lineDashOffset: optionOf(style, OptionKey.borderDashOffset),

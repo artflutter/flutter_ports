@@ -66,9 +66,9 @@ Object? _observeFiller(Chart chart) {
 
 /// The entry of [_observeFiller] for one meta.
 Object? _observeSource(types.ChartMeta meta) {
-  final source = (meta as types.PropertyAccess)[r'$filler'];
-  if (source is! FillerSource) {
-    return source;
+  final source = fillerSourceOf(meta);
+  if (source == null) {
+    return null;
   }
   return <String, Object?>{
     'visible': source.visible,
@@ -120,7 +120,7 @@ Object? _targets(Chart chart) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   return [
     for (var i = 0; i < datasets.length; i++)
-      switch ((chart.getDatasetMeta(i) as types.PropertyAccess)[r'$filler']) {
+      switch (fillerSourceOf(chart.getDatasetMeta(i))) {
         final FillerSource source => _describeTarget(getTarget(source)),
         _ => null,
       },

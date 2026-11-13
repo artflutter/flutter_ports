@@ -103,7 +103,7 @@ final class _Chart(List<Object?> data) implements types.Chart {
 final class _Meta(@override var types.Scale? iScale)
     implements types.ChartMeta {
   @override
-  Object? xAxisID = 'x';
+  String? xAxisID = 'x';
 
   @override
   final types.DatasetController controller = _Controller();

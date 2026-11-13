@@ -71,15 +71,6 @@ final class _FakeChart(
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// The clip of a fake meta: `{disabled: true}`.
-final class _DisabledClip() implements types.ChartMetaClip {
-  @override
-  bool get disabled => true;
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
 /// The fake meta `{index, type, hidden, dataset, iScale, _clip}`.
 final class _FakeMeta({
   @override required final int index,
@@ -89,7 +80,7 @@ final class _FakeMeta({
   @override required var types.Scale? iScale,
 }) implements types.ChartMeta {
   @override
-  types.ChartMetaClip clip = _DisabledClip();
+  types.ChartClip clip = const types.ChartClip(disabled: true);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

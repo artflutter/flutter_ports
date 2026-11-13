@@ -494,7 +494,7 @@ void main() {
       ];
       final chart = stackedChart(items);
       final meta = chart.getDatasetMeta(0);
-      expect(jsTruthy(meta.stacked), isTrue);
+      expect(meta.stacked, types.StackMode.on);
       expect(identical(meta.parsed, items), isTrue);
       for (final item in items) {
         final itemStacks = stacksOf(item);
@@ -513,7 +513,7 @@ void main() {
       registerController();
       final items = <Object?>[DateTime.utc(1970), DateTime.utc(1971)];
       final chart = stackedChart(items);
-      expect(jsTruthy(chart.getDatasetMeta(0).stacked), isTrue);
+      expect(chart.getDatasetMeta(0).stacked, types.StackMode.on);
       for (final item in items) {
         final itemStacks = stacksOf(item);
         expect(itemStacks, isA<JsObjectFace>());

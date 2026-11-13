@@ -286,7 +286,7 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
         i,
       );
       properties[axisDataKey(vAxis)!] = vScale.getPixelForValue(
-        jsTruthy(stacked)
+        stacked != types.StackMode.off
             ? applyStack(vScale, parsed, stacked)
             : parsedValueOf(parsed, vAxis),
         i,
@@ -428,99 +428,8 @@ final class _FakeScale(@override final types.Chart chart, AnyObject spec)
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// The meta of core.controller.js:835-848, and the members that the fake
-/// chart writes.
-final class _Meta(
-  /// `_dataset`.
-  final Object? datasetObject,
-  @override var int index,
-) implements types.ChartMeta {
-  // The members of Chart.js ADR 0028 that this test does not read.
-  @override
-  Object? get dataset_ => datasetObject;
-
-  @override
-  double? total;
-
-  @override
-  late String type;
-
-  @override
-  final List<types.Element> data = [];
-
-  @override
-  types.Element? dataset;
-
-  /// `controller`: Dart `null` for the JS `null` start value.
-  DatasetController? controllerValue;
-
-  @override
-  types.DatasetController get controller => controllerValue!;
-
-  @override
-  bool? hidden;
-
-  @override
-  Object? xAxisID;
-
-  @override
-  Object? yAxisID;
-
-  @override
-  Object? rAxisID;
-
-  @override
-  Object? iAxisID;
-
-  @override
-  Object? vAxisID;
-
-  double order =
-      jsTruthy(datasetObject) && jsTruthy(jsGet(datasetObject, 'order'))
-      ? jsToNumber(jsGet(datasetObject, 'order'))
-      : 0;
-
-  @override
-  List<Object?> parsed = [];
-
-  @override
-  bool sorted = false;
-
-  @override
-  Object? stack = undefined;
-
-  @override
-  ScaleAxis? indexAxis;
-
-  @override
-  Object? stacked;
-
-  @override
-  types.Scale? xScale;
-
-  @override
-  types.Scale? yScale;
-
-  @override
-  types.Scale? rScale;
-
-  @override
-  types.Scale? iScale;
-
-  @override
-  types.Scale? vScale;
-
-  @override
-  late types.ChartMetaClip clip;
-
-  @override
-  types.ScaleRanges? scaleRanges;
-
-  String label = '';
-
-  @override
-  bool visible = false;
-}
+/// The meta of core.controller.js:835-848: the native meta of the chart.
+typedef _Meta = types.ChartMeta<DatasetController>;
 
 /// A fake chart: the members that core.datasetController.js reads.
 final class _FakeChart(@override final Config config, AnyObject spec)
@@ -583,12 +492,26 @@ final class _FakeChart(@override final Config config, AnyObject spec)
     final dataset = jsGet(jsGet(data, 'datasets'), datasetIndex);
     final metasets = _metasets;
     final meta = metasets
-        .where((x) => identical(x.datasetObject, dataset))
+        .where((x) => identical(x.datasetConfig, dataset))
         .lastOrNull;
     if (meta != null) {
       return meta;
     }
-    final created = _Meta(dataset, datasetIndex);
+    final hasDataset = jsTruthy(dataset);
+    final datasetType = hasDataset ? jsGet(dataset, 'type') : undefined;
+    final type = jsToString(jsTruthy(datasetType) ? datasetType : config.type);
+    final created = _Meta(
+      index: datasetIndex,
+      datasetConfig: dataset,
+      type: type,
+      label: hasDataset ? jsToString(jsGet(dataset, 'label')) : 'undefined',
+      indexAxis: hasDataset
+          ? datasetIndexAxis(dataset, type, options)
+          : const XAxis(),
+      order: hasDataset && jsTruthy(jsGet(dataset, 'order'))
+          ? jsToNumber(jsGet(dataset, 'order'))
+          : 0,
+    );
     metasets.add(created);
     return created;
   }
@@ -744,7 +667,7 @@ final class _Run(final AnyObject spec) {
   _Meta meta(Object? ds) => chart.getDatasetMeta(jsToNumber(ds)) as _Meta;
 
   /// The controller of the dataset [ds].
-  DatasetController controller(Object? ds) => meta(ds).controllerValue!;
+  DatasetController controller(Object? ds) => meta(ds).controller!;
 
   AnyObject _dataset(Object? ds) => _datasets[_int(ds)]! as AnyObject;
 
@@ -865,7 +788,9 @@ final class _Run(final AnyObject spec) {
       case 'sorted':
         out.add('sorted ${_s(args[0])}: ${_enc(meta(args[0]).sorted)}');
       case 'stacked':
-        out.add('stacked ${_s(args[0])}: ${_enc(meta(args[0]).stacked)}');
+        out.add(
+          'stacked ${_s(args[0])}: ${_enc(_jsStacked(meta(args[0]).stacked))}',
+        );
       case 'stacks':
         out.add('stacks: ${_enc(chart.stacks ?? undefined)}');
       case 'minmax':
@@ -880,7 +805,7 @@ final class _Run(final AnyObject spec) {
         final value = c.applyStack(
           chart.scales[args[1]]!,
           c.getParsed(jsToNumber(args[2]).toInt()),
-          args[3],
+          _stackModeOf(args[3]),
         );
         out.add(
           'applyStack ${_s(args[0])} ${args[1]} ${_s(args[2])} '
@@ -913,18 +838,18 @@ final class _Run(final AnyObject spec) {
           'rScale': scale(m.rScale),
           'iScale': scale(m.iScale),
           'vScale': scale(m.vScale),
-          'indexAxis': m.indexAxis ?? undefined,
-          'stack': m.stack,
-          'stacked': m.stacked,
+          'indexAxis': m.indexAxis,
+          'stack': m.stack ?? undefined,
+          'stacked': _jsStacked(m.stacked),
         };
         out.add('meta ${_s(args[0])}: ${_enc(fields)}');
       case 'clip':
         final clip = meta(args[0]).clip;
         final edges = {
-          'top': clip.top,
-          'right': clip.right,
-          'bottom': clip.bottom,
-          'left': clip.left,
+          'top': _jsClipSide(clip.top),
+          'right': _jsClipSide(clip.right),
+          'bottom': _jsClipSide(clip.bottom),
+          'left': _jsClipSide(clip.left),
           'disabled': clip.disabled,
         };
         out.add('clip ${_s(args[0])}: ${_enc(edges)}');
@@ -1028,13 +953,12 @@ final class _Run(final AnyObject spec) {
       final datasetType = jsGet(dataset, 'type');
       final type = (jsTruthy(datasetType) ? datasetType : config.type)!;
       meta
-        ..type = type as String
         ..indexAxis = datasetIndexAxis(dataset, type, chart.options)
         ..order = jsOrZero(jsGet(dataset, 'order'))
         ..index = i
         ..label = jsToString(jsGet(dataset, 'label'))
         ..visible = chart.isDatasetVisible(i);
-      final existing = meta.controllerValue;
+      final existing = meta.controller;
       if (existing != null) {
         existing
           ..updateIndex(i)
@@ -1047,7 +971,7 @@ final class _Run(final AnyObject spec) {
               ? _elementTypes[datasetElement]
               : datasetElement,
         });
-        meta.controllerValue = jsConstruct(_testControllerClass, [
+        meta.controller = jsConstruct(_testControllerClass, [
           chart,
           i.toDouble(),
         ]) as DatasetController;
@@ -1055,6 +979,32 @@ final class _Run(final AnyObject spec) {
     }
   }
 }
+
+/// The [types.StackMode] of the JS `_stacked` value of the reference data
+/// (row `adapt-native-chart-meta`): Dart `null` for `undefined`.
+types.StackMode? _stackModeOf(Object? value) => switch (value) {
+  'single' => types.StackMode.single,
+  true => types.StackMode.on,
+  false => types.StackMode.off,
+  _ => null,
+};
+
+/// The JS value of a side of a [types.ChartClip], as the reference data
+/// writes it: Dart `null` is `false`, and NaN is the `undefined` side of a
+/// partial clip object, which the port reads as its `ToNumber` (row
+/// `adapt-native-chart-meta`).
+Object? _jsClipSide(double? side) => switch (side) {
+  null => false,
+  final double d when d.isNaN => undefined,
+  final double d => d,
+};
+
+/// The JS `_stacked` value of [mode], as the reference data writes it.
+Object _jsStacked(types.StackMode mode) => switch (mode) {
+  types.StackMode.off => false,
+  types.StackMode.on => true,
+  types.StackMode.single => 'single',
+};
 
 /// The `int` of a step argument.
 int _int(Object? value) => (value! as num).toInt();
@@ -1149,11 +1099,10 @@ void main() {
         ..['dataElementType'] = _spyPointClass
         ..['datasetElementType'] = false;
       final meta = run.chart.getDatasetMeta(0) as _Meta
-        ..type = 'test'
         ..indexAxis = const XAxis();
       final controller =
           jsConstruct(subclass, [run.chart, 0.0]) as DatasetController;
-      meta.controllerValue = controller;
+      meta.controller = controller;
       expect(controller.runtimeType, DatasetController);
       expect(controller.dataElementType, same(_spyPointClass));
       expect(controller.datasetElementType, false);
@@ -1804,7 +1753,7 @@ void main() {
       final modes = <String>[];
       final run = _runTo('clip without an overflow', 2);
       final controller = _ModeController(run.chart, 0, modes);
-      run.meta(0).controllerValue = controller;
+      run.meta(0).controller = controller;
       controller
         ..update_()
         ..update_('')
@@ -1826,36 +1775,24 @@ void main() {
       );
     });
 
-    // core.datasetController.js:306 keeps the raw id, and
-    // core.datasetController.js:332 reads `chart.scales[5]`, the key '5'.
-    test('a number axis id stays a number and finds its scale', () {
-      final base = _spec('linkScales');
-      final run = _Run({
-        ...base,
-        'scales': <Object?>[
-          ...base['scales']! as List<Object?>,
-          <String, Object?>{'id': '5', 'axis': const XAxis(), 'kind': 'linear'},
-        ],
-      });
-      final steps = run.spec['steps']! as List<Object?>;
-      run
-        ..step(steps.first! as List<Object?>)
-        ..step(<Object?>['setDataset', 0.0, 'xAxisID', 5.0])
-        ..step(<Object?>['linkScales', 0.0]);
-      final meta = run.meta(0.0);
-      expect(meta.xAxisID, 5.0);
-      expect(meta.iAxisID, 5.0);
-      expect(meta.xScale?.id, '5');
-      expect(meta.iScale?.id, '5');
-      expect(meta.yAxisID, 'y1');
+    // An axis id of the meta is a `String?` (row `adapt-native-chart-meta`):
+    // a number id stops a debug build in linkScales, where upstream keeps
+    // the number (core.datasetController.js:306).
+    test('a number axis id stops a debug build', () {
+      final run = _runTo('linkScales', 1)
+        ..step(<Object?>['setDataset', 0.0, 'xAxisID', 5.0]);
+      expect(
+        () => run.step(<Object?>['linkScales', 0.0]),
+        throwsA(isA<AssertionError>()),
+      );
     });
 
-    test('an axis id of no scale gives no scale', () {
+    test('a string axis id of no scale gives no scale', () {
       final run = _runTo('linkScales', 1)
-        ..step(<Object?>['setDataset', 0.0, 'xAxisID', 5.0])
+        ..step(<Object?>['setDataset', 0.0, 'xAxisID', 'none'])
         ..step(<Object?>['linkScales', 0.0]);
       final meta = run.meta(0.0);
-      expect(meta.xAxisID, 5.0);
+      expect(meta.xAxisID, 'none');
       expect(meta.xScale, isNull);
     });
   });
