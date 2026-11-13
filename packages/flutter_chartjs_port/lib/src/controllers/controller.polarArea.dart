@@ -112,7 +112,7 @@ List<LegendItem> _generateLabels(types.Chart chart) {
 
     return [
       for (final (i, label) in (labels! as List<Object?>).indexed)
-        _item(chart, label, i.toDouble(), pointStyle, color),
+        _item(chart, label, i, pointStyle, color),
     ];
   }
   return <LegendItem>[];
@@ -130,12 +130,12 @@ Object? _lengthOf(Object? value) => switch (value) {
 ///
 /// The fields follow the upstream literal. A key of `style` that is absent
 /// gives `undefined`, as the JS property read does: the style is an
-/// [ElementOptions], and [readOption] gives its raw value. `index` is a
-/// `double` (Chart.js ADR 0045).
+/// [ElementOptions], and [readOption] gives its raw value. `index` is an
+/// `int` (Chart.js ADR 0129).
 LegendItem _item(
   types.Chart chart,
   Object? label,
-  double i,
+  int i,
   Object? pointStyle,
   Object? color,
 ) {
@@ -152,7 +152,7 @@ LegendItem _item(
     hidden: !chart.getDataVisibility(i),
 
     // Extra data used for toggling the correct item
-    index: i.toInt(),
+    index: i,
   );
 }
 
@@ -294,7 +294,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// 0034). A parsed item that is `null` or `undefined` throws a [TypeError]
   /// at the read of `r`, as upstream.
   @override
-  ({Object? label, String value}) getLabelAndValue(double index) {
+  ({Object? label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final chart = this.chart;
     // `chart.data.labels || []`
@@ -323,8 +323,8 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     return parseObjectDataRadialScaleOf(
       meta.iScale,
@@ -341,7 +341,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
     final arcs = cachedMeta.data;
 
     _updateRadius();
-    updateElements(arcs, 0, arcs.length.toDouble(), mode);
+    updateElements(arcs, 0, arcs.length, mode);
   }
 
   /// controller.polarArea.js:123 `getMinMax()`.
@@ -370,9 +370,9 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
     // `return` that stops the loop.
     for (var index = 0; index < meta.data.length; index++) {
       // One read of `this.getParsed(index).r` (:128), as upstream.
-      final parsed = parsedValueOf(getParsed(index * 1.0), const RAxis());
+      final parsed = parsedValueOf(getParsed(index), const RAxis());
 
-      if (!jsIsNaN(parsed) && chart.getDataVisibility(index * 1.0)) {
+      if (!jsIsNaN(parsed) && chart.getDataVisibility(index)) {
         if (jsLessThan(parsed, min)) {
           min = parsed;
         }
@@ -439,8 +439,8 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElements(
     List<types.Element> arcs,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final reset = mode == 'reset';
@@ -453,7 +453,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
     final centerY = scale.yCenter;
     final datasetStartAngle = scale.getIndexAngle(0) - 0.5 * pi;
     var angle = datasetStartAngle;
-    double i;
+    int i;
 
     final defaultAngle = 360 / countVisibleElements();
     // DIVERGES(chartjs): adapt-arc-native-options, an exact controller reads
@@ -484,7 +484,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
     // copy: each tick of `Chart.updateData` starts with the entry.
     final tryColors = tryPlan && cachedDataElementOptions(mode) == null;
     for (i = start; i < start + count; i++) {
-      final arc = arcs[i.toInt()];
+      final arc = arcs[i];
       if (colors != null && (!nativeArcElement(arc) || arc.active)) {
         colors = null;
       }
@@ -521,7 +521,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
       final ElementOptions elementOptions;
       if (prepared != null) {
         if (!constant) getContext(i, false, mode);
-        elementOptions = prepared(i.toInt());
+        elementOptions = prepared(i);
       } else {
         elementOptions = resolveDataElementOptions(
           i,
@@ -676,8 +676,8 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
 
     // `meta.data.forEach((element, index) => ...)`.
     for (var index = 0; index < meta.data.length; index++) {
-      if (!jsIsNaN(parsedValueOf(getParsed(index * 1.0), const RAxis())) &&
-          chart.getDataVisibility(index * 1.0)) {
+      if (!jsIsNaN(parsedValueOf(getParsed(index), const RAxis())) &&
+          chart.getDataVisibility(index)) {
         count++;
       }
     }
@@ -693,7 +693,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// [ElementOptions.valueOf], typed for an [ArcOptions]. With [cachedAngle],
   /// a hit of the options cache reads its entry: a call would only copy it.
   double _computeAngle(
-    double index,
+    int index,
     String mode,
     double defaultAngle, {
     bool cachedAngle = false,

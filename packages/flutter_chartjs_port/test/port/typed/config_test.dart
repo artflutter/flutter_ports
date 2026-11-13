@@ -256,7 +256,7 @@ void main() {
       expect(_elements(typedChart), _elements(twinChart));
       expect(
         [
-          for (final i in [0.0, 1.0]) typedChart.getDatasetMeta(i).type,
+          for (final i in [0, 1]) typedChart.getDatasetMeta(i).type,
         ],
         ['bar', 'line'],
       );

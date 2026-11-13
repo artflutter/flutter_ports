@@ -776,9 +776,9 @@ final class const _EveryNth(final int n) extends DecimationAlgorithm {
   @override
   List<Object?> decimate(
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
     double availableWidth,
     Object options,
-  ) => [for (var i = start.toInt(); i < start + count; i += n) data[i]];
+  ) => [for (var i = start; i < start + count; i += n) data[i]];
 }

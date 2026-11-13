@@ -189,7 +189,7 @@ final class _ParseRadii(final BubbleController _owner, List<Object?> data) {
   /// The old parsed item of [index], before the resolve of any item reads it:
   /// `parsed && parsed._custom`. A falsy item has no read. `item[2]` of the new
   /// item needs no check: the parse only keeps it, with no conversion.
-  void oldItem(double index) {
+  void oldItem(int index) {
     if (!_open) return;
     final parsed = _owner.getParsed(index);
     if (jsTruthy(parsed) &&
@@ -200,10 +200,10 @@ final class _ParseRadii(final BubbleController _owner, List<Object?> data) {
 
   /// Whether the eager resolve of [index] can stay out. With an indexed plan,
   /// this refreshes the context of the item, as the resolve would.
-  bool skips(double index) {
+  bool skips(int index) {
     if (!_skips) return false;
     if (_indexed) {
-      final i = index.toInt();
+      final i = index;
       final points = _owner.cachedMeta.data;
       if (i >= points.length || !nativePointElement(points[i])) {
         _end();
@@ -309,8 +309,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   List<ParsedItem> parsePrimitiveData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     final parsed = super.parsePrimitiveData(meta, data, start, count);
     for (var i = 0; i < parsed.length; i++) {
@@ -330,8 +330,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   List<ParsedItem> parseArrayData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     final parsed = super.parseArrayData(meta, data, start, count);
     final radii = _ParseRadii(this, data);
@@ -361,8 +361,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
-    double start,
-    double count,
+    int start,
+    int count,
   ) {
     final parsed = super.parseObjectData(meta, data, start, count);
     final radii = _ParseRadii(this, data);
@@ -387,7 +387,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// `valueOrDefault(own, this.resolveDataElementOptions(index).radius)`,
   /// without the resolve when [radii] finds that it has no effect to keep.
   // DIVERGES(chartjs): adapt-bubble-point-options, upstream always resolves.
-  Object? _radiusOrDefault(Object? own, double index, _ParseRadii radii) {
+  Object? _radiusOrDefault(Object? own, int index, _ParseRadii radii) {
     radii.oldItem(index);
     if (own is! Undefined && radii.skips(index)) return own;
     final result = valueOrDefault(
@@ -438,7 +438,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
             : _notPlain;
         if (!identical(custom, _notPlain)) {
           if (indexed && contexts?.readQualified(point, i) == null) {
-            getContext(i * 1.0, false, 'default');
+            getContext(i, false, 'default');
           }
           max = jsMax(
             max,
@@ -455,7 +455,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
         fields = null;
         indexed = false;
       }
-      max = jsMax(max, point.size(resolveDataElementOptions(i * 1.0)) / 2);
+      max = jsMax(max, point.size(resolveDataElementOptions(i)) / 2);
       // The first ordinary resolution makes the entry of constant options, and
       // two warm the indexed plan. There is one attempt for each loop.
       if (i == last) {
@@ -481,7 +481,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// The label is `labels[index] || ''`: any value (Chart.js ADR 0028,
   /// section 2). The `+` of the value joins the [jsToString] of each part.
   @override
-  ({Object? label, String value}) getLabelAndValue(double index) {
+  ({Object? label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final dataLabels = jsGet(chart.data, 'labels');
     final labels = jsTruthy(dataLabels) ? dataLabels : <Object?>[];
@@ -507,7 +507,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
     final points = cachedMeta.data;
 
     // Update Points
-    updateElements(points, 0, points.length.toDouble(), mode);
+    updateElements(points, 0, points.length, mode);
   }
 
   /// controller.bubble.js:118 `updateElements(points, start, count, mode)`.
@@ -525,8 +525,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final reset = mode == 'reset';
@@ -563,7 +563,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
         );
 
     for (var i = start; i < start + count; i++) {
-      final point = points[i.toInt()];
+      final point = points[i];
       final parsed = reset ? false : getParsed(i);
       if (prepared != null &&
           (!nativePointElement(point) ||
@@ -585,10 +585,10 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
       if (includeOptions) {
         final plan = prepared;
         if (plan != null) {
-          if (indexed && contexts?.read(i.toInt()) == null) {
+          if (indexed && contexts?.read(i) == null) {
             getContext(i, false, mode);
           }
-          options = _customRadius(plan(i.toInt()), parsed, mode);
+          options = _customRadius(plan(i), parsed, mode);
         } else {
           options =
               sharedOptions ??
@@ -694,7 +694,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// [jsAdd] of the raw `radius` (Chart.js ADR 0036, section 7): a string
   /// radius joins.
   @override
-  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+  ElementOptions resolveDataElementOptions(int index, [String? mode]) {
     final parsed = getParsed(index);
     var values = super.resolveDataElementOptions(index, mode);
 

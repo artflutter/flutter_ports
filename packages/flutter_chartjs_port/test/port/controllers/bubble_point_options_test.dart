@@ -71,7 +71,7 @@ class _CountingBubble(super.chart, super.datasetIndex, [super.newTarget])
   );
 
   @override
-  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+  ElementOptions resolveDataElementOptions(int index, [String? mode]) {
     resolves++;
     return super.resolveDataElementOptions(index, mode);
   }
@@ -136,7 +136,7 @@ class _CustomScale(super.cfg) extends LinearScale {
     construct: (_, args) => _CustomScale(scaleCfgArg(args)),
   );
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     calls++;
     return super.getPixelForValue(value, index);
   }
@@ -452,19 +452,9 @@ void main() {
         final probes = _probes(a);
         final others = _probes(b);
         final meta = a.getDatasetMeta(0);
-        meta.controller!.updateElements(
-          meta.data,
-          0,
-          _length.toDouble(),
-          'none',
-        );
+        meta.controller!.updateElements(meta.data, 0, _length, 'none');
         final other = b.getDatasetMeta(0);
-        other.controller!.updateElements(
-          other.data,
-          0,
-          _length.toDouble(),
-          'none',
-        );
+        other.controller!.updateElements(other.data, 0, _length, 'none');
         expect(probes[0].planReads, 0);
         expect(probes[1].planReads, 0);
         expect(probes.skip(2).every((p) => p.planReads > 0), isTrue);
@@ -508,12 +498,7 @@ void main() {
         };
         final meta = chart.getDatasetMeta(0);
         meta.parsed[3] = observed;
-        meta.controller!.updateElements(
-          meta.data,
-          0,
-          _length.toDouble(),
-          'none',
-        );
+        meta.controller!.updateElements(meta.data, 0, _length, 'none');
         logs.add(List.of(observed.reads));
         if (type == 'bubble') {
           expect(probes[2].planReads, greaterThan(0));
@@ -557,12 +542,7 @@ void main() {
       final chart = _chart(_config());
       final probes = _probes(chart);
       final meta = chart.getDatasetMeta(0);
-      meta.controller!.updateElements(
-        meta.data,
-        0,
-        _length.toDouble(),
-        'reset',
-      );
+      meta.controller!.updateElements(meta.data, 0, _length, 'reset');
       expect(probes.every((p) => p.planReads == 0), isTrue);
       expect(probes.every((p) => jsGet(p.options, 'radius') == 0), isTrue);
     });
@@ -946,12 +926,7 @@ void main() {
             chart.config.clearCache();
             meta.controller!.configure();
           };
-          meta.controller!.updateElements(
-            meta.data,
-            0,
-            _length.toDouble(),
-            'none',
-          );
+          meta.controller!.updateElements(meta.data, 0, _length, 'none');
           custom.onConvert = null;
           widths.add([
             for (final point in meta.data) jsGet(point.options, 'borderWidth'),
@@ -981,12 +956,7 @@ void main() {
         final chart = _chart(cfg, reference: type != 'bubble');
         final probes = _probes(chart);
         final meta = chart.getDatasetMeta(0);
-        meta.controller!.updateElements(
-          meta.data,
-          0,
-          _length.toDouble(),
-          'none',
-        );
+        meta.controller!.updateElements(meta.data, 0, _length, 'none');
         probed.add(probes.any((p) => p.planReads > 0));
         results.add(_observe(chart));
       }
@@ -1095,12 +1065,7 @@ void main() {
         probes[4].active = true;
         final meta = chart.getDatasetMeta(0);
         calls.clear();
-        meta.controller!.updateElements(
-          meta.data,
-          0,
-          _length.toDouble(),
-          'none',
-        );
+        meta.controller!.updateElements(meta.data, 0, _length, 'none');
         logs.add(List.of(calls));
         states.add(_observe(chart));
         if (type == 'bubble') {
@@ -1137,12 +1102,7 @@ void main() {
         final chart = _chart(cfg, reference: type != 'bubble');
         final probes = _probes(chart);
         final meta = chart.getDatasetMeta(0);
-        meta.controller!.updateElements(
-          meta.data,
-          0,
-          _length.toDouble(),
-          'none',
-        );
+        meta.controller!.updateElements(meta.data, 0, _length, 'none');
         expect(probes.every((p) => p.planReads == 0), isTrue);
         states.add(_observe(chart));
       }

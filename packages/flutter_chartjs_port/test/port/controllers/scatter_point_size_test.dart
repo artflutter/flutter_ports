@@ -60,7 +60,7 @@ class _CountingScatter(super.chart, super.datasetIndex, [super.newTarget])
   );
 
   @override
-  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
+  ElementOptions resolveDataElementOptions(int index, [String? mode]) {
     resolves++;
     return super.resolveDataElementOptions(index, mode);
   }
@@ -560,12 +560,7 @@ void main() {
         expect(probes[_length - 1].planReads, 0);
         expect(probes[_length - 2].planReads, 0);
         expect(probes[0].planReads, 1);
-        meta.controller!.updateElements(
-          meta.data,
-          0,
-          _length.toDouble(),
-          'none',
-        );
+        meta.controller!.updateElements(meta.data, 0, _length, 'none');
         expect(probes[3].$context?.jsRead('mode'), 'none');
         expect(probes[3].planReads, greaterThanOrEqualTo(2));
       });

@@ -230,7 +230,7 @@ void Function(Object? dataset, int datasetIndex) _getColorizer(
   var i = 0;
 
   return (dataset, datasetIndex) {
-    final controller = chart.getDatasetMeta(datasetIndex.toDouble()).controller;
+    final controller = chart.getDatasetMeta(datasetIndex).controller;
 
     if (controller is DoughnutController) {
       i = _colorizeDoughnutDataset(dataset, i);

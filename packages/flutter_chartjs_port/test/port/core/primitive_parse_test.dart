@@ -53,7 +53,7 @@ class _CustomLinear(super.cfg) extends LinearScale {
     construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
   );
   @override
-  Object? parse(Object? raw, [double? index]) {
+  Object? parse(Object? raw, [int? index]) {
     calls++;
     return super.parse(raw, index);
   }
@@ -68,7 +68,7 @@ class _CustomCategory(super.cfg) extends CategoryScale {
     construct: (_, args) => _CustomCategory(scaleCfgArg(args)),
   );
   @override
-  double? parse(Object? raw, [double? index]) {
+  double? parse(Object? raw, [int? index]) {
     calls++;
     return super.parse(raw, index);
   }
@@ -124,8 +124,8 @@ Chart _chart(Map<String, Object?> cfg, {bool reference = false}) {
 List<ParsedItem>? _fast(
   Chart chart,
   List<Object?> values, {
-  double start = 0,
-  double? count,
+  int start = 0,
+  int? count,
 }) {
   final meta = chart.getDatasetMeta(0);
   return tryParseNumericCategories(
@@ -134,7 +134,7 @@ List<ParsedItem>? _fast(
     meta.iScale!.getLabels(),
     values,
     start,
-    count ?? values.length.toDouble(),
+    count ?? values.length,
   );
 }
 
@@ -241,7 +241,6 @@ void main() {
       expect(parsed.map((p) => p.x), [1.0, 2.0]);
       expect(parsed.map((p) => p.y), values.sublist(1, 3));
       expect(_fast(chart, values, start: -1), isNull);
-      expect(_fast(chart, values, start: 0.5, count: 1), isNull);
       expect(_fast(chart, values, count: 5), isNull);
       expect(_fast(chart, values, count: 0), isNull);
     }

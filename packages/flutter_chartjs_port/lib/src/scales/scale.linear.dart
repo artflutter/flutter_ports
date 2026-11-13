@@ -158,7 +158,7 @@ class LinearScale(super.cfg)
   /// upstream subtraction applies it: the `undefined` sentinel and a string
   /// that is not a number give NaN. [index] has no effect.
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     if (value is double) {
       // Port-only fast path for a number (Chart.js ADR 0025, section 3).
       return getPixelForDecimal((value - startValue) / valueRange);

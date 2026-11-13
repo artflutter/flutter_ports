@@ -278,12 +278,12 @@ final class const _NumberPoint(
 TooltipItem _createTooltipItem(types.Chart chart, types.ActiveElement item) {
   final types.ActiveElement(:element, :datasetIndex, :index) = item;
   final controller = chart.getDatasetMeta(datasetIndex).controller!;
-  final (:label, :value) = controller.getLabelAndValue(index.toDouble());
+  final (:label, :value) = controller.getLabelAndValue(index);
 
   return TooltipItem()
     ..chart = chart
     ..label = label
-    ..parsed = controller.getParsed(index.toDouble())
+    ..parsed = controller.getParsed(index)
     ..raw = jsGetIndex(
       jsGet(
         jsGetIndex(jsGet(chart.data, 'datasets'), datasetIndex.toDouble()),
@@ -727,6 +727,14 @@ Object? _defaultLabelValue(types.TooltipModel self, Object? tooltipItem) {
   return label;
 }
 
+/// The index [value] of a tooltip item as an `int`. An item of user code can
+/// hold another number: its `ToNumber` truncates, and NaN gives -1, an index
+/// with no dataset and no element.
+int _indexOf(Object? value) {
+  final number = jsToNumber(value);
+  return number.isFinite ? number.toInt() : -1;
+}
+
 /// The style of the data element of a tooltip item: the reads
 /// `tooltipItem.chart.getDatasetMeta(tooltipItem.datasetIndex)` and
 /// `meta.controller.getStyle(tooltipItem.dataIndex)` of
@@ -734,8 +742,8 @@ Object? _defaultLabelValue(types.TooltipModel self, Object? tooltipItem) {
 Object _styleOf(Object? tooltipItem) {
   final item = _TooltipItemView(tooltipItem);
   final meta = _chartOf(tooltipItem)
-      .getDatasetMeta(jsToNumber(item.datasetIndex));
-  return meta.controller!.getStyle(jsToNumber(item.dataIndex));
+      .getDatasetMeta(_indexOf(item.datasetIndex));
+  return meta.controller!.getStyle(_indexOf(item.dataIndex));
 }
 
 /// plugin.tooltip.js:404 the default `labelColor(tooltipItem)`: a
@@ -832,7 +840,7 @@ bool _strictEquals(Object? a, Object? b) {
 }
 
 /// The element `meta.data[index]`, or Dart `null` for JS `undefined`.
-types.Element? _elementAt(List<types.Element> data, double index) =>
+types.Element? _elementAt(List<types.Element> data, int index) =>
     switch (jsGetIndex(data, index)) {
       final types.Element element => element,
       _ => null,
@@ -2012,7 +2020,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
 
       return types.ActiveElement(
         datasetIndex: datasetIndex,
-        element: _elementAt(meta.data, index.toDouble()),
+        element: _elementAt(meta.data, index),
         index: index,
       );
     }).toList();
@@ -2122,7 +2130,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
                   chart
                       .getDatasetMeta(i.datasetIndex)
                       .controller!
-                      .getParsed(i.index.toDouble()),
+                      .getParsed(i.index),
                   undefined,
                 ),
           )

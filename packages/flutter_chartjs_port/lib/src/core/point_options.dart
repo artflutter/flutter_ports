@@ -34,7 +34,7 @@ abstract interface class NativePointChart() {
 abstract interface class DatasetMetaSource() {
   /// The meta of `getDatasetMeta(datasetIndex)` when it has one, or Dart
   /// `null`. `getDatasetMeta` adds a meta for a dataset that has none.
-  types.ChartMeta? existingDatasetMeta(num datasetIndex);
+  types.ChartMeta? existingDatasetMeta(int datasetIndex);
 }
 
 /// Native point size/context/property reads and writes, without user callbacks.
@@ -70,8 +70,7 @@ bool nativePointClass(Object? value) =>
 
 /// A dataset index already read from an exact native controller.
 @internal
-bool nativePointDatasetIndex(double index) =>
-    index.isFinite && index >= 0 && index == index.truncateToDouble();
+bool nativePointDatasetIndex(int index) => index >= 0;
 
 /// Common line/scatter prerequisites over already-read loop inputs. This is
 /// permission to attempt preparation, not a reusable proof about the dataset.
@@ -85,8 +84,8 @@ bool canPrepareNativePointUpdate({
   required Object? segment,
   required ScaleAxis iAxis,
   required ScaleAxis vAxis,
-  required double start,
-  required double count,
+  required int start,
+  required int count,
 }) =>
     mode == 'none' &&
     sharedOptions == null &&
@@ -464,7 +463,7 @@ final class NativePointContextReader._(
     return context..refresh(
       index < parsed.length ? parsed[index] : undefined,
       index < raw.length ? raw[index] : undefined,
-      index * 1.0,
+      index,
       false,
       _mode,
     );

@@ -1436,7 +1436,7 @@ _IndexedItemStyles? _indexedItemStyles(
   final config = controller.chart.config;
   if (config is! Config) return null;
   final styles = config.prepareIndexedArcStyles(
-    controller.index.toInt(),
+    controller.index,
     controllerType: controller.type,
     count: count,
   );
@@ -1494,16 +1494,16 @@ final class _IndexedItemStyles(
         context.refresh(
           i < parsedLength ? parsed[i] : undefined,
           i < rawLength ? raw[i] : undefined,
-          i * 1.0,
+          i,
           false,
           'default',
         );
       } else {
-        controller.getContext(i * 1.0, false, 'default');
+        controller.getContext(i, false, 'default');
       }
     }
     if (count > end) {
-      controller.getContext(end.toDouble(), false, 'default');
+      controller.getContext(end, false, 'default');
     }
     return true;
   }
@@ -1645,11 +1645,11 @@ void _onClick(Object? e, LegendItem item, types.LegendElement legend) {
   final index = item.datasetIndex;
   if (index == null) return;
   final ci = legend.chart;
-  if (ci.isDatasetVisible(index.toDouble())) {
-    ci.hide(index.toDouble());
+  if (ci.isDatasetVisible(index)) {
+    ci.hide(index);
     item.hidden = true;
   } else {
-    ci.show(index.toDouble());
+    ci.show(index);
     item.hidden = false;
   }
 }
@@ -1751,7 +1751,7 @@ LegendItem _datasetItem(
               : optionOf(style, OptionKey.borderRadius))
         : useBorderRadius,
     // Below is extra data used for toggling the datasets
-    datasetIndex: meta.index.toInt(),
+    datasetIndex: meta.index,
   );
 }
 

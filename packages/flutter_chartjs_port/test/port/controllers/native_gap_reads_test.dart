@@ -156,7 +156,7 @@ class _WritingScale(super.cfg) extends LinearScale {
   );
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     if (armed && index == 2) {
       armed = false;
       (data[1]! as Map<String, Object?>)['x'] = 100.0;

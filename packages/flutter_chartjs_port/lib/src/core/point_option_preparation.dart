@@ -37,7 +37,7 @@ PointOptions Function(int)? prepareNativePointColors(
   final config = controller.chart.config;
   return config is Config && config.runtimeType == Config
       ? config.prepareIndexedPointColors(
-          controller.index.toInt(),
+          controller.index,
           controllerType: controllerType,
         )
       : null;
@@ -66,7 +66,7 @@ NativePointContextReader? prepareNativePointContexts(
   final datasets = dataUpdateField(data, 'datasets');
   if (!nativeDataUpdateList(datasets)) return null;
   final list = datasets! as List<Object?>;
-  final index = controller.index.toInt();
+  final index = controller.index;
   if (index >= list.length) return null;
   final dataset = list[index];
   if (!nativeDataUpdateObject(dataset)) return null;
@@ -147,6 +147,6 @@ NativePointResolution? prepareNativePointResolution(
   }
   final config = controller.chart.config;
   return config is Config && config.runtimeType == Config
-      ? config.prepareLineResolution(controller.index.toInt())
+      ? config.prepareLineResolution(controller.index)
       : null;
 }

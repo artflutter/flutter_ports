@@ -305,7 +305,7 @@ Map<String, Object?>? _datasetElement(types.Element? element) {
 
 /// The `datasets` observation of the dataset [index] of [chart].
 Map<String, Object?> _observeDataset(Chart chart, int index) {
-  final i = index.toDouble();
+  final i = index;
   final meta = chart.getDatasetMeta(i);
   final controller = meta.controller!;
   final type = meta['type'];
@@ -355,13 +355,11 @@ Map<String, Object?> _observeDataset(Chart chart, int index) {
     ],
     'active': [
       for (var k = 0; k < data.length; k++)
-        plainValue(
-          controller.resolveDataElementOptions(k.toDouble(), 'active'),
-        ),
+        plainValue(controller.resolveDataElementOptions(k, 'active')),
     ],
     'labelAndValue': [
       for (var k = 0; k < data.length; k++)
-        switch (controller.getLabelAndValue(k.toDouble())) {
+        switch (controller.getLabelAndValue(k)) {
           (:final label, :final value) => <String, Object?>{
             'label': plainValue(label),
             'value': value,
@@ -790,11 +788,11 @@ Future<void> runStep(
       chart.update(mode);
     case ['setDatasetVisibility', final num d, final bool v]:
       chart
-        ..setDatasetVisibility(d, v)
+        ..setDatasetVisibility(d.toInt(), v)
         ..update();
     case ['toggleDataVisibility', final num i]:
       chart
-        ..toggleDataVisibility(i.toDouble())
+        ..toggleDataVisibility(i.toInt())
         ..update();
     case ['setActive', final List<Object?> items]:
       chart

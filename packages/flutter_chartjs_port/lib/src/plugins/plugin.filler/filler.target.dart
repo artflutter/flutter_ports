@@ -51,7 +51,11 @@ Object? getTarget(FillerSource source) {
   final line = source.line;
 
   if (isFinite(fill)) {
-    return _getLineByIndex(chart, (fill as num).toDouble());
+    // A fill index that is not a whole number names no dataset.
+    final index = fill as num;
+    return index == index.truncateToDouble()
+        ? _getLineByIndex(chart, index.toInt())
+        : null;
   }
 
   if (fill == FillBoundary.stack) {
@@ -78,7 +82,7 @@ Object? getTarget(FillerSource source) {
 ///
 /// `getDatasetMeta` always gives a meta. Dart `null` is the JS `null` of a
 /// hidden dataset, and of a meta without a `dataset` element.
-types.Element? _getLineByIndex(types.Chart chart, double index) {
+types.Element? _getLineByIndex(types.Chart chart, int index) {
   final meta = chart.getDatasetMeta(index);
   final visible = chart.isDatasetVisible(index);
   return visible ? meta.dataset : null;
@@ -144,7 +148,7 @@ Object _computeCircularBoundary(
   }
 
   for (var i = 0; i < length; ++i) {
-    final p = scale.getPointPositionForValue(i * 1.0, value);
+    final p = scale.getPointPositionForValue(i, value);
     // DIVERGES(chartjs): adapt-line-points-elements, {x, y, angle} is a point.
     target.add(
       PointElement()

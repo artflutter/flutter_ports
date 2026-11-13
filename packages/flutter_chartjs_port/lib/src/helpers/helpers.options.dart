@@ -273,12 +273,8 @@ ChartTextStyle toFont(Object? options, [Object? fallback]) {
 /// the element at an integer index from 0 to `length - 1`, else
 /// [undefined]. A fractional, negative or NaN index names a property that
 /// the array does not have.
-Object? _arrayElement(List<Object?> array, double index) {
-  if (index >= 0 && index < array.length && index == index.floorToDouble()) {
-    return array[index.toInt()];
-  }
-  return undefined;
-}
+Object? _arrayElement(List<Object?> array, int index) =>
+    index >= 0 && index < array.length ? array[index] : undefined;
 
 /// helpers.options.ts:154 `resolve`.
 ///
@@ -304,7 +300,7 @@ Object? _arrayElement(List<Object?> array, double index) {
 Object? resolve(
   List<Object?> inputs, [
   Object? context = undefined,
-  double? index,
+  int? index,
   AnyObject? info,
 ]) {
   var cacheable = true;
@@ -321,7 +317,10 @@ Object? resolve(
     }
     if (index != null && isArray(value)) {
       final array = value! as List<Object?>;
-      value = _arrayElement(array, index.remainder(array.length));
+      // `index % 0` is NaN, an index with no element.
+      value = array.isEmpty
+          ? undefined
+          : _arrayElement(array, index.remainder(array.length));
       cacheable = false;
     }
     if (!identical(value, undefined)) {
@@ -616,7 +615,7 @@ final class ScriptableContext extends ContextObject {
   /// core.datasetController.js:182 `createDatasetContext(parent, index)`:
   /// the keys `active` (false), `dataset` (undefined), `datasetIndex`,
   /// `index`, `mode` ('default') and `type` ('dataset'), in this order.
-  new dataset(super.prototype, double index) {
+  new dataset(super.prototype, int index) {
     this
       ..active = false
       ..dataset = undefined
@@ -630,7 +629,7 @@ final class ScriptableContext extends ContextObject {
   /// element)`: the keys `active` (false), `dataIndex`, `parsed`
   /// (undefined), `raw` (undefined), `element`, `index`, `mode`
   /// ('default') and `type` ('data'), in this order.
-  new data(super.prototype, double index, Object? element) {
+  new data(super.prototype, int index, Object? element) {
     this
       ..active = false
       ..dataIndex = index
@@ -745,7 +744,7 @@ final class ScriptableContext extends ContextObject {
   void refresh(
     Object? parsed,
     Object? raw,
-    double index,
+    int index,
     Object? active,
     Object? mode,
   ) {
@@ -773,7 +772,7 @@ final class ScriptableContext extends ContextObject {
   @internal
   void refreshAfterParsed(
     Object? raw,
-    double index,
+    int index,
     Object? active,
     Object? mode,
   ) {
@@ -795,16 +794,9 @@ final class ScriptableContext extends ContextObject {
   /// `context.index = context.dataIndex = index` of two present keys. An index
   /// that does not change keeps its box: a live chart writes the same number
   /// into each context several times in each update. -0 is another number.
-  void _writeIndexes(double index) {
-    final current = _index;
-    final Object box =
-        current is double &&
-            current == index &&
-            current.isNegative == index.isNegative
-        ? current
-        : index;
-    _dataIndex = box;
-    _index = box;
+  void _writeIndexes(int index) {
+    _dataIndex = index;
+    _index = index;
   }
 
   void _setElement(Object? value) {
@@ -871,7 +863,7 @@ final class ScriptableScaleContext extends ContextObject {
 
   /// The fresh tick context, with the upstream literal's own-key order.
   // DIVERGES(chartjs): adapt-tick-context-construction, direct typed fields.
-  new tick(Object? parent, Object tick, double index)
+  new tick(Object? parent, Object tick, int index)
     : _tick = tick,
       _index = index,
       _type = 'tick',
@@ -926,7 +918,7 @@ final class ScriptableScalePointLabelContext extends ContextObject {
 
   /// The fresh point label context, with the upstream literal's own-key order.
   // DIVERGES(chartjs): adapt-point-label-context-construction, typed fields.
-  new pointLabel(Object? parent, Object? label, double index)
+  new pointLabel(Object? parent, Object? label, int index)
     : _label = label,
       _index = index,
       _type = 'pointLabel',

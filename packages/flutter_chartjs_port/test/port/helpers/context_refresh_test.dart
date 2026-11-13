@@ -71,36 +71,18 @@ void main() {
     },
   );
 
-  test('the index fields take each number, also over -0 and a string', () {
-    // A runtime value: on JavaScript, the constant `-0.0` evaluates to +0.
-    final negativeZero = double.parse('-0');
+  test('the index fields take each index, also over a string', () {
     final context = ScriptableContext.data(null, 0, 'point')
-      ..index = negativeZero
-      ..refresh(1, 2, 0, false, 'none');
-    expect((context.index! as double).isNegative, isFalse);
-    expect((context.dataIndex! as double).isNegative, isFalse);
-
-    context.refresh(1, 2, negativeZero, false, 'none');
-    expect((context.index! as double).isNegative, isTrue);
-    expect((context.dataIndex! as double).isNegative, isTrue);
-
-    context
       ..jsWrite('index', 'three')
       ..jsWrite('dataIndex', 'four')
       ..refresh(1, 2, 3, false, 'none');
     expect(context.index, 3);
     expect(context.dataIndex, 3);
 
+    // A dataIndex that a user changed takes the index of the refresh.
     context
-      ..jsWrite('index', double.nan)
-      ..refresh(1, 2, double.nan, false, 'none');
-    expect((context.index! as double).isNaN, isTrue);
-
-    // A dataIndex that a user changed takes the number of the refresh also
-    // while the index field keeps its box.
-    context
-      ..index = 5.0
-      ..dataIndex = 9.0
+      ..index = 5
+      ..dataIndex = 9
       ..refresh(1, 2, 5, false, 'none');
     expect(context.dataIndex, 5);
     expect(context.index, 5);

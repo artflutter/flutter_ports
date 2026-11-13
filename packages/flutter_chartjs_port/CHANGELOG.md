@@ -15,6 +15,14 @@
   `strokeColor` are a `ChartPaint`, not an `Object?`:
   `RenderTextOpts(color: ChartPaint.solid(Color(0xFF666666)))`.
 
+- Make each index an `int`: a dataset index, a data index, and the start and
+  the count of a range of data elements. `getDatasetMeta`, `hide`, `show` and
+  `toggleDataVisibility` of `Chart`, `getParsed`, `getLabelAndValue`,
+  `getContext` and `updateElements` of a controller, the index parameter of
+  `getPixelForValue` and `parse` of a scale, and the context keys `index`,
+  `dataIndex` and `datasetIndex` take or hold an `int`. A subclass of a
+  controller or a scale changes its overrides from `double` to `int`.
+
 - Migrate active elements to the public extensible `ActiveElement` class with
   `int` `datasetIndex` and `index` and a nullable `element`. The interaction
   modes make it, `getActiveElements` gives it, and `setActiveElements` of the

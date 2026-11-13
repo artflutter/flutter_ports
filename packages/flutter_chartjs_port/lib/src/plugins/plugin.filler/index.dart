@@ -58,7 +58,7 @@ final class FillerSource({
   required final bool visible,
 
   /// index.js:28 `index: i`, the dataset index.
-  required final double index,
+  required final int index,
 
   /// index.js:29 `fill: _decodeFill(line, i, count)`: `false`, a `double`
   /// dataset index, a `String` mode or the option object `{value}`
@@ -98,7 +98,7 @@ void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
   final sources = <FillerSource?>[];
 
   for (var i = 0; i < count; ++i) {
-    final index = i.toDouble();
+    final index = i;
     final meta = chart.getDatasetMeta(index);
     final line = meta.dataset;
     FillerSource? source;

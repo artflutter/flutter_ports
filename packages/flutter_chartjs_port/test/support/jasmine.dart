@@ -583,8 +583,8 @@ final class _LineSpy(
   void draw(
     CanvasRenderingContext2D ctx, [
     ChartArea? area,
-    double? start,
-    double? count,
+    int? start,
+    int? count,
   ]) {
     draws.add([ctx, area, start, count], object: this);
     if (callThrough) super.draw(ctx, area, start, count);
@@ -689,7 +689,7 @@ final class _ArrayListenerSpy(
   }
 
   @override
-  void onDataSplice(double index, double deleteCount, List<Object?> items) {
+  void onDataSplice(int index, int deleteCount, List<Object?> items) {
     calls['_onDataSplice']!.add([index, deleteCount, ...items], object: _of);
     if (callThrough) _of.onDataSplice(index, deleteCount, items);
   }

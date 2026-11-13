@@ -39,7 +39,7 @@ ArcOptions Function(int)? prepareNativeArcColors(
   final config = controller.chart.config;
   return config is Config && config.runtimeType == Config
       ? config.prepareIndexedArcColors(
-          controller.index.toInt(),
+          controller.index,
           controllerType: controller.type,
         )
       : null;

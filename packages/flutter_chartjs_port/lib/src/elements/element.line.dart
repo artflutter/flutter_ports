@@ -709,8 +709,8 @@ _getInterpolationMethod(Object? options) {
 void _strokePathWithCache(
   CanvasRenderingContext2D ctx,
   LineElement line,
-  double? start,
-  double? count,
+  int? start,
+  int? count,
 ) {
   var path = line._path;
   // The cached path holds the merge of one bitmap scale (Chart.js ADR 0114).
@@ -749,8 +749,8 @@ void _strokePathWithCache(
 void _strokePathDirect(
   CanvasRenderingContext2D ctx,
   LineElement line,
-  double? start,
-  double? count,
+  int? start,
+  int? count,
 ) {
   final segments = line.segments;
   final options = line.options;
@@ -761,9 +761,14 @@ void _strokePathDirect(
     _setStyle(ctx, options, segment.style);
     line._denseUsed = false;
     ctx.beginPath();
-    final params = (
-      start: start,
-      end: (start ?? double.nan) + (count ?? double.nan) - 1,
+    // `{start, end: start + count - 1}`: an absent number is `undefined`,
+    // and the sum with it is NaN.
+    final _PathParams params = (
+      start: start?.toDouble(),
+      end:
+          (start?.toDouble() ?? double.nan) +
+          (count?.toDouble() ?? double.nan) -
+          1,
       move: null,
       reverse: false,
     );
@@ -790,8 +795,8 @@ const bool _usePath2D = true;
 void _draw(
   CanvasRenderingContext2D ctx,
   LineElement line,
-  double? start,
-  double? count,
+  int? start,
+  int? count,
 ) {
   if (_usePath2D && !jsTruthy(_segment(line.options))) {
     _strokePathWithCache(ctx, line, start, count);
@@ -961,8 +966,8 @@ class LineElement([AnyObject? cfg])
   /// [updateControlPoints] has set the control points of [points].
   bool _pointsUpdated = false;
 
-  /// The value of [datasetIndex]: NaN in the `undefined` state.
-  double _datasetIndex = double.nan;
+  /// The value of [datasetIndex]: -1 in the `undefined` state.
+  int _datasetIndex = -1;
 
   /// Whether [datasetIndex] is in the `undefined` state, the start state
   /// (Chart.js ADR 0054 §9).
@@ -1008,11 +1013,11 @@ class LineElement([AnyObject? cfg])
   /// (helpers.segment.js:282, :321).
   @internal
   @override
-  double? get datasetIndex => _datasetIndexUndefined ? null : _datasetIndex;
+  int? get datasetIndex => _datasetIndexUndefined ? null : _datasetIndex;
 
   @internal
   @override
-  set datasetIndex(double value) {
+  set datasetIndex(int value) {
     _datasetIndex = value;
     _datasetIndexUndefined = false;
   }
@@ -1259,7 +1264,7 @@ class LineElement([AnyObject? cfg])
   /// result` gives 1 only when `_loop` and each segment result are `true`.
   /// The Dart `&` of two `bool` values gives the same result. It also
   /// evaluates both operands.
-  bool path(CanvasPath ctx, [double? start, double? count]) {
+  bool path(CanvasPath ctx, [int? start, int? count]) {
     final segments = this.segments;
     // `_strokePathWithCache` gives the scale of its context for its `Path2D`
     // (Chart.js ADR 0114).
@@ -1268,18 +1273,18 @@ class LineElement([AnyObject? cfg])
     final segmentMethod = _getSegmentMethod(this);
     var loop = _loop ?? false;
 
-    // Upstream reassigns its parameters.
-    // ignore: parameter_assignments
-    start = jsTruthy(start) ? start! : 0;
-    // Upstream reassigns its parameters.
-    // ignore: parameter_assignments
-    count = jsTruthy(count) ? count! : points.length - start;
+    // `start = start || 0` and `count = count || (points.length - start)`.
+    // The segment code computes with numbers (helpers.segment.dart).
+    final first = start != null && start != 0 ? start.toDouble() : 0.0;
+    final length = count != null && count != 0
+        ? count.toDouble()
+        : points.length - first;
 
     for (final segment in segments) {
       loop &=
           segmentMethod(ctx, this, segment, (
-            start: start,
-            end: start + count - 1,
+            start: first,
+            end: first + length - 1,
             move: null,
             reverse: false,
           )) ??
@@ -1305,8 +1310,8 @@ class LineElement([AnyObject? cfg])
   void draw(
     CanvasRenderingContext2D ctx, [
     ChartArea? area,
-    double? start,
-    double? count,
+    int? start,
+    int? count,
   ]) {
     final options = this.options ?? const <String, Object?>{};
     final points = _points ?? const <types.PointElement>[];
@@ -1506,7 +1511,9 @@ class LineElement([AnyObject? cfg])
         _pointsUpdated = toDefinedBoolProp(prop, value);
       case '_datasetIndex':
         final number = toNumberProp(prop, value);
-        _datasetIndex = number ?? double.nan;
+        _datasetIndex = number == null || !number.isFinite
+            ? -1
+            : number.toInt();
         _datasetIndexUndefined = number == null;
       default:
         super[prop] = value;

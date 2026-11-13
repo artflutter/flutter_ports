@@ -473,7 +473,7 @@ final class _IndexedElementPlan(
   /// A resolve of such an index runs no user code and throws nothing.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
   bool covers(int count, ScriptableContext at, ElementOptions kind) {
-    if (prepared(at..index = 0.0, kind) == null) return false;
+    if (prepared(at..index = 0, kind) == null) return false;
     for (final i in _varying) {
       final key = keys[i];
       final list = values[i]! as List<Object?>;
@@ -582,7 +582,7 @@ final class IndexedElementStyles._(
 
   /// The fresh options of a resolve with a context of the index [index], after
   /// [covers] of a higher count, with no user code between.
-  ElementOptions at(double index) =>
+  ElementOptions at(int index) =>
       _plan.prepared(_context..index = index, _kind)!;
 }
 
@@ -2878,7 +2878,7 @@ List<String> _resolveKeysFromAllScopes(List<Object?> scopes) {
 /// `controller.polarArea.js:110` binds. Thus it is a [JsFunction]
 /// (`lib/src/js/js_function.dart`). Its closure takes `this` (a
 /// [DatasetController]), `meta` (a [ChartMeta]), `data` (a `List<Object?>`),
-/// `start` and `count` (`double`s). Call it with [jsCall] and the controller
+/// `start` and `count` (`int`s). Call it with [jsCall] and the controller
 /// as `thisArg`. It returns a `List<ParsedItem>`: each item is the object
 /// `{r}` of upstream, a typed parsed item (Chart.js ADR 0054 §8) with the
 /// one key `r`.
@@ -2892,8 +2892,8 @@ List<ParsedItem> _parseObjectDataRadialScale(
   DatasetController self,
   ChartMeta meta,
   List<Object?> data,
-  double start,
-  double count,
+  int start,
+  int count,
 ) =>
     parseObjectDataRadialScaleOf(meta.iScale, self.parsing, data, start, count);
 
@@ -2909,14 +2909,14 @@ List<ParsedItem> parseObjectDataRadialScaleOf(
   Scale? iScale,
   Object? parsing,
   List<Object?> data,
-  double start,
-  double count,
+  int start,
+  int count,
 ) {
   final parsingKey = jsGet(parsing, 'key');
   final key = identical(parsingKey, undefined) ? 'r' : parsingKey;
   final parsed = <ParsedItem>[];
 
-  for (var i = 0.0, ilen = count; i < ilen; ++i) {
+  for (var i = 0, ilen = count; i < ilen; ++i) {
     final index = i + start;
     final item = jsGetIndex(data, index);
     parsed.add(

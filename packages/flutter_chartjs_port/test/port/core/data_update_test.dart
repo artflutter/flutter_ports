@@ -265,7 +265,7 @@ Object observe(Chart chart) {
           plain((e as types.ElementPropertyRead)[key]),
       ],
     for (var i = 0; i < meta.data.length; i++)
-      meta.controller!.getLabelAndValue(i.toDouble()),
+      meta.controller!.getLabelAndValue(i),
   ];
 }
 

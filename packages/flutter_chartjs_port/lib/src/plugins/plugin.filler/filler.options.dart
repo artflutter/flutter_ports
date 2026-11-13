@@ -81,7 +81,7 @@ Object resolveTarget(List<FillerSource?> sources, int index, bool propagate) {
 /// The port has no text: a [RelativeFill] is the relative index, as `'+n'`
 /// or `'-n'` upstream, and a number is the absolute index. The `fill[0]` of
 /// a number or an array is no sign.
-Object decodeFill(types.LineElement line, double index, double count) {
+Object decodeFill(types.LineElement line, int index, double count) {
   // @type {string | {value: number}}
   final fill = _parseFillOption(line);
 
@@ -112,7 +112,7 @@ Object decodeFill(types.LineElement line, double index, double count) {
 /// of a number).
 Object _decodeTargetIndex(
   Object? firstCh,
-  double index,
+  int index,
   double target,
   double count,
 ) {

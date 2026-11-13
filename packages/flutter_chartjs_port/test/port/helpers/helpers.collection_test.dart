@@ -64,7 +64,7 @@ final class _Listener(final String name, final List<List<Object?>> log)
   void onDataShift() => log.add(['$name shift']);
 
   @override
-  void onDataSplice(double index, double deleteCount, List<double> items) =>
+  void onDataSplice(int index, int deleteCount, List<double> items) =>
       log.add(['$name splice', index, deleteCount, ...items]);
 
   @override
@@ -84,7 +84,7 @@ final class _AnyListener() with ArrayListener<Object?> {
   void onDataPush(List<Object?> items) => log.add(['push', ...items]);
 
   @override
-  void onDataSplice(double index, double deleteCount, List<Object?> items) =>
+  void onDataSplice(int index, int deleteCount, List<Object?> items) =>
       log.add(['splice', index, deleteCount, ...items]);
 }
 
@@ -421,10 +421,12 @@ void main() {
         ['push', 3.0],
         ['splice', 1.0, 0.0, 7.0],
       ]);
-      expect(
-        any.log.expand((call) => call.skip(1)),
-        everyElement(isA<double>()),
-      );
+      // The items are JavaScript numbers. The index and the count of a
+      // splice are `int` values (row `adapt-int-indexes`).
+      expect(any.log[0][1], isA<double>());
+      expect(any.log[1][1], isA<int>());
+      expect(any.log[1][2], isA<int>());
+      expect(any.log[1][3], isA<double>());
     });
 
     test('a splice needs index and deleteCount', () {

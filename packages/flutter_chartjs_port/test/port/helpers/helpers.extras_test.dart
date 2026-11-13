@@ -45,7 +45,7 @@ final class _Scale({
   getUserBounds() => bounds;
 
   @override
-  double getPixelForValue(Object? value, [double? index]) =>
+  double getPixelForValue(Object? value, [int? index]) =>
       pixel(jsToNumber(value));
 
   @override

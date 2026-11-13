@@ -285,7 +285,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// section 2). The `+` of the value joins the [jsToString] of each part.
   /// `chart.data.labels` is a property of the data object of the user.
   @override
-  ({Object? label, String value}) getLabelAndValue(double index) {
+  ({Object? label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final dataLabels = jsGet(chart.data, 'labels');
     final labels = jsTruthy(dataLabels) ? dataLabels : <Object?>[];
@@ -342,7 +342,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
 
     if (scaleRangesChanged(meta)) {
       start = 0;
-      count = points.length.toDouble();
+      count = points.length;
     }
 
     if (jsTruthy(options.readKey(OptionKey.showLine))) {
@@ -448,8 +448,8 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     // DIVERGES(chartjs): adapt-scatter-overflow-refresh, taken before any read.
@@ -519,7 +519,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         : null;
 
     for (var i = start; i < start + count; ++i) {
-      final point = points[i.toInt()];
+      final point = points[i];
       final parsed = getParsed(i);
       // The catch-up of the contexts is not part of the proof.
       var caughtUp = false;
@@ -529,7 +529,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
               !coordinates.accepts(parsed))) {
         colors = null;
         if (waitingFrom >= 0) {
-          _catchUpContexts(contexts!, waitingFrom, i.toInt(), mode);
+          _catchUpContexts(contexts!, waitingFrom, i, mode);
           waitingFrom = -1;
           caughtUp = true;
         }
@@ -583,11 +583,10 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         // shared options.
         final prepared = colors;
         if (prepared != null) {
-          if (waitingFrom < 0 &&
-              contexts?.readQualified(point, i.toInt()) == null) {
+          if (waitingFrom < 0 && contexts?.readQualified(point, i) == null) {
             getContext(i, false, mode);
           }
-          writes.options(prepared(i.toInt()));
+          writes.options(prepared(i));
         } else {
           userCode = sharedOptions == null;
           writes.options(
@@ -617,7 +616,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           contexts = prepareNativePointContexts(this, mode);
           if (overflowFollows && contexts != null) {
             overflowPass = _prepareOverflowPass(points, start, count, colors);
-            if (overflowPass != null) waitingFrom = i.toInt() + 1;
+            if (overflowPass != null) waitingFrom = i + 1;
           }
         }
       }
@@ -640,7 +639,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     String mode,
   ) {
     for (var i = from; i < to; i++) {
-      if (contexts.read(i) == null) getContext(i * 1.0, false, mode);
+      if (contexts.read(i) == null) getContext(i, false, mode);
     }
   }
 
@@ -657,8 +656,8 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the window of the proof.
   _OverflowPass? _prepareOverflowPass(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     PointOptions Function(int) colors,
   ) {
     if (start != 0 ||
@@ -714,7 +713,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       final contexts = pass.contexts;
       for (var i = data.length - 1; i >= 0; --i) {
         if (contexts.readQualified(data[i], i) == null) {
-          getContext(i * 1.0, false, 'default');
+          getContext(i, false, 'default');
         }
       }
       return pass.overflow;
@@ -736,7 +735,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           indexed = false;
         }
         if (nativeSize == null) {
-          max = jsMax(max, point.size(resolveDataElementOptions(i * 1.0)) / 2);
+          max = jsMax(max, point.size(resolveDataElementOptions(i)) / 2);
           // The first ordinary resolution makes the entry of constant options.
           if (i == last) nativeSize = _cachedPointSize();
           // No coordinate conversion occurs here: parsed/raw values are only
@@ -759,7 +758,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         } else {
           // Indexed options refresh the context of each point, as upstream.
           if (indexed && contexts?.readQualified(point, i) == null) {
-            getContext(i * 1.0, false, 'default');
+            getContext(i, false, 'default');
           }
           max = jsMax(max, nativeSize / 2);
         }
@@ -785,7 +784,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       resolveDataElementOptions(0),
     );
     final lastPoint = (data[data.length - 1] as types.PointElement).size(
-      resolveDataElementOptions((data.length - 1).toDouble()),
+      resolveDataElementOptions(data.length - 1),
     );
     return jsMax(jsMax(jsToNumber(border), firstPoint), lastPoint) / 2;
   }

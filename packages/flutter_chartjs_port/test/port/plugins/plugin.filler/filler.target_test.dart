@@ -82,7 +82,7 @@ final class _DisabledClip() implements types.ChartMetaClip {
 
 /// The fake meta `{index, type, hidden, dataset, iScale, _clip}`.
 final class _FakeMeta({
-  @override required final double index,
+  @override required final int index,
   @override required final String type,
   @override required final bool? hidden,
   @override required var types.Element? dataset,
@@ -124,7 +124,7 @@ final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
   @override
   bool isHorizontal() => _horizontal;
   @override
-  double getPixelForValue(Object? value, [double? index]) =>
+  double getPixelForValue(Object? value, [int? index]) =>
       _horizontal ? 50 + 40 * jsToNumber(value) : 400 - 40 * jsToNumber(value);
   @override
   double getBasePixel() => getPixelForValue(_baseValue);
@@ -174,7 +174,7 @@ final class _FakeRadialScale(Map<String, Object?> d, final _FakeChart _chart)
 
   @override
   ({double x, double y, double angle}) getPointPositionForValue(
-    double index,
+    num index,
     Object? value,
   ) {
     final r = _dist(value);
@@ -231,7 +231,7 @@ types.Element _makeLine(Map<String, Object?> d) {
   chart.metas = [
     for (var i = 0; i < lines.length; i++)
       _FakeMeta(
-        index: i.toDouble(),
+        index: i,
         type: lines[i]['type']! as String,
         hidden: lines[i]['hidden'] as bool?,
         dataset: _makeLine(lines[i]),
@@ -239,7 +239,7 @@ types.Element _makeLine(Map<String, Object?> d) {
       ),
   ];
   final source = input['source']! as Map<String, Object?>;
-  final index = _n(source['index']);
+  final index = _n(source['index']).toInt();
   return (
     chart: chart,
     source: FillerSource(
@@ -249,7 +249,7 @@ types.Element _makeLine(Map<String, Object?> d) {
       chart: chart,
       axis: source['axis'],
       scale: scale,
-      line: chart.metas[index.toInt()].dataset! as types.LineElement,
+      line: chart.metas[index].dataset! as types.LineElement,
     ),
   );
 }
@@ -361,7 +361,7 @@ Object? _run(FillerTargetReferenceCase c) {
         ),
       });
       return _attempt(
-        () => decodeFill(line, _n(input['index']), _n(input['count'])),
+        () => decodeFill(line, _n(input['index']).toInt(), _n(input['count'])),
       );
     case 'resolveTarget':
       final chart = _FakeChart(const [], null);
@@ -370,7 +370,7 @@ Object? _run(FillerTargetReferenceCase c) {
           if (s case final Map<String, Object?> source)
             FillerSource(
               visible: source['visible']! as bool,
-              index: i.toDouble(),
+              index: i,
               fill: source['fill']!,
               chart: chart,
               axis: null,

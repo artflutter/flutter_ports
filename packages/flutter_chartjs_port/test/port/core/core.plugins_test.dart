@@ -544,7 +544,7 @@ null calls: 0''');
         'install PluginHookArgs',
         'beforeUpdate resize true',
         'beforeUpdate none false',
-        'afterDatasetUpdate 2.0 false',
+        'afterDatasetUpdate 2 false',
       ]);
       // The narrow case of the row adapt-typed-plugins: a hook function
       // that is typed for its argument class throws a TypeError for an args

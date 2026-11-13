@@ -99,10 +99,10 @@ final class _DisguisedRadial(super.cfg) extends _CountedRadial {
 
 /// A chart that counts `getDataVisibility` and records its arguments.
 final class _VisibilityChart(super.item, super.userConfig) extends Chart {
-  final List<num> visibilityReads = [];
+  final List<int> visibilityReads = [];
 
   @override
-  bool getDataVisibility(num index) {
+  bool getDataVisibility(int index) {
     visibilityReads.add(index);
     return super.getDataVisibility(index);
   }
@@ -478,7 +478,7 @@ final List<_Case> _cases = [
       'font': (Object? ctx) => _record(
         'font',
         ctx,
-        ChartTextStyle(fontSize: 10.0 + (jsGet(ctx, 'index')! as double) % 3),
+        ChartTextStyle(fontSize: 10.0 + (jsGet(ctx, 'index')! as num) % 3),
       ),
     },
   ),
@@ -540,7 +540,7 @@ final List<_Case> _cases = [
     expected: const _Expect(fit: false),
     pointLabels: () => {
       'padding': (Object? ctx) =>
-          _record('padding', ctx, (jsGet(ctx, 'index')! as double) % 4),
+          _record('padding', ctx, (jsGet(ctx, 'index')! as num) % 4),
     },
   ),
   _Case(
@@ -1159,7 +1159,7 @@ void main() {
       expect(exact.single, isNot(contains('Label 1')));
     });
 
-    testWidgets('a user chart gets each visibility read, with a double', (
+    testWidgets('a user chart gets each visibility read, with an int', (
       tester,
     ) async {
       final canvas = UiCanvasElement(width: 300, height: 300);
@@ -1167,8 +1167,7 @@ void main() {
       addTearDown(chart.destroy);
       chart.visibilityReads.clear();
       _scaleOf(chart).generateTickLabels(_scaleOf(chart).ticks!);
-      expect(chart.visibilityReads, <double>[0, 1, 2]);
-      expect(chart.visibilityReads.every((v) => v is double), isTrue);
+      expect(chart.visibilityReads, <int>[0, 1, 2]);
     });
 
     testWidgets('the built-in callback copies a native label list', (
@@ -1226,15 +1225,11 @@ void main() {
       for (final index in const [0, 1, 2, 7, 39, 40, 41, 1000]) {
         expect(
           bits(positions.indexAngleAt(index)),
-          bits(scale.getIndexAngle(index.toDouble())),
+          bits(scale.getIndexAngle(index)),
         );
         for (final distance in distances) {
           for (final addition in additions) {
-            final ordinary = scale.getPointPosition(
-              index.toDouble(),
-              distance,
-              addition,
-            );
+            final ordinary = scale.getPointPosition(index, distance, addition);
             final plan = positions.positionAt(index, distance, addition);
             expect(bits(plan.x), bits(ordinary.x));
             expect(bits(plan.y), bits(ordinary.y));

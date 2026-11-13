@@ -110,7 +110,7 @@ Object? _animationsOf(Object? anims) {
 
 /// The dataset element and the data elements of the dataset [i].
 List<Element> _elementsOf(Chart chart, int i) {
-  final meta = chart.getDatasetMeta(i.toDouble());
+  final meta = chart.getDatasetMeta(i);
   return [
     if (meta.dataset case final dataset?) dataset as Element,
     for (final element in meta.data) element as Element,
@@ -124,7 +124,7 @@ int _datasetCount(Chart chart) =>
 /// `datasetsOf` of the generator.
 List<Object?> _datasetsOf(Chart chart) => [
   for (var i = 0; i < _datasetCount(chart); i++)
-    switch (chart.getDatasetMeta(i.toDouble())) {
+    switch (chart.getDatasetMeta(i)) {
       final meta => <String, Object?>{
         'dataset': switch (meta.dataset) {
           final Element dataset => _optionsOf(dataset.options),
@@ -173,9 +173,9 @@ Object? _applyStep(Chart chart, List<Object?> step) {
         ])
         ..update();
     case ['hide', final num d]:
-      chart.hide(d.toDouble());
+      chart.hide(d.toInt());
     case ['show', final num d]:
-      chart.show(d.toDouble());
+      chart.show(d.toInt());
     case ['resolveNamed', final List<Object?> names]:
       // config.resolveNamedOptions with the scopes and the context of the
       // data element 0 of dataset 0 (core.datasetController.js:802-834).
@@ -232,7 +232,7 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       ];
     case ['hitNear', final num d, final num i, final num dx, final num dy]:
       final element =
-          chart.getDatasetMeta(d.toDouble()).data[i.toInt()]
+          chart.getDatasetMeta(d.toInt()).data[i.toInt()]
               as ElementPropertyRead;
       final event = ReferenceEvent(
         jsToNumber(element['x']) + dx,

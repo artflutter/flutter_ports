@@ -70,10 +70,10 @@ void main() {
     expect(nativePointClass(cls), isFalse);
     expect(nativePointClass({'id': 'point'}), isFalse);
     expect(nativePointClass(null), isFalse);
-    for (final index in [0.0, -0.0, 2.0]) {
+    for (final index in [0, 2]) {
       expect(nativePointDatasetIndex(index), isTrue);
     }
-    for (final index in [-1.0, .5, double.nan, double.infinity]) {
+    for (final index in [-1, -5]) {
       expect(nativePointDatasetIndex(index), isFalse);
     }
   });

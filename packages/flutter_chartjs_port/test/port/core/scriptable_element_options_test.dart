@@ -52,7 +52,7 @@ class _Fixture({bool ordinary = false}) {
   void Function(helpers.OptionView)? action;
   void Function()? beforeContext;
   Object? color = red;
-  PointOptions resolve([double index = 0]) =>
+  PointOptions resolve([int index = 0]) =>
       config.resolveNativeElementNamedOptions(
         scopes,
         keys,

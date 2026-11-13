@@ -72,14 +72,14 @@ final class _TypedController extends DatasetController {
         'options': options,
       }, mode);
     }
-    updateElements(points, 0, points.length.toDouble(), mode);
+    updateElements(points, 0, points.length, mode);
   }
 
   @override
   void updateElements(
     List<types.Element> points,
-    double start,
-    double count,
+    int start,
+    int count,
     String mode,
   ) {
     final meta = cachedMeta;
@@ -87,7 +87,7 @@ final class _TypedController extends DatasetController {
     final vScale = meta.vScale!;
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     for (var i = start; i < start + count; ++i) {
-      final point = points[i.toInt()] as Element;
+      final point = points[i] as Element;
       final parsed = getParsed(i);
       final properties = <String, Object?>{
         'x': iScale.getPixelForValue(jsGet(parsed, 'x'), i),
@@ -147,7 +147,7 @@ final class _TypedScale(super.cfg) extends Scale {
   List<Tick>? buildTicks() => [Tick(value: 0), Tick(value: 5), Tick(value: 10)];
 
   @override
-  double getPixelForValue(Object? value, [double? index]) {
+  double getPixelForValue(Object? value, [int? index]) {
     return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 }

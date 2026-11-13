@@ -125,7 +125,7 @@ class _ReadingScatter(super.chart, super.datasetIndex, [super.newTarget])
   );
 
   @override
-  ContextObject getContext([double? index, bool? active, String? mode]) {
+  ContextObject getContext([int? index, bool? active, String? mode]) {
     if (index != null) reads++;
     return super.getContext(index, active, mode);
   }
@@ -633,7 +633,7 @@ void main() {
                 meta.controller!.updateElements(
                   meta.data,
                   0,
-                  meta.data.length.toDouble(),
+                  meta.data.length,
                   'none',
                 );
                 seen.add([

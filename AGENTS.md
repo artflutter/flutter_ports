@@ -1394,7 +1394,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0054 §4. Chart.js ADR 0122 (`dart:math` without fdlibm) is accepted
       (2026-11-12): its code passes the tests. It supersedes parts of Chart.js ADRs 0045 and 0035.
       Chart.js ADR 0125 (native tooltip callbacks) is accepted (2026-11-13): its code passes the
-      tests. Chart.js ADR 0126 (a native plugin contract) is proposed (2026-11-13): it waits for
+      tests. Chart.js ADR 0129 (an index is an int) is accepted (2026-11-13): its code passes the
+      tests. It supersedes the index rule of Chart.js ADR 0045 section 7 and Chart.js ADR 0052
+      section 10. Chart.js ADR 0126 (a native plugin contract) is proposed (2026-11-13): it waits for
       the review of the maintainer, and no code implements it.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
@@ -1819,8 +1821,15 @@ An active element is the native extensible class `ActiveElement` of `lib/src/typ
 `adapt-native-active-element`, doc/native-active-element-design-draft.md): `datasetIndex` and `index` are `int`,
 and `element` is nullable. The interaction modes make it, `getActiveElements` gives it, and `setActiveElements`
 of the chart and of the tooltip take a `List<ActiveElement>` with no element. `InteractionItem`,
-`ActiveDataPoint` and the typed view `ChartHit` are removed. The other index parameters of the chart keep their
-`num` and `double` types.
+`ActiveDataPoint` and the typed view `ChartHit` are removed.
+
+An index is an `int` (Chart.js ADR 0129, row `adapt-int-indexes`): a dataset index, a data index, and the start
+and the count of a range of data elements, in the chart methods (`getDatasetMeta`, `hide`, `show`,
+`toggleDataVisibility`), `ChartMeta.index`, the dataset controller and the eight controllers (`getParsed`,
+`getLabelAndValue`, `getStyle`, `getContext`, `updateElements`, `parse`), the interaction modes, the context keys
+`index`, `dataIndex` and `datasetIndex`, the hook arguments and `each`. An absent index is Dart `null`. The four
+angle methods of the radial linear scale take a `num`. The decimation algorithms and the line segments keep
+their inner numbers. Ported code writes no `i.toDouble()` or `i * 1.0` for an index.
 
 A tick is the native extensible class `Tick` of `lib/src/types/tick.dart` (row `adapt-native-tick`,
 doc/native-tick-design-draft.md): `value` is a `double`, `label` is the `List<String>?` of its lines, `major` is a
@@ -2162,7 +2171,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 - A Jasmine `spyOn(chart, 'update')` is a plugin with a `beforeUpdate` hook (`_spyOnUpdate` of
   `test/specs/global.defaults_test.dart`, Chart.js ADR 0041 §11 item 2).
 - Jasmine `this` in a spec port is a set of `late` variables of the group closure.
-- A test scale overrides `getPixelForValue(Object? value, [double? index])` and applies
+- A test scale overrides `getPixelForValue(Object? value, [int? index])` and applies
   `jsToNumber(value)` before its arithmetic. A test controller passes the raw
   `jsGet(parsed, axis)` (Chart.js ADR 0025).
 - A scale reference test in `test/port/scales/` builds each chart of its generator with

@@ -276,24 +276,24 @@ final class StackEntry() extends TypedRecord {
     _ => -1,
   };
 
-  double? _top;
-  double? _bottom;
+  int? _top;
+  int? _bottom;
   IndexValues? _visualValues;
 
   /// `_top`: the index of the last dataset with a positive value, or Dart
   /// `null` for JS `null` and for an absent key.
-  double? get top => hasSlot(0) && !isForeignSlot(0) ? _top : null;
+  int? get top => hasSlot(0) && !isForeignSlot(0) ? _top : null;
 
-  set top(double? value) {
+  set top(int? value) {
     _top = value;
     touchSlot(0);
   }
 
   /// `_bottom`: the index of the last dataset with a negative value, as
   /// [top].
-  double? get bottom => hasSlot(1) && !isForeignSlot(1) ? _bottom : null;
+  int? get bottom => hasSlot(1) && !isForeignSlot(1) ? _bottom : null;
 
-  set bottom(double? value) {
+  set bottom(int? value) {
     _bottom = value;
     touchSlot(1);
   }
@@ -318,16 +318,19 @@ final class StackEntry() extends TypedRecord {
   bool writeSlot(int slot, Object? value) {
     switch (slot) {
       case 0 || 1:
-        final double? number;
+        // An index is an int. Another value of user code is a foreign value.
+        final int? number;
         final bool typed;
         if (value == null) {
           number = null;
           typed = true;
-        } else if (value is num) {
-          number = value.toDouble();
+        } else if (value is num &&
+            value.isFinite &&
+            value == value.truncateToDouble()) {
+          number = value.toInt();
           typed = true;
         } else {
-          number = jsToNumber(value);
+          number = null;
           typed = false;
         }
         if (slot == 0) {

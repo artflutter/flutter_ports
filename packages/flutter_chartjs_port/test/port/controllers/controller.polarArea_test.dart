@@ -338,8 +338,7 @@ void main() {
       );
       final controller = chart.getDatasetMeta(0).controller!;
       final labels = [
-        for (var i = 0; i < 6; i++)
-          controller.getLabelAndValue(i.toDouble()).label,
+        for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label,
       ];
       expect(labels[0], same(lines));
       expect(labels.skip(1), [5.0, '', 'd', '', '']);

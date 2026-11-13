@@ -1208,7 +1208,7 @@ Object? _constantBackground(Object? ctx) =>
     const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1));
 
 double _index(Object? ctx) => switch (_dataIndex(ctx)) {
-  final double i => i,
+  final num i => i.toDouble(),
   _ => -1,
 };
 
@@ -1394,7 +1394,7 @@ final List<_Case> _focusedCases = [
           'duration': 1000.0,
           'delay': (Object? ctx, Object? options) {
             final i = jsGet(ctx, 'dataIndex');
-            return i is double ? i * 10 : 0.0;
+            return i is num ? i * 10.0 : 0.0;
           },
         },
       },

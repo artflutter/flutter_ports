@@ -20,7 +20,7 @@ final class _Chart() implements types.Chart {
 }
 
 final class _Meta(
-  @override final double index,
+  @override final int index,
   @override final types.Element dataset,
 ) implements types.ChartMeta {
   @override
@@ -60,12 +60,12 @@ LineElement _line(
 
 FillerSource _source(List<LineElement> lines) => FillerSource(
   visible: true,
-  index: (lines.length - 1).toDouble(),
+  index: lines.length - 1,
   fill: FillBoundary.stack,
   chart: _Chart(),
   axis: const XAxis(),
   scale: _Scale([
-    for (final (index, line) in lines.indexed) _Meta(index.toDouble(), line),
+    for (final (index, line) in lines.indexed) _Meta(index, line),
   ]),
   line: lines.last,
 );

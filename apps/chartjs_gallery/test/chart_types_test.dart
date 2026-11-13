@@ -616,9 +616,7 @@ void main() {
         await tester.pumpAndSettle();
         final tooltip = chart.tooltip!;
         expect(tooltip.opacity, 1, reason: id);
-        final (:label, :value) = meta.controller!.getLabelAndValue(
-          index.toDouble(),
-        );
+        final (:label, :value) = meta.controller!.getLabelAndValue(index);
         final text = 'd0#$index $label: $value';
         expect(state.hoverLabel, text, reason: id);
         expect(

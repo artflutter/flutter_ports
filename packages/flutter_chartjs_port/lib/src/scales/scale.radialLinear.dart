@@ -289,7 +289,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
     final opts = pointLabelOpts.setContext(scale.getPointLabelContext(i)!);
     padding[i] = opts.padding;
     final pointPosition = scale.getPointPosition(
-      i * 1.0,
+      i,
       jsToNumber(jsAdd(scale.drawingArea, padding[i])),
       additionalAngle,
     );
@@ -302,7 +302,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
     labelSizes[i] = textSize;
 
     final angleRadians = normalizeAngle(
-      scale.getIndexAngle(i * 1.0) + additionalAngle,
+      scale.getIndexAngle(i) + additionalAngle,
     );
     final angle = jsRound(toDegrees(angleRadians));
     final hLimits = _determineLimits(
@@ -477,7 +477,7 @@ PointLabelItem _createPointLabelItem(
   // DIVERGES(chartjs): adapt-radial-static-plans, no option read per label.
   final pointLabelPosition = positions != null
       ? positions.positionAt(index, distance, additionalAngle)
-      : scale.getPointPosition(index * 1.0, distance, additionalAngle);
+      : scale.getPointPosition(index, distance, additionalAngle);
   final angle = jsRound(
     toDegrees(normalizeAngle(pointLabelPosition.angle + halfPi)),
   );
@@ -778,7 +778,7 @@ void _pathRadiusLine(
     ctx.moveTo(pointPosition.x, pointPosition.y);
 
     for (var i = 1; i < labelCount; i++) {
-      pointPosition = scale.getPointPosition(i * 1.0, radius);
+      pointPosition = scale.getPointPosition(i, radius);
       ctx.lineTo(pointPosition.x, pointPosition.y);
     }
   }
@@ -835,11 +835,7 @@ ScriptableScalePointLabelContext _createPointLabelContext(
   Object? label,
 ) {
   // DIVERGES(chartjs): adapt-point-label-context-construction, no Map.
-  return ScriptableScalePointLabelContext.pointLabel(
-    parent,
-    label,
-    index * 1.0,
-  );
+  return ScriptableScalePointLabelContext.pointLabel(parent, label, index);
 }
 
 /// scale.radialLinear.js:147-163 the object of `createPointLabelItem`: the
@@ -1169,7 +1165,7 @@ class RadialLinearScale(super.cfg)
     }
     pointLabels = [
       for (var i = 0; i < mapped.length; i++)
-        if (chart.getDataVisibility(i * 1.0)) mapped[i],
+        if (chart.getDataVisibility(i)) mapped[i],
     ];
   }
 
@@ -1220,7 +1216,7 @@ class RadialLinearScale(super.cfg)
   /// `this._pointLabels.length || 1` gives 1 for no labels.
   /// `this.options.startAngle || 0` is [jsOrZero].
   @override
-  double getIndexAngle(double index) {
+  double getIndexAngle(num index) {
     final angleMultiplier =
         tau / (pointLabels.isEmpty ? 1 : pointLabels.length);
     final startAngle = jsOrZero(options.startAngle);
@@ -1278,7 +1274,7 @@ class RadialLinearScale(super.cfg)
   /// additionalAngle = 0)`. The result is the object literal `{x, y, angle}`
   /// (:522-526), a record (Chart.js ADR 0003).
   ({double x, double y, double angle}) getPointPosition(
-    double index,
+    num index,
     double distanceFromCenter, [
     double additionalAngle = 0,
   ]) {
@@ -1295,7 +1291,7 @@ class RadialLinearScale(super.cfg)
   /// [value] is any JS value (Chart.js ADR 0025).
   @override
   ({double x, double y, double angle}) getPointPositionForValue(
-    double index,
+    num index,
     Object? value,
   ) {
     return getPointPosition(index, getDistanceFromCenterForValue(value));
@@ -1303,8 +1299,10 @@ class RadialLinearScale(super.cfg)
 
   /// scale.radialLinear.js:533 `getBasePosition(index)`. `index || 0` is
   /// [jsOrZero].
-  ({double x, double y, double angle}) getBasePosition([double? index]) {
-    return getPointPositionForValue(jsOrZero(index), getBaseValue());
+  ({double x, double y, double angle}) getBasePosition([num? index]) {
+    // `index || 0`: NaN is falsy too.
+    final at = index == null || index.isNaN ? 0 : index;
+    return getPointPositionForValue(at, getBaseValue());
   }
 
   /// scale.radialLinear.js:537 `getPointLabelPosition(index)`.
@@ -1410,7 +1408,7 @@ class RadialLinearScale(super.cfg)
           ..lineDashOffset = canvasNumber(optsAtIndex.borderDashOffset);
 
         final offset = getDistanceFromCenterForValue(opts.reverse ? min : max);
-        final position = getPointPosition(i * 1.0, offset);
+        final position = getPointPosition(i, offset);
         ctx
           ..beginPath()
           ..moveTo(xCenter ?? double.nan, yCenter ?? double.nan)

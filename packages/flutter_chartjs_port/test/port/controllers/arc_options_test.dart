@@ -289,7 +289,7 @@ Object? _plain(Object? value) {
 Object _observe(Chart chart) {
   final count = _datasets(_rawConfig[chart]!).length;
   return [
-    for (var d = 0.0; d < count; d++)
+    for (var d = 0; d < count; d++)
       [
         for (final element in chart.getDatasetMeta(d).data)
           if (element is ArcElement)
@@ -637,9 +637,9 @@ void main() {
     ]),
     prepare: (chart, _) {
       chart
-        ..toggleDataVisibility(0.0)
-        ..toggleDataVisibility(1.0)
-        ..toggleDataVisibility(5.0);
+        ..toggleDataVisibility(0)
+        ..toggleDataVisibility(1)
+        ..toggleDataVisibility(5);
     },
   );
 
@@ -650,8 +650,8 @@ void main() {
     ]),
     prepare: (chart, _) {
       chart
-        ..toggleDataVisibility(1.0)
-        ..toggleDataVisibility(5.0);
+        ..toggleDataVisibility(1)
+        ..toggleDataVisibility(5);
     },
   );
 
@@ -1121,7 +1121,7 @@ void main() {
         _rawConfig[chart] = cfg;
         final rings = [<_ProbeArc>[], <_ProbeArc>[]];
         for (var d = 0; d < 2; d++) {
-          final data = chart.getDatasetMeta(d.toDouble()).data;
+          final data = chart.getDatasetMeta(d).data;
           for (var i = 0; i < data.length; i++) {
             final probe = _ProbeArc();
             rings[d].add(probe);
@@ -1271,7 +1271,7 @@ void main() {
         final seen = <Object>{};
         for (var i = 0; i < 8; i++) {
           final a = prepared!(i);
-          final b = controller.resolveDataElementOptions(i.toDouble(), 'none');
+          final b = controller.resolveDataElementOptions(i, 'none');
           expect(_plain(a), _plain(b));
           expect(a.isFrozen, isFalse);
           expect(seen.add(a), isTrue);
@@ -1351,8 +1351,8 @@ void main() {
     test('hidden arcs of a polar area keep the one resolve', () {
       final probes = <_ProbeArc>[];
       final chart = probeChart('polarArea', probes)
-        ..toggleDataVisibility(0.0)
-        ..toggleDataVisibility(4.0)
+        ..toggleDataVisibility(0)
+        ..toggleDataVisibility(4)
         ..update('none');
       for (final probe in probes) {
         probe.contextReads = 0;

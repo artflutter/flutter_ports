@@ -241,7 +241,7 @@ Object? callback(
 /// @param [reverse] - If true, iterates backward on the loopable.
 ///
 /// [fn] is a Dart [Function] or a [JsFunction], called through [jsCall]. For
-/// a List it gets the item and its index as a `double`. For a Map it gets the
+/// a List it gets the item and its index as an `int`. For a Map it gets the
 /// value and the key, in the [jsObjectKeys] order. An item that a call of
 /// [fn] removes reads as [undefined], as in JavaScript.
 void each(
@@ -258,11 +258,12 @@ void each(
     len = array.length;
     if (reverse) {
       for (i = len - 1; i >= 0; i--) {
-        jsCall(fn, [_item(array, i), i.toDouble()], thisArg: thisArg);
+        // DIVERGES(chartjs): adapt-int-indexes, the index is an int.
+        jsCall(fn, [_item(array, i), i], thisArg: thisArg);
       }
     } else {
       for (i = 0; i < len; i++) {
-        jsCall(fn, [_item(array, i), i.toDouble()], thisArg: thisArg);
+        jsCall(fn, [_item(array, i), i], thisArg: thisArg);
       }
     }
   } else if (isObject(loopable)) {

@@ -81,8 +81,8 @@ typedef InteractionModeFunction = List<types.ActiveElement> Function(
 /// dataset index and the index of the element (index.d.ts:813).
 typedef InteractionHandler = void Function(
   Element element,
-  double datasetIndex,
-  double index,
+  int datasetIndex,
+  int index,
 );
 
 /// `position[axis]` of core.interaction.js:76: the coordinate of the axis
@@ -248,7 +248,7 @@ void _evaluateInteractionItems(
     for (var j = lo; j <= hi; ++j) {
       final element = data[j] as Element;
       if (!_skipped(element)) {
-        handler(element, index, j * 1.0);
+        handler(element, index, j);
       }
     }
   }
@@ -299,7 +299,7 @@ List<types.ActiveElement> _getIntersectItems(
     return items;
   }
 
-  void evaluationFunc(Element element, double datasetIndex, double index) {
+  void evaluationFunc(Element element, int datasetIndex, int index) {
     if (!includeInvisible && !isPointInArea(element, chart.chartArea, 0)) {
       return;
     }
@@ -311,8 +311,8 @@ List<types.ActiveElement> _getIntersectItems(
       items.add(
         types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex.toInt(),
-          index: index.toInt(),
+          datasetIndex: datasetIndex,
+          index: index,
         ),
       );
     }
@@ -351,7 +351,7 @@ List<types.ActiveElement> _getNearestRadialItems(
 ]) {
   final items = <types.ActiveElement>[];
 
-  void evaluationFunc(Element element, double datasetIndex, double index) {
+  void evaluationFunc(Element element, int datasetIndex, int index) {
     final startAngle = element.finalNumber(
       AnimatedProp.startAngle,
       element.numberOf(AnimatedProp.startAngle),
@@ -368,8 +368,8 @@ List<types.ActiveElement> _getNearestRadialItems(
       items.add(
         types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex.toInt(),
-          index: index.toInt(),
+          datasetIndex: datasetIndex,
+          index: index,
         ),
       );
     }
@@ -406,7 +406,7 @@ List<types.ActiveElement> _getNearestCartesianItems(
   final distanceMetric = _getDistanceMetricForAxis(axis);
   var minDistance = double.infinity;
 
-  void evaluationFunc(Element element, double datasetIndex, double index) {
+  void evaluationFunc(Element element, int datasetIndex, int index) {
     final visual = element as types.VisualElement;
     final inRange = visual.inRange(position.x, position.y, useFinalPosition);
     if (intersect && !inRange) {
@@ -424,8 +424,8 @@ List<types.ActiveElement> _getNearestCartesianItems(
       items = [
         types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex.toInt(),
-          index: index.toInt(),
+          datasetIndex: datasetIndex,
+          index: index,
         ),
       ];
       minDistance = distance;
@@ -435,8 +435,8 @@ List<types.ActiveElement> _getNearestCartesianItems(
       items.add(
         types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex.toInt(),
-          index: index.toInt(),
+          datasetIndex: datasetIndex,
+          index: index,
         ),
       );
     }
@@ -531,8 +531,8 @@ List<types.ActiveElement> _getAxisItems(
       items.add(
         types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex.toInt(),
-          index: index.toInt(),
+          datasetIndex: datasetIndex,
+          index: index,
         ),
       );
       intersectsItem =
@@ -582,8 +582,8 @@ bool _intersectOption(Object options) =>
 /// [index], or Dart `null` for the `undefined` of an index outside the list.
 ///
 /// [index] is the index of an interaction item: a whole number from 0.
-Element? _dataAt(List<types.Element> data, double index) =>
-    index < data.length ? data[index.toInt()] as Element : null;
+Element? _dataAt(List<types.Element> data, int index) =>
+    index < data.length ? data[index] as Element : null;
 
 /// core.interaction.js:269 `modes.index`.
 ///
@@ -633,14 +633,14 @@ List<types.ActiveElement> _index(
 
   for (final meta in chart.getSortedVisibleDatasetMetas()) {
     final index = items[0].index;
-    final element = _dataAt(meta.data, index.toDouble());
+    final element = _dataAt(meta.data, index);
 
     // don't count items that are skipped (null data)
     if (element != null && !_skipped(element)) {
       elements.add(
         types.ActiveElement(
           element: element,
-          datasetIndex: meta.index.toInt(),
+          datasetIndex: meta.index,
           index: index,
         ),
       );
