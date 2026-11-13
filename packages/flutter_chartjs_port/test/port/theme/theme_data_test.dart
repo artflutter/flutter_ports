@@ -288,7 +288,7 @@ List<String> _hits(Chart chart) {
       <String, Object?>{'intersect': true},
       false,
     ))
-      '${item.datasetIndex.toInt()}:${item.index.toInt()}',
+      '${item.datasetIndex}:${item.index}',
   ];
 }
 

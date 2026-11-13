@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
@@ -285,9 +286,9 @@ _Chart _chart(InteractionReferenceScene scene, List<String> trace) {
 }
 
 /// The items of [items] as `(datasetIndex, index, element name)`.
-List<(double, double, String)> _results(List<InteractionItem> items) => [
+List<(int, int, String)> _results(List<ActiveElement> items) => [
   for (final item in items)
-    (item.datasetIndex, item.index, (item.element as _Spy).name),
+    (item.datasetIndex, item.index, (item.element! as _Spy).name),
 ];
 
 void main() {
@@ -358,7 +359,7 @@ void main() {
       // Array.prototype.indexOf. The port has no such form: a value that is
       // not an axis is the falsy `options.axis` of :272 and :354.
       final scene = interactionReference.first;
-      List<(double, double, String)> run(
+      List<(int, int, String)> run(
         InteractionMode mode,
         Map<String, Object?> options,
       ) {
@@ -514,32 +515,31 @@ void main() {
     });
   });
 
-  group('InteractionItem', () {
+  group('ActiveElement', () {
     final element = PointElement();
 
     test('equals an item with the same element and indices', () {
       expect(
-        InteractionItem(element: element, datasetIndex: 0, index: 1),
-        InteractionItem(element: element, datasetIndex: 0, index: 1),
+        ActiveElement(element: element, datasetIndex: 0, index: 1),
+        ActiveElement(element: element, datasetIndex: 0, index: 1),
       );
       expect(
-        InteractionItem(element: element, datasetIndex: 0, index: 1).hashCode,
-        InteractionItem(element: element, datasetIndex: 0, index: 1).hashCode,
+        ActiveElement(element: element, datasetIndex: 0, index: 1).hashCode,
+        ActiveElement(element: element, datasetIndex: 0, index: 1).hashCode,
       );
     });
 
     test('compares the elements by identity', () {
       expect(
-        InteractionItem(element: element, datasetIndex: 0, index: 1),
+        ActiveElement(element: element, datasetIndex: 0, index: 1),
         isNot(
-          InteractionItem(element: PointElement(), datasetIndex: 0, index: 1),
+          ActiveElement(element: PointElement(), datasetIndex: 0, index: 1),
         ),
       );
     });
 
-    test('is an ActiveDataPoint', () {
-      final item = InteractionItem(element: element, datasetIndex: 2, index: 3);
-      expect(item, isA<types.ActiveDataPoint>());
+    test('prints its element and its indexes', () {
+      final item = ActiveElement(element: element, datasetIndex: 2, index: 3);
       expect(
         item.toString(),
         '{element: PointElement, datasetIndex: 2, '
@@ -552,7 +552,7 @@ void main() {
 /// A mode of the test: it finds no item.
 final class const _NoItemsMode() extends InteractionMode {
   @override
-  List<InteractionItem> itemsAt(
+  List<ActiveElement> itemsAt(
     types.Chart chart,
     Object e,
     Object options, [

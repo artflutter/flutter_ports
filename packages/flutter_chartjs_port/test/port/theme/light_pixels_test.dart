@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -129,9 +130,7 @@ AnyObject _config(String type, {required bool colors, Object? theme}) {
 Future<Chart> _acquireActive(WidgetTester tester, AnyObject config) async {
   final chart = acquireChart(config);
   await tester.pump();
-  final active = [
-    <String, Object?>{'datasetIndex': 0, 'index': 0},
-  ];
+  const active = [ActiveElement(datasetIndex: 0, index: 0)];
   final element = chart.getDatasetMeta(0).data[0] as Element;
   chart
     ..setActiveElements(active)

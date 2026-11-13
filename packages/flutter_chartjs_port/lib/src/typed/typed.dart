@@ -54,7 +54,6 @@ export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartAnimationDetails,
         ChartContext,
         ChartEventDetails,
-        ChartHit,
         ChartLegendEventDetails,
         ChartScript;
 export 'package:flutter_chartjs_port/src/typed/chart_value.dart'

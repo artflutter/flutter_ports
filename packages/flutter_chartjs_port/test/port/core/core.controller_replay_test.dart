@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show dispatchCanvasEvent;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -373,9 +374,7 @@ void main() {
       final chart = heldChart(counts);
       final tooltip = chart.tooltip!
         ..setActiveElements(
-          <Object?>[
-            <String, Object?>{'datasetIndex': 0, 'index': 0},
-          ],
+          [const ActiveElement(datasetIndex: 0, index: 0)],
           <String, Object?>{'x': 0, 'y': 0},
         );
       expect(tooltip.getActiveElements().single.index, 0);

@@ -38,6 +38,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -444,14 +445,12 @@ final Map<String, void Function(Chart chart)> _steps = {
   },
   'an active arc': (chart) {
     chart
-      ..setActiveElements(<Object?>[
-        <String, Object?>{'datasetIndex': 0, 'index': 1},
-      ])
+      ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)])
       ..update('none');
   },
   'no active arc': (chart) {
     chart
-      ..setActiveElements(<Object?>[])
+      ..setActiveElements([])
       ..update('none');
   },
 };
@@ -534,9 +533,7 @@ String _firstArcState(Chart chart) {
 /// Makes arc 0 of [chart] active and gives it a new value, for an update that
 /// must write the new state into its context.
 void _changeFirstArc(Chart chart) {
-  chart.setActiveElements(<Object?>[
-    <String, Object?>{'datasetIndex': 0, 'index': 0},
-  ]);
+  chart.setActiveElements([const ActiveElement(datasetIndex: 0, index: 0)]);
   (_dataset0(chart)['data']! as List<Object?>)[0] = 9.0;
 }
 
@@ -2721,7 +2718,7 @@ void main() {
         );
         expect(_contexts(chart), state);
         for (final each in [chart, twin]) {
-          each.setActiveElements(<Object?>[]);
+          each.setActiveElements([]);
         }
         expect(calls, twinCalls);
         expect(_state(chart), _state(twin));
@@ -2969,8 +2966,8 @@ void main() {
             each
               ..update('none')
               ..update()
-              ..setActiveElements(<Object?>[
-                <String, Object?>{'datasetIndex': 0, 'index': 1},
+              ..setActiveElements([
+                const ActiveElement(datasetIndex: 0, index: 1),
               ])
               ..update('none')
               ..draw();
@@ -4036,14 +4033,10 @@ void main() {
           jsGet((chart.getDatasetMeta(0).data[1] as Element).$context, 'mode');
       final chart = acquireChart(_config('pie', dataset: _indexedColors))
         ..update('none')
-        ..setActiveElements(<Object?>[
-          <String, Object?>{'datasetIndex': 0, 'index': 1},
-        ]);
+        ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)]);
       final twin = acquireChart(_eager('pie', dataset: _indexedColors))
         ..update('none')
-        ..setActiveElements(<Object?>[
-          <String, Object?>{'datasetIndex': 0, 'index': 1},
-        ]);
+        ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)]);
       // The hover wrote the state of the mode `active` into the context.
       final hover = _contexts(chart);
       expect(hover, _contexts(twin));

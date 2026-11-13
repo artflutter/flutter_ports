@@ -144,16 +144,6 @@ final class const NearestTooltipPositioner() extends TooltipPositioner {
 TooltipPosition? _positionOrNull(Object? result) =>
     result is TooltipPosition ? result : null;
 
-/// The element of the active item [item]: `items[i].element`.
-///
-/// A `types.ActiveElement` gives its member, with Dart `null` as JS
-/// `undefined`. Another value gives the read by name ([jsGet]): a plain item
-/// without an `element` gives [undefined] (`plugin.tooltip.tests.js:1152`).
-Object? _elementOf(Object? item) => switch (item) {
-  final types.ActiveElement active => active.element ?? undefined,
-  _ => jsGet(item, 'element'),
-};
-
 /// The JS read `position.x` of a position or an event position [value]: a
 /// [TooltipPosition] and a [Point] (a chart event) give their member, with
 /// Dart `null` as JS `null` for a [Point]. Another value (the result of a
@@ -186,8 +176,8 @@ Object? _itemsLength(Object? items) =>
 /// removes the copies with SameValueZero (Chart.js ADR 0039, section 4).
 /// The sum keeps the insertion order. The elements cast to [Element] at
 /// `hasValue` and `tooltipPosition` (Chart.js ADR 0038, section 6).
-Object? _average(Object? items) {
-  if (!jsTruthy(_itemsLength(items))) {
+Object? _average(List<types.ActiveElement> items) {
+  if (items.isEmpty) {
     return false;
   }
 
@@ -195,11 +185,10 @@ Object? _average(Object? items) {
   var y = 0.0;
   var count = 0;
 
-  final len = jsToNumber(_itemsLength(items));
-  for (var i = 0.0; i < len; ++i) {
-    final el = _elementOf(jsGetIndex(items, i));
-    if (jsTruthy(el) && (el! as Element).hasValue()) {
-      final pos = (el as Element).tooltipPosition();
+  for (var i = 0, len = items.length; i < len; ++i) {
+    final el = items[i].element;
+    if (el != null && (el as Element).hasValue()) {
+      final pos = el.tooltipPosition();
       // `Set.prototype.add` stores +0 for -0.
       xSet.add(pos.x == 0 ? 0.0 : pos.x);
       y += pos.y;
@@ -227,8 +216,8 @@ Object? _average(Object? items) {
 /// `x` and `y` start as the raw `eventPosition.x` and `.y` ([_readX]).
 /// `distanceBetweenPoints` gets their `ToNumber`, the conversion of the
 /// upstream subtraction (Chart.js ADR 0039, section 4).
-Object? _nearest(Object? items, Object? eventPosition) {
-  if (!jsTruthy(_itemsLength(items))) {
+Object? _nearest(List<types.ActiveElement> items, Object? eventPosition) {
+  if (items.isEmpty) {
     return false;
   }
 
@@ -237,10 +226,9 @@ Object? _nearest(Object? items, Object? eventPosition) {
   var minDistance = double.infinity;
   Element? nearestElement;
 
-  final len = jsToNumber(_itemsLength(items));
-  for (var i = 0.0; i < len; ++i) {
-    final el = _elementOf(jsGetIndex(items, i));
-    if (jsTruthy(el) && (el! as Element).hasValue()) {
+  for (var i = 0, len = items.length; i < len; ++i) {
+    final el = items[i].element;
+    if (el != null && (el as Element).hasValue()) {
       final center = (el as types.VisualElement).getCenterPoint();
       final d = distanceBetweenPoints(
         _NumberPoint(
@@ -252,7 +240,7 @@ Object? _nearest(Object? items, Object? eventPosition) {
 
       if (d < minDistance) {
         minDistance = d;
-        nearestElement = el as Element;
+        nearestElement = el;
       }
     }
   }
@@ -290,15 +278,18 @@ final class const _NumberPoint(
 TooltipItem _createTooltipItem(types.Chart chart, types.ActiveElement item) {
   final types.ActiveElement(:element, :datasetIndex, :index) = item;
   final controller = chart.getDatasetMeta(datasetIndex).controller!;
-  final (:label, :value) = controller.getLabelAndValue(index);
+  final (:label, :value) = controller.getLabelAndValue(index.toDouble());
 
   return TooltipItem()
     ..chart = chart
     ..label = label
-    ..parsed = controller.getParsed(index)
+    ..parsed = controller.getParsed(index.toDouble())
     ..raw = jsGetIndex(
-      jsGet(jsGetIndex(jsGet(chart.data, 'datasets'), datasetIndex), 'data'),
-      index,
+      jsGet(
+        jsGetIndex(jsGet(chart.data, 'datasets'), datasetIndex.toDouble()),
+        'data',
+      ),
+      index.toDouble(),
     )
     ..formattedValue = value
     ..dataset = controller.getDataset()
@@ -839,16 +830,6 @@ bool _strictEquals(Object? a, Object? b) {
   if (a is String && b is String) return a == b;
   return identical(a, b);
 }
-
-/// The object `{datasetIndex, element, index}` of `setActiveElements`
-/// (plugin.tooltip.js:1115-1119).
-final class _ActiveElement({
-  @override required final double datasetIndex,
-
-  /// Dart `null` stands for the `undefined` of an index without an element.
-  @override required final types.Element? element,
-  @override required final double index,
-}) implements types.ActiveElement;
 
 /// The element `meta.data[index]`, or Dart `null` for JS `undefined`.
 types.Element? _elementAt(List<types.Element> data, double index) =>
@@ -2011,35 +1992,27 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// @param {object} eventPosition Synthetic event position used in
   /// positioning
   ///
-  /// An item is a `types.ActiveDataPoint` or a Map `{datasetIndex, index}`
-  /// of user code, read by name as `Chart.setActiveElements` reads it.
+  /// An item is an `ActiveElement` with the two indexes (row
+  /// `adapt-native-active-element`), as for `Chart.setActiveElements`.
   /// `getDatasetMeta` always gives a meta, so the throw of :1112 cannot
   /// occur.
   @override
   void setActiveElements(
-    List<Object?> activeElements, [
+    List<types.ActiveElement> activeElements, [
     Object? eventPosition = undefined,
   ]) {
     final lastActive = _active;
-    final active = activeElements.map<types.ActiveElement>((item) {
-      final double datasetIndex;
-      final double index;
-      if (item is types.ActiveDataPoint) {
-        datasetIndex = item.datasetIndex;
-        index = item.index;
-      } else {
-        // DIVERGES(chartjs): adapt-active-elements-number-index, a number.
-        datasetIndex = jsToNumber(jsGet(item, 'datasetIndex'));
-        index = jsToNumber(jsGet(item, 'index'));
-      }
+    final active = activeElements.map((item) {
+      // DIVERGES(chartjs): adapt-native-active-element, int indexes.
+      final types.ActiveElement(:datasetIndex, :index) = item;
       final meta = chart.getDatasetMeta(datasetIndex);
 
       // `if (!meta) throw new Error('Cannot find a dataset at index ' + ...)`:
       // getDatasetMeta always gives a meta.
 
-      return _ActiveElement(
+      return types.ActiveElement(
         datasetIndex: datasetIndex,
-        element: _elementAt(meta.data, index),
+        element: _elementAt(meta.data, index.toDouble()),
         index: index,
       );
     }).toList();
@@ -2140,13 +2113,16 @@ class Tooltip(({types.Chart chart, Object? options}) config)
           .where(
             (i) =>
                 jsTruthy(
-                  jsGetIndex(jsGet(chart.data, 'datasets'), i.datasetIndex),
+                  jsGetIndex(
+                    jsGet(chart.data, 'datasets'),
+                    i.datasetIndex.toDouble(),
+                  ),
                 ) &&
                 !identical(
                   chart
                       .getDatasetMeta(i.datasetIndex)
                       .controller!
-                      .getParsed(i.index),
+                      .getParsed(i.index.toDouble()),
                   undefined,
                 ),
           )

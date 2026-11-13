@@ -15,6 +15,14 @@
   `strokeColor` are a `ChartPaint`, not an `Object?`:
   `RenderTextOpts(color: ChartPaint.solid(Color(0xFF666666)))`.
 
+- Migrate active elements to the public extensible `ActiveElement` class with
+  `int` `datasetIndex` and `index` and a nullable `element`. The interaction
+  modes make it, `getActiveElements` gives it, and `setActiveElements` of the
+  chart and of the tooltip take it:
+  `chart.setActiveElements(const [ActiveElement(datasetIndex: 0, index: 2)])`.
+  `InteractionItem`, `ActiveDataPoint` and `ChartHit` are removed, and a Map
+  item is no longer an item.
+
 - Migrate ticks to the public extensible `Tick` class: `label` is the list of
   its lines (`List<String>?`), and `major` is a `bool`. The option
   `ticks.callback` holds a `TickCallback`, also in a raw configuration:

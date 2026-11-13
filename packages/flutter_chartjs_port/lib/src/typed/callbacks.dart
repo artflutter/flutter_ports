@@ -5,7 +5,8 @@
 /// - The details objects [ChartEventDetails], [ChartLegendEventDetails]
 ///   and [ChartAnimationDetails] hold the arguments of one call. A new
 ///   field is an addition that breaks no callback.
-/// - [ChartHit] and [ChartContext] are views over the chart objects.
+/// - [ChartContext] is a view over the context objects of the chart. An
+///   active element of an event is the core [ActiveElement].
 ///   `ChartTooltipItem` is the shared core view. [LegendItem] is the shared
 ///   native mutable object; legend event details preserve its identity.
 /// - [ChartScript] is the type of a scriptable option.
@@ -46,7 +47,7 @@ final class const ChartEventDetails({
 
   /// The active elements of the event by the interaction options, in the
   /// order of the interaction mode. Empty when the event hits no element.
-  required final List<ChartHit> hits,
+  required final List<ActiveElement> hits,
 
   /// The chart of the event.
   required final Chart chart,
@@ -100,19 +101,6 @@ final class const ChartAnimationDetails({
 }) {
   /// The details of one animation step.
   this;
-}
-
-/// An active element of an event: a hit of `onClick` and `onHover`.
-///
-/// A view of the `ActiveElement` of the chart, with `int` indexes. It
-/// implements [ActiveElement], so a `List<ChartHit>` is a
-/// `List<ActiveElement>`, for example for `chart.setActiveElements`.
-extension type ChartHit._(ActiveElement _hit) implements ActiveElement {
-  /// The index of the dataset in `data.datasets`.
-  int get datasetIndex => _hit.datasetIndex.toInt();
-
-  /// The index of the data item in the dataset.
-  int get index => _hit.index.toInt();
 }
 
 /// The context of a scriptable option (`docs/general/options.md`, "Option

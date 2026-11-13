@@ -371,8 +371,8 @@ void main() {
         1,
       ));
       expect(charts.keysState, charts.mouseState);
-      expect(charts.keysState['active'], ['0.0:1.0', '1.0:1.0']);
-      expect(charts.keysState['tooltip'], ['0.0:1.0', '1.0:1.0']);
+      expect(charts.keysState['active'], ['0:1', '1:1']);
+      expect(charts.keysState['tooltip'], ['0:1', '1:1']);
     });
   });
 
@@ -394,7 +394,7 @@ void main() {
       await _key(tester, LogicalKeyboardKey.enter);
       expect(chart.isDatasetVisible(0), isFalse);
       await _key(tester, LogicalKeyboardKey.arrowDown);
-      expect(_items(chart.getActiveElements()), ['1.0:0.0']);
+      expect(_items(chart.getActiveElements()), ['1:0']);
     });
 
     testWidgets('doughnut: Enter on legend item 1 toggles its data index', (
@@ -465,7 +465,7 @@ void main() {
       await _key(tester, LogicalKeyboardKey.enter);
       await triggerMouseEvent(mouse, 'click', _at(mouse, (0, 0)));
       expect(keysClicks, [
-        ['click', '0.0:0.0'],
+        ['click', '0:0'],
       ]);
       expect(keysClicks, mouseClicks);
     });
@@ -512,7 +512,7 @@ void main() {
       expect(charts.keysLog, isEmpty);
       await _key(tester, LogicalKeyboardKey.enter);
       expect(clicks, [
-        ['0.0:0.0'],
+        ['0:0'],
       ]);
     });
 

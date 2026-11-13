@@ -479,9 +479,7 @@ final Map<String, void Function(Chart chart, Map<String, Object?> cfg)> _steps =
       'show a dataset item': (chart, cfg) => chart.show(0, 1),
       'an active element': (chart, cfg) {
         chart
-          ..setActiveElements([
-            {'datasetIndex': 0.0, 'index': 4.0},
-          ])
+          ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
           ..update('none');
       },
       'no active element': (chart, cfg) {
@@ -1328,9 +1326,7 @@ void main() {
           'hoverBorderWidth': 5.0,
         });
         final chart = _chart(cfg)
-          ..setActiveElements([
-            {'datasetIndex': 0.0, 'index': 4.0},
-          ])
+          ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
           ..update('none');
         results.add(_observe(chart, cfg));
       }
@@ -1579,9 +1575,9 @@ void main() {
         });
         final chart = _chart(cfg)
           ..setActiveElements([
-            {'datasetIndex': 0.0, 'index': 0.0},
-            {'datasetIndex': 0.0, 'index': 1.0},
-            {'datasetIndex': 0.0, 'index': 2.0},
+            const ActiveElement(datasetIndex: 0, index: 0),
+            const ActiveElement(datasetIndex: 0, index: 1),
+            const ActiveElement(datasetIndex: 0, index: 2),
           ]);
         armed = true;
         chart.update('none');
@@ -1838,9 +1834,7 @@ void main() {
           'hoverBorderWidth': 5.0,
         },
         prepare: (chart) => chart
-          ..setActiveElements([
-            {'datasetIndex': 0.0, 'index': 4.0},
-          ])
+          ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
           ..update('none'),
       );
       dataOnlyTwin(

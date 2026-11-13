@@ -38,6 +38,7 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -894,9 +895,7 @@ void main() {
       o.observe('replay', log.where((l) => l.contains('Event')).join(' '));
       run('mouseout', _Event('mouseout', p1.x, p1.y));
       log.clear();
-      chart.setActiveElements([
-        <String, Object?>{'datasetIndex': 1, 'index': 2},
-      ]);
+      chart.setActiveElements([const ActiveElement(datasetIndex: 1, index: 2)]);
       o.observe(
         'set active',
         '${_activeText(chart.getActiveElements(), o)} | '
@@ -915,7 +914,7 @@ void main() {
           'set missing',
           error(
             () => chart.setActiveElements([
-              <String, Object?>{'datasetIndex': 0, 'index': 7},
+              const ActiveElement(datasetIndex: 0, index: 7),
             ]),
           ),
         )
@@ -935,7 +934,7 @@ void main() {
       charts.add(chart);
       _labelElements(chart, o);
       final p1 = chart.getDatasetMeta(0).data[1];
-      String items(List<InteractionItem> list) => list
+      String items(List<ActiveElement> list) => list
           .map(
             (i) =>
                 '${_n(i.datasetIndex)}:${_n(i.index)}:'

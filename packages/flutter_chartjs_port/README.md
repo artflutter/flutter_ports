@@ -378,7 +378,9 @@ class _VotesPageState() extends State<VotesPage> {
 ```
 
 - `onClick` and `onHover` get `ChartEventDetails`: the chart event, the elements under the
-  pointer (`hits`, each with `datasetIndex`, `index` and `element`) and the chart.
+  pointer (`hits`, a list of `ActiveElement`, each with an `int` `datasetIndex`, an `int` `index`
+  and the `element`) and the chart. `chart.setActiveElements` takes the same class:
+  `ActiveElement(datasetIndex: 0, index: 2)`.
 - The legend `onClick`, `onHover` and `onLeave` get `ChartLegendEventDetails`. A legend `onClick`
   replaces the default click, which hides or shows the dataset. `details.item` is the same mutable
   `LegendItem` used by rendering, with `List<String>` text, native `ChartPaint` styles and nullable

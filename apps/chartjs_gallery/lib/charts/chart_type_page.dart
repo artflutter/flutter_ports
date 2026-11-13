@@ -104,12 +104,12 @@ class ChartTypePageState() extends State<ChartTypePage> {
     ].join('; ');
   }
 
-  static String _hoverItem(Chart chart, double datasetIndex, double index) {
+  static String _hoverItem(Chart chart, int datasetIndex, int index) {
     final controller = chart.getDatasetMeta(datasetIndex).controller!;
-    final (:label, :value) = controller.getLabelAndValue(index);
+    final (:label, :value) = controller.getLabelAndValue(index.toDouble());
     // Display text: the label and the value that the tooltip item gets
     // (plugin.tooltip.js:127-137).
-    return 'd${datasetIndex.toInt()}#${index.toInt()} $label: $value';
+    return 'd$datasetIndex#$index $label: $value';
   }
 
   ChartTypeVariant get _current => widget.entry.variants[_variant];

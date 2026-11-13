@@ -20,12 +20,10 @@ import 'package:test/test.dart';
 // at v4.5.1 in Node.js v24.12.0 on x64 (V8 13.6.233.17-node.37), unless a test
 // says that it pins a difference of the port.
 
-/// A JavaScript object literal `{datasetIndex, index}`, passed as an
-/// [ActiveDataPoint].
-final class const _Active(
-  @override final double datasetIndex,
-  @override final double index,
-) implements ActiveDataPoint;
+/// A JavaScript object literal `{datasetIndex, index}`, an [ActiveElement]
+/// with no element (row `adapt-native-active-element`).
+ActiveElement _active(int datasetIndex, int index) =>
+    ActiveElement(datasetIndex: datasetIndex, index: index);
 
 /// A JavaScript event object `{type}`, passed as a [ChartEvent]. Only
 /// `type` is read.
@@ -196,23 +194,10 @@ void main() {
       expect(helpers.elementsEqual([], []), isTrue);
     });
 
-    test('compares the indices with !==', () {
-      expect(
-        helpers.elementsEqual(
-          [const _Active(double.nan, 0)],
-          [const _Active(double.nan, 0)],
-        ),
-        isFalse,
-      );
-      expect(
-        helpers.elementsEqual(
-          // The int literal -0 is 0, not -0.
-          // ignore: prefer_int_literals
-          [const _Active(0, -0.0)],
-          [const _Active(0, 0)],
-        ),
-        isTrue,
-      );
+    test('compares the two indexes of each item', () {
+      expect(helpers.elementsEqual([_active(0, 1)], [_active(0, 1)]), isTrue);
+      expect(helpers.elementsEqual([_active(0, 1)], [_active(1, 1)]), isFalse);
+      expect(helpers.elementsEqual([_active(0, 1)], [_active(0, 2)]), isFalse);
     });
   });
 

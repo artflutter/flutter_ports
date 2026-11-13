@@ -1162,7 +1162,7 @@ void main() {
           final b = chart(cb);
           for (final c in [a, b]) {
             c.setActiveElements([
-              <String, Object?>{'datasetIndex': 0.0, 'index': 1.0},
+              const ActiveElement(datasetIndex: 0, index: 1),
             ]);
           }
           change(ca, 0);

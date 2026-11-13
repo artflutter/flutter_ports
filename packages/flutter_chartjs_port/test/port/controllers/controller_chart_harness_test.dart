@@ -104,7 +104,7 @@ List<Object?> _data(Chart chart, int index) =>
 }
 
 /// The active elements of [chart] as `[datasetIndex, index]`.
-List<List<double>> _active(Chart chart) => [
+List<List<int>> _active(Chart chart) => [
   for (final item in chart.getActiveElements()) [item.datasetIndex, item.index],
 ];
 

@@ -34,6 +34,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPosition, TooltipPositioner;
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -1229,7 +1230,7 @@ void main() {
         // Dart `null`.
         TooltipPosition? call() => averagePositioner.positionOf(
           Tooltip((chart: _NoChart(), options: null)),
-          const [_NoElementItem()],
+          const [ActiveElement(datasetIndex: 0, index: 0)],
           null,
         );
         expect(call, returnsNormally);
@@ -1791,7 +1792,7 @@ void main() {
 
         final meta = chart.getDatasetMeta(0);
         chart.tooltip!.setActiveElements([
-          <String, Object?>{'datasetIndex': 0, 'index': 0},
+          const ActiveElement(datasetIndex: 0, index: 0),
         ], _point(0, 0));
         expect(
           chart.tooltip!.getActiveElements()[0].element,
@@ -1830,7 +1831,7 @@ void main() {
           );
 
           chart.tooltip!.setActiveElements([
-            <String, Object?>{'datasetIndex': 0, 'index': 1},
+            const ActiveElement(datasetIndex: 0, index: 1),
           ]);
           chart.update();
           expect(chart.tooltip!.opacity, 1);
@@ -2184,18 +2185,6 @@ final class _RecordingPositioner() extends TooltipPositioner {
       ..x = 0
       ..y = 0;
   }
-}
-
-/// An active item without an element.
-final class const _NoElementItem() implements types.ActiveElement {
-  @override
-  Element? get element => null;
-
-  @override
-  double get datasetIndex => 0;
-
-  @override
-  double get index => 0;
 }
 
 /// A chart that no positioner of the tests reads.
