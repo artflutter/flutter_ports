@@ -2,7 +2,10 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/charts/chart_type_page.dart';
 import 'package:chartjs_gallery/charts/chart_types.dart';
 import 'package:chartjs_gallery/helpers_demo.dart';
+import 'package:chartjs_gallery/plugins/sankey_page.dart';
 import 'package:chartjs_gallery/plugins/zoom_page.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
+    show chartjsChartSankeyVersion;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show chartjsPluginZoomVersion;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -142,6 +145,19 @@ class const GalleryHome({super.key}) extends StatelessWidget {
             onTap: () => Navigator.of(
               context,
             ).push(MaterialPageRoute<void>(builder: (_) => const ZoomPage())),
+          ),
+          ListTile(
+            key: const ValueKey('gallery.chart.sankey'),
+            leading: const Icon(Icons.account_tree_outlined),
+            title: const Text('Sankey'),
+            subtitle: const Text(
+              'chartjs-chart-sankey $chartjsChartSankeyVersion: '
+              'docs samples',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute<void>(builder: (_) => const SankeyPage())),
           ),
         ],
       ),
