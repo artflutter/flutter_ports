@@ -99,7 +99,7 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     `lib/src/js/`, or `package:flutter_chartjs_port/js_semantics.dart` in an add-on. It resolves
     types with `package:analyzer` to find the interpolation of
     `double` and `num` values. It also fails on `DateTime.now(`: ported code reads the time with
-    `jsDateNow`.
+    `clock.now()` of package:clock (Chart.js ADR 0143).
   - `port:next:check`: the check mode of tool 8 (`port:next`, below).
   - `parity:check`: the check mode of tool 6 (`parity`, below).
   - `check:typed-reads`: tool 9, the ratchet of the by-name forms (Chart.js ADR 0054). For each
@@ -283,8 +283,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color`
     0.3.2 port), and `js/`, the JS runtime: port-only `js_*.dart` files. `js_webidl.dart` has the WebIDL
     conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
-    0020). `js_date.dart`, `js_map.dart` and `js_promise.dart` have `Date.now()`, the `Map`
-    iteration and the promise jobs (Chart.js ADRs 0019 and 0045).
+    0020). `js_map.dart` and `js_promise.dart` have the `Map` iteration and the promise jobs
+    (Chart.js ADR 0019).
   - `lib/src/options/` (Chart.js ADR 0054, port-only, pure layers): the typed internal model.
     `opt.dart` has the option cell `Opt<T>` (`OptValue`, `OptFunction`, `OptList`, `OptScope`,
     `OptUndefined`, `OptNull`, `OptForeign`) and the classification of a raw JS value for a key of
@@ -1495,6 +1495,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       (2026-11-13): its code passes the tests. It supersedes, of Chart.js ADR 0054, the internal
       `ScriptableLineSegmentContext` of §11, the typed record of the segment style of §9 and the
       scope kind `SegmentOptions` of §2.
+      Chart.js ADR 0143 (`Date.now()` is `clock.now()`) is accepted (2026-11-14): its code passes
+      the tests. It supersedes the `jsDateNow` parts of Chart.js ADR 0045 §6.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -2218,9 +2220,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
     `ownKeys` trap. `jsMapForEach` is `Map.prototype.forEach` while the callback changes the Map.
   - `jsSplice` is `Array.prototype.splice`. `start` and `deleteCount` go through
     `ToIntegerOrInfinity`. Dart `null` stands for an absent `deleteCount`.
-  - `jsDateNow` of `js_date.dart` is `Date.now()` on `clock.now()` (Chart.js ADR 0045 §6). Ported
-    code never calls `DateTime.now()`. A `DateTime` is a JS `Date`: `jsToNumber` gives its time
-    value (Chart.js ADR 0024).
+  - `Date.now()` has no runtime function: it is `clock.now().millisecondsSinceEpoch` of
+    package:clock, with `.toDouble()` where the code computes with doubles (Chart.js ADR 0143).
+    Inside `testWidgets` and `withClock`, the fake clock moves it. Ported code never calls
+    `DateTime.now()`. A `DateTime` is a JS `Date`: `jsToNumber` gives its time value (Chart.js ADR
+    0024).
   - `js_promise.dart` has the promise jobs of Chart.js ADR 0019 §7:
     `jsEnqueuePromiseJob`, `jsRunWithMicrotaskCheckpoint` (the checkpoint after an animator frame
     callback) and `jsPromiseAll` (`Promise.all`).

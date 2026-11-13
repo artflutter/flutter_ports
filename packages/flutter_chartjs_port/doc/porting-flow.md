@@ -302,8 +302,8 @@ display-only JS exactness. In short:
   `ToNumber` of a `double?` value whose `null` is JS `null`, such as `Point.x` and `Point.y`, is
   `(e ?? 0)`, not `jsToNumber(e)`.
 - Where the Dart SDK or a package that Flutter 3.47.7 depends on gives the JS result, the port
-  uses it. The port-only `jsSort` calls `mergeSort` of `package:collection`. `jsDateNow()` reads
-  `clock.now()` of `package:clock`. The `FakeAsync` zone of `testWidgets` fakes that clock.
+  uses it. The port-only `jsSort` calls `mergeSort` of `package:collection`. Ported code reads the
+  time from `clock.now()` of `package:clock` (Chart.js ADR 0143). The `FakeAsync` zone of `testWidgets` fakes that clock.
 - `Intl.NumberFormat` is the `NumberFormat` of `package:intl` as it is
   ([Chart.js ADR 0119](adr/0119-plain-intl-number-format.md)). The chart option `locale` holds a
   Flutter `Locale`, and the tick option `format` a `NumberFormat`. The port does not correct the
@@ -395,8 +395,7 @@ and the frame source of the animator. `requestAnimFrame` calls
 one module-level animator on `requestAnimFrame`. `TickerMode(enabled: false)` mutes a chart
 (the last bullet of this section). Thus `core.animator.js` has two small `DIVERGES` hunks for the
 mute: the mute and the skip of a muted chart. Its third row is the promise checkpoint (see below).
-[Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) gives the clock: `jsDateNow()` on
-`clock.now()`.
+[Chart.js ADR 0143](adr/0143-clock-now.md) gives the clock: `clock.now()` of package:clock.
 
 Chart.js ADR 0016 (accepted 2026-10-21) supersedes Chart.js ADR 0007. It states the complete
 scheduling decision again and changes decision 9 of Chart.js ADR 0007. The first layout of the
@@ -408,7 +407,7 @@ decisions with their numbers.
 [Chart.js ADR 0019: Animation](adr/0019-animation.md) (phase 5) holds the gate 5
 decision, its evidence and the items that stay open. In short:
 - `core.animation`, `core.animations` and `core.animator` are line-by-line ports on the
-  module-level animator of Chart.js ADR 0016, with `jsDateNow()` on `clock.now()`.
+  module-level animator of Chart.js ADR 0016, with `clock.now()` as the clock.
 - An animation reads and writes its target by name, and keeps the `undefined` state.
 - A promise checkpoint (`lib/src/js/js_promise.dart`) runs the promise jobs of an animator frame
   callback at the end of that callback, as a browser does. Without it, a re-hover in the frame
@@ -449,7 +448,7 @@ decision, its evidence and the items that stay open. In short:
 - `parse` reads ISO 8601 with the moment grammar, RFC 2822, the ASP.NET form, and a format string
   through intl with the current-date fill. Other strings, Lists and Maps are invalid (row
   `adapt-date-parse-fallback`).
-- "Now" is `jsDateNow()` ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)), because
+- "Now" is `clock.now()` ([Chart.js ADR 0143](adr/0143-clock-now.md)), because
   `scale.time.js:342-343` calls `Date.now()`. A step of `_generate` that does not advance throws a
   `StateError` (row `adapt-time-generate-no-advance`).
 
@@ -1134,7 +1133,7 @@ an add-on. It flags these forms:
   ([Chart.js ADR 0134](adr/0134-dart-math-max-min.md)).
 - from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
   `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
-- from phase 5, `DateTime.now(`. Ported code reads the time through `jsDateNow`, because only
+- from phase 5, `DateTime.now(`. Ported code reads the time through `clock.now()`, because only
   `clock.now()` follows the fake clock of `testWidgets` and `withClock`.
 
 A site passes with `// js-ok: <reason>` at the end of its line, or alone on the line before it.

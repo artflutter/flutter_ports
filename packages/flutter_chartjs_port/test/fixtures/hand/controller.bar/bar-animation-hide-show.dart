@@ -6,6 +6,7 @@ library;
 import 'dart:async';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
@@ -13,7 +14,6 @@ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -72,7 +72,7 @@ Map<String, Object?> fixture() {
         final completer = Completer<void>();
         requestAnimFrame(() {
           // make sure previous animation is finished
-          animator.update(jsDateNow() * 2);
+          animator.update(clock.now().millisecondsSinceEpoch * 2.0);
 
           chart.hide(1);
           var start = anims.items[0].start;
@@ -90,7 +90,7 @@ Map<String, Object?> fixture() {
           }
 
           // make sure previous animation is finished
-          animator.update(jsDateNow() * 2);
+          animator.update(clock.now().millisecondsSinceEpoch * 2.0);
 
           chart.show(1);
           start = anims.items[0].start;

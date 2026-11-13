@@ -4,7 +4,8 @@
 ///
 /// One module-level [Animator], [animator], ticks the animations of all the
 /// charts on [requestAnimFrame] (Chart.js ADR 0016, decision 6). `Date.now()`
-/// is [jsDateNow]. Inside `testWidgets`, `tester.pump` moves its clock.
+/// is `clock.now()` of package:clock (Chart.js ADR 0143). Inside
+/// `testWidgets`, `tester.pump` moves its clock.
 ///
 /// - The frame callback runs inside [jsRunWithMicrotaskCheckpoint]. Thus the
 ///   promise chains that it starts finish at the end of the callback, as
@@ -29,10 +30,10 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show requestAnimFrame;
-import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_map.dart';
 import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
@@ -196,7 +197,7 @@ class Animator() {
   /// (Chart.js ADR 0029, section 6).
   @internal
   void update([double? date]) {
-    date ??= jsDateNow();
+    date ??= clock.now().millisecondsSinceEpoch.toDouble();
     var remaining = 0;
 
     jsMapForEach(_charts, (anims, chart) {
@@ -314,7 +315,7 @@ class Animator() {
     }
     anims
       ..running = true
-      ..start = jsDateNow()
+      ..start = clock.now().millisecondsSinceEpoch.toDouble()
       ..duration = anims.items.fold<double>(
         0,
         (acc, cur) => math.max(acc, cur.duration),
@@ -352,7 +353,12 @@ class Animator() {
       items[i].cancel();
     }
     anims.items = [];
-    _notify(chart, anims, jsDateNow(), 'complete');
+    _notify(
+      chart,
+      anims,
+      clock.now().millisecondsSinceEpoch.toDouble(),
+      'complete',
+    );
   }
 
   /// core.animator.js:208 `remove(chart)`: Remove chart from Animator

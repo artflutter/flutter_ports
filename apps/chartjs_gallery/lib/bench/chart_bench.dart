@@ -61,6 +61,7 @@ import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, PanAmount, ScaleRange, ZoomAmount, ZoomChart, zoomPlugin;
@@ -621,7 +622,9 @@ void _benchTick(double date) {
 /// first tick gives each animation its end value, and the second tick
 /// removes the animations (core.animator.js:57-110).
 void _benchFinishAnimations() {
-  final date = jsDateNow() + Duration.millisecondsPerHour;
+  final date =
+      (clock.now().millisecondsSinceEpoch + Duration.millisecondsPerHour)
+          .toDouble();
   _benchTick(date);
   _benchTick(date);
 }
@@ -827,7 +830,7 @@ ChartBenchCase _fadeCase(int datasets) => _pluginCase(
           } else {
             pointer.out(chart);
           }
-          start = jsDateNow();
+          start = clock.now().millisecondsSinceEpoch.toDouble();
           phase = (fade * chartBenchFadePhase) % 1;
           fade++;
         }
@@ -1402,7 +1405,7 @@ ChartBenchCase _themeAnimCase(String type) => _themeCase(
       if (frame == 0) {
         index = 1 - index;
         theme.switchTo(chart, chartBenchThemes[index]);
-        start = jsDateNow();
+        start = clock.now().millisecondsSinceEpoch.toDouble();
         phase = (transition * chartBenchFadePhase) % 1;
         transition++;
       }

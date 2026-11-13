@@ -934,7 +934,6 @@ jsAssign
 jsCall
 jsCall1
 jsConstruct
-jsDateNow
 jsDeleteKey
 jsEnqueuePromiseJob
 jsGet
@@ -1242,7 +1241,6 @@ jsAssign
 jsCall
 jsCall1
 jsConstruct
-jsDateNow
 jsDeleteKey
 jsEnqueuePromiseJob
 jsGet

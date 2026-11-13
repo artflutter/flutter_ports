@@ -30,7 +30,6 @@ library;
 
 export 'package:flutter_chartjs_port/src/js/js_array.dart';
 export 'package:flutter_chartjs_port/src/js/js_class.dart';
-export 'package:flutter_chartjs_port/src/js/js_date.dart';
 export 'package:flutter_chartjs_port/src/js/js_function.dart';
 export 'package:flutter_chartjs_port/src/js/js_map.dart';
 export 'package:flutter_chartjs_port/src/js/js_math.dart';

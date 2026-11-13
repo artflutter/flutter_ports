@@ -41,7 +41,7 @@ import 'animation_reference.dart';
 //   Chart.js ADR 0049, section 7).
 // The expected colors come from src/core/core.animation.js at v4.5.1 in
 // Node.js v24.22.1 on arm64 (animation_reference.dart). The frames are pumps
-// of 16 ms: the fake clock of jsDateNow moves by 16 ms in each one.
+// of 16 ms: the fake clock of clock.now() moves by 16 ms in each one.
 
 /// A chart for the animator: it counts its draws. Its other members throw.
 final class _Chart() implements types.Chart {

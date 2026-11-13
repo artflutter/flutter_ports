@@ -16,7 +16,7 @@
 ///   format of a unit that the scale computes reads with
 ///   [DisplayFormats.formatOf].
 /// - Numbers are `double` (Chart.js ADR 0045). `+value` of an adapter
-///   result is [jsToNumber]. `Date.now()` is [jsDateNow].
+///   result is [jsToNumber]. `Date.now()` is `clock.now()`.
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [TimeScale.getDecimalForValue] starts with the port-only fast path for
 ///   a `double` of Chart.js ADR 0025, section 3.
@@ -41,6 +41,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -56,7 +57,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber, limitValue, toRadians;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -568,7 +568,7 @@ class TimeScale(super.cfg) extends Scale {
   /// scale.time.js:311 `determineDataLimits()`.
   ///
   /// Without data and bounds, the limits are the start and the end of the
-  /// current `time.unit` (or day), from `Date.now()` ([jsDateNow]).
+  /// current `time.unit` (or day), from `Date.now()` (`clock.now()`).
   @override
   void determineDataLimits() {
     final options = this.options;
@@ -608,10 +608,21 @@ class TimeScale(super.cfg) extends Scale {
 
     min = isFinite(min) && !jsIsNaN(min)
         ? min
-        : jsToNumber(adapter.startOf(jsDateNow(), unit));
+        : jsToNumber(
+            adapter.startOf(
+              clock.now().millisecondsSinceEpoch.toDouble(),
+              unit,
+            ),
+          );
     max = isFinite(max) && !jsIsNaN(max)
         ? max
-        : jsToNumber(adapter.endOf(jsDateNow(), unit)) + 1;
+        : jsToNumber(
+                adapter.endOf(
+                  clock.now().millisecondsSinceEpoch.toDouble(),
+                  unit,
+                ),
+              ) +
+              1;
 
     // Make sure that max is strictly higher than min (required by the
     // timeseries lookup table)

@@ -287,7 +287,7 @@ void main() {
 
   test('allows package:clock/clock.dart in lib/ and pure layers', () {
     tree
-      ..write('lib/src/js/js_date.dart', [
+      ..write('lib/src/core/date_parse.dart', [
         _portOnly,
         "import 'package:clock/clock.dart';",
       ])

@@ -163,13 +163,13 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     r'\.sortRange' + _typeArguments,
     _quickSortCollectionSort,
   ),
-  // The clock of Date.now() from phase 5 (Chart.js ADR 0045, section 6).
+  // The clock of Date.now() (Chart.js ADR 0143).
   JsSemanticsRule(
     'DateTime.now(',
     r'\bDateTime\s*\.\s*now\s*\(',
     'DateTime.now() reads the system clock: FakeAsync and withClock do not '
-        'move it, so animations do not run in fake time. Use jsDateNow, '
-        'which reads clock.now() (Chart.js ADR 0045, section 6).',
+        'move it, so animations do not run in fake time. Use clock.now() '
+        'of package:clock (Chart.js ADR 0143).',
   ),
 ];
 

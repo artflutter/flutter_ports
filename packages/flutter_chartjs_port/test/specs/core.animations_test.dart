@@ -21,7 +21,7 @@ import '../support/jasmine.dart';
 // The cases with `done` wait with `setTimeout` and `waitForDone` of the
 // harness (Chart.js ADR 0022, section 7, Chart.js ADR 0019, section 12).
 // They are `testWidgets` cases: the pumps of `waitForDone` move the fake
-// clock of `jsDateNow` in frames of 16 ms, and run the frame callbacks of
+// clock of `clock.now()` in frames of 16 ms, and run the frame callbacks of
 // the animator. A task of `setTimeout` runs at the first pump boundary at or
 // after its delay. The other cases never start the animator.
 
