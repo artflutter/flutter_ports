@@ -31,6 +31,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope,
         ScaleTitleOptionsScope,
         TickOptionsScope;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// core.scale.defaults.js:3 `applyScaleDefaults`.
@@ -69,7 +71,7 @@ void applyScaleDefaults(Defaults defaults) {
           ..drawTicks = true
           ..tickLength = 8.0
           ..tickWidthCell = const OptFunction<double>(_tickWidth)
-          ..tickColor = _tickColor
+          ..tickColorCell = const OptFunction(_tickColor)
           ..offset = false)
         ..border = (BorderOptionsScope()
           ..display = true
@@ -90,7 +92,9 @@ void applyScaleDefaults(Defaults defaults) {
           ..maxRotation = 50.0
           ..mirror = false
           ..textStrokeWidth = 0.0
-          ..textStrokeColor = const ui.Color.fromRGBO(0, 0, 0, 0)
+          ..textStrokeColor = const ChartPaint.solid(
+            ui.Color.fromRGBO(0, 0, 0, 0),
+          )
           ..padding = 3.0
           ..display = true
           ..autoSkip = true
@@ -105,7 +109,9 @@ void applyScaleDefaults(Defaults defaults) {
           ..align = TickAlign.center
           ..crossAlign = TickCrossAlign.near
           ..showLabelBackdrop = false
-          ..backdropColor = const ui.Color.fromRGBO(255, 255, 255, 0.75)
+          ..backdropColor = const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 255, 255, 0.75),
+          )
           ..backdropPadding = const EdgeInsets.all(2)),
     )
     ..route('scale.ticks', 'color', '', 'color')

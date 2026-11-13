@@ -365,7 +365,10 @@ void main() {
       );
       final chart = _chart(tester);
       final written = _dataset(chart, 0)['borderColor'];
-      expect(written, const native_ui.Color.fromRGBO(54, 162, 235, 1));
+      expect(
+        written,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
+      );
 
       await tester.pumpWidget(
         _view(
@@ -561,7 +564,7 @@ void main() {
             data: data,
             borderColor: borderColor == null
                 ? null
-                : ChartValue.constant(borderColor),
+                : ChartValue.constant(.solid(borderColor)),
           ),
         ],
         extra: _colorsOn,
@@ -570,7 +573,7 @@ void main() {
       final host = tester.state<_HostState>(find.byType(_Host));
       final chart = _chart(tester);
       final map = _dataset(chart, 0);
-      expect(map['borderColor'], _green);
+      expect(map['borderColor'], const ChartPaint.solid(_green));
       expect(modes, [undefined]);
 
       final data = [4, 5, 6];
@@ -579,14 +582,14 @@ void main() {
       expect(modes, [undefined, 'theme']);
       expect(_dataset(chart, 0), same(map));
       expect(map['data'], same(data));
-      expect(map['borderColor'], _blue);
+      expect(map['borderColor'], const ChartPaint.solid(_blue));
 
       // A typed color in the frame of a switch wins over the palette: the
       // switch restores only a value that the colors plugin wrote.
       host.show(config(data, borderColor: _red), themeA);
       await tester.pump();
       expect(modes, [undefined, 'theme', 'theme']);
-      expect(map['borderColor'], _red);
+      expect(map['borderColor'], const ChartPaint.solid(_red));
     });
   });
 

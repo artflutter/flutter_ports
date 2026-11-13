@@ -20,6 +20,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -123,7 +125,9 @@ void main() {
 
           'angleLines': <String, Object?>{
             'display': true,
-            'color': const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            'color': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
             'lineWidth': 1,
             'borderDash': <Object?>[],
             'borderDashOffset': 0.0,

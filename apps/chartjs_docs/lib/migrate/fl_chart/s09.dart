@@ -9,8 +9,8 @@ import 'package:material_ui/material_ui.dart';
 
 const _font = TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
 
-Object? _zero(JsObjectFace c, Color color) =>
-    tickOf(c) == 0 ? color : Colors.transparent;
+ChartPaint _zero(JsObjectFace c, Color color) =>
+    .solid(tickOf(c) == 0 ? color : Colors.transparent);
 
 Map<String, Object?> _axis(Color color) => {
   'border': {
@@ -32,7 +32,7 @@ final ChartConfig _config = fills(
         borderWidth: 3,
         pointRadius: 0,
         pointHoverRadius: 8,
-        borderColor: const .constant(Fl.pink),
+        borderColor: const .constant(.solid(Fl.pink)),
         borderCapStyle: StrokeCap.round,
       ),
     ],
@@ -42,9 +42,9 @@ final ChartConfig _config = fills(
       axis: .x,
     ),
     tooltip: ChartTooltip(
-      backgroundColor: Colors.black,
+      backgroundColor: const ChartPaint.solid(Colors.black),
       displayColors: false,
-      bodyColor: Fl.pink,
+      bodyColor: const ChartPaint.solid(Fl.pink),
       bodyFont: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
       callbacks: TooltipCallbacks(
         title: (tooltip, _) => null,
@@ -67,7 +67,7 @@ final ChartConfig _config = fills(
         extra: _axis(Fl.yellow),
         ticks: const AxisTicks(
           stepSize: 1,
-          color: Fl.blue,
+          color: ChartPaint.solid(Fl.blue),
           maxRotation: 0,
           font: _font,
           padding: 16,
@@ -84,7 +84,7 @@ final ChartConfig _config = fills(
         extra: _axis(Fl.blue),
         ticks: AxisTicks(
           stepSize: 0.5,
-          color: Fl.yellow,
+          color: const ChartPaint.solid(Fl.yellow),
           font: _font,
           padding: 16,
           format: (t) => t.value % 1 == 0 ? '${t.value.toInt()}' : '${t.value}',

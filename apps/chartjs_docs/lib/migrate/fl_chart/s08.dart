@@ -74,14 +74,14 @@ final ChartConfig _config = fills(
         borderDash: const [10, 6],
         pointRadius: 0,
         pointHoverRadius: 8,
-        pointHoverBackgroundColor: Fl.orange,
-        borderColor: const .constant(Fl.red),
+        pointHoverBackgroundColor: const .constant(.solid(Fl.orange)),
+        borderColor: const .constant(.solid(Fl.red)),
         borderCapStyle: StrokeCap.round,
       ),
     ],
     interaction: const ChartInteraction(mode: flX, intersect: false),
     tooltip: ChartTooltip(
-      backgroundColor: Fl.red,
+      backgroundColor: const ChartPaint.solid(Fl.red),
       displayColors: false,
       bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       callbacks: TooltipCallbacks(
@@ -98,7 +98,7 @@ final ChartConfig _config = fills(
         extra: Fl.noBorder,
         ticks: AxisTicks(
           stepSize: 4,
-          color: Colors.white,
+          color: ChartPaint.solid(Colors.white),
           font: TextStyle(fontSize: 10),
         ),
       ),
@@ -114,7 +114,8 @@ final ChartConfig _config = fills(
           format: (t) =>
               String.fromCharCode(_icons[t.value.toInt()]!.$1.codePoint),
           extra: {
-            'color': (JsObjectFace c) => _icons[tickOf(c).toInt()]!.$2,
+            'color': (JsObjectFace c) =>
+                ChartPaint.solid(_icons[tickOf(c).toInt()]!.$2),
           },
         ),
       ),

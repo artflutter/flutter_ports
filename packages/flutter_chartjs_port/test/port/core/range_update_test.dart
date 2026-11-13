@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
     show LttbDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -136,9 +138,11 @@ Map<String, Object?> _ticks(_Log log) => <String, Object?>{
     log.context('ticks.color', ctx);
     // A read through the scale view has the scale context, with no index.
     final index = jsGet(ctx, 'index');
-    return index is num && index % 2 == 0
-        ? const Color(0xff336699)
-        : const Color(0xff993366);
+    return ChartPaint.solid(
+      index is num && index % 2 == 0
+          ? const Color(0xff336699)
+          : const Color(0xff993366),
+    );
   },
 };
 

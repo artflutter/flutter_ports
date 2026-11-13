@@ -20,6 +20,10 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show SolidChartPaint;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -501,7 +505,9 @@ void main() {
     // Chart.js ADR 0117: compileThemeData gives the fields to
     // compileChartTheme, with no conversion.
     Color? colorOf(Color color) =>
-        compileThemeData(ChartThemeData(color: color))!['color'] as Color?;
+        (compileThemeData(ChartThemeData(color: color))!['color']!
+                as SolidChartPaint)
+            .color;
 
     test('an sRGB color', () {
       expect(colorOf(const Color(0xFF36A2EB)), const Color(0xFF36A2EB));
@@ -623,7 +629,9 @@ void main() {
     test('the compiled theme is frozen', () {
       final compiled = compileThemeData(_full)!;
       expect(
-        () => compiled['color'] = const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        () => compiled['color'] = const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 0, 0, 1),
+        ),
         throwsA(isA<TypeError>()),
       );
     });
@@ -652,11 +660,11 @@ void main() {
       }
       expect(
         compileThemeData(dark)!['color'],
-        const native_ui.Color.fromRGBO(153, 153, 153, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(153, 153, 153, 1)),
       );
       expect(
         _at(compileThemeData(dark), 'plugins.tooltip.backgroundColor'),
-        const native_ui.Color.fromRGBO(255, 255, 255, 0.8),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 0.8)),
       );
     });
 

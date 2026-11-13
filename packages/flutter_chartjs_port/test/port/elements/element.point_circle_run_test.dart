@@ -2,9 +2,6 @@
 @TestOn('vm')
 library;
 
-// Canvas observations are deliberately separate from mutations.
-// ignore_for_file: cascade_invocations
-
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -14,6 +11,11 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle, RectPointStyle;
+// Canvas observations are deliberately separate from mutations.
+// ignore_for_file: cascade_invocations
+
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -65,8 +67,8 @@ Object _options(math.Random r) {
     'borderWidth': r.nextInt(3) == 0 ? 1.5 : 0.0,
     'rotation': 0.0,
     'pointStyle': kind == 0 ? const RectPointStyle() : const CirclePointStyle(),
-    'backgroundColor': _colors[r.nextInt(_colors.length)],
-    'borderColor': _colors[r.nextInt(_colors.length)],
+    'backgroundColor': ChartPaint.solid(_colors[r.nextInt(_colors.length)]),
+    'borderColor': ChartPaint.solid(_colors[r.nextInt(_colors.length)]),
   };
   // An option that is absent, of another type or a plain Map.
   if (kind == 1) values.remove('borderColor');
@@ -209,8 +211,8 @@ void main() {
       'hoverRadius': 4.0,
       'borderWidth': 1.0,
       'pointStyle': const CirclePointStyle(),
-      'backgroundColor': _colors[0],
-      'borderColor': _colors[1],
+      'backgroundColor': ChartPaint.solid(_colors[0]),
+      'borderColor': ChartPaint.solid(_colors[1]),
     });
     final elements = <types.Element>[
       for (var i = 0; i < 2000; i++)
@@ -274,7 +276,7 @@ void main() {
           'pointStyle': const CirclePointStyle(),
           'hoverRadius': 0.0,
           'borderWidth': 0.0,
-          'backgroundColor': _colors[0],
+          'backgroundColor': ChartPaint.solid(_colors[0]),
         }),
     ];
     expect(
@@ -304,7 +306,7 @@ void main() {
           'pointStyle': const CirclePointStyle(),
           'hoverRadius': 0.0,
           'borderWidth': 0.0,
-          'backgroundColor': _colors[0],
+          'backgroundColor': ChartPaint.solid(_colors[0]),
         }),
     ];
     final next = (elements.first as PointElement).drawCircleRun(

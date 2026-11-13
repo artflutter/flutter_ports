@@ -224,8 +224,10 @@ class CoreDemoState extends State<CoreDemo> {
         LineDataset(
           label: _datasetStyles[d].label,
           points: _data[d],
-          backgroundColor: ChartValue.constant(_datasetStyles[d].background),
-          borderColor: ChartValue.constant(_datasetStyles[d].border),
+          backgroundColor: ChartValue.constant(
+            .solid(_datasetStyles[d].background),
+          ),
+          borderColor: ChartValue.constant(.solid(_datasetStyles[d].border)),
           pointStyle: _datasetStyles[d].style,
         ),
     ],

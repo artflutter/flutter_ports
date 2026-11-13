@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -1466,31 +1468,22 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'Closed',
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                56,
-                39,
-                101,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(56, 39, 101, 1),
               ),
               'data': <Object?>[2500, 2000, 1500],
             },
             <String, Object?>{
               'label': 'In Progress',
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                123,
-                194,
-                37,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(123, 194, 37, 1),
               ),
               'data': <Object?>[1000, 2000, 1500],
             },
             <String, Object?>{
               'label': 'Assigned',
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                255,
-                194,
-                37,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 194, 37, 1),
               ),
               'data': <Object?>[1000, 2000, 1500],
             },
@@ -1530,11 +1523,8 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset 1',
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                56,
-                39,
-                101,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(56, 39, 101, 1),
               ),
               'data': <Object?>[2500, 2000, 1500],
               'hidden': true,
@@ -1566,11 +1556,8 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset 1',
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                56,
-                39,
-                101,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(56, 39, 101, 1),
               ),
               'data': <Object?>[2500, 2000, 1500],
             },
@@ -1600,11 +1587,8 @@ void main() {
           'datasets': <Object?>[
             <String, Object?>{
               'label': 'dataset 1',
-              'backgroundColor': const native_ui.Color.fromRGBO(
-                56,
-                39,
-                101,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(56, 39, 101, 1),
               ),
               'data': <Object?>[-2500, -2000, -1500],
             },

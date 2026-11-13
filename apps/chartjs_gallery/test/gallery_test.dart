@@ -130,7 +130,7 @@ void main() {
     // The color token of the dark preset: '#666' mirrored (theming.md §4).
     expect(
       chart.options['color'],
-      const native_ui.Color.fromRGBO(153, 153, 153, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(153, 153, 153, 1)),
     );
     expect(tester.takeException(), isNull);
   });
@@ -145,7 +145,7 @@ void main() {
     // The arc border is the surface of the theme (element.arc.ts:379).
     expect(
       (arc.options! as JsObjectFace)['borderColor'],
-      const native_ui.Color.fromRGBO(255, 255, 255, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
     );
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
     await tester.pumpAndSettle();
@@ -155,12 +155,12 @@ void main() {
     expect(state.chart, same(chart));
     expect(
       chart.options['color'],
-      const native_ui.Color.fromRGBO(153, 153, 153, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(153, 153, 153, 1)),
     );
     final surface = galleryDarkTheme.colorScheme.surface;
     expect(
       (arc.options! as JsObjectFace)['borderColor'],
-      surface,
+      ChartPaint.solid(surface),
     );
     expect(tester.takeException(), isNull);
   });
@@ -178,7 +178,7 @@ void main() {
     // The '#666' of core.defaults.js:43 as the light preset gives it.
     expect(
       chart.options['color'],
-      const native_ui.Color.fromRGBO(102, 102, 102, 1),
+      const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
     );
     expect(tester.takeException(), isNull);
   });

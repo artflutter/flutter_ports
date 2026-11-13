@@ -18,8 +18,8 @@
 /// 2. A List of the app goes by reference: `data`, `points`, `labels`,
 ///    `CategoryAxis.labels` and `plugins`. A small style List
 ///    (`ChartValue.indexed` or `borderDash`) lowers to a new List.
-/// 3. A `Color` lowers through [colorValue], a `Duration` through
-///    [millisecondsOf] and keeps an `EdgeInsets` as a native value.
+/// 3. A `ChartPaint` passes unchanged. A `Duration` lowers through
+///    [millisecondsOf], and an `EdgeInsets` stays a native value.
 ///    A name type lowers to its name or its `optionValue`.
 ///    An axis class (`XAxis`, `YAxis`) and a font (`TextStyle`, Chart.js ADR
 ///    0116) stay themselves. An object option value
@@ -39,8 +39,6 @@
 ///
 /// Internal: no public library exports it.
 library;
-
-import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart' show Key, ValueChanged, listEquals;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
@@ -588,9 +586,6 @@ Object? Function(Object?) animationTrampoline(
   );
   return null;
 };
-
-/// Keeps the native [color] unchanged, including null for an unset option.
-Color? colorValue(Color? color) => color;
 
 /// The option value of [duration]: the milliseconds, with the fraction of
 /// the microseconds. Dart `null` for `null`.

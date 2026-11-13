@@ -532,16 +532,7 @@ Object? referenceMatcher(Object? expected) => switch (expected) {
     'color',
     nativeColorBytes(p.color),
   ),
-  final GradientChartPaint p => isA<GradientChartPaint>().having(
-    (v) => v.gradient,
-    'gradient',
-    same(p.gradient),
-  ),
-  final PatternChartPaint p => isA<PatternChartPaint>().having(
-    (v) => v.pattern,
-    'pattern',
-    same(p.pattern),
-  ),
+  final ChartShaderPaint paint => same(paint),
   UnchangedChartPaint() => isA<UnchangedChartPaint>(),
   final TooltipCornerRadii r =>
     isA<TooltipCornerRadii>()

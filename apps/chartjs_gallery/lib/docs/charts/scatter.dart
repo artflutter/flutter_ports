@@ -2,6 +2,7 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show ChartPosition;
 
@@ -19,7 +20,9 @@ Map<String, Object?> scatterConfig() => <String, Object?>{
           <String, Object?>{'x': 10.0, 'y': 5.0},
           <String, Object?>{'x': 0.5, 'y': 5.5},
         ],
-        'backgroundColor': const ui.Color.fromRGBO(255, 99, 132, 1),
+        'backgroundColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
       },
     ],
   },

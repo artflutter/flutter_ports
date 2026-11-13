@@ -49,6 +49,8 @@ import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
@@ -551,13 +553,13 @@ base class ChartOptionsScope extends OptionScope {
   set clip(Object value) =>
       store(OptionKey.clip, classify(OptionKey.clip, value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -566,16 +568,16 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -584,18 +586,16 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -604,18 +604,16 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -624,16 +622,16 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -642,10 +640,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _font;
 
@@ -1165,13 +1161,13 @@ base class ChartOptionsScope extends OptionScope {
   set scale(ScaleOptionsScope value) =>
       store(OptionKey.scale, OptScope<ScaleOptionsScope>(value));
 
-  Opt<Object>? _hoverColor;
+  Opt<ChartPaint>? _hoverColor;
 
   /// The cell of `hoverColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverColorCell => _hoverColor;
+  Opt<ChartPaint>? get hoverColorCell => _hoverColor;
 
   /// Stores the cell of `hoverColor`. Dart `null` deletes the key.
-  set hoverColorCell(Opt<Object>? cell) {
+  set hoverColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverColor);
     } else {
@@ -1180,8 +1176,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverColor`.
-  set hoverColor(Object value) =>
-      store(OptionKey.hoverColor, classify(OptionKey.hoverColor, value));
+  set hoverColor(ChartPaint value) =>
+      store(OptionKey.hoverColor, OptValue<ChartPaint>(value));
 
   Opt<bool>? _drawActiveElementsOnTop;
 
@@ -1686,13 +1682,13 @@ base class ChartOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
-  Opt<Object>? _pointBackgroundColor;
+  Opt<ChartPaint>? _pointBackgroundColor;
 
   /// The cell of `pointBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get pointBackgroundColorCell => _pointBackgroundColor;
+  Opt<ChartPaint>? get pointBackgroundColorCell => _pointBackgroundColor;
 
   /// Stores the cell of `pointBackgroundColor`. Dart `null` deletes the key.
-  set pointBackgroundColorCell(Opt<Object>? cell) {
+  set pointBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointBackgroundColor);
     } else {
@@ -1701,18 +1697,16 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointBackgroundColor`.
-  set pointBackgroundColor(Object value) => store(
-    OptionKey.pointBackgroundColor,
-    classify(OptionKey.pointBackgroundColor, value),
-  );
+  set pointBackgroundColor(ChartPaint value) =>
+      store(OptionKey.pointBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _pointBorderColor;
+  Opt<ChartPaint>? _pointBorderColor;
 
   /// The cell of `pointBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get pointBorderColorCell => _pointBorderColor;
+  Opt<ChartPaint>? get pointBorderColorCell => _pointBorderColor;
 
   /// Stores the cell of `pointBorderColor`. Dart `null` deletes the key.
-  set pointBorderColorCell(Opt<Object>? cell) {
+  set pointBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointBorderColor);
     } else {
@@ -1721,10 +1715,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointBorderColor`.
-  set pointBorderColor(Object value) => store(
-    OptionKey.pointBorderColor,
-    classify(OptionKey.pointBorderColor, value),
-  );
+  set pointBorderColor(ChartPaint value) =>
+      store(OptionKey.pointBorderColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _pointBorderWidth;
 
@@ -1798,13 +1790,14 @@ base class ChartOptionsScope extends OptionScope {
   set pointRotation(double value) =>
       store(OptionKey.pointRotation, OptValue<double>(value));
 
-  Opt<Object>? _pointHoverBackgroundColor;
+  Opt<ChartPaint>? _pointHoverBackgroundColor;
 
   /// The cell of `pointHoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get pointHoverBackgroundColorCell => _pointHoverBackgroundColor;
+  Opt<ChartPaint>? get pointHoverBackgroundColorCell =>
+      _pointHoverBackgroundColor;
 
   /// Stores the cell of `pointHoverBackgroundColor`. Dart `null` deletes the key.
-  set pointHoverBackgroundColorCell(Opt<Object>? cell) {
+  set pointHoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointHoverBackgroundColor);
     } else {
@@ -1813,18 +1806,16 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointHoverBackgroundColor`.
-  set pointHoverBackgroundColor(Object value) => store(
-    OptionKey.pointHoverBackgroundColor,
-    classify(OptionKey.pointHoverBackgroundColor, value),
-  );
+  set pointHoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.pointHoverBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _pointHoverBorderColor;
+  Opt<ChartPaint>? _pointHoverBorderColor;
 
   /// The cell of `pointHoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get pointHoverBorderColorCell => _pointHoverBorderColor;
+  Opt<ChartPaint>? get pointHoverBorderColorCell => _pointHoverBorderColor;
 
   /// Stores the cell of `pointHoverBorderColor`. Dart `null` deletes the key.
-  set pointHoverBorderColorCell(Opt<Object>? cell) {
+  set pointHoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointHoverBorderColor);
     } else {
@@ -1833,10 +1824,8 @@ base class ChartOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointHoverBorderColor`.
-  set pointHoverBorderColor(Object value) => store(
-    OptionKey.pointHoverBorderColor,
-    classify(OptionKey.pointHoverBorderColor, value),
-  );
+  set pointHoverBorderColor(ChartPaint value) =>
+      store(OptionKey.pointHoverBorderColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _pointHoverBorderWidth;
 
@@ -2505,15 +2494,15 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.clip:
         _clip = fitCell(cell, (raw) => classifyUnion(raw, 35));
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.font:
         _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.responsive:
@@ -2573,7 +2562,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.scale:
         _scale = fitCell(cell, classifyScope<ScaleOptionsScope>);
       case OptionKey.hoverColor:
-        _hoverColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.label:
@@ -2631,9 +2620,9 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.pointBackgroundColor:
-        _pointBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointBorderColor:
-        _pointBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointBorderWidth:
         _pointBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.pointHitRadius:
@@ -2643,12 +2632,9 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.pointRotation:
         _pointRotation = fitCell(cell, classifyNumber);
       case OptionKey.pointHoverBackgroundColor:
-        _pointHoverBackgroundColor = fitCell(
-          cell,
-          (raw) => classifyUnion(raw, 64),
-        );
+        _pointHoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointHoverBorderColor:
-        _pointHoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointHoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointHoverBorderWidth:
         _pointHoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.pointHoverRadius:
@@ -2837,15 +2823,15 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.clip:
         return classifyUnion(raw, 35);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.font:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.responsive:
@@ -2905,7 +2891,7 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.scale:
         return classifyScope<ScaleOptionsScope>(raw);
       case OptionKey.hoverColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.label:
@@ -2963,9 +2949,9 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.dataElementType:
         return classifyUnion(raw, 6);
       case OptionKey.pointBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointBorderWidth:
         return classifyNumber(raw);
       case OptionKey.pointHitRadius:
@@ -2975,9 +2961,9 @@ base class ChartOptionsScope extends OptionScope {
       case OptionKey.pointRotation:
         return classifyNumber(raw);
       case OptionKey.pointHoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointHoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointHoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.pointHoverRadius:
@@ -5428,13 +5414,13 @@ base class PointOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -5443,16 +5429,16 @@ base class PointOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -5461,10 +5447,8 @@ base class PointOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _radius;
 
@@ -5573,13 +5557,13 @@ base class PointOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -5588,18 +5572,16 @@ base class PointOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -5608,10 +5590,8 @@ base class PointOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _hoverRadius;
 
@@ -5711,9 +5691,9 @@ base class PointOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.radius:
         _radius = fitCell(cell, classifyNumber);
       case OptionKey.hitRadius:
@@ -5727,9 +5707,9 @@ base class PointOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverRadius:
         _hoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.dollarShared:
@@ -5770,9 +5750,9 @@ base class PointOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.radius:
         return classifyNumber(raw);
       case OptionKey.hitRadius:
@@ -5786,9 +5766,9 @@ base class PointOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverRadius:
         return classifyNumber(raw);
       case OptionKey.dollarShared:
@@ -5828,13 +5808,13 @@ base class LineOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -5843,16 +5823,16 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -5861,10 +5841,8 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<StrokeCap>? _borderCapStyle;
 
@@ -6085,13 +6063,13 @@ base class LineOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -6100,18 +6078,16 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -6120,10 +6096,8 @@ base class LineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<StrokeCap>? _hoverBorderCapStyle;
 
@@ -6297,9 +6271,9 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.borderCapStyle:
         _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
@@ -6328,9 +6302,9 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
@@ -6386,9 +6360,9 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.borderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
@@ -6414,9 +6388,9 @@ base class LineOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
@@ -6444,13 +6418,13 @@ base class BarOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.barOptions;
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -6459,16 +6433,16 @@ base class BarOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -6477,10 +6451,8 @@ base class BarOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _base;
 
@@ -6589,13 +6561,13 @@ base class BarOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -6604,18 +6576,16 @@ base class BarOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -6624,10 +6594,8 @@ base class BarOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<Object>? _hoverBorderRadius;
 
@@ -6745,9 +6713,9 @@ base class BarOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.base:
         _base = fitCell(cell, classifyNumber);
       case OptionKey.borderSkipped:
@@ -6761,9 +6729,9 @@ base class BarOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderRadius:
         _hoverBorderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.pointStyle:
@@ -6804,9 +6772,9 @@ base class BarOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.base:
         return classifyNumber(raw);
       case OptionKey.borderSkipped:
@@ -6820,9 +6788,9 @@ base class BarOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.pointStyle:
@@ -6864,13 +6832,13 @@ base class ArcOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -6879,16 +6847,16 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -6897,10 +6865,8 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<bool>? _selfJoin;
 
@@ -7097,13 +7063,13 @@ base class ArcOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -7112,18 +7078,16 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -7132,10 +7096,8 @@ base class ArcOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<Object>? _hoverBorderDash;
 
@@ -7306,9 +7268,9 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.selfJoin:
         _selfJoin = fitCell(cell, classifyBool);
       case OptionKey.borderAlign:
@@ -7332,9 +7294,9 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderDash:
         _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderDashOffset:
@@ -7389,9 +7351,9 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.selfJoin:
         return classifyBool(raw);
       case OptionKey.borderAlign:
@@ -7415,9 +7377,9 @@ base class ArcOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderDash:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderDashOffset:
@@ -7730,13 +7692,13 @@ base class FillTargetScope extends OptionScope {
   set target(Object value) =>
       store(OptionKey.target, classify(OptionKey.target, value));
 
-  Opt<Object>? _above;
+  Opt<ChartPaint>? _above;
 
   /// The cell of `above`, or Dart `null` when absent.
-  Opt<Object>? get aboveCell => _above;
+  Opt<ChartPaint>? get aboveCell => _above;
 
   /// Stores the cell of `above`. Dart `null` deletes the key.
-  set aboveCell(Opt<Object>? cell) {
+  set aboveCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.above);
     } else {
@@ -7745,16 +7707,16 @@ base class FillTargetScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `above`.
-  set above(Object value) =>
-      store(OptionKey.above, classify(OptionKey.above, value));
+  set above(ChartPaint value) =>
+      store(OptionKey.above, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _below;
+  Opt<ChartPaint>? _below;
 
   /// The cell of `below`, or Dart `null` when absent.
-  Opt<Object>? get belowCell => _below;
+  Opt<ChartPaint>? get belowCell => _below;
 
   /// Stores the cell of `below`. Dart `null` deletes the key.
-  set belowCell(Opt<Object>? cell) {
+  set belowCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.below);
     } else {
@@ -7763,8 +7725,8 @@ base class FillTargetScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `below`.
-  set below(Object value) =>
-      store(OptionKey.below, classify(OptionKey.below, value));
+  set below(ChartPaint value) =>
+      store(OptionKey.below, OptValue<ChartPaint>(value));
 
   Opt<double>? _value;
 
@@ -7805,9 +7767,9 @@ base class FillTargetScope extends OptionScope {
       case OptionKey.target:
         _target = fitCell(cell, (raw) => classifyUnion(raw, 3363));
       case OptionKey.above:
-        _above = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _above = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.below:
-        _below = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _below = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.value:
         _value = fitCell(cell, classifyNumber);
       default:
@@ -7834,9 +7796,9 @@ base class FillTargetScope extends OptionScope {
       case OptionKey.target:
         return classifyUnion(raw, 3363);
       case OptionKey.above:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.below:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.value:
         return classifyNumber(raw);
       default:
@@ -7854,13 +7816,13 @@ base class SegmentOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.segmentOptions;
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -7869,18 +7831,16 @@ base class SegmentOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -7889,8 +7849,8 @@ base class SegmentOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
   Opt<StrokeCap>? _borderCapStyle;
 
@@ -8008,9 +7968,9 @@ base class SegmentOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.borderCapStyle:
         _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
@@ -8046,9 +8006,9 @@ base class SegmentOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.borderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
@@ -8216,13 +8176,13 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `hidden`.
   set hidden(bool value) => store(OptionKey.hidden, OptValue<bool>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -8231,16 +8191,16 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -8249,10 +8209,8 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _base;
 
@@ -8361,13 +8319,13 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -8376,18 +8334,16 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -8396,10 +8352,8 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<Object>? _animation;
 
@@ -8968,9 +8922,9 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hidden:
         _hidden = fitCell(cell, classifyBool);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.base:
         _base = fitCell(cell, classifyNumber);
       case OptionKey.borderSkipped:
@@ -8984,9 +8938,9 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.animation:
         _animation = fitCell(cell, (raw) => classifyUnion(raw, 34));
       case OptionKey.animations:
@@ -9118,9 +9072,9 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hidden:
         return classifyBool(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.base:
         return classifyNumber(raw);
       case OptionKey.borderSkipped:
@@ -9134,9 +9088,9 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.animation:
         return classifyUnion(raw, 34);
       case OptionKey.animations:
@@ -9346,13 +9300,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `hidden`.
   set hidden(bool value) => store(OptionKey.hidden, OptValue<bool>(value));
 
-  Opt<Object>? _pointBackgroundColor;
+  Opt<ChartPaint>? _pointBackgroundColor;
 
   /// The cell of `pointBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get pointBackgroundColorCell => _pointBackgroundColor;
+  Opt<ChartPaint>? get pointBackgroundColorCell => _pointBackgroundColor;
 
   /// Stores the cell of `pointBackgroundColor`. Dart `null` deletes the key.
-  set pointBackgroundColorCell(Opt<Object>? cell) {
+  set pointBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointBackgroundColor);
     } else {
@@ -9361,18 +9315,16 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointBackgroundColor`.
-  set pointBackgroundColor(Object value) => store(
-    OptionKey.pointBackgroundColor,
-    classify(OptionKey.pointBackgroundColor, value),
-  );
+  set pointBackgroundColor(ChartPaint value) =>
+      store(OptionKey.pointBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _pointBorderColor;
+  Opt<ChartPaint>? _pointBorderColor;
 
   /// The cell of `pointBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get pointBorderColorCell => _pointBorderColor;
+  Opt<ChartPaint>? get pointBorderColorCell => _pointBorderColor;
 
   /// Stores the cell of `pointBorderColor`. Dart `null` deletes the key.
-  set pointBorderColorCell(Opt<Object>? cell) {
+  set pointBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointBorderColor);
     } else {
@@ -9381,10 +9333,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointBorderColor`.
-  set pointBorderColor(Object value) => store(
-    OptionKey.pointBorderColor,
-    classify(OptionKey.pointBorderColor, value),
-  );
+  set pointBorderColor(ChartPaint value) =>
+      store(OptionKey.pointBorderColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _pointBorderWidth;
 
@@ -9476,13 +9426,14 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set pointStyle(Object value) =>
       store(OptionKey.pointStyle, classify(OptionKey.pointStyle, value));
 
-  Opt<Object>? _pointHoverBackgroundColor;
+  Opt<ChartPaint>? _pointHoverBackgroundColor;
 
   /// The cell of `pointHoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get pointHoverBackgroundColorCell => _pointHoverBackgroundColor;
+  Opt<ChartPaint>? get pointHoverBackgroundColorCell =>
+      _pointHoverBackgroundColor;
 
   /// Stores the cell of `pointHoverBackgroundColor`. Dart `null` deletes the key.
-  set pointHoverBackgroundColorCell(Opt<Object>? cell) {
+  set pointHoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointHoverBackgroundColor);
     } else {
@@ -9491,18 +9442,16 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointHoverBackgroundColor`.
-  set pointHoverBackgroundColor(Object value) => store(
-    OptionKey.pointHoverBackgroundColor,
-    classify(OptionKey.pointHoverBackgroundColor, value),
-  );
+  set pointHoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.pointHoverBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _pointHoverBorderColor;
+  Opt<ChartPaint>? _pointHoverBorderColor;
 
   /// The cell of `pointHoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get pointHoverBorderColorCell => _pointHoverBorderColor;
+  Opt<ChartPaint>? get pointHoverBorderColorCell => _pointHoverBorderColor;
 
   /// Stores the cell of `pointHoverBorderColor`. Dart `null` deletes the key.
-  set pointHoverBorderColorCell(Opt<Object>? cell) {
+  set pointHoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointHoverBorderColor);
     } else {
@@ -9511,10 +9460,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointHoverBorderColor`.
-  set pointHoverBorderColor(Object value) => store(
-    OptionKey.pointHoverBorderColor,
-    classify(OptionKey.pointHoverBorderColor, value),
-  );
+  set pointHoverBorderColor(ChartPaint value) =>
+      store(OptionKey.pointHoverBorderColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _pointHoverBorderWidth;
 
@@ -9771,13 +9718,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -9786,16 +9733,16 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -9804,10 +9751,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<StrokeCap>? _hoverBorderCapStyle;
 
@@ -9901,13 +9846,13 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -9916,18 +9861,16 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -9936,10 +9879,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<Object>? _animation;
 
@@ -10371,9 +10312,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hidden:
         _hidden = fitCell(cell, classifyBool);
       case OptionKey.pointBackgroundColor:
-        _pointBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointBorderColor:
-        _pointBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointBorderWidth:
         _pointBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.pointHitRadius:
@@ -10385,12 +10326,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointStyle:
         _pointStyle = fitCell(cell, (raw) => classifyUnion(raw, 3202));
       case OptionKey.pointHoverBackgroundColor:
-        _pointHoverBackgroundColor = fitCell(
-          cell,
-          (raw) => classifyUnion(raw, 64),
-        );
+        _pointHoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointHoverBorderColor:
-        _pointHoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointHoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointHoverBorderWidth:
         _pointHoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.pointHoverRadius:
@@ -10423,9 +10361,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
@@ -10437,9 +10375,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.animation:
         _animation = fitCell(cell, (raw) => classifyUnion(raw, 34));
       case OptionKey.animations:
@@ -10566,9 +10504,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hidden:
         return classifyBool(raw);
       case OptionKey.pointBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointBorderWidth:
         return classifyNumber(raw);
       case OptionKey.pointHitRadius:
@@ -10580,9 +10518,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointStyle:
         return classifyUnion(raw, 3202);
       case OptionKey.pointHoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointHoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointHoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.pointHoverRadius:
@@ -10612,9 +10550,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
@@ -10626,9 +10564,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.animation:
         return classifyUnion(raw, 34);
       case OptionKey.animations:
@@ -10835,13 +10773,13 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -10850,16 +10788,16 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -10868,10 +10806,8 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _radius;
 
@@ -10980,13 +10916,13 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -10995,18 +10931,16 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -11015,10 +10949,8 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _hoverRadius;
 
@@ -11411,9 +11343,9 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.radius:
         _radius = fitCell(cell, classifyNumber);
       case OptionKey.hitRadius:
@@ -11427,9 +11359,9 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverRadius:
         _hoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.xAxisID:
@@ -11537,9 +11469,9 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.radius:
         return classifyNumber(raw);
       case OptionKey.hitRadius:
@@ -11553,9 +11485,9 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverRadius:
         return classifyNumber(raw);
       case OptionKey.xAxisID:
@@ -11763,13 +11695,13 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -11778,16 +11710,16 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -11796,10 +11728,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<bool>? _selfJoin;
 
@@ -11996,13 +11926,13 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -12011,18 +11941,16 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -12031,10 +11959,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<Object>? _hoverBorderDash;
 
@@ -12598,9 +12524,9 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.selfJoin:
         _selfJoin = fitCell(cell, classifyBool);
       case OptionKey.borderAlign:
@@ -12624,9 +12550,9 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderDash:
         _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderDashOffset:
@@ -12763,9 +12689,9 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.selfJoin:
         return classifyBool(raw);
       case OptionKey.borderAlign:
@@ -12789,9 +12715,9 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderDash:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderDashOffset:
@@ -13015,13 +12941,13 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -13030,16 +12956,16 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -13048,10 +12974,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<bool>? _selfJoin;
 
@@ -13248,13 +13172,13 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -13263,18 +13187,16 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -13283,10 +13205,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<Object>? _hoverBorderDash;
 
@@ -13869,9 +13789,9 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.selfJoin:
         _selfJoin = fitCell(cell, classifyBool);
       case OptionKey.borderAlign:
@@ -13895,9 +13815,9 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderDash:
         _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderDashOffset:
@@ -14037,9 +13957,9 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.selfJoin:
         return classifyBool(raw);
       case OptionKey.borderAlign:
@@ -14063,9 +13983,9 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderDash:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderDashOffset:
@@ -14291,13 +14211,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set borderWidth(double value) =>
       store(OptionKey.borderWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -14306,16 +14226,16 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -14324,10 +14244,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _radius;
 
@@ -14436,13 +14354,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set hoverBorderWidth(double value) =>
       store(OptionKey.hoverBorderWidth, OptValue<double>(value));
 
-  Opt<Object>? _hoverBorderColor;
+  Opt<ChartPaint>? _hoverBorderColor;
 
   /// The cell of `hoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderColorCell => _hoverBorderColor;
+  Opt<ChartPaint>? get hoverBorderColorCell => _hoverBorderColor;
 
   /// Stores the cell of `hoverBorderColor`. Dart `null` deletes the key.
-  set hoverBorderColorCell(Opt<Object>? cell) {
+  set hoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderColor);
     } else {
@@ -14451,18 +14369,16 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderColor`.
-  set hoverBorderColor(Object value) => store(
-    OptionKey.hoverBorderColor,
-    classify(OptionKey.hoverBorderColor, value),
-  );
+  set hoverBorderColor(ChartPaint value) =>
+      store(OptionKey.hoverBorderColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBackgroundColor;
+  Opt<ChartPaint>? _hoverBackgroundColor;
 
   /// The cell of `hoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get hoverBackgroundColorCell => _hoverBackgroundColor;
+  Opt<ChartPaint>? get hoverBackgroundColorCell => _hoverBackgroundColor;
 
   /// Stores the cell of `hoverBackgroundColor`. Dart `null` deletes the key.
-  set hoverBackgroundColorCell(Opt<Object>? cell) {
+  set hoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBackgroundColor);
     } else {
@@ -14471,10 +14387,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBackgroundColor`.
-  set hoverBackgroundColor(Object value) => store(
-    OptionKey.hoverBackgroundColor,
-    classify(OptionKey.hoverBackgroundColor, value),
-  );
+  set hoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _hoverRadius;
 
@@ -14494,13 +14408,13 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set hoverRadius(double value) =>
       store(OptionKey.hoverRadius, OptValue<double>(value));
 
-  Opt<Object>? _pointBackgroundColor;
+  Opt<ChartPaint>? _pointBackgroundColor;
 
   /// The cell of `pointBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get pointBackgroundColorCell => _pointBackgroundColor;
+  Opt<ChartPaint>? get pointBackgroundColorCell => _pointBackgroundColor;
 
   /// Stores the cell of `pointBackgroundColor`. Dart `null` deletes the key.
-  set pointBackgroundColorCell(Opt<Object>? cell) {
+  set pointBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointBackgroundColor);
     } else {
@@ -14509,18 +14423,16 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointBackgroundColor`.
-  set pointBackgroundColor(Object value) => store(
-    OptionKey.pointBackgroundColor,
-    classify(OptionKey.pointBackgroundColor, value),
-  );
+  set pointBackgroundColor(ChartPaint value) =>
+      store(OptionKey.pointBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _pointBorderColor;
+  Opt<ChartPaint>? _pointBorderColor;
 
   /// The cell of `pointBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get pointBorderColorCell => _pointBorderColor;
+  Opt<ChartPaint>? get pointBorderColorCell => _pointBorderColor;
 
   /// Stores the cell of `pointBorderColor`. Dart `null` deletes the key.
-  set pointBorderColorCell(Opt<Object>? cell) {
+  set pointBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointBorderColor);
     } else {
@@ -14529,10 +14441,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointBorderColor`.
-  set pointBorderColor(Object value) => store(
-    OptionKey.pointBorderColor,
-    classify(OptionKey.pointBorderColor, value),
-  );
+  set pointBorderColor(ChartPaint value) =>
+      store(OptionKey.pointBorderColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _pointBorderWidth;
 
@@ -14606,13 +14516,14 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   set pointRotation(double value) =>
       store(OptionKey.pointRotation, OptValue<double>(value));
 
-  Opt<Object>? _pointHoverBackgroundColor;
+  Opt<ChartPaint>? _pointHoverBackgroundColor;
 
   /// The cell of `pointHoverBackgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get pointHoverBackgroundColorCell => _pointHoverBackgroundColor;
+  Opt<ChartPaint>? get pointHoverBackgroundColorCell =>
+      _pointHoverBackgroundColor;
 
   /// Stores the cell of `pointHoverBackgroundColor`. Dart `null` deletes the key.
-  set pointHoverBackgroundColorCell(Opt<Object>? cell) {
+  set pointHoverBackgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointHoverBackgroundColor);
     } else {
@@ -14621,18 +14532,16 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointHoverBackgroundColor`.
-  set pointHoverBackgroundColor(Object value) => store(
-    OptionKey.pointHoverBackgroundColor,
-    classify(OptionKey.pointHoverBackgroundColor, value),
-  );
+  set pointHoverBackgroundColor(ChartPaint value) =>
+      store(OptionKey.pointHoverBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _pointHoverBorderColor;
+  Opt<ChartPaint>? _pointHoverBorderColor;
 
   /// The cell of `pointHoverBorderColor`, or Dart `null` when absent.
-  Opt<Object>? get pointHoverBorderColorCell => _pointHoverBorderColor;
+  Opt<ChartPaint>? get pointHoverBorderColorCell => _pointHoverBorderColor;
 
   /// Stores the cell of `pointHoverBorderColor`. Dart `null` deletes the key.
-  set pointHoverBorderColorCell(Opt<Object>? cell) {
+  set pointHoverBorderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.pointHoverBorderColor);
     } else {
@@ -14641,10 +14550,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `pointHoverBorderColor`.
-  set pointHoverBorderColor(Object value) => store(
-    OptionKey.pointHoverBorderColor,
-    classify(OptionKey.pointHoverBorderColor, value),
-  );
+  set pointHoverBorderColor(ChartPaint value) =>
+      store(OptionKey.pointHoverBorderColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _pointHoverBorderWidth;
 
@@ -15379,9 +15286,9 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.radius:
         _radius = fitCell(cell, classifyNumber);
       case OptionKey.hitRadius:
@@ -15395,15 +15302,15 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         _hoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderColor:
-        _hoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBackgroundColor:
-        _hoverBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverRadius:
         _hoverRadius = fitCell(cell, classifyNumber);
       case OptionKey.pointBackgroundColor:
-        _pointBackgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointBorderColor:
-        _pointBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointBorderWidth:
         _pointBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.pointHitRadius:
@@ -15413,12 +15320,9 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointRotation:
         _pointRotation = fitCell(cell, classifyNumber);
       case OptionKey.pointHoverBackgroundColor:
-        _pointHoverBackgroundColor = fitCell(
-          cell,
-          (raw) => classifyUnion(raw, 64),
-        );
+        _pointHoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointHoverBorderColor:
-        _pointHoverBorderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _pointHoverBorderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.pointHoverBorderWidth:
         _pointHoverBorderWidth = fitCell(cell, classifyNumber);
       case OptionKey.pointHoverRadius:
@@ -15586,9 +15490,9 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.radius:
         return classifyNumber(raw);
       case OptionKey.hitRadius:
@@ -15602,15 +15506,15 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.hoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.hoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverRadius:
         return classifyNumber(raw);
       case OptionKey.pointBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointBorderWidth:
         return classifyNumber(raw);
       case OptionKey.pointHitRadius:
@@ -15620,9 +15524,9 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
       case OptionKey.pointRotation:
         return classifyNumber(raw);
       case OptionKey.pointHoverBackgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointHoverBorderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.pointHoverBorderWidth:
         return classifyNumber(raw);
       case OptionKey.pointHoverRadius:
@@ -16387,13 +16291,13 @@ base class ScaleOptionsScope extends OptionScope {
   set alignToPixels(bool value) =>
       store(OptionKey.alignToPixels, OptValue<bool>(value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -16402,10 +16306,8 @@ base class ScaleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<bool>? _reverse;
 
@@ -17342,7 +17244,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.alignToPixels:
         _alignToPixels = fitCell(cell, classifyBool);
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.reverse:
         _reverse = fitCell(cell, classifyBool);
       case OptionKey.clip:
@@ -17515,7 +17417,7 @@ base class ScaleOptionsScope extends OptionScope {
       case OptionKey.alignToPixels:
         return classifyBool(raw);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.reverse:
         return classifyBool(raw);
       case OptionKey.clip:
@@ -17623,13 +17525,13 @@ base class TickOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.tickOptions;
 
-  Opt<Object>? _backdropColor;
+  Opt<ChartPaint>? _backdropColor;
 
   /// The cell of `backdropColor`, or Dart `null` when absent.
-  Opt<Object>? get backdropColorCell => _backdropColor;
+  Opt<ChartPaint>? get backdropColorCell => _backdropColor;
 
   /// Stores the cell of `backdropColor`. Dart `null` deletes the key.
-  set backdropColorCell(Opt<Object>? cell) {
+  set backdropColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backdropColor);
     } else {
@@ -17638,8 +17540,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backdropColor`.
-  set backdropColor(Object value) =>
-      store(OptionKey.backdropColor, classify(OptionKey.backdropColor, value));
+  set backdropColor(ChartPaint value) =>
+      store(OptionKey.backdropColor, OptValue<ChartPaint>(value));
 
   Opt<EdgeInsets>? _backdropPadding;
 
@@ -17694,13 +17596,13 @@ base class TickOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `display`.
   set display(bool value) => store(OptionKey.display, OptValue<bool>(value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -17709,8 +17611,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _font;
 
@@ -17766,13 +17668,13 @@ base class TickOptionsScope extends OptionScope {
   set showLabelBackdrop(bool value) =>
       store(OptionKey.showLabelBackdrop, OptValue<bool>(value));
 
-  Opt<Object>? _textStrokeColor;
+  Opt<ChartPaint>? _textStrokeColor;
 
   /// The cell of `textStrokeColor`, or Dart `null` when absent.
-  Opt<Object>? get textStrokeColorCell => _textStrokeColor;
+  Opt<ChartPaint>? get textStrokeColorCell => _textStrokeColor;
 
   /// Stores the cell of `textStrokeColor`. Dart `null` deletes the key.
-  set textStrokeColorCell(Opt<Object>? cell) {
+  set textStrokeColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.textStrokeColor);
     } else {
@@ -17781,10 +17683,8 @@ base class TickOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `textStrokeColor`.
-  set textStrokeColor(Object value) => store(
-    OptionKey.textStrokeColor,
-    classify(OptionKey.textStrokeColor, value),
-  );
+  set textStrokeColor(ChartPaint value) =>
+      store(OptionKey.textStrokeColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _textStrokeWidth;
 
@@ -18212,7 +18112,7 @@ base class TickOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.backdropColor:
-        _backdropColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backdropColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backdropPadding:
         _backdropPadding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.callback:
@@ -18220,7 +18120,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.display:
         _display = fitCell(cell, classifyBool);
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.font:
         _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.padding:
@@ -18228,7 +18128,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.showLabelBackdrop:
         _showLabelBackdrop = fitCell(cell, classifyBool);
       case OptionKey.textStrokeColor:
-        _textStrokeColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _textStrokeColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.textStrokeWidth:
         _textStrokeWidth = fitCell(cell, classifyNumber);
       case OptionKey.z:
@@ -18316,7 +18216,7 @@ base class TickOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.backdropColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backdropPadding:
         return classifyTyped<EdgeInsets>(raw);
       case OptionKey.callback:
@@ -18324,7 +18224,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.display:
         return classifyBool(raw);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.font:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.padding:
@@ -18332,7 +18232,7 @@ base class TickOptionsScope extends OptionScope {
       case OptionKey.showLabelBackdrop:
         return classifyBool(raw);
       case OptionKey.textStrokeColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.textStrokeWidth:
         return classifyNumber(raw);
       case OptionKey.z:
@@ -18512,13 +18412,13 @@ base class GridLineOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `circular`.
   set circular(bool value) => store(OptionKey.circular, OptValue<bool>(value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -18527,8 +18427,8 @@ base class GridLineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<double>? _lineWidth;
 
@@ -18622,13 +18522,13 @@ base class GridLineOptionsScope extends OptionScope {
   set tickBorderDashOffset(double value) =>
       store(OptionKey.tickBorderDashOffset, OptValue<double>(value));
 
-  Opt<Object>? _tickColor;
+  Opt<ChartPaint>? _tickColor;
 
   /// The cell of `tickColor`, or Dart `null` when absent.
-  Opt<Object>? get tickColorCell => _tickColor;
+  Opt<ChartPaint>? get tickColorCell => _tickColor;
 
   /// Stores the cell of `tickColor`. Dart `null` deletes the key.
-  set tickColorCell(Opt<Object>? cell) {
+  set tickColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.tickColor);
     } else {
@@ -18637,8 +18537,8 @@ base class GridLineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `tickColor`.
-  set tickColor(Object value) =>
-      store(OptionKey.tickColor, classify(OptionKey.tickColor, value));
+  set tickColor(ChartPaint value) =>
+      store(OptionKey.tickColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _tickLength;
 
@@ -18752,7 +18652,7 @@ base class GridLineOptionsScope extends OptionScope {
       case OptionKey.circular:
         _circular = fitCell(cell, classifyBool);
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.lineWidth:
         _lineWidth = fitCell(cell, classifyNumber);
       case OptionKey.drawOnChartArea:
@@ -18764,7 +18664,7 @@ base class GridLineOptionsScope extends OptionScope {
       case OptionKey.tickBorderDashOffset:
         _tickBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.tickColor:
-        _tickColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _tickColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.tickLength:
         _tickLength = fitCell(cell, classifyNumber);
       case OptionKey.tickWidth:
@@ -18808,7 +18708,7 @@ base class GridLineOptionsScope extends OptionScope {
       case OptionKey.circular:
         return classifyBool(raw);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.lineWidth:
         return classifyNumber(raw);
       case OptionKey.drawOnChartArea:
@@ -18820,7 +18720,7 @@ base class GridLineOptionsScope extends OptionScope {
       case OptionKey.tickBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.tickColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.tickLength:
         return classifyNumber(raw);
       case OptionKey.tickWidth:
@@ -18896,13 +18796,13 @@ base class BorderOptionsScope extends OptionScope {
   set dashOffset(double value) =>
       store(OptionKey.dashOffset, OptValue<double>(value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -18911,8 +18811,8 @@ base class BorderOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<double>? _width;
 
@@ -18978,7 +18878,7 @@ base class BorderOptionsScope extends OptionScope {
       case OptionKey.dashOffset:
         _dashOffset = fitCell(cell, classifyNumber);
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.width:
         _width = fitCell(cell, classifyNumber);
       case OptionKey.z:
@@ -19013,7 +18913,7 @@ base class BorderOptionsScope extends OptionScope {
       case OptionKey.dashOffset:
         return classifyNumber(raw);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.width:
         return classifyNumber(raw);
       case OptionKey.z:
@@ -19086,13 +18986,13 @@ base class ScaleTitleOptionsScope extends OptionScope {
   set text(Object value) =>
       store(OptionKey.text, classify(OptionKey.text, value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -19101,16 +19001,16 @@ base class ScaleTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _strokeColor;
+  Opt<ChartPaint>? _strokeColor;
 
   /// The cell of `strokeColor`, or Dart `null` when absent.
-  Opt<Object>? get strokeColorCell => _strokeColor;
+  Opt<ChartPaint>? get strokeColorCell => _strokeColor;
 
   /// Stores the cell of `strokeColor`. Dart `null` deletes the key.
-  set strokeColorCell(Opt<Object>? cell) {
+  set strokeColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.strokeColor);
     } else {
@@ -19119,8 +19019,8 @@ base class ScaleTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `strokeColor`.
-  set strokeColor(Object value) =>
-      store(OptionKey.strokeColor, classify(OptionKey.strokeColor, value));
+  set strokeColor(ChartPaint value) =>
+      store(OptionKey.strokeColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _strokeWidth;
 
@@ -19210,9 +19110,9 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.text:
         _text = fitCell(cell, (raw) => classifyUnion(raw, 20));
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.strokeColor:
-        _strokeColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _strokeColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.strokeWidth:
         _strokeWidth = fitCell(cell, classifyNumber);
       case OptionKey.font:
@@ -19251,9 +19151,9 @@ base class ScaleTitleOptionsScope extends OptionScope {
       case OptionKey.text:
         return classifyUnion(raw, 20);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.strokeColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.strokeWidth:
         return classifyNumber(raw);
       case OptionKey.font:
@@ -19799,13 +19699,13 @@ base class AngleLineOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `display`.
   set display(bool value) => store(OptionKey.display, OptValue<bool>(value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -19814,8 +19714,8 @@ base class AngleLineOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<double>? _lineWidth;
 
@@ -19895,7 +19795,7 @@ base class AngleLineOptionsScope extends OptionScope {
       case OptionKey.display:
         _display = fitCell(cell, classifyBool);
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.lineWidth:
         _lineWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderDash:
@@ -19927,7 +19827,7 @@ base class AngleLineOptionsScope extends OptionScope {
       case OptionKey.display:
         return classifyBool(raw);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.lineWidth:
         return classifyNumber(raw);
       case OptionKey.borderDash:
@@ -19949,13 +19849,13 @@ base class PointLabelOptionsScope extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.pointLabelOptions;
 
-  Opt<Object>? _backdropColor;
+  Opt<ChartPaint>? _backdropColor;
 
   /// The cell of `backdropColor`, or Dart `null` when absent.
-  Opt<Object>? get backdropColorCell => _backdropColor;
+  Opt<ChartPaint>? get backdropColorCell => _backdropColor;
 
   /// Stores the cell of `backdropColor`. Dart `null` deletes the key.
-  set backdropColorCell(Opt<Object>? cell) {
+  set backdropColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backdropColor);
     } else {
@@ -19964,8 +19864,8 @@ base class PointLabelOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backdropColor`.
-  set backdropColor(Object value) =>
-      store(OptionKey.backdropColor, classify(OptionKey.backdropColor, value));
+  set backdropColor(ChartPaint value) =>
+      store(OptionKey.backdropColor, OptValue<ChartPaint>(value));
 
   Opt<EdgeInsets>? _backdropPadding;
 
@@ -20021,13 +19921,13 @@ base class PointLabelOptionsScope extends OptionScope {
   set display(Object value) =>
       store(OptionKey.display, classify(OptionKey.display, value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -20036,8 +19936,8 @@ base class PointLabelOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _font;
 
@@ -20141,7 +20041,7 @@ base class PointLabelOptionsScope extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.backdropColor:
-        _backdropColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backdropColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.backdropPadding:
         _backdropPadding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.borderRadius:
@@ -20149,7 +20049,7 @@ base class PointLabelOptionsScope extends OptionScope {
       case OptionKey.display:
         _display = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.font:
         _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.callback:
@@ -20185,7 +20085,7 @@ base class PointLabelOptionsScope extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.backdropColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.backdropPadding:
         return classifyTyped<EdgeInsets>(raw);
       case OptionKey.borderRadius:
@@ -20193,7 +20093,7 @@ base class PointLabelOptionsScope extends OptionScope {
       case OptionKey.display:
         return classifyUnion(raw, 6);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.font:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.callback:
@@ -20690,13 +20590,13 @@ base class LegendLabelOptionsScope extends OptionScope {
   set boxHeight(double value) =>
       store(OptionKey.boxHeight, OptValue<double>(value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -20705,8 +20605,8 @@ base class LegendLabelOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _font;
 
@@ -20952,7 +20852,7 @@ base class LegendLabelOptionsScope extends OptionScope {
       case OptionKey.boxHeight:
         _boxHeight = fitCell(cell, classifyNumber);
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.font:
         _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.padding:
@@ -21015,7 +20915,7 @@ base class LegendLabelOptionsScope extends OptionScope {
       case OptionKey.boxHeight:
         return classifyNumber(raw);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.font:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.padding:
@@ -21070,13 +20970,13 @@ base class LegendTitleOptionsScope extends OptionScope {
   /// Stores the plain value [value] of `display`.
   set display(bool value) => store(OptionKey.display, OptValue<bool>(value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -21085,8 +20985,8 @@ base class LegendTitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _font;
 
@@ -21185,7 +21085,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.display:
         _display = fitCell(cell, classifyBool);
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.font:
         _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.position:
@@ -21224,7 +21124,7 @@ base class LegendTitleOptionsScope extends OptionScope {
       case OptionKey.display:
         return classifyBool(raw);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.font:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.position:
@@ -21301,13 +21201,13 @@ base class TitleOptionsScope extends OptionScope {
   set position(ChartPosition value) =>
       store(OptionKey.position, OptValue<ChartPosition>(value));
 
-  Opt<Object>? _color;
+  Opt<ChartPaint>? _color;
 
   /// The cell of `color`, or Dart `null` when absent.
-  Opt<Object>? get colorCell => _color;
+  Opt<ChartPaint>? get colorCell => _color;
 
   /// Stores the cell of `color`. Dart `null` deletes the key.
-  set colorCell(Opt<Object>? cell) {
+  set colorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.color);
     } else {
@@ -21316,8 +21216,8 @@ base class TitleOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `color`.
-  set color(Object value) =>
-      store(OptionKey.color, classify(OptionKey.color, value));
+  set color(ChartPaint value) =>
+      store(OptionKey.color, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _font;
 
@@ -21463,7 +21363,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.position:
         _position = fitCell(cell, classifyTyped<ChartPosition>);
       case OptionKey.color:
-        _color = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.font:
         _font = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.fullSize:
@@ -21510,7 +21410,7 @@ base class TitleOptionsScope extends OptionScope {
       case OptionKey.position:
         return classifyTyped<ChartPosition>(raw);
       case OptionKey.color:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.font:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.fullSize:
@@ -21735,13 +21635,13 @@ base class TooltipOptionsScope extends OptionScope {
   set filter(Object value) =>
       store(OptionKey.filter, classify(OptionKey.filter, value));
 
-  Opt<Object>? _backgroundColor;
+  Opt<ChartPaint>? _backgroundColor;
 
   /// The cell of `backgroundColor`, or Dart `null` when absent.
-  Opt<Object>? get backgroundColorCell => _backgroundColor;
+  Opt<ChartPaint>? get backgroundColorCell => _backgroundColor;
 
   /// Stores the cell of `backgroundColor`. Dart `null` deletes the key.
-  set backgroundColorCell(Opt<Object>? cell) {
+  set backgroundColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.backgroundColor);
     } else {
@@ -21750,10 +21650,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `backgroundColor`.
-  set backgroundColor(Object value) => store(
-    OptionKey.backgroundColor,
-    classify(OptionKey.backgroundColor, value),
-  );
+  set backgroundColor(ChartPaint value) =>
+      store(OptionKey.backgroundColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _boxPadding;
 
@@ -21773,13 +21671,13 @@ base class TooltipOptionsScope extends OptionScope {
   set boxPadding(double value) =>
       store(OptionKey.boxPadding, OptValue<double>(value));
 
-  Opt<Object>? _titleColor;
+  Opt<ChartPaint>? _titleColor;
 
   /// The cell of `titleColor`, or Dart `null` when absent.
-  Opt<Object>? get titleColorCell => _titleColor;
+  Opt<ChartPaint>? get titleColorCell => _titleColor;
 
   /// Stores the cell of `titleColor`. Dart `null` deletes the key.
-  set titleColorCell(Opt<Object>? cell) {
+  set titleColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.titleColor);
     } else {
@@ -21788,8 +21686,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `titleColor`.
-  set titleColor(Object value) =>
-      store(OptionKey.titleColor, classify(OptionKey.titleColor, value));
+  set titleColor(ChartPaint value) =>
+      store(OptionKey.titleColor, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _titleFont;
 
@@ -21881,13 +21779,13 @@ base class TooltipOptionsScope extends OptionScope {
   set bodySpacing(double value) =>
       store(OptionKey.bodySpacing, OptValue<double>(value));
 
-  Opt<Object>? _bodyColor;
+  Opt<ChartPaint>? _bodyColor;
 
   /// The cell of `bodyColor`, or Dart `null` when absent.
-  Opt<Object>? get bodyColorCell => _bodyColor;
+  Opt<ChartPaint>? get bodyColorCell => _bodyColor;
 
   /// Stores the cell of `bodyColor`. Dart `null` deletes the key.
-  set bodyColorCell(Opt<Object>? cell) {
+  set bodyColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.bodyColor);
     } else {
@@ -21896,8 +21794,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `bodyColor`.
-  set bodyColor(Object value) =>
-      store(OptionKey.bodyColor, classify(OptionKey.bodyColor, value));
+  set bodyColor(ChartPaint value) =>
+      store(OptionKey.bodyColor, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _bodyFont;
 
@@ -21971,13 +21869,13 @@ base class TooltipOptionsScope extends OptionScope {
   set footerMarginTop(double value) =>
       store(OptionKey.footerMarginTop, OptValue<double>(value));
 
-  Opt<Object>? _footerColor;
+  Opt<ChartPaint>? _footerColor;
 
   /// The cell of `footerColor`, or Dart `null` when absent.
-  Opt<Object>? get footerColorCell => _footerColor;
+  Opt<ChartPaint>? get footerColorCell => _footerColor;
 
   /// Stores the cell of `footerColor`. Dart `null` deletes the key.
-  set footerColorCell(Opt<Object>? cell) {
+  set footerColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.footerColor);
     } else {
@@ -21986,8 +21884,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `footerColor`.
-  set footerColor(Object value) =>
-      store(OptionKey.footerColor, classify(OptionKey.footerColor, value));
+  set footerColor(ChartPaint value) =>
+      store(OptionKey.footerColor, OptValue<ChartPaint>(value));
 
   Opt<TextStyle>? _footerFont;
 
@@ -22097,13 +21995,13 @@ base class TooltipOptionsScope extends OptionScope {
   set cornerRadius(Object value) =>
       store(OptionKey.cornerRadius, classify(OptionKey.cornerRadius, value));
 
-  Opt<Object>? _multiKeyBackground;
+  Opt<ChartPaint>? _multiKeyBackground;
 
   /// The cell of `multiKeyBackground`, or Dart `null` when absent.
-  Opt<Object>? get multiKeyBackgroundCell => _multiKeyBackground;
+  Opt<ChartPaint>? get multiKeyBackgroundCell => _multiKeyBackground;
 
   /// Stores the cell of `multiKeyBackground`. Dart `null` deletes the key.
-  set multiKeyBackgroundCell(Opt<Object>? cell) {
+  set multiKeyBackgroundCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.multiKeyBackground);
     } else {
@@ -22112,10 +22010,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `multiKeyBackground`.
-  set multiKeyBackground(Object value) => store(
-    OptionKey.multiKeyBackground,
-    classify(OptionKey.multiKeyBackground, value),
-  );
+  set multiKeyBackground(ChartPaint value) =>
+      store(OptionKey.multiKeyBackground, OptValue<ChartPaint>(value));
 
   Opt<bool>? _displayColors;
 
@@ -22189,13 +22085,13 @@ base class TooltipOptionsScope extends OptionScope {
   set usePointStyle(bool value) =>
       store(OptionKey.usePointStyle, OptValue<bool>(value));
 
-  Opt<Object>? _borderColor;
+  Opt<ChartPaint>? _borderColor;
 
   /// The cell of `borderColor`, or Dart `null` when absent.
-  Opt<Object>? get borderColorCell => _borderColor;
+  Opt<ChartPaint>? get borderColorCell => _borderColor;
 
   /// Stores the cell of `borderColor`. Dart `null` deletes the key.
-  set borderColorCell(Opt<Object>? cell) {
+  set borderColorCell(Opt<ChartPaint>? cell) {
     if (cell == null) {
       delete(OptionKey.borderColor);
     } else {
@@ -22204,8 +22100,8 @@ base class TooltipOptionsScope extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderColor`.
-  set borderColor(Object value) =>
-      store(OptionKey.borderColor, classify(OptionKey.borderColor, value));
+  set borderColor(ChartPaint value) =>
+      store(OptionKey.borderColor, OptValue<ChartPaint>(value));
 
   Opt<double>? _borderWidth;
 
@@ -22473,11 +22369,11 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.filter:
         _filter = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.backgroundColor:
-        _backgroundColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _backgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.boxPadding:
         _boxPadding = fitCell(cell, classifyNumber);
       case OptionKey.titleColor:
-        _titleColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _titleColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.titleFont:
         _titleFont = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.titleSpacing:
@@ -22489,7 +22385,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.bodySpacing:
         _bodySpacing = fitCell(cell, classifyNumber);
       case OptionKey.bodyColor:
-        _bodyColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _bodyColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.bodyFont:
         _bodyFont = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.bodyAlign:
@@ -22499,7 +22395,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerMarginTop:
         _footerMarginTop = fitCell(cell, classifyNumber);
       case OptionKey.footerColor:
-        _footerColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _footerColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.footerFont:
         _footerFont = fitCell(cell, classifyTyped<TextStyle>);
       case OptionKey.footerAlign:
@@ -22513,7 +22409,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.cornerRadius:
         _cornerRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.multiKeyBackground:
-        _multiKeyBackground = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _multiKeyBackground = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.displayColors:
         _displayColors = fitCell(cell, classifyBool);
       case OptionKey.boxWidth:
@@ -22523,7 +22419,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.usePointStyle:
         _usePointStyle = fitCell(cell, classifyBool);
       case OptionKey.borderColor:
-        _borderColor = fitCell(cell, (raw) => classifyUnion(raw, 64));
+        _borderColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, classifyNumber);
       case OptionKey.rtl:
@@ -22625,11 +22521,11 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.filter:
         return classifyUnion(raw, 8);
       case OptionKey.backgroundColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.boxPadding:
         return classifyNumber(raw);
       case OptionKey.titleColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.titleFont:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.titleSpacing:
@@ -22641,7 +22537,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.bodySpacing:
         return classifyNumber(raw);
       case OptionKey.bodyColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.bodyFont:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.bodyAlign:
@@ -22651,7 +22547,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.footerMarginTop:
         return classifyNumber(raw);
       case OptionKey.footerColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.footerFont:
         return classifyTyped<TextStyle>(raw);
       case OptionKey.footerAlign:
@@ -22665,7 +22561,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.cornerRadius:
         return classifyUnion(raw, 33);
       case OptionKey.multiKeyBackground:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.displayColors:
         return classifyBool(raw);
       case OptionKey.boxWidth:
@@ -22675,7 +22571,7 @@ base class TooltipOptionsScope extends OptionScope {
       case OptionKey.usePointStyle:
         return classifyBool(raw);
       case OptionKey.borderColor:
-        return classifyUnion(raw, 64);
+        return classifyTyped<ChartPaint>(raw);
       case OptionKey.borderWidth:
         return classifyNumber(raw);
       case OptionKey.rtl:

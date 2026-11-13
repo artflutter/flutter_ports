@@ -5,7 +5,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     show Color;
-import 'package:flutter_chartjs_port/src/types/color.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:test/test.dart';
 
 // The behaviour of helpers.color that test/specs/helpers.color.tests.js does
@@ -13,19 +13,17 @@ import 'package:test/test.dart';
 // expected strings come from @kurkle/color 0.3.2 in Node.js v24.12.0 on x64.
 
 /// A gradient of the canvas layer.
-final class _Gradient implements CanvasGradient {
-  @override
-  void addColorStop(double offset, Object color) {}
-}
+ChartGradient _gradient() =>
+    const ChartGradient.linear(ui.Offset.zero, ui.Offset(1, 1), []);
 
-/// A pattern of the canvas layer.
-final class _Pattern implements CanvasPattern {}
+/// Another native shader variant. Image patterns are covered in the VM spec.
+ChartGradient _radial() => const ChartGradient.radial(ui.Offset.zero, 1, []);
 
 void main() {
   group('platform-color-brand', () {
-    test('isPatternOrGradient tests the canvas interfaces', () {
-      expect(isPatternOrGradient(_Gradient()), isTrue);
-      expect(isPatternOrGradient(_Pattern()), isTrue);
+    test('isPatternOrGradient tests native shader paints', () {
+      expect(isPatternOrGradient(_gradient()), isTrue);
+      expect(isPatternOrGradient(_radial()), isTrue);
       expect(
         isPatternOrGradient(
           const ui.Color.fromRGBO(255, 255, 255, 1),
@@ -37,13 +35,13 @@ void main() {
       expect(isPatternOrGradient(undefined), isFalse);
     });
 
-    test('color and getHoverColor return a pattern or gradient as is', () {
-      final gradient = _Gradient();
-      final pattern = _Pattern();
+    test('color and getHoverColor return shader paints as is', () {
+      final gradient = _gradient();
+      final radial = _radial();
       expect(identical(color(gradient), gradient), isTrue);
-      expect(identical(color(pattern), pattern), isTrue);
+      expect(identical(color(radial), radial), isTrue);
       expect(identical(getHoverColor(gradient), gradient), isTrue);
-      expect(identical(getHoverColor(pattern), pattern), isTrue);
+      expect(identical(getHoverColor(radial), radial), isTrue);
     });
   });
 
@@ -57,31 +55,31 @@ void main() {
   test('getHoverColor saturates by 0.5 and darkens by 0.1', () {
     expect(
       getHoverColor(const ui.Color.fromRGBO(70, 191, 189, 1)),
-      const ui.Color.fromRGBO(32, 203, 200, 1),
+      const ChartPaint.solid(ui.Color.fromRGBO(32, 203, 200, 1)),
     );
     expect(
       getHoverColor(const ui.Color.fromRGBO(70, 191, 189, 1)),
-      const ui.Color.fromRGBO(32, 203, 200, 1),
+      const ChartPaint.solid(ui.Color.fromRGBO(32, 203, 200, 1)),
     );
     expect(
       getHoverColor(const ui.Color.fromRGBO(255, 0, 0, 1)),
-      const ui.Color.fromRGBO(230, 0, 0, 1),
+      const ChartPaint.solid(ui.Color.fromRGBO(230, 0, 0, 1)),
     );
     expect(
       getHoverColor(const ui.Color.fromRGBO(255, 99, 132, 0.5)),
-      const ui.Color.fromRGBO(255, 64, 105, 0.5),
+      const ChartPaint.solid(ui.Color.fromRGBO(255, 64, 105, 0.5)),
     );
     expect(
       getHoverColor(const ui.Color.fromRGBO(0, 0, 0, 0)),
-      const ui.Color.fromRGBO(0, 0, 0, 0),
+      const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)),
     );
     expect(
       getHoverColor(const ui.Color.fromRGBO(10, 20, 30, 0.5)),
-      const ui.Color.fromRGBO(4, 18, 32, 0.5),
+      const ChartPaint.solid(ui.Color.fromRGBO(4, 18, 32, 0.5)),
     );
     expect(
       getHoverColor(const ui.Color.fromRGBO(10, 20, 30, 0.5)),
-      const ui.Color.fromRGBO(4, 18, 32, 0.5),
+      const ChartPaint.solid(ui.Color.fromRGBO(4, 18, 32, 0.5)),
     );
   });
 

@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/stack_point_search.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../scales/scale_chart_harness.dart' show drawCalls;
@@ -28,8 +30,10 @@ void main() {
               'data': [for (var i = 0; i < 64; i++) 1 + (i + k) % 7],
               'fill': FillBoundary.stack,
               'pointRadius': 0,
-              'backgroundColor': Color.fromARGB(100, 30 + 60 * k, 80, 160),
-              'borderColor': const Color(0xff123456),
+              'backgroundColor': ChartPaint.solid(
+                Color.fromARGB(100, 30 + 60 * k, 80, 160),
+              ),
+              'borderColor': const ChartPaint.solid(Color(0xff123456)),
             },
         ],
       },

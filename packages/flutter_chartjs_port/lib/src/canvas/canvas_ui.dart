@@ -61,10 +61,11 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart'
-    show UiCanvasGradient, UiCanvasPattern, UiImageSource;
+    show UiImageSource;
 
 /// The retained paint generations before flattening (ADR 0066). A large
 /// generation can span multiple pictures without triggering rasterization.
@@ -448,9 +449,9 @@ final class _PathClip extends _Clip {
 final class _State {
   final UiTransform transform = UiTransform();
   ui.Color? fillColor = _black;
-  UiShaderSource? fillShader;
+  ChartShaderPaint? fillShader;
   ui.Color? strokeColor = _black;
-  UiShaderSource? strokeShader;
+  ChartShaderPaint? strokeShader;
   double lineWidth = 1;
   ui.StrokeCap cap = ui.StrokeCap.butt;
   ui.StrokeJoin join = ui.StrokeJoin.miter;
@@ -1031,14 +1032,14 @@ final class UiCanvasContext
   bool _setupPaint(
     ui.Paint paint,
     ui.Color? color,
-    UiShaderSource? source, {
+    ChartShaderPaint? source, {
     required bool mapped,
   }) {
     final s = _s;
     final alpha = s.globalAlpha;
     if (alpha == 0 && s.blendMode == ui.BlendMode.srcOver) return false;
     if (source != null) {
-      final shader = source.shaderFor(mapped ? _shaderMatrix() : null);
+      final shader = shaderFor(source, mapped ? _shaderMatrix() : null);
       if (shader == null) return false;
       paint
         ..shader = shader
@@ -1202,7 +1203,7 @@ final class UiCanvasContext
 
   /// Whether a draw with [color] or [shader] can join the circle batch: a
   /// plain color in the `srcOver` mode.
-  bool _batchable(ui.Color? color, UiShaderSource? shader) =>
+  bool _batchable(ui.Color? color, ChartShaderPaint? shader) =>
       shader == null &&
       color != null &&
       _s.blendMode == ui.BlendMode.srcOver &&
@@ -1425,77 +1426,59 @@ final class UiCanvasContext
 
   // Styles.
 
-  static Object _styleValue(ui.Color? color, UiShaderSource? shader) =>
+  static Object _styleValue(ui.Color? color, ChartShaderPaint? shader) =>
       shader ?? color!;
 
   @override
   Object? get fillStyle => _styleValue(_s.fillColor, _s.fillShader);
 
-  /// A native Color, a [UiCanvasGradient] or a [UiCanvasPattern].
-  /// Invalid solid colors throw without changing the current style.
+  /// A native Color or a [ChartPaint]: a solid paint, a [ChartGradient] or
+  /// a [ChartPattern]. Dart `null` and [ChartPaint.unchanged] keep the
+  /// style. Invalid solid colors throw without changing the current style.
   @override
   set fillStyle(Object? value) {
-    if (value == null) return;
-    if (value is UiShaderSource) {
-      _s
-        ..fillShader = value
-        ..fillColor = null;
-    } else {
-      _s
-        ..fillColor = requireUiColor(value, 'fillStyle')
-        ..fillShader = null;
+    switch (value) {
+      case null || UnchangedChartPaint():
+        return;
+      case final ChartShaderPaint shader:
+        _s
+          ..fillShader = shader
+          ..fillColor = null;
+      case SolidChartPaint(:final color):
+        _s
+          ..fillColor = color
+          ..fillShader = null;
+      default:
+        _s
+          ..fillColor = requireUiColor(value, 'fillStyle')
+          ..fillShader = null;
     }
   }
 
   @override
   Object? get strokeStyle => _styleValue(_s.strokeColor, _s.strokeShader);
 
-  /// A native Color, a [UiCanvasGradient] or a [UiCanvasPattern].
-  /// Invalid solid colors throw without changing the current style.
+  /// A native Color or a [ChartPaint]: a solid paint, a [ChartGradient] or
+  /// a [ChartPattern]. Dart `null` and [ChartPaint.unchanged] keep the
+  /// style. Invalid solid colors throw without changing the current style.
   @override
   set strokeStyle(Object? value) {
-    if (value == null) return;
-    if (value is UiShaderSource) {
-      _s
-        ..strokeShader = value
-        ..strokeColor = null;
-    } else {
-      _s
-        ..strokeColor = requireUiColor(value, 'strokeStyle')
-        ..strokeShader = null;
+    switch (value) {
+      case null || UnchangedChartPaint():
+        return;
+      case final ChartShaderPaint shader:
+        _s
+          ..strokeShader = shader
+          ..strokeColor = null;
+      case SolidChartPaint(:final color):
+        _s
+          ..strokeColor = color
+          ..strokeShader = null;
+      default:
+        _s
+          ..strokeColor = requireUiColor(value, 'strokeStyle')
+          ..strokeShader = null;
     }
-  }
-
-  @override
-  UiCanvasGradient createLinearGradient(
-    double x0,
-    double y0,
-    double x1,
-    double y1,
-  ) => UiCanvasGradient.linear(x0, y0, x1, y1);
-
-  @override
-  UiCanvasGradient createRadialGradient(
-    double x0,
-    double y0,
-    double r0,
-    double x1,
-    double y1,
-    double r1,
-  ) => UiCanvasGradient.radial(x0, y0, r0, x1, y1, r1);
-
-  @override
-  UiCanvasGradient createConicGradient(double startAngle, double x, double y) =>
-      UiCanvasGradient.conic(startAngle, x, y);
-
-  /// A pattern of a [UiImageSource]. Another image source gives `null`.
-  @override
-  UiCanvasPattern? createPattern(CanvasImageSource image, String? repetition) {
-    if (image is! UiImageSource) return null;
-    return UiCanvasPattern(
-      image.image,
-      repetition == null || repetition.isEmpty ? 'repeat' : repetition,
-    );
   }
 
   // Rectangles.
@@ -1554,7 +1537,8 @@ final class UiCanvasContext
   // Only exact immutable sRGB colors qualify. Cache that validation by
   // identity; gradients, unusual color objects and non-finite channels keep
   // their ordinary setters and possible errors at the original point.
-  static bool _rectBarColor(Object? value, ui.Color? validated) {
+  static bool _rectBarColor(Object? input, ui.Color? validated) {
+    final value = input is SolidChartPaint ? input.color : input;
     if (validated != null && identical(value, validated)) return true;
     if (value is! ui.Color ||
         value.runtimeType != ui.Color ||
@@ -1621,8 +1605,12 @@ final class UiCanvasContext
       ));
       if (ring == null) return false;
     }
-    final border = borderColor! as ui.Color;
-    final background = backgroundColor! as ui.Color;
+    final border = (borderColor is SolidChartPaint
+        ? borderColor.color
+        : borderColor! as ui.Color);
+    final background = (backgroundColor is SolidChartPaint
+        ? backgroundColor.color
+        : backgroundColor! as ui.Color);
     _rectBarBorder = border;
     _rectBarBackground = background;
     if (hasBorder && _setupPaint(_fillPaint, border, null, mapped: true)) {
@@ -1722,9 +1710,13 @@ final class UiCanvasContext
         !(firstSweep + secondSweep < _maxSectorSweep)) {
       return false;
     }
-    final background = backgroundColor! as ui.Color;
+    final background = (backgroundColor is SolidChartPaint
+        ? backgroundColor.color
+        : backgroundColor! as ui.Color);
     _arcBackground = background;
-    _arcBorder = borderColor! as ui.Color;
+    _arcBorder = (borderColor is SolidChartPaint
+        ? borderColor.color
+        : borderColor! as ui.Color);
     _path.setPendingSector(
       x,
       y,
@@ -2670,7 +2662,7 @@ final class UiCanvasContext
         ..[12] = -x / sx
         ..[13] = -y
         ..[15] = 1;
-      final shader = source.shaderFor(matrix);
+      final shader = shaderFor(source, matrix);
       if (shader == null) return;
       final paint = (stroke ? _textStrokePaint(_black) : ui.Paint())
         ..shader = shader

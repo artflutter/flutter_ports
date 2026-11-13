@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
@@ -1074,7 +1076,9 @@ void main() {
       );
       await tester.pumpWidget(
         build(<String, Object?>{
-          'color': const native_ui.Color.fromRGBO(18, 52, 86, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(18, 52, 86, 1),
+          ),
         }),
       );
       node.requestFocus();

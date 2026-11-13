@@ -8,10 +8,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
-const red = Color(0xffff0000);
-const blue = Color(0xff0000ff);
+const red = ChartPaint.solid(Color(0xffff0000));
+const blue = ChartPaint.solid(Color(0xff0000ff));
 
 class _Fixture {
   _Fixture() {

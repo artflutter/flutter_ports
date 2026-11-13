@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -81,9 +83,11 @@ AnyObject _segmentOption(String kind) => switch (kind) {
     'setContext': (Object? ctx) {
       final late = jsToNumber(jsGet(ctx, 'p0DataIndex')) >= 2;
       return <String, Object?>{
-        'borderColor': late
-            ? const ui.Color.fromRGBO(0, 0, 255, 1)
-            : const ui.Color.fromRGBO(255, 0, 0, 1),
+        'borderColor': ChartPaint.solid(
+          late
+              ? const ui.Color.fromRGBO(0, 0, 255, 1)
+              : const ui.Color.fromRGBO(255, 0, 0, 1),
+        ),
         'borderWidth': late ? 4.0 : 2.0,
       };
     },
@@ -335,7 +339,7 @@ AnyObject _plain(JsObjectFace scope) => {
 /// The resolved options of a line: the defaults and a border color.
 AnyObject _options([AnyObject extra = const {}]) => {
   ..._plain(LineElement.defaults),
-  'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+  'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
   ...extra,
 };
 

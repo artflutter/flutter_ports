@@ -50,7 +50,7 @@ The zoom port uses it with its option `rangeOnlyUpdates`
 - A typed Dart API: `ChartConfig`, one dataset class for each chart type, typed axes and option
   groups, Flutter values (`Color`, `TextStyle`, `Duration`, `EdgeInsets`) and callbacks with
   `int` indexes.
-- The raw Chart.js structure as a Dart `Map` (`ChartView.raw`), with native `Color` values, for a copy of the Chart.js
+- The raw Chart.js structure as a Dart `Map` (`ChartView.raw`), with native `ChartPaint` values, for a copy of the Chart.js
   docs or `jsonDecode` output: the same keys, the same defaults and the same results.
 - Animations, hover, tooltips and legend clicks with a mouse, a touch screen or the keyboard.
 - A theme API with light and dark presets, a semantics node for screen readers, and reduced
@@ -145,13 +145,13 @@ ChartConfig(
     BarDataset(
       label: 'Orders',
       data: orders,
-      backgroundColor: ChartValue.constant(Colors.orange),
+      backgroundColor: .constant(.solid(Colors.orange)),
     ),
     LineDataset(
       label: 'Visitors',
       data: visitors,
-      borderColor: ChartValue.constant(Colors.blue),
-      backgroundColor: ChartValue.constant(Colors.blue.withValues(alpha: 0.2)),
+      borderColor: .constant(.solid(Colors.blue)),
+      backgroundColor: .constant(.solid(Colors.blue.withValues(alpha: 0.2))),
       fill: .origin,
       tension: 0.3,
       pointStyle: const RectRotPointStyle(),
@@ -184,10 +184,12 @@ LineDataset(
 
 The values of the options are Dart and Flutter values:
 
-- Dataset `backgroundColor` and `borderColor` each take a `ChartValue<Color>`:
-  `ChartValue.constant(color)` for one color, `ChartValue.indexed(colors)` for a
-  repeating list, or `ChartValue.resolver(callback)` for a color calculated from
-  each item's context. Other single-color parameters continue to take `Color`.
+- Dataset background, border, hover and point-specific colors take
+  `ChartValue<ChartPaint>`: `.constant(.solid(color))` for one paint,
+  `.indexed(paints)` for a repeating list, or `.resolver(callback)` for a paint
+  calculated from each item's context. Scalar paint fields take `ChartPaint`.
+  Use `.solid(color)`, `ChartGradient.linear(...)` or `ChartPattern(image)`.
+  Shadow colors, theme tokens, palette entries and gradient stops remain `Color`.
 - Fonts are `TextStyle` values, also in a raw config: the chart lays out each text with the
   whole style, and the line height is `fontSize * height`. A raw config and a font function can
   give a `ChartTextStyle`, a `TextStyle` with the field `lineHeight`. The chart does not read the
@@ -214,19 +216,20 @@ Dataset color migration:
 
 | Previous parameter | Replacement |
 |---|---|
-| `backgroundColor: color` | `backgroundColor: ChartValue.constant(color)` |
-| `backgroundColors: colors` | `backgroundColor: ChartValue.indexed(colors)` |
-| `backgroundColorFor: callback` | `backgroundColor: ChartValue.resolver(callback)` |
-| `borderColor: color` | `borderColor: ChartValue.constant(color)` |
-| `borderColors: colors` | `borderColor: ChartValue.indexed(colors)` |
-| `borderColorFor: callback` | `borderColor: ChartValue.resolver(callback)` |
+| `backgroundColor: color` | `backgroundColor: .constant(.solid(color))` |
+| `backgroundColors: colors` | `backgroundColor: .indexed(paints)` |
+| `backgroundColorFor: callback` | `backgroundColor: .resolver(callback)` |
+| `borderColor: color` | `borderColor: .constant(.solid(color))` |
+| `borderColors: colors` | `borderColor: .indexed(paints)` |
+| `borderColorFor: callback` | `borderColor: .resolver(callback)` |
 
-Omit either dataset color to inherit its default. `copyWith(backgroundColor: ...)`
+Omit a dataset color to inherit its default. `copyWith(backgroundColor: ...)`
 and `copyWith(borderColor: ...)` independently switch between the three forms;
 a `null` copy argument retains the current form. Indexed style lists are copied
 when lowered, and callbacks should use a stable tear-off when possible.
-Hover, point-specific and element-style colors retain their existing types.
-The raw Map API keeps its existing color value/list/function forms.
+Hover and point-specific dataset colors use the same variants. Element-style
+colors take `ChartPaint` directly. Raw Maps keep value/list/function forms with
+`ChartPaint` leaves.
 
 Each dataset class takes a `shadow`. The lines, the points, the bars and the arcs of the dataset
 cast it. The area fill of a line does not. `blur` is the `shadowBlur` of the canvas: the Gaussian
@@ -292,7 +295,7 @@ ChartConfig(
     labelFont: TextStyle(fontSize: 12),
   ),
   title: const ChartTitle(display: true, text: 'Votes'),
-  tooltip: const ChartTooltip(backgroundColor: Colors.black87, cornerRadius: 4),
+  tooltip: const ChartTooltip(backgroundColor: .solid(Colors.black87), cornerRadius: 4),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
@@ -347,8 +350,8 @@ class _VotesPageState extends State<VotesPage> {
   List<String> _label(TooltipModel tooltip, ChartTooltipItem item) =>
       ['${item.datasetLabel}: ${item.formattedValue} votes'];
 
-  Color _barColor(ChartContext context) =>
-      (context.raw as num? ?? 0) > 10 ? Colors.green : Colors.grey;
+  ChartPaint _barColor(ChartContext context) =>
+      .solid((context.raw as num? ?? 0) > 10 ? Colors.green : Colors.grey);
 
   @override
   Widget build(BuildContext context) {
@@ -388,7 +391,7 @@ class _VotesPageState extends State<VotesPage> {
   override the six per-item hooks. Callback objects merge field by field with `merge`.
 - `AxisTicks.format` gives the tick label, and `ChartAnimation.onProgress` and `onComplete` get
   `ChartAnimationDetails`.
-- A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColorFor` get a
+- A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColor: .resolver(...)` get a
   `ChartContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `chart`)
   for each element.
 
@@ -491,7 +494,7 @@ ChartConfig(
 ```
 
 `ChartConfig.extra` goes into `options`. A key of `extra` wins over a parameter with the same
-key, and a Map value merges into the Map of the key. Thus `extra` also takes a native `Color`,
+key, and a Map value merges into the Map of the key. Thus `extra` also takes a native `ChartPaint`,
 a gradient function or the JavaScript `null` (Dart `null` in a parameter means "not set"). For a
 config that the typed API does not fit, use [`ChartView.raw`](#raw-chartjs-configs).
 
@@ -617,11 +620,11 @@ Custom canvas drawing uses `CanvasCompositeOperation` for
 The enum is available from both public chart libraries and needs no `dart:ui`
 import. A null assignment leaves the native canvas operation unchanged.
 
-Solid colors must be Flutter `Color` values in both APIs. CSS color strings such as
-`'red'`, `'#36A2EB'` and `'rgba(54, 162, 235, 0.5)'` throw `ArgumentError`.
-Use `const Color(0xFF36A2EB)` or `const Color.fromRGBO(54, 162, 235, 0.5)` instead.
-Lists contain colors and scriptable color callbacks return colors. Gradient stops
-also require `Color`; gradient and pattern paint objects remain supported.
+Paint options use `ChartPaint` in both APIs. CSS color strings such as
+`'red'`, `'#36A2EB'` and `'rgba(54, 162, 235, 0.5)'`, and bare Flutter colors,
+are rejected. Use `const ChartPaint.solid(Color(0xFF36A2EB))` instead.
+Lists contain paints and scriptable callbacks return paints. Gradient stops,
+shadow colors and theme tokens remain Flutter `Color` values.
 
 `ChartView.raw` takes a Chart.js configuration as a Dart `Map`: `type`, `data`, `options`,
 `plugins` (inline plugins) and `platform`, with every option of Chart.js. Use it for a copy of the
@@ -713,8 +716,8 @@ Write the options as in the Chart.js docs, with these rules of Dart:
   ```dart
   'backgroundColor': (JsObjectFace context) =>
       context['dataIndex'] == 0
-          ? const Color(0xFFFF6384)
-          : const Color(0xFF36A2EB),
+          ? const ChartPaint.solid(Color(0xFFFF6384))
+          : const ChartPaint.solid(Color(0xFF36A2EB)),
   ```
 
 The updates of a raw configuration:

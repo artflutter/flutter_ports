@@ -62,6 +62,7 @@ import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
@@ -342,6 +343,9 @@ abstract final class ShapeBits {
   /// Native tooltip callbacks.
   static const int tooltipCallbacks = 4736;
 
+  /// `chartPaint`: a native solid, gradient or pattern.
+  static const int chartPaint = 4864;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -449,6 +453,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.timeUnit => classifyTyped<TimeUnit>(raw),
   ShapeBits.chartPosition => classifyTyped<ChartPosition>(raw),
   ShapeBits.layoutPosition => classifyTyped<LayoutPosition>(raw),
+  ShapeBits.chartPaint => classifyTyped<ChartPaint>(raw),
   ShapeBits.tooltipCallbacks => classifyTyped<TooltipCallbacks>(raw),
   ShapeBits.textDirection => classifyTyped<TextDirection>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),

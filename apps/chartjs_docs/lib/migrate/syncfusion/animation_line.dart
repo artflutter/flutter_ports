@@ -54,12 +54,12 @@ class _SfAnimationLineState extends State<SfAnimationLine> {
             points: [
               for (final (x, y) in _values.indexed) DataPoint(x, y),
             ],
-            borderColor: const .constant(_color),
+            borderColor: const .constant(.solid(_color)),
             borderWidth: 2,
             pointRadius: 4,
             pointBorderWidth: 2,
-            pointBackgroundColor: Colors.white,
-            pointBorderColor: _color,
+            pointBackgroundColor: const .constant(.solid(Colors.white)),
+            pointBorderColor: const .constant(.solid(_color)),
           ),
         ],
         maintainAspectRatio: false,
@@ -77,26 +77,30 @@ class _SfAnimationLineState extends State<SfAnimationLine> {
             max: 10,
             grid: AxisGrid(
               drawOnChartArea: false,
-              color: _axisLine,
+              color: .solid(_axisLine),
               extra: {'tickLength': 6},
             ),
             ticks: AxisTicks(
               stepSize: 2,
-              color: _text,
+              color: .solid(_text),
               font: TextStyle(fontSize: 12),
             ),
             extra: {
-              'border': {'color': _axisLine},
+              'border': {'color': ChartPaint.solid(_axisLine)},
             },
           ),
           'y': LinearAxis(
             min: 0,
             max: 100,
-            grid: AxisGrid(color: _grid, lineWidth: 0.7, drawTicks: false),
+            grid: AxisGrid(
+              color: .solid(_grid),
+              lineWidth: 0.7,
+              drawTicks: false,
+            ),
             ticks: AxisTicks(
               stepSize: 20,
               padding: 8,
-              color: _text,
+              color: .solid(_text),
               font: TextStyle(fontSize: 12),
             ),
             extra: {

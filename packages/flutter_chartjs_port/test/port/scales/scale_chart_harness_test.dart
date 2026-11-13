@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -423,8 +425,12 @@ void main() {
         'width': 30,
         'height': 80,
         'options': <String, Object?>{
-          'borderColor': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-          'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 255, 1),
+          'borderColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(255, 0, 0, 1),
+          ),
+          'backgroundColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 0, 255, 1),
+          ),
           'borderWidth': 2,
           'borderRadius': 0,
         },

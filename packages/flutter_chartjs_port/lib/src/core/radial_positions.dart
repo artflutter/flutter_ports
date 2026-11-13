@@ -1,12 +1,12 @@
 // Original code, not ported from Chart.js: scalar radial loop positions.
 
 import 'dart:math' as math;
-
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, normalizeAngle;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:meta/meta.dart';
 
 /// A radial scale whose position methods have the built-in behavior.
@@ -100,4 +100,4 @@ bool plainOptionValue(Object? value) =>
     value is String ||
     value is num ||
     value is bool ||
-    value.runtimeType == Color;
+    (value is SolidChartPaint && value.color.runtimeType == Color);

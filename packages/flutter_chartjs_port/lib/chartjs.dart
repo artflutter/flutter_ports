@@ -49,10 +49,8 @@ export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show
         CSSStyleDeclaration,
         CanvasCompositeOperation,
-        CanvasGradient,
         CanvasImageSource,
         CanvasPath,
-        CanvasPattern,
         CanvasRenderingContext2D,
         CanvasTextBaseline,
         CssStyleProperties,
@@ -145,7 +143,7 @@ export 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
 export 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis, XAxis, YAxis;
 export 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    hide chartPaintOf, chartPaintValue;
+    hide chartPaintOf;
 export 'package:flutter_chartjs_port/src/types/chart_text_style.dart'
     show ChartTextStyle;
 export 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';

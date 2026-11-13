@@ -24,6 +24,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         DescriptorsScope,
         TransitionOptionsScope,
         TransitionsSpecScope;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// core.animations.defaults.js:1 `numbers`.
@@ -79,7 +80,7 @@ void applyAnimationsDefaults(Defaults defaults) {
         ..show = (TransitionOptionsScope()
           ..animations = (AnimationsSpecScope()
             ..colors = (AnimationOptionsScope()
-              ..from = const ui.Color.fromRGBO(0, 0, 0, 0))
+              ..from = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)))
             ..visible = (AnimationOptionsScope()
               ..type = 'boolean'
               // show immediately
@@ -87,7 +88,7 @@ void applyAnimationsDefaults(Defaults defaults) {
         ..hide = (TransitionOptionsScope()
           ..animations = (AnimationsSpecScope()
             ..colors = (AnimationOptionsScope()
-              ..to = const ui.Color.fromRGBO(0, 0, 0, 0))
+              ..to = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)))
             ..visible = (AnimationOptionsScope()
               ..type = 'boolean'
               // DIVERGES(chartjs): adapt-flutter-curves, the curve.

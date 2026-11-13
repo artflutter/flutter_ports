@@ -648,11 +648,15 @@ class PointElement extends Element
       // A color field holds the raw value: Dart `null` for an absent key,
       // which the canvas ignores as it ignores `undefined`.
       ctx
-        ..strokeStyle = canvasStyle(opts.borderColor)
+        ..strokeStyle = canvasStyle(
+          rawOption(opts, OptionKey.borderColor, opts.borderColor),
+        )
         ..lineWidth = plainOption(opts, OptionKey.borderWidth)
             ? opts.borderWidth
             : canvasNumber(_raw(opts, OptionKey.borderWidth))
-        ..fillStyle = canvasStyle(opts.backgroundColor);
+        ..fillStyle = canvasStyle(
+          rawOption(opts, OptionKey.backgroundColor, opts.backgroundColor),
+        );
     } else {
       ctx
         ..strokeStyle = canvasStyle(_byName(opts, OptionKey.borderColor))
@@ -736,9 +740,13 @@ class PointElement extends Element
         if (!styled) {
           final o = options!;
           ctx
-            ..strokeStyle = canvasStyle(o.borderColor)
+            ..strokeStyle = canvasStyle(
+              rawOption(o, OptionKey.borderColor, o.borderColor),
+            )
             ..lineWidth = borderWidth
-            ..fillStyle = canvasStyle(o.backgroundColor);
+            ..fillStyle = canvasStyle(
+              rawOption(o, OptionKey.backgroundColor, o.backgroundColor),
+            );
           if (!run.tryStartCircleRun(radius, stroke: borderWidth > 0)) break;
           styled = true;
         }

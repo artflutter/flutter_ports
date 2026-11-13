@@ -27,18 +27,18 @@ const _series = {
 LineDataset _line(String name, Color color, List<double> values) => LineDataset(
   label: name,
   points: [for (final (i, v) in values.indexed) DataPoint(2010 + i, v)],
-  borderColor: .constant(color),
-  backgroundColor: .constant(color),
+  borderColor: .constant(.solid(color)),
+  backgroundColor: .constant(.solid(color)),
   borderWidth: 2,
   // dashArray: [15, 3, 3, 3]
   borderDash: const [15, 3, 3, 3],
   pointRadius: 4,
   pointHoverRadius: 4,
   pointBorderWidth: 2,
-  pointBackgroundColor: Colors.white,
-  pointBorderColor: color,
-  pointHoverBackgroundColor: Colors.white,
-  pointHoverBorderColor: color,
+  pointBackgroundColor: const .constant(.solid(Colors.white)),
+  pointBorderColor: .constant(.solid(color)),
+  pointHoverBackgroundColor: const .constant(.solid(Colors.white)),
+  pointHoverBorderColor: .constant(.solid(color)),
   extra: const {'pointHoverBorderWidth': 2, 'pointHitRadius': 8},
 );
 
@@ -70,17 +70,17 @@ final ChartConfig _config = ChartConfig(
   title: const ChartTitle(
     display: true,
     text: 'Capital investment as a share of exports',
-    color: _text,
+    color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
   legend: const ChartLegend(
     usePointStyle: true,
     boxHeight: 7,
-    labelColor: _text,
+    labelColor: ChartPaint.solid(_text),
     labelFont: TextStyle(fontSize: 13),
   ),
   tooltip: ChartTooltip(
-    backgroundColor: _tooltip,
+    backgroundColor: const ChartPaint.solid(_tooltip),
     yAlign: .bottom,
     extra: const {
       'titleAlign': TextAlign.center,
@@ -113,29 +113,33 @@ final ChartConfig _config = ChartConfig(
       max: 2016,
       grid: AxisGrid(
         drawOnChartArea: false,
-        color: _axisLine,
+        color: ChartPaint.solid(_axisLine),
         extra: {'tickLength': 6},
       ),
       ticks: AxisTicks(
         stepSize: 2,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
         format: _year,
         align: .inner,
       ),
       extra: {
-        'border': {'color': _axisLine},
+        'border': {'color': ChartPaint.solid(_axisLine)},
       },
     ),
     // NumericAxis(minimum: 3, maximum: 21, interval: 3)
     'y': LinearAxis(
       min: 3,
       max: 21,
-      grid: AxisGrid(color: _grid, lineWidth: 0.7, drawTicks: false),
+      grid: AxisGrid(
+        color: ChartPaint.solid(_grid),
+        lineWidth: 0.7,
+        drawTicks: false,
+      ),
       ticks: AxisTicks(
         stepSize: 3,
         padding: 8,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
         format: _percent,
       ),

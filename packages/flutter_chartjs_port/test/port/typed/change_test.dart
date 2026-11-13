@@ -64,7 +64,7 @@ class _ParentState extends State<_Parent> {
   late List<num?> data = widget.data;
   String? title;
   ValueChanged<ChartEventDetails>? onClick;
-  ChartScript<Color>? colorFor;
+  ChartScript<ChartPaint>? colorFor;
   String label = '';
 
   /// Rebuilds with the given values: the fields that are not given stay.
@@ -72,7 +72,7 @@ class _ParentState extends State<_Parent> {
     List<num?>? data,
     String? title,
     ValueChanged<ChartEventDetails>? onClick,
-    ChartScript<Color>? colorFor,
+    ChartScript<ChartPaint>? colorFor,
   }) => setState(() {
     this.data = data ?? this.data;
     this.title = title ?? this.title;
@@ -127,7 +127,7 @@ Offset _barPoint(WidgetTester tester, Chart chart, int index) {
       Offset(bar.x, (bar.y + chart.chartArea!.bottom) / 2);
 }
 
-Color _blueFor(ChartContext context) => const Color(0xFF0000FF);
+ChartPaint _blueFor(ChartContext context) => const .solid(Color(0xFF0000FF));
 
 void main() {
   group('the change test', () {
@@ -215,19 +215,19 @@ void main() {
       expect(
         (chart.getDatasetMeta(0).data.first.options!
             as JsObjectFace)['backgroundColor'],
-        const native_ui.Color.fromRGBO(0, 0, 255, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
       );
       parent.show(colorFor: _blueFor);
       await tester.pump();
       expect(modes, hasLength(2));
 
-      parent.show(colorFor: (context) => _red);
+      parent.show(colorFor: (context) => const ChartPaint.solid(_red));
       await tester.pump();
       expect(modes, hasLength(3));
       expect(
         (chart.getDatasetMeta(0).data.first.options!
             as JsObjectFace)['backgroundColor'],
-        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
       );
     });
 

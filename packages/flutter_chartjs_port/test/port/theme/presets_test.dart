@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
@@ -285,7 +287,10 @@ void main() {
       }
 
       final themed = color(compileLightTheme());
-      expect(themed, const ui.Color.fromRGBO(102, 102, 102, 1));
+      expect(
+        themed,
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
+      );
       expect(_parsed(themed), _parsed(themeLightChartColor));
       expect(color(null), referenceColorOrString(themeLightChartColor));
     });
@@ -304,7 +309,7 @@ void main() {
       );
       expect(
         _resolveElement(pointActive, theme)['backgroundColor'],
-        const ui.Color.fromRGBO(0, 0, 0, 26 / 255),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 26 / 255)),
       );
     });
   });

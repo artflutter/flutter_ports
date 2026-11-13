@@ -23,6 +23,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
@@ -302,8 +304,8 @@ final Map<String, Object> _functions = {
   ),
   'colorByIndex': (Object? ctx) =>
       jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2))
-      ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-      : const native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
+      : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
   'widthByIndex': (Object? ctx) =>
       jsGet(ctx, 'type') == 'tick' ? jsToNumber(jsGet(ctx, 'index')) + 1 : 5.0,
   'undefinedOddWidth': (Object? ctx) =>
@@ -316,8 +318,8 @@ final Map<String, Object> _functions = {
   'colorByMajor': (Object? ctx) {
     final tick = jsGet(ctx, 'tick');
     return tick is Tick && (tick.major ?? false)
-        ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
-        : const native_ui.Color.fromRGBO(128, 128, 128, 1);
+        ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
+        : const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1));
   },
   'dropFirst': (Object? scale) {
     final s = scale! as Scale;
@@ -330,7 +332,16 @@ final Map<String, Object> _functions = {
 Object? _copy(Object? value) => switch (value) {
   final String s when s.startsWith('fn:') => _functions[s.substring(3)]!,
   final Map<String, Object?> map => <String, Object?>{
-    for (final MapEntry(:key, :value) in map.entries) key: _copy(value),
+    for (final MapEntry(:key, :value) in map.entries)
+      key: key == 'strokeWidth' && map['strokeColor'] == ''
+          ? 0.0
+          : key == 'strokeColor' && value == ''
+          ? const ChartPaint.unchanged()
+          : (key == 'color' || key.endsWith('Color')) &&
+                value is String &&
+                !value.startsWith('fn:')
+          ? referenceColorInput(value)
+          : _copy(value),
   },
   final List<Object?> list => <Object?>[for (final item in list) _copy(item)],
   _ => value,
@@ -388,8 +399,8 @@ Map<String, Object?> _labelItem(types.LabelItem item) {
     'lineHeight': item.font.lineHeight,
     'textOffset': item.textOffset,
     'rotation': o.rotation,
-    'color': o.color,
-    'strokeColor': o.strokeColor,
+    'color': referencePaintValue(o.color),
+    'strokeColor': referencePaintValue(o.strokeColor),
     'strokeWidth': o.strokeWidth,
     // The upstream keyword: the name of the enum value.
     'textAlign': o.textAlign?.name,
@@ -403,7 +414,7 @@ Map<String, Object?> _labelItem(types.LabelItem item) {
             'top': backdrop.top,
             'width': backdrop.width,
             'height': backdrop.height,
-            'color': backdrop.color,
+            'color': referencePaintValue(backdrop.color),
           },
   };
 }

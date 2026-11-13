@@ -15,15 +15,15 @@ LineDataset _line(
   Color? fillColor,
 }) => LineDataset(
   points: points,
-  borderColor: .constant(color),
-  backgroundColor: fillColor == null ? null : .constant(fillColor),
+  borderColor: .constant(.solid(color)),
+  backgroundColor: fillColor == null ? null : .constant(.solid(fillColor)),
   borderWidth: width,
   tension: tension,
   fill: fill,
   pointRadius: dots ? 4 : 0,
-  pointBackgroundColor: color,
+  pointBackgroundColor: .constant(.solid(color)),
   pointHoverRadius: 8,
-  pointHoverBackgroundColor: color,
+  pointHoverBackgroundColor: .constant(.solid(color)),
   borderCapStyle: StrokeCap.round,
 );
 
@@ -92,7 +92,7 @@ ChartConfig _config(bool main) => fills(
     interaction: const ChartInteraction(mode: flX, intersect: false),
     tooltip: main
         ? ChartTooltip(
-            backgroundColor: Fl.blueGrey.withValues(alpha: 0.8),
+            backgroundColor: .solid(Fl.blueGrey.withValues(alpha: 0.8)),
             displayColors: false,
             callbacks: TooltipCallbacks(
               title: (tooltip, _) => null,
@@ -107,13 +107,16 @@ ChartConfig _config(bool main) => fills(
         max: 14,
         grid: const AxisGrid(display: false),
         extra: {
-          'border': {'color': Fl.cyan.withValues(alpha: 0.2), 'width': 4},
+          'border': {
+            'color': ChartPaint.solid(Fl.cyan.withValues(alpha: 0.2)),
+            'width': 4,
+          },
         },
         ticks: const AxisTicks(
           stepSize: 1,
           autoSkip: false,
           maxRotation: 0,
-          color: Colors.white,
+          color: .solid(Colors.white),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           format: _bottom,
         ),
@@ -126,7 +129,7 @@ ChartConfig _config(bool main) => fills(
         ticks: const AxisTicks(
           stepSize: 1,
           autoSkip: false,
-          color: Colors.white,
+          color: .solid(Colors.white),
           font: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           format: _left,
         ),

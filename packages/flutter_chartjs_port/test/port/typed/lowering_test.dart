@@ -37,11 +37,16 @@ import 'twin.dart';
 
 const Color _red = Color(0xFFFF6384);
 const Color _blue = Color(0xFF36A2EB);
-const native_ui.Color _redValue = native_ui.Color.fromRGBO(255, 99, 132, 1);
-const native_ui.Color _blueValue = native_ui.Color.fromRGBO(54, 162, 235, 1);
+const ChartPaint _redValue = ChartPaint.solid(
+  native_ui.Color.fromRGBO(255, 99, 132, 1),
+);
+const ChartPaint _blueValue = ChartPaint.solid(
+  native_ui.Color.fromRGBO(54, 162, 235, 1),
+);
 
 /// A scriptable color: blue at the data index 1, else red.
-Color _colorFor(ChartContext context) => context.dataIndex == 1 ? _blue : _red;
+ChartPaint _colorFor(ChartContext context) =>
+    ChartPaint.solid(context.dataIndex == 1 ? _blue : _red);
 
 /// The 8 dataset classes, each without a parameter, with the chart type of
 /// its controller.
@@ -72,40 +77,60 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
   'hidden': ((d) => d.copyWith(hidden: true), {'hidden': true}),
   'order': ((d) => d.copyWith(order: 2), {'order': 2}),
   'backgroundColor': (
-    (d) => d.copyWith(backgroundColor: const ChartValue.constant(_red)),
+    (d) => d.copyWith(backgroundColor: const ChartValue.constant(.solid(_red))),
     {'backgroundColor': _redValue},
   ),
   'backgroundColor indexed': (
-    (d) => d.copyWith(backgroundColor: const ChartValue.indexed([_red, _blue])),
+    (d) => d.copyWith(
+      backgroundColor: const ChartValue.indexed([
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_blue),
+      ]),
+    ),
     {
-      'backgroundColor': [_redValue, _blueValue],
+      'backgroundColor': [
+        _redValue,
+        _blueValue,
+      ],
     },
   ),
   'backgroundColor resolver': (
     (d) => d.copyWith(backgroundColor: const ChartValue.resolver(_colorFor)),
-    {'backgroundColor': (Object? context, Object? options) => _redValue},
+    {
+      'backgroundColor': (Object? context, Object? options) => _redValue,
+    },
   ),
   'borderColor': (
-    (d) => d.copyWith(borderColor: const ChartValue.constant(_blue)),
+    (d) => d.copyWith(borderColor: const ChartValue.constant(.solid(_blue))),
     {'borderColor': _blueValue},
   ),
   'borderColor indexed': (
-    (d) => d.copyWith(borderColor: const ChartValue.indexed([_blue, _red])),
+    (d) => d.copyWith(
+      borderColor: const ChartValue.indexed([
+        ChartPaint.solid(_blue),
+        ChartPaint.solid(_red),
+      ]),
+    ),
     {
-      'borderColor': [_blueValue, _redValue],
+      'borderColor': [
+        _blueValue,
+        _redValue,
+      ],
     },
   ),
   'borderColor resolver': (
     (d) => d.copyWith(borderColor: const ChartValue.resolver(_colorFor)),
-    {'borderColor': (Object? context, Object? options) => _redValue},
+    {
+      'borderColor': (Object? context, Object? options) => _redValue,
+    },
   ),
   'borderWidth': ((d) => d.copyWith(borderWidth: 2), {'borderWidth': 2}),
   'hoverBackgroundColor': (
-    (d) => d.copyWith(hoverBackgroundColor: _blue),
+    (d) => d.copyWith(hoverBackgroundColor: const .constant(.solid(_blue))),
     {'hoverBackgroundColor': _blueValue},
   ),
   'hoverBorderColor': (
-    (d) => d.copyWith(hoverBorderColor: _red),
+    (d) => d.copyWith(hoverBorderColor: const .constant(.solid(_red))),
     {'hoverBorderColor': _redValue},
   ),
   'hoverBorderWidth': (
@@ -130,11 +155,11 @@ List<Dataset> _lineStyle({
   double? pointRadius,
   double? pointHoverRadius,
   PointStyle? pointStyle,
-  Color? pointBackgroundColor,
-  Color? pointBorderColor,
+  ChartValue<ChartPaint>? pointBackgroundColor,
+  ChartValue<ChartPaint>? pointBorderColor,
   double? pointBorderWidth,
-  Color? pointHoverBackgroundColor,
-  Color? pointHoverBorderColor,
+  ChartValue<ChartPaint>? pointHoverBackgroundColor,
+  ChartValue<ChartPaint>? pointHoverBorderColor,
 }) => [
   LineDataset(
     fill: fill,
@@ -331,11 +356,11 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   ),
 
   'pointBackgroundColor': (
-    _lineStyle(pointBackgroundColor: _red),
+    _lineStyle(pointBackgroundColor: const .constant(.solid(_red))),
     {'pointBackgroundColor': _redValue},
   ),
   'pointBorderColor': (
-    _lineStyle(pointBorderColor: _blue),
+    _lineStyle(pointBorderColor: const .constant(.solid(_blue))),
     {'pointBorderColor': _blueValue},
   ),
   'pointBorderWidth': (
@@ -343,11 +368,11 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
     {'pointBorderWidth': 2},
   ),
   'pointHoverBackgroundColor': (
-    _lineStyle(pointHoverBackgroundColor: _red),
+    _lineStyle(pointHoverBackgroundColor: const .constant(.solid(_red))),
     {'pointHoverBackgroundColor': _redValue},
   ),
   'pointHoverBorderColor': (
-    _lineStyle(pointHoverBorderColor: _blue),
+    _lineStyle(pointHoverBorderColor: const .constant(.solid(_blue))),
     {'pointHoverBorderColor': _blueValue},
   ),
   'radius of a bubble': (const [BubbleDataset(radius: 7)], {'radius': 7}),
@@ -562,7 +587,12 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
         },
       ),
       'pointLabelsColor': (
-        const [(RadialLinearAxis(pointLabelsColor: _blue), 'radialLinear')],
+        const [
+          (
+            RadialLinearAxis(pointLabelsColor: ChartPaint.solid(_blue)),
+            'radialLinear',
+          ),
+        ],
         {
           'pointLabels': {'color': _blueValue},
         },
@@ -580,7 +610,12 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
         },
       ),
       'angleLinesColor': (
-        const [(RadialLinearAxis(angleLinesColor: _red), 'radialLinear')],
+        const [
+          (
+            RadialLinearAxis(angleLinesColor: ChartPaint.solid(_red)),
+            'radialLinear',
+          ),
+        ],
         {
           'angleLines': {'color': _redValue},
         },
@@ -596,7 +631,10 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
 /// The cases of the parameters of [AxisTicks] and the twin `ticks` Map.
 const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
   'display': (AxisTicks(display: false), {'display': false}),
-  'color': (AxisTicks(color: _red), {'color': _redValue}),
+  'color': (
+    AxisTicks(color: ChartPaint.solid(_red)),
+    {'color': _redValue},
+  ),
   'font': (AxisTicks(font: _font), {'font': _fontValue}),
   'padding': (AxisTicks(padding: 6), {'padding': 6}),
   'stepSize': (AxisTicks(stepSize: 5), {'stepSize': 5}),
@@ -608,7 +646,10 @@ const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
 /// The cases of the parameters of [AxisGrid] and the twin `grid` Map.
 const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
   'display': (AxisGrid(display: false), {'display': false}),
-  'color': (AxisGrid(color: _blue), {'color': _blueValue}),
+  'color': (
+    AxisGrid(color: ChartPaint.solid(_blue)),
+    {'color': _blueValue},
+  ),
   'lineWidth': (AxisGrid(lineWidth: 2), {'lineWidth': 2}),
   'drawOnChartArea': (
     AxisGrid(drawOnChartArea: false),
@@ -623,7 +664,10 @@ const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
 const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
   'display': (AxisTitle(display: true), {'display': true}),
   'text': (AxisTitle(text: 'Month'), {'text': 'Month'}),
-  'color': (AxisTitle(color: _red), {'color': _redValue}),
+  'color': (
+    AxisTitle(color: ChartPaint.solid(_red)),
+    {'color': _redValue},
+  ),
   'font': (AxisTitle(font: _font), {'font': _fontValue}),
   'align': (AxisTitle(align: .end), {'align': ChartAlign.end}),
   'padding': (
@@ -670,13 +714,17 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'point.backgroundColor': (
-    ChartElements(point: PointElementStyle(backgroundColor: _red)),
+    ChartElements(
+      point: PointElementStyle(backgroundColor: ChartPaint.solid(_red)),
+    ),
     {
       'point': {'backgroundColor': _redValue},
     },
   ),
   'point.borderColor': (
-    ChartElements(point: PointElementStyle(borderColor: _blue)),
+    ChartElements(
+      point: PointElementStyle(borderColor: ChartPaint.solid(_blue)),
+    ),
     {
       'point': {'borderColor': _blueValue},
     },
@@ -712,13 +760,15 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'line.backgroundColor': (
-    ChartElements(line: LineElementStyle(backgroundColor: _red)),
+    ChartElements(
+      line: LineElementStyle(backgroundColor: ChartPaint.solid(_red)),
+    ),
     {
       'line': {'backgroundColor': _redValue},
     },
   ),
   'line.borderColor': (
-    ChartElements(line: LineElementStyle(borderColor: _blue)),
+    ChartElements(line: LineElementStyle(borderColor: ChartPaint.solid(_blue))),
     {
       'line': {'borderColor': _blueValue},
     },
@@ -766,13 +816,15 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'bar.backgroundColor': (
-    ChartElements(bar: BarElementStyle(backgroundColor: _red)),
+    ChartElements(
+      bar: BarElementStyle(backgroundColor: ChartPaint.solid(_red)),
+    ),
     {
       'bar': {'backgroundColor': _redValue},
     },
   ),
   'bar.borderColor': (
-    ChartElements(bar: BarElementStyle(borderColor: _blue)),
+    ChartElements(bar: BarElementStyle(borderColor: ChartPaint.solid(_blue))),
     {
       'bar': {'borderColor': _blueValue},
     },
@@ -796,13 +848,15 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'arc.backgroundColor': (
-    ChartElements(arc: ArcElementStyle(backgroundColor: _red)),
+    ChartElements(
+      arc: ArcElementStyle(backgroundColor: ChartPaint.solid(_red)),
+    ),
     {
       'arc': {'backgroundColor': _redValue},
     },
   ),
   'arc.borderColor': (
-    ChartElements(arc: ArcElementStyle(borderColor: _blue)),
+    ChartElements(arc: ArcElementStyle(borderColor: ChartPaint.solid(_blue))),
     {
       'arc': {'borderColor': _blueValue},
     },
@@ -873,7 +927,7 @@ const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
   'align': (ChartLegend(align: .start), {'align': ChartAlign.start}),
   'reverse': (ChartLegend(reverse: true), {'reverse': true}),
   'labelColor': (
-    ChartLegend(labelColor: _red),
+    ChartLegend(labelColor: ChartPaint.solid(_red)),
     {
       'labels': {'color': _redValue},
     },
@@ -918,7 +972,10 @@ const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
 const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   'display': (ChartTitle(display: true), {'display': true}),
   'text': (ChartTitle(text: 'Votes'), {'text': 'Votes'}),
-  'color': (ChartTitle(color: _blue), {'color': _blueValue}),
+  'color': (
+    ChartTitle(color: ChartPaint.solid(_blue)),
+    {'color': _blueValue},
+  ),
   'font': (ChartTitle(font: _font), {'font': _fontValue}),
   'align': (ChartTitle(align: .start), {'align': ChartAlign.start}),
   'position': (
@@ -957,11 +1014,11 @@ final Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
   ),
   'intersect': (const ChartTooltip(intersect: false), {'intersect': false}),
   'backgroundColor': (
-    const ChartTooltip(backgroundColor: _red),
+    const ChartTooltip(backgroundColor: ChartPaint.solid(_red)),
     {'backgroundColor': _redValue},
   ),
   'titleColor': (
-    const ChartTooltip(titleColor: _red),
+    const ChartTooltip(titleColor: ChartPaint.solid(_red)),
     {'titleColor': _redValue},
   ),
   'titleFont': (
@@ -969,12 +1026,12 @@ final Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
     {'titleFont': _fontValue},
   ),
   'bodyColor': (
-    const ChartTooltip(bodyColor: _blue),
+    const ChartTooltip(bodyColor: ChartPaint.solid(_blue)),
     {'bodyColor': _blueValue},
   ),
   'bodyFont': (const ChartTooltip(bodyFont: _font), {'bodyFont': _fontValue}),
   'footerColor': (
-    const ChartTooltip(footerColor: _blue),
+    const ChartTooltip(footerColor: ChartPaint.solid(_blue)),
     {'footerColor': _blueValue},
   ),
   'footerFont': (
@@ -1348,7 +1405,9 @@ void main() {
       final lowered = _lower(
         LineDataset(
           borderDash: dash,
-          backgroundColor: ChartValue.indexed(colors),
+          backgroundColor: ChartValue.indexed(
+            colors.map(ChartPaint.solid).toList(),
+          ),
         ),
       );
       expect(lowered['borderDash'], isNot(same(dash)));
@@ -1427,13 +1486,19 @@ void main() {
         expectTwin(
           _lower(
             const LineDataset(
-              backgroundColor: ChartValue.constant(_red),
+              backgroundColor: ChartValue.constant(.solid(_red)),
               extra: {
-                'backgroundColor': native_ui.Color.fromRGBO(255, 0, 0, 1),
+                'backgroundColor': ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
               },
             ),
           ),
-          {'backgroundColor': const native_ui.Color.fromRGBO(255, 0, 0, 1)},
+          {
+            'backgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
+          },
         );
       });
 
@@ -1443,12 +1508,12 @@ void main() {
             const LineDataset(
               fill: .value(25),
               extra: {
-                'fill': {'above': 'red'},
+                'fill': {'above': _redValue},
               },
             ),
           ),
           {
-            'fill': {'value': 25, 'above': 'red'},
+            'fill': {'value': 25, 'above': _redValue},
           },
         );
       });
@@ -1487,7 +1552,7 @@ void main() {
       test('a List and a function go by reference', () {
         final segment = <String, Object?>{
           'borderColor': (Object? c) =>
-              const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
         };
         final list = <Object?>[1, 2];
         final lowered = _lower(
@@ -1518,11 +1583,11 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColor: const ChartValue.constant(_red),
-            borderColor: const ChartValue.constant(_blue),
+            backgroundColor: const ChartValue.constant(.solid(_red)),
+            borderColor: const ChartValue.constant(.solid(_blue)),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             xAxisID: 'x2',
             yAxisID: 'y2',
@@ -1589,11 +1654,11 @@ void main() {
             points: points,
             hidden: true,
             order: 2,
-            backgroundColor: const ChartValue.indexed([_red]),
+            backgroundColor: const ChartValue.indexed([ChartPaint.solid(_red)]),
             borderColor: const ChartValue.resolver(_colorFor),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             xAxisID: 'x2',
             yAxisID: 'y2',
@@ -1608,11 +1673,11 @@ void main() {
             pointRadius: 3,
             pointHoverRadius: 6,
             pointStyle: const StarPointStyle(),
-            pointBackgroundColor: _red,
-            pointBorderColor: _blue,
+            pointBackgroundColor: const .constant(.solid(_red)),
+            pointBorderColor: const .constant(.solid(_blue)),
             pointBorderWidth: 1,
-            pointHoverBackgroundColor: _blue,
-            pointHoverBorderColor: _red,
+            pointHoverBackgroundColor: const .constant(.solid(_blue)),
+            pointHoverBorderColor: const .constant(.solid(_red)),
             extra: const {'clip': 5},
           ),
         );
@@ -1643,11 +1708,11 @@ void main() {
             points: points,
             hidden: true,
             order: 2,
-            backgroundColor: const ChartValue.constant(_red),
-            borderColor: const ChartValue.constant(_blue),
+            backgroundColor: const ChartValue.constant(.solid(_red)),
+            borderColor: const ChartValue.constant(.solid(_blue)),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             xAxisID: 'x2',
             yAxisID: 'y2',
@@ -1661,11 +1726,11 @@ void main() {
             pointRadius: 3,
             pointHoverRadius: 6,
             pointStyle: const StarPointStyle(),
-            pointBackgroundColor: _red,
-            pointBorderColor: _blue,
+            pointBackgroundColor: const .constant(.solid(_red)),
+            pointBorderColor: const .constant(.solid(_blue)),
             pointBorderWidth: 1,
-            pointHoverBackgroundColor: _blue,
-            pointHoverBorderColor: _red,
+            pointHoverBackgroundColor: const .constant(.solid(_blue)),
+            pointHoverBorderColor: const .constant(.solid(_red)),
             extra: const {'clip': 5},
           ),
         );
@@ -1696,11 +1761,11 @@ void main() {
             points: bubbles,
             hidden: false,
             order: 1,
-            backgroundColor: const ChartValue.constant(_red),
-            borderColor: const ChartValue.constant(_blue),
+            backgroundColor: const ChartValue.constant(.solid(_red)),
+            borderColor: const ChartValue.constant(.solid(_blue)),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             xAxisID: 'x2',
             yAxisID: 'y2',
@@ -1735,7 +1800,10 @@ void main() {
         'data': data,
         'hidden': false,
         'order': 1,
-        'backgroundColor': [_redValue, _blueValue],
+        'backgroundColor': [
+          _redValue,
+          _blueValue,
+        ],
         'borderColor': _blueValue,
         'borderWidth': 2,
         'hoverBackgroundColor': _blueValue,
@@ -1759,11 +1827,14 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColor: const ChartValue.indexed([_red, _blue]),
-            borderColor: const ChartValue.constant(_blue),
+            backgroundColor: const ChartValue.indexed([
+              ChartPaint.solid(_red),
+              ChartPaint.solid(_blue),
+            ]),
+            borderColor: const ChartValue.constant(.solid(_blue)),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             offset: 4,
             hoverOffset: 8,
@@ -1786,11 +1857,14 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColor: const ChartValue.indexed([_red, _blue]),
-            borderColor: const ChartValue.constant(_blue),
+            backgroundColor: const ChartValue.indexed([
+              ChartPaint.solid(_red),
+              ChartPaint.solid(_blue),
+            ]),
+            borderColor: const ChartValue.constant(.solid(_blue)),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             offset: 4,
             hoverOffset: 8,
@@ -1813,11 +1887,11 @@ void main() {
             data: data,
             hidden: false,
             order: 1,
-            backgroundColor: const ChartValue.constant(_red),
-            borderColor: const ChartValue.constant(_blue),
+            backgroundColor: const ChartValue.constant(.solid(_red)),
+            borderColor: const ChartValue.constant(.solid(_blue)),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             offset: 4,
             hoverOffset: 8,
@@ -1850,11 +1924,11 @@ void main() {
             data: data,
             hidden: true,
             order: 2,
-            backgroundColor: const ChartValue.constant(_red),
-            borderColor: const ChartValue.constant(_blue),
+            backgroundColor: const ChartValue.constant(.solid(_red)),
+            borderColor: const ChartValue.constant(.solid(_blue)),
             borderWidth: 2,
-            hoverBackgroundColor: _blue,
-            hoverBorderColor: _red,
+            hoverBackgroundColor: const .constant(.solid(_blue)),
+            hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
             fill: .origin,
             tension: 0.4,
@@ -1865,11 +1939,11 @@ void main() {
             pointRadius: 3,
             pointHoverRadius: 6,
             pointStyle: const StarPointStyle(),
-            pointBackgroundColor: _red,
-            pointBorderColor: _blue,
+            pointBackgroundColor: const .constant(.solid(_red)),
+            pointBorderColor: const .constant(.solid(_blue)),
             pointBorderWidth: 1,
-            pointHoverBackgroundColor: _blue,
-            pointHoverBorderColor: _red,
+            pointHoverBackgroundColor: const .constant(.solid(_blue)),
+            pointHoverBorderColor: const .constant(.solid(_red)),
             extra: const {'clip': 5},
           ),
         );
@@ -1967,7 +2041,7 @@ void main() {
       expectTwin(
         lowerAxis(
           const LinearAxis(
-            grid: AxisGrid(color: _red),
+            grid: AxisGrid(color: ChartPaint.solid(_red)),
             extra: {
               'grid': {'tickLength': 4},
               'grace': PercentGrace(5),
@@ -1983,7 +2057,7 @@ void main() {
     });
 
     test('each axis class with all its parameters, in parameter order', () {
-      const ticks = AxisTicks(display: true, color: _red);
+      const ticks = AxisTicks(display: true, color: ChartPaint.solid(_red));
       const grid = AxisGrid(display: false);
       const title = AxisTitle(display: true, text: 'T');
       const tail = <String, Object?>{
@@ -2135,11 +2209,11 @@ void main() {
             beginAtZero: true,
             startAngle: 90,
             pointLabelsDisplay: true,
-            pointLabelsColor: _red,
+            pointLabelsColor: ChartPaint.solid(_red),
             pointLabelsFont: _font,
             pointLabelsPadding: 4,
             angleLinesDisplay: true,
-            angleLinesColor: _blue,
+            angleLinesColor: ChartPaint.solid(_blue),
             angleLinesLineWidth: 2,
             ticks: ticks,
             grid: grid,
@@ -2301,7 +2375,7 @@ void main() {
             position: .bottom,
             align: .start,
             reverse: true,
-            labelColor: _red,
+            labelColor: ChartPaint.solid(_red),
             labelFont: _font,
             boxWidth: 20,
             boxHeight: 10,
@@ -2315,7 +2389,7 @@ void main() {
           title: const ChartTitle(
             display: true,
             text: 'T',
-            color: _red,
+            color: ChartPaint.solid(_red),
             font: _font,
             align: .end,
             position: .left,
@@ -2327,12 +2401,12 @@ void main() {
             enabled: true,
             mode: const IndexInteractionMode(),
             intersect: false,
-            backgroundColor: _red,
-            titleColor: _blue,
+            backgroundColor: const ChartPaint.solid(_red),
+            titleColor: const ChartPaint.solid(_blue),
             titleFont: _font,
-            bodyColor: _red,
+            bodyColor: const ChartPaint.solid(_red),
             bodyFont: _font,
-            footerColor: _blue,
+            footerColor: const ChartPaint.solid(_blue),
             footerFont: _font,
             padding: const EdgeInsets.all(8),
             cornerRadius: 3,

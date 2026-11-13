@@ -35,9 +35,9 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
-const red = ui.Color(0xffff0000);
-const blue = ui.Color(0xff0000ff);
-const green = ui.Color(0xff00ff00);
+const red = ChartPaint.solid(ui.Color(0xffff0000));
+const blue = ChartPaint.solid(ui.Color(0xff0000ff));
+const green = ChartPaint.solid(ui.Color(0xff00ff00));
 const _length = 8;
 
 /// A trivial user subclass: the exact-class guard fails, and each call stays on
@@ -309,7 +309,7 @@ void main() {
   };
   final colors = <String, Object?>{
     'constant': blue,
-    'indexed': <ui.Color>[red, blue],
+    'indexed': <ChartPaint>[red, blue],
   };
   for (final data in datas.entries) {
     for (final color in colors.entries) {
@@ -363,7 +363,7 @@ void main() {
           type: type,
           parsing: parsing,
           data: data(_length),
-          backgroundColor: <ui.Color>[red, blue],
+          backgroundColor: <ChartPaint>[red, blue],
         ),
       );
       final a = _chart(configs[0]);
@@ -381,11 +381,14 @@ void main() {
 
   test('twin of the two datasets of one chart, by index', () {
     final configs = _pair((type) {
-      final cfg = _config(type: type, backgroundColor: <ui.Color>[red, blue]);
+      final cfg = _config(type: type, backgroundColor: <ChartPaint>[red, blue]);
       ((cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>)
           .add(<String, Object?>{
             'data': _maps(step: 2),
-            'backgroundColor': <ui.Color>[green, red],
+            'backgroundColor': <ChartPaint>[
+              green,
+              red,
+            ],
             'borderColor': red,
             'borderWidth': 2.0,
           });
@@ -453,7 +456,7 @@ void main() {
   group('the update loop', () {
     for (final color in <Object?>[
       blue,
-      <ui.Color>[red, blue],
+      <ChartPaint>[red, blue],
     ]) {
       test('prepares fresh options after two resolves, color $color', () {
         final configs = _pair(
@@ -504,7 +507,7 @@ void main() {
       for (final type in ['bubble', 'referenceBubble']) {
         final cfg = _config(
           type: type,
-          backgroundColor: <ui.Color>[red, blue],
+          backgroundColor: <ChartPaint>[red, blue],
         );
         final chart = _chart(cfg, reference: type != 'bubble');
         final probes = _probes(chart);
@@ -514,7 +517,7 @@ void main() {
           if (key == 'y' && !changed) {
             changed = true;
             _dataset(cfg)['radius'] = 7.0;
-            (_dataset(cfg)['backgroundColor']! as List<ui.Color>)[0] = green;
+            (_dataset(cfg)['backgroundColor']! as List<ChartPaint>)[0] = green;
             chart.config.clearCache();
           }
         };
@@ -539,11 +542,11 @@ void main() {
     });
 
     test('a partial update keeps absolute indexes and untouched points', () {
-      final a = _chart(_config(backgroundColor: <ui.Color>[red, blue]));
+      final a = _chart(_config(backgroundColor: <ChartPaint>[red, blue]));
       final b = _chart(
         _config(
           type: 'referenceBubble',
-          backgroundColor: <ui.Color>[red, blue],
+          backgroundColor: <ChartPaint>[red, blue],
         ),
         reference: true,
       );
@@ -611,7 +614,7 @@ void main() {
 
   test('an indexed overflow keeps each context write and the mode', () {
     final chart = _chart(
-      _config(backgroundColor: <ui.Color>[red, blue]),
+      _config(backgroundColor: <ChartPaint>[red, blue]),
     );
     final meta = chart.getDatasetMeta(0);
     final controller = meta.controller!;
@@ -687,7 +690,7 @@ void main() {
       final configs = _pair(
         (type) => _config(
           type: type,
-          backgroundColor: <ui.Color>[red, blue],
+          backgroundColor: <ChartPaint>[red, blue],
         ),
       );
       final a = _chart(configs[0]);
@@ -1080,7 +1083,7 @@ void main() {
           (type) => _config(
             type: type,
             dataset: options,
-            backgroundColor: <ui.Color>[red, blue],
+            backgroundColor: <ChartPaint>[red, blue],
           ),
         );
         final a = _chart(configs[0]);
@@ -1103,10 +1106,10 @@ void main() {
       for (final type in ['bubble', 'referenceBubble']) {
         final cfg = _config(
           type: type,
-          backgroundColor: <ui.Color>[red, blue],
+          backgroundColor: <ChartPaint>[red, blue],
         );
         final calls = <Object?>[];
-        ui.Color hover(Object? ctx) {
+        ChartPaint hover(Object? ctx) {
           calls.add(jsGet(ctx, 'dataIndex'));
           return green;
         }
@@ -1374,7 +1377,7 @@ void main() {
     });
   });
 
-  for (final color in <ChartValue<ui.Color>>[
+  for (final color in <ChartValue<ChartPaint>>[
     const ChartValue.constant(blue),
     const ChartValue.indexed([red, blue]),
   ]) {

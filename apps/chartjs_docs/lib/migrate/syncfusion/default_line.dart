@@ -17,18 +17,18 @@ const List<Color> _colors = [_germany, _england];
 LineDataset _series(String name, Color color, List<num> values) => LineDataset(
   label: name,
   points: [for (final (i, v) in values.indexed) DataPoint(2005 + i, v)],
-  borderColor: .constant(color),
+  borderColor: .constant(.solid(color)),
   // The legend and the tooltip take this color.
-  backgroundColor: .constant(color),
+  backgroundColor: .constant(.solid(color)),
   borderWidth: 2,
   // MarkerSettings(isVisible: true): a white circle with a colored border.
   pointRadius: 4,
   pointHoverRadius: 4,
   pointBorderWidth: 2,
-  pointBackgroundColor: Colors.white,
-  pointBorderColor: color,
-  pointHoverBackgroundColor: Colors.white,
-  pointHoverBorderColor: color,
+  pointBackgroundColor: const .constant(.solid(Colors.white)),
+  pointBorderColor: .constant(.solid(color)),
+  pointHoverBackgroundColor: const .constant(.solid(Colors.white)),
+  pointHoverBorderColor: .constant(.solid(color)),
   extra: const {'pointHoverBorderWidth': 2, 'pointHitRadius': 8},
 );
 
@@ -61,17 +61,17 @@ final ChartConfig _config = ChartConfig(
   title: const ChartTitle(
     display: true,
     text: 'Inflation - Consumer price',
-    color: _text,
+    color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
   legend: const ChartLegend(
     usePointStyle: true,
     boxHeight: 7,
-    labelColor: _text,
+    labelColor: ChartPaint.solid(_text),
     labelFont: TextStyle(fontSize: 13),
   ),
   tooltip: ChartTooltip(
-    backgroundColor: _tooltip,
+    backgroundColor: const ChartPaint.solid(_tooltip),
     yAlign: .bottom,
     extra: const {
       'titleAlign': TextAlign.center,
@@ -105,29 +105,33 @@ final ChartConfig _config = ChartConfig(
       max: 2011,
       grid: AxisGrid(
         drawOnChartArea: false,
-        color: _axisLine,
+        color: ChartPaint.solid(_axisLine),
         extra: {'tickLength': 6},
       ),
       ticks: AxisTicks(
         stepSize: 2,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
         format: _year,
         align: .inner,
       ),
       extra: {
-        'border': {'color': _axisLine},
+        'border': {'color': ChartPaint.solid(_axisLine)},
       },
     ),
     // labelFormat: '{value}%', no axis line, no tick marks.
     'y': LinearAxis(
       min: 0,
       max: 100,
-      grid: AxisGrid(color: _grid, lineWidth: 0.7, drawTicks: false),
+      grid: AxisGrid(
+        color: ChartPaint.solid(_grid),
+        lineWidth: 0.7,
+        drawTicks: false,
+      ),
       ticks: AxisTicks(
         stepSize: 20,
         padding: 8,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
         format: _percent,
       ),

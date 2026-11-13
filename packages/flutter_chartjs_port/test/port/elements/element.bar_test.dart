@@ -13,9 +13,12 @@ import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
+import '../../support/color_json.dart';
 import '../helpers/rounded_rect_upstream.dart';
 import 'bar_reference.dart';
 
@@ -75,7 +78,9 @@ const Map<String, Object Function(AnyObject options)> _optionsForms = {
 /// [cfg] with its `options` Map in the form [form].
 AnyObject _withOptions(AnyObject cfg, Object Function(AnyObject) form) => {
   for (final MapEntry(:key, :value) in cfg.entries)
-    key: key == 'options' && value is AnyObject ? form(value) : value,
+    key: key == 'options' && value is AnyObject
+        ? form(referencePaintOptions(value))
+        : value,
 };
 
 /// `new BarElement(cfg)` with an animation for each entry of [animations],
@@ -106,6 +111,8 @@ List<Object?> _calls(List<(String, List<Object?>)> calls) => [
             isNaN
           else if (arg is num)
             closeTo(arg, 1e-9)
+          else if (arg is String)
+            referenceColorOrString(arg)
           else
             arg,
       ],
@@ -140,8 +147,8 @@ Map<String, Object?> _drawCfg([Map<String, Object?> extra = const {}]) => {
   'width': 30,
   'height': 80,
   'options': <String, Object?>{
-    'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-    'backgroundColor': const ui.Color.fromRGBO(0, 0, 255, 1),
+    'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
+    'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
     'borderWidth': 2,
     'borderRadius': 0,
   },

@@ -4,7 +4,6 @@
 library;
 
 import 'dart:ui' as native_ui;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -15,6 +14,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -63,12 +64,14 @@ AnyObject _config(String type) => <String, Object?>{
       <String, Object?>{
         'data': <Object?>[10, 20, double.nan],
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(255, 0, 0, 1),
-          const native_ui.Color.fromRGBO(0, 128, 0, 1),
-          const native_ui.Color.fromRGBO(0, 0, 255, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
         ],
         'borderWidth': 2,
-        'borderColor': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 0, 1),
+        ),
       },
     ],
   },
@@ -83,9 +86,13 @@ void main() {
         final chart = acquireChart(_config('doughnut'));
 
         final expectedCommon = <String, Object?>{
-          'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+          'fontColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(102, 102, 102, 1),
+          ),
           'hidden': false,
-          'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+          'strokeStyle': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 0, 0, 1),
+          ),
           'textAlign': undefined,
           'lineWidth': 2,
           'pointStyle': undefined,
@@ -98,19 +105,25 @@ void main() {
         final expected = <Object?>[
           <String, Object?>{
             'text': 'label1',
-            'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+            'fillStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
             'index': 0,
             ...expectedCommon,
           },
           <String, Object?>{
             'text': 'label2',
-            'fillStyle': const native_ui.Color.fromRGBO(0, 128, 0, 1),
+            'fillStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 128, 0, 1),
+            ),
             'index': 1,
             ...expectedCommon,
           },
           <String, Object?>{
             'text': 'label3',
-            'fillStyle': const native_ui.Color.fromRGBO(0, 0, 255, 1),
+            'fillStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 255, 1),
+            ),
             'index': 2,
             ...expectedCommon,
           },
@@ -129,10 +142,14 @@ void main() {
                 <String, Object?>{
                   'data': <Object?>[10],
                   'backgroundColor': <Object?>[
-                    const native_ui.Color.fromRGBO(255, 0, 0, 1),
+                    const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(255, 0, 0, 1),
+                    ),
                   ],
                   'borderWidth': 2,
-                  'borderColor': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+                  'borderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(0, 0, 0, 1),
+                  ),
                   'borderDash': <Object?>[1, 2, 3],
                   'borderDashOffset': 1,
                   'borderJoinStyle': native_ui.StrokeJoin.miter,
@@ -156,11 +173,17 @@ void main() {
           final expected = <Object?>[
             <String, Object?>{
               'text': 'label1',
-              'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
+              'fillStyle': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              ),
               'index': 0,
-              'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+              'fontColor': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(102, 102, 102, 1),
+              ),
               'hidden': false,
-              'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+              'strokeStyle': const ChartPaint.solid(
+                native_ui.Color.fromRGBO(0, 0, 0, 1),
+              ),
               'textAlign': TextAlign.left,
               'lineWidth': 2,
               'pointStyle': undefined,
@@ -201,33 +224,51 @@ void main() {
         final expected = <Object?>[
           <String, Object?>{
             'text': 'label1',
-            'fillStyle': const native_ui.Color.fromRGBO(255, 0, 0, 1),
-            'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+            'fillStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
+            'fontColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(102, 102, 102, 1),
+            ),
             'hidden': false,
             'index': 0,
-            'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+            'strokeStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 1),
+            ),
             'textAlign': undefined,
             'lineWidth': 2,
             'pointStyle': undefined,
           },
           <String, Object?>{
             'text': 'label2',
-            'fillStyle': const native_ui.Color.fromRGBO(0, 128, 0, 1),
-            'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+            'fillStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 128, 0, 1),
+            ),
+            'fontColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(102, 102, 102, 1),
+            ),
             'hidden': false,
             'index': 1,
-            'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+            'strokeStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 1),
+            ),
             'textAlign': undefined,
             'lineWidth': 2,
             'pointStyle': undefined,
           },
           <String, Object?>{
             'text': 'label3',
-            'fillStyle': const native_ui.Color.fromRGBO(0, 0, 255, 1),
-            'fontColor': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+            'fillStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 255, 1),
+            ),
+            'fontColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(102, 102, 102, 1),
+            ),
             'hidden': false,
             'index': 2,
-            'strokeStyle': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+            'strokeStyle': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(0, 0, 0, 1),
+            ),
             'textAlign': undefined,
             'lineWidth': 2,
             'pointStyle': undefined,

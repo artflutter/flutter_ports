@@ -2,9 +2,6 @@
 @TestOn('vm')
 library;
 
-// Keep each step of a twin as its own statement.
-// ignore_for_file: cascade_invocations
-
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -19,6 +16,11 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+// Keep each step of a twin as its own statement.
+// ignore_for_file: cascade_invocations
+
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -357,7 +359,9 @@ void main() {
             'elements': <String, Object?>{
               'point': <String, Object?>{
                 'hoverRadius': 9.0,
-                'hoverBackgroundColor': const ui.Color(0xFFFF0000),
+                'hoverBackgroundColor': const ChartPaint.solid(
+                  ui.Color(0xFFFF0000),
+                ),
               },
             },
           },

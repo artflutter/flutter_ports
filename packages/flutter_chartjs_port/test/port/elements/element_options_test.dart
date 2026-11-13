@@ -28,7 +28,11 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet, jsObjectFreeze, jsObjectIsFrozen, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
+    show foreignAudit;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 // The typed element options of Chart.js ADR 0054 §9 have no upstream source
@@ -291,6 +295,17 @@ List<ContextCall> _drawCalls(Object options) {
 
 void main() {
   setUpSpecs();
+  setUp(() {
+    // These face/clone/freeze probes deliberately put every JS value kind
+    // in each slot. Their assertions check that the raw value survives.
+    final saved = foreignAudit;
+    foreignAudit = (owner, key, raw) {
+      if (key != 'backgroundColor' && key != 'borderColor') {
+        saved?.call(owner, key, raw);
+      }
+    };
+    addTearDown(() => foreignAudit = saved);
+  });
 
   for (final kind in _kinds) {
     group(kind.name, () {
@@ -496,8 +511,12 @@ void main() {
           final map = <String, Object?>{
             'radius': 5,
             'borderWidth': 2,
-            'borderColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-            'backgroundColor': const ui.Color.fromRGBO(0, 0, 255, 1),
+            'borderColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
+            'backgroundColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(0, 0, 255, 1),
+            ),
             'pointStyle': style,
             'rotation': ?rotation,
           };
@@ -943,7 +962,9 @@ void _adr0021Tests() {
       r'$shared': true,
       'borderWidth': 1.0,
       'radius': 3.0,
-      'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
+      'backgroundColor': const ChartPaint.solid(
+        ui.Color.fromRGBO(255, 0, 0, 1),
+      ),
       'myKey': 1.0,
     };
 

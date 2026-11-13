@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 class _Ordinary extends Config {}
@@ -129,7 +131,7 @@ void main() {
           foreignAudit = (_, key, _) {
             if (armed && change == 'audit' && key == 'borderWidth') {
               trace.add('audit');
-              raw().jsWrite('borderColor', green);
+              raw().jsWrite('borderColor', const ChartPaint.solid(green));
             }
           };
           try {

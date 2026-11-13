@@ -6,10 +6,11 @@
 ///
 /// - Solid paints and gradient stops require `ui.Color`. Strings throw;
 ///   there is no CSS color parser or color-string cache (ADR 0057).
-/// - A gradient builds its `ui.Gradient` when a draw uses it, with the
-///   transform of that draw (the DOM rule: gradient coordinates are in the
-///   user space of the draw). The shader is cached for the last matrix.
-/// - A pattern is a `ui.ImageShader` with the tile modes of the repetition.
+/// - A `ChartGradient` builds its `ui.Gradient` when a draw uses it, with
+///   the transform of that draw (the DOM rule: gradient coordinates are in
+///   the user space of the draw). The shader is cached for the last matrix
+///   by the identity of the gradient (Chart.js ADR 0128).
+/// - A `ChartPattern` is a `ui.ImageShader` with its tile modes.
 /// - A line dash cuts the path with `ui.PathMetric.extractPath`, the usual
 ///   Flutter recipe: `dart:ui` has no dash.
 library;
@@ -19,7 +20,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 
 /// CSS color parsing is unsupported. Supply a Flutter Color instead.
 ui.Color? parseCssColor(String value) => throw ArgumentError.value(
@@ -116,8 +117,7 @@ CanvasCompositeOperation compositeOperationOf(ui.BlendMode mode) =>
     };
 
 /// A [CanvasImageSource] that wraps a `ui.Image`, for
-/// [CanvasRenderingContext2D.drawImage] and
-/// [CanvasRenderingContext2D.createPattern].
+/// [CanvasRenderingContext2D.drawImage].
 final class UiImageSource implements CanvasImageSource {
   /// Wraps [image]. Its size in CSS pixels is its size in pixels.
   UiImageSource(this.image);
@@ -132,198 +132,191 @@ final class UiImageSource implements CanvasImageSource {
   double get height => image.height.toDouble();
 }
 
-/// A paint source that builds a shader for a draw: a gradient or a
-/// pattern.
-sealed class UiShaderSource {
-  Float64List? _lastMatrix;
-  ui.Shader? _lastShader;
-  bool _valid = false;
-
-  /// Marks the cached shader stale.
-  void _invalidate() => _valid = false;
-
-  /// The shader for a draw whose local space maps to the user space of the
-  /// style through [matrix] (a column-major 4 x 4 matrix, `null` for the
-  /// identity). `null` when the style paints nothing.
-  ui.Shader? shaderFor(Float64List? matrix) {
-    if (_valid && _sameMatrix(_lastMatrix, matrix)) return _lastShader;
-    _lastMatrix = matrix == null ? null : Float64List.fromList(matrix);
-    _lastShader = _build(matrix);
-    _valid = true;
-    return _lastShader;
-  }
-
-  ui.Shader? _build(Float64List? matrix);
-
-  static bool _sameMatrix(Float64List? a, Float64List? b) {
-    if (a == null || b == null) return a == null && b == null;
-    // A 2D affine matrix: the other entries are fixed.
-    return a[0] == b[0] &&
-        a[1] == b[1] &&
-        a[4] == b[4] &&
-        a[5] == b[5] &&
-        a[12] == b[12] &&
-        a[13] == b[13];
-  }
+/// The last shader of a [ChartShaderPaint], with the matrix of its draw.
+final class _ShaderCache {
+  Float64List? matrix;
+  ui.Shader? shader;
+  List<ui.Color>? colors;
+  List<double>? stops;
 }
 
-/// The kinds of [UiCanvasGradient].
-enum UiGradientKind {
-  /// `createLinearGradient`.
-  linear,
+/// The cache of each paint, including snapshots of its gradient lists.
+final Expando<_ShaderCache> _shaderCaches = Expando('ChartShaderPaint');
 
-  /// `createRadialGradient`.
-  radial,
-
-  /// `createConicGradient`.
-  conic,
+/// The shader of [source] for a draw whose local space maps to the user
+/// space of the style through [matrix] (a column-major 4 x 4 matrix, `null`
+/// for the identity). `null` when the style paints nothing.
+///
+/// A `stops` list of another length than the colors, and a negative radius
+/// of a radial gradient, throw.
+ui.Shader? shaderFor(ChartShaderPaint source, Float64List? matrix) {
+  final cache = _shaderCaches[source];
+  if (cache != null && _sameMatrix(cache.matrix, matrix)) {
+    if (source is! ChartGradient ||
+        (_sameItems(cache.colors, source.colors) &&
+            _sameItems(cache.stops, source.stops))) {
+      return cache.shader;
+    }
+  }
+  // Publish only after a successful build: a rejected paint must keep
+  // throwing on later draws instead of caching a null shader.
+  final shader = switch (source) {
+    final ChartGradient gradient => _gradientShader(gradient, matrix),
+    final ChartPattern pattern => ui.ImageShader(
+      pattern.image,
+      pattern.tileModeX,
+      pattern.tileModeY,
+      matrix ?? _identityMatrix,
+      filterQuality: ui.FilterQuality.low,
+    ),
+  };
+  _shaderCaches[source] = _ShaderCache()
+    ..matrix = matrix == null ? null : Float64List.fromList(matrix)
+    ..shader = shader
+    ..colors = source is ChartGradient ? List.of(source.colors) : null
+    ..stops = source is ChartGradient && source.stops != null
+        ? List.of(source.stops!)
+        : null;
+  return shader;
 }
 
-/// The `dart:ui` [CanvasGradient].
-final class UiCanvasGradient extends UiShaderSource implements CanvasGradient {
-  /// `createLinearGradient(x0, y0, x1, y1)`.
-  UiCanvasGradient.linear(this.x0, this.y0, this.x1, this.y1)
-    : kind = UiGradientKind.linear,
-      r0 = 0,
-      r1 = 0;
-
-  /// `createRadialGradient(x0, y0, r0, x1, y1, r1)`. A negative radius
-  /// throws a [RangeError] (the DOM `IndexSizeError`).
-  UiCanvasGradient.radial(this.x0, this.y0, this.r0, this.x1, this.y1, this.r1)
-    : kind = UiGradientKind.radial {
-    if (r0 < 0 || r1 < 0) throw RangeError('The radius is negative');
+bool _sameItems<T>(List<T>? a, List<T>? b) {
+  if (a == null || b == null) return a == null && b == null;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
   }
+  return true;
+}
 
-  /// `createConicGradient(startAngle, x, y)`: [r0] holds the start angle.
-  UiCanvasGradient.conic(double startAngle, this.x0, this.y0)
-    : kind = UiGradientKind.conic,
-      r0 = startAngle,
-      x1 = x0,
-      y1 = y0,
-      r1 = 0;
+bool _sameMatrix(Float64List? a, Float64List? b) {
+  if (a == null || b == null) return a == null && b == null;
+  // A 2D affine matrix: the other entries are fixed.
+  return a[0] == b[0] &&
+      a[1] == b[1] &&
+      a[4] == b[4] &&
+      a[5] == b[5] &&
+      a[12] == b[12] &&
+      a[13] == b[13];
+}
 
-  /// The kind.
-  final UiGradientKind kind;
+/// The offsets of [count] colors with equal distances.
+List<double> _evenStops(int count) => [
+  for (var i = 0; i < count; i++) i / (count - 1),
+];
 
-  /// The start point (the center of a conic gradient).
-  final double x0;
-
-  /// The start point (the center of a conic gradient).
-  final double y0;
-
-  /// The start radius, or the start angle of a conic gradient.
-  final double r0;
-
-  /// The end point.
-  final double x1;
-
-  /// The end point.
-  final double y1;
-
-  /// The end radius.
-  final double r1;
-
-  final List<double> _offsets = [];
-  final List<ui.Color> _colors = [];
-
-  /// The color stops: offsets in [0, 1], ascending.
-  List<double> get offsets => List.unmodifiable(_offsets);
-
-  /// The colors of the stops.
-  List<ui.Color> get colors => List.unmodifiable(_colors);
-
-  /// `addColorStop(offset, color)`. An offset outside [0, 1] throws a
-  /// [RangeError] (the DOM `IndexSizeError`). A value that is not a native
-  /// color throws an [ArgumentError] (ADR 0057). A stop with the
-  /// same offset as earlier stops goes after them.
-  @override
-  void addColorStop(double offset, Object color) {
-    if (!(offset >= 0 && offset <= 1)) {
-      throw RangeError.range(offset, 0, 1, 'offset');
-    }
-    final parsed = requireUiColor(color, 'gradient color');
-    var i = _offsets.length;
-    while (i > 0 && _offsets[i - 1] > offset) {
-      i--;
-    }
-    _offsets.insert(i, offset);
-    _colors.insert(i, parsed);
-    _invalidate();
+ui.Shader? _gradientShader(ChartGradient gradient, Float64List? matrix) {
+  var colors = gradient.colors;
+  var stops = gradient.stops;
+  if (stops != null && stops.length != colors.length) {
+    throw ArgumentError.value(
+      stops,
+      'stops',
+      'Expected one offset for each of the ${colors.length} colors',
+    );
   }
-
-  @override
-  ui.Shader? _build(Float64List? matrix) {
-    if (_colors.isEmpty) return null;
-    var colors = _colors;
-    var stops = _offsets;
-    if (colors.length == 1) {
-      colors = [colors[0], colors[0]];
-      stops = const [0, 1];
+  if (stops != null) {
+    var previous = 0.0;
+    for (final stop in stops) {
+      if (!stop.isFinite || stop < previous || stop > 1) {
+        throw ArgumentError.value(
+          stops,
+          'stops',
+          'Expected ascending offsets in [0, 1]',
+        );
+      }
+      previous = stop;
     }
-    switch (kind) {
-      case UiGradientKind.linear:
-        if (x0 == x1 && y0 == y1) return null;
-        return ui.Gradient.linear(
-          ui.Offset(x0, y0),
-          ui.Offset(x1, y1),
-          colors,
-          stops,
-          ui.TileMode.clamp,
-          matrix,
-        );
-      case UiGradientKind.radial:
-        if (x0 == x1 && y0 == y1 && r0 == r1) return null;
-        // The engine rejects a conical gradient with both centers at the
-        // origin: draw it shifted, with a matrix that shifts it back.
-        var shift = 0.0;
-        if (x0 == 0 && y0 == 0 && x1 == 0 && y1 == 0 && r0 != 0) {
-          shift = 1;
-        }
-        var m = matrix;
-        if (shift != 0) {
-          m = Float64List(16)
-            ..[0] = 1
-            ..[5] = 1
-            ..[10] = 1
-            ..[12] = -shift
-            ..[13] = -shift
-            ..[15] = 1;
-          if (matrix != null) m = _multiply(matrix, m);
-        }
-        return ui.Gradient.radial(
-          ui.Offset(x1 + shift, y1 + shift),
-          r1,
-          colors,
-          stops,
-          ui.TileMode.clamp,
-          m,
-          ui.Offset(x0 + shift, y0 + shift),
-          r0,
-        );
-      case UiGradientKind.conic:
-        // The angle 0 of a conic gradient is the positive x axis, as for a
-        // sweep gradient. The start angle rotates it around the center.
-        final cos = math.cos(r0);
-        final sin = math.sin(r0);
-        final rotation = Float64List(16)
-          ..[0] = cos
-          ..[1] = sin
-          ..[4] = -sin
-          ..[5] = cos
+  }
+  if (gradient case RadialChartGradient(:final radius, :final focalRadius)) {
+    if (!radius.isFinite ||
+        !focalRadius.isFinite ||
+        radius < 0 ||
+        focalRadius < 0) {
+      throw RangeError('The radius must be finite and non-negative');
+    }
+  }
+  if (colors.isEmpty) return null;
+  if (colors.length == 1) {
+    colors = [colors[0], colors[0]];
+    stops = const [0, 1];
+  }
+  stops ??= _evenStops(colors.length);
+  switch (gradient) {
+    case LinearChartGradient(:final from, :final to):
+      if (from == to) return null;
+      return ui.Gradient.linear(
+        from,
+        to,
+        colors,
+        stops,
+        ui.TileMode.clamp,
+        matrix,
+      );
+    case RadialChartGradient(
+      :final center,
+      :final radius,
+      :final focalRadius,
+    ):
+      final focal = gradient.focal ?? center;
+      if (radius < 0 || focalRadius < 0) {
+        throw RangeError('The radius is negative');
+      }
+      if (focal == center && focalRadius == radius) return null;
+      // The engine rejects a conical gradient with both centers at the
+      // origin: draw it shifted, with a matrix that shifts it back.
+      var shift = 0.0;
+      if (focal == ui.Offset.zero &&
+          center == ui.Offset.zero &&
+          focalRadius != 0) {
+        shift = 1;
+      }
+      var m = matrix;
+      if (shift != 0) {
+        m = Float64List(16)
+          ..[0] = 1
+          ..[5] = 1
           ..[10] = 1
-          ..[12] = x0 - cos * x0 + sin * y0
-          ..[13] = y0 - sin * x0 - cos * y0
+          ..[12] = -shift
+          ..[13] = -shift
           ..[15] = 1;
-        return ui.Gradient.sweep(
-          ui.Offset(x0, y0),
-          colors,
-          stops,
-          ui.TileMode.clamp,
-          0,
-          2 * math.pi,
-          matrix == null ? rotation : _multiply(matrix, rotation),
-        );
-    }
+        if (matrix != null) m = _multiply(matrix, m);
+      }
+      return ui.Gradient.radial(
+        center.translate(shift, shift),
+        radius,
+        colors,
+        stops,
+        ui.TileMode.clamp,
+        m,
+        focal.translate(shift, shift),
+        focalRadius,
+      );
+    case SweepChartGradient(:final center, :final startAngle):
+      // The angle 0 of a sweep gradient is the positive x axis. The start
+      // angle rotates it around the center.
+      final cos = math.cos(startAngle);
+      final sin = math.sin(startAngle);
+      final x0 = center.dx;
+      final y0 = center.dy;
+      final rotation = Float64List(16)
+        ..[0] = cos
+        ..[1] = sin
+        ..[4] = -sin
+        ..[5] = cos
+        ..[10] = 1
+        ..[12] = x0 - cos * x0 + sin * y0
+        ..[13] = y0 - sin * x0 - cos * y0
+        ..[15] = 1;
+      return ui.Gradient.sweep(
+        center,
+        colors,
+        stops,
+        ui.TileMode.clamp,
+        0,
+        2 * math.pi,
+        matrix == null ? rotation : _multiply(matrix, rotation),
+      );
   }
 }
 
@@ -352,43 +345,6 @@ final Float64List _identityMatrix = Float64List(16)
   ..[5] = 1
   ..[10] = 1
   ..[15] = 1;
-
-/// The `dart:ui` [CanvasPattern]: an image repeated in user space.
-final class UiCanvasPattern extends UiShaderSource implements CanvasPattern {
-  /// `createPattern(image, repetition)`. [repetition] is `'repeat'`,
-  /// `'repeat-x'`, `'repeat-y'` or `'no-repeat'`. Another value throws a
-  /// [FormatException] (the DOM `SyntaxError`).
-  UiCanvasPattern(this.image, String repetition)
-    : repeatX = repetition == 'repeat' || repetition == 'repeat-x',
-      repeatY = repetition == 'repeat' || repetition == 'repeat-y' {
-    if (!const {
-      'repeat',
-      'repeat-x',
-      'repeat-y',
-      'no-repeat',
-    }.contains(repetition)) {
-      throw FormatException('Unknown repetition', repetition);
-    }
-  }
-
-  /// The image.
-  final ui.Image image;
-
-  /// The pattern repeats along x.
-  final bool repeatX;
-
-  /// The pattern repeats along y.
-  final bool repeatY;
-
-  @override
-  ui.Shader? _build(Float64List? matrix) => ui.ImageShader(
-    image,
-    repeatX ? ui.TileMode.repeated : ui.TileMode.decal,
-    repeatY ? ui.TileMode.repeated : ui.TileMode.decal,
-    matrix ?? _identityMatrix,
-    filterQuality: ui.FilterQuality.low,
-  );
-}
 
 /// [source] cut into the dashes of [dash] (an even-length list), with the
 /// lengths and [offset] multiplied by [scale]. The pattern restarts at each

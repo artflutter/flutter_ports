@@ -1,5 +1,20 @@
 ## 0.1.0
 
+- Use `ChartPaint` for paint-capable color options, including raw configurations.
+  Solids use `.solid(color)`; `ChartGradient` and `ChartPattern` replace canvas
+  gradient/pattern factories. Theme tokens, palette entries, shadow colors and
+  gradient stops remain Flutter `Color` values.
+- Make all dataset point and hover color fields `ChartValue<ChartPaint>?`,
+  matching background and border fields: `.constant(.solid(teal))`,
+  `.indexed([...])` or `.resolver(callback)`. Callbacks stay lazy and indexed
+  values repeat by data index.
+
+- `RenderTextOpts` and `BackdropOptions` are classes with a `const` constructor
+  and named parameters. A caller of `renderText` makes the options with the
+  constructor and no longer implements an interface. Their `color` and
+  `strokeColor` are a `ChartPaint`, not an `Object?`:
+  `RenderTextOpts(color: ChartPaint.solid(Color(0xFF666666)))`.
+
 - Migrate legend hit boxes to the public extensible `LegendHitBox` class.
   Layout, pointer and keyboard handling share native mutable geometry and
   integer row/column membership. Hit testing, centers, copying and merging
@@ -17,10 +32,10 @@
   `shadowOffsetX` and `shadowOffsetY`. The canvas also has these four
   attributes for plugins.
 
-- Use sealed `ChartValue<Color>` for typed dataset `backgroundColor` and
+- Use sealed `ChartValue<ChartPaint>` for typed dataset `backgroundColor` and
   `borderColor`. Migrate plain colors to `.constant(...)`, the plural color
   companions to `.indexed(...)`, and `*ColorFor` callbacks to `.resolver(...)`.
-  Hover, point-specific, element-style and raw APIs are unchanged.
+  Point-specific and hover fields now use the same variants (ADR 0128).
 
 - Add `Chart.updateData()` for incremental native data updates across all eight
   chart types, with metadata/interaction refresh and conservative full fallback.

@@ -22,6 +22,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -283,38 +285,42 @@ void main() {
       ]);
       expect(
         _get(scale['ticks'], 'color'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
         _get(scale['grid'], 'color'),
-        const ui.Color.fromRGBO(0, 0, 0, 0.1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
       expect(
         _get(scale['border'], 'color'),
-        const ui.Color.fromRGBO(0, 0, 0, 0.1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
       expect(
         _get(scale['title'], 'color'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
 
-      defaults['color'] = const ui.Color.fromRGBO(255, 0, 0, 1);
-      defaults['borderColor'] = const ui.Color.fromRGBO(0, 0, 255, 1);
+      defaults['color'] = const ChartPaint.solid(
+        ui.Color.fromRGBO(255, 0, 0, 1),
+      );
+      defaults['borderColor'] = const ChartPaint.solid(
+        ui.Color.fromRGBO(0, 0, 255, 1),
+      );
       expect(
         _get(scale['ticks'], 'color'),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       expect(
         _get(scale['grid'], 'color'),
-        const ui.Color.fromRGBO(0, 0, 255, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
       );
       expect(
         _get(scale['border'], 'color'),
-        const ui.Color.fromRGBO(0, 0, 255, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
       );
       expect(
         _get(scale['title'], 'color'),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
       );
     });
 
@@ -323,28 +329,34 @@ void main() {
         jsCall(defaults['hoverBackgroundColor'], [
           <String, Object?>{},
           <String, Object?>{
-            'backgroundColor': const ui.Color.fromRGBO(0, 0, 0, 0.1),
+            'backgroundColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(0, 0, 0, 0.1),
+            ),
           },
         ]),
-        const ui.Color.fromRGBO(0, 0, 0, 0.1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
       expect(
         jsCall(defaults['hoverBorderColor'], [
           <String, Object?>{},
           <String, Object?>{
-            'borderColor': const ui.Color.fromRGBO(54, 162, 235, 1),
+            'borderColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(54, 162, 235, 1),
+            ),
           },
         ]),
-        const ui.Color.fromRGBO(5, 155, 255, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(5, 155, 255, 1)),
       );
       expect(
         jsCall(defaults['hoverColor'], [
           <String, Object?>{},
           <String, Object?>{
-            'color': const ui.Color.fromRGBO(102, 102, 102, 1),
+            'color': const ChartPaint.solid(
+              ui.Color.fromRGBO(102, 102, 102, 1),
+            ),
           },
         ]),
-        const ui.Color.fromRGBO(92, 92, 92, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(92, 92, 92, 1)),
       );
       expect(
         jsCall(defaults['devicePixelRatio'], [
@@ -365,12 +377,12 @@ void main() {
       }
       expect(() => hover('currentColor'), throwsArgumentError);
       expect(
-        hover(const ui.Color.fromRGBO(255, 255, 255, 1)),
-        const ui.Color.fromRGBO(230, 230, 230, 1),
+        hover(const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))),
+        const ChartPaint.solid(ui.Color.fromRGBO(230, 230, 230, 1)),
       );
       expect(
-        hover(const ui.Color.fromRGBO(1, 0, 0, 1)),
-        const ui.Color.fromRGBO(1, 0, 0, 1),
+        hover(const ChartPaint.solid(ui.Color.fromRGBO(1, 0, 0, 1))),
+        const ChartPaint.solid(ui.Color.fromRGBO(1, 0, 0, 1)),
       );
       expect(
         jsCall(defaults['hoverColor'], [<String, Object?>{}, 'str']),
@@ -382,14 +394,13 @@ void main() {
       final resolver = createResolver(
         [
           <String, Object?>{
-            'barBackgroundColor': const ui.Color.fromRGBO(
-              255,
-              0,
-              0,
-              1,
+            'barBackgroundColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
             ),
-            'barBorderColor': const ui.Color.fromRGBO(0, 255, 0, 1),
-            'barColor': const ui.Color.fromRGBO(0, 0, 255, 1),
+            'barBorderColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(0, 255, 0, 1),
+            ),
+            'barColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
           },
         ],
         ['bar', ''],
@@ -401,15 +412,15 @@ void main() {
           <String, Object?>{},
           resolver,
         ]),
-        const ui.Color.fromRGBO(230, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(230, 0, 0, 1)),
       );
       expect(
         jsCall(defaults['hoverBorderColor'], [<String, Object?>{}, context]),
-        const ui.Color.fromRGBO(0, 230, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 230, 0, 1)),
       );
       expect(
         jsCall(defaults['hoverColor'], [<String, Object?>{}, resolver]),
-        const ui.Color.fromRGBO(0, 0, 230, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 230, 1)),
       );
     });
   });
@@ -501,7 +512,10 @@ void main() {
       final c = d['c'];
       expect(_get(c, 'x'), isNull);
       jsSet(c, 'x', undefined);
-      expect(_get(c, 'x'), const ui.Color.fromRGBO(102, 102, 102, 1));
+      expect(
+        _get(c, 'x'),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
+      );
       expect(_keys(c), ['x']);
       d['color'] = 'red';
       expect(_get(c, 'x'), 'red');
@@ -589,7 +603,7 @@ void main() {
       expect(_keys(d['e']), ['p', 'q', 'z']);
       expect(
         _get(d['e'], 'z'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(jsHasOwn(d['e'], 'z'), true);
       expect(_keys(d['f']), ['p', 'z', 'q']);
@@ -684,7 +698,7 @@ void main() {
       d['color'] = 'green';
       expect(
         _get(d['e'], 'z'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
         () => jsDeleteKey(d['e'], 'z'),
@@ -748,7 +762,7 @@ void main() {
         ..route('p.font', 'size', '', 'color');
       expect(
         _get(_get(d['t'], 'font'), 'size'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
         _json(_get(d['p'], 'font')),
@@ -778,7 +792,7 @@ void main() {
         ..route('a.font', 'x', '', 'color');
       expect(
         _get(_get(d['b'], 'font'), 'x'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(_local(d['a'], 'font'), same(undefined));
       expect(
@@ -845,7 +859,10 @@ void main() {
       routed['q'] = undefined;
       expect(_get(plain, 'q'), 2.0);
       expect(_local(routed, 'q'), same(undefined));
-      expect(routed['q'], const ui.Color.fromRGBO(102, 102, 102, 1));
+      expect(
+        routed['q'],
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
+      );
       expect(identical(d.get('s'), routed), true);
     });
 
@@ -871,11 +888,11 @@ void main() {
         ..route('t', 'v', '', 'color');
       expect(
         _get(d['t'], 'v'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
         _get(d['u'], 'v'),
-        const ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
     });
   });
@@ -945,10 +962,12 @@ void main() {
       expect(defaults['font'], isA<ChartTextStyle>());
       expect((defaults['font']! as TextStyle).fontSize, 12);
       // The routes of the snapshot still read the root.
-      defaults['color'] = const ui.Color.fromRGBO(0, 0, 255, 1);
+      defaults['color'] = const ChartPaint.solid(
+        ui.Color.fromRGBO(0, 0, 255, 1),
+      );
       expect(
         _get(scale['ticks'], 'color'),
-        const ui.Color.fromRGBO(0, 0, 255, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
       );
     }
 

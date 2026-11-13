@@ -30,17 +30,16 @@ const List<double> _rainfall = [
 // three hard bands. The top third is high, the bottom third is low.
 Object? _zones(JsObjectFace context) {
   final chart = context['chart']! as Chart;
-  if (chart.chartArea == null) return _medium;
+  if (chart.chartArea == null) return const ChartPaint.solid(_medium);
   final y = chart.scales['y']!;
   final top = y.getPixelForValue(_rainfall.reduce(math.max));
   final bottom = y.getPixelForValue(_rainfall.reduce(math.min));
-  final gradient = chart.ctx!.createLinearGradient(0, top, 0, bottom);
-  const stops = [0.0, 1 / 3, 1 / 3, 2 / 3, 2 / 3, 1.0];
-  const colors = [_high, _high, _medium, _medium, _low, _low];
-  for (var i = 0; i < stops.length; i++) {
-    gradient.addColorStop(stops[i], colors[i]);
-  }
-  return gradient;
+  return ChartGradient.linear(
+    Offset(0, top),
+    Offset(0, bottom),
+    const [_high, _high, _medium, _medium, _low, _low],
+    stops: const [0.0, 1 / 3, 1 / 3, 2 / 3, 2 / 3, 1.0],
+  );
 }
 
 String? _mm(AxisTickInfo tick) => '${tick.value.round()}mm';
@@ -102,7 +101,7 @@ final ChartConfig _config = ChartConfig(
   title: const ChartTitle(
     display: true,
     text: 'Average annual rainfall of United Kingdom',
-    color: _text,
+    color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
   legend: const ChartLegend(display: false),
@@ -113,7 +112,7 @@ final ChartConfig _config = ChartConfig(
     axis: .x,
   ),
   tooltip: ChartTooltip(
-    backgroundColor: _tooltip,
+    backgroundColor: const ChartPaint.solid(_tooltip),
     displayColors: false,
     yAlign: .bottom,
     extra: const {},
@@ -137,28 +136,32 @@ final ChartConfig _config = ChartConfig(
       tooltipFormat: 'yyyy',
       grid: AxisGrid(
         drawOnChartArea: false,
-        color: _axisLine,
+        color: ChartPaint.solid(_axisLine),
         extra: {'tickLength': 6},
       ),
       ticks: AxisTicks(
         stepSize: 5,
         maxRotation: 0,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
         align: .inner,
       ),
       extra: {
-        'border': {'color': _axisLine},
+        'border': {'color': ChartPaint.solid(_axisLine)},
       },
     ),
     'y': LinearAxis(
       min: 24,
       max: 36,
-      grid: AxisGrid(color: _grid, lineWidth: 0.7, drawTicks: false),
+      grid: AxisGrid(
+        color: ChartPaint.solid(_grid),
+        lineWidth: 0.7,
+        drawTicks: false,
+      ),
       ticks: AxisTicks(
         stepSize: 2,
         padding: 8,
-        color: _text,
+        color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 12),
         format: _mm,
       ),

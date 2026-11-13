@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
@@ -132,15 +134,15 @@ void main() {
       final themed = _resolveRadial(compileLightTheme());
       expect(
         themed['pointLabels.color'],
-        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
         themed['angleLines.color'],
-        const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
       expect(
         themed['ticks.color'],
-        const native_ui.Color.fromRGBO(102, 102, 102, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       );
     });
   });

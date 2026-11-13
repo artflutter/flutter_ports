@@ -10,10 +10,12 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/pure.dart' show referenceColor;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as legacy;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:test/test.dart';
 
 /// RGBA bytes of a numerical/native color, or null for a non-color value.
-List<int>? nativeColorBytes(Object? value) {
+List<int>? nativeColorBytes(Object? input) {
+  final value = input is SolidChartPaint ? input.color : input;
   if (value is! ui.Color) return null;
   final color = value.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
   return [
@@ -107,7 +109,7 @@ String referenceColorText(String text) {
 /// Parses only legacy reference data; native production values are converted
 /// numerically, without sending Flutter Color objects to the old string parser.
 legacy.Color referenceParsedColor(Object? value) =>
-    value is ui.Color ? legacy.Color(value) : referenceColor(value);
+    referenceColor(value is SolidChartPaint ? value.color : value);
 
 /// JSON/probe text with CSS scalar values normalized to RGBA bytes. Keys and
 /// Other values keep their spelling; runtime values are untouched.
@@ -136,7 +138,8 @@ String referenceColorTokens(String text) {
 /// Converts a supported frozen color input to the numerical/native contract.
 /// Unsupported values stay unchanged so tests can assert their rejection.
 Object? referenceColorInput(Object? value) {
-  if (value == null || value is ui.Color || nativeColorBytes(value) != null) {
+  if (value is ui.Color) return ChartPaint.solid(value);
+  if (value == null || value is ChartPaint || nativeColorBytes(value) != null) {
     return value;
   }
   if (value is! String &&
@@ -166,14 +169,31 @@ Object? referenceColorInput(Object? value) {
       rgba.b != rgba.b.roundToDouble()) {
     return value;
   }
-  return ui.Color.fromRGBO(
-    rgba.r.round(),
-    rgba.g.round(),
-    rgba.b.round(),
-    rgba.a / 255,
+  return ChartPaint.solid(
+    ui.Color.fromRGBO(
+      rgba.r.round(),
+      rgba.g.round(),
+      rgba.b.round(),
+      rgba.a / 255,
+    ),
   );
 }
 
 /// Whether a frozen string names a color value rather than a drawing opcode.
 bool isReferenceColor(String value) =>
     value.isEmpty || referenceColor(value).valid;
+
+/// The native color of a paint for frozen pre-migration observations only.
+Object? referencePaintValue(ChartPaint paint) => switch (paint) {
+  SolidChartPaint(:final color) => color,
+  UnchangedChartPaint() => null,
+  _ => paint,
+};
+
+/// Paint leaves of a frozen upstream element option object.
+Map<String, Object?> referencePaintOptions(Map<String, Object?> options) => {
+  for (final entry in options.entries)
+    entry.key: entry.key == 'color' || entry.key.endsWith('Color')
+        ? referenceColorInput(entry.value)
+        : entry.value,
+};

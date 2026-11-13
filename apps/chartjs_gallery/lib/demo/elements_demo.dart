@@ -275,8 +275,8 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// The options of a bar.
   Map<String, Object?> _barBase() => {
     ..._plain(BarElement.defaults),
-    'backgroundColor': _barBackground,
-    'borderColor': _barColor,
+    'backgroundColor': const ChartPaint.solid(_barBackground),
+    'borderColor': const ChartPaint.solid(_barColor),
     'hoverBackgroundColor': getHoverColor(_barBackground),
     'hoverBorderColor': getHoverColor(_barColor),
     'borderWidth': _borderWidth,
@@ -286,8 +286,8 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// The options of a point.
   Map<String, Object?> _pointBase() => {
     ..._plain(PointElement.defaults),
-    'backgroundColor': _lineBackground,
-    'borderColor': _lineColor,
+    'backgroundColor': const ChartPaint.solid(_lineBackground),
+    'borderColor': const ChartPaint.solid(_lineColor),
     'hoverBackgroundColor': getHoverColor(_lineBackground),
     'hoverBorderColor': getHoverColor(_lineColor),
     'borderWidth': _borderWidth,
@@ -301,8 +301,8 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// The options of the line.
   Map<String, Object?> _lineBase() => {
     ..._plain(LineElement.defaults),
-    'backgroundColor': _lineBackground,
-    'borderColor': _lineColor,
+    'backgroundColor': const ChartPaint.solid(_lineBackground),
+    'borderColor': const ChartPaint.solid(_lineColor),
     'borderWidth': _borderWidth,
     'stepped': _stepped,
     'tension': _tension,
@@ -313,7 +313,7 @@ class ElementsDemoState extends State<ElementsDemo> {
     final color = chartColors[index % chartColors.length];
     return {
       ..._plain(ArcElement.defaults),
-      'backgroundColor': color,
+      'backgroundColor': ChartPaint.solid(color),
       'hoverBackgroundColor': getHoverColor(color),
       'hoverBorderColor': getHoverColor(ArcElement.defaults['borderColor']),
       'borderWidth': _borderWidth,

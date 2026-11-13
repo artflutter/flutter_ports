@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 // The spec constructs Chart.elements.ArcElement. Here it is the ArcElement
@@ -368,13 +370,12 @@ void main() {
               'offset': 0,
               'borderWidth': 0,
               'borderRadius': 0,
-              'backgroundColor': const ui.Color.fromRGBO(
-                255,
-                0,
-                0,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                ui.Color.fromRGBO(255, 0, 0, 1),
               ),
-              'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+              'borderColor': const ChartPaint.solid(
+                ui.Color.fromRGBO(0, 0, 0, 1),
+              ),
             },
           });
         }
@@ -438,8 +439,10 @@ void main() {
           'offset': 0,
           'borderWidth': 0,
           'borderRadius': 0,
-          'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-          'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+          'backgroundColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 0, 0, 1),
+          ),
+          'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
         },
       });
 
@@ -472,8 +475,12 @@ void main() {
             'offset': 0,
             'borderWidth': 0,
             'borderRadius': 0,
-            'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-            'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+            'backgroundColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
+            'borderColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(0, 0, 0, 1),
+            ),
           },
         });
 
@@ -517,8 +524,12 @@ void main() {
             'offset': 0,
             'borderWidth': 0,
             'borderRadius': 0,
-            'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-            'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+            'backgroundColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
+            'borderColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(0, 0, 0, 1),
+            ),
           },
         });
 
@@ -555,8 +566,12 @@ void main() {
             'offset': 0,
             'borderWidth': 6,
             'borderRadius': 12,
-            'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-            'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+            'backgroundColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
+            'borderColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(0, 0, 0, 1),
+            ),
           },
         });
 
@@ -597,8 +612,10 @@ void main() {
           'offset': 0,
           'borderWidth': 0,
           'borderRadius': 0,
-          'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-          'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+          'backgroundColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 0, 0, 1),
+          ),
+          'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
         },
       });
 
@@ -634,8 +651,12 @@ void main() {
             'borderWidth': 2,
             'borderRadius': 0,
             'borderJoinStyle': ui.StrokeJoin.round,
-            'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-            'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+            'backgroundColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
+            'borderColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(0, 0, 0, 1),
+            ),
           },
         });
 
@@ -671,8 +692,10 @@ void main() {
           'borderWidth': 10,
           'borderRadius': 1,
           'borderJoinStyle': ui.StrokeJoin.round,
-          'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
-          'borderColor': const ui.Color.fromRGBO(0, 0, 0, 1),
+          'backgroundColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 0, 0, 1),
+          ),
+          'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
         },
       });
 

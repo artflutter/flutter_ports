@@ -30,8 +30,7 @@
 /// the recorded calls, Dart `null` stands for JS `undefined`, as for an
 /// absent argument (`harness-mock-optional-args`).
 ///
-/// This library is a pure layer. It imports neither `dart:ui` nor
-/// `package:flutter`.
+/// This library is a framework-free core layer.
 library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
@@ -46,7 +45,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 ///
 /// The [undefined] sentinel of an absent option gives Dart `null`. The DOM
 /// ignores `undefined`, which is not a color, and the canvas layer ignores
-/// `null`. Another value passes as it is.
+/// `null`. A paint passes unchanged. The canvas validates other values at
+/// the original setter call, after flushing its pending drawing operations.
 Object? canvasStyle(Object? value) => switch (value) {
   Undefined() => null,
   _ => value,

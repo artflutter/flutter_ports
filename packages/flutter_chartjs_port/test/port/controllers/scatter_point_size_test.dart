@@ -25,8 +25,8 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
-const red = ui.Color(0xffff0000);
-const blue = ui.Color(0xff0000ff);
+const red = ChartPaint.solid(ui.Color(0xffff0000));
+const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const _length = 8;
 
 /// A trivial user subclass: the exact-class guard fails, and each call stays on
@@ -217,7 +217,7 @@ Object _observe(Chart chart) {
   ];
 }
 
-ChartConfig _typed(List<DataPoint> points, {ChartValue<ui.Color>? color}) =>
+ChartConfig _typed(List<DataPoint> points, {ChartValue<ChartPaint>? color}) =>
     ChartConfig(
       type: .scatter,
       datasets: [
@@ -277,7 +277,7 @@ void main() {
     });
 
     test('indexed colors keep each context write with one size', () {
-      final chart = _chart(_config(backgroundColor: <ui.Color>[red, blue]));
+      final chart = _chart(_config(backgroundColor: <ChartPaint>[red, blue]));
       final probes = _probes(chart);
       chart.getDatasetMeta(0).controller!.getMaxOverflow();
       expect(probes[_length - 1].sizeCalls, 1);
@@ -291,7 +291,7 @@ void main() {
 
     for (final color in [
       blue,
-      <ui.Color>[red, blue],
+      <ChartPaint>[red, blue],
     ]) {
       test('twin over updates, color $color', () {
         final a = _config(backgroundColor: color);
@@ -318,7 +318,7 @@ void main() {
     test('twin with a data length change', () {
       for (final color in [
         blue,
-        <ui.Color>[red, blue],
+        <ChartPaint>[red, blue],
       ]) {
         final a = _config(backgroundColor: color);
         final b = _config(type: 'referenceScatter', backgroundColor: color);
@@ -341,7 +341,7 @@ void main() {
     test('twin of a queued animation in the mode default', () {
       for (final color in [
         blue,
-        <ui.Color>[red, blue],
+        <ChartPaint>[red, blue],
       ]) {
         // `stop` writes the value at its time: both charts stop at one time.
         var now = DateTime.utc(2026);
@@ -524,14 +524,17 @@ void main() {
   group('the context reader beside a plan', () {
     for (final typed in [false, true]) {
       test('fresh contexts through updates, typed root $typed', () {
-        const colors = ChartValue<ui.Color>.indexed([red, blue]);
+        const colors = ChartValue<ChartPaint>.indexed([
+          red,
+          blue,
+        ]);
         final lowering = ChartConfigLowering(_typed(_points(), color: colors));
-        final rawConfig = _config(backgroundColor: <ui.Color>[red, blue]);
+        final rawConfig = _config(backgroundColor: <ChartPaint>[red, blue]);
         final a = _chart(typed ? lowering.lower() : rawConfig);
         // The twin of the typed root is a raw config with the same values.
         final other = _config(
           type: 'referenceScatter',
-          backgroundColor: <ui.Color>[red, blue],
+          backgroundColor: <ChartPaint>[red, blue],
           dataset: typed
               ? const {
                   'pointRadius': 3.0,
@@ -577,7 +580,7 @@ void main() {
     }
 
     test('a replaced context class takes the ordinary getContext', () {
-      final chart = _chart(_config(backgroundColor: <ui.Color>[red, blue]));
+      final chart = _chart(_config(backgroundColor: <ChartPaint>[red, blue]));
       final probes = _probes(chart);
       final meta = chart.getDatasetMeta(0);
       meta.controller!.getMaxOverflow();
@@ -590,7 +593,7 @@ void main() {
     });
 
     test('a store into a result stays with that result', () {
-      final chart = _chart(_config(backgroundColor: <ui.Color>[red, blue]));
+      final chart = _chart(_config(backgroundColor: <ChartPaint>[red, blue]));
       final points = chart.getDatasetMeta(0).data;
       (points[3].options! as ElementOptions).storeKey(OptionKey.radius, 77.0);
       expect((points[4].options! as ElementOptions).jsRead('radius'), 3);

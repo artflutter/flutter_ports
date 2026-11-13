@@ -7,6 +7,8 @@ import 'dart:ui';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';
@@ -29,8 +31,10 @@ void main() {
           ..endAngle = end + delta
           ..circumference = end + delta - start
           ..options = ArcOptions({
-            'backgroundColor': const Color.fromRGBO(255, 99, 132, 0.5),
-            'borderColor': const Color(0xffffffff),
+            'backgroundColor': const ChartPaint.solid(
+              Color.fromRGBO(255, 99, 132, 0.5),
+            ),
+            'borderColor': const ChartPaint.solid(Color(0xffffffff)),
             'borderWidth': 2.0,
             'borderAlign': ArcBorderAlign.center,
             'borderRadius': 4.0,

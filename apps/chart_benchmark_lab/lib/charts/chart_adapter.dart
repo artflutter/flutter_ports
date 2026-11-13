@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart' as fl;
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     as zp;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:graphic/graphic.dart' as gr;
 import 'package:material_ui/material_ui.dart';
@@ -250,8 +251,11 @@ class BenchmarkChart extends StatelessWidget {
   Widget _chartJs() {
     final values = frame.values;
     final color = config.alternateColors && config.type.hasItemColors
-        ? const cj.ChartValue<Color>.indexed([chartBlue, chartTeal])
-        : const cj.ChartValue<Color>.constant(chartBlue);
+        ? const cj.ChartValue<ChartPaint>.indexed([
+            ChartPaint.solid(chartBlue),
+            ChartPaint.solid(chartTeal),
+          ])
+        : const cj.ChartValue<ChartPaint>.constant(.solid(chartBlue));
     final points =
         config.type == ChartType.line || config.type == ChartType.scatter
         ? [for (final p in values) cj.DataPoint(p.x, p.y)]
@@ -270,10 +274,12 @@ class BenchmarkChart extends StatelessWidget {
         label: 'Values',
         shadow: shadow,
         points: points,
-        borderColor: const cj.ChartValue.constant(chartBlue),
+        borderColor: const cj.ChartValue.constant(.solid(chartBlue)),
         borderWidth: 2,
-        backgroundColor: const cj.ChartValue.constant(Color(0x264f6bed)),
-        pointBackgroundColor: chartBlue,
+        backgroundColor: const cj.ChartValue.constant(
+          .solid(Color(0x264f6bed)),
+        ),
+        pointBackgroundColor: const .constant(.solid(chartBlue)),
         pointBorderWidth: 0,
         pointRadius: config.markers ? 3 : 0,
         pointHoverRadius: 3,
@@ -340,10 +346,12 @@ class BenchmarkChart extends StatelessWidget {
         label: 'Values',
         shadow: shadow,
         data: [for (final p in values) p.y],
-        borderColor: const cj.ChartValue.constant(chartBlue),
+        borderColor: const cj.ChartValue.constant(.solid(chartBlue)),
         borderWidth: 2,
-        backgroundColor: const cj.ChartValue.constant(Color(0x264f6bed)),
-        pointBackgroundColor: chartBlue,
+        backgroundColor: const cj.ChartValue.constant(
+          .solid(Color(0x264f6bed)),
+        ),
+        pointBackgroundColor: const .constant(.solid(chartBlue)),
         pointBorderWidth: 0,
         pointRadius: config.markers ? 3 : 0,
         pointHoverRadius: 3,
@@ -352,7 +360,7 @@ class BenchmarkChart extends StatelessWidget {
     };
     final grid = cj.AxisGrid(
       display: config.grid,
-      color: chartGrid,
+      color: const ChartPaint.solid(chartGrid),
       drawTicks: false,
     );
     final ticks = cj.AxisTicks(
@@ -399,7 +407,7 @@ class BenchmarkChart extends StatelessWidget {
               pointLabelsDisplay: config.axes,
               pointLabelsFont: const TextStyle(fontSize: 10),
               angleLinesDisplay: config.grid,
-              angleLinesColor: chartGrid,
+              angleLinesColor: const ChartPaint.solid(chartGrid),
               angleLinesLineWidth: 1,
               grid: grid.copyWith(extra: const {'circular': true}),
               ticks: ticks,

@@ -98,6 +98,7 @@ import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -238,8 +239,8 @@ final _nativeIndexedLists = <Type>{
   ..._indexedListTypes<Object?>(),
   ..._indexedListTypes<Object>(),
   ..._indexedListTypes<dynamic>(),
-  ..._indexedListTypes<Color>(),
-  ..._indexedListTypes<Color?>(),
+  ..._indexedListTypes<ChartPaint>(),
+  ..._indexedListTypes<ChartPaint?>(),
   ..._indexedListTypes<String>(),
   ..._indexedListTypes<String?>(),
   ..._indexedListTypes<num>(),
@@ -253,8 +254,12 @@ final _nativeIndexedLists = <Type>{
   const <Object?>[].runtimeType,
   const <Object>[].runtimeType,
   const <dynamic>[].runtimeType,
+  const <ChartPaint>[].runtimeType,
+  const <SolidChartPaint>[].runtimeType,
+  const <SolidChartPaint?>[].runtimeType,
   const <Color>[].runtimeType,
   const <Color?>[].runtimeType,
+  const <ChartPaint?>[].runtimeType,
   const <String>[].runtimeType,
   const <String?>[].runtimeType,
   const <num>[].runtimeType,
@@ -288,7 +293,7 @@ bool _indexedScalar(Object? value) =>
     value is ScaleAxis ||
     value is Locale ||
     value is NumberFormat ||
-    (value is Color && !isObject(value));
+    (value is ChartPaint && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list
 // (helpers.config.ts:233-296) gives the same list unless item 0 is an object.
@@ -639,8 +644,10 @@ bool _nativeIndexedValue(OptionKey key, Object? value) =>
 bool _staticIndexedValue(OptionKey key, Object? value) =>
     _nativeIndexedValue(key, value) &&
     (key == OptionKey.backgroundColor || key == OptionKey.borderColor
-        ? value == null || value is Undefined || value.runtimeType == Color
-        : value is! Color);
+        ? value == null ||
+              value is Undefined ||
+              (value is SolidChartPaint && value.color.runtimeType == Color)
+        : value is! ChartPaint);
 
 /// helpers.config.ts:27 `_createResolver`.
 ///
@@ -910,7 +917,7 @@ final class OptionResolver implements ResolverProxy {
               (entry) =>
                   entry == null ||
                   entry is Undefined ||
-                  (entry is Color && !isObject(entry)),
+                  (entry is ChartPaint && !isObject(entry)),
             )) {
           return null;
         }

@@ -13,7 +13,7 @@
 /// (`docs/general/performance.md`).
 library;
 
-import 'dart:ui' show Color, StrokeCap, StrokeJoin;
+import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
@@ -37,6 +37,7 @@ import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
 import 'package:meta/meta.dart' show internal;
@@ -151,10 +152,10 @@ final class PointElementStyle with Diagnosticable {
   final PointStyle? pointStyle;
 
   /// The fill color of a point: `backgroundColor`.
-  final Color? backgroundColor;
+  final ChartPaint? backgroundColor;
 
   /// The border color of a point: `borderColor`.
-  final Color? borderColor;
+  final ChartPaint? borderColor;
 
   /// The border width of a point in pixels: `borderWidth`. The default is
   /// 1.
@@ -177,8 +178,8 @@ final class PointElementStyle with Diagnosticable {
   PointElementStyle copyWith({
     double? radius,
     PointStyle? pointStyle,
-    Color? backgroundColor,
-    Color? borderColor,
+    ChartPaint? backgroundColor,
+    ChartPaint? borderColor,
     double? borderWidth,
     double? hitRadius,
     double? hoverRadius,
@@ -199,8 +200,8 @@ final class PointElementStyle with Diagnosticable {
     final scope = PointOptionsScope();
     put(scope, OptionKey.radius, radius);
     put(scope, OptionKey.pointStyle, pointStyle);
-    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
-    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.backgroundColor, backgroundColor);
+    put(scope, OptionKey.borderColor, borderColor);
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.hitRadius, hitRadius);
     put(scope, OptionKey.hoverRadius, hoverRadius);
@@ -261,10 +262,10 @@ final class LineElementStyle with Diagnosticable {
   final double? tension;
 
   /// The fill color under a line: `backgroundColor`.
-  final Color? backgroundColor;
+  final ChartPaint? backgroundColor;
 
   /// The color of a line: `borderColor`.
-  final Color? borderColor;
+  final ChartPaint? borderColor;
 
   /// The width of a line in pixels: `borderWidth`. The default is 3.
   final double? borderWidth;
@@ -304,8 +305,8 @@ final class LineElementStyle with Diagnosticable {
   /// that is `null` keeps its value.
   LineElementStyle copyWith({
     double? tension,
-    Color? backgroundColor,
-    Color? borderColor,
+    ChartPaint? backgroundColor,
+    ChartPaint? borderColor,
     double? borderWidth,
     List<double>? borderDash,
     StrokeCap? borderCapStyle,
@@ -333,8 +334,8 @@ final class LineElementStyle with Diagnosticable {
   LineOptionsScope _lower() {
     final scope = LineOptionsScope();
     put(scope, OptionKey.tension, tension);
-    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
-    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.backgroundColor, backgroundColor);
+    put(scope, OptionKey.borderColor, borderColor);
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.borderDash, numberList(borderDash));
     put(scope, OptionKey.borderCapStyle, borderCapStyle);
@@ -391,10 +392,10 @@ final class BarElementStyle with Diagnosticable {
   });
 
   /// The fill color of a bar: `backgroundColor`.
-  final Color? backgroundColor;
+  final ChartPaint? backgroundColor;
 
   /// The border color of a bar: `borderColor`.
-  final Color? borderColor;
+  final ChartPaint? borderColor;
 
   /// The border width of a bar in pixels: `borderWidth`. The default is 0.
   final double? borderWidth;
@@ -410,8 +411,8 @@ final class BarElementStyle with Diagnosticable {
   /// A copy of these bar options with the given parameters. A parameter
   /// that is `null` keeps its value.
   BarElementStyle copyWith({
-    Color? backgroundColor,
-    Color? borderColor,
+    ChartPaint? backgroundColor,
+    ChartPaint? borderColor,
     double? borderWidth,
     double? borderRadius,
     Map<String, Object?>? extra,
@@ -426,8 +427,8 @@ final class BarElementStyle with Diagnosticable {
   /// The `bar` Map.
   BarOptionsScope _lower() {
     final scope = BarOptionsScope();
-    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
-    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.backgroundColor, backgroundColor);
+    put(scope, OptionKey.borderColor, borderColor);
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.borderRadius, borderRadius);
     return mergeExtra(scope, extra);
@@ -476,10 +477,10 @@ final class ArcElementStyle with Diagnosticable {
   });
 
   /// The fill color of an arc: `backgroundColor`.
-  final Color? backgroundColor;
+  final ChartPaint? backgroundColor;
 
   /// The border color of an arc: `borderColor`. The default is white.
-  final Color? borderColor;
+  final ChartPaint? borderColor;
 
   /// The border width of an arc in pixels: `borderWidth`. The default is
   /// 2.
@@ -506,8 +507,8 @@ final class ArcElementStyle with Diagnosticable {
   /// A copy of these arc options with the given parameters. A parameter
   /// that is `null` keeps its value.
   ArcElementStyle copyWith({
-    Color? backgroundColor,
-    Color? borderColor,
+    ChartPaint? backgroundColor,
+    ChartPaint? borderColor,
     double? borderWidth,
     double? offset,
     double? spacing,
@@ -528,8 +529,8 @@ final class ArcElementStyle with Diagnosticable {
   /// The `arc` Map.
   ArcOptionsScope _lower() {
     final scope = ArcOptionsScope();
-    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
-    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.backgroundColor, backgroundColor);
+    put(scope, OptionKey.borderColor, borderColor);
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.offset, offset);
     put(scope, OptionKey.spacing, spacing);

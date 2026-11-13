@@ -3,8 +3,6 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'dart:ui' show Color;
-
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show ChartPaint, TooltipCallbacks, TooltipCornerRadii, TooltipLabelStyle;
@@ -68,12 +66,9 @@ Map<String, Object?> fixture() => <String, Object?>{
                 jsToNumber(jsGet(tooltipItem, 'dataIndex')),
               );
               return TooltipLabelStyle(
-                borderColor: ChartPaint.solid(
-                  jsGet(options, 'borderColor')! as Color,
-                ),
-                backgroundColor: ChartPaint.solid(
-                  jsGet(options, 'backgroundColor')! as Color,
-                ),
+                borderColor: jsGet(options, 'borderColor')! as ChartPaint,
+                backgroundColor:
+                    jsGet(options, 'backgroundColor')! as ChartPaint,
                 borderWidth: 2,
                 borderRadius: const TooltipCornerRadii(
                   topRight: 5,

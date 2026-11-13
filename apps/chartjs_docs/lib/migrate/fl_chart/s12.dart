@@ -92,8 +92,8 @@ class _Sample12State extends State<Sample12> {
           borderWidth: 1,
           pointRadius: 0,
           pointHoverRadius: 6,
-          pointHoverBackgroundColor: Fl.yellow,
-          borderColor: const .constant(Fl.yellow),
+          pointHoverBackgroundColor: const .constant(.solid(Fl.yellow)),
+          borderColor: const .constant(.solid(Fl.yellow)),
           fill: .start,
           extra: {
             'backgroundColor': verticalGradient(
@@ -113,11 +113,11 @@ class _Sample12State extends State<Sample12> {
         axis: .x,
       ),
       tooltip: ChartTooltip(
-        backgroundColor: Colors.black,
+        backgroundColor: const ChartPaint.solid(Colors.black),
         displayColors: false,
-        titleColor: const Color(0xFF2FCC3A),
+        titleColor: const ChartPaint.solid(Color(0xFF2FCC3A)),
         titleFont: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        bodyColor: Fl.yellow,
+        bodyColor: const ChartPaint.solid(Fl.yellow),
         bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         callbacks: TooltipCallbacks(
           title: (tooltip, items) {
@@ -139,7 +139,7 @@ class _Sample12State extends State<Sample12> {
           extra: Fl.noBorder,
           ticks: AxisTicks(
             maxRotation: 45,
-            color: Fl.green,
+            color: const ChartPaint.solid(Fl.green),
             font: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             format: (t) {
               final index = t.value.toInt();
@@ -153,7 +153,7 @@ class _Sample12State extends State<Sample12> {
         'y': LinearAxis(
           grid: flGrid(),
           extra: flGridDash,
-          ticks: const AxisTicks(color: Colors.white),
+          ticks: const AxisTicks(color: ChartPaint.solid(Colors.white)),
         ),
       },
     ),

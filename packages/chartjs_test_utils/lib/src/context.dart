@@ -1,20 +1,24 @@
 // Ported from chartjs-test-utils v0.4.0 src/context.js (MIT, chartjs-test-utils Contributors).
 // DIVERGES(chartjs): platform-composite-enum, typed compositing operations.
+// DIVERGES(chartjs): adapt-chart-paint-objects, record the canvas paint values.
 
 /// Port of `src/context.js`: the mock canvas context that records calls.
 ///
 /// This library is a pure layer. It implements the canvas interface of
-/// `flutter_chartjs_port` (`lib/src/canvas/canvas.dart`), which has no `dart:ui`.
+/// `flutter_chartjs_port` (`lib/src/canvas/canvas.dart`), a framework-free core.
 library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show TextStyle;
-
 // The harness implements the canvas interface. flutter_chartjs_port does not
 // export lib/src.
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+// The pure harness consumes paint value types without importing widgets.
+// ignore: implementation_imports
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show SolidChartPaint, UnchangedChartPaint;
 
 /// context.js:157 the object that `record` pushes: `{name, args}`.
 ///
@@ -121,8 +125,10 @@ class MockContext implements CanvasRenderingContext2D {
 
   @override
   set fillStyle(Object? style) {
-    _fillStyle = style;
-    record('setFillStyle', [style]);
+    if (style is UnchangedChartPaint) return;
+    final value = style is SolidChartPaint ? style.color : style;
+    _fillStyle = value;
+    record('setFillStyle', [value]);
   }
 
   /// The font is a `TextStyle` (Chart.js ADR 0116): the record holds it.
@@ -178,8 +184,10 @@ class MockContext implements CanvasRenderingContext2D {
 
   @override
   set strokeStyle(Object? style) {
-    _strokeStyle = style;
-    record('setStrokeStyle', [style]);
+    if (style is UnchangedChartPaint) return;
+    final value = style is SolidChartPaint ? style.color : style;
+    _strokeStyle = value;
+    record('setStrokeStyle', [value]);
   }
 
   @override
@@ -433,32 +441,6 @@ class MockContext implements CanvasRenderingContext2D {
 
   @override
   void resetTransform() => _missing('resetTransform');
-
-  @override
-  CanvasGradient createLinearGradient(
-    double x0,
-    double y0,
-    double x1,
-    double y1,
-  ) => _missing('createLinearGradient');
-
-  @override
-  CanvasGradient createRadialGradient(
-    double x0,
-    double y0,
-    double r0,
-    double x1,
-    double y1,
-    double r1,
-  ) => _missing('createRadialGradient');
-
-  @override
-  CanvasGradient createConicGradient(double startAngle, double x, double y) =>
-      _missing('createConicGradient');
-
-  @override
-  CanvasPattern? createPattern(CanvasImageSource image, String? repetition) =>
-      _missing('createPattern');
 
   @override
   List<double> getLineDash() => _missing('getLineDash');

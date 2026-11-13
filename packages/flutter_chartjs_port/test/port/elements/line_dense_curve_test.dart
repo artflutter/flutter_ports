@@ -2,11 +2,6 @@
 @TestOn('vm')
 library;
 
-// The twins of Chart.js ADR 0114: a line chart with the merge of the narrow
-// curves off against on. Below the threshold the bytes are the same. Above
-// it, each pixel that differs is on the line or next to it, and the count has
-// a bound. Each guard keeps the commands of upstream.
-
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -33,6 +28,13 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/typed/typed.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+// The twins of Chart.js ADR 0114: a line chart with the merge of the narrow
+// curves off against on. Below the threshold the bytes are the same. Above
+// it, each pixel that differs is on the line or next to it, and the count has
+// a bound. Each guard keeps the commands of upstream.
+
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 const _blue = ui.Color(0xff4f6bed);
@@ -66,7 +68,7 @@ List<double> _ys(int count, int seed) {
 /// `noBorder` (a fill with `borderWidth: 0`), `dash`, or `anim` (the values
 /// at the fraction [t] between two data sets).
 ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
-  const grid = AxisGrid(color: _grid, drawTicks: false);
+  const grid = AxisGrid(color: ChartPaint.solid(_grid), drawTicks: false);
   const ticks = AxisTicks(
     stepSize: 25,
     font: TextStyle(fontSize: 10),
@@ -99,11 +101,11 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     key: ValueKey(key),
     label: key,
     points: points,
-    borderColor: const ChartValue.constant(_blue),
+    borderColor: const ChartValue.constant(.solid(_blue)),
     borderWidth: variant == 'noBorder' ? 0 : 2,
     borderDash: variant == 'dash' ? const [6, 3] : null,
-    backgroundColor: const ChartValue.constant(_fill),
-    pointBackgroundColor: _blue,
+    backgroundColor: const ChartValue.constant(.solid(_fill)),
+    pointBackgroundColor: const .constant(.solid(_blue)),
     pointBorderWidth: 0,
     pointRadius: markers ? 3 : 0,
     pointHoverRadius: 3,
@@ -137,7 +139,9 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
           'segment': <String, Object?>{
             'borderColor': (Object? ctx) {
               final i = jsGet(ctx, 'p0DataIndex');
-              return i is num && (i ~/ eighth).isOdd ? _green : undefined;
+              return i is num && (i ~/ eighth).isOdd
+                  ? const ChartPaint.solid(_green)
+                  : undefined;
             },
           },
         },

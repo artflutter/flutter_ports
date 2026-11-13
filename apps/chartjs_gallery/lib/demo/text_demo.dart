@@ -118,8 +118,8 @@ class _TextDemoState extends State<TextDemo> {
         labelWidth + (c + 0.5) * cellWidth,
         _headerHeight - 6,
         small,
-        const TextOpts(
-          color: labelColor,
+        const RenderTextOpts(
+          color: ChartPaint.solid(labelColor),
           textAlign: TextAlign.center,
           textBaseline: CanvasTextBaseline.bottom,
         ),
@@ -134,8 +134,8 @@ class _TextDemoState extends State<TextDemo> {
           4,
           top + cellHeight / 2,
           small,
-          const TextOpts(
-            color: labelColor,
+          const RenderTextOpts(
+            color: ChartPaint.solid(labelColor),
             textAlign: TextAlign.left,
             textBaseline: CanvasTextBaseline.middle,
           ),

@@ -22,6 +22,8 @@ import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show DrawPointOptions;
@@ -383,10 +385,10 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
     }
   }
 
-  Object? _backgroundColor = null;
+  ChartPaint? _backgroundColor = null;
 
   /// `backgroundColor`: the JS conversion of the value of the key.
-  Object? get backgroundColor => _backgroundColor;
+  ChartPaint? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
   Object? get backgroundColorValue => _present & 128 == 0 ? undefined : _raw7();
@@ -405,13 +407,20 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       return;
     }
     _present |= 128;
-    _backgroundColor = raw;
+    if (raw is ChartPaint) {
+      _backgroundColor = raw;
+      _clearForeign(7, 128);
+    } else {
+      _backgroundColor = null;
+      _setForeign(7, 128, raw);
+      assert(auditForeign('PointOptions', 'backgroundColor', raw));
+    }
   }
 
-  Object? _borderColor = null;
+  ChartPaint? _borderColor = null;
 
   /// `borderColor`: the JS conversion of the value of the key.
-  Object? get borderColor => _borderColor;
+  ChartPaint? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
   Object? get borderColorValue => _present & 256 == 0 ? undefined : _raw8();
@@ -430,7 +439,14 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       return;
     }
     _present |= 256;
-    _borderColor = raw;
+    if (raw is ChartPaint) {
+      _borderColor = raw;
+      _clearForeign(8, 256);
+    } else {
+      _borderColor = null;
+      _setForeign(8, 256, raw);
+      assert(auditForeign('PointOptions', 'borderColor', raw));
+    }
   }
 
   @override
@@ -1064,10 +1080,10 @@ final class LineOptions extends ElementOptions {
     }
   }
 
-  Object? _backgroundColor = null;
+  ChartPaint? _backgroundColor = null;
 
   /// `backgroundColor`: the JS conversion of the value of the key.
-  Object? get backgroundColor => _backgroundColor;
+  ChartPaint? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
   Object? get backgroundColorValue =>
@@ -1087,13 +1103,20 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 2048;
-    _backgroundColor = raw;
+    if (raw is ChartPaint) {
+      _backgroundColor = raw;
+      _clearForeign(11, 2048);
+    } else {
+      _backgroundColor = null;
+      _setForeign(11, 2048, raw);
+      assert(auditForeign('LineOptions', 'backgroundColor', raw));
+    }
   }
 
-  Object? _borderColor = null;
+  ChartPaint? _borderColor = null;
 
   /// `borderColor`: the JS conversion of the value of the key.
-  Object? get borderColor => _borderColor;
+  ChartPaint? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
   Object? get borderColorValue => _present & 4096 == 0 ? undefined : _raw12();
@@ -1112,7 +1135,14 @@ final class LineOptions extends ElementOptions {
       return;
     }
     _present |= 4096;
-    _borderColor = raw;
+    if (raw is ChartPaint) {
+      _borderColor = raw;
+      _clearForeign(12, 4096);
+    } else {
+      _borderColor = null;
+      _setForeign(12, 4096, raw);
+      assert(auditForeign('LineOptions', 'borderColor', raw));
+    }
   }
 
   Object? _segment = null;
@@ -1603,10 +1633,10 @@ final class BarOptions extends ElementOptions {
     _pointStyle = raw;
   }
 
-  Object? _backgroundColor = null;
+  ChartPaint? _backgroundColor = null;
 
   /// `backgroundColor`: the JS conversion of the value of the key.
-  Object? get backgroundColor => _backgroundColor;
+  ChartPaint? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
   Object? get backgroundColorValue => _present & 32 == 0 ? undefined : _raw5();
@@ -1625,13 +1655,20 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 32;
-    _backgroundColor = raw;
+    if (raw is ChartPaint) {
+      _backgroundColor = raw;
+      _clearForeign(5, 32);
+    } else {
+      _backgroundColor = null;
+      _setForeign(5, 32, raw);
+      assert(auditForeign('BarOptions', 'backgroundColor', raw));
+    }
   }
 
-  Object? _borderColor = null;
+  ChartPaint? _borderColor = null;
 
   /// `borderColor`: the JS conversion of the value of the key.
-  Object? get borderColor => _borderColor;
+  ChartPaint? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
   Object? get borderColorValue => _present & 64 == 0 ? undefined : _raw6();
@@ -1650,7 +1687,14 @@ final class BarOptions extends ElementOptions {
       return;
     }
     _present |= 64;
-    _borderColor = raw;
+    if (raw is ChartPaint) {
+      _borderColor = raw;
+      _clearForeign(6, 64);
+    } else {
+      _borderColor = null;
+      _setForeign(6, 64, raw);
+      assert(auditForeign('BarOptions', 'borderColor', raw));
+    }
   }
 
   @override
@@ -1939,10 +1983,10 @@ final class ArcOptions extends ElementOptions {
     }
   }
 
-  Object? _borderColor = null;
+  ChartPaint? _borderColor = null;
 
   /// `borderColor`: the JS conversion of the value of the key.
-  Object? get borderColor => _borderColor;
+  ChartPaint? get borderColor => _borderColor;
 
   /// `borderColor`: the raw value, or [undefined] for an absent key.
   Object? get borderColorValue => _present & 2 == 0 ? undefined : _raw1();
@@ -1961,7 +2005,14 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 2;
-    _borderColor = raw;
+    if (raw is ChartPaint) {
+      _borderColor = raw;
+      _clearForeign(1, 2);
+    } else {
+      _borderColor = null;
+      _setForeign(1, 2, raw);
+      assert(auditForeign('ArcOptions', 'borderColor', raw));
+    }
   }
 
   Object? _borderDash = null;
@@ -2342,10 +2393,10 @@ final class ArcOptions extends ElementOptions {
     }
   }
 
-  Object? _backgroundColor = null;
+  ChartPaint? _backgroundColor = null;
 
   /// `backgroundColor`: the JS conversion of the value of the key.
-  Object? get backgroundColor => _backgroundColor;
+  ChartPaint? get backgroundColor => _backgroundColor;
 
   /// `backgroundColor`: the raw value, or [undefined] for an absent key.
   Object? get backgroundColorValue =>
@@ -2365,7 +2416,14 @@ final class ArcOptions extends ElementOptions {
       return;
     }
     _present |= 8192;
-    _backgroundColor = raw;
+    if (raw is ChartPaint) {
+      _backgroundColor = raw;
+      _clearForeign(13, 8192);
+    } else {
+      _backgroundColor = null;
+      _setForeign(13, 8192, raw);
+      assert(auditForeign('ArcOptions', 'backgroundColor', raw));
+    }
   }
 
   @override

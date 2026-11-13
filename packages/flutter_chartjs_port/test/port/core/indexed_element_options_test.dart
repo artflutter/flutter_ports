@@ -13,10 +13,12 @@ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
-const _red = Color(0xffff0000);
-const _blue = Color(0xff0000ff);
+const _red = ChartPaint.solid(Color(0xffff0000));
+const _blue = ChartPaint.solid(Color(0xff0000ff));
 
 // An otherwise identical Config that intentionally retains the ordinary path.
 class _OrdinaryConfig extends Config {}
@@ -254,7 +256,7 @@ void main() {
         ..remove(OptionKey.radius)
         ..addAll([OptionKey.borderSkipped, OptionKey.inflateAmount]);
       f.scope
-        ..['borderColor'] = <Color>[_blue, _red]
+        ..['borderColor'] = <ChartPaint>[_blue, _red]
         ..['borderSkipped'] = 'start'
         ..['inflateAmount'] = 'auto';
     }
@@ -319,10 +321,10 @@ void main() {
   });
 
   for (final colors in <List<Object?>>[
-    <Color>[_red, _blue],
-    List<Color>.of([_red, _blue], growable: false),
-    List<Color>.unmodifiable([_red, _blue]),
-    const <Color>[_red, _blue],
+    <ChartPaint>[_red, _blue],
+    List<ChartPaint>.of([_red, _blue], growable: false),
+    List<ChartPaint>.unmodifiable([_red, _blue]),
+    const <ChartPaint>[_red, _blue],
     <Object?>[_red, null, undefined],
   ]) {
     test('native ${colors.runtimeType} matches ordinary resolution', () {
@@ -363,12 +365,12 @@ void main() {
   test('writes, deletes and full cache clears invalidate the plan', () {
     final f = _Fixture()..resolve();
     expect(f.probe(), isTrue);
-    f.resolver.jsWrite('backgroundColor', <Color>[_blue]);
+    f.resolver.jsWrite('backgroundColor', <ChartPaint>[_blue]);
     expect(f.resolve().backgroundColor, _blue);
     f.resolver.jsDelete('radius');
     expect(f.resolve().radiusValue, same(undefined));
     f.scope['radius'] = 9.0;
-    f.scope['backgroundColor'] = <Color>[_red];
+    f.scope['backgroundColor'] = <ChartPaint>[_red];
     f.config.clearCache();
     expect(f.resolve().radius, 9);
     expect(f.resolve().backgroundColor, _red);
@@ -402,7 +404,7 @@ void main() {
         final result = f.resolve();
         expect(f.contexts, 2);
         expect(
-          result.backgroundColor,
+          result.backgroundColorValue,
           clear ? _blue : f.scope['backgroundColor'],
         );
       }
@@ -569,7 +571,7 @@ void main() {
   test(
     'large integer contexts use JavaScript numeric rounding before modulo',
     () {
-      const green = Color(0xff00ff00);
+      const green = ChartPaint.solid(Color(0xff00ff00));
       final colors = <Object?>[_red, _blue, green];
       final fast = _Fixture(colors: colors)..resolve();
       final full = _Fixture(ordinary: true, colors: colors)..resolve();
@@ -585,8 +587,8 @@ void main() {
   );
 
   test('Color subclasses in native Color lists retain the fast path', () {
-    const color = _DerivedColor(0xffff0000);
-    final f = _Fixture(colors: <Color>[color])..resolve();
+    const color = ChartPaint.solid(_DerivedColor(0xffff0000));
+    final f = _Fixture(colors: <ChartPaint>[color])..resolve();
     expect(f.probe(), isTrue);
     expect(f.resolve().backgroundColor, same(color));
   });

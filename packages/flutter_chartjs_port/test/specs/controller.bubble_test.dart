@@ -18,6 +18,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -220,17 +222,11 @@ void main() {
       }
 
       // Use dataset level styles for lines & points
-      _dataset(chart, 0)['backgroundColor'] = const native_ui.Color.fromRGBO(
-        98,
-        98,
-        98,
-        1,
+      _dataset(chart, 0)['backgroundColor'] = const ChartPaint.solid(
+        native_ui.Color.fromRGBO(98, 98, 98, 1),
       );
-      _dataset(chart, 0)['borderColor'] = const native_ui.Color.fromRGBO(
-        8,
-        8,
-        8,
-        1,
+      _dataset(chart, 0)['borderColor'] = const ChartPaint.solid(
+        native_ui.Color.fromRGBO(8, 8, 8, 1),
       );
       _dataset(chart, 0)['borderWidth'] = 0.55;
 
@@ -244,8 +240,12 @@ void main() {
         expect(
           _options(meta.data[i]),
           objectContaining(<String, Object?>{
-            'backgroundColor': const native_ui.Color.fromRGBO(98, 98, 98, 1),
-            'borderColor': const native_ui.Color.fromRGBO(8, 8, 8, 1),
+            'backgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(98, 98, 98, 1),
+            ),
+            'borderColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(8, 8, 8, 1),
+            ),
             'borderWidth': 0.55,
             'hitRadius': 3.3,
           }),
@@ -329,13 +329,12 @@ void main() {
           'options': <String, Object?>{
             'elements': <String, Object?>{
               'point': <String, Object?>{
-                'backgroundColor': const native_ui.Color.fromRGBO(
-                  100,
-                  150,
-                  200,
-                  1,
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(100, 150, 200, 1),
                 ),
-                'borderColor': const native_ui.Color.fromRGBO(50, 100, 150, 1),
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(50, 100, 150, 1),
+                ),
                 'borderWidth': 2,
                 'radius': 3,
               },
@@ -351,11 +350,11 @@ void main() {
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
           _option(point, 'backgroundColor'),
-          const native_ui.Color.fromRGBO(49, 135, 221, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(49, 135, 221, 1)),
         );
         expect(
           _option(point, 'borderColor'),
-          const native_ui.Color.fromRGBO(23, 90, 157, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(23, 90, 157, 1)),
         );
         expect(_option(point, 'borderWidth'), 1);
         expect(_option(point, 'radius'), 20 + 4);
@@ -363,11 +362,11 @@ void main() {
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
           _option(point, 'backgroundColor'),
-          const native_ui.Color.fromRGBO(100, 150, 200, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
           _option(point, 'borderColor'),
-          const native_ui.Color.fromRGBO(50, 100, 150, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
         expect(_option(point, 'borderWidth'), 2);
         expect(_option(point, 'radius'), 20);
@@ -380,13 +379,12 @@ void main() {
         final point = chart.getDatasetMeta(0).data[0];
 
         helpers.merge(_dataset(chart, 0), <String, Object?>{
-          'hoverBackgroundColor': const native_ui.Color.fromRGBO(
-            200,
-            100,
-            150,
-            1,
+          'hoverBackgroundColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(200, 100, 150, 1),
           ),
-          'hoverBorderColor': const native_ui.Color.fromRGBO(150, 50, 100, 1),
+          'hoverBorderColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(150, 50, 100, 1),
+          ),
           'hoverBorderWidth': 8.4,
           'hoverRadius': 4.2,
         });
@@ -396,11 +394,11 @@ void main() {
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
           _option(point, 'backgroundColor'),
-          const native_ui.Color.fromRGBO(200, 100, 150, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
           _option(point, 'borderColor'),
-          const native_ui.Color.fromRGBO(150, 50, 100, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
         expect(_option(point, 'borderWidth'), 8.4);
         expect(_option(point, 'radius'), 20 + 4.2);
@@ -408,11 +406,11 @@ void main() {
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
           _option(point, 'backgroundColor'),
-          const native_ui.Color.fromRGBO(100, 150, 200, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
           _option(point, 'borderColor'),
-          const native_ui.Color.fromRGBO(50, 100, 150, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
         expect(_option(point, 'borderWidth'), 2);
         expect(_option(point, 'radius'), 20);
@@ -427,17 +425,11 @@ void main() {
         helpers.merge(
           jsGet(jsGet(chart.options, 'elements'), 'point'),
           <String, Object?>{
-            'hoverBackgroundColor': const native_ui.Color.fromRGBO(
-              200,
-              100,
-              150,
-              1,
+            'hoverBackgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(200, 100, 150, 1),
             ),
-            'hoverBorderColor': const native_ui.Color.fromRGBO(
-              150,
-              50,
-              100,
-              1,
+            'hoverBorderColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(150, 50, 100, 1),
             ),
             'hoverBorderWidth': 8.4,
             'hoverRadius': 4.2,
@@ -449,11 +441,11 @@ void main() {
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
           _option(point, 'backgroundColor'),
-          const native_ui.Color.fromRGBO(200, 100, 150, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
           _option(point, 'borderColor'),
-          const native_ui.Color.fromRGBO(150, 50, 100, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
         expect(_option(point, 'borderWidth'), 8.4);
         expect(_option(point, 'radius'), 20 + 4.2);
@@ -461,11 +453,11 @@ void main() {
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
           _option(point, 'backgroundColor'),
-          const native_ui.Color.fromRGBO(100, 150, 200, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
           _option(point, 'borderColor'),
-          const native_ui.Color.fromRGBO(50, 100, 150, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
         expect(_option(point, 'borderWidth'), 2);
         expect(_option(point, 'radius'), 20);

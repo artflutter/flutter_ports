@@ -3,7 +3,6 @@
 library;
 
 import 'dart:ui' as ui;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';

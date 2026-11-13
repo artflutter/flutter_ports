@@ -128,7 +128,7 @@ class _Sample13State extends State<Sample13> {
           borderWidth: 1,
           pointRadius: 0,
           pointHoverRadius: 0,
-          borderColor: const .constant(Fl.blue),
+          borderColor: const .constant(.solid(Fl.blue)),
         ),
       ],
       onHover: _hover,
@@ -144,7 +144,7 @@ class _Sample13State extends State<Sample13> {
           title: const AxisTitle(
             display: true,
             text: 'Day of month',
-            color: Fl.green,
+            color: ChartPaint.solid(Fl.green),
             font: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           ticks: AxisTicks(
@@ -160,8 +160,9 @@ class _Sample13State extends State<Sample13> {
                   : '';
             },
             extra: {
-              'color': (JsObjectFace c) =>
-                  tickOf(c) == _hovered ? Colors.white : Fl.green,
+              'color': (JsObjectFace c) => ChartPaint.solid(
+                tickOf(c) == _hovered ? Colors.white : Fl.green,
+              ),
             },
           ),
         ),
@@ -172,7 +173,7 @@ class _Sample13State extends State<Sample13> {
             drawTicks: false,
             extra: {
               'color': (JsObjectFace c) =>
-                  tickOf(c) == 0 ? Fl.white38 : Fl.blueGrey,
+                  ChartPaint.solid(tickOf(c) == 0 ? Fl.white38 : Fl.blueGrey),
               'lineWidth': (JsObjectFace c) => tickOf(c) == 0 ? 0.8 : 0.4,
             },
           ),
@@ -185,7 +186,7 @@ class _Sample13State extends State<Sample13> {
           },
           ticks: AxisTicks(
             stepSize: 5,
-            color: Colors.white,
+            color: const ChartPaint.solid(Colors.white),
             format: (t) => '${t.value.toInt()}°',
           ),
         ),

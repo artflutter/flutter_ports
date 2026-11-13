@@ -197,8 +197,8 @@ class AxesDemoState extends State<AxesDemo> {
         'label': style.label,
         'data': <Map<String, Object?>>[],
         'parsing': true,
-        'backgroundColor': style.background,
-        'borderColor': style.border,
+        'backgroundColor': ChartPaint.solid(style.background),
+        'borderColor': ChartPaint.solid(style.border),
         'pointStyle': style.style,
       },
   ];

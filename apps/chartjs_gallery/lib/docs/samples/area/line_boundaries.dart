@@ -3,6 +3,7 @@
 
 import 'dart:ui' as ui;
 
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, FillBoundary, JsObjectFace;
 
@@ -72,8 +73,12 @@ Map<String, Object?> _config(Object fill) => <String, Object?>{
           -59.53,
           -0.87,
         ],
-        'borderColor': const ui.Color.fromRGBO(255, 99, 132, 1),
-        'backgroundColor': const ui.Color.fromRGBO(255, 99, 132, 0.5),
+        'borderColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
+        'backgroundColor': const ChartPaint.solid(
+          ui.Color.fromRGBO(255, 99, 132, 0.5),
+        ),
         'fill': fill,
       },
     ],

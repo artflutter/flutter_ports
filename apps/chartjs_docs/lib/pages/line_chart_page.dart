@@ -18,7 +18,7 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'backgroundColor',
     section: 'line-styling',
-    type: 'ChartValue<Color>',
+    type: 'ChartValue<ChartPaint>',
     scriptable: true,
     fallback: 'rgba(0, 0, 0, 0.1)',
   ),
@@ -31,7 +31,7 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'borderColor',
     section: 'line-styling',
-    type: 'ChartValue<Color>',
+    type: 'ChartValue<ChartPaint>',
     scriptable: true,
     fallback: 'rgba(0, 0, 0, 0.1)',
   ),

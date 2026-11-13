@@ -22,6 +22,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -1206,11 +1208,8 @@ void main() {
                   <String, Object?>{'x': 640940400000, 'y': '27.25'},
                   <String, Object?>{'x': 641026800000, 'y': '25.93'},
                 ],
-                'backgroundColor': const native_ui.Color.fromRGBO(
-                  255,
-                  102,
-                  102,
-                  1,
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 102, 102, 1),
                 ),
               },
             ],

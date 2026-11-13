@@ -66,6 +66,7 @@ const Map<String, int> shapeAtoms = {
   'edgeInsets': 4480,
   'textDirection': 4608,
   'tooltipCallbacks': 4736,
+  'chartPaint': 4864,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -80,6 +81,11 @@ typedef TypedAtom = ({String type, String uri, String? field});
 /// The typed atoms of the schema: the native types of options that were
 /// names in Chart.js (a Flutter type, an enum or a class of the port).
 const Map<String, TypedAtom> typedAtoms = {
+  'chartPaint': (
+    type: 'ChartPaint',
+    uri: 'package:flutter_chartjs_port/src/types/chart_paint.dart',
+    field: 'ChartPaint?',
+  ),
   'curve': (type: 'Curve', uri: 'package:flutter/animation.dart', field: null),
   'interactionMode': (
     type: 'InteractionMode',

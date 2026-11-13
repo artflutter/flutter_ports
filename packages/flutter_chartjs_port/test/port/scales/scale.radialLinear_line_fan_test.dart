@@ -8,8 +8,8 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter/widgets.dart' show Directionality, SizedBox;
 import 'package:flutter/widgets.dart' as widgets show TextDirection;
+import 'package:flutter/widgets.dart' show Directionality, SizedBox;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show
         AxisGrid,
@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/line_fan_engine.dart';
@@ -180,10 +182,12 @@ Map<String, Object?> _config({
         'type': ?scaleType,
         'min': 0.0,
         'max': 100.0,
-        'grid': <String, Object?>{'color': const ui.Color(0x33000000)},
+        'grid': <String, Object?>{
+          'color': const ChartPaint.solid(ui.Color(0x33000000)),
+        },
         'angleLines': <String, Object?>{
           'display': true,
-          'color': color,
+          'color': ChartPaint.solid(color),
           ...?angleLines,
         },
         'ticks': <String, Object?>{'display': false},
@@ -283,7 +287,7 @@ void main() {
               'startAngle': 33.0,
               'grid': <String, Object?>{
                 'circular': true,
-                'color': const ui.Color(0x33000000),
+                'color': const ChartPaint.solid(ui.Color(0x33000000)),
               },
             },
           ),
@@ -312,7 +316,7 @@ void main() {
       var reads = 0;
       Object? color(Object? context) {
         reads++;
-        return const ui.Color(0x80336699);
+        return const ChartPaint.solid(ui.Color(0x80336699));
       }
 
       final chart = acquireChart(_config(angleLines: {'color': color}));
@@ -334,8 +338,8 @@ void main() {
         _config(
           angleLines: {
             'color': <Object?>[
-              const ui.Color(0x80336699),
-              const ui.Color(0x80996633),
+              const ChartPaint.solid(ui.Color(0x80336699)),
+              const ChartPaint.solid(ui.Color(0x80996633)),
             ],
           },
         ),
@@ -450,14 +454,14 @@ void main() {
       ),
       (
         'a scriptable color',
-        {'color': (Object? _) => const ui.Color(0x80996633)},
+        {'color': (Object? _) => const ChartPaint.solid(ui.Color(0x80996633))},
       ),
       (
         'an indexed color',
         {
           'color': <Object?>[
-            const ui.Color(0x80336699),
-            const ui.Color(0x80996633),
+            const ChartPaint.solid(ui.Color(0x80336699)),
+            const ChartPaint.solid(ui.Color(0x80996633)),
           ],
         },
       ),
@@ -480,7 +484,7 @@ void main() {
         'startAngle': 33.0,
         'grid': <String, Object?>{
           'circular': true,
-          'color': const ui.Color(0x33000000),
+          'color': const ChartPaint.solid(ui.Color(0x33000000)),
         },
         'ticks': <String, Object?>{'display': true},
         'pointLabels': <String, Object?>{'display': true},
@@ -571,10 +575,10 @@ void main() {
                     'r': RadialLinearAxis(
                       min: 0,
                       max: 100,
-                      angleLinesColor: ui.Color(0x33888888),
+                      angleLinesColor: ChartPaint.solid(ui.Color(0x33888888)),
                       angleLinesLineWidth: 1,
                       grid: AxisGrid(
-                        color: ui.Color(0x33888888),
+                        color: ChartPaint.solid(ui.Color(0x33888888)),
                         drawTicks: false,
                       ),
                     ),

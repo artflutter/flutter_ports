@@ -7,10 +7,13 @@ import 'dart:io';
 import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 // dart:io reads the manifest and the snapshot, so the web legs
@@ -495,12 +498,12 @@ void main() {
     // The report on changed inventories: a bump that adds, removes or
     // changes a key gives an entry in the list of the change.
     const emitted = <String, Object?>{
-      'color': native_ui.Color.fromRGBO(102, 102, 102, 1),
+      'color': ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       'scale.ticks.font.family': 'serif',
       'scale.ticks.font.size': 12.0,
     };
     const manifest = <String, Object?>{
-      'color': native_ui.Color.fromRGBO(102, 102, 102, 1),
+      'color': ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       'font.family': 'serif',
       'font.size': 12,
       'scale.ticks.color': <String, Object?>{
@@ -530,7 +533,9 @@ void main() {
       // shows here. A key that is not visual does not.
       final lists = report(emitted, {
         ...manifest,
-        'scale.title.strokeColor': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+        'scale.title.strokeColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 0, 1),
+        ),
         'scale.title.strokeWidth': 0,
         'plugins.legend.labels.font': <String, Object?>{'size': 12},
       });
@@ -546,14 +551,20 @@ void main() {
       final lists = report(emitted, {
         'font.family': 'serif',
         'font.size': 12,
-        'scale.ticks.color': const native_ui.Color.fromRGBO(0, 0, 0, 1),
-        'scale.grid.color': const native_ui.Color.fromRGBO(0, 0, 0, 1),
+        'scale.ticks.color': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 0, 1),
+        ),
+        'scale.grid.color': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 0, 1),
+        ),
       });
       expect(lists['REMOVED'], ['color']);
       // A font slot without any leaf in the manifest is REMOVED too.
       expect(
         report(emitted, {
-          'color': const native_ui.Color.fromRGBO(102, 102, 102, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(102, 102, 102, 1),
+          ),
           'font.family': 'serif',
           'font.size': 12,
         })['REMOVED'],

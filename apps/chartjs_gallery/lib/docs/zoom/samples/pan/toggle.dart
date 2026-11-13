@@ -6,6 +6,7 @@ import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show Mode, ZoomChart;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, ChartPosition, JsObjectFace;
 
@@ -31,8 +32,10 @@ ZoomDocsSample zoomPanToggleSample(ZoomDocsLog log) {
   // <block:scales:2>
   final scaleOpts = <String, Object?>{
     'grid': <String, Object?>{
-      'borderColor': const ui.Color.fromRGBO(201, 203, 207, 1),
-      'color': const ui.Color.fromRGBO(0, 0, 0, 0.1),
+      'borderColor': const ChartPaint.solid(
+        ui.Color.fromRGBO(201, 203, 207, 1),
+      ),
+      'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
     },
     'title': <String, Object?>{'display': true, 'text': zoomAxisTitle},
   };

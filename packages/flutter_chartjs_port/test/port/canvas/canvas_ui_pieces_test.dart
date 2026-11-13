@@ -2,9 +2,6 @@
 @TestOn('vm')
 library;
 
-// Canvas observations are deliberately separate from mutations.
-// ignore_for_file: cascade_invocations
-
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -17,6 +14,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -90,8 +88,9 @@ Future<(Render, Render, int)> _fills(
     (ctx) {
       UiCanvasContext.debugDrawLongPathsInPieces = pieces;
       setup(ctx);
-      ctx.fillStyle = color;
-      ctx.beginPath();
+      ctx
+        ..fillStyle = color
+        ..beginPath();
       if (pieces) ctx.deferCurrentPath();
       shape(ctx);
       if (rule == null) {
@@ -122,9 +121,10 @@ Future<(Render, Render, int)> _strokes(
     (ctx) {
       UiCanvasContext.debugDrawLongPathsInPieces = pieces;
       setup(ctx);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.lineJoin = join;
+      ctx
+        ..strokeStyle = color
+        ..lineWidth = width
+        ..lineJoin = join;
       final path = Path2D();
       shape(path);
       ctx.stroke(path);
@@ -425,9 +425,9 @@ void main() {
         ]) {
           Future<Render> one({required bool pieces}) async {
             UiCanvasContext.debugDrawLongPathsInPieces = pieces;
-            final ctx = UiCanvasElement(width: 500, height: 300).getContext2d();
-            ctx.fillStyle = color;
-            ctx.beginPath();
+            final ctx = UiCanvasElement(width: 500, height: 300).getContext2d()
+              ..fillStyle = color
+              ..beginPath();
             if (pieces) ctx.deferCurrentPath();
             _shape(ctx, 5000);
             ctx.fill();
@@ -496,8 +496,9 @@ void main() {
       Future<Render> one({required bool pieces}) => renderContext(
         (ctx) {
           UiCanvasContext.debugDrawLongPathsInPieces = pieces;
-          ctx.fillStyle = _soft;
-          ctx.beginPath();
+          ctx
+            ..fillStyle = _soft
+            ..beginPath();
           if (pieces) ctx.deferCurrentPath();
           _shape(ctx, 1000);
           ctx.fill();
@@ -505,9 +506,10 @@ void main() {
             expect(ctx.debugPath.debugBuilt, isFalse);
             expect(ctx.debugPieceDraws, 1);
           }
-          ctx.strokeStyle = const ui.Color(0xffdd4400);
-          ctx.lineWidth = .6;
-          ctx.stroke();
+          ctx
+            ..strokeStyle = const ui.Color(0xffdd4400)
+            ..lineWidth = .6
+            ..stroke();
         },
         width: 500,
         height: 300,
@@ -609,9 +611,11 @@ void main() {
           (ctx) {
             UiCanvasContext.debugDrawLongPathsInPieces = pieces;
             if (style == 0) {
-              ctx.fillStyle = ctx.createLinearGradient(0, 0, 500, 0)
-                ..addColorStop(0, _blue)
-                ..addColorStop(1, _soft);
+              ctx.fillStyle = const ChartGradient.linear(
+                ui.Offset.zero,
+                ui.Offset(500, 0),
+                [_blue, _soft],
+              );
             } else {
               ctx
                 ..fillStyle = _soft
@@ -818,9 +822,11 @@ void main() {
           Future<Render> one({required bool pieces}) => renderContext(
             (ctx) {
               UiCanvasContext.debugDrawLongPathsInPieces = pieces;
-              ctx.strokeStyle = ctx.createLinearGradient(0, 0, 500, 0)
-                ..addColorStop(0, _blue)
-                ..addColorStop(1, _soft);
+              ctx.strokeStyle = const ChartGradient.linear(
+                ui.Offset.zero,
+                ui.Offset(500, 0),
+                [_blue, _soft],
+              );
               final path = Path2D();
               _top(path, 300);
               ctx.stroke(path);
@@ -850,8 +856,7 @@ void main() {
     });
 
     test('a piece has at most its commands and its area', () {
-      final pieces = UiPathPieces(1, 2);
-      pieces.moveTo(0, 0);
+      final pieces = UiPathPieces(1, 2)..moveTo(0, 0);
       for (var i = 1; i <= 1000; i++) {
         pieces.lineTo(i * .01, 0);
       }
@@ -860,8 +865,7 @@ void main() {
         pieces.pieces.length,
         greaterThanOrEqualTo(1000 ~/ maxPieceCommands),
       );
-      final wide = UiPathPieces(1, 2);
-      wide.moveTo(0, 0);
+      final wide = UiPathPieces(1, 2)..moveTo(0, 0);
       for (var i = 1; i <= 100; i++) {
         wide.lineTo(i * 5.0, i.isEven ? 0 : 400);
       }
@@ -1046,15 +1050,17 @@ void main() {
           (ctx) {
             UiCanvasContext.debugDrawLongPathsInPieces = pieces;
             if (pieces) expect(ctx.deferredFillMinPoints, minPieceCommands);
-            ctx.fillStyle = _soft;
-            ctx.beginPath();
+            ctx
+              ..fillStyle = _soft
+              ..beginPath();
             // Also a deferred path of fewer commands fills in one draw.
             if (pieces) ctx.deferCurrentPath();
             _shape(ctx, 100);
             ctx.fill();
             if (pieces) expect(ctx.debugPieceDraws, 0);
-            ctx.strokeStyle = _blue;
-            ctx.lineWidth = 2;
+            ctx
+              ..strokeStyle = _blue
+              ..lineWidth = 2;
             final path = Path2D();
             _top(path, 100);
             ctx.stroke(path);
@@ -1077,8 +1083,8 @@ void main() {
               'data': <Object?>[
                 for (var i = 0; i < count; i++) 50 + 40 * math.sin(i * .2),
               ],
-              'borderColor': _blue,
-              'backgroundColor': _soft,
+              'borderColor': const ChartPaint.solid(_blue),
+              'backgroundColor': const ChartPaint.solid(_soft),
               'fill': FillBoundary.origin,
               'pointRadius': 0.0,
             },
@@ -1168,8 +1174,8 @@ void main() {
                           : 50 + 38 * math.sin(i * .02 + d),
                     },
                 ],
-                'borderColor': _blue,
-                'backgroundColor': _soft,
+                'borderColor': const ChartPaint.solid(_blue),
+                'backgroundColor': const ChartPaint.solid(_soft),
                 'fill': fill,
                 'pointRadius': 0.0,
               },

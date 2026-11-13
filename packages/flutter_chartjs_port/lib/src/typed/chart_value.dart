@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: explicit typed option values.
 
-/// Public constant, indexed and callback values for dataset background and
-/// border colors. Other typed options retain their existing API.
+/// Public constant, indexed and callback values for dataset paints, including
+/// point-specific and hover colors (Chart.js ADR 0128).
 library;
 
 import 'package:flutter/foundation.dart' show listEquals;
@@ -12,8 +12,8 @@ import 'package:meta/meta.dart' show immutable, internal;
 
 /// One of the supported forms of a typed chart option.
 ///
-/// Dataset backgroundColor and borderColor accept `ChartValue<Color>`.
-/// Omitting either parameter
+/// Dataset background, border, hover and point-specific colors accept
+/// `ChartValue<ChartPaint>`. Omitting a parameter
 /// inherits the default. Use [ChartValue.constant] for a shared value,
 /// [ChartValue.indexed] for a repeating list, or [ChartValue.resolver] for a
 /// callback. The variants retain their kind when lowered into internal cells.

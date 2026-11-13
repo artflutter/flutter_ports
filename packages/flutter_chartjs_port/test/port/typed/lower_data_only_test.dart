@@ -104,7 +104,9 @@ void main() {
     test('an equal indexed color in a new ChartValue', () {
       Dataset dataset() => BarDataset(
         data: _data(),
-        backgroundColor: ChartValue.indexed(<Color>[..._pair]),
+        backgroundColor: ChartValue.indexed(
+          <Color>[..._pair].map(ChartPaint.solid).toList(),
+        ),
       );
       expect(_report(_config([dataset()]), _config([dataset()])), isTrue);
     });
@@ -301,7 +303,7 @@ void main() {
             'a constant color',
             (data) => BarDataset(
               data: data,
-              backgroundColor: const ChartValue.constant(_red),
+              backgroundColor: const ChartValue.constant(.solid(_red)),
             ),
           ),
           (
@@ -333,7 +335,9 @@ void main() {
     test('a replaced indexed color', () {
       Dataset colored(List<Color> colors) => BarDataset(
         data: _data(),
-        backgroundColor: ChartValue.indexed(colors),
+        backgroundColor: ChartValue.indexed(
+          colors.map(ChartPaint.solid).toList(),
+        ),
       );
       expect(
         _report(
@@ -365,13 +369,15 @@ void main() {
           _config([
             BarDataset(
               data: _data(),
-              backgroundColor: const ChartValue.constant(_red),
+              backgroundColor: const ChartValue.constant(.solid(_red)),
             ),
           ]),
           _config([
             BarDataset(
               data: _data(),
-              backgroundColor: const ChartValue.indexed([_red]),
+              backgroundColor: const ChartValue.indexed([
+                ChartPaint.solid(_red),
+              ]),
             ),
           ]),
         ),
@@ -380,7 +386,7 @@ void main() {
     });
 
     test('a resolved color: a new bridge in each lowering', () {
-      Color resolve(ChartContext context) => _red;
+      ChartPaint resolve(ChartContext context) => const ChartPaint.solid(_red);
       Dataset colored() => BarDataset(
         data: _data(),
         backgroundColor: ChartValue.resolver(resolve),
@@ -440,7 +446,9 @@ void main() {
     test('still writes the new List and the new data', () {
       Dataset dataset() => BarDataset(
         data: _data(),
-        backgroundColor: ChartValue.indexed(<Color>[..._pair]),
+        backgroundColor: ChartValue.indexed(
+          <Color>[..._pair].map(ChartPaint.solid).toList(),
+        ),
       );
       final lowering = ChartConfigLowering(_config([dataset()]));
       final root = lowering.lower();
@@ -452,7 +460,10 @@ void main() {
       lowering.apply(_config([next]));
       final scope = ((data as JsObjectFace)['datasets']! as List).single;
       final written = (scope as JsObjectFace)['backgroundColor']! as List;
-      expect(written, [_red, _green]);
+      expect(written, [
+        const ChartPaint.solid(_red),
+        const ChartPaint.solid(_green),
+      ]);
       expect(scope['data'], same((next as BarDataset).data));
       expect(written, isNot(same(firstColors)));
     });

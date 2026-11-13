@@ -1418,7 +1418,7 @@ void main() {
         ),
       ]) {
         scene.frame!(chart);
-        expect(chart.options['color'], color, reason: type);
+        expect(chart.options['color'], ChartPaint.solid(color), reason: type);
         // The frame ends the transition: no animation stays.
         expect(animator.has(chart), isFalse, reason: type);
         // The switch removes the palette colors, and the update colors the
@@ -1426,7 +1426,10 @@ void main() {
         expect(dataset['backgroundColor'], isNotNull, reason: type);
         if (type == 'doughnut') {
           // The arc border is the surface (element.arc.ts:379).
-          expect((element.options! as JsObjectFace)['borderColor'], surface);
+          expect(
+            (element.options! as JsObjectFace)['borderColor'],
+            ChartPaint.solid(surface),
+          );
         }
       }
     }
@@ -1464,7 +1467,10 @@ void main() {
     final element = chart.getDatasetMeta(0).data.first;
     const black = native_ui.Color.fromRGBO(0, 0, 0, 1);
     const white = native_ui.Color.fromRGBO(255, 255, 255, 1);
-    expect((element.options! as JsObjectFace)['borderColor'], white);
+    expect(
+      (element.options! as JsObjectFace)['borderColor'],
+      const ChartPaint.solid(white),
+    );
     final borders = <Object?>[];
     for (var i = 0; i < 2 * chartBenchFadeFrames; i++) {
       scene.frame!(chart);
@@ -1475,15 +1481,15 @@ void main() {
     // the first transition and back in the second one. The colors
     // interpolator gives a native grey Color between the ends, and
     // the last frame gives the end value.
-    expect(borders[f - 1], black);
-    expect(borders[2 * f - 1], white);
+    expect(borders[f - 1], const ChartPaint.solid(black));
+    expect(borders[2 * f - 1], const ChartPaint.solid(white));
     final between = [
       ...borders.sublist(0, f - 1),
       ...borders.sublist(f, 2 * f - 1),
     ];
     for (final border in between) {
       expect(border, isNot(anyOf(black, white)));
-      expect(border, isA<Color>());
+      expect(border, isA<SolidChartPaint>());
     }
     expect(between.toSet(), hasLength(between.length));
     // The timed case draws in each frame only for the doughnut: in the

@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:test/test.dart';
 
@@ -135,7 +137,7 @@ void main() {
   group('merge and mergeIf', () {
     test('merge into a typed scope makes typed children', () {
       final scope = ChartOptionsScope()
-        ..color = const ui.Color.fromRGBO(255, 0, 0, 1);
+        ..color = const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1));
       const font = ChartTextStyle(fontSize: 14, fontFamily: 'x');
       merge(scope, <String, Object?>{
         'interaction': <String, Object?>{
@@ -143,13 +145,13 @@ void main() {
           'axis': InteractionAxis.x,
         },
         'font': font,
-        'color': const ui.Color.fromRGBO(0, 0, 255, 1),
+        'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
         'extra': <String, Object?>{'a': 1.0},
       });
       expect(scope.jsKeys(), ['color', 'interaction', 'font', 'extra']);
       expect(
         scope.jsRead('color'),
-        const ui.Color.fromRGBO(0, 0, 255, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
       );
       final interaction = scope.interactionCell!.raw;
       expect(interaction, isA<InteractionOptionsScope>());
@@ -188,7 +190,7 @@ void main() {
         ..interaction = (InteractionOptionsScope()..intersect = false)
         ..font = const ChartTextStyle(fontSize: 12);
       mergeIf(scope, <String, Object?>{
-        'color': const ui.Color.fromRGBO(255, 0, 0, 1),
+        'color': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
         'interaction': <String, Object?>{
           'intersect': true,
           'includeInvisible': true,

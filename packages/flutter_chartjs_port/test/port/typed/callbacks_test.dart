@@ -139,11 +139,11 @@ void main() {
       // Chart.js keeps one context object for each element and sets its
       // `active` at each resolution: the state at the call.
       final activeAtCall = <(int?, bool)>[];
-      native_ui.Color record(Object? context, Object? options) {
+      ChartPaint record(Object? context, Object? options) {
         final view = context! as ChartContext;
         contexts.add(view);
         activeAtCall.add((view.dataIndex, view.active));
-        return const native_ui.Color.fromRGBO(255, 0, 0, 1);
+        return const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1));
       }
 
       final chart = acquireChart(<String, Object?>{

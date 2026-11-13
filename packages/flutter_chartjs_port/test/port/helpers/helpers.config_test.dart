@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show ScopeRoute;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope, InteractionOptionsScope;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -649,22 +651,24 @@ void main() {
       final resolver = createResolver(
         [
           <String, Object?>{
-            'hoverColor': const ui.Color.fromRGBO(255, 0, 0, 1),
+            'hoverColor': const ChartPaint.solid(
+              ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
           },
         ],
         ['hover', ''],
       );
       expect(
         resolveObjectKey(resolver, 'color'),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       expect(
         resolveObjectKey({'o': resolver}, 'o.color'),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       expect(
         resolveObjectKey(attachContext(resolver, {}), 'color'),
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       expect(resolveObjectKey(resolver, '_fallback'), same(undefined));
     });

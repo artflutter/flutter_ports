@@ -230,12 +230,12 @@ void main() {
     await _pumpDemo(tester);
     await _openTab(tester, 'Options');
     // Absent and undefined go to defaults; null is a value.
-    expect(find.text('Color(0x1A000000)'), findsNWidgets(2));
+    expect(find.text('ChartPaint.solid(Color(0x1A000000))'), findsNWidgets(2));
     expect(find.text('null'), findsOneWidget);
-    expect(find.text('Color(0xFF36A2EB)'), findsOneWidget);
+    expect(find.text('ChartPaint.solid(Color(0xFF36A2EB))'), findsOneWidget);
 
-    await _scrollTo(tester, find.text('Color(0xFF059BFF)'));
-    expect(find.text('Color(0xFF059BFF)'), findsOneWidget);
+    await _scrollTo(tester, find.text('ChartPaint.solid(Color(0xFF059BFF))'));
+    expect(find.text('ChartPaint.solid(Color(0xFF059BFF))'), findsOneWidget);
 
     await _scrollTo(tester, find.text('Georgia · size 16 · height 1.5'));
     await _scrollTo(tester, find.text('{top: 1, left: 2}'));

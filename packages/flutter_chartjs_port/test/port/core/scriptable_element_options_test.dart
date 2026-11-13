@@ -9,10 +9,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
-const red = Color(0xffff0000);
-const blue = Color(0xff0000ff);
+const red = ChartPaint.solid(Color(0xffff0000));
+const blue = ChartPaint.solid(Color(0xff0000ff));
 
 class _OrdinaryConfig extends Config {}
 
@@ -143,7 +145,7 @@ void main() {
             case 'nested':
               f.color = <String, Object?>{'inner': 42};
             case 'array':
-              f.color = <Color>[red, blue];
+              f.color = <ChartPaint>[red, blue];
           }
         };
         if (change == 'context') {
@@ -215,7 +217,7 @@ void main() {
           }
           return switch (change) {
             'nested' => <String, Object?>{'value': 42},
-            'array' => <Color>[red, blue],
+            'array' => <ChartPaint>[red, blue],
             'function' => callback,
             _ => red,
           };
@@ -230,8 +232,8 @@ void main() {
         counts.add(calls);
       }
       if (change == 'function') {
-        expect(outputs[0][0].backgroundColor, isA<Function>());
-        expect(outputs[1][0].backgroundColor, isA<Function>());
+        expect(outputs[0][0].backgroundColorValue, isA<Function>());
+        expect(outputs[1][0].backgroundColorValue, isA<Function>());
       } else {
         for (var i = 0; i < 2; i++) {
           same(outputs[0][i], outputs[1][i]);
@@ -244,7 +246,7 @@ void main() {
   test('optional second argument still receives a fresh resolver', () {
     final f = _Fixture();
     final seen = <Object?>[];
-    Color background(Object? ctx, [Object? options]) {
+    ChartPaint background(Object? ctx, [Object? options]) {
       seen.add(options);
       expect(options, isA<helpers.OptionView>());
       return red;

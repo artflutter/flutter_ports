@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The rendered RGBA pixels of a canvas.
@@ -959,9 +960,14 @@ void main() {
     });
 
     test('a linear gradient', () async {
-      final gradient = _context().createLinearGradient(0, 0, 100, 0)
-        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
+      const gradient = ChartGradient.linear(
+        ui.Offset.zero,
+        ui.Offset(100, 0),
+        [
+          native_ui.Color.fromRGBO(255, 0, 0, 1),
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ],
+      );
       final ctx = _context()
         ..fillStyle = gradient
         ..fillRect(0, 0, 100, 100);
@@ -969,24 +975,111 @@ void main() {
       final pixels = await _render(ctx);
       expect(pixels.r(2, 50), greaterThan(240));
       expect(pixels.b(97, 50), greaterThan(240));
+      // One offset for each color.
       expect(
-        () => gradient.addColorStop(
-          1.5,
-          const native_ui.Color.fromRGBO(255, 0, 0, 1),
-        ),
-        throwsRangeError,
-      );
-      expect(
-        () => gradient.addColorStop(0.5, 'not a color'),
+        () => ctx
+          ..fillStyle = const ChartGradient.linear(
+            ui.Offset.zero,
+            ui.Offset(100, 0),
+            [
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+              native_ui.Color.fromRGBO(0, 0, 255, 1),
+            ],
+            stops: [0],
+          )
+          ..fillRect(0, 0, 100, 100),
         throwsArgumentError,
       );
     });
 
+    test('an invalid gradient throws on every draw', () {
+      for (final stops in <List<double>>[
+        [0],
+        [0.8, 0.2],
+        [0, double.nan],
+        [0, 1.1],
+        [-0.1, 1],
+      ]) {
+        final ctx = _context()
+          ..fillStyle = ChartGradient.linear(
+            ui.Offset.zero,
+            const ui.Offset(100, 0),
+            const [ui.Color(0xffff0000), ui.Color(0xff0000ff)],
+            stops: stops,
+          );
+        expect(() => ctx.fillRect(0, 0, 100, 100), throwsArgumentError);
+        expect(() => ctx.fillRect(0, 0, 100, 100), throwsArgumentError);
+        ctx.dispose();
+      }
+    });
+
+    test('a changed gradient list invalidates its shader', () async {
+      final colors = [const ui.Color(0xffff0000), const ui.Color(0xffff0000)];
+      final gradient = ChartGradient.linear(
+        ui.Offset.zero,
+        const ui.Offset(100, 0),
+        colors,
+      );
+      final ctx = _context()
+        ..fillStyle = gradient
+        ..fillRect(0, 0, 50, 100);
+      colors[0] = colors[1] = const ui.Color(0xff0000ff);
+      ctx.fillRect(50, 0, 50, 100);
+      final pixels = await _render(ctx);
+      expect(pixels.r(2, 50), 255);
+      expect(pixels.b(97, 50), 255);
+    });
+
+    test('a gradient without stops has equal distances', () async {
+      final ctx = _context()
+        ..fillStyle = const ChartGradient.linear(
+          ui.Offset.zero,
+          ui.Offset(100, 0),
+          [
+            native_ui.Color.fromRGBO(255, 0, 0, 1),
+            native_ui.Color.fromRGBO(0, 255, 0, 1),
+            native_ui.Color.fromRGBO(0, 0, 255, 1),
+          ],
+        )
+        ..fillRect(0, 0, 100, 100);
+      final pixels = await _render(ctx);
+      expect(pixels.r(2, 50), greaterThan(240));
+      expect(pixels.g(50, 50), greaterThan(240));
+      expect(pixels.b(97, 50), greaterThan(240));
+    });
+
+    test('a gradient with one color or no color', () async {
+      final ctx = _context()
+        ..fillStyle = const ChartGradient.linear(
+          ui.Offset.zero,
+          ui.Offset(100, 0),
+          [native_ui.Color.fromRGBO(0, 255, 0, 1)],
+        )
+        ..fillRect(0, 0, 100, 100);
+      var pixels = await _render(ctx);
+      expect(pixels.g(50, 50), 255);
+      ctx
+        ..clearRect(0, 0, 100, 100)
+        ..fillStyle = const ChartGradient.linear(
+          ui.Offset.zero,
+          ui.Offset(100, 0),
+          [],
+        )
+        ..fillRect(0, 0, 100, 100);
+      pixels = await _render(ctx);
+      expect(pixels.inked(50, 50), isFalse);
+    });
+
     test('a gradient is in user space at fill time', () async {
       final ctx = _context();
-      final gradient = ctx.createLinearGradient(0, 0, 50, 0)
-        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
+      const gradient = ChartGradient.linear(
+        ui.Offset.zero,
+        ui.Offset(50, 0),
+        [
+          native_ui.Color.fromRGBO(255, 0, 0, 1),
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ],
+      );
       ctx
         ..translate(50, 0)
         ..fillStyle = gradient
@@ -998,9 +1091,15 @@ void main() {
 
     test('radial and conic gradients paint', () async {
       final ctx = _context();
-      final radial = ctx.createRadialGradient(0, 0, 10, 0, 0, 100)
-        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
+      const radial = ChartGradient.radial(
+        ui.Offset.zero,
+        100,
+        [
+          native_ui.Color.fromRGBO(255, 0, 0, 1),
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ],
+        focalRadius: 10,
+      );
       ctx
         ..fillStyle = radial
         ..fillRect(0, 0, 100, 100);
@@ -1008,17 +1107,29 @@ void main() {
       expect(pixels.r(3, 3), greaterThan(240));
       expect(pixels.b(99, 99), greaterThan(200));
 
-      final conic = ctx.createConicGradient(0, 50, 50)
-        ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-        ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
+      const conic = ChartGradient.sweep(ui.Offset(50, 50), [
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
+        native_ui.Color.fromRGBO(0, 0, 255, 1),
+      ]);
       ctx
         ..clearRect(0, 0, 100, 100)
         ..fillStyle = conic
         ..fillRect(0, 0, 100, 100);
       pixels = await _render(ctx);
       expect(pixels.a(50, 80), 255);
+      // A negative radius throws at the draw.
       expect(
-        () => ctx.createRadialGradient(0, 0, -1, 0, 0, 1),
+        () => ctx
+          ..fillStyle = const ChartGradient.radial(
+            ui.Offset.zero,
+            1,
+            [
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+              native_ui.Color.fromRGBO(0, 0, 255, 1),
+            ],
+            focalRadius: -1,
+          )
+          ..fillRect(0, 0, 100, 100),
         throwsRangeError,
       );
     });
@@ -1033,7 +1144,7 @@ void main() {
       final image = await picture.toImage(10, 10);
       final source = UiImageSource(image);
       final ctx = _context();
-      final pattern = ctx.createPattern(source, null)!;
+      final pattern = ChartPattern(image);
       ctx
         ..fillStyle = pattern
         ..fillRect(0, 0, 100, 100);
@@ -1048,10 +1159,6 @@ void main() {
       pixels = await _render(ctx);
       expect(pixels.g(55, 55), 255);
       expect(pixels.inked(65, 65), isFalse);
-      expect(
-        () => ctx.createPattern(source, 'bogus'),
-        throwsFormatException,
-      );
     });
 
     test('toImageSource snapshots the bitmap in device pixels', () async {
@@ -1367,9 +1474,14 @@ void main() {
       );
       expect(stroked.width, greaterThan(0));
       final gradientText = await inkOf((ctx) {
-        final gradient = ctx.createLinearGradient(0, 0, 200, 0)
-          ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-          ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
+        const gradient = ChartGradient.linear(
+          ui.Offset.zero,
+          ui.Offset(200, 0),
+          [
+            native_ui.Color.fromRGBO(255, 0, 0, 1),
+            native_ui.Color.fromRGBO(0, 0, 255, 1),
+          ],
+        );
         ctx
           ..fillStyle = gradient
           ..fillText('HHH', 100, 50);
@@ -1379,14 +1491,19 @@ void main() {
 
     group('a gradient or a pattern is in user space', () {
       // Red left of x = 100, blue right of it, in user space.
-      UiCanvasGradient halves(UiCanvasContext ctx) =>
-          ctx.createLinearGradient(0, 0, 200, 0)
-            ..addColorStop(0, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-            ..addColorStop(0.5, const native_ui.Color.fromRGBO(255, 0, 0, 1))
-            ..addColorStop(0.5, const native_ui.Color.fromRGBO(0, 0, 255, 1))
-            ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1));
+      ChartGradient halves(UiCanvasContext ctx) => const ChartGradient.linear(
+        ui.Offset.zero,
+        ui.Offset(200, 0),
+        [
+          native_ui.Color.fromRGBO(255, 0, 0, 1),
+          native_ui.Color.fromRGBO(255, 0, 0, 1),
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+          native_ui.Color.fromRGBO(0, 0, 255, 1),
+        ],
+        stops: [0, 0.5, 0.5, 1],
+      );
 
-      Future<UiCanvasPattern> halvesPattern(UiCanvasContext ctx) async {
+      Future<ChartPattern> halvesPattern(UiCanvasContext ctx) async {
         final recorder = ui.PictureRecorder();
         ui.Canvas(recorder)
           ..drawRect(
@@ -1400,7 +1517,11 @@ void main() {
         final picture = recorder.endRecording();
         final image = await picture.toImage(200, 100);
         picture.dispose();
-        return ctx.createPattern(UiImageSource(image), 'no-repeat')!;
+        return ChartPattern(
+          image,
+          tileModeX: ui.TileMode.decal,
+          tileModeY: ui.TileMode.decal,
+        );
       }
 
       /// Expects red ink left of [split] and blue ink right of it, in the
@@ -1502,9 +1623,14 @@ void main() {
       expect(first.paragraph.debugDisposed, isTrue);
       // A gradient paragraph is disposed after its draw.
       ctx
-        ..fillStyle = (ctx.createLinearGradient(0, 0, 200, 0)
-          ..addColorStop(0, const native_ui.Color.fromRGBO(0, 0, 255, 1))
-          ..addColorStop(1, const native_ui.Color.fromRGBO(0, 0, 255, 1)))
+        ..fillStyle = const ChartGradient.linear(
+          ui.Offset.zero,
+          ui.Offset(200, 0),
+          [
+            native_ui.Color.fromRGBO(0, 0, 255, 1),
+            native_ui.Color.fromRGBO(0, 0, 255, 1),
+          ],
+        )
         ..fillText('HH', 110, 50);
       // The left stem of each first H.
       var pixels = await _render(ctx);

@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:meta/meta.dart';
 
@@ -48,8 +49,12 @@ final _lists = <Type>{
   <int>[].runtimeType,
   <int?>[].runtimeType,
   <String>[].runtimeType,
+  <ChartPaint>[].runtimeType,
+  <SolidChartPaint>[].runtimeType,
+  <SolidChartPaint?>[].runtimeType,
   <Color>[].runtimeType,
   <Color?>[].runtimeType,
+  <ChartPaint?>[].runtimeType,
   <Map<String, Object?>>[].runtimeType,
   <Map<String, double>>[].runtimeType,
   <ParsedItem>[].runtimeType,
@@ -77,8 +82,12 @@ final _lists = <Type>{
   const <String>[].runtimeType,
   // A const style List of a raw config (Chart.js ADR 0100).
   const <Object>[].runtimeType,
+  const <ChartPaint>[].runtimeType,
+  const <SolidChartPaint>[].runtimeType,
+  const <SolidChartPaint?>[].runtimeType,
   const <Color>[].runtimeType,
   const <Color?>[].runtimeType,
+  const <ChartPaint?>[].runtimeType,
 };
 final _points = <Type>{};
 
@@ -157,6 +166,7 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         // The chart locale is a value (row adapt-intl-number-format).
         node is Locale ||
         node.runtimeType == EdgeInsets ||
+        (node is SolidChartPaint && node.color.runtimeType == Color) ||
         node.runtimeType == Color) {
       return true;
     }

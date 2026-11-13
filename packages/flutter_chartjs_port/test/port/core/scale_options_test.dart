@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: the scale option facades.
 import 'dart:ui' as ui;
+import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
@@ -13,6 +14,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:test/test.dart';
@@ -65,7 +68,7 @@ final Map<String, Object? Function(OptionView view)> _scaleGetters = {
 Map<String, Object?> _scaleValues() => {
   'display': 'auto',
   'alignToPixels': true,
-  'backgroundColor': const ui.Color.fromRGBO(255, 0, 0, 1),
+  'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
   'reverse': true,
   'clip': false,
   'weight': '2',
@@ -213,7 +216,7 @@ void main() {
             'ticks': <String, Object?>{
               'color': (Object? ctx) {
                 final index = jsToNumber((ctx! as AnyObject)['index']);
-                return 'c${jsNumberToString(index)}';
+                return ChartPaint.solid(Color(0xff000000 + index.toInt()));
               },
             },
             'grid': <String, Object?>{
@@ -223,7 +226,10 @@ void main() {
         ]),
       );
       final context = <String, Object?>{'index': 2.0};
-      expect(options.ticks.setContext(context).color, 'c2');
+      expect(
+        options.ticks.setContext(context).color,
+        const ChartPaint.solid(Color(0xff000002)),
+      );
       expect(options.grid.setContext(context).lineWidth, 2.0);
     });
 

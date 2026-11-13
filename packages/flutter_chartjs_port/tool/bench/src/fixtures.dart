@@ -10,6 +10,8 @@
 /// `defaults.elements.bar`, `defaults` and `descriptors`.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
@@ -19,6 +21,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 
 bool _registered = false;
 
@@ -73,8 +77,10 @@ void registerBarDefaults() {
 AnyObject staticBarDataset(int index) => <String, Object?>{
   'label': 'Dataset $index',
   'data': <Object?>[for (var i = 0; i < 100; i++) (i * 7 % 50).toDouble()],
-  'backgroundColor': 'rgba(255, 99, 132, 0.5)',
-  'borderColor': 'rgb(255, 99, 132)',
+  'backgroundColor': const ChartPaint.solid(
+    ui.Color.fromRGBO(255, 99, 132, 0.5),
+  ),
+  'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 99, 132, 1)),
   'borderWidth': 1.0,
 };
 

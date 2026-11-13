@@ -16,7 +16,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show ElementPropertyRead;
 import 'package:flutter_test/flutter_test.dart';
@@ -222,8 +221,8 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       return [
         for (final item in chart.legend!.legendItems!)
           _valueOf(switch (key) {
-            'strokeStyle' => chartPaintValue(item.strokeStyle),
-            'fontColor' => chartPaintValue(item.fontColor),
+            'strokeStyle' => referencePaintValue(item.strokeStyle),
+            'fontColor' => referencePaintValue(item.fontColor),
             _ => throw StateError('Unknown legend trace field: $key'),
           }, 1),
       ];

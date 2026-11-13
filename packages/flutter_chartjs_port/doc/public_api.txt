@@ -18,10 +18,8 @@ CSSStyleDeclaration
 CancelableHookArgs
 CanvasCompositeOperation
 CanvasEventTarget
-CanvasGradient
 CanvasImageSource
 CanvasPath
-CanvasPattern
 CanvasRenderingContext2D
 CanvasTextBaseline
 CartesianAxis
@@ -31,10 +29,13 @@ ChartAlign
 ChartArea
 ChartConfiguration
 ChartEvent
+ChartGradient
 ChartMeta
 ChartMetaClip
 ChartPaint
+ChartPattern
 ChartPosition
+ChartShaderPaint
 ChartTextStyle
 ChartTooltipItem
 CirclePointStyle
@@ -60,7 +61,6 @@ FillTarget
 FillerDrawTime
 FlutterPlatform
 GraceLength
-GradientChartPaint
 HTMLCanvasElement
 ImagePointStyle
 IndexInteractionMode
@@ -79,6 +79,7 @@ LegendItem
 LineController
 LineElement
 LinePointStyle
+LinearChartGradient
 LinearScale
 LogarithmicScale
 LttbDecimationAlgorithm
@@ -92,7 +93,6 @@ NearestInteractionMode
 NearestTooltipPositioner
 Path2D
 PathPointStyle
-PatternChartPaint
 PercentGrace
 PercentRadius
 PieController
@@ -107,6 +107,7 @@ PointStyle
 PolarAreaController
 RAxis
 RadarController
+RadialChartGradient
 RadialLinearScale
 RadiusLength
 RectPointStyle
@@ -125,6 +126,7 @@ SolidChartPaint
 SplinePoint
 StarPointStyle
 SteppedLine
+SweepChartGradient
 TRBL
 TRBLCorners
 TextMetrics
@@ -212,10 +214,8 @@ CSSStyleDeclaration
 CancelableHookArgs
 CanvasCompositeOperation
 CanvasEventTarget
-CanvasGradient
 CanvasImageSource
 CanvasPath
-CanvasPattern
 CanvasRenderingContext2D
 CanvasTextBaseline
 CartesianAxis
@@ -236,6 +236,7 @@ ChartEvent
 ChartEventDetails
 ChartFill
 ChartFiller
+ChartGradient
 ChartHit
 ChartIndexed
 ChartInteraction
@@ -245,9 +246,11 @@ ChartLegendEventDetails
 ChartMeta
 ChartMetaClip
 ChartPaint
+ChartPattern
 ChartPosition
 ChartResolver
 ChartScript
+ChartShaderPaint
 ChartShadow
 ChartTextStyle
 ChartTheme
@@ -286,7 +289,6 @@ FillTarget
 FillerDrawTime
 FlutterPlatform
 GraceLength
-GradientChartPaint
 HTMLCanvasElement
 HeightAnimation
 HideTransition
@@ -312,6 +314,7 @@ LineElement
 LineElementStyle
 LinePointStyle
 LinearAxis
+LinearChartGradient
 LinearScale
 LogarithmicAxis
 LogarithmicScale
@@ -328,7 +331,6 @@ OffsetAnimation
 OuterRadiusAnimation
 Path2D
 PathPointStyle
-PatternChartPaint
 PercentGrace
 PercentRadius
 PieController
@@ -348,6 +350,7 @@ PropertyAnimation
 RAxis
 RadarController
 RadarDataset
+RadialChartGradient
 RadialLinearAxis
 RadialLinearScale
 RadiusAnimation
@@ -374,6 +377,7 @@ SplinePoint
 StarPointStyle
 StartAngleAnimation
 SteppedLine
+SweepChartGradient
 TRBL
 TRBLCorners
 TensionAnimation

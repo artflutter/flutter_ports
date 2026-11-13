@@ -8,14 +8,16 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 class _Ordinary extends Config {
   _Ordinary(super.config);
 }
 
-const red = Color(0xffff0000);
-const blue = Color(0xff0000ff);
+const red = ChartPaint.solid(Color(0xffff0000));
+const blue = ChartPaint.solid(Color(0xff0000ff));
 
 Object? _plain(Object? value) => value is helpers.OptionView
     ? {for (final key in value.jsKeys()) key: _plain(value.jsRead(key))}
@@ -115,7 +117,7 @@ void main() {
               }
             }
             return switch (change) {
-              'array' => <Color>[red, blue],
+              'array' => <ChartPaint>[red, blue],
               'object' => <String, Object?>{'value': 3},
               'null' => null,
               'undefined' => undefined,

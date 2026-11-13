@@ -69,18 +69,18 @@ List<DataPoint> _points(int step, {int count = _count}) => <DataPoint>[
 ];
 
 /// A dataset of the chart type [type], with new data for [step].
-Dataset _dataset(ChartKind type, int step, {ChartValue<Color>? color}) =>
+Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
     switch (type) {
       ChartKind.bar => BarDataset(
         label: 'd',
         data: _values(step),
-        backgroundColor: color ?? const ChartValue.constant(_blue),
+        backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         borderWidth: 0,
       ),
       ChartKind.line => LineDataset(
         label: 'd',
         points: _points(step),
-        borderColor: color ?? const ChartValue.constant(_blue),
+        borderColor: color ?? const ChartValue.constant(.solid(_blue)),
         pointRadius: 3,
         tension: .3,
         fill: ChartFill.origin,
@@ -88,7 +88,7 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<Color>? color}) =>
       ChartKind.scatter => ScatterDataset(
         label: 'd',
         points: _points(step),
-        backgroundColor: color ?? const ChartValue.constant(_blue),
+        backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         pointRadius: 3,
       ),
       ChartKind.bubble => BubbleDataset(
@@ -97,31 +97,31 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<Color>? color}) =>
           for (var i = 0; i < _count; i++)
             DataPoint.bubble(i * 10, _value(i, step), 4),
         ],
-        backgroundColor: color ?? const ChartValue.constant(_blue),
+        backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         borderWidth: 0,
       ),
       ChartKind.pie => PieDataset(
         label: 'd',
         data: _values(step),
-        backgroundColor: color ?? const ChartValue.constant(_blue),
+        backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         borderWidth: 0,
       ),
       ChartKind.doughnut => DoughnutDataset(
         label: 'd',
         data: _values(step),
-        backgroundColor: color ?? const ChartValue.constant(_blue),
+        backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         borderWidth: 0,
       ),
       ChartKind.polarArea => PolarAreaDataset(
         label: 'd',
         data: _values(step),
-        backgroundColor: color ?? const ChartValue.constant(_blue),
+        backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         borderWidth: 0,
       ),
       _ => RadarDataset(
         label: 'd',
         data: _values(step),
-        borderColor: color ?? const ChartValue.constant(_blue),
+        borderColor: color ?? const ChartValue.constant(.solid(_blue)),
         pointRadius: 3,
         fill: ChartFill.start,
       ),
@@ -196,7 +196,7 @@ ChartConfig _bars(
           key: _a,
           label: 'd',
           data: _values(step),
-          backgroundColor: const ChartValue.constant(_blue),
+          backgroundColor: const ChartValue.constant(.solid(_blue)),
           borderWidth: 0,
         ),
       ],
@@ -727,7 +727,7 @@ void main() {
         (data) => BarDataset(
           key: _a,
           data: data,
-          backgroundColor: const ChartValue.constant(_red),
+          backgroundColor: const ChartValue.constant(.solid(_red)),
         ),
       ),
       ('hidden', (data) => BarDataset(key: _a, data: data, hidden: true)),
@@ -756,7 +756,9 @@ void main() {
       Dataset colored(int step, List<Color> colors) => BarDataset(
         key: _a,
         data: _values(step),
-        backgroundColor: ChartValue.indexed(colors),
+        backgroundColor: ChartValue.indexed(
+          colors.map(ChartPaint.solid).toList(),
+        ),
       );
       final spy = await afterChange(
         tester,
@@ -777,7 +779,7 @@ void main() {
       );
       expect(spy.layouts, 1);
       final bar = _chart(tester).getDatasetMeta(0).data[1];
-      expect(_option(bar, 'backgroundColor'), _blue);
+      expect(_option(bar, 'backgroundColor'), const ChartPaint.solid(_blue));
     });
 
     testWidgets('a data List of another length', (tester) async {
@@ -1043,11 +1045,14 @@ void main() {
     Dataset colored(
       ChartKind type,
       int step, {
-      ChartValue<Color> background = const ChartValue.indexed([_red, _green]),
-      ChartValue<Color> border = const ChartValue.indexed([
-        _blue,
-        _red,
-        _green,
+      ChartValue<ChartPaint> background = const ChartValue.indexed([
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_green),
+      ]),
+      ChartValue<ChartPaint> border = const ChartValue.indexed([
+        ChartPaint.solid(_blue),
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_green),
       ]),
       double radius = 4,
     }) => switch (type) {
@@ -1268,10 +1273,14 @@ void main() {
               type,
               step,
               background: ChartValue.indexed(
-                List<Color>.of(const [_red, _green]),
+                List<Color>.of(const [_red, _green])
+                    .map(ChartPaint.solid)
+                    .toList(),
               ),
               border: ChartValue.indexed(
-                List<Color>.of(const [_blue, _red, _green]),
+                List<Color>.of(const [_blue, _red, _green])
+                    .map(ChartPaint.solid)
+                    .toList(),
               ),
             ),
           );
@@ -1305,7 +1314,9 @@ void main() {
             dataset: colored(
               type,
               step,
-              background: ChartValue.indexed(colors),
+              background: ChartValue.indexed(
+                colors.map(ChartPaint.solid).toList(),
+              ),
             ),
           );
           await _warm(tester, (step) => _view(at(step, [_red, _green])));
@@ -1316,7 +1327,10 @@ void main() {
           await tester.pumpWidget(_view(at(3, [_green, _blue])));
           expect(spy.layouts, 1);
           final element = _chart(tester).getDatasetMeta(0).data[1];
-          expect(_option(element, 'backgroundColor'), _blue);
+          expect(
+            _option(element, 'backgroundColor'),
+            const ChartPaint.solid(_blue),
+          );
           spy.clear();
           await tester.pumpWidget(_view(at(4, [_green, _blue])));
           expect(spy.layouts, 0);
@@ -1327,9 +1341,9 @@ void main() {
           final spy = _spyOnChart();
           final labels = _newLabels();
           var calls = 0;
-          Color resolve(ChartContext _) {
+          ChartPaint resolve(ChartContext _) {
             calls++;
-            return _red;
+            return const ChartPaint.solid(_red);
           }
 
           ChartConfig at(int step) => coloredConfig(
@@ -1685,14 +1699,14 @@ void main() {
           key: _a,
           label: 'a',
           data: _values(step),
-          backgroundColor: const ChartValue.constant(_blue),
+          backgroundColor: const ChartValue.constant(.solid(_blue)),
           borderWidth: 0,
         ),
         BarDataset(
           key: _b,
           label: 'b',
           data: _values(step + 1),
-          backgroundColor: const ChartValue.constant(_red),
+          backgroundColor: const ChartValue.constant(.solid(_red)),
           borderWidth: 0,
         ),
       ],
@@ -1820,7 +1834,7 @@ void main() {
       datasets: [
         BubbleDataset(
           points: <DataPoint>[DataPoint.bubble(40 + step, 50, radius)],
-          backgroundColor: const ChartValue.constant(_blue),
+          backgroundColor: const ChartValue.constant(.solid(_blue)),
           borderWidth: 0,
         ),
       ],
@@ -1828,13 +1842,13 @@ void main() {
         'x': LinearAxis(
           min: 0,
           max: 100,
-          grid: const AxisGrid(color: _red, lineWidth: 3),
+          grid: const AxisGrid(color: ChartPaint.solid(_red), lineWidth: 3),
           extra: xExtra,
         ),
         'y': const LinearAxis(
           min: 0,
           max: 100,
-          grid: AxisGrid(color: _green, lineWidth: 3),
+          grid: AxisGrid(color: ChartPaint.solid(_green), lineWidth: 3),
         ),
       },
       animation: ChartAnimation.none,
@@ -2023,7 +2037,7 @@ void main() {
                 _count,
                 (i) => step >= 2 && i < 3 ? 500.0 : 50.0,
               ),
-              backgroundColor: const ChartValue.constant(_blue),
+              backgroundColor: const ChartValue.constant(.solid(_blue)),
               borderWidth: 0,
             ),
           ],

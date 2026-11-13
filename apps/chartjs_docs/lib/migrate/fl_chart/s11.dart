@@ -43,9 +43,11 @@ class _Sample11State extends State<Sample11> {
     grid: AxisGrid(
       drawTicks: false,
       extra: {
-        'color': (JsObjectFace c) => (tickOf(c) - base).abs() <= 0.1
-            ? const Color(0xB3FFFFFF)
-            : Fl.blueGrey,
+        'color': (JsObjectFace c) => ChartPaint.solid(
+          (tickOf(c) - base).abs() <= 0.1
+              ? const Color(0xB3FFFFFF)
+              : Fl.blueGrey,
+        ),
         'lineWidth': (JsObjectFace c) =>
             (tickOf(c) - base).abs() <= 0.1 ? 1.0 : 0.4,
       },
@@ -55,8 +57,9 @@ class _Sample11State extends State<Sample11> {
       maxRotation: 0,
       format: (t) => t.value.toStringAsFixed(t.value % 1 == 0 ? 0 : 1),
       extra: {
-        'color': (JsObjectFace c) =>
-            (tickOf(c) - base).abs() <= 0.1 ? Colors.white : Colors.white60,
+        'color': (JsObjectFace c) => ChartPaint.solid(
+          (tickOf(c) - base).abs() <= 0.1 ? Colors.white : Colors.white60,
+        ),
         'font': (JsObjectFace c) =>
             (tickOf(c) - base).abs() <= 0.1 ? _bold : _plain,
       },

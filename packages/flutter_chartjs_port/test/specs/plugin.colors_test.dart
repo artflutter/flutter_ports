@@ -11,6 +11,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -41,17 +43,14 @@ void main() {
     group('Plugin.colors.chartDefaults', () {
       void beforeAll() {
         defaults['backgroundColor'] = <Object?>[
-          const native_ui.Color.fromRGBO(0, 128, 0, 1),
-          const native_ui.Color.fromRGBO(255, 255, 0, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 0, 1)),
         ];
       }
 
       void afterAll() {
-        defaults['backgroundColor'] = const native_ui.Color.fromRGBO(
-          0,
-          0,
-          0,
-          0.1,
+        defaults['backgroundColor'] = const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 0, 0.1),
         );
       }
 
@@ -80,11 +79,11 @@ void main() {
         final meta = chart.getDatasetMeta(0);
         expect(
           _options(meta.data[0])!['backgroundColor'],
-          const native_ui.Color.fromRGBO(0, 128, 0, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
         );
         expect(
           _options(meta.data[1])!['backgroundColor'],
-          const native_ui.Color.fromRGBO(255, 255, 0, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 0, 1)),
         );
       });
     });

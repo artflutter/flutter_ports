@@ -1,4 +1,4 @@
-# Resolved color fields materialize native values at writes (ADR 0057).
+# Paint option fields hold ChartPaint throughout resolution (ADR 0128).
 # Original code, not ported from Chart.js: the option schema of the typed internal model.
 #
 # The hand-written schema of Chart.js ADR 0054 section 2. tool/options_gen.dart reads it and
@@ -22,7 +22,8 @@
 #   line in a comment).
 #
 # A shape is one atom or several atoms joined by ` | `: `number`, `bool`, `string`, `fn` (a
-# plain function value), `list` (a plain array value), `curve` (a Flutter `Curve`, the value of
+# plain function value), `list` (a plain array value), `chartPaint` (a solid, gradient
+# or pattern paint; bare Flutter colors and CSS strings are foreign), `curve` (a Flutter `Curve`, the value of
 # `easing`; an easing name is a foreign value), `interactionMode` (an `InteractionMode`, the value
 # of `mode`; a mode name is a foreign value), `tooltipPositioner` (a `TooltipPositioner`, the value
 # of the tooltip `position`; a positioner name is a foreign value), `strokeCap` and `strokeJoin` (the
@@ -93,11 +94,11 @@ kinds:
       datasets: scope DatasetOptionsByType
       indexAxis: cartesianAxis
       clip: number | bool | scope ChartArea
-      color: any
-      backgroundColor: any
-      hoverBackgroundColor: any
-      borderColor: any
-      hoverBorderColor: any
+      color: chartPaint
+      backgroundColor: chartPaint
+      hoverBackgroundColor: chartPaint
+      borderColor: chartPaint
+      hoverBorderColor: chartPaint
       font: textStyle
       responsive: bool
       maintainAspectRatio: bool
@@ -127,7 +128,7 @@ kinds:
       spacingMode: arcSpacingMode
       startAngle: number  # index.d.ts:400 PolarAreaControllerChartOptions
       scale: scope ScaleOptions  # index.d.ts:708 Defaults, only Chart.defaults has it
-      hoverColor: any  # core.defaults.js:64
+      hoverColor: chartPaint  # core.defaults.js:64
       drawActiveElementsOnTop: bool  # core.defaults.js:80
       # The keys of the dataset kinds that are not chart keys above, in the order of
       # DatasetOptionsByType: the dataset, element and animation resolution read the root options
@@ -160,14 +161,14 @@ kinds:
       fill: number | fillTarget | bool | scope FillTarget
       datasetElementType: string | bool
       dataElementType: string | bool
-      pointBackgroundColor: any
-      pointBorderColor: any
+      pointBackgroundColor: chartPaint
+      pointBorderColor: chartPaint
       pointBorderWidth: number
       pointHitRadius: number
       pointRadius: number
       pointRotation: number
-      pointHoverBackgroundColor: any
-      pointHoverBorderColor: any
+      pointHoverBackgroundColor: chartPaint
+      pointHoverBorderColor: chartPaint
       pointHoverBorderWidth: number
       pointHoverRadius: number
       borderCapStyle: strokeCap
@@ -332,16 +333,16 @@ kinds:
     implements: DrawPointOptions
     keys:
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       radius: number
       hitRadius: number
       pointStyle: pointStyle | bool
       rotation: number
       drawActiveElementsOnTop: bool
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverRadius: number
       $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
       $animations: any  # written at core.animations.js:71 and :159
@@ -367,8 +368,8 @@ kinds:
       - $animations
     keys:
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       borderCapStyle: strokeCap
       borderDash: list
       borderDashOffset: number
@@ -381,8 +382,8 @@ kinds:
       spanGaps: bool | number
       segment: scope SegmentOptions
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number
@@ -403,16 +404,16 @@ kinds:
       - borderColor
       - $animations
     keys:
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       base: number
       borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
       inflateAmount: number | string
       borderWidth: number | scope Padding
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverBorderRadius: number | scope BorderRadius
       pointStyle: pointStyle | bool  # element.bar.js:153 defaults
       $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
@@ -439,8 +440,8 @@ kinds:
       - $animations
     keys:
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       selfJoin: bool
       borderAlign: arcBorderAlign
       borderDash: list
@@ -452,8 +453,8 @@ kinds:
       spacing: number
       spacingMode: arcSpacingMode
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverBorderDash: list
       hoverBorderDashOffset: number
       hoverOffset: number
@@ -479,14 +480,14 @@ kinds:
     doc: index.d.ts:2302 ComplexFillTarget and the object `{value}` of index.d.ts:2300 FillTarget, the object form of `fill`.
     keys:
       target: number | fillTarget | bool | scope FillTarget
-      above: any
-      below: any
+      above: chartPaint
+      below: chartPaint
       value: number
   SegmentOptions:
     doc: Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable styles of a line segment.
     keys:
-      backgroundColor: any
-      borderColor: any
+      backgroundColor: chartPaint
+      borderColor: chartPaint
       borderCapStyle: strokeCap
       borderDash: list
       borderDashOffset: number
@@ -511,16 +512,16 @@ kinds:
       order: number
       stack: string
       hidden: bool
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       base: number
       borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
       inflateAmount: number | string
       borderWidth: number | scope Padding
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       animation: bool | scope AnimationOptions
       animations: bool | scope AnimationsSpec
       transitions: scope TransitionsSpec
@@ -557,15 +558,15 @@ kinds:
       order: number
       stack: string
       hidden: bool
-      pointBackgroundColor: any
-      pointBorderColor: any
+      pointBackgroundColor: chartPaint
+      pointBorderColor: chartPaint
       pointBorderWidth: number
       pointHitRadius: number
       pointRadius: number
       pointRotation: number
       pointStyle: pointStyle | bool
-      pointHoverBackgroundColor: any
-      pointHoverBorderColor: any
+      pointHoverBackgroundColor: chartPaint
+      pointHoverBorderColor: chartPaint
       pointHoverBorderWidth: number
       pointHoverRadius: number
       borderCapStyle: strokeCap
@@ -580,15 +581,15 @@ kinds:
       spanGaps: bool | number
       segment: scope SegmentOptions
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       hoverBorderCapStyle: strokeCap
       hoverBorderDash: list
       hoverBorderDashOffset: number
       hoverBorderJoinStyle: strokeJoin
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       animation: bool | scope AnimationOptions
       animations: bool | scope AnimationsSpec
       transitions: scope TransitionsSpec
@@ -617,16 +618,16 @@ kinds:
       stack: string
       hidden: bool
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       radius: number
       hitRadius: number
       pointStyle: pointStyle | bool
       rotation: number
       drawActiveElementsOnTop: bool
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverRadius: number
       xAxisID: string
       yAxisID: string
@@ -655,8 +656,8 @@ kinds:
       stack: string
       hidden: bool
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       selfJoin: bool
       borderAlign: arcBorderAlign
       borderDash: list
@@ -668,8 +669,8 @@ kinds:
       spacing: number
       spacingMode: arcSpacingMode
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverBorderDash: list
       hoverBorderDashOffset: number
       hoverOffset: number
@@ -706,8 +707,8 @@ kinds:
       stack: string
       hidden: bool
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       selfJoin: bool
       borderAlign: arcBorderAlign
       borderDash: list
@@ -719,8 +720,8 @@ kinds:
       spacing: number
       spacingMode: arcSpacingMode
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverBorderDash: list
       hoverBorderDashOffset: number
       hoverOffset: number
@@ -758,25 +759,25 @@ kinds:
       stack: string
       hidden: bool
       borderWidth: number
-      borderColor: any
-      backgroundColor: any
+      borderColor: chartPaint
+      backgroundColor: chartPaint
       radius: number
       hitRadius: number
       pointStyle: pointStyle | bool
       rotation: number
       drawActiveElementsOnTop: bool
       hoverBorderWidth: number
-      hoverBorderColor: any
-      hoverBackgroundColor: any
+      hoverBorderColor: chartPaint
+      hoverBackgroundColor: chartPaint
       hoverRadius: number
-      pointBackgroundColor: any
-      pointBorderColor: any
+      pointBackgroundColor: chartPaint
+      pointBorderColor: chartPaint
       pointBorderWidth: number
       pointHitRadius: number
       pointRadius: number
       pointRotation: number
-      pointHoverBackgroundColor: any
-      pointHoverBorderColor: any
+      pointHoverBackgroundColor: chartPaint
+      pointHoverBorderColor: chartPaint
       pointHoverBorderWidth: number
       pointHoverRadius: number
       borderCapStyle: strokeCap
@@ -845,7 +846,7 @@ kinds:
     keys:
       display: bool | string
       alignToPixels: bool
-      backgroundColor: any
+      backgroundColor: chartPaint
       reverse: bool
       clip: bool
       weight: number
@@ -894,15 +895,15 @@ kinds:
   TickOptions:
     doc: The union of index.d.ts:3115 TickOptions, :3179 CartesianTickOptions, the linear ticks of :3376, the logarithmic ticks of :3415, :3466 TimeScaleTickOptions and :3535 RadialTickOptions, the scope `ticks` of a scale.
     keys:
-      backdropColor: any
+      backdropColor: chartPaint
       backdropPadding: edgeInsets
       callback: fn | bool
       display: bool
-      color: any
+      color: chartPaint
       font: textStyle
       padding: number
       showLabelBackdrop: bool
-      textStrokeColor: any
+      textStrokeColor: chartPaint
       textStrokeWidth: number
       z: number
       major: scope MajorTickOptions
@@ -935,13 +936,13 @@ kinds:
     keys:
       display: bool
       circular: bool
-      color: any
+      color: chartPaint
       lineWidth: number
       drawOnChartArea: bool
       drawTicks: bool
       tickBorderDash: list
       tickBorderDashOffset: number
-      tickColor: any
+      tickColor: chartPaint
       tickLength: number
       tickWidth: number
       offset: bool
@@ -952,7 +953,7 @@ kinds:
       display: bool
       dash: list
       dashOffset: number
-      color: any
+      color: chartPaint
       width: number
       z: number
   ScaleTitleOptions:
@@ -961,8 +962,8 @@ kinds:
       display: bool
       align: chartAlign
       text: string | list
-      color: any
-      strokeColor: any
+      color: chartPaint
+      strokeColor: chartPaint
       strokeWidth: number
       font: textStyle
       padding: edgeInsets
@@ -994,18 +995,18 @@ kinds:
     doc: Port-only name for index.d.ts:3568 RadialLinearScaleOptions `angleLines`, the angle lines of a radial scale.
     keys:
       display: bool
-      color: any
+      color: chartPaint
       lineWidth: number
       borderDash: list
       borderDashOffset: number
   PointLabelOptions:
     doc: Port-only name for index.d.ts:3613 RadialLinearScaleOptions `pointLabels`, the point labels of a radial scale.
     keys:
-      backdropColor: any
+      backdropColor: chartPaint
       backdropPadding: edgeInsets
       borderRadius: number | scope BorderRadius
       display: bool | string
-      color: any
+      color: chartPaint
       font: textStyle
       callback: fn
       padding: number
@@ -1037,7 +1038,7 @@ kinds:
     keys:
       boxWidth: number
       boxHeight: number
-      color: any
+      color: chartPaint
       font: textStyle
       padding: number
       pointStyleWidth: number
@@ -1053,7 +1054,7 @@ kinds:
     doc: Port-only name for index.d.ts:2552 LegendOptions `title`, the title of the legend.
     keys:
       display: bool
-      color: any
+      color: chartPaint
       font: textStyle
       position: chartAlign
       padding: edgeInsets
@@ -1064,7 +1065,7 @@ kinds:
       align: chartAlign
       display: bool
       position: chartPosition
-      color: any
+      color: chartPaint
       font: textStyle
       fullSize: bool
       padding: edgeInsets
@@ -1085,32 +1086,32 @@ kinds:
       yAlign: tooltipYAlign
       itemSort: fn
       filter: fn
-      backgroundColor: any
+      backgroundColor: chartPaint
       boxPadding: number
-      titleColor: any
+      titleColor: chartPaint
       titleFont: textStyle
       titleSpacing: number
       titleMarginBottom: number
       titleAlign: textAlign
       bodySpacing: number
-      bodyColor: any
+      bodyColor: chartPaint
       bodyFont: textStyle
       bodyAlign: textAlign
       footerSpacing: number
       footerMarginTop: number
-      footerColor: any
+      footerColor: chartPaint
       footerFont: textStyle
       footerAlign: textAlign
       padding: edgeInsets
       caretPadding: number
       caretSize: number
       cornerRadius: number | scope BorderRadius
-      multiKeyBackground: any
+      multiKeyBackground: chartPaint
       displayColors: bool
       boxWidth: number
       boxHeight: number
       usePointStyle: bool
-      borderColor: any
+      borderColor: chartPaint
       borderWidth: number
       rtl: bool
       textDirection: textDirection

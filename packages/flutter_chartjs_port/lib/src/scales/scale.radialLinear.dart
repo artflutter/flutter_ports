@@ -87,6 +87,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         TickOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show chartPaintOf;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' as types;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -183,55 +185,6 @@ final class _RoundedRect implements types.RoundedRect {
 
   @override
   final types.TRBLCorners radius;
-}
-
-/// The text options of a point label (scale.radialLinear.js:281-285) and of
-/// a tick label (scale.radialLinear.js:670-674). The members that the
-/// object literals leave out are Dart `null`, JS `undefined`.
-final class _RenderTextOpts implements types.RenderTextOpts {
-  _RenderTextOpts({
-    this.color,
-    this.strokeColor,
-    this.strokeWidth,
-    this.textAlign,
-    this.textBaseline,
-  });
-
-  @override
-  final Object? color;
-
-  @override
-  final Object? strokeColor;
-
-  @override
-  final double? strokeWidth;
-
-  @override
-  final TextAlign? textAlign;
-
-  @override
-  final CanvasTextBaseline? textBaseline;
-
-  @override
-  types.BackdropOptions? get backdrop => null;
-
-  @override
-  double? get decorationWidth => null;
-
-  @override
-  double? get maxWidth => null;
-
-  @override
-  double? get rotation => null;
-
-  @override
-  bool? get strikethrough => null;
-
-  @override
-  (double, double)? get translation => null;
-
-  @override
-  bool? get underline => null;
 }
 
 /// scale.radialLinear.js:9 `getTickBackdropHeight(opts)`.
@@ -739,7 +692,7 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
       x,
       y + (plFont.lineHeight! / 2),
       plFont,
-      _RenderTextOpts(
+      types.RenderTextOpts(
         color: optsAtIndex.color,
         textAlign: textAlign,
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
@@ -779,6 +732,8 @@ int _drawStaticPointLabels(
   int start,
 ) {
   final ctx = scale.ctx!;
+  // One paint for the loop: the plan has one plain color.
+  final paint = chartPaintOf(color);
   final items = scale.pointLabelItems;
   final labels = scale.pointLabels;
   final middle = font.lineHeight! / 2;
@@ -797,8 +752,8 @@ int _drawStaticPointLabels(
       item.x,
       item.y + middle,
       font,
-      _RenderTextOpts(
-        color: color,
+      types.RenderTextOpts(
+        color: paint,
         textAlign: item.textAlign,
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         textBaseline: CanvasTextBaseline.middle,
@@ -1627,7 +1582,7 @@ class RadialLinearScale extends LinearScaleBase
       if (optsAtIndex.showLabelBackdrop) {
         ctx.font = tickFont;
         final width = ctx.measureText(jsToString(tick.label)).width;
-        ctx.fillStyle = canvasStyle(optsAtIndex.backdropColor);
+        ctx.fillStyle = optsAtIndex.backdropColor;
 
         final padding = optsAtIndex.backdropPadding;
         ctx.fillRect(
@@ -1644,7 +1599,7 @@ class RadialLinearScale extends LinearScaleBase
         0,
         -offset,
         tickFont,
-        _RenderTextOpts(
+        types.RenderTextOpts(
           color: optsAtIndex.color,
           strokeColor: optsAtIndex.textStrokeColor,
           strokeWidth: canvasNumber(optsAtIndex.textStrokeWidth),

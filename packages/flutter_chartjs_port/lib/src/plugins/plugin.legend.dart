@@ -99,7 +99,8 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
         canvasNumber,
         canvasStyle,
         canvasTextAlign;
-import 'package:flutter_chartjs_port/src/options/opt.dart' show optNull;
+import 'package:flutter_chartjs_port/src/options/opt.dart'
+    show OptFunction, optNull;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
@@ -981,7 +982,9 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       final lineWidth = legendItem.lineWidth ?? 1;
       ctx
         ..fillStyle = canvasStyle(
-          chartPaintValue(legendItem.fillStyle) ?? defaultColor,
+          legendItem.fillStyle is UnchangedChartPaint
+              ? defaultColor
+              : legendItem.fillStyle,
         )
         // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enums.
         ..lineCap = canvasLineCap(
@@ -995,7 +998,9 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         )
         ..lineWidth = canvasNumber(lineWidth)
         ..strokeStyle = canvasStyle(
-          chartPaintValue(legendItem.strokeStyle) ?? defaultColor,
+          legendItem.strokeStyle is UnchangedChartPaint
+              ? defaultColor
+              : legendItem.strokeStyle,
         )
         ..setLineDash(
           canvasLineDash(legendItem.lineDash ?? <double>[]),
@@ -1068,7 +1073,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         x,
         y + (itemHeight / 2),
         labelFont,
-        _LegendTextOpts(
+        types.RenderTextOpts(
           strikethrough: jsTruthy(legendItem.hidden),
           // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
           textAlign: rtlHelper.textAlign(canvasTextAlign(legendItem.textAlign)),
@@ -1111,7 +1116,9 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       for (var i = 0; i < legendItems.length; i++) {
         final legendItem = legendItems[i];
         final fontColor = canvasStyle(
-          chartPaintValue(legendItem.fontColor) ?? labelOpts.color,
+          legendItem.fontColor is UnchangedChartPaint
+              ? labelOpts.color
+              : legendItem.fontColor,
         );
         ctx
           ..strokeStyle =
@@ -1653,49 +1660,6 @@ final class _RoundedRect implements RoundedRect {
   final TRBLCorners radius;
 }
 
-/// The text options of a legend item (:368-371), the object literal of the
-/// `renderText` call. The members that the literal leaves out are Dart
-/// `null`, JS `undefined`.
-final class _LegendTextOpts implements types.RenderTextOpts {
-  _LegendTextOpts({required this.strikethrough, required this.textAlign});
-
-  @override
-  final bool? strikethrough;
-
-  @override
-  final TextAlign? textAlign;
-
-  @override
-  Object? get color => null;
-
-  @override
-  double? get maxWidth => null;
-
-  @override
-  double? get rotation => null;
-
-  @override
-  CanvasTextBaseline? get textBaseline => null;
-
-  @override
-  (double, double)? get translation => null;
-
-  @override
-  types.BackdropOptions? get backdrop => null;
-
-  @override
-  double? get decorationWidth => null;
-
-  @override
-  Object? get strokeColor => null;
-
-  @override
-  double? get strokeWidth => null;
-
-  @override
-  bool? get underline => null;
-}
-
 /// The `config` of `new Legend(config)` from the arguments [args] of the
 /// `construct` closure of [Legend.jsClass]: the reads `config.chart`,
 /// `config.options` and `config.ctx` of plugin.legend.js:62-64.
@@ -1933,13 +1897,13 @@ final Plugin legend = Plugin(supportsDataUpdates: true)
     ..onHoverCell = optNull
     ..onLeaveCell = optNull
     ..labels = (LegendLabelOptionsScope()
-      ..color = _chartColor
+      ..colorCell = const OptFunction(_chartColor)
       ..boxWidth = 40.0
       ..padding = 10.0
       // Generates labels shown in the legend
       ..generateLabels = _generateLabels)
     ..title = (LegendTitleOptionsScope()
-      ..color = _chartColor
+      ..colorCell = const OptFunction(_chartColor)
       ..display = false
       // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
       ..position = ChartAlign.center

@@ -96,24 +96,24 @@ List<Color> _seven(double alpha) => [
 
 /// The 7 background colors of the bar and line docs blocks.
 const List<Object?> _sevenBackgrounds = [
-  native_ui.Color.fromRGBO(255, 99, 132, 0.2),
-  native_ui.Color.fromRGBO(255, 159, 64, 0.2),
-  native_ui.Color.fromRGBO(255, 205, 86, 0.2),
-  native_ui.Color.fromRGBO(75, 192, 192, 0.2),
-  native_ui.Color.fromRGBO(54, 162, 235, 0.2),
-  native_ui.Color.fromRGBO(153, 102, 255, 0.2),
-  native_ui.Color.fromRGBO(201, 203, 207, 0.2),
+  ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.2)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(255, 159, 64, 0.2)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 0.2)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(75, 192, 192, 0.2)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 0.2)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(153, 102, 255, 0.2)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(201, 203, 207, 0.2)),
 ];
 
 /// The 7 border colors of the bar and line docs blocks.
 const List<Object?> _sevenBorders = [
-  native_ui.Color.fromRGBO(255, 99, 132, 1),
-  native_ui.Color.fromRGBO(255, 159, 64, 1),
-  native_ui.Color.fromRGBO(255, 205, 86, 1),
-  native_ui.Color.fromRGBO(75, 192, 192, 1),
-  native_ui.Color.fromRGBO(54, 162, 235, 1),
-  native_ui.Color.fromRGBO(153, 102, 255, 1),
-  native_ui.Color.fromRGBO(201, 203, 207, 1),
+  ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(255, 159, 64, 1)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 1)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(75, 192, 192, 1)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(153, 102, 255, 1)),
+  ChartPaint.solid(native_ui.Color.fromRGBO(201, 203, 207, 1)),
 ];
 
 /// The labels of `Utils.months({count: 7})` (`docs/scripts/utils.js:91-104`).
@@ -172,8 +172,10 @@ ChartConfig _barVerticalTyped() => ChartConfig(
     BarDataset(
       label: 'My First Dataset',
       data: _docsData,
-      backgroundColor: ChartValue.indexed(_seven(0.2)),
-      borderColor: ChartValue.indexed(_seven(1)),
+      backgroundColor: ChartValue.indexed(
+        _seven(0.2).map(ChartPaint.solid).toList(),
+      ),
+      borderColor: ChartValue.indexed(_seven(1).map(ChartPaint.solid).toList()),
       borderWidth: 1,
     ),
   ],
@@ -210,8 +212,10 @@ ChartConfig _barHorizontalTyped() => ChartConfig(
     BarDataset(
       label: 'My First Dataset',
       data: _docsData,
-      backgroundColor: ChartValue.indexed(_seven(0.2)),
-      borderColor: ChartValue.indexed(_seven(1)),
+      backgroundColor: ChartValue.indexed(
+        _seven(0.2).map(ChartPaint.solid).toList(),
+      ),
+      borderColor: ChartValue.indexed(_seven(1).map(ChartPaint.solid).toList()),
       borderWidth: 1,
     ),
   ],
@@ -230,7 +234,9 @@ Map<String, Object?> _bubbleRaw() => <String, Object?>{
           <String, Object?>{'x': 20.0, 'y': 30.0, 'r': 15.0},
           <String, Object?>{'x': 40.0, 'y': 10.0, 'r': 10.0},
         ],
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
       },
     ],
   },
@@ -244,7 +250,7 @@ ChartConfig _bubbleTyped() => ChartConfig(
     BubbleDataset(
       label: 'First Dataset',
       points: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
-      backgroundColor: const ChartValue.constant(_red),
+      backgroundColor: const ChartValue.constant(.solid(_red)),
     ),
   ],
 );
@@ -258,9 +264,9 @@ Map<String, Object?> _doughnutData() => <String, Object?>{
       'label': 'My First Dataset',
       'data': <Object?>[300.0, 50.0, 100.0],
       'backgroundColor': <Object?>[
-        const native_ui.Color.fromRGBO(255, 99, 132, 1),
-        const native_ui.Color.fromRGBO(54, 162, 235, 1),
-        const native_ui.Color.fromRGBO(255, 205, 86, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 1)),
       ],
       'hoverOffset': 4.0,
     },
@@ -282,7 +288,11 @@ ChartConfig _doughnutTyped() => const ChartConfig(
     DoughnutDataset(
       label: 'My First Dataset',
       data: [300, 50, 100],
-      backgroundColor: ChartValue.indexed([_red, _blue, _yellow]),
+      backgroundColor: ChartValue.indexed([
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_blue),
+        ChartPaint.solid(_yellow),
+      ]),
       hoverOffset: 4,
     ),
   ],
@@ -303,7 +313,11 @@ ChartConfig _pieTyped() => const ChartConfig(
     PieDataset(
       label: 'My First Dataset',
       data: [300, 50, 100],
-      backgroundColor: ChartValue.indexed([_red, _blue, _yellow]),
+      backgroundColor: ChartValue.indexed([
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_blue),
+        ChartPaint.solid(_yellow),
+      ]),
       hoverOffset: 4,
     ),
   ],
@@ -320,7 +334,9 @@ Map<String, Object?> _lineRaw() => <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
         'fill': false,
-        'borderColor': const native_ui.Color.fromRGBO(75, 192, 192, 1),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(75, 192, 192, 1),
+        ),
         'tension': 0.1,
       },
     ],
@@ -336,7 +352,7 @@ ChartConfig _lineTyped() => const ChartConfig(
       label: 'My First Dataset',
       data: _docsData,
       fill: .none,
-      borderColor: ChartValue.constant(_green),
+      borderColor: ChartValue.constant(.solid(_green)),
       tension: 0.1,
     ),
   ],
@@ -378,8 +394,10 @@ ChartConfig _lineVerticalTyped() => ChartConfig(
       label: 'My First Dataset',
       data: _docsData,
       fill: .none,
-      backgroundColor: ChartValue.indexed(_seven(0.2)),
-      borderColor: ChartValue.indexed(_seven(1)),
+      backgroundColor: ChartValue.indexed(
+        _seven(0.2).map(ChartPaint.solid).toList(),
+      ),
+      borderColor: ChartValue.indexed(_seven(1).map(ChartPaint.solid).toList()),
       borderWidth: 1,
     ),
   ],
@@ -398,15 +416,21 @@ Map<String, Object?> _mixedRaw() => <String, Object?>{
         'type': 'bar',
         'label': 'Bar Dataset',
         'data': <Object?>[10.0, 20.0, 30.0, 40.0],
-        'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 99, 132, 0.2),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 0.2),
+        ),
       },
       <String, Object?>{
         'type': 'line',
         'label': 'Line Dataset',
         'data': <Object?>[50.0, 50.0, 50.0, 50.0],
         'fill': false,
-        'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 1),
+        ),
       },
     ],
   },
@@ -426,14 +450,16 @@ ChartConfig _mixedTyped() => const ChartConfig(
     BarDataset(
       label: 'Bar Dataset',
       data: [10, 20, 30, 40],
-      borderColor: ChartValue.constant(_red),
-      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 0.2)),
+      borderColor: ChartValue.constant(.solid(_red)),
+      backgroundColor: ChartValue.constant(
+        .solid(Color.fromRGBO(255, 99, 132, 0.2)),
+      ),
     ),
     LineDataset(
       label: 'Line Dataset',
       data: [50, 50, 50, 50],
       fill: .none,
-      borderColor: ChartValue.constant(_blue),
+      borderColor: ChartValue.constant(.solid(_blue)),
     ),
   ],
   scales: {'y': LinearAxis(beginAtZero: true)},
@@ -450,11 +476,11 @@ Map<String, Object?> _polarAreaRaw() => <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[11.0, 16.0, 7.0, 3.0, 14.0],
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(255, 99, 132, 1),
-          const native_ui.Color.fromRGBO(75, 192, 192, 1),
-          const native_ui.Color.fromRGBO(255, 205, 86, 1),
-          const native_ui.Color.fromRGBO(201, 203, 207, 1),
-          const native_ui.Color.fromRGBO(54, 162, 235, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(75, 192, 192, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(201, 203, 207, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
         ],
       },
     ],
@@ -471,11 +497,11 @@ ChartConfig _polarAreaTyped() => const ChartConfig(
       label: 'My First Dataset',
       data: [11, 16, 7, 3, 14],
       backgroundColor: ChartValue.indexed([
-        _red,
-        _green,
-        _yellow,
-        _grey,
-        _blue,
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_green),
+        ChartPaint.solid(_yellow),
+        ChartPaint.solid(_grey),
+        ChartPaint.solid(_blue),
       ]),
     ),
   ],
@@ -500,52 +526,46 @@ Map<String, Object?> _radarRaw() => <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0, 55.0, 40.0],
         'fill': true,
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 99, 132, 0.2),
-        'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
-        'pointBackgroundColor': const native_ui.Color.fromRGBO(
-          255,
-          99,
-          132,
-          1,
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 0.2),
         ),
-        'pointBorderColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
-        'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-          255,
-          255,
-          255,
-          1,
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
         ),
-        'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-          255,
-          99,
-          132,
-          1,
+        'pointBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
+        'pointBorderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
+        'pointHoverBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
+        'pointHoverBorderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
         ),
       },
       <String, Object?>{
         'label': 'My Second Dataset',
         'data': <Object?>[28.0, 48.0, 40.0, 19.0, 96.0, 27.0, 100.0],
         'fill': true,
-        'backgroundColor': const native_ui.Color.fromRGBO(54, 162, 235, 0.2),
-        'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
-        'pointBackgroundColor': const native_ui.Color.fromRGBO(
-          54,
-          162,
-          235,
-          1,
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 0.2),
         ),
-        'pointBorderColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
-        'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-          255,
-          255,
-          255,
-          1,
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 1),
         ),
-        'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-          54,
-          162,
-          235,
-          1,
+        'pointBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 1),
+        ),
+        'pointBorderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
+        'pointHoverBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
+        'pointHoverBorderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 1),
         ),
       },
     ],
@@ -574,23 +594,27 @@ ChartConfig _radarTyped() => const ChartConfig(
       label: 'My First Dataset',
       data: [65, 59, 90, 81, 56, 55, 40],
       fill: .origin,
-      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 99, 132, 0.2)),
-      borderColor: ChartValue.constant(_red),
-      pointBackgroundColor: _red,
-      pointBorderColor: _white,
-      pointHoverBackgroundColor: _white,
-      pointHoverBorderColor: _red,
+      backgroundColor: ChartValue.constant(
+        .solid(Color.fromRGBO(255, 99, 132, 0.2)),
+      ),
+      borderColor: ChartValue.constant(.solid(_red)),
+      pointBackgroundColor: .constant(.solid(_red)),
+      pointBorderColor: .constant(.solid(_white)),
+      pointHoverBackgroundColor: .constant(.solid(_white)),
+      pointHoverBorderColor: .constant(.solid(_red)),
     ),
     RadarDataset(
       label: 'My Second Dataset',
       data: [28, 48, 40, 19, 96, 27, 100],
       fill: .origin,
-      backgroundColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 0.2)),
-      borderColor: ChartValue.constant(_blue),
-      pointBackgroundColor: _blue,
-      pointBorderColor: _white,
-      pointHoverBackgroundColor: _white,
-      pointHoverBorderColor: _blue,
+      backgroundColor: ChartValue.constant(
+        .solid(Color.fromRGBO(54, 162, 235, 0.2)),
+      ),
+      borderColor: ChartValue.constant(.solid(_blue)),
+      pointBackgroundColor: .constant(.solid(_blue)),
+      pointBorderColor: .constant(.solid(_white)),
+      pointHoverBackgroundColor: .constant(.solid(_white)),
+      pointHoverBorderColor: .constant(.solid(_blue)),
     ),
   ],
   elements: ChartElements(line: LineElementStyle(borderWidth: 3)),
@@ -626,7 +650,9 @@ Map<String, Object?> _scatterRaw() => <String, Object?>{
           <String, Object?>{'x': 10.0, 'y': 5.0},
           <String, Object?>{'x': 0.5, 'y': 5.5},
         ],
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
       },
     ],
   },
@@ -652,7 +678,7 @@ ChartConfig _scatterTyped() => ChartConfig(
         DataPoint(10, 5),
         DataPoint(0.5, 5.5),
       ],
-      backgroundColor: const ChartValue.constant(_red),
+      backgroundColor: const ChartValue.constant(.solid(_red)),
     ),
   ],
   scales: const {'x': LinearAxis(position: .bottom)},
@@ -685,8 +711,12 @@ Map<String, Object?> _areaRaw(Object fill) => <String, Object?>{
       <String, Object?>{
         'label': 'Dataset',
         'data': <Object?>[..._areaData],
-        'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 99, 132, 0.5),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 0.5),
+        ),
         'fill': fill,
       },
     ],
@@ -718,9 +748,9 @@ ChartConfig _areaTyped(ChartFill fill, String title) => ChartConfig(
     LineDataset(
       label: 'Dataset',
       data: _areaData,
-      borderColor: const ChartValue.constant(_red),
+      borderColor: const ChartValue.constant(.solid(_red)),
       backgroundColor: const ChartValue.constant(
-        Color.fromRGBO(255, 99, 132, 0.5),
+        ChartPaint.solid(Color.fromRGBO(255, 99, 132, 0.5)),
       ),
       fill: fill,
     ),
@@ -843,10 +873,10 @@ ChartConfig _barTyped() => ChartConfig(
     BarDataset(
       label: 'North',
       data: [12, 19, 3, 5],
-      backgroundColor: ChartValue.constant(_blue),
-      borderColor: ChartValue.constant(_navy),
+      backgroundColor: ChartValue.constant(.solid(_blue)),
+      borderColor: ChartValue.constant(.solid(_navy)),
       borderWidth: 2,
-      hoverBackgroundColor: _green,
+      hoverBackgroundColor: .constant(.solid(_green)),
       hoverBorderWidth: 3,
       stack: 'sales',
       borderRadius: 4,
@@ -856,7 +886,12 @@ ChartConfig _barTyped() => ChartConfig(
     BarDataset(
       label: 'South',
       data: [7, 11, 5, 8],
-      backgroundColor: ChartValue.indexed([_red, _orange, _yellow, _green]),
+      backgroundColor: ChartValue.indexed([
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_orange),
+        ChartPaint.solid(_yellow),
+        ChartPaint.solid(_green),
+      ]),
       stack: 'sales',
       maxBarThickness: 40,
       minBarLength: 2,
@@ -864,7 +899,12 @@ ChartConfig _barTyped() => ChartConfig(
     BarDataset(
       label: 'Target',
       data: [10, 10, 10, 10],
-      borderColor: ChartValue.indexed([_grey, _grey, _purple, _purple]),
+      borderColor: ChartValue.indexed([
+        ChartPaint.solid(_grey),
+        ChartPaint.solid(_grey),
+        ChartPaint.solid(_purple),
+        ChartPaint.solid(_purple),
+      ]),
       borderWidth: 1,
       stack: 'target',
       order: 1,
@@ -876,7 +916,10 @@ ChartConfig _barTyped() => ChartConfig(
     'x': CategoryAxis(
       stacked: true,
       grid: AxisGrid(display: false),
-      ticks: AxisTicks(color: _navy, font: TextStyle(fontSize: 13)),
+      ticks: AxisTicks(
+        color: ChartPaint.solid(_navy),
+        font: TextStyle(fontSize: 13),
+      ),
     ),
     'y': LinearAxis(
       stacked: true,
@@ -886,7 +929,7 @@ ChartConfig _barTyped() => ChartConfig(
       title: AxisTitle(
         display: true,
         text: 'Units',
-        color: _navy,
+        color: ChartPaint.solid(_navy),
         font: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         padding: EdgeInsets.symmetric(vertical: 4),
       ),
@@ -899,7 +942,7 @@ ChartConfig _barTyped() => ChartConfig(
     boxWidth: 20,
     boxHeight: 10,
     labelPadding: 12,
-    labelColor: _navy,
+    labelColor: ChartPaint.solid(_navy),
     labelFont: TextStyle(fontSize: 11),
   ),
   title: const ChartTitle(
@@ -912,7 +955,7 @@ ChartConfig _barTyped() => ChartConfig(
   tooltip: ChartTooltip(
     mode: const IndexInteractionMode(),
     intersect: false,
-    backgroundColor: const Color(0xCC000000),
+    backgroundColor: const ChartPaint.solid(Color(0xCC000000)),
     padding: const EdgeInsets.all(10),
     cornerRadius: 4,
     displayColors: false,
@@ -939,14 +982,15 @@ Map<String, Object?> _barRaw() => <String, Object?>{
       <String, Object?>{
         'label': 'North',
         'data': <Object?>[12, 19, 3, 5],
-        'backgroundColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
-        'borderColor': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 1),
+        ),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(27, 58, 92, 1),
+        ),
         'borderWidth': 2,
-        'hoverBackgroundColor': const native_ui.Color.fromRGBO(
-          75,
-          192,
-          192,
-          1,
+        'hoverBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(75, 192, 192, 1),
         ),
         'hoverBorderWidth': 3,
         'stack': 'sales',
@@ -958,10 +1002,10 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'label': 'South',
         'data': <Object?>[7, 11, 5, 8],
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(255, 99, 132, 1),
-          const native_ui.Color.fromRGBO(255, 159, 64, 1),
-          const native_ui.Color.fromRGBO(255, 205, 86, 1),
-          const native_ui.Color.fromRGBO(75, 192, 192, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 159, 64, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(75, 192, 192, 1)),
         ],
         'stack': 'sales',
         'maxBarThickness': 40,
@@ -971,10 +1015,10 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'label': 'Target',
         'data': <Object?>[10, 10, 10, 10],
         'borderColor': <Object?>[
-          const native_ui.Color.fromRGBO(201, 203, 207, 1),
-          const native_ui.Color.fromRGBO(201, 203, 207, 1),
-          const native_ui.Color.fromRGBO(153, 102, 255, 1),
-          const native_ui.Color.fromRGBO(153, 102, 255, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(201, 203, 207, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(201, 203, 207, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(153, 102, 255, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(153, 102, 255, 1)),
         ],
         'borderWidth': 1,
         'stack': 'target',
@@ -991,7 +1035,9 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'stacked': true,
         'grid': <String, Object?>{'display': false},
         'ticks': <String, Object?>{
-          'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(27, 58, 92, 1),
+          ),
           'font': const ChartTextStyle(fontSize: 13),
         },
       },
@@ -1008,7 +1054,9 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'title': <String, Object?>{
           'display': true,
           'text': 'Units',
-          'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(27, 58, 92, 1),
+          ),
           'font': const ChartTextStyle(
             fontSize: 12,
             fontWeight: native_ui.FontWeight.bold,
@@ -1028,7 +1076,9 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         'position': ChartPosition.bottom,
         'align': ChartAlign.start,
         'labels': <String, Object?>{
-          'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(27, 58, 92, 1),
+          ),
           'font': const ChartTextStyle(fontSize: 11),
           'boxWidth': 20,
           'boxHeight': 10,
@@ -1048,7 +1098,9 @@ Map<String, Object?> _barRaw() => <String, Object?>{
       'tooltip': <String, Object?>{
         'mode': const IndexInteractionMode(),
         'intersect': false,
-        'backgroundColor': const native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(0, 0, 0, 0.8),
+        ),
         'titleFont': const ChartTextStyle(fontSize: 13),
         'padding': const EdgeInsets.all(10),
         'cornerRadius': 4,
@@ -1073,9 +1125,9 @@ ChartConfig _lineTypeTyped() => ChartConfig(
       label: 'This week',
       data: [3, 5, null, 8, 6, 9, 7],
       backgroundColor: ChartValue.constant(
-        Color.fromRGBO(255, 99, 132, 0.25),
+        ChartPaint.solid(Color.fromRGBO(255, 99, 132, 0.25)),
       ),
-      borderColor: ChartValue.constant(_red),
+      borderColor: ChartValue.constant(.solid(_red)),
       borderWidth: 2,
       fill: .origin,
       tension: 0.3,
@@ -1083,19 +1135,19 @@ ChartConfig _lineTypeTyped() => ChartConfig(
       pointStyle: RectRotPointStyle(),
       pointRadius: 5,
       pointHoverRadius: 8,
-      pointBackgroundColor: _white,
-      pointBorderColor: _red,
+      pointBackgroundColor: .constant(.solid(_white)),
+      pointBorderColor: .constant(.solid(_red)),
       pointBorderWidth: 2,
-      pointHoverBackgroundColor: _red,
-      pointHoverBorderColor: _white,
+      pointHoverBackgroundColor: .constant(.solid(_red)),
+      pointHoverBorderColor: .constant(.solid(_white)),
     ),
     LineDataset(
       label: 'Last week',
       data: const [2, 4, 6, 5, 4, 6, 5],
       backgroundColor: const ChartValue.constant(
-        Color.fromRGBO(54, 162, 235, 0.25),
+        ChartPaint.solid(Color.fromRGBO(54, 162, 235, 0.25)),
       ),
-      borderColor: const ChartValue.constant(_blue),
+      borderColor: const ChartValue.constant(.solid(_blue)),
       fill: ChartFill.relative(-1),
       borderDash: const [6, 4],
       stepped: SteppedLine.before,
@@ -1111,7 +1163,7 @@ ChartConfig _lineTypeTyped() => ChartConfig(
       min: 0,
       max: 12,
       grid: AxisGrid(
-        color: Color.fromRGBO(0, 0, 0, 0.1),
+        color: ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.1)),
         lineWidth: 0.5,
         drawOnChartArea: true,
       ),
@@ -1127,7 +1179,7 @@ ChartConfig _lineTypeTyped() => ChartConfig(
   subtitle: const ChartTitle(
     display: true,
     text: 'Steps in thousands',
-    color: _navy,
+    color: ChartPaint.solid(_navy),
     position: .bottom,
   ),
   legend: const ChartLegend(usePointStyle: true, reverse: true),
@@ -1147,8 +1199,12 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
       <String, Object?>{
         'label': 'This week',
         'data': <Object?>[3, 5, null, 8, 6, 9, 7],
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 99, 132, 0.25),
-        'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 0.25),
+        ),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
         'borderWidth': 2,
         'fill': FillBoundary.origin,
         'tension': 0.3,
@@ -1156,32 +1212,29 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         'pointStyle': const RectRotPointStyle(),
         'pointRadius': 5,
         'pointHoverRadius': 8,
-        'pointBackgroundColor': const native_ui.Color.fromRGBO(
-          255,
-          255,
-          255,
-          1,
+        'pointBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
         ),
-        'pointBorderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        'pointBorderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
         'pointBorderWidth': 2,
-        'pointHoverBackgroundColor': const native_ui.Color.fromRGBO(
-          255,
-          99,
-          132,
-          1,
+        'pointHoverBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
         ),
-        'pointHoverBorderColor': const native_ui.Color.fromRGBO(
-          255,
-          255,
-          255,
-          1,
+        'pointHoverBorderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
         ),
       },
       <String, Object?>{
         'label': 'Last week',
         'data': <Object?>[2, 4, 6, 5, 4, 6, 5],
-        'backgroundColor': const native_ui.Color.fromRGBO(54, 162, 235, 0.25),
-        'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 0.25),
+        ),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 1),
+        ),
         'fill': const RelativeFill(-1),
         'borderDash': <Object?>[6, 4],
         'stepped': SteppedLine.before,
@@ -1201,7 +1254,9 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         'min': 0,
         'max': 12,
         'grid': <String, Object?>{
-          'color': const native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 0, 0, 0.1),
+          ),
           'lineWidth': 0.5,
           'drawOnChartArea': true,
         },
@@ -1222,7 +1277,9 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
       'subtitle': <String, Object?>{
         'display': true,
         'text': 'Steps in thousands',
-        'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+        'color': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(27, 58, 92, 1),
+        ),
         'position': ChartPosition.bottom,
       },
       'legend': <String, Object?>{
@@ -1249,9 +1306,9 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
         DataPoint.time(DateTime.utc(2026, 3, 5), 25),
       ],
       backgroundColor: const ChartValue.constant(
-        Color.fromRGBO(153, 102, 255, 0.3),
+        ChartPaint.solid(Color.fromRGBO(153, 102, 255, 0.3)),
       ),
-      borderColor: const ChartValue.constant(_purple),
+      borderColor: const ChartValue.constant(.solid(_purple)),
       borderWidth: 1,
       showLine: true,
       fill: const ChartFill.value(10),
@@ -1264,7 +1321,7 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
         DataPoint.time(DateTime.utc(2026, 3), 50),
         DataPoint.time(DateTime.utc(2026, 3, 6), 50),
       ],
-      borderColor: const ChartValue.constant(_red),
+      borderColor: const ChartValue.constant(.solid(_red)),
       showLine: true,
       borderDash: const [2, 2],
       pointHoverRadius: 4,
@@ -1300,8 +1357,12 @@ Map<String, Object?> _scatterTypeRaw() => <String, Object?>{
           <String, Object?>{'x': DateTime.utc(2026, 3, 4), 'y': 40},
           <String, Object?>{'x': DateTime.utc(2026, 3, 5), 'y': 25},
         ],
-        'backgroundColor': const native_ui.Color.fromRGBO(153, 102, 255, 0.3),
-        'borderColor': const native_ui.Color.fromRGBO(153, 102, 255, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(153, 102, 255, 0.3),
+        ),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(153, 102, 255, 1),
+        ),
         'borderWidth': 1,
         'showLine': true,
         'fill': <String, Object?>{'value': 10},
@@ -1314,7 +1375,9 @@ Map<String, Object?> _scatterTypeRaw() => <String, Object?>{
           <String, Object?>{'x': DateTime.utc(2026, 3), 'y': 50},
           <String, Object?>{'x': DateTime.utc(2026, 3, 6), 'y': 50},
         ],
-        'borderColor': const native_ui.Color.fromRGBO(255, 99, 132, 1),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
+        ),
         'showLine': true,
         'borderDash': <Object?>[2, 2],
         'pointStyle': false,
@@ -1358,9 +1421,9 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
         DataPoint.bubble(32, 28, 5),
       ],
       backgroundColor: const ChartValue.constant(
-        Color.fromRGBO(75, 192, 192, 0.5),
+        ChartPaint.solid(Color.fromRGBO(75, 192, 192, 0.5)),
       ),
-      borderColor: const ChartValue.constant(_green),
+      borderColor: const ChartValue.constant(.solid(_green)),
       borderWidth: 2,
       hoverRadius: 6,
       pointStyle: const RectRoundedPointStyle(),
@@ -1369,8 +1432,11 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
       label: 'Towns',
       points: [DataPoint(15, 8), DataPoint(28, 22)],
       radius: 4,
-      backgroundColor: const ChartValue.indexed([_orange, _yellow]),
-      hoverBackgroundColor: _red,
+      backgroundColor: const ChartValue.indexed([
+        ChartPaint.solid(_orange),
+        ChartPaint.solid(_yellow),
+      ]),
+      hoverBackgroundColor: const .constant(.solid(_red)),
     ),
   ],
   scales: const {
@@ -1399,8 +1465,12 @@ Map<String, Object?> _bubbleTypeRaw() => <String, Object?>{
           <String, Object?>{'x': 25, 'y': 12, 'r': 14},
           <String, Object?>{'x': 32, 'y': 28, 'r': 5},
         ],
-        'backgroundColor': const native_ui.Color.fromRGBO(75, 192, 192, 0.5),
-        'borderColor': const native_ui.Color.fromRGBO(75, 192, 192, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(75, 192, 192, 0.5),
+        ),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(75, 192, 192, 1),
+        ),
         'borderWidth': 2,
         'hoverRadius': 6,
         'pointStyle': const RectRoundedPointStyle(),
@@ -1413,14 +1483,11 @@ Map<String, Object?> _bubbleTypeRaw() => <String, Object?>{
         ],
         'radius': 4,
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(255, 159, 64, 1),
-          const native_ui.Color.fromRGBO(255, 205, 86, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 159, 64, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 1)),
         ],
-        'hoverBackgroundColor': const native_ui.Color.fromRGBO(
-          255,
-          99,
-          132,
-          1,
+        'hoverBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 99, 132, 1),
         ),
       },
     ],
@@ -1466,8 +1533,13 @@ ChartConfig _pieTypeTyped() => ChartConfig(
     PieDataset(
       label: 'Budget',
       data: [1200, 450, 300, 150],
-      backgroundColor: ChartValue.indexed([_blue, _red, _yellow, _grey]),
-      borderColor: ChartValue.constant(_white),
+      backgroundColor: ChartValue.indexed([
+        ChartPaint.solid(_blue),
+        ChartPaint.solid(_red),
+        ChartPaint.solid(_yellow),
+        ChartPaint.solid(_grey),
+      ]),
+      borderColor: ChartValue.constant(.solid(_white)),
       borderWidth: 2,
       offset: 4,
       hoverOffset: 12,
@@ -1481,7 +1553,7 @@ ChartConfig _pieTypeTyped() => ChartConfig(
     labelFont: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
   ),
   tooltip: ChartTooltip(
-    bodyColor: _yellow,
+    bodyColor: const ChartPaint.solid(_yellow),
     bodyFont: const TextStyle(fontSize: 14),
     callbacks: TooltipCallbacks(
       footer: (tooltip, arg) {
@@ -1506,12 +1578,14 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
         'label': 'Budget',
         'data': <Object?>[1200, 450, 300, 150],
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(54, 162, 235, 1),
-          const native_ui.Color.fromRGBO(255, 99, 132, 1),
-          const native_ui.Color.fromRGBO(255, 205, 86, 1),
-          const native_ui.Color.fromRGBO(201, 203, 207, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(201, 203, 207, 1)),
         ],
-        'borderColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
         'borderWidth': 2,
         'offset': 4,
         'hoverOffset': 12,
@@ -1533,7 +1607,9 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
         },
       },
       'tooltip': <String, Object?>{
-        'bodyColor': const native_ui.Color.fromRGBO(255, 205, 86, 1),
+        'bodyColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 205, 86, 1),
+        ),
         'bodyFont': const ChartTextStyle(fontSize: 14),
         'callbacks': TooltipCallbacks(
           footer: (tooltip, arg) => [jsToString(_rawBudgetFooter(arg))],
@@ -1553,8 +1629,12 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
     DoughnutDataset(
       label: 'Sprint 1',
       data: [8, 3, 1],
-      backgroundColor: ChartValue.indexed([_green, _blue, _red]),
-      hoverBorderColor: _navy,
+      backgroundColor: ChartValue.indexed([
+        ChartPaint.solid(_green),
+        ChartPaint.solid(_blue),
+        ChartPaint.solid(_red),
+      ]),
+      hoverBorderColor: .constant(.solid(_navy)),
       hoverBorderWidth: 3,
       spacing: 2,
       weight: 2,
@@ -1563,7 +1643,11 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
     DoughnutDataset(
       label: 'Sprint 2',
       data: [5, 6, 2],
-      backgroundColor: ChartValue.indexed([_green, _blue, _red]),
+      backgroundColor: ChartValue.indexed([
+        ChartPaint.solid(_green),
+        ChartPaint.solid(_blue),
+        ChartPaint.solid(_red),
+      ]),
       weight: 1,
       radius: PixelRadius(150),
     ),
@@ -1571,12 +1655,12 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
   title: ChartTitle(
     display: true,
     text: 'Tasks',
-    color: _navy,
+    color: ChartPaint.solid(_navy),
     position: .bottom,
     fullSize: false,
   ),
   elements: ChartElements(
-    arc: ArcElementStyle(borderWidth: 1, borderColor: _white),
+    arc: ArcElementStyle(borderWidth: 1, borderColor: ChartPaint.solid(_white)),
   ),
   animation: ChartAnimation(
     duration: Duration(milliseconds: 800),
@@ -1595,11 +1679,13 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
         'label': 'Sprint 1',
         'data': <Object?>[8, 3, 1],
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(75, 192, 192, 1),
-          const native_ui.Color.fromRGBO(54, 162, 235, 1),
-          const native_ui.Color.fromRGBO(255, 99, 132, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(75, 192, 192, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
         ],
-        'hoverBorderColor': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+        'hoverBorderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(27, 58, 92, 1),
+        ),
         'hoverBorderWidth': 3,
         'spacing': 2,
         'weight': 2,
@@ -1609,9 +1695,9 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
         'label': 'Sprint 2',
         'data': <Object?>[5, 6, 2],
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(75, 192, 192, 1),
-          const native_ui.Color.fromRGBO(54, 162, 235, 1),
-          const native_ui.Color.fromRGBO(255, 99, 132, 1),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(75, 192, 192, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
         ],
         'weight': 1,
         'radius': const PixelRadius(150),
@@ -1626,7 +1712,9 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
     },
     'elements': <String, Object?>{
       'arc': <String, Object?>{
-        'borderColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
         'borderWidth': 1,
       },
     },
@@ -1634,7 +1722,9 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
       'title': <String, Object?>{
         'display': true,
         'text': 'Tasks',
-        'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+        'color': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(27, 58, 92, 1),
+        ),
         'position': ChartPosition.bottom,
         'fullSize': false,
       },
@@ -1653,13 +1743,13 @@ ChartConfig _polarAreaTypeTyped() => const ChartConfig(
       label: 'Wind',
       data: [11, 16, 7, 3, 14],
       backgroundColor: ChartValue.indexed([
-        Color.fromRGBO(255, 99, 132, 0.5),
-        Color.fromRGBO(75, 192, 192, 0.5),
-        Color.fromRGBO(255, 205, 86, 0.5),
-        Color.fromRGBO(201, 203, 207, 0.5),
-        Color.fromRGBO(54, 162, 235, 0.5),
+        ChartPaint.solid(Color.fromRGBO(255, 99, 132, 0.5)),
+        ChartPaint.solid(Color.fromRGBO(75, 192, 192, 0.5)),
+        ChartPaint.solid(Color.fromRGBO(255, 205, 86, 0.5)),
+        ChartPaint.solid(Color.fromRGBO(201, 203, 207, 0.5)),
+        ChartPaint.solid(Color.fromRGBO(54, 162, 235, 0.5)),
       ]),
-      borderColor: ChartValue.constant(_white),
+      borderColor: ChartValue.constant(.solid(_white)),
       borderWidth: 1,
       offset: 2,
       hoverOffset: 8,
@@ -1670,10 +1760,10 @@ ChartConfig _polarAreaTypeTyped() => const ChartConfig(
     'r': RadialLinearAxis(
       beginAtZero: true,
       startAngle: 30,
-      ticks: AxisTicks(stepSize: 5, color: _navy),
-      grid: AxisGrid(color: _grey),
+      ticks: AxisTicks(stepSize: 5, color: ChartPaint.solid(_navy)),
+      grid: AxisGrid(color: ChartPaint.solid(_grey)),
       pointLabelsDisplay: true,
-      pointLabelsColor: _navy,
+      pointLabelsColor: ChartPaint.solid(_navy),
       pointLabelsFont: TextStyle(fontSize: 12),
     ),
   },
@@ -1690,13 +1780,15 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
         'label': 'Wind',
         'data': <Object?>[11, 16, 7, 3, 14],
         'backgroundColor': <Object?>[
-          const native_ui.Color.fromRGBO(255, 99, 132, 0.5),
-          const native_ui.Color.fromRGBO(75, 192, 192, 0.5),
-          const native_ui.Color.fromRGBO(255, 205, 86, 0.5),
-          const native_ui.Color.fromRGBO(201, 203, 207, 0.5),
-          const native_ui.Color.fromRGBO(54, 162, 235, 0.5),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.5)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(75, 192, 192, 0.5)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 205, 86, 0.5)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(201, 203, 207, 0.5)),
+          const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 0.5)),
         ],
-        'borderColor': const native_ui.Color.fromRGBO(255, 255, 255, 1),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 255, 255, 1),
+        ),
         'borderWidth': 1,
         'offset': 2,
         'hoverOffset': 8,
@@ -1712,14 +1804,20 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
         'startAngle': 30,
         'ticks': <String, Object?>{
           'stepSize': 5,
-          'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(27, 58, 92, 1),
+          ),
         },
         'grid': <String, Object?>{
-          'color': const native_ui.Color.fromRGBO(201, 203, 207, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(201, 203, 207, 1),
+          ),
         },
         'pointLabels': <String, Object?>{
           'display': true,
-          'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(27, 58, 92, 1),
+          ),
           'font': const ChartTextStyle(fontSize: 12),
         },
       },
@@ -1754,8 +1852,10 @@ ChartConfig _radarTypeTyped() => ChartConfig(
     RadarDataset(
       label: 'Model A',
       data: [7, 8, 5, 6, 4, 9],
-      backgroundColor: ChartValue.constant(Color.fromRGBO(54, 162, 235, 0.2)),
-      borderColor: ChartValue.constant(_blue),
+      backgroundColor: ChartValue.constant(
+        .solid(Color.fromRGBO(54, 162, 235, 0.2)),
+      ),
+      borderColor: ChartValue.constant(.solid(_blue)),
       fill: .origin,
       tension: 0.1,
       pointStyle: StarPointStyle(),
@@ -1765,12 +1865,14 @@ ChartConfig _radarTypeTyped() => ChartConfig(
     RadarDataset(
       label: 'Model B',
       data: [5, 6, 8, 7, 7, 6],
-      backgroundColor: ChartValue.constant(Color.fromRGBO(255, 159, 64, 0.2)),
-      borderColor: ChartValue.constant(_orange),
+      backgroundColor: ChartValue.constant(
+        .solid(Color.fromRGBO(255, 159, 64, 0.2)),
+      ),
+      borderColor: ChartValue.constant(.solid(_orange)),
       fill: ChartFill.dataset(0),
       borderDash: [4, 4],
       spanGaps: false,
-      pointBackgroundColor: _orange,
+      pointBackgroundColor: .constant(.solid(_orange)),
     ),
   ],
   scales: const {
@@ -1779,9 +1881,9 @@ ChartConfig _radarTypeTyped() => ChartConfig(
       suggestedMax: 10,
       ticks: AxisTicks(stepSize: 2),
       angleLinesDisplay: true,
-      angleLinesColor: _grey,
+      angleLinesColor: ChartPaint.solid(_grey),
       angleLinesLineWidth: 1,
-      pointLabelsColor: _navy,
+      pointLabelsColor: ChartPaint.solid(_navy),
       pointLabelsFont: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       pointLabelsPadding: 8,
     ),
@@ -1791,7 +1893,7 @@ ChartConfig _radarTypeTyped() => ChartConfig(
     line: LineElementStyle(borderWidth: 2),
   ),
   tooltip: ChartTooltip(
-    titleColor: _yellow,
+    titleColor: const ChartPaint.solid(_yellow),
     callbacks: TooltipCallbacks(
       title: (tooltip, arg) {
         final text = _radarTitle(arg);
@@ -1821,8 +1923,12 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
       <String, Object?>{
         'label': 'Model A',
         'data': <Object?>[7, 8, 5, 6, 4, 9],
-        'backgroundColor': const native_ui.Color.fromRGBO(54, 162, 235, 0.2),
-        'borderColor': const native_ui.Color.fromRGBO(54, 162, 235, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 0.2),
+        ),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(54, 162, 235, 1),
+        ),
         'fill': FillBoundary.origin,
         'tension': 0.1,
         'pointStyle': const StarPointStyle(),
@@ -1832,16 +1938,17 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
       <String, Object?>{
         'label': 'Model B',
         'data': <Object?>[5, 6, 8, 7, 7, 6],
-        'backgroundColor': const native_ui.Color.fromRGBO(255, 159, 64, 0.2),
-        'borderColor': const native_ui.Color.fromRGBO(255, 159, 64, 1),
+        'backgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 159, 64, 0.2),
+        ),
+        'borderColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 159, 64, 1),
+        ),
         'fill': 0,
         'borderDash': <Object?>[4, 4],
         'spanGaps': false,
-        'pointBackgroundColor': const native_ui.Color.fromRGBO(
-          255,
-          159,
-          64,
-          1,
+        'pointBackgroundColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 159, 64, 1),
         ),
       },
     ],
@@ -1855,11 +1962,15 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
         'ticks': <String, Object?>{'stepSize': 2},
         'angleLines': <String, Object?>{
           'display': true,
-          'color': const native_ui.Color.fromRGBO(201, 203, 207, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(201, 203, 207, 1),
+          ),
           'lineWidth': 1,
         },
         'pointLabels': <String, Object?>{
-          'color': const native_ui.Color.fromRGBO(27, 58, 92, 1),
+          'color': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(27, 58, 92, 1),
+          ),
           'font': const ChartTextStyle(
             fontSize: 13,
             fontWeight: native_ui.FontWeight.bold,
@@ -1874,7 +1985,9 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
     },
     'plugins': <String, Object?>{
       'tooltip': <String, Object?>{
-        'titleColor': const native_ui.Color.fromRGBO(255, 205, 86, 1),
+        'titleColor': const ChartPaint.solid(
+          native_ui.Color.fromRGBO(255, 205, 86, 1),
+        ),
         'callbacks': TooltipCallbacks(
           title: (tooltip, arg) => [jsToString(_rawRadarTitle(arg))],
         ),

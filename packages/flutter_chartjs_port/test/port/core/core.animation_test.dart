@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:test/test.dart';
 
@@ -162,14 +164,14 @@ void _replay(
 /// [to], and returns the value after each tick at the 11 factors.
 List<Object?> _colorResults(Object? from, Object? to) {
   final target = <String, Object?>{
-    'color': const ui.Color.fromRGBO(0, 0, 0, 1),
+    'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
   };
   final anim =
       Animation(
           {'duration': 1000, 'loop': true, 'type': 'color'},
           target,
           'color',
-          const ui.Color.fromRGBO(255, 0, 0, 1),
+          const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
         )
         ..from = referenceColorInput(from)
         ..to = referenceColorInput(to);
@@ -314,8 +316,8 @@ void main() {
         bool supported(Object? value) =>
             value == null ||
             value is Undefined ||
-            value is CanvasGradient ||
-            value is CanvasPattern ||
+            value is ChartGradient ||
+            value is ChartPattern ||
             nativeColorBytes(value) != null;
         if (!inputs.every(supported)) {
           for (final input in inputs.where((value) => !supported(value))) {
@@ -336,13 +338,13 @@ void main() {
 
     test('a change of from and to between the calls parses again', () {
       final target = <String, Object?>{
-        'color': const ui.Color.fromRGBO(0, 0, 0, 1),
+        'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
       };
       final anim = Animation(
         {'duration': 1000, 'loop': true, 'type': 'color'},
         target,
         'color',
-        const ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       for (final (i, step) in animationColorSequence.indexed) {
         if (!identical(step.from, animationAbsent)) {
@@ -355,8 +357,8 @@ void main() {
           (value) =>
               value != null &&
               value is! Undefined &&
-              value is! CanvasGradient &&
-              value is! CanvasPattern &&
+              value is! ChartGradient &&
+              value is! ChartPattern &&
               nativeColorBytes(value) == null,
         );
         if (invalid.isNotEmpty) {
@@ -377,18 +379,18 @@ void main() {
       // The cache mixes a clone of the cached target color. Thus a second
       // round of ticks gives the colors of the first round.
       final first = _colorResults(
-        const ui.Color.fromRGBO(54, 162, 235, 0.5),
-        const ui.Color.fromRGBO(255, 99, 132, 1),
+        const ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 0.5)),
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 99, 132, 1)),
       );
       final target = <String, Object?>{
-        'color': const ui.Color.fromRGBO(0, 0, 0, 1),
+        'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
       };
       final anim = Animation(
         {'duration': 1000, 'loop': true, 'type': 'color'},
         target,
         'color',
-        const ui.Color.fromRGBO(255, 99, 132, 1),
-      )..from = const ui.Color.fromRGBO(54, 162, 235, 0.5);
+        const ChartPaint.solid(ui.Color.fromRGBO(255, 99, 132, 1)),
+      )..from = const ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 0.5));
       for (var round = 0; round < 3; round++) {
         for (var k = 0; k <= 10; k++) {
           anim.tick(anim.start + 100 * k);
@@ -400,12 +402,12 @@ void main() {
 
   group('adapt-color-animation-by-value', () {
     test('a native color animates with no type', () {
-      const red = ui.Color(0xFFFF0000);
-      const blue = ui.Color(0xFF0000FF);
+      const red = ChartPaint.solid(ui.Color(0xFFFF0000));
+      const blue = ChartPaint.solid(ui.Color(0xFF0000FF));
       final target = <String, Object?>{'c': red};
       final anim = Animation({'duration': 1000}, target, 'c', blue);
       anim.tick(anim.start + 500);
-      final mid = target['c']! as ui.Color;
+      final mid = (target['c']! as SolidChartPaint).color;
       expect(mid.r, inExclusiveRange(0, 1));
       expect(mid.b, inExclusiveRange(0, 1));
       anim.tick(anim.start + 1000);

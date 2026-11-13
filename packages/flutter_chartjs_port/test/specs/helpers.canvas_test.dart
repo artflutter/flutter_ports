@@ -4,7 +4,6 @@
 library;
 
 import 'dart:ui' as native_ui;
-
 import 'dart:ui' show FontStyle, TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -13,6 +12,9 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     as helpers;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' hide Chart;
 import 'package:flutter_test/flutter_test.dart';
@@ -120,60 +122,6 @@ const _arial = ChartTextStyle(
   fontSize: 12,
   height: 20 / 12,
 );
-
-/// A JavaScript object literal of render options, passed as a
-/// [RenderTextOpts]. A null member is an absent key.
-final class _Opts implements RenderTextOpts {
-  const _Opts({
-    this.color,
-    this.decorationWidth,
-    this.maxWidth,
-    this.rotation,
-    this.strikethrough,
-    this.strokeColor,
-    this.strokeWidth,
-    this.textAlign,
-    this.textBaseline,
-    this.translation,
-    this.underline,
-  });
-
-  @override
-  final Object? color;
-
-  @override
-  final double? decorationWidth;
-
-  @override
-  final double? maxWidth;
-
-  @override
-  final double? rotation;
-
-  @override
-  final bool? strikethrough;
-
-  @override
-  final Object? strokeColor;
-
-  @override
-  final double? strokeWidth;
-
-  @override
-  final TextAlign? textAlign;
-
-  @override
-  final CanvasTextBaseline? textBaseline;
-
-  @override
-  final (double, double)? translation;
-
-  @override
-  final bool? underline;
-
-  @override
-  BackdropOptions? get backdrop => null;
-}
 
 void main() {
   group('Chart.helpers.canvas', () {
@@ -368,7 +316,7 @@ void main() {
           0,
           0,
           font,
-          const _Opts(maxWidth: 30),
+          const RenderTextOpts(maxWidth: 30),
         );
         expect(context.getCalls(), [
           {'name': 'save', 'args': <Object?>[]},
@@ -393,7 +341,7 @@ void main() {
           0,
           0,
           font,
-          const _Opts(decorationWidth: 3, underline: true),
+          const RenderTextOpts(decorationWidth: 3, underline: true),
         );
 
         expect(context.getCalls(), [
@@ -444,7 +392,7 @@ void main() {
           0,
           0,
           font,
-          const _Opts(strikethrough: true),
+          const RenderTextOpts(strikethrough: true),
         );
 
         expect(context.getCalls(), [
@@ -495,7 +443,9 @@ void main() {
           0,
           0,
           font,
-          const _Opts(color: native_ui.Color.fromRGBO(255, 0, 0, 1)),
+          const RenderTextOpts(
+            color: ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+          ),
         );
 
         expect(context.getCalls(), [
@@ -525,8 +475,10 @@ void main() {
           0,
           0,
           font,
-          const _Opts(
-            strokeColor: native_ui.Color.fromRGBO(255, 0, 0, 1),
+          const RenderTextOpts(
+            strokeColor: ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 0, 0, 1),
+            ),
             strokeWidth: 2,
           ),
         );
@@ -565,7 +517,7 @@ void main() {
           0,
           0,
           font,
-          const _Opts(
+          const RenderTextOpts(
             textAlign: TextAlign.left,
             textBaseline: CanvasTextBaseline.middle,
           ),
@@ -602,7 +554,7 @@ void main() {
           0,
           0,
           font,
-          const _Opts(rotation: 90, translation: (10, 20)),
+          const RenderTextOpts(rotation: 90, translation: (10, 20)),
         );
 
         expect(context.getCalls(), [

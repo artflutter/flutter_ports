@@ -60,8 +60,8 @@ class _Sample3State extends State<Sample3> {
     details.chart.update('none');
   }
 
-  Object? _bottomColor(JsObjectFace c) =>
-      tickOf(c) == _touched ? Fl.yellow : _indicatorColor;
+  ChartPaint _bottomColor(JsObjectFace c) =>
+      .solid(tickOf(c) == _touched ? Fl.yellow : _indicatorColor);
 
   ChartConfig _config() => fills(
     ChartConfig(
@@ -70,14 +70,14 @@ class _Sample3State extends State<Sample3> {
       datasets: [
         LineDataset(
           data: _values,
-          borderColor: const .constant(Fl.red),
+          borderColor: const .constant(.solid(Fl.red)),
           borderWidth: 4,
           fill: .origin,
-          pointBackgroundColor: Colors.white,
-          pointBorderColor: _dotStroke,
+          pointBackgroundColor: const .constant(.solid(Colors.white)),
+          pointBorderColor: .constant(.solid(_dotStroke)),
           pointBorderWidth: 3,
-          pointHoverBackgroundColor: Colors.white,
-          pointHoverBorderColor: Fl.yellow,
+          pointHoverBackgroundColor: const .constant(.solid(Colors.white)),
+          pointHoverBorderColor: const .constant(.solid(Fl.yellow)),
           extra: {
             'stepped': SteppedLine.middle,
             'backgroundColor': verticalGradient(
@@ -102,9 +102,9 @@ class _Sample3State extends State<Sample3> {
       onHover: _hover,
       interaction: const ChartInteraction(mode: flX, intersect: false),
       tooltip: ChartTooltip(
-        backgroundColor: Fl.green,
-        titleColor: Colors.black,
-        bodyColor: Colors.black,
+        backgroundColor: const ChartPaint.solid(Fl.green),
+        titleColor: const ChartPaint.solid(Colors.black),
+        bodyColor: const ChartPaint.solid(Colors.black),
         displayColors: false,
         titleFont: const TextStyle(fontWeight: FontWeight.bold),
         bodyFont: const TextStyle(fontWeight: FontWeight.w900),
@@ -129,8 +129,9 @@ class _Sample3State extends State<Sample3> {
           grid: AxisGrid(
             drawTicks: false,
             extra: {
-              'color': (JsObjectFace c) =>
-                  tickOf(c) == 0 ? Colors.transparent : Fl.white10,
+              'color': (JsObjectFace c) => ChartPaint.solid(
+                tickOf(c) == 0 ? Colors.transparent : Fl.white10,
+              ),
               'lineWidth': 0.5,
             },
           ),
@@ -147,15 +148,16 @@ class _Sample3State extends State<Sample3> {
           grid: AxisGrid(
             drawTicks: false,
             extra: {
-              'color': (JsObjectFace c) =>
-                  tickOf(c) == 0 ? Colors.transparent : Fl.white10,
+              'color': (JsObjectFace c) => ChartPaint.solid(
+                tickOf(c) == 0 ? Colors.transparent : Fl.white10,
+              ),
               'lineWidth': 0.5,
             },
           ),
           extra: Fl.noBorder,
           ticks: AxisTicks(
             stepSize: 1,
-            color: Fl.white54.withValues(alpha: 0.5),
+            color: ChartPaint.solid(Fl.white54.withValues(alpha: 0.5)),
             font: const TextStyle(fontSize: 10),
             format: (t) => t.value == 0 ? '' : '${t.value.toInt()}k calories',
             align: _fitLeft ? TickAlign.inner : TickAlign.center,

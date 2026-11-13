@@ -42,7 +42,7 @@ LineDataset _band(int type) => LineDataset(
   label: _types[type],
   data: _topEdge(type),
   fill: type == 0 ? ChartFill.dataset(_types.length) : .relative(-1),
-  backgroundColor: .constant(Gx.colors10[type]),
+  backgroundColor: .constant(.solid(Gx.colors10[type])),
   borderWidth: 0,
   // `BasicAreaShape(smooth: true)` is a Catmull-Rom spline with the
   // tension 0.5 of Chart.js.

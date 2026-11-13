@@ -5,7 +5,8 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
-import 'package:flutter_chartjs_port/src/types/color.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 
 /// A solid canvas color. CSS strings and all other values fail explicitly.
 ui.Color requireUiColor(Object? value, String argument) {
@@ -41,24 +42,26 @@ bool _colorKey(String key) =>
 /// consumed, without extra calls to user code.
 void validateChartColors(Object? config) {
   final seen = Set<Object>.identity();
-  void color(Object? value, String path) {
+  final paintLists = Set<Object>.identity();
+  final colorLists = Set<Object>.identity();
+  void color(Object? value, String path, {bool solidOnly = false}) {
     if (value == null || value is Undefined || jsIsFunction(value)) return;
     if (value is List) {
-      if (!seen.add(value)) return;
+      // A shared list can occur as both a palette and a paint option.
+      // Validate it under each contract, while still breaking cycles.
+      if (!(solidOnly ? colorLists : paintLists).add(value)) return;
       for (var i = 0; i < value.length; i++) {
-        color(value[i], '$path[$i]');
+        color(value[i], '$path[$i]', solidOnly: solidOnly);
       }
       return;
     }
-    if (value is ui.Color ||
-        value is CanvasGradient ||
-        value is CanvasPattern) {
-      return;
-    }
+    if (solidOnly ? value is ui.Color : value is ChartPaint) return;
     throw ArgumentError.value(
       value,
       path,
-      'Expected Flutter Color; CSS color strings are unsupported',
+      solidOnly
+          ? 'Expected Flutter Color'
+          : 'Expected ChartPaint; CSS color strings are unsupported',
     );
   }
 
@@ -103,7 +106,14 @@ void validateChartColors(Object? config) {
           scope(_field(child, plugin), '$path.plugins.$plugin');
         }
       } else if (_colorKey(key)) {
-        color(child, '$path.$key');
+        color(
+          child,
+          '$path.$key',
+          solidOnly:
+              key == 'shadowColor' ||
+              key == r'$borderColors' ||
+              key == r'$backgroundColors',
+        );
       } else if (const [
         'scale',
         'hover',

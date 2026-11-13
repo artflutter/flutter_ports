@@ -9,8 +9,6 @@
 /// scale type (`docs/axes/index.md`).
 library;
 
-import 'dart:ui' show Color;
-
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
@@ -35,6 +33,7 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' show Tick;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart' show internal;
@@ -736,7 +735,7 @@ final class RadialLinearAxis extends ChartAxis {
   final bool? pointLabelsDisplay;
 
   /// The color of the point labels: `pointLabels.color`.
-  final Color? pointLabelsColor;
+  final ChartPaint? pointLabelsColor;
 
   /// The font of the point labels: `pointLabels.font`. The color of the
   /// font is not read: set [pointLabelsColor].
@@ -752,7 +751,7 @@ final class RadialLinearAxis extends ChartAxis {
 
   /// The color of the lines from the center to the point labels:
   /// `angleLines.color`.
-  final Color? angleLinesColor;
+  final ChartPaint? angleLinesColor;
 
   /// The width of the lines from the center to the point labels, in pixels:
   /// `angleLines.lineWidth`. The default is 1.
@@ -771,11 +770,11 @@ final class RadialLinearAxis extends ChartAxis {
     bool? beginAtZero,
     double? startAngle,
     bool? pointLabelsDisplay,
-    Color? pointLabelsColor,
+    ChartPaint? pointLabelsColor,
     TextStyle? pointLabelsFont,
     double? pointLabelsPadding,
     bool? angleLinesDisplay,
-    Color? angleLinesColor,
+    ChartPaint? angleLinesColor,
     double? angleLinesLineWidth,
     AxisTicks? ticks,
     AxisGrid? grid,
@@ -812,12 +811,12 @@ final class RadialLinearAxis extends ChartAxis {
   void _lowerOwn(ScaleOptionsScope scope) {
     final pointLabels = PointLabelOptionsScope();
     put(pointLabels, OptionKey.display, pointLabelsDisplay);
-    put(pointLabels, OptionKey.color, colorValue(pointLabelsColor));
+    put(pointLabels, OptionKey.color, pointLabelsColor);
     put(pointLabels, OptionKey.font, pointLabelsFont);
     put(pointLabels, OptionKey.padding, pointLabelsPadding);
     final angleLines = AngleLineOptionsScope();
     put(angleLines, OptionKey.display, angleLinesDisplay);
-    put(angleLines, OptionKey.color, colorValue(angleLinesColor));
+    put(angleLines, OptionKey.color, angleLinesColor);
     put(angleLines, OptionKey.lineWidth, angleLinesLineWidth);
     put(scope, OptionKey.min, min);
     put(scope, OptionKey.max, max);
@@ -873,7 +872,7 @@ final class AxisTicks with Diagnosticable {
   final bool? display;
 
   /// The color of the tick labels: `color`.
-  final Color? color;
+  final ChartPaint? color;
 
   /// The font of the tick labels: `font`. The color of the font is not
   /// read: set [color].
@@ -923,7 +922,7 @@ final class AxisTicks with Diagnosticable {
   /// that is `null` keeps its value.
   AxisTicks copyWith({
     bool? display,
-    Color? color,
+    ChartPaint? color,
     TextStyle? font,
     double? padding,
     double? stepSize,
@@ -985,7 +984,7 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   final format = ticks.format;
   final scope = TickOptionsScope();
   put(scope, OptionKey.display, ticks.display);
-  put(scope, OptionKey.color, colorValue(ticks.color));
+  put(scope, OptionKey.color, ticks.color);
   put(scope, OptionKey.font, ticks.font);
   put(scope, OptionKey.padding, ticks.padding);
   put(scope, OptionKey.stepSize, ticks.stepSize);
@@ -1036,7 +1035,7 @@ final class AxisGrid with Diagnosticable {
   final bool? display;
 
   /// The color of the grid lines: `color`.
-  final Color? color;
+  final ChartPaint? color;
 
   /// The width of the grid lines in pixels: `lineWidth`.
   final double? lineWidth;
@@ -1061,7 +1060,7 @@ final class AxisGrid with Diagnosticable {
   /// that is `null` keeps its value.
   AxisGrid copyWith({
     bool? display,
-    Color? color,
+    ChartPaint? color,
     double? lineWidth,
     bool? drawOnChartArea,
     bool? drawTicks,
@@ -1107,7 +1106,7 @@ GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
   if (grid == null) return null;
   final scope = GridLineOptionsScope();
   put(scope, OptionKey.display, grid.display);
-  put(scope, OptionKey.color, colorValue(grid.color));
+  put(scope, OptionKey.color, grid.color);
   put(scope, OptionKey.lineWidth, grid.lineWidth);
   put(scope, OptionKey.drawOnChartArea, grid.drawOnChartArea);
   put(scope, OptionKey.drawTicks, grid.drawTicks);
@@ -1137,7 +1136,7 @@ final class AxisTitle with Diagnosticable {
   final String? text;
 
   /// The color of the title: `color`.
-  final Color? color;
+  final ChartPaint? color;
 
   /// The font of the title: `font`. The color of the font is not read: set
   /// [color].
@@ -1159,7 +1158,7 @@ final class AxisTitle with Diagnosticable {
   AxisTitle copyWith({
     bool? display,
     String? text,
-    Color? color,
+    ChartPaint? color,
     TextStyle? font,
     ChartAlign? align,
     EdgeInsets? padding,
@@ -1205,7 +1204,7 @@ ScaleTitleOptionsScope? _lowerTitle(AxisTitle? title) {
   final scope = ScaleTitleOptionsScope();
   put(scope, OptionKey.display, title.display);
   put(scope, OptionKey.text, title.text);
-  put(scope, OptionKey.color, colorValue(title.color));
+  put(scope, OptionKey.color, title.color);
   put(scope, OptionKey.font, title.font);
   put(scope, OptionKey.align, title.align);
   put(scope, OptionKey.padding, title.padding);

@@ -17,7 +17,6 @@
 library;
 
 import 'dart:math' as math;
-import 'dart:ui' show TextAlign;
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -784,9 +783,9 @@ void _setRenderOpts(CanvasRenderingContext2D ctx, RenderTextOpts opts) {
     ctx.rotate(rotation!);
   }
 
-  if (jsTruthy(opts.color)) {
-    ctx.fillStyle = opts.color;
-  }
+  // A paint is truthy. Without one, the fill style stays.
+  final fillStyle = opts.color;
+  ctx.fillStyle = fillStyle;
 
   if (jsTruthy(opts.textAlign)) {
     ctx.textAlign = opts.textAlign;
@@ -837,51 +836,11 @@ void _drawBackdrop(CanvasRenderingContext2D ctx, BackdropOptions opts) {
   final oldColor = ctx.fillStyle;
 
   ctx
+    // The setter keeps the fill style for Dart `null`, the value of
+    // `ChartPaint.unchanged`.
     ..fillStyle = opts.color
     ..fillRect(opts.left, opts.top, opts.width, opts.height)
     ..fillStyle = oldColor;
-}
-
-/// The JS object `{}`: the default of the `opts` parameter of `renderText`
-/// (helpers.canvas.ts:455).
-final class _EmptyRenderTextOpts implements RenderTextOpts {
-  const _EmptyRenderTextOpts();
-
-  @override
-  Object? get color => null;
-
-  @override
-  double? get decorationWidth => null;
-
-  @override
-  double? get maxWidth => null;
-
-  @override
-  double? get rotation => null;
-
-  @override
-  bool? get strikethrough => null;
-
-  @override
-  Object? get strokeColor => null;
-
-  @override
-  double? get strokeWidth => null;
-
-  @override
-  TextAlign? get textAlign => null;
-
-  @override
-  CanvasTextBaseline? get textBaseline => null;
-
-  @override
-  (double, double)? get translation => null;
-
-  @override
-  bool? get underline => null;
-
-  @override
-  BackdropOptions? get backdrop => null;
 }
 
 /// helpers.canvas.ts:449 `renderText`.
@@ -902,13 +861,15 @@ void renderText(
   double x,
   double y,
   ChartTextStyle font, [
-  RenderTextOpts opts = const _EmptyRenderTextOpts(),
+  // The JS object `{}`, the default of helpers.canvas.ts:455.
+  RenderTextOpts opts = const RenderTextOpts(),
 ]) {
   final lines = isArray(text) ? text! as List<Object?> : [text];
   final strokeWidth = opts.strokeWidth;
   // `undefined > 0` and `NaN > 0` are false.
-  final stroke =
-      strokeWidth != null && strokeWidth > 0 && opts.strokeColor != '';
+  // DIVERGES(chartjs): adapt-direct-colors, a paint is never the string ''.
+  final stroke = strokeWidth != null && strokeWidth > 0;
+  final strokeStyle = opts.strokeColor;
   int i;
   String line;
 
@@ -927,9 +888,7 @@ void renderText(
     }
 
     if (stroke) {
-      if (jsTruthy(opts.strokeColor)) {
-        ctx.strokeStyle = opts.strokeColor;
-      }
+      ctx.strokeStyle = strokeStyle;
 
       if (!isNullOrUndef(opts.strokeWidth)) {
         ctx.lineWidth = opts.strokeWidth;

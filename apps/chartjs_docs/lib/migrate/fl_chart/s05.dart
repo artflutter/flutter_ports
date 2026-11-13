@@ -100,7 +100,7 @@ class _Sample5State extends State<Sample5> {
           ticks: AxisTicks(
             maxRotation: 0,
             autoSkip: false,
-            color: Fl.pink,
+            color: ChartPaint.solid(Fl.pink),
             font: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
           ),
         ),
@@ -108,14 +108,22 @@ class _Sample5State extends State<Sample5> {
           min: 0,
           grid: AxisGrid(display: false),
           extra: Fl.noBorder,
-          title: AxisTitle(display: true, text: 'count', color: Colors.white),
+          title: AxisTitle(
+            display: true,
+            text: 'count',
+            color: ChartPaint.solid(Colors.white),
+          ),
           ticks: AxisTicks(display: false),
         ),
         'y2': LinearAxis(
           position: .right,
           grid: AxisGrid(display: false),
           extra: Fl.noBorder,
-          title: AxisTitle(display: true, text: 'count', color: Colors.white),
+          title: AxisTitle(
+            display: true,
+            text: 'count',
+            color: ChartPaint.solid(Colors.white),
+          ),
           ticks: AxisTicks(display: false),
         ),
         'x2': CategoryAxis(
@@ -125,7 +133,7 @@ class _Sample5State extends State<Sample5> {
           title: AxisTitle(
             display: true,
             text: 'Wall clock',
-            color: Colors.white,
+            color: ChartPaint.solid(Colors.white),
           ),
           ticks: AxisTicks(display: false),
         ),

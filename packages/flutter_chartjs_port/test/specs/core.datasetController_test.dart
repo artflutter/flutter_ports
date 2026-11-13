@@ -20,6 +20,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -1278,11 +1280,8 @@ void main() {
     ) async {
       final data0 = <Object?>[0, 1, 2, 3, 4, 5];
       final oldColor = Chart.defaults['borderColor'];
-      Chart.defaults['borderColor'] = const native_ui.Color.fromRGBO(
-        255,
-        0,
-        0,
-        1,
+      Chart.defaults['borderColor'] = const ChartPaint.solid(
+        native_ui.Color.fromRGBO(255, 0, 0, 1),
       );
       final chart = acquireChart(<String, Object?>{
         'type': 'line',
@@ -1296,11 +1295,11 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       expect(
         ((meta.dataset! as Element).options! as JsObjectFace)['borderColor'],
-        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
       );
       expect(
         (_element(meta, 0).options! as JsObjectFace)['borderColor'],
-        const native_ui.Color.fromRGBO(255, 0, 0, 1),
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
       );
 
       // Reset old shared state
@@ -1439,8 +1438,9 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'data': <Object?>[1, 2, 3],
-                'backgroundColor': () =>
-                    const native_ui.Color.fromRGBO(255, 0, 0, 1),
+                'backgroundColor': () => const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
               },
             ],
           },

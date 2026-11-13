@@ -14,6 +14,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:test/test.dart';
 
 // A JavaScript object literal is a `Map<String, Object?>` and an array is a
@@ -100,22 +102,24 @@ void main() {
     group('_createResolver', () {
       test('should resolve to raw values', () {
         final defaults = <String, Object?>{
-          'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-          'backgroundColor': const ui.Color.fromRGBO(0, 128, 0, 1),
+          'color': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
+          'backgroundColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(0, 128, 0, 1),
+          ),
           'hoverColor': (Object? ctx, Object? options) =>
               getHoverColor(options['color']),
         };
         final options = <String, Object?>{
-          'color': const ui.Color.fromRGBO(0, 0, 255, 1),
+          'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
         };
         final resolver = createResolver([options, defaults]);
         expect(
           resolver['color'],
-          const ui.Color.fromRGBO(0, 0, 255, 1),
+          const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
         );
         expect(
           resolver['backgroundColor'],
-          const ui.Color.fromRGBO(0, 128, 0, 1),
+          const ChartPaint.solid(ui.Color.fromRGBO(0, 128, 0, 1)),
         );
         expect(resolver['hoverColor'], same(defaults['hoverColor']));
       });
@@ -509,7 +513,9 @@ void main() {
                 'animation': <String, Object?>{'duration': 400},
                 'animations': <String, Object?>{
                   'colors': <String, Object?>{
-                    'from': const ui.Color.fromRGBO(0, 0, 0, 0),
+                    'from': const ChartPaint.solid(
+                      ui.Color.fromRGBO(0, 0, 0, 0),
+                    ),
                   },
                 },
               },
@@ -550,7 +556,7 @@ void main() {
             show['animations']['colors'],
             toEqualOptions({
               'duration': 400,
-              'from': const ui.Color.fromRGBO(0, 0, 0, 0),
+              'from': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)),
               'easing': 'linear',
               'type': 'color',
               'properties': ['color', 'borderColor', 'backgroundColor'],
@@ -650,27 +656,34 @@ void main() {
     group('_attachContext', () {
       test('should resolve to final values', () {
         final defaults = <String, Object?>{
-          'color': const ui.Color.fromRGBO(255, 0, 0, 1),
-          'backgroundColor': const ui.Color.fromRGBO(0, 128, 0, 1),
+          'color': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
+          'backgroundColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(0, 128, 0, 1),
+          ),
           'hoverColor': (Object? ctx, Object? options) =>
               getHoverColor(options['color']),
         };
         final options = <String, Object?>{
           'color': [
-            const ui.Color.fromRGBO(255, 255, 255, 1),
-            const ui.Color.fromRGBO(0, 0, 255, 1),
+            const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1)),
+            const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
           ],
         };
         final resolver = createResolver([options, defaults]);
         final opts = attachContext(resolver, {'index': 1});
-        expect(opts['color'], const ui.Color.fromRGBO(0, 0, 255, 1));
+        expect(
+          opts['color'],
+          const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
+        );
         expect(
           opts['backgroundColor'],
-          const ui.Color.fromRGBO(0, 128, 0, 1),
+          const ChartPaint.solid(ui.Color.fromRGBO(0, 128, 0, 1)),
         );
         expect(
           opts['hoverColor'],
-          getHoverColor(const ui.Color.fromRGBO(0, 0, 255, 1)),
+          getHoverColor(
+            const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
+          ),
         );
       });
 
@@ -698,11 +711,8 @@ void main() {
         final defaults = <String, Object?>{
           'elements': <String, Object?>{
             'point': <String, Object?>{
-              'backgroundColor': const ui.Color.fromRGBO(
-                255,
-                0,
-                0,
-                1,
+              'backgroundColor': const ChartPaint.solid(
+                ui.Color.fromRGBO(255, 0, 0, 1),
               ),
             },
           },
@@ -719,11 +729,13 @@ void main() {
         final opts = attachContext(resolver, {});
         expect(
           opts['elements']['point']['borderColor'],
-          getHoverColor(const ui.Color.fromRGBO(255, 0, 0, 1)),
+          getHoverColor(
+            const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
+          ),
         );
         expect(
           opts['elements']['point']['backgroundColor'],
-          const ui.Color.fromRGBO(255, 0, 0, 1),
+          const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
         );
       });
 

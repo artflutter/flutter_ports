@@ -14,6 +14,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:test/test.dart';
 
@@ -180,8 +182,8 @@ void main() {
   test(
     'point plans preserve dataset selection, ownership and invalidation',
     () {
-      const red = Color(0xffff0000);
-      const blue = Color(0xff0000ff);
+      const red = ChartPaint.solid(Color(0xffff0000));
+      const blue = ChartPaint.solid(Color(0xff0000ff));
       final saved = defaults.saveState();
       addTearDown(() => defaults.restoreState(saved));
       final point = PointOptionsScope()
@@ -193,8 +195,8 @@ void main() {
       defaults.elements = ElementOptionsByTypeScope()..point = point;
       final datasets = <Object?>[
         for (final colors in [
-          <Color>[red, blue],
-          <Color>[blue, red],
+          <ChartPaint>[red, blue],
+          <ChartPaint>[blue, red],
         ])
           <String, Object?>{
             '_scriptable': true,
@@ -241,7 +243,7 @@ void main() {
       expect(config.prepareIndexedPointColors(-1), isNull);
       expect(config.prepareIndexedPointColors(2), isNull);
       final ds = datasets[0]! as Map<String, Object?>;
-      (ds['backgroundColor']! as List<Color>).clear();
+      (ds['backgroundColor']! as List<ChartPaint>).clear();
       expect(config.prepareIndexedPointColors(0), isNull);
       config.clearCache();
       expect(config.prepareIndexedPointColors(1), isNull);

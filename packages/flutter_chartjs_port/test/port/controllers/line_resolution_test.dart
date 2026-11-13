@@ -125,7 +125,7 @@ void main() {
         final dataset = <String, Object?>{
           'data': raw,
           'radius': 3.0,
-          'borderColor': blue,
+          'borderColor': const ChartPaint.solid(blue),
           'showLine': true,
         };
         final data = <String, Object?>{
@@ -163,8 +163,8 @@ void main() {
         late Chart chart;
         late ChartMeta meta;
         late List<_Probe> points;
-        Color color(Object? input) {
-          if (!armed) return red;
+        ChartPaint color(Object? input) {
+          if (!armed) return const ChartPaint.solid(red);
           final context = input! as ScriptableContext;
           trace.add([
             'color',
@@ -236,10 +236,14 @@ void main() {
                   dataset,
                   config.datasetElementScopeKeys('line', 'point'),
                 );
-                final resolver = (config.createResolver(scopes, null, [
-                  'point',
-                  '',
-                ]) as helpers.OptionResolver)..jsWrite('backgroundColor', blue);
+                final resolver =
+                    (config.createResolver(scopes, null, [
+                      'point',
+                      '',
+                    ]) as helpers.OptionResolver)..jsWrite(
+                      'backgroundColor',
+                      const ChartPaint.solid(blue),
+                    );
                 meta.controller!.resolveDataElementOptions(3, 'none');
                 resolver.jsWrite('backgroundColor', color);
                 config.resolveOwnedElementNamedOptions(
@@ -261,7 +265,7 @@ void main() {
                 break;
             }
           }
-          return red;
+          return const ChartPaint.solid(red);
         }
 
         dataset['backgroundColor'] = color;

@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -365,10 +367,12 @@ AnyObject _config({
         'type': ?scaleType,
         'min': 0.0,
         'max': 100.0,
-        'grid': <String, Object?>{'color': const ui.Color(0x33000000)},
+        'grid': <String, Object?>{
+          'color': const ChartPaint.solid(ui.Color(0x33000000)),
+        },
         'angleLines': <String, Object?>{
           'display': true,
-          'color': const ui.Color(0xFF336699),
+          'color': const ChartPaint.solid(ui.Color(0xFF336699)),
         },
         'ticks': <String, Object?>{'display': false},
         ...?r?.call(),
@@ -485,7 +489,7 @@ final List<_Case> _cases = [
     'a backdrop',
     expected: const _Expect(labels: false),
     pointLabels: () => {
-      'backdropColor': const ui.Color(0xFFFFCC00),
+      'backdropColor': const ChartPaint.solid(ui.Color(0xFFFFCC00)),
       'backdropPadding': const EdgeInsets.all(3),
       'borderRadius': 0.0,
     },
@@ -494,7 +498,7 @@ final List<_Case> _cases = [
     'a rounded backdrop',
     expected: const _Expect(labels: false),
     pointLabels: () => {
-      'backdropColor': const ui.Color(0x80FF00FF),
+      'backdropColor': const ChartPaint.solid(ui.Color(0x80FF00FF)),
       'borderRadius': 4.0,
     },
   ),
@@ -537,7 +541,7 @@ final List<_Case> _cases = [
     expected: const _Expect(labels: false),
     pointLabels: () => {
       'color': (Object? ctx) =>
-          _record('color', ctx, const ui.Color(0xFF123456)),
+          _record('color', ctx, const ChartPaint.solid(ui.Color(0xFF123456))),
     },
   ),
   _Case(
@@ -545,20 +549,22 @@ final List<_Case> _cases = [
     expected: const _Expect(labels: false),
     pointLabels: () => {
       'color': <Object?>[
-        const ui.Color(0xFFFF0000),
-        const ui.Color(0xFF00FF00),
-        const ui.Color(0xFF0000FF),
+        const ChartPaint.solid(ui.Color(0xFFFF0000)),
+        const ChartPaint.solid(ui.Color(0xFF00FF00)),
+        const ChartPaint.solid(ui.Color(0xFF0000FF)),
       ],
     },
   ),
   _Case(
     'a native color',
-    pointLabels: () => {'color': const ui.Color(0xFF00FF00)},
+    pointLabels: () => {'color': const ChartPaint.solid(ui.Color(0xFF00FF00))},
   ),
   _Case(
     'a color of user code',
     expected: const _Expect(labels: false),
-    pointLabels: () => {'color': const _UserColor(0xFF112233)},
+    pointLabels: () => {
+      'color': const ChartPaint.solid(_UserColor(0xFF112233)),
+    },
   ),
   _Case(
     'a scriptable padding',
@@ -638,7 +644,7 @@ final List<_Case> _cases = [
     r: () => {
       'angleLines': <String, Object?>{
         'display': true,
-        'color': const ui.Color(0x4D0A141E),
+        'color': const ChartPaint.solid(ui.Color(0x4D0A141E)),
         'lineWidth': 2.0,
       },
     },
@@ -692,7 +698,7 @@ final List<_Case> _cases = [
       'ticks': <String, Object?>{'display': true},
       'grid': <String, Object?>{
         'circular': true,
-        'color': const ui.Color(0xFFAABBCC),
+        'color': const ChartPaint.solid(ui.Color(0xFFAABBCC)),
       },
     },
   ),
@@ -910,8 +916,11 @@ void main() {
       final target = chart.ctx!;
       // The set trap of the view: the next reads give the new color.
       final labels = scale.options.pointLabels.raw! as JsObjectFace
-        ..jsWrite('color', const ui.Color(0xFF010203));
-      expect(labels.jsRead('color'), const ui.Color(0xFF010203));
+        ..jsWrite('color', const ChartPaint.solid(ui.Color(0xFF010203)));
+      expect(
+        labels.jsRead('color'),
+        const ChartPaint.solid(ui.Color(0xFF010203)),
+      );
       final ordinary = _drawWith(chart, _Recorder(target));
       final plan = _drawWith(chart, _PlanRecorder(target));
       expect(_effectiveLog(plan), _effectiveLog(ordinary));
@@ -1364,10 +1373,10 @@ void main() {
                     min: 0,
                     max: 100,
                     pointLabelsFont: TextStyle(fontSize: 10),
-                    angleLinesColor: grid,
+                    angleLinesColor: ChartPaint.solid(grid),
                     angleLinesLineWidth: 1,
                     grid: AxisGrid(
-                      color: grid,
+                      color: ChartPaint.solid(grid),
                       drawTicks: false,
                       extra: {'circular': true},
                     ),
