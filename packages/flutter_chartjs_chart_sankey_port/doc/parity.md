@@ -18,7 +18,7 @@ host seams of [host-seams.md](host-seams.md) that the file uses.
 | `src/lib/core.ts` | 111 | `lib/src/lib/core.dart` | S7, S10 | ported |
 | `src/lib/layout.ts` | 662 | `lib/src/lib/layout.dart` | S7 | ported |
 | `src/labels.ts` | 166 | `lib/src/labels.dart` | S10, S18 | ported |
-| `src/flow.ts` | 303 | `lib/src/flow.dart` | S3, S5, S6, S12, S14, S17, S18, S19 | ported |
+| `src/flow.ts` | 303 | `lib/src/flow.dart` | S3, S5, S6, S12, S14, S17, S18, S19, S21 | ported |
 | `src/controller.ts` | 622 | `lib/src/controller.dart` | S1, S2, S4, S8, S10, S11, S16, S20 | ported |
 | `src/index.esm.ts` | 21 | `lib/src/index.esm.dart` | S16 | ported |
 | `src/index.ts` | 27 | — | S16 | n/a: the entry that registers at its import (Sankey ADR 0002 item 2); an app calls `Chart.register` |

@@ -11,8 +11,8 @@ column "Upstream file@version:lines" names the pin at which the porter last chec
 bump checks every row.
 
 A Dart form that translates the upstream lines is no row: a record for an object literal that only
-one function reads, the facades of the options, `getMeta()` for `this._cachedMeta`, and the class
-values `jsClass` of the two components
+one function reads, the facades of the options, and the class values `jsClass` of the two
+components
 ([Sankey ADR 0003](adr/0003-host-connection.md)).
 
 | ID | Dart file and symbol | Upstream file@version:lines | Category | Reason | Upstream reference | Pinning test | Re-check on bump |

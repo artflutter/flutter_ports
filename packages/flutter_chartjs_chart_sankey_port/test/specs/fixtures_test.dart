@@ -3,6 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
+import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
     show Flow, SankeyOrientation;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
@@ -10,7 +11,6 @@ import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsMax;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../fixtures/observe.dart' show RecordingContext;
 
 void main() {
   group('fixtures', fixture.specs());

@@ -4,8 +4,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/pure.dart'
-    show MockContext, createMockContext;
+import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_test/flutter_test.dart';
@@ -45,23 +44,22 @@ Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChart(
 
 typedef _Rect = ({double height, double width, double x, double y});
 
-/// `vi.spyOn(chart.ctx, 'fillRect')`, then `chart.draw()`: the controller
-/// draws its nodes, flows and labels on a recording context. The mock
-/// context of the harness has no `resetTransform` for the clear of
-/// `chart.draw()`, and only the controller calls `fillRect` in these charts.
-MockContext _drawRecorded(Chart chart) {
-  final recording = createMockContext();
-  final ctx = chart.ctx;
-  chart.ctx = recording;
-  chart.getDatasetMeta(0).controller!.draw();
-  chart.ctx = ctx;
+/// `vi.spyOn(chart.ctx, 'fillRect')`, then `chart.draw()`: the chart draws
+/// on a recording context over its own context.
+RecordingContext _drawRecorded(Chart chart) {
+  final target = chart.ctx!;
+  final recording = RecordingContext(target);
+  chart
+    ..ctx = recording
+    ..draw()
+    ..ctx = target;
   return recording;
 }
 
 // Node bars are drawn as square-ish rects of width `nodeWidth`; flows are
 // much wider/taller. Filtering by width isolates the fillRect calls that draw
 // node bars.
-List<_Rect> _nodeBarRects(MockContext recording) => [
+List<_Rect> _nodeBarRects(RecordingContext recording) => [
   for (final call in recording.getCalls())
     if (call['name'] == 'fillRect')
       if (call['args']!
