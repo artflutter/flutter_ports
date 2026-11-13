@@ -182,10 +182,12 @@ animator
 chartJsPackageVersion
 chartJsVersion
 colors
+controllerArgs
 controllers
 decimation
 defaultDateZone
 defaults
+elementCfgArg
 elements
 filler
 layouts
@@ -194,6 +196,7 @@ notifyArrayListeners
 plugins
 registerables
 registry
+scaleCfgArg
 scales
 setDefaultDateZone
 subTitle
@@ -454,10 +457,12 @@ animator
 chartJsPackageVersion
 chartJsVersion
 colors
+controllerArgs
 controllers
 decimation
 defaultDateZone
 defaults
+elementCfgArg
 elements
 filler
 layouts
@@ -466,6 +471,7 @@ notifyArrayListeners
 plugins
 registerables
 registry
+scaleCfgArg
 scales
 setDefaultDateZone
 subTitle

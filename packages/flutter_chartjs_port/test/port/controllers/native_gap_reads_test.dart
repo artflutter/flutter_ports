@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show registerDataUpdateTypes;
 import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'

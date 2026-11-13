@@ -25,9 +25,10 @@
 ///   integer px sizes, the regular and bold faces and the families of the
 ///   harness. Outside them, the generator stops with an error.
 /// - The Dart side records the calls of one `chart.draw()` after the layout
-///   with a [RecordingContext] in place of `chart.ctx`, of each `scale.ctx`,
-///   of the writable `ctx` of each dataset controller ([drawCalls],
-///   Chart.js ADR 0030), of the `ctx` of each `Title` box and of the `ctx`
+///   with a [ReferenceRecordingContext] in place of `chart.ctx`, of each
+///   `scale.ctx`, of the writable `ctx` of each dataset controller
+///   ([drawCalls], Chart.js ADR 0030), of the `ctx` of each `Title` box and of
+///   the `ctx`
 ///   of the `Legend` box. Thus the calls have the element draws, on both
 ///   sides. A `Path2D` argument records as `{path, calls}`
 ///   (`test/port/canvas/path2d_record.dart`). `measureText` of the recording
@@ -40,7 +41,7 @@
 ///   [scaleTestController]: the cartesian test controller of the generators.
 ///   [RadialTestController], [radialTestController] and
 ///   [radialLinearTestController]: the radial test controller.
-/// - [RecordingContext] and [drawCalls]: the calls of one draw.
+/// - [ReferenceRecordingContext] and [drawCalls]: the calls of one draw.
 /// - [observeChart]: the observations of `observe` of the generators.
 /// - [referenceMatcher], [callMatchers], [copyReference]: the comparison.
 /// - [expectScaleObservations], [expectCalls], [expectScaleChart],
@@ -284,56 +285,22 @@ JsClass radialLinearTestController(RadialPointPositionOf pointPosition) =>
 // ---------------------------------------------------------------------------
 // The draw calls.
 
-/// A [MockContext] that records every call and forwards the text state to
-/// a real context [target].
+/// The [RecordingContext] of the harness for the reference tests: it
+/// records every call and forwards the text state to a real context.
 ///
-/// It forwards `font`, `save`, `restore`, `measureText`, `canvas` and
-/// `resetTransform`. Thus a measure gets the font of the real canvas, as
-/// the layout did. It draws nothing on [target]. It records a `roundRect`
+/// A measure gets the width of the real canvas with the bounding box of the
+/// mock context, as the reference data have it. It records a `roundRect`
 /// call as the upstream arcs and lines of `addRoundedRectPath`
 /// (differences.md `adapt-rounded-rect-path`), so that the records compare
 /// with the upstream calls.
-final class RecordingContext(
-  /// The real context: the context of the chart.
-  final CanvasRenderingContext2D target,
-) extends MockContext {
-  /// A recording context over [target].
+final class ReferenceRecordingContext(super.target) extends RecordingContext {
+  /// A recording context over the real context `target`.
   this;
-
-  @override
-  HTMLCanvasElement get canvas => target.canvas;
-
-  @override
-  TextStyle? get font => target.font;
-
-  @override
-  set font(TextStyle? font) {
-    super.font = font;
-    target.font = font;
-  }
-
-  @override
-  void save() {
-    super.save();
-    target.save();
-  }
-
-  @override
-  void restore() {
-    super.restore();
-    target.restore();
-  }
 
   @override
   TextMetrics measureText(String text) {
     record('measureText', [text]);
     return _MockBoxMetrics(target.measureText(text).width, empty: text.isEmpty);
-  }
-
-  @override
-  void resetTransform() {
-    record('resetTransform', const []);
-    target.resetTransform();
   }
 
   @override
@@ -344,7 +311,7 @@ final class RecordingContext(
 /// The calls of one `chart.draw()`: `drawCalls(chart)` of the generators,
 /// with the element draws.
 ///
-/// The function puts a [RecordingContext] over `chart.ctx` in place of
+/// The function puts a [ReferenceRecordingContext] over `chart.ctx` in place of
 /// `chart.ctx`, of the `ctx` of each scale (core.controller.js:357-362), of
 /// the `ctx` of each dataset controller whose context is the context of the
 /// chart (core.datasetController.js:257 `_ctx`), of the `ctx` of each
@@ -356,7 +323,7 @@ final class RecordingContext(
 /// `Path2D` argument becomes `{path, calls}` (path2d_record.dart).
 List<Object?> drawCalls(Chart chart) {
   final target = chart.ctx!;
-  final recording = RecordingContext(target);
+  final recording = ReferenceRecordingContext(target);
   final scales = chart.scales.values.toList();
   final scaleContexts = [for (final scale in scales) scale.ctx];
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
@@ -665,7 +632,7 @@ Object? _argMatcher(Object? arg) => switch (arg) {
 /// The calls of the rectangle paths of a bar: `addNormalRectPath`
 /// (element.bar.js:123-125) and `addRoundedRectPath`
 /// (helpers.canvas.ts:498-527). The `roundRect` of the port records as the
-/// upstream calls ([RecordingContext]).
+/// upstream calls ([ReferenceRecordingContext]).
 const Set<String> _barPathCalls = {
   'rect',
   'moveTo',
@@ -1007,7 +974,8 @@ void testReferenceWidths(List<ScaleChartWidth> widths) {
   }
 }
 
-/// The metrics of [RecordingContext.measureText]: the width of the target
+/// The metrics of [ReferenceRecordingContext.measureText]: the width of the
+/// target
 /// and the bounding box of the mock context of the generators
 /// (`LiberationContext` of scale_chart_common.mjs, `context.js:150` of
 /// chartjs-test-utils): 4, 8, 15, 25 for a text that is not empty, else 0.

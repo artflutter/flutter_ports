@@ -6,7 +6,6 @@ import 'dart:collection';
 
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show scaleCfgArg;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_test/flutter_test.dart';
 

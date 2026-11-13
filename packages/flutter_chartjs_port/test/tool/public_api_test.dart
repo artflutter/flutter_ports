@@ -179,6 +179,9 @@ const Map<String, String> _internalFalseHits = {};
 /// The members of an exported concrete class with an upstream `_` name that
 /// are public by design, each with its reason.
 const Map<String, String> _publicUnderscore = {
+  'DatasetController.cachedMeta':
+      'a controller of another package reads the meta, as an upstream '
+      'subclass reads the protected `_cachedMeta` (Chart.js ADR 0133)',
   'ChartMeta.clip': _metaParseState,
   'ChartMeta.parsed': _metaParseState,
   'ChartMeta.sorted': _metaParseState,
