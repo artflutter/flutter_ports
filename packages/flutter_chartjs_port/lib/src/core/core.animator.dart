@@ -11,9 +11,10 @@
 ///   promise chains that it starts finish at the end of the callback, as
 ///   after a `requestAnimationFrame` callback of a browser
 ///   (`platform-animation-promise-checkpoint`).
-/// - [Animator.update] walks the charts with [jsMapForEach], the ECMAScript
-///   `Map.prototype.forEach`. A listener can destroy a chart or start a new
-///   chart.
+/// - [Animator.update] walks a copy of the chart list: a listener can
+///   destroy a chart or start a new chart (`adapt-animator-chart-list`). A
+///   destroyed chart gets no visit. A new chart gets its first visit in the
+///   next frame.
 /// - A chart under `TickerMode(enabled: false)` is muted with
 ///   [Animator.mute] and [Animator.unmute] (Chart.js ADR 0016, decision 7,
 ///   `platform-animator-mute` and `platform-animator-skip-muted`). The chart
@@ -34,7 +35,6 @@ import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show requestAnimFrame;
-import 'package:flutter_chartjs_port/src/js/js_map.dart';
 import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -111,6 +111,10 @@ class Animator() {
   /// record. A Dart `Map` keeps the insertion order. A `types.Chart` does
   /// not override `==`, so the keys compare by identity, as in a JS `Map`.
   final Map<types.Chart, Anims> _charts = {};
+
+  /// The charts whose record [getAnims] creates while [update] walks the
+  /// charts, or Dart `null` outside [update] (`adapt-animator-chart-list`).
+  List<types.Chart>? _added;
 
   /// core.animator.js:16 `_running`.
   bool _running = false;
@@ -200,51 +204,69 @@ class Animator() {
     date ??= clock.now().millisecondsSinceEpoch.toDouble();
     var remaining = 0;
 
-    jsMapForEach(_charts, (anims, chart) {
-      if (!anims.running || anims.items.isEmpty) {
-        return;
-      }
-      // DIVERGES(chartjs): platform-animator-skip-muted, a muted chart waits.
-      if (_muted[chart] ?? false) return;
-      final items = anims.items;
-      var i = items.length - 1;
-      var draw = false;
-      Animation item;
-
-      for (; i >= 0; --i) {
-        item = items[i];
-
-        if (item.active()) {
-          if (item.total > (anims.duration ?? double.nan)) {
-            // if the animation has been updated and its duration prolonged,
-            // update to total duration of current animations run (for
-            // progress event)
-            anims.duration = item.total;
-          }
-          item.tick(date!);
-          draw = true;
-        } else {
-          // Remove the item by replacing it with last item and removing the
-          // last
-          // A lot faster than splice.
-          items[i] = items[items.length - 1];
-          items.removeLast();
+    // DIVERGES(chartjs): adapt-animator-chart-list, a copy of the chart list.
+    final outerAdded = _added;
+    final added = _added = <types.Chart>[];
+    try {
+      for (final chart in _charts.keys.toList(growable: false)) {
+        final anims = _charts[chart];
+        // A chart that a listener destroyed before its visit.
+        if (anims == null) continue;
+        if (!anims.running || anims.items.isEmpty) {
+          continue;
         }
-      }
+        // DIVERGES(chartjs): platform-animator-skip-muted, a muted chart waits.
+        if (_muted[chart] ?? false) continue;
+        final items = anims.items;
+        var i = items.length - 1;
+        var draw = false;
+        Animation item;
 
-      if (draw) {
-        chart.draw();
-        _notify(chart, anims, date!, 'progress');
-      }
+        for (; i >= 0; --i) {
+          item = items[i];
 
-      if (items.isEmpty) {
-        anims.running = false;
-        _notify(chart, anims, date!, 'complete');
-        anims.initial = false;
-      }
+          if (item.active()) {
+            if (item.total > (anims.duration ?? double.nan)) {
+              // if the animation has been updated and its duration prolonged,
+              // update to total duration of current animations run (for
+              // progress event)
+              anims.duration = item.total;
+            }
+            item.tick(date);
+            draw = true;
+          } else {
+            // Remove the item by replacing it with last item and removing the
+            // last
+            // A lot faster than splice.
+            items[i] = items[items.length - 1];
+            items.removeLast();
+          }
+        }
 
-      remaining += items.length;
-    });
+        if (draw) {
+          chart.draw();
+          _notify(chart, anims, date, 'progress');
+        }
+
+        if (items.isEmpty) {
+          anims.running = false;
+          _notify(chart, anims, date, 'complete');
+          anims.initial = false;
+        }
+
+        remaining += items.length;
+      }
+    } finally {
+      _added = outerAdded;
+    }
+    // A chart that a listener started in the loop: its visit waits for the
+    // next frame, and it keeps the loop running.
+    for (final chart in added) {
+      final anims = _charts[chart];
+      if (anims == null || !anims.running || anims.items.isEmpty) continue;
+      if (_muted[chart] ?? false) continue;
+      remaining += anims.items.length;
+    }
 
     _lastDate = date;
 
@@ -265,6 +287,7 @@ class Animator() {
     if (anims == null) {
       anims = Anims();
       charts[chart] = anims;
+      _added?.add(chart);
     }
     return anims;
   }

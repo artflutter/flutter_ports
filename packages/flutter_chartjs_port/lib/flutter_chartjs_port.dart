@@ -191,7 +191,6 @@ export 'package:flutter_chartjs_port/src/index.dart' hide Animation, Element;
 export 'package:flutter_chartjs_port/src/js/js_array.dart';
 export 'package:flutter_chartjs_port/src/js/js_class.dart';
 export 'package:flutter_chartjs_port/src/js/js_function.dart';
-export 'package:flutter_chartjs_port/src/js/js_map.dart';
 export 'package:flutter_chartjs_port/src/js/js_math.dart';
 export 'package:flutter_chartjs_port/src/js/js_number.dart';
 export 'package:flutter_chartjs_port/src/js/js_object.dart';

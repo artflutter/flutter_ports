@@ -9,6 +9,11 @@
   (`clock.now().millisecondsSinceEpoch`): the fake clock of `testWidgets` and
   `withClock` moves it.
 
+- `jsMapForEach` and `js_map.dart` are removed from `js_semantics.dart` and the
+  app library. The animator walks a copy of its chart list: a chart that an
+  `onProgress` or `onComplete` callback creates gets its first animation frame
+  one frame later, and a chart that a callback destroys gets no further tick.
+
 - The scale option `border` holds one object, also in a raw configuration: an
   `AxisBorder` (`display`, `color`, `width`, `dash`, `dashOffset`, `z`) for a
   cartesian axis and a `RadialAxisBorder` (`dash`, `dashOffset`) for the radial

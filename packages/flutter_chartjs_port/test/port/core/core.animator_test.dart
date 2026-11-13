@@ -19,9 +19,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 // Behavior of Chart.js ADR 0019 that test/specs/core.animator.tests.js does
 // not check (AGENTS.md rule 3): the promise checkpoint of the animator
-// callback, jsMapForEach in `_update`, `stop()` inside a listener, one long
-// pump, the mute of Chart.js ADR 0016 (decision 7), `listen`, and the members
-// `getAnims`, `update` and `refresh` of Chart.js ADR 0029 (section 6).
+// callback, the copy of the chart list in `_update`, `stop()` inside a
+// listener, one long pump, the mute of Chart.js ADR 0016 (decision 7),
+// `listen`, and the members `getAnims`, `update` and `refresh` of Chart.js
+// ADR 0029 (section 6).
 //
 // A test registers a frame callback after the animator callback of a frame
 // with SchedulerBinding.scheduleFrameCallback between two pumps. The frame
@@ -259,7 +260,7 @@ void main() {
     });
   });
 
-  group('jsMapForEach in _update', () {
+  group('adapt-animator-chart-list', () {
     testWidgets('a destroy in onComplete throws nothing', (tester) async {
       final a = _Chart('a');
       final b = _Chart('b');
@@ -280,7 +281,28 @@ void main() {
         ..remove(b);
     });
 
-    testWidgets('a chart that starts in onComplete ticks in the same frame', (
+    testWidgets('a chart that onComplete destroys before its visit gets no '
+        'tick', (tester) async {
+      final a = _Chart('a');
+      final b = _Chart('b');
+      _start(a, <String, Object?>{'value': 0.0}, duration: 50);
+      final targetB = <String, Object?>{'value': 0.0};
+      _start(b, targetB, duration: 200);
+      // a completes in frame 5, before the visit of b in that frame.
+      animator.listen(a, 'complete', (event) => animator.remove(b));
+      await _frames(tester, 5);
+      expect(b.draws, 4);
+      final value = targetB['value']! as double;
+      expect(value, lessThan(10.0));
+      await _frames(tester, 10);
+      expect(b.draws, 4);
+      expect(targetB['value'], value);
+      // No chart runs: the loop ends.
+      expect(SchedulerBinding.instance.transientCallbackCount, 0);
+      animator.remove(a);
+    });
+
+    testWidgets('a chart that starts in onComplete ticks from the next frame', (
       tester,
     ) async {
       final a = _Chart('a');
@@ -289,17 +311,23 @@ void main() {
       final targetC = <String, Object?>{'value': 0.0};
       var startFrame = -1;
       var frame = 0;
+      final drawFrames = <int>[];
+      // The record of c is made in the loop of frame 5: c has no record
+      // before.
       animator.listen(a, 'complete', (event) {
         startFrame = frame;
         _start(c, targetC, duration: 50);
+        animator.listen(c, 'progress', (event) => drawFrames.add(frame));
       });
       for (frame = 1; frame <= 12; frame++) {
         await _frames(tester, 1);
       }
-      // a ends in frame 4 (64 ms) and completes in frame 5. c starts in
-      // that frame, after a in the Map, and ticks in it.
+      // a ends in frame 4 (64 ms) and completes in frame 5, its last chart
+      // with animations. c starts in that frame. It keeps the loop running
+      // and ticks from frame 6 to frame 9 (64 ms after its start).
       expect(startFrame, 5);
-      expect(c.draws, 5);
+      expect(drawFrames, [6, 7, 8, 9]);
+      expect(c.draws, 4);
       expect(targetC['value'], 10.0);
       expect(animator.running(c), isFalse);
       animator
