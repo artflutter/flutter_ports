@@ -994,14 +994,9 @@ types.StackMode? _stackModeOf(Object? value) => switch (value) {
 };
 
 /// The JS value of a side of a [types.ChartClip], as the reference data
-/// writes it: Dart `null` is `false`, and NaN is the `undefined` side of a
-/// partial clip object, which the port reads as its `ToNumber` (row
-/// `adapt-native-chart-meta`).
-Object? _jsClipSide(double? side) => switch (side) {
-  null => false,
-  final double d when d.isNaN => undefined,
-  final double d => d,
-};
+/// writes it: Dart `null` is `false` (rows `adapt-native-chart-meta` and
+/// `adapt-chart-clip-option`).
+Object? _jsClipSide(double? side) => side ?? false;
 
 /// The JS `_stacked` value of [mode], as the reference data writes it.
 Object _jsStacked(types.StackMode mode) => switch (mode) {

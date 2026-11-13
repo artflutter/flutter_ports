@@ -291,6 +291,7 @@ bool _indexedScalar(Object? value) =>
     value is ScaleAxis ||
     value is Locale ||
     value is NumberFormat ||
+    value is ChartClip ||
     (value is ChartPaint && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list

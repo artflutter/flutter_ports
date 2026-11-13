@@ -8,6 +8,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show RelativeFill;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -49,7 +50,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       ],
     },
     'options': <String, Object?>{
-      'clip': false,
+      // DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
+      'clip': ChartClip.none,
       'animation': false,
       'responsive': false,
       'plugins': <String, Object?>{

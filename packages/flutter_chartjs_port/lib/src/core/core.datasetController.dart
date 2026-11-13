@@ -125,78 +125,29 @@ import 'package:meta/meta.dart';
   );
 }
 
-/// core.datasetController.js:23 `defaultClip`.
+/// core.datasetController.js:23 `defaultClip`, with the `toClip` of its
+/// result.
 ///
-/// The result is `false` or the object `{top, right, bottom, left}`, a
-/// [_ClipEdges]. No overflow (Dart `null`, the JS `false`) gives `false`.
-Object? _defaultClip(
+/// No overflow (Dart `null`, the JS `false`) gives [types.ChartClip.none].
+// DIVERGES(chartjs): adapt-chart-clip-option, the edges are a ChartClip.
+types.ChartClip _defaultClip(
   types.Scale? xScale,
   types.Scale? yScale,
   double? allowedOverflow,
 ) {
   if (allowedOverflow == null) {
-    return false;
+    return types.ChartClip.none;
   }
   final x = _scaleClip(xScale, allowedOverflow);
   final y = _scaleClip(yScale, allowedOverflow);
 
-  return _ClipEdges(top: y.end, right: x.end, bottom: y.start, left: x.start);
-}
-
-/// core.datasetController.js:28-33 the object `{top, right, bottom, left}`
-/// of `defaultClip`. Only `toClip` reads it.
-final class _ClipEdges({
-  required final Object? top,
-  required final Object? right,
-  required final Object? bottom,
-  required final Object? left,
-});
-
-/// core.datasetController.js:38 `toClip`.
-///
-/// An absent key of an object [value] gives the [undefined] sentinel, as the
-/// property read of upstream does. The `clip` option of the user is a view
-/// of the resolver for an object (helpers.config.ts:215-221): the reads
-/// are typed. Each side is a `double?` of [types.ChartClip] (row
-/// `adapt-native-chart-meta`).
-types.ChartClip _toClip(Object? value) {
-  Object? t;
-  Object? r;
-  Object? b;
-  Object? l;
-
-  if (value is _ClipEdges) {
-    t = value.top;
-    r = value.right;
-    b = value.bottom;
-    l = value.left;
-  } else if (isObject(value)) {
-    t = readOption(value, OptionKey.top);
-    r = readOption(value, OptionKey.right);
-    b = readOption(value, OptionKey.bottom);
-    l = readOption(value, OptionKey.left);
-  } else {
-    t = r = b = l = value;
-  }
-
   return types.ChartClip(
-    top: _clipSide(t),
-    right: _clipSide(r),
-    bottom: _clipSide(b),
-    left: _clipSide(l),
-    disabled: value == false,
+    top: y.end,
+    right: x.end,
+    bottom: y.start,
+    left: x.start,
   );
 }
-
-/// A side of `toClip` as `getDatasetClipArea` reads it
-/// (helpers.dataset.ts:28-31): `false` is no clip (Dart `null`), `true` is
-/// 0, and another value is its `ToNumber`: `undefined` gives NaN.
-double? _clipSide(Object? side) => switch (side) {
-  false => null,
-  true => 0.0,
-  final num n => n.toDouble(),
-  _ => jsToNumber(side),
-};
 
 /// core.datasetController.js:59 `getSortedDatasetIndices`.
 List<int> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
@@ -1883,8 +1834,8 @@ class DatasetController(
   /// core.datasetController.js:680 `getMaxOverflow()`.
   ///
   /// The pixels that the elements of the dataset can draw outside the chart
-  /// area. Dart `null` is the JS `false`: no overflow, and no default clip
-  /// of the dataset (row `adapt-max-overflow`).
+  /// area. Dart `null` is the JS `false`: no overflow, and the default clip
+  /// of the dataset is [types.ChartClip.none] (row `adapt-max-overflow`).
   /// @protected
   // DIVERGES(chartjs): adapt-max-overflow, a double or null.
   double? getMaxOverflow() {
@@ -1943,12 +1894,15 @@ class DatasetController(
     overflowFollowsUpdate = true;
     update(mode == null || mode.isEmpty ? 'default' : mode);
     overflowFollowsUpdate = false;
-    meta.clip = _toClip(
-      valueOrDefault(
-        options.readKey(OptionKey.clip),
-        _defaultClip(meta.xScale, meta.yScale, getMaxOverflow()),
-      ),
+    // DIVERGES(chartjs): adapt-chart-clip-option, the option holds the
+    // ChartClip of `toClip`. The default runs at each update, as upstream.
+    final clip = options.readKey(OptionKey.clip);
+    final orElse = _defaultClip(meta.xScale, meta.yScale, getMaxOverflow());
+    assert(
+      clip is types.ChartClip || identical(clip, undefined) || clip == null,
+      'The option clip takes a ChartClip, not $clip.',
     );
+    meta.clip = clip is types.ChartClip ? clip : orElse;
   }
 
   /// Whether the [update] that starts now has the [getMaxOverflow] of

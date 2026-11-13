@@ -157,12 +157,19 @@ enum StackMode() {
 }
 
 /// core.datasetController.js:28-44 `toClip`, index.d.ts:463
-/// `ChartMetaClip`: the clip of a dataset.
+/// `ChartMetaClip`: the clip of a dataset, also the value of the dataset
+/// option `clip` (index.d.ts:75, row `adapt-chart-clip-option`).
 ///
-/// A side holds the pixels outside the area of the dataset. Null is the JS
-/// `false` of a side: no clip on that side. JS `true` is 0, and the
-/// `undefined` side of a partial clip object is NaN, as the JS arithmetic of
-/// `getDatasetClipArea` gives (helpers.dataset.ts:28-31).
+/// A side holds the pixels outside the area of the dataset: a positive value
+/// lets the drawing overflow the area, a negative value clips inside it. Null
+/// is the JS `false` of a side: no clip on that side. A side that the app
+/// omits is null; upstream gives `undefined` there, and its clip area is NaN.
+///
+/// ```dart
+/// LineDataset(data: points, clip: const ChartClip.all(5));
+/// LineDataset(data: points, clip: const ChartClip(top: 8, right: -20));
+/// LineDataset(data: points, clip: ChartClip.none);
+/// ```
 @immutable
 class const ChartClip({
   /// index.d.ts:464 `left`.
@@ -180,6 +187,25 @@ class const ChartClip({
   /// index.d.ts:468 `disabled`: the clip option is `false`.
   final bool disabled = false,
 }) {
-  /// Creates a clip. `toClip` calls it.
+  /// Creates a clip with the given sides.
   this;
+
+  /// The clip `clip: pixels` of upstream: each side is [pixels].
+  const new all(double pixels)
+    : this(left: pixels, top: pixels, right: pixels, bottom: pixels);
+
+  /// The clip `clip: false` of upstream: the dataset draws with no clip area.
+  static const ChartClip none = ChartClip(disabled: true);
+
+  @override
+  bool operator ==(Object other) =>
+      other is ChartClip &&
+      other.left == left &&
+      other.top == top &&
+      other.right == right &&
+      other.bottom == bottom &&
+      other.disabled == disabled;
+
+  @override
+  int get hashCode => Object.hash(left, top, right, bottom, disabled);
 }

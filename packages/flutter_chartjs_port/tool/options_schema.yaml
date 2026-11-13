@@ -55,7 +55,8 @@
 # dataset; an axis letter is a foreign value), `textStyle` (a Flutter `TextStyle`, the value of `font`,
 # `titleFont`, `bodyFont` and `footerFont`; a font object is a foreign value), `locale` (a Flutter
 # `Locale`, the chart `locale`; a language tag is a foreign value), `numberFormat` (a `NumberFormat`
-# of package:intl, the tick `format`; an object of number format options is a foreign value), `any` (any
+# of package:intl, the tick `format`; an object of number format options is a foreign value),
+# `chartClip` (a `ChartClip`, the dataset `clip`; a number, a bool or an object is a foreign value), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -93,7 +94,7 @@ kinds:
       transitions: scope TransitionsSpec
       datasets: scope DatasetOptionsByType
       indexAxis: cartesianAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       color: chartPaint
       backgroundColor: chartPaint
       hoverBackgroundColor: chartPaint
@@ -305,13 +306,6 @@ kinds:
       key: string
       xAxisKey: string
       yAxisKey: string
-  ChartArea:
-    doc: Port-only name for the object form of index.d.ts:75 `clip` (index.d.ts:463 ChartMetaClip), the clip of each side.
-    keys:
-      left: number | bool
-      top: number | bool
-      right: number | bool
-      bottom: number | bool
   # ---------------------------------------------------------------------------------------------
   # The elements.
   # ---------------------------------------------------------------------------------------------
@@ -507,7 +501,7 @@ kinds:
       parsing: bool | scope ParsingOptions
       normalized: bool
       indexAxis: cartesianAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       label: string
       order: number
       stack: string
@@ -553,7 +547,7 @@ kinds:
       parsing: bool | scope ParsingOptions
       normalized: bool
       indexAxis: cartesianAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       label: string
       order: number
       stack: string
@@ -612,7 +606,7 @@ kinds:
       parsing: bool | scope ParsingOptions
       normalized: bool
       indexAxis: cartesianAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       label: string
       order: number
       stack: string
@@ -650,7 +644,7 @@ kinds:
       parsing: bool | scope ParsingOptions
       normalized: bool
       indexAxis: radialAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       label: string
       order: number
       stack: string
@@ -701,7 +695,7 @@ kinds:
       parsing: bool | scope ParsingOptions
       normalized: bool
       indexAxis: radialAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       label: string
       order: number
       stack: string
@@ -753,7 +747,7 @@ kinds:
       parsing: bool | scope ParsingOptions
       normalized: bool
       indexAxis: radialAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       label: string
       order: number
       stack: string
@@ -817,7 +811,7 @@ kinds:
       parsing: bool | scope ParsingOptions
       normalized: bool
       indexAxis: scaleAxis
-      clip: number | bool | scope ChartArea
+      clip: chartClip
       label: string
       order: number
       stack: string

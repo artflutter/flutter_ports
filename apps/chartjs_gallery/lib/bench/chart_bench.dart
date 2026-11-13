@@ -1185,7 +1185,7 @@ ChartBenchCase _primitiveCase() => ChartBenchCase(
             'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
             'showLine': false,
-            'clip': false,
+            'clip': ChartClip.none,
           },
         ],
       },

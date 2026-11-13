@@ -29,6 +29,7 @@ import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
     show
         ChartArea,
+        ChartClip,
         ChartMeta,
         ChartPaint,
         DatasetController,
@@ -452,7 +453,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
   // DIVERGES(sankey): adapt-sankey-native-defaults, the objects of the host.
   static final Map<String, Object?> overrides = <String, Object?>{
     'datasets': <String, Object?>{
-      'clip': false,
+      'clip': ChartClip.none,
       'parsing': <String, Object?>{'flow': 'flow', 'from': 'from', 'to': 'to'},
     },
     'interaction': <String, Object?>{

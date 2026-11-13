@@ -1086,7 +1086,7 @@ Map<String, Object?> _benchConfig(
             'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
             'showLine': false,
-            'clip': false,
+            'clip': types.ChartClip.none,
           },
         },
       ],

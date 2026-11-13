@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -18422,26 +18423,21 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
               <String, Object?>{'x': 1.0, 'y': 1.0, 'r': 25.0},
               <String, Object?>{'x': 4.0, 'y': 9.0, 'r': 18.0},
             ],
-            'clip': false,
+            'clip': ChartClip.none,
           },
           <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': 2.0, 'y': 9.5, 'r': 20.0},
               <String, Object?>{'x': 5.0, 'y': 0.5, 'r': 15.0},
             ],
-            'clip': 10.0,
+            'clip': ChartClip.all(10),
           },
           <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': 0.5, 'y': 5.0, 'r': 22.0},
               <String, Object?>{'x': 5.5, 'y': 6.0, 'r': 12.0},
             ],
-            'clip': <String, Object?>{
-              'left': 5.0,
-              'top': false,
-              'right': -2.0,
-              'bottom': 0.0,
-            },
+            'clip': ChartClip(left: 5, right: -2, bottom: 0),
           },
         ],
       },

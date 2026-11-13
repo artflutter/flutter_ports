@@ -493,7 +493,7 @@ void main() {
       group('the draw does not throw', () {
         for (final (name, dataset) in <(String, Map<String, Object?>)>[
           ('no tension', {}),
-          ('clip false', {'clip': false}),
+          ('clip none', {'clip': types.ChartClip.none}),
           (
             'tension 0.4 and capBezierPoints false',
             {'tension': 0.4, 'capBezierPoints': false},

@@ -93,10 +93,6 @@ enum ScopeKind(
   /// controller.doughnut.js:158, helpers.config.ts:444).
   parsingOptions('ParsingOptions'),
 
-  /// Port-only name for the object form of index.d.ts:75 `clip` (index.d.ts:463
-  /// ChartMetaClip), the clip of each side.
-  chartArea('ChartArea'),
-
   /// index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the
   /// options of a point element.
   pointOptions('PointOptions', element: 'point'),
@@ -297,8 +293,6 @@ enum ScopeKind(
         return InteractionOptionsScope();
       case ScopeKind.parsingOptions:
         return ParsingOptionsScope();
-      case ScopeKind.chartArea:
-        return ChartAreaScope();
       case ScopeKind.pointOptions:
         return PointOptionsScope();
       case ScopeKind.lineOptions:
@@ -412,8 +406,6 @@ enum ScopeKind(
         return InteractionOptionsScope;
       case ScopeKind.parsingOptions:
         return ParsingOptionsScope;
-      case ScopeKind.chartArea:
-        return ChartAreaScope;
       case ScopeKind.pointOptions:
         return PointOptionsScope;
       case ScopeKind.lineOptions:
@@ -710,13 +702,6 @@ enum ScopeKind(
         ];
       case ScopeKind.parsingOptions:
         return const [OptionKey.key, OptionKey.xAxisKey, OptionKey.yAxisKey];
-      case ScopeKind.chartArea:
-        return const [
-          OptionKey.left,
-          OptionKey.top,
-          OptionKey.right,
-          OptionKey.bottom,
-        ];
       case ScopeKind.pointOptions:
         return const [
           OptionKey.borderWidth,
@@ -1527,7 +1512,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3840;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.color:
             return 4864;
           case OptionKey.backgroundColor:
@@ -1915,19 +1900,6 @@ enum ScopeKind(
           default:
             return 0;
         }
-      case ScopeKind.chartArea:
-        switch (key) {
-          case OptionKey.left:
-            return 3;
-          case OptionKey.top:
-            return 3;
-          case OptionKey.right:
-            return 3;
-          case OptionKey.bottom:
-            return 3;
-          default:
-            return 0;
-        }
       case ScopeKind.pointOptions:
         switch (key) {
           case OptionKey.borderWidth:
@@ -2158,7 +2130,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3840;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2249,7 +2221,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3840;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2366,7 +2338,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3840;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2441,7 +2413,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3968;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2542,7 +2514,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3968;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2645,7 +2617,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3968;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2770,7 +2742,7 @@ enum ScopeKind(
           case OptionKey.indexAxis:
             return 3712;
           case OptionKey.clip:
-            return 35;
+            return 4992;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -3443,8 +3415,6 @@ enum ScopeKind(
             return ScopeKind.transitionsSpec;
           case OptionKey.datasets:
             return ScopeKind.datasetOptionsByType;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.interaction:
             return ScopeKind.interactionOptions;
           case OptionKey.hover:
@@ -3597,8 +3567,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.parsingOptions:
         return null;
-      case ScopeKind.chartArea:
-        return null;
       case ScopeKind.pointOptions:
         return null;
       case ScopeKind.lineOptions:
@@ -3645,8 +3613,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.borderRadius:
             return ScopeKind.borderRadius;
           case OptionKey.borderWidth:
@@ -3672,8 +3638,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.fill:
             return ScopeKind.fillTarget;
           case OptionKey.segment:
@@ -3695,8 +3659,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.tooltip:
             return ScopeKind.tooltipDatasetOptions;
           case OptionKey.animation:
@@ -3716,8 +3678,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.borderRadius:
             return ScopeKind.borderRadius;
           case OptionKey.animation:
@@ -3739,8 +3699,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.borderRadius:
             return ScopeKind.borderRadius;
           case OptionKey.animation:
@@ -3762,8 +3720,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.fill:
             return ScopeKind.fillTarget;
           case OptionKey.segment:
@@ -3785,8 +3741,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.clip:
-            return ScopeKind.chartArea;
           case OptionKey.tooltip:
             return ScopeKind.tooltipDatasetOptions;
           case OptionKey.fill:
@@ -3935,8 +3889,6 @@ enum ScopeKind(
         return 64;
       case ScopeKind.parsingOptions:
         return 64;
-      case ScopeKind.chartArea:
-        return 64;
       case ScopeKind.pointOptions:
         return 64;
       case ScopeKind.lineOptions:
@@ -4050,8 +4002,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.parsingOptions:
         return null;
-      case ScopeKind.chartArea:
-        return null;
       case ScopeKind.pointOptions:
         return null;
       case ScopeKind.lineOptions:
@@ -4164,8 +4114,6 @@ enum ScopeKind(
       case ScopeKind.interactionOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.parsingOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.chartArea:
         return classifyUnion(raw, 64);
       case ScopeKind.pointOptions:
         return classifyUnion(raw, 64);

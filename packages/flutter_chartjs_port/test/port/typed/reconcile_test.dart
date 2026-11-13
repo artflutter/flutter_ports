@@ -314,8 +314,8 @@ void main() {
       final map = _dataset(chart, 0);
       final other = _dataset(chart, 1);
       // An app edit of the live Maps: a key that the lowering did not write.
-      map['clip'] = 4;
-      other['clip'] = 5;
+      map['clip'] = const ChartClip.all(4);
+      other['clip'] = const ChartClip.all(5);
 
       await tester.pumpWidget(
         _view(
@@ -328,7 +328,7 @@ void main() {
       expect(_dataset(chart, 0), same(map));
       expect(map.jsHas('label'), isFalse);
       expect(map['borderWidth'], 2);
-      expect(map['clip'], 4);
+      expect(map['clip'], const ChartClip.all(4));
       expect(map['data'], same(data));
       expect(
         (chart.getDatasetMeta(0).data.first.options!
@@ -338,7 +338,7 @@ void main() {
       expect(_dataset(chart, 1), same(other));
       expect(
         {for (final key in other.jsKeys()) key: other[key]},
-        {'label': 'B', 'data': data, 'clip': 5},
+        {'label': 'B', 'data': data, 'clip': const ChartClip.all(5)},
       );
     });
 

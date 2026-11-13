@@ -126,7 +126,7 @@ const List<(List<String>, Widget)> _samples = [
   (
     [
       'Large points with `pointRadius`, and a y axis with `reverse: true`.',
-      "`'clip': false` in `extra` lets the points overlap the chart edge.",
+      '`clip: ChartClip.none` lets the points overlap the chart edge.',
     ],
     Sample6(),
   ),

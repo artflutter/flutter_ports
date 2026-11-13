@@ -67,6 +67,7 @@ const Map<String, int> shapeAtoms = {
   'textDirection': 4608,
   'tooltipCallbacks': 4736,
   'chartPaint': 4864,
+  'chartClip': 4992,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -245,6 +246,11 @@ const Map<String, TypedAtom> typedAtoms = {
   'numberFormat': (
     type: 'NumberFormat',
     uri: 'package:intl/intl.dart',
+    field: null,
+  ),
+  'chartClip': (
+    type: 'ChartClip',
+    uri: 'package:flutter_chartjs_port/src/types/chart_meta.dart',
     field: null,
   ),
 };

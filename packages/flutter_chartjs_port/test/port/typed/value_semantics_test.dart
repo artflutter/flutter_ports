@@ -36,6 +36,7 @@ List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
 const List<String> _style = [
   'hidden',
   'order',
+  'clip',
   'backgroundColor',
   'borderColor',
   'borderWidth',
@@ -199,7 +200,7 @@ void main() {
           data: data,
           backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
-          extra: const {'clip': 5},
+          extra: const {'clip': ChartClip.all(5)},
         ),
         BarDataset(
           key: const ValueKey('a'),
@@ -207,7 +208,7 @@ void main() {
           data: data,
           backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
-          extra: const {'clip': 5},
+          extra: const {'clip': ChartClip.all(5)},
         ),
       );
       _expectEqual(

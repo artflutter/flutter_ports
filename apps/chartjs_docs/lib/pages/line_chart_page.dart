@@ -66,8 +66,7 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'clip',
     section: 'general',
-    type: 'num, bool or Map',
-    extra: true,
+    type: 'ChartClip',
     fallback: 'undefined',
   ),
   DocProperty(
@@ -427,9 +426,12 @@ DocPageContent lineChartPage() => DocPageContent(
                 'clip',
                 'How the chart clips the dataset at the chart area. A '
                     'positive value permits overflow. A negative value clips '
-                    'that number of pixels inside the chart area. `0` clips '
-                    'at the chart area. A Map sets each side, for example '
-                    "`{'left': 5, 'top': false, 'right': -2, 'bottom': 0}`.",
+                    'that number of pixels inside the chart area. '
+                    '`ChartClip.all(0)` clips at the chart area, and '
+                    '`ChartClip.none` draws with no clip. `ChartClip` also '
+                    'sets each side, for example '
+                    '`ChartClip(left: 5, right: -2, bottom: 0)`: a side with '
+                    'no value has no clip.',
               ),
               (
                 'drawActiveElementsOnTop',
