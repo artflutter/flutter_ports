@@ -1436,6 +1436,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       accepted (2026-11-13): its code passes the tests. It supersedes the `jsMax`, `jsMin` and
       `jsMaxMinCompare` parts of Chart.js ADR 0045 (§4, §8, the tests, an alternative and a
       consequence).
+      Chart.js ADR 0135 (`Math.hypot` is `math.sqrt(a * a + b * b)`) is accepted (2026-11-13): its
+      code passes the tests. It supersedes §2 of Chart.js ADR 0108 (`jsHypot`) and its rejected
+      alternative.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -2085,10 +2088,9 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   number index: a List gives the item at a whole index in range, else `undefined`), `jsSetIndex`
   (the write `list[index] = value`: a write at the length appends, a write past it or at a negative
   index throws a `RangeError`), `jsLessThan` (the operator `a < b` on raw values: two strings
-  compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036), `jsHypot` (`Math.hypot` of two doubles in the
-  V8 form: the infinities first, then NaN, then the operands scaled by the larger magnitude;
-  `math.sqrt(a * a + b * b)` differs in the last bit for about one pair in three, Chart.js ADR
-  0108) and the `undefined` sentinel (Chart.js ADR 0043). `Math.max` and `Math.min` have no
+  compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036) and the
+  `undefined` sentinel (Chart.js ADR 0043). `Math.hypot(a, b)` has no runtime function: it is
+  `math.sqrt(a * a + b * b)` (Chart.js ADR 0135). `Math.max` and `Math.min` have no
   runtime function: they are `dart:math` `max` and `min` with the type argument `double`, explicit
   or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), and
   `check:js-semantics` flags a `num` type argument (Chart.js ADR 0134). `lib/js_semantics.dart` exports each
@@ -2487,9 +2489,7 @@ sankey ADRs are proposed. The doc paths are relative to
   because a data file stays below 2,500,000 bytes),
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
   tooltip, Chart.js ADR 0037 §17). The other generators run on the reference engine of Chart.js
-  ADR 0045. `hypot_reference.mjs` (`test/port/js/hypot_reference.dart`, the 3,000 inputs of
-  `jsHypot`, Chart.js ADR 0108) is one of them: it does not stop on another engine, and
-  `js_math_hypot_test.dart` pins Node.js v24.22.1 on arm64.
+  ADR 0045.
   `theme_precedence_reference.mjs` also registers the 8 pinned controllers, and adds a JavaScript
   prototype of the hunks H4a-H5 to `plugin.colors.ts` in its prototype run. It and
   `controller_reference.mjs` register the seven plugins of `src/plugins/index.js` by name (a module

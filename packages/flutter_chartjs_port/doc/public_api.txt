@@ -603,7 +603,6 @@ jsGet
 jsGetIndex
 jsGetKey
 jsHasOwn
-jsHypot
 jsIsFinite
 jsIsFunction
 jsIsNaN
