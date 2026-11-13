@@ -13,11 +13,9 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/simple_parse.dart';
 
 /// hue.js:15 `HUE_RE`.
@@ -124,7 +122,7 @@ List<double> rgb2hsl(RGBA v) {
   // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
   // An if-element grows a list; the expression keeps a three-element literal.
   // ignore: prefer_if_elements_to_conditional_expressions
-  return [jsToInt32(h ?? double.nan), jsTruthy(s) ? s! : 0, l];
+  return [toInt32(h ?? double.nan).toDouble(), isNonZero(s) ? s! : 0, l];
 }
 
 /// hue.js:116 `calln`.
@@ -143,9 +141,9 @@ List<double> _calln(
   final rgb = a is List
       ? f(_at(a, 0), _at(a, 1), _at(a, 2))
       : f(
-          jsToNumber(a),
-          jsToNumber(b ?? undefined),
-          jsToNumber(c ?? undefined),
+          toNumber(a),
+          b?.toDouble() ?? double.nan,
+          c?.toDouble() ?? double.nan,
         );
   // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
   for (var i = 0; i < 3; i++) {
@@ -157,7 +155,7 @@ List<double> _calln(
 /// The JS read `a[i]` of an array, through ToNumber. An index past the end
 /// is `undefined`, which gives NaN.
 double _at(List<Object?> a, int i) =>
-    jsToNumber(i < a.length ? a[i] : undefined);
+    i < a.length ? toNumber(a[i]) : double.nan;
 
 /// hue.js:131 `hsl2rgb`.
 ///
@@ -266,10 +264,10 @@ String? hslString(RGBA? v) {
   final s = n2p(a[1]);
   final l = n2p(a[2]);
   return v.a < 255
-      ? 'hsla(${jsNumberToString(h)}, ${jsNumberToString(s)}%, '
-            '${jsNumberToString(l)}%, ${jsNumberToString(b2n(v.a))})'
-      : 'hsl(${jsNumberToString(h)}, ${jsNumberToString(s)}%, '
-            '${jsNumberToString(l)}%)';
+      ? 'hsla(${numberText(h)}, ${numberText(s)}%, '
+            '${numberText(l)}%, ${numberText(b2n(v.a))})'
+      : 'hsl(${numberText(h)}, ${numberText(s)}%, '
+            '${numberText(l)}%)';
 }
 
 int _hueStart(String s) {

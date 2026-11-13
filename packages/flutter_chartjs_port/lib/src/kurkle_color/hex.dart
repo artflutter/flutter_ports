@@ -13,8 +13,8 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
 
 /// The upstream digit map as an integer; -1 marks an absent map entry.
 int _digit(String str, int i) {
@@ -42,7 +42,7 @@ double _shortAlpha(String str) {
 int _int32(double x) {
   // DIVERGES(chartjs): adapt-kurkle-color-strings, performance optimisations.
   if (x > -2147483649.0 && x < 2147483648.0) return x.toInt();
-  return jsToInt32(x).toInt();
+  return toInt32(x);
 }
 
 /// hex.js:48 `hexParse`.

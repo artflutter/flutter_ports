@@ -8,8 +8,6 @@
 /// file as `../packed.js`. The port keeps the file next to `names.dart`.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-
 /// packed.js:2 `map`: the substitutions of the packed names.
 const Map<String, String> _map = {
   'x': 'dark',
@@ -198,8 +196,9 @@ const Map<String, String> _names = {
 /// Returns the CSS color names and their `[r, g, b]` bytes.
 Map<String, List<double>> unpack() {
   final unpacked = <String, List<double>>{};
-  final keys = jsObjectKeys(_names);
-  final tkeys = jsObjectKeys(_map);
+  // No key is an array index, so the Map order is the Object.keys order.
+  final keys = _names.keys.toList();
+  final tkeys = _map.keys.toList();
   for (var i = 0; i < keys.length; i++) {
     final ok = keys[i];
     var nk = ok;

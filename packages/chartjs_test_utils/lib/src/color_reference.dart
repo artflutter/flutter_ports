@@ -6,7 +6,6 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as legacy;
 // The test harness decodes frozen upstream input through internal primitives.
 // ignore_for_file: implementation_imports
@@ -30,9 +29,7 @@ legacy.Color referenceColor(Object? input) {
   } else {
     rgba = legacy.nameParse(value) ?? _function(value);
   }
-  return rgba == null
-      ? legacy.Color(undefined)
-      : legacy.Color.fromRgbaBytes(rgba);
+  return rgba == null ? legacy.Color(null) : legacy.Color.fromRgbaBytes(rgba);
 }
 
 /// The paint of the CSS color text [value], or Dart `null` for a text that
