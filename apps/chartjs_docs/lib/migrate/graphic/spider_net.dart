@@ -71,7 +71,7 @@ final ChartConfig _config = ChartConfig(
         data: _values(type),
         borderColor: .constant(.solid(Gx.colors10[i])),
         borderWidth: 2,
-        fill: ChartFill.none,
+        fill: FillTarget.none,
         pointRadius: 0,
         pointHoverRadius: 0,
       ),

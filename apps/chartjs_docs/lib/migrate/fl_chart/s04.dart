@@ -33,13 +33,10 @@ final ChartConfig _config = fills(
         borderWidth: 8,
         pointRadius: 0,
         borderColor: const .constant(.solid(Fl.yellow)),
-        extra: {
-          'fill': {
-            'target': const {'value': 5},
-            'above': const ChartPaint.solid(Fl.pink),
-            'below': ChartPaint.solid(_above),
-          },
-        },
+        fill: const FillTarget.toValue(5).split(
+          above: const ChartPaint.solid(Fl.pink),
+          below: ChartPaint.solid(_above),
+        ),
       ),
     ],
     tooltip: const ChartTooltip(enabled: false),

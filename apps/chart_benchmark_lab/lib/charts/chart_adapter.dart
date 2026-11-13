@@ -369,7 +369,7 @@ class const BenchmarkChart({
         pointRadius: config.markers ? 3 : 0,
         pointHoverRadius: 3,
         tension: config.curved ? .35 : 0,
-        fill: config.fill ? cj.ChartFill.origin : cj.ChartFill.none,
+        fill: config.fill ? cj.FillTarget.toOrigin : cj.FillTarget.none,
       ),
       ChartType.bar => cj.BarDataset(
         key: const ValueKey('series'),
@@ -440,7 +440,7 @@ class const BenchmarkChart({
         pointBorderWidth: 0,
         pointRadius: config.markers ? 3 : 0,
         pointHoverRadius: 3,
-        fill: config.fill ? cj.ChartFill.start : cj.ChartFill.none,
+        fill: config.fill ? cj.FillTarget.toStart : cj.FillTarget.none,
       ),
       ChartType.sankey => _noSankey(),
     };

@@ -212,8 +212,8 @@ void main() {
         ),
       );
       _expectEqual(
-        LineDataset(points: points, fill: const .value(2)),
-        LineDataset(points: points, fill: const .value(2)),
+        LineDataset(points: points, fill: const .toValue(2)),
+        LineDataset(points: points, fill: const .toValue(2)),
       );
     });
 

@@ -6,8 +6,7 @@ import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
@@ -52,7 +51,7 @@ void main() {
         'datasets': [
           {
             'data': [for (var i = 0; i < 64; i++) 0],
-            'fill': false,
+            'fill': FillTarget.none,
             'pointRadius': 0,
           },
           {
@@ -60,7 +59,7 @@ void main() {
               for (var i = 0; i < 64; i++)
                 if (i % 12 == 5) null else i % 7 - 3,
             ],
-            'fill': 0,
+            'fill': const FillTarget.toDataset(0),
             'pointRadius': 0,
             'backgroundColor': const ChartPaint.solid(Color(0x88334455)),
           },
@@ -89,9 +88,9 @@ void main() {
     ('y', YAxis()),
   ]) {
     for (final fill in [
-      FillBoundary.origin,
-      FillBoundary.start,
-      FillBoundary.end,
+      FillTarget.toOrigin,
+      FillTarget.toStart,
+      FillTarget.toEnd,
     ]) {
       for (final reverse in [false, true]) {
         testWidgets(
@@ -108,11 +107,10 @@ void main() {
                         for (var i = 0; i < 64; i++)
                           if (i % 12 == 5) null else (i + k) % 7 - 3,
                       ],
-                      'fill': {
-                        'target': fill,
-                        'above': const ChartPaint.solid(Color(0x88334455)),
-                        'below': const ChartPaint.solid(Color(0x88778899)),
-                      },
+                      'fill': fill.split(
+                        above: const ChartPaint.solid(Color(0x88334455)),
+                        below: const ChartPaint.solid(Color(0x88778899)),
+                      ),
                       'pointRadius': 0,
                       if (k == 1) 'tension': 0.4,
                       if (k == 2) 'stepped': SteppedLine.middle,

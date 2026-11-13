@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -347,7 +348,7 @@ void main() {
         'borderWidth': 3,
         'capBezierPoints': true,
         'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
-        'fill': false,
+        'fill': FillTarget.none,
         'spanGaps': false,
         'stepped': false,
         'tension': 0,

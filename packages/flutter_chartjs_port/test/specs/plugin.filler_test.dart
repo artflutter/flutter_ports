@@ -9,8 +9,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary, RelativeFill;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,8 +26,9 @@ import '../fixtures/index.dart' as fixture;
 // test/port/core/core.datasetController_test.dart reads it.
 //
 // `meta.$filler` is the extra property `$filler` of the meta, read by name
-// (Chart.js ADR 0040, section 6). Its `fill` is a `double` dataset index, a
-// `String` mode, `false` or the option object.
+// (Chart.js ADR 0040, section 6). Its `fill` is a `FillTarget` (Chart.js ADR
+// 0140): `FillTarget.none` for `false`, a `DatasetFill` for a dataset index,
+// a boundary or a `ValueFill` for the option object.
 //
 // Each case builds a chart. Thus the file runs on the VM, and each case is a
 // `testWidgets` case with the harness of Chart.js ADR 0022, section 2.
@@ -102,7 +102,7 @@ void main() {
           Chart.unregister([filler]);
           _acquireWithWarnSpy(
             _line([
-              <String, Object?>{'fill': true},
+              <String, Object?>{'fill': FillTarget.toOrigin},
             ]),
             warnings,
           );
@@ -121,7 +121,10 @@ void main() {
           final warnings = <String>[];
           Chart.unregister([filler]);
           _acquireWithWarnSpy(
-            _line([<String, Object?>{}], <String, Object?>{'fill': true}),
+            _line(
+              [<String, Object?>{}],
+              <String, Object?>{'fill': FillTarget.toOrigin},
+            ),
             warnings,
           );
 
@@ -135,43 +138,53 @@ void main() {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
           _line([
-            _fill(FillBoundary.origin),
-            _fill(FillBoundary.start),
-            _fill(FillBoundary.end),
+            _fill(FillTarget.toOrigin),
+            _fill(FillTarget.toStart),
+            _fill(FillTarget.toEnd),
           ]),
         );
 
         expect(_decodedFillValues(chart), [
-          FillBoundary.origin,
-          FillBoundary.start,
-          FillBoundary.end,
+          FillTarget.toOrigin,
+          FillTarget.toStart,
+          FillTarget.toEnd,
         ]);
       });
 
       testWidgets('should support absolute dataset index', (tester) async {
         final chart = acquireChart(
-          _line([_fill(1), _fill(3), _fill(0), _fill(2)]),
+          _line([
+            _fill(const FillTarget.toDataset(1)),
+            _fill(const FillTarget.toDataset(3)),
+            _fill(const FillTarget.toDataset(0)),
+            _fill(const FillTarget.toDataset(2)),
+          ]),
         );
 
-        expect(_decodedFillValues(chart), [1.0, 3.0, 0.0, 2.0]);
+        expect(_decodedFillValues(chart), [
+          const FillTarget.toDataset(1),
+          const FillTarget.toDataset(3),
+          const FillTarget.toDataset(0),
+          const FillTarget.toDataset(2),
+        ]);
       });
 
       testWidgets('should support relative dataset index', (tester) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
           _line([
-            _fill(const RelativeFill(3)),
-            _fill(const RelativeFill(-1)),
-            _fill(const RelativeFill(1)),
-            _fill(const RelativeFill(-2)),
+            _fill(const FillTarget.toRelative(3)),
+            _fill(FillTarget.toPrevious),
+            _fill(FillTarget.toNext),
+            _fill(const FillTarget.toRelative(-2)),
           ]),
         );
 
         expect(_decodedFillValues(chart), [
-          3.0, // 0 + 3
-          0.0, // 1 - 1
-          3.0, // 2 + 1
-          1.0, // 3 - 2
+          const FillTarget.toDataset(3), // 0 + 3
+          const FillTarget.toDataset(0), // 1 - 1
+          const FillTarget.toDataset(3), // 2 + 1
+          const FillTarget.toDataset(1), // 3 - 2
         ]);
       });
 
@@ -179,27 +192,32 @@ void main() {
         tester,
       ) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(_line([_fill(true), _fill(false)]));
+        final chart = acquireChart(
+          _line([_fill(FillTarget.toOrigin), _fill(FillTarget.none)]),
+        );
 
-        expect(_decodedFillValues(chart), [FillBoundary.origin, false]);
+        expect(_decodedFillValues(chart), [
+          FillTarget.toOrigin,
+          FillTarget.none,
+        ]);
       });
 
       testWidgets('should ignore self dataset index', (tester) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
           _line([
-            _fill(0),
-            _fill(const RelativeFill(0)),
-            _fill(const RelativeFill(0)),
-            _fill(3),
+            _fill(const FillTarget.toDataset(0)),
+            _fill(const FillTarget.toRelative(0)),
+            _fill(const FillTarget.toRelative(0)),
+            _fill(const FillTarget.toDataset(3)),
           ]),
         );
 
         expect(_decodedFillValues(chart), [
-          false, // 0 === 0
-          false, // 1 === 1 - 0
-          false, // 2 === 2 + 0
-          false, // 3 === 3
+          FillTarget.none, // 0 === 0
+          FillTarget.none, // 1 === 1 - 0
+          FillTarget.none, // 2 === 2 + 0
+          FillTarget.none, // 3 === 3
         ]);
       });
 
@@ -207,55 +225,33 @@ void main() {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
           _line([
-            _fill(-2),
-            _fill(4),
-            _fill(const RelativeFill(-3)),
-            _fill(const RelativeFill(1)),
+            _fill(const FillTarget.toDataset(-2)),
+            _fill(const FillTarget.toDataset(4)),
+            _fill(const FillTarget.toRelative(-3)),
+            _fill(FillTarget.toNext),
           ]),
         );
 
         expect(_decodedFillValues(chart), [
-          false, // 0 - 2 < 0
-          false, // 1 + 4 > 3
-          false, // 2 - 3 < 0
-          false, // 3 + 1 > 3
+          FillTarget.none, // 0 - 2 < 0
+          FillTarget.none, // 1 + 4 > 3
+          FillTarget.none, // 2 - 3 < 0
+          FillTarget.none, // 3 + 1 > 3
         ]);
       });
 
       testWidgets('should ignore invalid values', (tester) async {
-        // A text is no fill target in the port: the cases of the invalid
-        // texts take values that are no target either.
+        // The texts, the floats, the infinities and the array of the spec
+        // are no FillTarget (Chart.js ADR 0140): a debug build stops on
+        // them. The cases of NaN and `null` stay, NaN as a value fill.
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
-          _line([
-            _fill(7.5),
-            _fill(-7.5),
-            _fill(double.negativeInfinity),
-            _fill(1.1),
-            _fill(-2.2),
-            _fill(3.3),
-            _fill(-4.4),
-            _fill(double.nan),
-            _fill(double.infinity),
-            _fill(0.5),
-            _fill(null),
-            _fill(<Object?>[]),
-          ]),
+          _line([_fill(const FillTarget.toValue(double.nan)), _fill(null)]),
         );
 
         expect(_decodedFillValues(chart), [
-          false, // float, for 'foo'
-          false, // float, for '+foo'
-          false, // !isFinite, for '-foo'
-          false, // float, for '+1.1'
-          false, // float, for '-2.2'
-          false, // float (number)
-          false, // float (number)
-          false, // NaN
-          false, // !isFinite
-          false, // float, for the empty string
-          false, // null
-          false, // array
+          FillTarget.none, // NaN
+          FillTarget.none, // null
         ]);
       });
     });
@@ -267,26 +263,26 @@ void main() {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
           _line([
-            _hiddenFill(FillBoundary.start),
-            _hiddenFill(const RelativeFill(-1)),
-            _hiddenFill(1),
-            _hiddenFill(const RelativeFill(-2)),
-            _fill(const RelativeFill(1)),
-            _fill(const RelativeFill(2)),
-            _fill(const RelativeFill(-1)),
-            _hiddenFill(FillBoundary.end),
+            _hiddenFill(FillTarget.toStart),
+            _hiddenFill(FillTarget.toPrevious),
+            _hiddenFill(const FillTarget.toDataset(1)),
+            _hiddenFill(const FillTarget.toRelative(-2)),
+            _fill(FillTarget.toNext),
+            _fill(const FillTarget.toRelative(2)),
+            _fill(FillTarget.toPrevious),
+            _hiddenFill(FillTarget.toEnd),
           ], _propagate(propagate: true)),
         );
 
         expect(_decodedFillValues(chart), [
-          FillBoundary.start, // 'start'
-          FillBoundary.start, // 1 - 1 -> 0 (hidden) -> 'start'
-          FillBoundary.start, // 1 (hidden) -> 0 (hidden) -> 'start'
-          FillBoundary.start, // 3 - 2 -> 1 (hidden) -> 0 (hidden) -> 'start'
-          5.0, // 4 + 1
-          FillBoundary.end, // 5 + 2 -> 7 (hidden) -> 'end'
-          5.0, // 6 - 1 -> 5
-          FillBoundary.end, // 'end'
+          FillTarget.toStart, // 'start'
+          FillTarget.toStart, // 1 - 1 -> 0 (hidden) -> 'start'
+          FillTarget.toStart, // 1 (hidden) -> 0 (hidden) -> 'start'
+          FillTarget.toStart, // 3 - 2 -> 1 (hidden) -> 0 (hidden) -> 'start'
+          const FillTarget.toDataset(5), // 4 + 1
+          FillTarget.toEnd, // 5 + 2 -> 7 (hidden) -> 'end'
+          const FillTarget.toDataset(5), // 6 - 1 -> 5
+          FillTarget.toEnd, // 'end'
         ]);
       });
 
@@ -296,26 +292,26 @@ void main() {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
           _line([
-            _hiddenFill(FillBoundary.start),
-            _hiddenFill(const RelativeFill(-1)),
-            _hiddenFill(1),
-            _hiddenFill(const RelativeFill(-2)),
-            _fill(const RelativeFill(1)),
-            _fill(const RelativeFill(2)),
-            _fill(const RelativeFill(-1)),
-            _hiddenFill(FillBoundary.end),
+            _hiddenFill(FillTarget.toStart),
+            _hiddenFill(FillTarget.toPrevious),
+            _hiddenFill(const FillTarget.toDataset(1)),
+            _hiddenFill(const FillTarget.toRelative(-2)),
+            _fill(FillTarget.toNext),
+            _fill(const FillTarget.toRelative(2)),
+            _fill(FillTarget.toPrevious),
+            _hiddenFill(FillTarget.toEnd),
           ], _propagate(propagate: false)),
         );
 
         expect(_decodedFillValues(chart), [
-          FillBoundary.start, // 'origin'
-          0.0, // 1 - 1
-          1.0, // 1
-          1.0, // 3 - 2
-          5.0, // 4 + 1
-          7.0, // 5 + 2
-          5.0, // 6 - 1
-          FillBoundary.end, // 'end'
+          FillTarget.toStart, // 'origin'
+          const FillTarget.toDataset(0), // 1 - 1
+          const FillTarget.toDataset(1), // 1
+          const FillTarget.toDataset(1), // 3 - 2
+          const FillTarget.toDataset(5), // 4 + 1
+          const FillTarget.toDataset(7), // 5 + 2
+          const FillTarget.toDataset(5), // 6 - 1
+          FillTarget.toEnd, // 'end'
         ]);
       });
 
@@ -323,18 +319,19 @@ void main() {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
         final chart = acquireChart(
           _line([
-            _hiddenFill(const RelativeFill(2)),
-            _hiddenFill(const RelativeFill(-1)),
-            _hiddenFill(const RelativeFill(-1)),
-            _fill(const RelativeFill(-2)),
+            _hiddenFill(const FillTarget.toRelative(2)),
+            _hiddenFill(FillTarget.toPrevious),
+            _hiddenFill(FillTarget.toPrevious),
+            _fill(const FillTarget.toRelative(-2)),
           ], _propagate(propagate: true)),
         );
 
         expect(_decodedFillValues(chart), [
-          false, // 0 + 2 -> 2 (hidden) -> 1 (hidden) -> 0 (loop)
-          false, // 1 - 1 -> 0 (hidden) -> 2 (hidden) -> 1 (loop)
-          false, // 2 - 1 -> 1 (hidden) -> 0 (hidden) -> 2 (loop)
-          false, // 3 - 2 -> 1 (hidden) -> 0 (hidden) -> 2 (hidden) -> 1 (loop)
+          FillTarget.none, // 0 + 2 -> 2 (hidden) -> 1 (hidden) -> 0 (loop)
+          FillTarget.none, // 1 - 1 -> 0 (hidden) -> 2 (hidden) -> 1 (loop)
+          FillTarget.none, // 2 - 1 -> 1 (hidden) -> 0 (hidden) -> 2 (loop)
+          // 3 - 2 -> 1 (hidden) -> 0 (hidden) -> 2 (hidden) -> 1 (loop)
+          FillTarget.none,
         ]);
       });
     });

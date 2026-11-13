@@ -84,6 +84,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, LineOptionsScope;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
     show TypedRecord;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -864,7 +866,8 @@ class LineElement([AnyObject? cfg])
     // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
     // class.
     ..cubicInterpolationMode = const DefaultCubicInterpolationMode()
-    ..fill = false
+    // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+    ..fill = FillTarget.none
     ..spanGaps = false
     ..stepped = false
     ..tension = 0.0;

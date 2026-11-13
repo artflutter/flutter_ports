@@ -33,7 +33,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'line': <String, Object?>{
           // DIVERGES(chartjs): adapt-fill-target-objects, the target
           // value.
-          'fill': const RelativeFill(-1),
+          'fill': FillTarget.toPrevious,
         },
         'point': <String, Object?>{'radius': 0},
       },

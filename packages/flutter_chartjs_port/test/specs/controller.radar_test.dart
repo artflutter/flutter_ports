@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -227,7 +228,7 @@ void main() {
               'borderDashOffset': 0.1,
               'borderJoinStyle': native_ui.StrokeJoin.bevel,
               'borderWidth': 1.2,
-              'fill': true,
+              'fill': FillTarget.toOrigin,
               'tension': 0.1,
             },
             'point': <String, Object?>{
@@ -264,7 +265,7 @@ void main() {
           'borderDashOffset': 0.1,
           'borderJoinStyle': native_ui.StrokeJoin.bevel,
           'borderWidth': 1.2,
-          'fill': true,
+          'fill': FillTarget.toOrigin,
           'tension': 0.1,
         }),
       );
@@ -339,7 +340,7 @@ void main() {
       _dataset(chart, 0)['borderDash'] = <Object?>[2, 3];
       _dataset(chart, 0)['borderDashOffset'] = 7;
       _dataset(chart, 0)['borderJoinStyle'] = native_ui.StrokeJoin.miter;
-      _dataset(chart, 0)['fill'] = false;
+      _dataset(chart, 0)['fill'] = FillTarget.none;
 
       // point styles
       _dataset(chart, 0)['pointRadius'] = 22;
@@ -368,7 +369,7 @@ void main() {
           'borderDashOffset': 7,
           'borderJoinStyle': native_ui.StrokeJoin.miter,
           'borderWidth': 0.55,
-          'fill': false,
+          'fill': FillTarget.none,
           'tension': 0,
         }),
       );

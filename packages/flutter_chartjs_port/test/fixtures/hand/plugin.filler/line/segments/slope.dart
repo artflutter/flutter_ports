@@ -5,6 +5,7 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
@@ -26,7 +27,8 @@ Map<String, Object?> fixture() {
             'data': <Object?>[1, 2, 3, 3, 2, 1],
             'backgroundColor': 'black',
             'borderColor': 'orange',
-            'fill': true,
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            'fill': FillTarget.toOrigin,
             'segment': <String, Object?>{
               'backgroundColor': (Object? ctx) => slope(ctx) > 0
                   ? 'green'

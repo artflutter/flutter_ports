@@ -18,7 +18,7 @@
 /// `TitleOptions`, `TooltipOptions`, `TooltipCallbacks`, `FillerOptions`,
 /// `DecimationOptions`) or a port-only name for an inline type of
 /// `index.d.ts` (`LegendLabelOptions`, `LegendTitleOptions`,
-/// `ColorsPluginOptions` of `plugin.colors.ts:4`, `FillTargetOptions`). The
+/// `ColorsPluginOptions` of `plugin.colors.ts:4`). The
 /// facades are internal: no public library exports them.
 ///
 /// This library is a pure layer.
@@ -400,23 +400,6 @@ extension type const FillerOptions(Object? object) {
   /// `propagate`.
   bool get propagate =>
       boolOption(optionOf(object, OptionKey.propagate), OptionKey.propagate);
-}
-
-/// The fill option object `{target, above, below}` or `{value}` of a line
-/// (`index.d.ts` `ComplexFillTarget` and `FillTarget`, inline types): a
-/// resolver of the line options, or the raw value.
-extension type const FillTargetOptions(Object? object) {
-  /// `above`.
-  Object? get above => optionOf(object, OptionKey.above);
-
-  /// `below`.
-  Object? get below => optionOf(object, OptionKey.below);
-
-  /// `target`.
-  Object? get target => optionOf(object, OptionKey.target);
-
-  /// `value`.
-  Object? get value => optionOf(object, OptionKey.value);
 }
 
 /// `DecimationOptions` (`index.d.ts`): the options of the decimation plugin

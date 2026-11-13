@@ -81,6 +81,7 @@ import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
 import {fileURLToPath} from 'node:url';
 
+import {fillTargetCode} from './fill_target.mjs';
 import {fontObjectRecord, resolvedFontRecord} from './font_record.mjs';
 
 /**
@@ -501,6 +502,14 @@ function num(v) {
  * Another value is `undefined` here.
  */
 function strokeEnum(k, x) {
+  // The FillTarget of `fill` (Chart.js ADR 0140, row
+  // adapt-fill-target-objects).
+  if (k === 'fill' && x !== undefined && x !== null) {
+    const code = fillTargetCode(x);
+    if (code === null) throw new Error(`No FillTarget for the fill ${String(x)}`);
+    usesFillTargets = true;
+    return code;
+  }
   if (typeof x !== 'string') return undefined;
   if ((k === 'borderCapStyle' || k === 'lineCap') && ['butt', 'round', 'square'].includes(x)) {
     return `StrokeCap.${x}`;
@@ -555,6 +564,9 @@ let usesSteppedLines = false;
 /** Whether the data have a cubic interpolation mode, for the imports. */
 let usesCubicModes = false;
 
+/** Whether the data have a fill, for the imports. */
+let usesFillTargets = false;
+
 /** Whether the data have a point style, for the imports. */
 let usesPointStyles = false;
 let usesBorderSkips = false;
@@ -608,7 +620,7 @@ const out = `// Original code, not ported from Chart.js: light theme reference d
 // ${elementCases.length} element cases.
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
-${usesUndefined || usesArcEnums || usesSteppedLines || usesBorderSkips || usesCubicModes || usesPointStyles ? '\n' : ''}${usesPointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${usesCubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${usesBorderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${usesSteppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${usesUndefined || usesArcEnums || usesSteppedLines || usesBorderSkips || usesCubicModes || usesPointStyles || usesFillTargets ? '\n' : ''}${usesPointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${usesCubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesFillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${usesArcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${usesBorderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${usesSteppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String themeLightReferenceNode = '${process.version}';
 

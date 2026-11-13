@@ -2,7 +2,7 @@
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, FillTarget;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show YAxis;
 
 /// The vertical bar chart of `docs/charts/bar.md:5-54`.
@@ -77,7 +77,7 @@ Map<String, Object?> barHorizontalConfig() => <String, Object?>{
         'axis': const YAxis(),
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
-        'fill': false,
+        'fill': FillTarget.none,
         'backgroundColor': <Object?>[
           const ChartPaint.solid(ui.Color.fromRGBO(255, 99, 132, 0.2)),
           const ChartPaint.solid(ui.Color.fromRGBO(255, 159, 64, 0.2)),

@@ -19,7 +19,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'label': '# of Votes',
           'data': <Object?>[9.0, 7.0, 3.0, 5.0, 2.0, 3.0],
-          'fill': FillBoundary.origin,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin,
           'borderColor': 'red',
           'backgroundColor': 'green',
           'pointRadius': 12.0,

@@ -15,6 +15,7 @@
 
 import 'dart:ui' show FontStyle, StrokeCap, StrokeJoin;
 
+import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -68,10 +69,10 @@ typedef PluginFillerReferenceWidth = ({
 });
 
 /// The cases.
-const List<PluginFillerReferenceCase> pluginFillerReference = [
+final List<PluginFillerReferenceCase> pluginFillerReference = [
   (
     name: 'fill origin',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -80,7 +81,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -95,8 +96,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -221,7 +222,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -483,7 +484,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -1006,7 +1007,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill start',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -1015,7 +1016,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
           },
         ],
       },
@@ -1030,8 +1031,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -1164,7 +1165,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.start,
+                'fill': FillTarget.toStart,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -1423,7 +1424,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -2062,7 +2063,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill end',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -2071,7 +2072,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.end,
+            'fill': FillTarget.toEnd,
           },
         ],
       },
@@ -2086,8 +2087,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -2220,7 +2221,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.end,
+                'fill': FillTarget.toEnd,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -2479,7 +2480,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.end,
+            'fill': FillTarget.toEnd,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -3118,7 +3119,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill value',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -3127,7 +3128,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{'value': 4.0},
+            'fill': FillTarget.toValue(4),
           },
         ],
       },
@@ -3142,8 +3143,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -3276,7 +3277,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': <String, Object?>{'value': 4.0},
+                'fill': FillTarget.toValue(4),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -3535,7 +3536,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': <String, Object?>{'value': 4.0},
+            'fill': FillTarget.toValue(4),
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -4174,7 +4175,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill true',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -4183,7 +4184,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': true,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -4198,8 +4199,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -4324,7 +4325,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': true,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -4586,7 +4587,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -5109,7 +5110,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -5118,7 +5119,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': false,
+            'fill': FillTarget.none,
           },
         ],
       },
@@ -5133,8 +5134,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -5267,7 +5268,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -5526,7 +5527,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -6138,7 +6139,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill -1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -6152,7 +6153,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': RelativeFill(-1),
+            'fill': FillTarget.toPrevious,
           },
         ],
       },
@@ -6167,8 +6168,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -6293,7 +6294,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -6570,7 +6571,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(-1),
+                'fill': FillTarget.toPrevious,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -6829,14 +6830,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -7439,7 +7440,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill +1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -7448,7 +7449,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': RelativeFill(1),
+            'fill': FillTarget.toNext,
           },
           <String, Object?>{
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
@@ -7468,8 +7469,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -7594,7 +7595,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(1),
+                'fill': FillTarget.toNext,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -7871,7 +7872,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -8130,14 +8131,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': 1.0,
+            'fill': FillTarget.toDataset(1),
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -8740,7 +8741,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill as a dataset index',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -8749,7 +8750,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': 2.0,
+            'fill': FillTarget.toDataset(2),
           },
           <String, Object?>{
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
@@ -8774,8 +8775,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -8908,7 +8909,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 2.0,
+                'fill': FillTarget.toDataset(2),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -9191,7 +9192,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -9474,7 +9475,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -9742,21 +9743,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': 2.0,
+            'fill': FillTarget.toDataset(2),
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -10547,7 +10548,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill stack',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -10556,19 +10557,19 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
           },
           <String, Object?>{
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 128, 0, 0.3)',
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
           },
         ],
       },
@@ -10586,8 +10587,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -10791,7 +10792,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -11092,7 +11093,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.stack,
+                'fill': FillTarget.toStacked,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -11396,7 +11397,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.stack,
+                'fill': FillTarget.toStacked,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -11658,21 +11659,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -12479,7 +12480,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill shape',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -12488,7 +12489,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.shape,
+            'fill': FillTarget.shape,
           },
         ],
       },
@@ -12503,8 +12504,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -12629,7 +12630,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.shape,
+                'fill': FillTarget.shape,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -12891,7 +12892,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.shape,
+            'fill': FillTarget.shape,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -13396,7 +13397,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'a gap without spanGaps',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -13405,7 +13406,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, null, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -13420,8 +13421,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -13551,7 +13552,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -13810,7 +13811,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -14398,7 +14399,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'a gap with spanGaps',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -14407,7 +14408,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, null, 6.0, null, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'spanGaps': true,
           },
         ],
@@ -14423,8 +14424,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -14553,7 +14554,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': true,
                 'stepped': false,
                 'tension': 0.0,
@@ -14812,7 +14813,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -15375,7 +15376,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stepped',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -15384,7 +15385,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'stepped': true,
           },
         ],
@@ -15400,8 +15401,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -15526,7 +15527,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': true,
                 'tension': 0.0,
@@ -15788,7 +15789,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -16315,7 +16316,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'a tension with fill -1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -16330,7 +16331,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': RelativeFill(-1),
+            'fill': FillTarget.toPrevious,
             'tension': 0.4,
           },
         ],
@@ -16346,8 +16347,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -16472,7 +16473,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.4,
@@ -16749,7 +16750,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(-1),
+                'fill': FillTarget.toPrevious,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.4,
@@ -17008,14 +17009,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -17617,7 +17618,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'monotone',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -17626,7 +17627,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'cubicInterpolationMode': MonotoneCubicInterpolationMode(),
           },
         ],
@@ -17642,8 +17643,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -17768,7 +17769,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': MonotoneCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -18030,7 +18031,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -18552,7 +18553,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'indexAxis y with fill origin',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -18561,7 +18562,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -18577,8 +18578,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           20.673828125,
@@ -18712,7 +18713,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -18977,7 +18978,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': YAxis(),
             'scale': 'x',
           },
@@ -19502,7 +19503,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'indexAxis y with fill -1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -19516,7 +19517,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': RelativeFill(-1),
+            'fill': FillTarget.toPrevious,
           },
         ],
       },
@@ -19532,8 +19533,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           20.673828125,
@@ -19667,7 +19668,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -19953,7 +19954,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(-1),
+                'fill': FillTarget.toPrevious,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -20218,14 +20219,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': YAxis(),
             'scale': 'x',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': YAxis(),
             'scale': 'x',
           },
@@ -20831,21 +20832,20 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
     config: <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
         'datasets': <Object?>[
           <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
+            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{
-              'target': FillBoundary.origin,
-              'above': 'rgba(255, 0, 0, 0.3)',
-              'below': 'rgba(0, 128, 0, 0.3)',
-            },
+            'fill': FillTarget.toOrigin.split(
+              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+            ),
           },
         ],
       },
-      'options': <String, Object?>{
+      'options': const <String, Object?>{
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -20856,11 +20856,16 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
+    options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
-        'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
-        'scales': <String, Object?>{
+        'chartArea': const <Object?>[
+          24.669921875,
+          10.2,
+          507.0,
+          483.59999999999997,
+        ],
+        'scales': const <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
             'axis': XAxis(),
@@ -20935,7 +20940,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': XAxis(),
+            'indexAxis': const XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -20943,7 +20948,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'order': 0.0,
             'visible': true,
             'hidden': null,
-            '_clip': <String, Object?>{
+            '_clip': const <String, Object?>{
               'top': 5.0,
               'right': 5.0,
               'bottom': 5.0,
@@ -20953,12 +20958,12 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             '_drawStart': 0.0,
             '_drawCount': 6.0,
             'maxOverflow': 5.0,
-            'datasetOptions': <String, Object?>{
+            'datasetOptions': const <String, Object?>{
               'showLine': true,
               'spanGaps': false,
               'drawActiveElementsOnTop': true,
             },
-            'parsed': <Object?>[
+            'parsed': const <Object?>[
               <String, Object?>{'x': 0.0, 'y': -2.0},
               <String, Object?>{'x': 1.0, 'y': 1.0},
               <String, Object?>{'x': 2.0, 'y': -3.0},
@@ -20970,23 +20975,22 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               '_loop': undefined,
               '_fullLoop': undefined,
               'pointCount': 6.0,
-              'segments': <Object?>[
+              'segments': const <Object?>[
                 <Object?>[0.0, 5.0, false],
               ],
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': const <Object?>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
-                'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': <String, Object?>{
-                  'target': FillBoundary.origin,
-                  'above': 'rgba(255, 0, 0, 0.3)',
-                  'below': 'rgba(0, 128, 0, 0.3)',
-                },
+                'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
+                'fill': FillTarget.toOrigin.split(
+                  above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+                  below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+                ),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -20995,7 +20999,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'segment': undefined,
               },
             },
-            'data': <Object?>[
+            'data': const <Object?>[
               <String, Object?>{
                 'x': 24.669921875,
                 'y': 404.7,
@@ -21060,7 +21064,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'tooltipPosition': <Object?>[507.0, 10.2],
               },
             ],
-            'options': <Object?>[
+            'options': const <Object?>[
               <String, Object?>{
                 r'$shared': true,
                 'borderWidth': 1.0,
@@ -21134,7 +21138,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': 'black',
               },
             ],
-            'active': <Object?>[
+            'active': const <Object?>[
               <String, Object?>{
                 r'$shared': false,
                 'borderWidth': 1.0,
@@ -21208,7 +21212,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': '#000',
               },
             ],
-            'labelAndValue': <Object?>[
+            'labelAndValue': const <Object?>[
               <String, Object?>{'label': 'a', 'value': '-2'},
               <String, Object?>{'label': 'b', 'value': '1'},
               <String, Object?>{'label': 'c', 'value': '-3'},
@@ -21218,7 +21222,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
           },
         ],
-        'boxes': <Object?>[
+        'boxes': const <Object?>[
           <Object?>[
             'x',
             ChartPosition.bottom,
@@ -21244,17 +21248,17 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             473.4,
           ],
         ],
-        'plugins.filler': <Object?>[
+        'plugins.filler': const <Object?>[
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
         ],
       },
-      'steps': <Object?>[],
+      'steps': const <Object?>[],
       'drawCalls': '''
 ["save"]
 ["resetTransform"]
@@ -21791,7 +21795,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
 ["stroke",null]
 ["restore"]
 ''',
-      'extra': <String, Object?>{
+      'extra': const <String, Object?>{
         'targets': <Object?>[
           <String, Object?>{
             'kind': 'line',
@@ -21812,21 +21816,20 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
     config: <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
         'datasets': <Object?>[
           <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
+            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{
-              'target': FillBoundary.origin,
-              'above': 'rgba(255, 0, 0, 0.3)',
-              'below': 'rgba(0, 128, 0, 0.3)',
-            },
+            'fill': FillTarget.toOrigin.split(
+              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+            ),
           },
         ],
       },
-      'options': <String, Object?>{
+      'options': const <String, Object?>{
         'indexAxis': YAxis(),
         'plugins': <String, Object?>{
           'colors': false,
@@ -21838,16 +21841,16 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
+    options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
-        'chartArea': <Object?>[
+        'chartArea': const <Object?>[
           20.673828125,
           10.2,
           505.6630859375,
           483.59999999999997,
         ],
-        'scales': <String, Object?>{
+        'scales': const <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
             'axis': YAxis(),
@@ -21926,7 +21929,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': YAxis(),
+            'indexAxis': const YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -21934,7 +21937,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'order': 0.0,
             'visible': true,
             'hidden': null,
-            '_clip': <String, Object?>{
+            '_clip': const <String, Object?>{
               'top': 5.0,
               'right': 5.0,
               'bottom': 5.0,
@@ -21944,12 +21947,12 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             '_drawStart': 0.0,
             '_drawCount': 6.0,
             'maxOverflow': 5.0,
-            'datasetOptions': <String, Object?>{
+            'datasetOptions': const <String, Object?>{
               'showLine': true,
               'spanGaps': false,
               'drawActiveElementsOnTop': true,
             },
-            'parsed': <Object?>[
+            'parsed': const <Object?>[
               <String, Object?>{'y': 0.0, 'x': -2.0},
               <String, Object?>{'y': 1.0, 'x': 1.0},
               <String, Object?>{'y': 2.0, 'x': -3.0},
@@ -21961,23 +21964,22 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               '_loop': undefined,
               '_fullLoop': undefined,
               'pointCount': 6.0,
-              'segments': <Object?>[
+              'segments': const <Object?>[
                 <Object?>[0.0, 5.0, false],
               ],
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': const <Object?>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
-                'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': <String, Object?>{
-                  'target': FillBoundary.origin,
-                  'above': 'rgba(255, 0, 0, 0.3)',
-                  'below': 'rgba(0, 128, 0, 0.3)',
-                },
+                'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
+                'fill': FillTarget.toOrigin.split(
+                  above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+                  below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+                ),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -21986,7 +21988,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'segment': undefined,
               },
             },
-            'data': <Object?>[
+            'data': const <Object?>[
               <String, Object?>{
                 'x': 101.50537109375,
                 'y': 10.2,
@@ -22054,7 +22056,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 ],
               },
             ],
-            'options': <Object?>[
+            'options': const <Object?>[
               <String, Object?>{
                 r'$shared': true,
                 'borderWidth': 1.0,
@@ -22128,7 +22130,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': 'black',
               },
             ],
-            'active': <Object?>[
+            'active': const <Object?>[
               <String, Object?>{
                 r'$shared': false,
                 'borderWidth': 1.0,
@@ -22202,7 +22204,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': '#000',
               },
             ],
-            'labelAndValue': <Object?>[
+            'labelAndValue': const <Object?>[
               <String, Object?>{'label': 'a', 'value': '-2'},
               <String, Object?>{'label': 'b', 'value': '1'},
               <String, Object?>{'label': 'c', 'value': '-3'},
@@ -22212,7 +22214,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
           },
         ],
-        'boxes': <Object?>[
+        'boxes': const <Object?>[
           <Object?>[
             'y',
             ChartPosition.left,
@@ -22238,17 +22240,17 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             28.4,
           ],
         ],
-        'plugins.filler': <Object?>[
+        'plugins.filler': const <Object?>[
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': YAxis(),
             'scale': 'x',
           },
         ],
       },
-      'steps': <Object?>[],
+      'steps': const <Object?>[],
       'drawCalls': '''
 ["save"]
 ["resetTransform"]
@@ -22793,7 +22795,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
 ["stroke",null]
 ["restore"]
 ''',
-      'extra': <String, Object?>{
+      'extra': const <String, Object?>{
         'targets': <Object?>[
           <String, Object?>{
             'kind': 'line',
@@ -22814,26 +22816,25 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
     config: <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
         'datasets': <Object?>[
-          <String, Object?>{
+          const <String, Object?>{
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
           },
           <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
+            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{
-              'target': RelativeFill(-1),
-              'above': 'rgba(255, 0, 0, 0.3)',
-              'below': 'rgba(0, 128, 0, 0.3)',
-            },
+            'fill': FillTarget.toPrevious.split(
+              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+            ),
           },
         ],
       },
-      'options': <String, Object?>{
+      'options': const <String, Object?>{
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -22844,11 +22845,16 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
+    options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
-        'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
-        'scales': <String, Object?>{
+        'chartArea': const <Object?>[
+          24.669921875,
+          10.2,
+          507.0,
+          483.59999999999997,
+        ],
+        'scales': const <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
             'axis': XAxis(),
@@ -22923,7 +22929,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
         'stacks': undefined,
         'datasets': <Object?>[
-          <String, Object?>{
+          const <String, Object?>{
             'type': 'line',
             'indexAxis': XAxis(),
             'xAxisID': 'x',
@@ -22972,7 +22978,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -23211,7 +23217,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           },
           <String, Object?>{
             'type': 'line',
-            'indexAxis': XAxis(),
+            'indexAxis': const XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -23219,7 +23225,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'order': 0.0,
             'visible': true,
             'hidden': null,
-            '_clip': <String, Object?>{
+            '_clip': const <String, Object?>{
               'top': 5.0,
               'right': 5.0,
               'bottom': 5.0,
@@ -23229,12 +23235,12 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             '_drawStart': 0.0,
             '_drawCount': 6.0,
             'maxOverflow': 5.0,
-            'datasetOptions': <String, Object?>{
+            'datasetOptions': const <String, Object?>{
               'showLine': true,
               'spanGaps': false,
               'drawActiveElementsOnTop': true,
             },
-            'parsed': <Object?>[
+            'parsed': const <Object?>[
               <String, Object?>{'x': 0.0, 'y': -2.0},
               <String, Object?>{'x': 1.0, 'y': 1.0},
               <String, Object?>{'x': 2.0, 'y': -3.0},
@@ -23246,23 +23252,22 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               '_loop': undefined,
               '_fullLoop': undefined,
               'pointCount': 6.0,
-              'segments': <Object?>[
+              'segments': const <Object?>[
                 <Object?>[0.0, 5.0, false],
               ],
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': const <Object?>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
-                'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': <String, Object?>{
-                  'target': RelativeFill(-1),
-                  'above': 'rgba(255, 0, 0, 0.3)',
-                  'below': 'rgba(0, 128, 0, 0.3)',
-                },
+                'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
+                'fill': FillTarget.toPrevious.split(
+                  above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+                  below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+                ),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -23271,7 +23276,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'segment': undefined,
               },
             },
-            'data': <Object?>[
+            'data': const <Object?>[
               <String, Object?>{
                 'x': 24.669921875,
                 'y': 415.9714285714286,
@@ -23342,7 +23347,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'tooltipPosition': <Object?>[507.0, 77.82857142857145],
               },
             ],
-            'options': <Object?>[
+            'options': const <Object?>[
               <String, Object?>{
                 r'$shared': true,
                 'borderWidth': 1.0,
@@ -23416,7 +23421,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': 'black',
               },
             ],
-            'active': <Object?>[
+            'active': const <Object?>[
               <String, Object?>{
                 r'$shared': false,
                 'borderWidth': 1.0,
@@ -23490,7 +23495,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': '#000',
               },
             ],
-            'labelAndValue': <Object?>[
+            'labelAndValue': const <Object?>[
               <String, Object?>{'label': 'a', 'value': '-2'},
               <String, Object?>{'label': 'b', 'value': '1'},
               <String, Object?>{'label': 'c', 'value': '-3'},
@@ -23500,7 +23505,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
           },
         ],
-        'boxes': <Object?>[
+        'boxes': const <Object?>[
           <Object?>[
             'x',
             ChartPosition.bottom,
@@ -23526,24 +23531,24 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             473.4,
           ],
         ],
-        'plugins.filler': <Object?>[
+        'plugins.filler': const <Object?>[
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
         ],
       },
-      'steps': <Object?>[],
+      'steps': const <Object?>[],
       'drawCalls': '''
 ["save"]
 ["resetTransform"]
@@ -24187,7 +24192,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
 ["stroke",null]
 ["restore"]
 ''',
-      'extra': <String, Object?>{
+      'extra': const <String, Object?>{
         'targets': <Object?>[
           <String, Object?>{
             'kind': 'line',
@@ -24219,7 +24224,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'clip false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -24228,7 +24233,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'clip': ChartClip.none,
           },
         ],
@@ -24244,8 +24249,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -24370,7 +24375,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -24632,7 +24637,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -25150,7 +25155,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'drawTime beforeDraw',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -25159,13 +25164,13 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
           },
         ],
       },
@@ -25181,8 +25186,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -25307,7 +25312,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -25584,7 +25589,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 0.0,
+                'fill': FillTarget.toDataset(0),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -25843,14 +25848,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -26449,7 +26454,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'drawTime beforeDatasetsDraw',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -26458,13 +26463,13 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
           },
         ],
       },
@@ -26482,8 +26487,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -26608,7 +26613,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -26885,7 +26890,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 0.0,
+                'fill': FillTarget.toDataset(0),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -27144,14 +27149,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -27781,7 +27786,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'propagate false with a hidden target',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -27790,20 +27795,20 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 128, 0, 0.3)',
-            'fill': RelativeFill(-1),
+            'fill': FillTarget.toPrevious,
             'hidden': true,
           },
           <String, Object?>{
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': RelativeFill(-1),
+            'fill': FillTarget.toPrevious,
           },
         ],
       },
@@ -27819,8 +27824,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -27947,7 +27952,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -28233,7 +28238,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(-1),
+                'fill': FillTarget.toPrevious,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -28516,7 +28521,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(-1),
+                'fill': FillTarget.toPrevious,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -28784,21 +28789,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': false,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
-            'fill': 1.0,
+            'fill': FillTarget.toDataset(1),
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -28944,7 +28949,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': FillBoundary.origin,
+                    'fill': FillTarget.toOrigin,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,
@@ -29233,7 +29238,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': RelativeFill(-1),
+                    'fill': FillTarget.toPrevious,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,
@@ -29519,7 +29524,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': RelativeFill(-1),
+                    'fill': FillTarget.toPrevious,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,
@@ -29787,21 +29792,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               <String, Object?>{
                 'visible': true,
                 'index': 0.0,
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 1.0,
-                'fill': 0.0,
+                'fill': FillTarget.toDataset(0),
                 'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 2.0,
-                'fill': 1.0,
+                'fill': FillTarget.toDataset(1),
                 'axis': XAxis(),
                 'scale': 'y',
               },
@@ -30655,7 +30660,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'propagate true with a hidden target',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -30664,20 +30669,20 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 128, 0, 0.3)',
-            'fill': RelativeFill(-1),
+            'fill': FillTarget.toPrevious,
             'hidden': true,
           },
           <String, Object?>{
             'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': RelativeFill(-1),
+            'fill': FillTarget.toPrevious,
           },
         ],
       },
@@ -30693,8 +30698,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -30821,7 +30826,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -31107,7 +31112,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(-1),
+                'fill': FillTarget.toPrevious,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -31390,7 +31395,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': RelativeFill(-1),
+                'fill': FillTarget.toPrevious,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -31658,21 +31663,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': false,
             'index': 1.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 2.0,
-            'fill': 0.0,
+            'fill': FillTarget.toDataset(0),
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -31818,7 +31823,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': FillBoundary.origin,
+                    'fill': FillTarget.toOrigin,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,
@@ -32107,7 +32112,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': RelativeFill(-1),
+                    'fill': FillTarget.toPrevious,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,
@@ -32393,7 +32398,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                     'borderWidth': 3.0,
                     'capBezierPoints': true,
                     'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                    'fill': RelativeFill(-1),
+                    'fill': FillTarget.toPrevious,
                     'spanGaps': false,
                     'stepped': false,
                     'tension': 0.0,
@@ -32661,21 +32666,21 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               <String, Object?>{
                 'visible': true,
                 'index': 0.0,
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 1.0,
-                'fill': 0.0,
+                'fill': FillTarget.toDataset(0),
                 'axis': XAxis(),
                 'scale': 'y',
               },
               <String, Object?>{
                 'visible': true,
                 'index': 2.0,
-                'fill': 1.0,
+                'fill': FillTarget.toDataset(1),
                 'axis': XAxis(),
                 'scale': 'y',
               },
@@ -33529,7 +33534,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack above a line with segment styles',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -33538,14 +33543,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': false,
+            'fill': FillTarget.none,
             'segment': <String, Object?>{'borderColor': 'fn:segStyle'},
           },
           <String, Object?>{
             'data': <Object?>[3.0, 4.0, 5.0, 4.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
           },
         ],
       },
@@ -33560,8 +33565,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -33691,7 +33696,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -33932,7 +33937,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.stack,
+                'fill': FillTarget.toStacked,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -34156,14 +34161,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -34804,7 +34809,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack above a line whose x goes back',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -34817,7 +34822,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': false,
+            'fill': FillTarget.none,
           },
           <String, Object?>{
             'data': <Object?>[
@@ -34827,7 +34832,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
           },
         ],
       },
@@ -34845,8 +34850,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           30.681640625,
@@ -34984,7 +34989,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -35194,7 +35199,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.stack,
+                'fill': FillTarget.toStacked,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -35351,14 +35356,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -35983,7 +35988,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack above a line without segment styles',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -35992,13 +35997,13 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': false,
+            'fill': FillTarget.none,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 4.0, 5.0, 4.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
           },
         ],
       },
@@ -36013,8 +36018,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -36142,7 +36147,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -36383,7 +36388,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.stack,
+                'fill': FillTarget.toStacked,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -36607,14 +36612,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -37258,7 +37263,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack on a scatter chart',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'scatter',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -37270,7 +37275,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'showLine': true,
           },
         ],
@@ -37286,8 +37291,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           30.681640625,
@@ -37431,7 +37436,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.stack,
+                'fill': FillTarget.toStacked,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -37588,7 +37593,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -38292,26 +38297,25 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
     config: <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
         'datasets': <Object?>[
           <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
+            'data': const <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{
-              'target': 1.0,
-              'above': 'rgba(255, 0, 0, 0.3)',
-              'below': 'rgba(0, 128, 0, 0.3)',
-            },
+            'fill': const FillTarget.toDataset(1).split(
+              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+            ),
           },
-          <String, Object?>{
+          const <String, Object?>{
             'data': <Object?>[],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
           },
         ],
       },
-      'options': <String, Object?>{
+      'options': const <String, Object?>{
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -38322,11 +38326,16 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
+    options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
-        'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
-        'scales': <String, Object?>{
+        'chartArea': const <Object?>[
+          30.681640625,
+          10.2,
+          507.0,
+          483.59999999999997,
+        ],
+        'scales': const <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
             'axis': XAxis(),
@@ -38409,7 +38418,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': XAxis(),
+            'indexAxis': const XAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -38417,7 +38426,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'order': 0.0,
             'visible': true,
             'hidden': null,
-            '_clip': <String, Object?>{
+            '_clip': const <String, Object?>{
               'top': 5.0,
               'right': 5.0,
               'bottom': 5.0,
@@ -38427,12 +38436,12 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             '_drawStart': 0.0,
             '_drawCount': 5.0,
             'maxOverflow': 5.0,
-            'datasetOptions': <String, Object?>{
+            'datasetOptions': const <String, Object?>{
               'showLine': true,
               'spanGaps': false,
               'drawActiveElementsOnTop': true,
             },
-            'parsed': <Object?>[
+            'parsed': const <Object?>[
               <String, Object?>{'x': 0.0, 'y': 1.0},
               <String, Object?>{'x': 1.0, 'y': 2.0},
               <String, Object?>{'x': 2.0, 'y': 3.0},
@@ -38443,23 +38452,22 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               '_loop': undefined,
               '_fullLoop': undefined,
               'pointCount': 5.0,
-              'segments': <Object?>[
+              'segments': const <Object?>[
                 <Object?>[0.0, 4.0, false],
               ],
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': const <Object?>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
-                'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': <String, Object?>{
-                  'target': 1.0,
-                  'above': 'rgba(255, 0, 0, 0.3)',
-                  'below': 'rgba(0, 128, 0, 0.3)',
-                },
+                'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
+                'fill': const FillTarget.toDataset(1).split(
+                  above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+                  below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+                ),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -38468,7 +38476,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'segment': undefined,
               },
             },
-            'data': <Object?>[
+            'data': const <Object?>[
               <String, Object?>{
                 'x': 30.681640625,
                 'y': 483.59999999999997,
@@ -38520,7 +38528,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'tooltipPosition': <Object?>[411.736328125, 483.59999999999997],
               },
             ],
-            'options': <Object?>[
+            'options': const <Object?>[
               <String, Object?>{
                 r'$shared': true,
                 'borderWidth': 1.0,
@@ -38582,7 +38590,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': 'black',
               },
             ],
-            'active': <Object?>[
+            'active': const <Object?>[
               <String, Object?>{
                 r'$shared': false,
                 'borderWidth': 1.0,
@@ -38644,7 +38652,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': '#000',
               },
             ],
-            'labelAndValue': <Object?>[
+            'labelAndValue': const <Object?>[
               <String, Object?>{'label': 'a', 'value': '1'},
               <String, Object?>{'label': 'b', 'value': '2'},
               <String, Object?>{'label': 'c', 'value': '3'},
@@ -38652,7 +38660,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               <String, Object?>{'label': 'e', 'value': '1'},
             ],
           },
-          <String, Object?>{
+          const <String, Object?>{
             'type': 'line',
             'indexAxis': XAxis(),
             'xAxisID': 'x',
@@ -38692,7 +38700,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -38707,7 +38715,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'labelAndValue': <Object?>[],
           },
         ],
-        'boxes': <Object?>[
+        'boxes': const <Object?>[
           <Object?>[
             'x',
             ChartPosition.bottom,
@@ -38733,24 +38741,24 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             473.4,
           ],
         ],
-        'plugins.filler': <Object?>[
+        'plugins.filler': const <Object?>[
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': 1.0,
+            'fill': FillTarget.toDataset(1),
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
         ],
       },
-      'steps': <Object?>[],
+      'steps': const <Object?>[],
       'drawCalls': '''
 ["save"]
 ["resetTransform"]
@@ -39352,7 +39360,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
 ["stroke",null]
 ["restore"]
 ''',
-      'extra': <String, Object?>{
+      'extra': const <String, Object?>{
         'targets': <Object?>[
           <String, Object?>{
             'kind': 'line',
@@ -39371,26 +39379,25 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
     config: <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
         'datasets': <Object?>[
           <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
+            'data': const <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{
-              'target': 1.0,
-              'above': 'rgba(255, 0, 0, 0.3)',
-              'below': 'rgba(0, 128, 0, 0.3)',
-            },
+            'fill': const FillTarget.toDataset(1).split(
+              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+            ),
           },
-          <String, Object?>{
+          const <String, Object?>{
             'data': <Object?>[],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
           },
         ],
       },
-      'options': <String, Object?>{
+      'options': const <String, Object?>{
         'indexAxis': YAxis(),
         'plugins': <String, Object?>{
           'colors': false,
@@ -39402,16 +39409,16 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
+    options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
-        'chartArea': <Object?>[
+        'chartArea': const <Object?>[
           20.673828125,
           10.2,
           500.6591796875,
           483.59999999999997,
         ],
-        'scales': <String, Object?>{
+        'scales': const <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
             'axis': YAxis(),
@@ -39498,7 +39505,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'type': 'line',
-            'indexAxis': YAxis(),
+            'indexAxis': const YAxis(),
             'xAxisID': 'x',
             'yAxisID': 'y',
             'rAxisID': undefined,
@@ -39506,7 +39513,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'order': 0.0,
             'visible': true,
             'hidden': null,
-            '_clip': <String, Object?>{
+            '_clip': const <String, Object?>{
               'top': 5.0,
               'right': 5.0,
               'bottom': 5.0,
@@ -39516,12 +39523,12 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             '_drawStart': 0.0,
             '_drawCount': 5.0,
             'maxOverflow': 5.0,
-            'datasetOptions': <String, Object?>{
+            'datasetOptions': const <String, Object?>{
               'showLine': true,
               'spanGaps': false,
               'drawActiveElementsOnTop': true,
             },
-            'parsed': <Object?>[
+            'parsed': const <Object?>[
               <String, Object?>{'y': 0.0, 'x': 1.0},
               <String, Object?>{'y': 1.0, 'x': 2.0},
               <String, Object?>{'y': 2.0, 'x': 3.0},
@@ -39532,23 +39539,22 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               '_loop': undefined,
               '_fullLoop': undefined,
               'pointCount': 5.0,
-              'segments': <Object?>[
+              'segments': const <Object?>[
                 <Object?>[0.0, 4.0, false],
               ],
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': const <Object?>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
-                'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': <String, Object?>{
-                  'target': 1.0,
-                  'above': 'rgba(255, 0, 0, 0.3)',
-                  'below': 'rgba(0, 128, 0, 0.3)',
-                },
+                'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
+                'fill': const FillTarget.toDataset(1).split(
+                  above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+                  below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+                ),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -39557,7 +39563,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'segment': undefined,
               },
             },
-            'data': <Object?>[
+            'data': const <Object?>[
               <String, Object?>{
                 'x': 20.673828125,
                 'y': 10.2,
@@ -39615,7 +39621,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'tooltipPosition': <Object?>[20.673828125, 388.92],
               },
             ],
-            'options': <Object?>[
+            'options': const <Object?>[
               <String, Object?>{
                 r'$shared': true,
                 'borderWidth': 1.0,
@@ -39677,7 +39683,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': 'black',
               },
             ],
-            'active': <Object?>[
+            'active': const <Object?>[
               <String, Object?>{
                 r'$shared': false,
                 'borderWidth': 1.0,
@@ -39739,7 +39745,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderColor': '#000',
               },
             ],
-            'labelAndValue': <Object?>[
+            'labelAndValue': const <Object?>[
               <String, Object?>{'label': 'a', 'value': '1'},
               <String, Object?>{'label': 'b', 'value': '2'},
               <String, Object?>{'label': 'c', 'value': '3'},
@@ -39747,7 +39753,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
               <String, Object?>{'label': 'e', 'value': '1'},
             ],
           },
-          <String, Object?>{
+          const <String, Object?>{
             'type': 'line',
             'indexAxis': YAxis(),
             'xAxisID': 'x',
@@ -39787,7 +39793,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -39802,7 +39808,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'labelAndValue': <Object?>[],
           },
         ],
-        'boxes': <Object?>[
+        'boxes': const <Object?>[
           <Object?>[
             'y',
             ChartPosition.left,
@@ -39828,24 +39834,24 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             28.4,
           ],
         ],
-        'plugins.filler': <Object?>[
+        'plugins.filler': const <Object?>[
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': 1.0,
+            'fill': FillTarget.toDataset(1),
             'axis': YAxis(),
             'scale': 'x',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': YAxis(),
             'scale': 'x',
           },
         ],
       },
-      'steps': <Object?>[],
+      'steps': const <Object?>[],
       'drawCalls': '''
 ["save"]
 ["resetTransform"]
@@ -40447,7 +40453,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
 ["stroke",null]
 ["restore"]
 ''',
-      'extra': <String, Object?>{
+      'extra': const <String, Object?>{
         'targets': <Object?>[
           <String, Object?>{
             'kind': 'line',
@@ -40463,7 +40469,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'offset with min and max on a category scale',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -40472,7 +40478,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -40490,8 +40496,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -40620,7 +40626,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -40894,7 +40900,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -41401,7 +41407,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: '120 points without parsing',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -41530,7 +41536,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'pointRadius': 0.0,
           },
         ],
@@ -41550,8 +41556,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -41799,7 +41805,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -46264,7 +46270,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -46853,7 +46859,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar origin',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -46862,7 +46868,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -46880,8 +46886,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -46975,7 +46981,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -47233,7 +47239,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -47679,7 +47685,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar start',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -47688,7 +47694,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
           },
         ],
       },
@@ -47704,8 +47710,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -47803,7 +47809,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.start,
+                'fill': FillTarget.toStart,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -48058,7 +48064,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -48516,7 +48522,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar end',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -48525,7 +48531,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.end,
+            'fill': FillTarget.toEnd,
           },
         ],
       },
@@ -48541,8 +48547,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -48640,7 +48646,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.end,
+                'fill': FillTarget.toEnd,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -48895,7 +48901,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.end,
+            'fill': FillTarget.toEnd,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -49369,7 +49375,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar value',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -49378,7 +49384,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{'value': 2.0},
+            'fill': FillTarget.toValue(2),
           },
         ],
       },
@@ -49394,8 +49400,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -49493,7 +49499,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': <String, Object?>{'value': 2.0},
+                'fill': FillTarget.toValue(2),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -49748,7 +49754,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': <String, Object?>{'value': 2.0},
+            'fill': FillTarget.toValue(2),
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -50222,7 +50228,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with a gap',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -50231,7 +50237,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, null, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -50249,8 +50255,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -50348,7 +50354,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -50609,7 +50615,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -51056,7 +51062,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar fill 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -51065,7 +51071,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[3.0, 4.0, 5.0, 4.0, 3.0, 4.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': 1.0,
+            'fill': FillTarget.toDataset(1),
           },
           <String, Object?>{
             'data': <Object?>[1.0, 2.0, 1.0, 2.0, 1.0, 2.0],
@@ -51088,8 +51094,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -51187,7 +51193,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': 1.0,
+                'fill': FillTarget.toDataset(1),
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -51469,7 +51475,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.start,
+                'fill': FillTarget.toStart,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -51724,14 +51730,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': 1.0,
+            'fill': FillTarget.toDataset(1),
             'axis': RAxis(),
             'scale': 'r',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -52300,7 +52306,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar reverse',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -52309,7 +52315,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
           },
         ],
       },
@@ -52327,8 +52333,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -52426,7 +52432,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.start,
+                'fill': FillTarget.toStart,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -52681,7 +52687,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -53148,7 +53154,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with a negative minimum',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -53157,7 +53163,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-3.0, 2.0, -1.0, 4.0, 1.0, -2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -53173,8 +53179,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -53266,7 +53272,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -53524,7 +53530,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -53950,7 +53956,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with r min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -53959,7 +53965,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[-4.0, -2.0, -3.0, -2.0, -4.0, -3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -53977,8 +53983,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -54072,7 +54078,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -54330,7 +54336,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -54780,7 +54786,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with a positive r min',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -54789,7 +54795,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -54807,8 +54813,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -54898,7 +54904,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -55150,7 +55156,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -55512,7 +55518,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar circular',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -55521,7 +55527,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -55542,8 +55548,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -55633,7 +55639,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -55891,7 +55897,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -56209,7 +56215,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar circular with a gap',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -56218,7 +56224,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, null, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -56239,8 +56245,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -56338,7 +56344,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -56599,7 +56605,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -56987,21 +56993,20 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
     config: <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
         'datasets': <Object?>[
           <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
+            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': <String, Object?>{
-              'target': FillBoundary.shape,
-              'above': 'rgba(255, 0, 0, 0.3)',
-              'below': 'rgba(0, 128, 0, 0.3)',
-            },
+            'fill': FillTarget.shape.split(
+              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
+              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
+            ),
           },
         ],
       },
-      'options': <String, Object?>{
+      'options': const <String, Object?>{
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
@@ -57012,14 +57017,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'throws: radar without a layout',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
@@ -57028,7 +57033,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
           },
         ],
       },
@@ -57047,14 +57052,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         <String, Object?>{'id': 'noLayout', 'beforeLayout': 'fn:noLayout'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'full: radar with colors on',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
@@ -57073,8 +57078,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -57171,7 +57176,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.start,
+                'fill': FillTarget.toStart,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -57417,7 +57422,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.start,
+                'fill': FillTarget.toStart,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -57673,14 +57678,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
             'axis': RAxis(),
             'scale': 'r',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': FillBoundary.start,
+            'fill': FillTarget.toStart,
             'axis': RAxis(),
             'scale': 'r',
           },
@@ -58239,7 +58244,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'full: lttb with fill origin',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -58308,7 +58313,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'pointRadius': 0.0,
           },
         ],
@@ -58328,8 +58333,8 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 502.326171875, 483.6],
         'scales': <String, Object?>{
@@ -58451,7 +58456,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.origin,
+                'fill': FillTarget.toOrigin,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -58977,7 +58982,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': FillBoundary.origin,
+            'fill': FillTarget.toOrigin,
             'axis': XAxis(),
             'scale': 'y',
           },
@@ -59486,7 +59491,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'full: min-max with fill stack',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -59630,7 +59635,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             ],
             'borderColor': 'black',
             'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'pointRadius': 0.0,
           },
         ],
@@ -59649,10 +59654,10 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 100.0, 'height': 100.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[38.017578125, 50.0, 86.9892578125, 71.6],
         'scales': <String, Object?>{
@@ -59798,7 +59803,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': false,
+                'fill': FillTarget.none,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -61926,7 +61931,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
                 'borderWidth': 3.0,
                 'capBezierPoints': true,
                 'cubicInterpolationMode': DefaultCubicInterpolationMode(),
-                'fill': FillBoundary.stack,
+                'fill': FillTarget.toStacked,
                 'spanGaps': false,
                 'stepped': false,
                 'tension': 0.0,
@@ -64013,14 +64018,14 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
           <String, Object?>{
             'visible': true,
             'index': 0.0,
-            'fill': false,
+            'fill': FillTarget.none,
             'axis': XAxis(),
             'scale': 'y',
           },
           <String, Object?>{
             'visible': true,
             'index': 1.0,
-            'fill': FillBoundary.stack,
+            'fill': FillTarget.toStacked,
             'axis': XAxis(),
             'scale': 'y',
           },

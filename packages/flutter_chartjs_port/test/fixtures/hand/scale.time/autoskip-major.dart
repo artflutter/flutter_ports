@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
@@ -22,7 +23,11 @@ Map<String, Object?> fixture() {
       'type': 'line',
       'data': <String, Object?>{
         'datasets': <Object?>[
-          <String, Object?>{'xAxisID': 'x', 'data': data, 'fill': false},
+          <String, Object?>{
+            'xAxisID': 'x',
+            'data': data,
+            'fill': FillTarget.none,
+          },
         ],
       },
       'options': <String, Object?>{

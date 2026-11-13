@@ -6,6 +6,7 @@ library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -119,7 +120,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'line': <String, Object?>{
           'borderColor': 'transparent',
           'borderWidth': 1,
-          'fill': false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
         },
         'point': <String, Object?>{'radius': 16},
       },

@@ -4,8 +4,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show RelativeFill;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -18,30 +17,32 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'backgroundColor': 'rgba(255, 0, 0, 0.25)',
           'data': <Object?>[null, null, 0, -1, 0, 1, 0, -1, 0],
-          'fill': 1,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': const FillTarget.toDataset(1),
         },
         <String, Object?>{
           'backgroundColor': 'rgba(0, 255, 0, 0.25)',
           'data': <Object?>[1, 0, null, 1, 0, null, -1, 0, 1],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const RelativeFill(1),
+          'fill': FillTarget.toNext,
         },
         <String, Object?>{
           'backgroundColor': 'rgba(0, 0, 255, 0.25)',
           'data': <Object?>[0, 2, 0, -2, 0, 2, 0],
-          'fill': 3,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': const FillTarget.toDataset(3),
         },
         <String, Object?>{
           'backgroundColor': 'rgba(255, 0, 255, 0.25)',
           'data': <Object?>[2, 0, -2, 0, 2, 0, -2, 0, 2],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const RelativeFill(-2),
+          'fill': const FillTarget.toRelative(-2),
         },
         <String, Object?>{
           'backgroundColor': 'rgba(255, 255, 0, 0.25)',
           'data': <Object?>[3, 1, -1, -3, -1, 1, 3, 1, -1],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const RelativeFill(-1),
+          'fill': FillTarget.toPrevious,
         },
       ],
     },

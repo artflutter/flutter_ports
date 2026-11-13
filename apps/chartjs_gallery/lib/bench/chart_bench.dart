@@ -852,11 +852,11 @@ ChartBenchCase _fadeCase(int datasets) => _pluginCase(
 /// hidden scales, with `pointRadius: 0`, `animation: false`, `events: []`
 /// and no legend.
 /// - `fill.gaps`: a line chart, the values from -1 to 1 with a gap every
-///   12 points, and `fill: {target: FillBoundary.origin, above, below}` on
+///   12 points, and `fill: FillTarget.toOrigin.split(above:, below:)` on
 ///   each dataset. `above` and `below` make the path clips of the filler
 ///   (`filler.drawing.js`, `clipVertical` and `clipHorizontal`).
 /// - `fill.stack`: a line chart with stacked y values and
-///   `fill: FillBoundary.stack` on each dataset. The stack target is
+///   `fill: FillTarget.toStacked` on each dataset. The stack target is
 ///   quadratic in N, as upstream.
 /// - `fill.radar`: a radar chart on a hidden polygon grid with the fills
 ///   `origin`, `-1` and `-1`.
@@ -879,23 +879,26 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
         scales = _benchHiddenScales(min: -1, max: 1);
         fills = [
           for (var k = 0; k < 3; k++)
-            <String, Object?>{
-              'target': FillBoundary.origin,
-              'above': ChartPaint.solid(_benchFills[1]),
-              'below': ChartPaint.solid(_benchFills[0]),
-            },
+            FillTarget.toOrigin.split(
+              above: ChartPaint.solid(_benchFills[1]),
+              below: ChartPaint.solid(_benchFills[0]),
+            ),
         ];
       case 'stack':
         scales = _benchHiddenScales(min: 0, max: 3, stacked: true);
-        fills = [FillBoundary.stack, FillBoundary.stack, FillBoundary.stack];
+        fills = [
+          FillTarget.toStacked,
+          FillTarget.toStacked,
+          FillTarget.toStacked,
+        ];
       default:
         scales = <String, Object?>{
           'r': stressHiddenScale('radialLinear', min: 0, max: 1),
         };
         fills = [
-          FillBoundary.origin,
-          const RelativeFill(-1),
-          const RelativeFill(-1),
+          FillTarget.toOrigin,
+          FillTarget.toPrevious,
+          FillTarget.toPrevious,
         ];
     }
     return ChartBenchScene(

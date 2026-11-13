@@ -4,6 +4,8 @@
 /// rejects strings and charts accept native Flutter Color values.
 library;
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as legacy;
 // The test harness decodes frozen upstream input through internal primitives.
@@ -32,3 +34,23 @@ legacy.Color referenceColor(Object? input) {
       ? legacy.Color(undefined)
       : legacy.Color.fromRgbaBytes(rgba);
 }
+
+/// The paint of the CSS color text [value], or Dart `null` for a text that
+/// is no color: the conversion of a color option of `nativeFixtureColors`.
+ChartPaint? paintOfCss(String value) {
+  final parsed = referenceColor(value);
+  if (!parsed.valid) return null;
+  final rgb = parsed.rgbaBytes!;
+  return ChartPaint.solid(
+    ui.Color.fromRGBO(rgb.r.round(), rgb.g.round(), rgb.b.round(), rgb.a / 255),
+  );
+}
+
+/// The native paint of the upstream color text [value] of a fixture or a
+/// reference config, as `nativeFixtureColors` gives it for a color option.
+/// A split fill (`FillTarget.split`, Chart.js ADR 0140) holds its colors in
+/// a native object, which the walk of `nativeFixtureColors` does not enter.
+/// Throws an [ArgumentError] for a text that is no color.
+ChartPaint nativeFixturePaint(String value) =>
+    paintOfCss(value) ??
+    (throw ArgumentError.value(value, 'value', 'no CSS color'));

@@ -5,8 +5,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show RelativeFill;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 
@@ -22,27 +21,29 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'data': <Object?>[55, 49, 70, 71, 46, 45, 30],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': 1,
+          'fill': const FillTarget.toDataset(1),
           'borderColor': 'rgb(255, 0, 0)',
           'backgroundColor': 'rgba(255, 0, 0, 0.25)',
           'yAxisID': 'y1',
         },
         <String, Object?>{
           'data': <Object?>[65, 59, 80, 81, 56, 55, 40],
-          'fill': false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
           'borderColor': 'rgb(255, 0, 0)',
           'yAxisID': 'y1',
         },
         <String, Object?>{
           'data': <Object?>[65, 59, 80, 81, 56, 55, 40],
-          'fill': false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
           'borderColor': 'rgb(0, 0, 255)',
           'yAxisID': 'y2',
         },
         <String, Object?>{
           'data': <Object?>[75, 69, 90, 91, 66, 65, 50],
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const RelativeFill(-1),
+          'fill': FillTarget.toPrevious,
           'borderColor': 'rgb(0, 0, 255)',
           'backgroundColor': 'rgba(0, 0, 255, 0.25)',
           'yAxisID': 'y2',

@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
@@ -82,7 +83,7 @@ Map<String, Object?> fixture() {
           'y': <String, Object?>{'display': false},
         },
         'elements': <String, Object?>{
-          'line': <String, Object?>{'fill': false},
+          'line': <String, Object?>{'fill': FillTarget.none},
         },
         'plugins': <String, Object?>{
           'legend': false,

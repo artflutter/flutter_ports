@@ -95,6 +95,8 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
     show ArcOptions, BarOptions, PointOptions;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget, SplitFill;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
@@ -279,7 +281,9 @@ final _nativeIndexedLists = <Type>{
 // axis class has no members (row adapt-axis-objects). A `Locale` is a value,
 // and the chart only calls `format` of a `NumberFormat` (row
 // adapt-intl-number-format). A `ChartShadow` is an immutable value that only
-// the widget plugin reads (Chart.js ADR 0139).
+// the widget plugin reads (Chart.js ADR 0139). A `FillTarget` is an immutable
+// value that only the filler reads; a split fill holds plain paints
+// (Chart.js ADR 0140).
 bool _indexedScalar(Object? value) =>
     value == null ||
     value is Undefined ||
@@ -296,6 +300,9 @@ bool _indexedScalar(Object? value) =>
     value is NumberFormat ||
     value is ChartClip ||
     value is ChartShadow ||
+    (value is FillTarget &&
+        (value is! SplitFill ||
+            (_indexedScalar(value.above) && _indexedScalar(value.below)))) ||
     (value is ChartPaint && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list

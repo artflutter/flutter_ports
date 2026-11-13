@@ -40,6 +40,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, SolidChartPaint;
@@ -48,6 +49,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
+import '../../support/fill_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../core/resolver_trace_cases.dart'
     show resolverTraceFunctions, resolverTraceSetups;
@@ -180,7 +182,11 @@ List<_Case> _cases() => [
         name: 'fixture $path',
         make: () => _fixtureInput(
           path,
-          _copyJson(_dataFixtures[path])! as Map<String, Object?>,
+          // A data fixture without a hand port holds no fill but `false`
+          // (Chart.js ADR 0140).
+          _nativeFalseFills(
+            _copyJson(_dataFixtures[path])! as Map<String, Object?>,
+          ),
         ),
         cleanup: null,
       ),
@@ -211,6 +217,12 @@ List<_Case> _cases() => [
 final Map<String, Object?> _dataFixtures =
     jsonDecode(File('doc/upstream/fixtures.json').readAsStringSync())!
         as Map<String, Object?>;
+
+/// [json] after [nativeFixtureFalseFills].
+Map<String, Object?> _nativeFalseFills(Map<String, Object?> json) {
+  nativeFixtureFalseFills(json);
+  return json;
+}
 
 /// A deep copy of the decoded JSON [value].
 Object? _copyJson(Object? value) => switch (value) {
@@ -1612,7 +1624,7 @@ final List<_Case> _focusedCases = [
       <String, Object?>{
         'data': _values(6, 2),
         'pointRadius': (Object? ctx) => 2 + _index(ctx),
-        'fill': true,
+        'fill': FillTarget.toOrigin,
       },
     ], type: 'radar'),
   ),

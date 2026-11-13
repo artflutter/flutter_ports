@@ -38,7 +38,7 @@ final ChartConfig _config = ChartConfig(
       borderColor: const .constant(.solid(Gx.primary)),
       borderWidth: 0.5,
       backgroundColor: .constant(.solid(Gx.colors10.first.withAlpha(80))),
-      fill: .start,
+      fill: .toStart,
       pointRadius: 0,
       pointHoverRadius: 0,
     ),

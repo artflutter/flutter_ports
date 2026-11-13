@@ -31,7 +31,7 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 // DIVERGES(chartjs): adapt-boundary-exact-points, private boundary endpoints.
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary;
+    show EndFill, OriginFill, SplitFill, StartFill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart'
     show findSegmentEnd, getBounds, segments;
@@ -42,7 +42,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
 // DIVERGES(chartjs): adapt-partitioned-baseline-fill, native equivalent fill.
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/partitioned_baseline_fill.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show FillTargetOptions, optionOf;
+    show optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -66,9 +66,7 @@ void drawfill(
   // boundary, not a dataset line accessible to callbacks during drawing.
   final fill = source.fill;
   final linearBoundary =
-      (fill == FillBoundary.origin ||
-          fill == FillBoundary.start ||
-          fill == FillBoundary.end) &&
+      (fill is OriginFill || fill is StartFill || fill is EndFill) &&
       source.scale is! types.RadialLinearScale;
   final target = getTarget(source);
   final chart = source.chart;
@@ -79,16 +77,12 @@ void drawfill(
   final lineOpts = line.options;
   final fillOption = optionOf(lineOpts, OptionKey.fill);
   final color = optionOf(lineOpts, OptionKey.backgroundColor);
-  // `{above = color, below = color} = fillOption || {}`: the defaults apply
-  // only to `undefined`.
-  final above = _orDefault(
-    jsTruthy(fillOption) ? FillTargetOptions(fillOption).above : undefined,
-    color,
-  );
-  final below = _orDefault(
-    jsTruthy(fillOption) ? FillTargetOptions(fillOption).below : undefined,
-    color,
-  );
+  // `{above = color, below = color} = fillOption || {}`: only a split fill
+  // has the keys, and a Dart `null` color is the `undefined` that takes the
+  // default.
+  // DIVERGES(chartjs): adapt-fill-target-objects, the object is a class.
+  final above = fillOption is SplitFill ? fillOption.above ?? color : color;
+  final below = fillOption is SplitFill ? fillOption.below ?? color : color;
   final meta = chart.getDatasetMeta(index);
   final clip = getDatasetClipArea(chart, meta);
   if (jsTruthy(target) && line.points.isNotEmpty) {

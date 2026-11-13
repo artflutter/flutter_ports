@@ -1070,9 +1070,7 @@ elementOptions 0 0: opt#3 frozen=false {"$shared":false,"borderWidth":1,"hitRadi
         <String, Object?>{
           'data': <Object?>[1.0, 2.0],
           'backgroundColor': <String, Object?>{r'$fn': 'colorByIndex'},
-          'fill': <String, Object?>{
-            'value': <String, Object?>{r'$fn': 'typeIsDataset'},
-          },
+          'fill': <String, Object?>{r'$fn': 'fillIsDataset'},
         },
       ],
       'steps': <Object?>[

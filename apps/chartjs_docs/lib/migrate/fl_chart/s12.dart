@@ -93,7 +93,7 @@ class _Sample12State() extends State<Sample12> {
           pointHoverRadius: 6,
           pointHoverBackgroundColor: const .constant(.solid(Fl.yellow)),
           borderColor: const .constant(.solid(Fl.yellow)),
-          fill: .start,
+          fill: .toStart,
           extra: {
             'backgroundColor': verticalGradient(
               [

@@ -143,7 +143,7 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
 /// A [LineDataset], a [ScatterDataset] and a [RadarDataset] with the same
 /// line style parameters.
 List<Dataset> _lineStyle({
-  ChartFill? fill,
+  FillTarget? fill,
   double? tension,
   List<double>? borderDash,
   bool? spanGaps,
@@ -304,18 +304,23 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   ),
   'minBarLength': (const [BarDataset(minBarLength: 2)], {'minBarLength': 2}),
   'grouped': (const [BarDataset(grouped: false)], {'grouped': false}),
-  'fill, a name': (_lineStyle(fill: .origin), {'fill': FillBoundary.origin}),
-  'fill, none': (_lineStyle(fill: .none), {'fill': false}),
-  'fill, a dataset index': (_lineStyle(fill: const .dataset(1)), {'fill': 1}),
+  'fill, a name': (_lineStyle(fill: .toOrigin), {'fill': FillTarget.toOrigin}),
+  'fill, none': (_lineStyle(fill: .none), {'fill': FillTarget.none}),
+  'fill, a dataset index': (
+    _lineStyle(fill: const .toDataset(1)),
+    {'fill': const FillTarget.toDataset(1)},
+  ),
   'fill, a relative index': (
-    _lineStyle(fill: .relative(-1)),
-    {'fill': const RelativeFill(-1)},
+    _lineStyle(fill: .toPrevious),
+    {'fill': FillTarget.toPrevious},
   ),
   'fill, a value': (
-    _lineStyle(fill: const .value(25)),
-    {
-      'fill': {'value': 25},
-    },
+    _lineStyle(fill: const .toValue(25)),
+    {'fill': const FillTarget.toValue(25)},
+  ),
+  'fill, a split': (
+    _lineStyle(fill: FillTarget.toOrigin.split(above: _redValue)),
+    {'fill': FillTarget.toOrigin.split(above: _redValue)},
   ),
   'tension': (_lineStyle(tension: 0.4), {'tension': 0.4}),
   'borderDash': (
@@ -777,9 +782,9 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'line.fill': (
-    ChartElements(line: LineElementStyle(fill: .origin)),
+    ChartElements(line: LineElementStyle(fill: .toOrigin)),
     {
-      'line': {'fill': FillBoundary.origin},
+      'line': {'fill': FillTarget.toOrigin},
     },
   ),
   'line.stepped': (
@@ -1467,17 +1472,18 @@ void main() {
       });
 
       test('a Map merges into the Map of the key', () {
+        const callbacks = TooltipCallbacks();
         expectTwin(
           _lower(
             const LineDataset(
-              fill: .value(25),
+              tooltipCallbacks: callbacks,
               extra: {
-                'fill': {'above': _redValue},
+                'tooltip': {'enabled': false},
               },
             ),
           ),
           {
-            'fill': {'value': 25, 'above': _redValue},
+            'tooltip': {'callbacks': callbacks, 'enabled': false},
           },
         );
       });
@@ -1595,7 +1601,7 @@ void main() {
 
       /// The twin keys of the line style parameters of the cases below.
       const lineStyleTwin = <String, Object?>{
-        'fill': FillBoundary.origin,
+        'fill': FillTarget.toOrigin,
         'tension': 0.4,
         'borderDash': [5, 5],
         'spanGaps': true,
@@ -1628,7 +1634,7 @@ void main() {
             yAxisID: 'y2',
             stack: 's',
             indexAxis: const XAxis(),
-            fill: .origin,
+            fill: .toOrigin,
             tension: 0.4,
             borderDash: const [5, 5],
             spanGaps: true,
@@ -1681,7 +1687,7 @@ void main() {
             xAxisID: 'x2',
             yAxisID: 'y2',
             stack: 's',
-            fill: .origin,
+            fill: .toOrigin,
             tension: 0.4,
             borderDash: const [5, 5],
             spanGaps: true,
@@ -1891,7 +1897,7 @@ void main() {
             hoverBackgroundColor: const .constant(.solid(_blue)),
             hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
-            fill: .origin,
+            fill: .toOrigin,
             tension: 0.4,
             borderDash: const [5, 5],
             spanGaps: true,

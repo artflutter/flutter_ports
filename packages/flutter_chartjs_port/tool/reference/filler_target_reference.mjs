@@ -70,6 +70,8 @@ import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
 import {fileURLToPath} from 'node:url';
 
+import {fillTargetCode} from './fill_target.mjs';
+
 /**
  * The submodules that the script reads: the header of the entry in
  * tool/port_sources.yaml, the folder in third_party/ and the folders that the
@@ -394,10 +396,11 @@ function add(c) {
 // ---------------------------------------------------------------------------
 // decodeFill (filler.options.js:46-73).
 
-// The port has no fill text (row adapt-fill-target-objects): a keyword is a
-// FillBoundary and a relative index a RelativeFill. The cases of the other
-// texts (an absolute index as text, an empty, a padded or a bad text) are
-// not here: a text stops a debug build of the port.
+// Each fill of the port is a FillTarget (Chart.js ADR 0140, row
+// adapt-fill-target-objects). The cases of the values that have no FillTarget
+// (a float, an infinity, NaN, an array, a text that is no keyword and no
+// relative index, an object `{value}` without a number, an empty object) are
+// not here: such a value stops a debug build of the port.
 const FILLS = [
   ['undefined with a backgroundColor', {backgroundColor: 'red'}],
   ['undefined without a backgroundColor', {}],
@@ -412,10 +415,6 @@ const FILLS = [
   ['3', {fill: 3}],
   ['4', {fill: 4}],
   ['-1', {fill: -1}],
-  ['1.5', {fill: 1.5}],
-  ['NaN', {fill: NaN}],
-  ['Infinity', {fill: Infinity}],
-  ['-Infinity', {fill: -Infinity}],
   ["'-0'", {fill: '-0'}],
   ["'+0'", {fill: '+0'}],
   ["'+1'", {fill: '+1'}],
@@ -427,15 +426,8 @@ const FILLS = [
   ["'end'", {fill: 'end'}],
   ["'stack'", {fill: 'stack'}],
   ["'shape'", {fill: 'shape'}],
-  ['[]', {fill: []}],
-  ['[2]', {fill: [2]}],
-  ["['+1']", {fill: ['+1']}],
   ['{value: 2}', {fill: {value: 2}}],
   ['{value: NaN}', {fill: {value: NaN}}],
-  ["{value: 'a'}", {fill: {value: 'a'}}],
-  ["{value: '3'}", {fill: {value: '3'}}],
-  ['{value: null}', {fill: {value: null}}],
-  ['{}', {fill: {}}],
   ["{target: 'origin'}", {fill: {target: 'origin'}}],
   ['{target: 2}', {fill: {target: 2}}],
   ["{target: '+1'}", {fill: {target: '+1'}}],
@@ -485,8 +477,6 @@ for (const [name, fill] of [
   ['origin', 'origin'],
   ['a number', 1],
   ['{value: 3}', {value: 3}],
-  ["{value: '3'}", {value: '3'}],
-  ['{value: null}', {value: null}],
 ]) {
   add({name: `targetPixel ${name}, vertical`, kind: 'targetPixel', fill, scale: VERTICAL});
   add({name: `targetPixel ${name}, horizontal`, kind: 'targetPixel', fill, scale: HORIZONTAL});
@@ -675,27 +665,20 @@ function num(v) {
   return Number.isInteger(v) ? `${v}.0` : String(v);
 }
 
-/** The fill keywords of upstream: the values of FillBoundary of the port. */
-const FILL_KEYWORDS = new Set(['origin', 'start', 'end', 'stack', 'shape']);
-
 /**
- * The Dart literal of a fill value: a keyword is a FillBoundary and a
- * relative index as text a RelativeFill (row adapt-fill-target-objects).
+ * The Dart literal of a fill value: its FillTarget (Chart.js ADR 0140, row
+ * adapt-fill-target-objects). `undefined` and `null` stay. A color of a split
+ * fill is the paint of `nativeFixturePaint`.
  */
 function fillDart(v) {
-  if (typeof v === 'string') {
-    if (FILL_KEYWORDS.has(v)) return `FillBoundary.${v}`;
-    const m = /^([+-])(\d+)$/.exec(v);
-    if (m) return `RelativeFill(${m[1] === '-' ? -Number(m[2]) : Number(m[2])})`;
-  }
-  return dart(v, 'fill');
+  if (v === undefined || v === null) return dart(v);
+  const code = fillTargetCode(v, (color) => `nativeFixturePaint(${dart(color)})`);
+  if (code === null) throw new Error(`No FillTarget for the fill ${String(v)}`);
+  return code;
 }
 
-/**
- * The Dart literal of a value. [owner] is the key of the object of the
- * value: the `target` of a fill object is a fill value too.
- */
-function dart(v, owner) {
+/** The Dart literal of a value. */
+function dart(v) {
   if (v === null) return 'null';
   if (v === undefined) return 'undefined';
   if (typeof v === 'number') return num(v);
@@ -708,7 +691,7 @@ function dart(v, owner) {
     const axisDart = (x) => `${x.toUpperCase()}Axis()`;
     const entries = Object.keys(v).map(
       (k) =>
-        `${dart(k)}: ${k === 'fill' || (k === 'target' && owner === 'fill') ? fillDart(v[k]) : k === 'axis' && ['x', 'y', 'r'].includes(v[k]) ? axisDart(v[k]) : dart(v[k], k)}`,
+        `${dart(k)}: ${k === 'fill' ? fillDart(v[k]) : k === 'axis' && ['x', 'y', 'r'].includes(v[k]) ? axisDart(v[k]) : dart(v[k])}`,
     );
     return `<String, Object?>{${entries.join(', ')}}`;
   }
@@ -719,7 +702,12 @@ const body = cases
   .map((c) => {
     const {name, kind, result, ...input} = c;
     const fillResult = kind === 'decodeFill' || kind === 'resolveTarget';
-    return `  (name: ${dart(name)}, kind: '${kind}', input: ${dart(input)}, result: ${fillResult ? fillDart(result) : dart(result)}),\n`;
+    const record = `(name: ${dart(name)}, kind: '${kind}', input: ${dart(input)}, result: ${fillResult ? fillDart(result) : dart(result)})`;
+    // A case with a split fill is not const (Chart.js ADR 0140): its
+    // constructor calls take const one by one.
+    return record.includes('.split(')
+      ? `  ${record.replace(/(?<![.\w])(FillTarget\.to(?:Dataset|Relative|Value)\(|[XYR]Axis\(\))/g, 'const $1')},\n`
+      : `  const ${record},\n`;
   })
   .join('');
 
@@ -729,6 +717,7 @@ const out = `// Original code, not ported from Chart.js: filler target reference
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/plugins/plugin.filler/ at the pinned Chart.js. ${cases.length} cases.
 
+import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
@@ -756,8 +745,8 @@ typedef FillerTargetReferenceCase = ({
   Object? result,
 });
 
-/// The cases.
-const List<FillerTargetReferenceCase> fillerTargetReference = [
+/// The cases. A split fill is not \`const\`.
+final List<FillerTargetReferenceCase> fillerTargetReference = [
 ${body}];
 `;
 

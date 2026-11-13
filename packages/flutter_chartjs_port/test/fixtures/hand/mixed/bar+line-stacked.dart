@@ -4,6 +4,7 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
@@ -24,7 +25,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'stack': 'mixed',
           'data': <Object?>[6, 16, 3, 19],
           'borderColor': '#0000ff',
-          'fill': false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
         },
       ],
     },

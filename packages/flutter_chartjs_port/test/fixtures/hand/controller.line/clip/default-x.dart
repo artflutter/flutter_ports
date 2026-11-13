@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The upstream config, with native padding values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.
@@ -28,7 +29,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': 4.0, 'y': 7.0},
             <String, Object?>{'x': 5.0, 'y': 9.0},
           ],
-          'fill': false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
           'showLine': true,
           'borderWidth': 20.0,
           'pointRadius': 0.0,

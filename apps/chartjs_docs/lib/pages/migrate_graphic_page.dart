@@ -68,7 +68,7 @@ DocPageContent graphicMigrationPage() => migrationPage(
     ('StackModifier', '`stacked: true` of the y axis'),
     (
       'SymmetricModifier',
-      'datasets of the computed edges with `fill: ChartFill.relative(-1)`',
+      'datasets of the computed edges with `fill: FillTarget.toPrevious`',
     ),
     ('selected: {...}', '`setActiveElements` in `onChartCreated`'),
   ],
@@ -97,7 +97,7 @@ DocPageContent graphicMigrationPage() => migrationPage(
       region: 'graphic-area',
       notes: const [
         'The `AreaMark` and the `LineMark` are one `LineDataset` with '
-            '`fill: .start`: the area goes down to the bottom of the axis.',
+            '`fill: .toStart`: the area goes down to the bottom of the axis.',
         'A `null` or a `double.nan` value breaks the line and the area, as '
             'in Graphic.',
         'An `OrdinalScale` is a `CategoryAxis` with `offset: true`. The '

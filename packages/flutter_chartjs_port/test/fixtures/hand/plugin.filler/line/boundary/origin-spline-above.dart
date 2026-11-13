@@ -4,9 +4,9 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillBoundary;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -48,11 +48,10 @@ Map<String, Object?> fixture() => <String, Object?>{
           // class.
           'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
           'borderColor': 'transparent',
-          'fill': <String, Object?>{
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'target': FillBoundary.origin,
-            'below': 'transparent',
-          },
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin.split(
+            below: nativeFixturePaint('transparent'),
+          ),
         },
       },
       'plugins': <String, Object?>{

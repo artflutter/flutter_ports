@@ -1147,18 +1147,20 @@ void main() {
                   expect(data[11], isNull, reason: reason);
                   expect(data[23], isNull, reason: reason);
                   expect(data[10], isA<double>(), reason: reason);
-                  expect(fill, containsPair('target', FillBoundary.origin));
-                  expect(fill, contains('above'));
-                  expect(fill, contains('below'));
+                  expect(fill, isA<SplitFill>(), reason: reason);
+                  final split = fill! as SplitFill;
+                  expect(split.target, FillTarget.toOrigin, reason: reason);
+                  expect(split.above, isNotNull, reason: reason);
+                  expect(split.below, isNotNull, reason: reason);
                 case 'stack':
-                  expect(fill, FillBoundary.stack, reason: reason);
+                  expect(fill, FillTarget.toStacked, reason: reason);
                 default:
                   expect(
                     fill,
                     [
-                      FillBoundary.origin,
-                      const RelativeFill(-1),
-                      const RelativeFill(-1),
+                      FillTarget.toOrigin,
+                      FillTarget.toPrevious,
+                      FillTarget.toPrevious,
                     ][k],
                     reason: reason,
                   );

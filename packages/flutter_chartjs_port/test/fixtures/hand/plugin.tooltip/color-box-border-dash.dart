@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -44,7 +45,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'y': <String, Object?>{'display': false},
       },
       'elements': <String, Object?>{
-        'line': <String, Object?>{'fill': false},
+        'line': <String, Object?>{'fill': FillTarget.none},
       },
       'plugins': <String, Object?>{
         'legend': false,

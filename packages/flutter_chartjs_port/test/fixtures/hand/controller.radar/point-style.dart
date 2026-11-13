@@ -6,6 +6,7 @@ library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -89,7 +90,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'r': <String, Object?>{'display': false, 'min': 0, 'max': 3},
       },
       'elements': <String, Object?>{
-        'line': <String, Object?>{'fill': false},
+        'line': <String, Object?>{'fill': FillTarget.none},
       },
       'layout': <String, Object?>{
         'padding': const EdgeInsets.only(left: 24, right: 24),

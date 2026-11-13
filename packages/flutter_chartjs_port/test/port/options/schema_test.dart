@@ -29,6 +29,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart' show ScaleAxis;
@@ -181,12 +182,14 @@ bool _fits(String kind, int shape) {
   return switch (kind) {
     'fn' || 'obj:JsFunction' || 'obj:JsClass' => true,
     'List' || 'null' || 'undefined' => true,
-    // Upstream data hold a number where the port has a length.
+    // Upstream data hold a number where the port has a length or a fill
+    // target (a dataset index, Chart.js ADR 0140).
     'double' || 'int' =>
       shape & ShapeBits.number != 0 ||
           shape & ShapeBits.typed == ShapeBits.radiusLength ||
           shape & ShapeBits.typed == ShapeBits.graceLength ||
-          shape & ShapeBits.typed == ShapeBits.edgeInsets,
+          shape & ShapeBits.typed == ShapeBits.edgeInsets ||
+          shape & ShapeBits.typed == ShapeBits.fillTarget,
     // Upstream data hold a name where the port has a typed atom: a curve, an
     // enum or a class of the port (`ShapeBits.typed`).
     'String' => shape & (ShapeBits.string | ShapeBits.typed) != 0,
@@ -199,11 +202,16 @@ bool _fits(String kind, int shape) {
       shape & ShapeBits.typed == ShapeBits.tooltipCallbacks,
     'obj:EdgeInsets' => shape & ShapeBits.typed == ShapeBits.edgeInsets,
     'obj:ChartTextStyle' => shape & ShapeBits.typed == ShapeBits.textStyle,
-    'bool' => shape & ShapeBits.boolean != 0,
+    // Upstream data hold a boolean or an object where the port has a fill
+    // target (Chart.js ADR 0140).
+    'bool' =>
+      shape & ShapeBits.boolean != 0 ||
+          shape & ShapeBits.typed == ShapeBits.fillTarget,
     'Map' =>
       shape & ShapeBits.scope != 0 ||
           shape & ShapeBits.typed == ShapeBits.edgeInsets ||
-          shape & ShapeBits.typed == ShapeBits.tooltipCallbacks,
+          shape & ShapeBits.typed == ShapeBits.tooltipCallbacks ||
+          shape & ShapeBits.typed == ShapeBits.fillTarget,
     _ when kind.startsWith('NarrowMap') => shape & ShapeBits.scope != 0,
     _ => false,
   };
@@ -247,6 +255,23 @@ bool _isPaddingField(ScopeKind root, String path) {
   final walk = _walk(root, match[1]!.split('.'));
   return walk.shape != null &&
       walk.shape! & ShapeBits.typed == ShapeBits.edgeInsets;
+}
+
+// The fields of an upstream fill object belong to one native atom, the
+// FillTarget (Chart.js ADR 0140).
+final RegExp _fillField = RegExp(r'^(.+\.fill)\.(target|above|below|value)$');
+bool _isFillField(ScopeKind root, String path) {
+  final match = _fillField.firstMatch(path);
+  if (match == null) return false;
+  final segments = match[1]!.split('.');
+  final walks = path.startsWith('data.datasets[].')
+      ? [for (final kind in _datasetKinds) _walk(kind, segments.sublist(2))]
+      : [_walk(root, segments)];
+  return walks.any(
+    (walk) =>
+        walk.shape != null &&
+        walk.shape! & ShapeBits.typed == ShapeBits.fillTarget,
+  );
 }
 
 Map<String, double> _paddingSides(EdgeInsets p) => {
@@ -352,6 +377,13 @@ String? _mismatch(Object? actual, Object? expected) {
   if (expected is String && actual is TooltipPositioner) return null;
   // The same for an algorithm name and an algorithm object.
   if (expected is String && actual is DecimationAlgorithm) return null;
+  // Upstream has `false` and a keyword where the port has a fill target
+  // (Chart.js ADR 0140): `false` is `FillTarget.none`, and a keyword has no
+  // compare.
+  if (expected == false && actual is FillTarget) {
+    return actual == FillTarget.none ? null : '$actual != false';
+  }
+  if (expected is String && actual is FillTarget) return null;
   // The same for a cubic interpolation mode and a point style.
   if (expected is String && actual is CubicInterpolationMode) return null;
   if (expected is String && actual is PointStyle) return null;
@@ -721,6 +753,7 @@ void main() {
         }
         if (_skipped(path) ||
             _isPaddingField(ScopeKind.chartConfiguration, path) ||
+            _isFillField(ScopeKind.chartConfiguration, path) ||
             _isCallbackField(ScopeKind.chartConfiguration, path)) {
           continue;
         }

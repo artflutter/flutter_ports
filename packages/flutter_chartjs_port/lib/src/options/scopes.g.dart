@@ -1627,13 +1627,13 @@ base class ChartOptionsScope() extends OptionScope {
   set rAxisID(String value) =>
       store(OptionKey.rAxisID, OptValue<String>(value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -1642,8 +1642,8 @@ base class ChartOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<Object>? _datasetElementType;
 
@@ -2617,7 +2617,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.datasetElementType:
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
@@ -2946,7 +2946,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.datasetElementType:
         return classifyUnion(raw, 6);
       case OptionKey.dataElementType:
@@ -5852,13 +5852,13 @@ base class LineOptionsScope() extends OptionScope {
   set stepped(Object value) =>
       store(OptionKey.stepped, classify(OptionKey.stepped, value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -5867,8 +5867,8 @@ base class LineOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<Object>? _spanGaps;
 
@@ -6155,7 +6155,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         _stepped = fitCell(cell, (raw) => classifyUnion(raw, 2818));
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
@@ -6241,7 +6241,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         return classifyUnion(raw, 2818);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
@@ -7526,148 +7526,6 @@ base class BorderRadiusScope() extends OptionScope {
   }
 }
 
-/// index.d.ts:2302 ComplexFillTarget and the object `{value}` of
-/// index.d.ts:2300 FillTarget, the object form of `fill`.
-base class FillTargetScope() extends OptionScope {
-  /// An empty scope.
-  this;
-
-  @override
-  ScopeKind get kind => ScopeKind.fillTarget;
-
-  Opt<Object>? _target;
-
-  /// The cell of `target`, or Dart `null` when absent.
-  Opt<Object>? get targetCell => _target;
-
-  /// Stores the cell of `target`. Dart `null` deletes the key.
-  set targetCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.target);
-    } else {
-      store(OptionKey.target, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `target`.
-  set target(Object value) =>
-      store(OptionKey.target, classify(OptionKey.target, value));
-
-  Opt<ChartPaint>? _above;
-
-  /// The cell of `above`, or Dart `null` when absent.
-  Opt<ChartPaint>? get aboveCell => _above;
-
-  /// Stores the cell of `above`. Dart `null` deletes the key.
-  set aboveCell(Opt<ChartPaint>? cell) {
-    if (cell == null) {
-      delete(OptionKey.above);
-    } else {
-      store(OptionKey.above, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `above`.
-  set above(ChartPaint value) =>
-      store(OptionKey.above, OptValue<ChartPaint>(value));
-
-  Opt<ChartPaint>? _below;
-
-  /// The cell of `below`, or Dart `null` when absent.
-  Opt<ChartPaint>? get belowCell => _below;
-
-  /// Stores the cell of `below`. Dart `null` deletes the key.
-  set belowCell(Opt<ChartPaint>? cell) {
-    if (cell == null) {
-      delete(OptionKey.below);
-    } else {
-      store(OptionKey.below, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `below`.
-  set below(ChartPaint value) =>
-      store(OptionKey.below, OptValue<ChartPaint>(value));
-
-  Opt<double>? _value;
-
-  /// The cell of `value`, or Dart `null` when absent.
-  Opt<double>? get valueCell => _value;
-
-  /// Stores the cell of `value`. Dart `null` deletes the key.
-  set valueCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.value);
-    } else {
-      store(OptionKey.value, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `value`.
-  set value(double value) => store(OptionKey.value, OptValue<double>(value));
-
-  @override
-  Opt<Object?>? cellOf(OptionKey key) {
-    switch (key) {
-      case OptionKey.target:
-        return _target;
-      case OptionKey.above:
-        return _above;
-      case OptionKey.below:
-        return _below;
-      case OptionKey.value:
-        return _value;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  void setCell(OptionKey key, Opt<Object?>? cell) {
-    switch (key) {
-      case OptionKey.target:
-        _target = fitCell(cell, (raw) => classifyUnion(raw, 3363));
-      case OptionKey.above:
-        _above = fitCell(cell, classifyTyped<ChartPaint>);
-      case OptionKey.below:
-        _below = fitCell(cell, classifyTyped<ChartPaint>);
-      case OptionKey.value:
-        _value = fitCell(cell, classifyNumber);
-      default:
-        throw ArgumentError.value(key, 'key', 'Not a key of FillTarget');
-    }
-  }
-
-  @override
-  bool hasField(OptionKey key) {
-    switch (key) {
-      case OptionKey.target:
-      case OptionKey.above:
-      case OptionKey.below:
-      case OptionKey.value:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @override
-  Opt<Object?> classify(OptionKey key, Object? raw) {
-    switch (key) {
-      case OptionKey.target:
-        return classifyUnion(raw, 3363);
-      case OptionKey.above:
-        return classifyTyped<ChartPaint>(raw);
-      case OptionKey.below:
-        return classifyTyped<ChartPaint>(raw);
-      case OptionKey.value:
-        return classifyNumber(raw);
-      default:
-        return kind.classifyOther(raw);
-    }
-  }
-}
-
 /// Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable
 /// styles of a line segment.
 base class SegmentOptionsScope() extends OptionScope {
@@ -8557,13 +8415,13 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
   set rAxisID(String value) =>
       store(OptionKey.rAxisID, OptValue<String>(value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -8572,8 +8430,8 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<bool>? _drawActiveElementsOnTop;
 
@@ -8861,7 +8719,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.elements:
@@ -9014,7 +8872,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.elements:
@@ -9550,13 +9408,13 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   set stepped(Object value) =>
       store(OptionKey.stepped, classify(OptionKey.stepped, value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -9565,8 +9423,8 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<Object>? _spanGaps;
 
@@ -10261,7 +10119,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         _stepped = fitCell(cell, (raw) => classifyUnion(raw, 2818));
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
@@ -10453,7 +10311,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         return classifyUnion(raw, 2818);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
@@ -11060,13 +10918,13 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
   set rAxisID(String value) =>
       store(OptionKey.rAxisID, OptValue<String>(value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -11075,8 +10933,8 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<ElementOptionsByTypeScope>? _elements;
 
@@ -11316,7 +11174,7 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.elements:
         _elements = fitCell(cell, classifyScope<ElementOptionsByTypeScope>);
       case OptionKey.datasetElementType:
@@ -11445,7 +11303,7 @@ base class BubbleControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.elements:
         return classifyScope<ElementOptionsByTypeScope>(raw);
       case OptionKey.datasetElementType:
@@ -12222,13 +12080,13 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
   set rAxisID(String value) =>
       store(OptionKey.rAxisID, OptValue<String>(value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -12237,8 +12095,8 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<bool>? _drawActiveElementsOnTop;
 
@@ -12546,7 +12404,7 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.elements:
@@ -12714,7 +12572,7 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.elements:
@@ -13510,13 +13368,13 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
   set rAxisID(String value) =>
       store(OptionKey.rAxisID, OptValue<String>(value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -13525,8 +13383,8 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<bool>? _drawActiveElementsOnTop;
 
@@ -13838,7 +13696,7 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.elements:
@@ -14009,7 +13867,7 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.elements:
@@ -14740,13 +14598,13 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   set stepped(Object value) =>
       store(OptionKey.stepped, classify(OptionKey.stepped, value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -14755,8 +14613,8 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<Object>? _spanGaps;
 
@@ -15355,7 +15213,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         _stepped = fitCell(cell, (raw) => classifyUnion(raw, 2818));
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.spanGaps:
         _spanGaps = fitCell(cell, (raw) => classifyUnion(raw, 3));
       case OptionKey.segment:
@@ -15559,7 +15417,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.stepped:
         return classifyUnion(raw, 2818);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.spanGaps:
         return classifyUnion(raw, 3);
       case OptionKey.segment:
@@ -15883,13 +15741,13 @@ base class GenericDatasetOptionsScope() extends OptionScope {
   set rAxisID(String value) =>
       store(OptionKey.rAxisID, OptValue<String>(value));
 
-  Opt<Object>? _fill;
+  Opt<FillTarget>? _fill;
 
   /// The cell of `fill`, or Dart `null` when absent.
-  Opt<Object>? get fillCell => _fill;
+  Opt<FillTarget>? get fillCell => _fill;
 
   /// Stores the cell of `fill`. Dart `null` deletes the key.
-  set fillCell(Opt<Object>? cell) {
+  set fillCell(Opt<FillTarget>? cell) {
     if (cell == null) {
       delete(OptionKey.fill);
     } else {
@@ -15898,8 +15756,8 @@ base class GenericDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `fill`.
-  set fill(Object value) =>
-      store(OptionKey.fill, classify(OptionKey.fill, value));
+  set fill(FillTarget value) =>
+      store(OptionKey.fill, OptValue<FillTarget>(value));
 
   Opt<bool>? _drawActiveElementsOnTop;
 
@@ -16159,7 +16017,7 @@ base class GenericDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
-        _fill = fitCell(cell, (raw) => classifyUnion(raw, 3363));
+        _fill = fitCell(cell, classifyTyped<FillTarget>);
       case OptionKey.drawActiveElementsOnTop:
         _drawActiveElementsOnTop = fitCell(cell, classifyBool);
       case OptionKey.animation:
@@ -16255,7 +16113,7 @@ base class GenericDatasetOptionsScope() extends OptionScope {
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
-        return classifyUnion(raw, 3363);
+        return classifyTyped<FillTarget>(raw);
       case OptionKey.drawActiveElementsOnTop:
         return classifyBool(raw);
       case OptionKey.animation:

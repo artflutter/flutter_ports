@@ -77,6 +77,8 @@ bool _sameDefault(Object? actual, String text) => switch (actual) {
   DefaultCubicInterpolationMode() => text == 'DefaultCubicInterpolationMode()',
   // The default point style.
   CirclePointStyle() => text == 'CirclePointStyle()',
+  // The default fill (Chart.js ADR 0140).
+  final FillTarget value => '$value' == text,
   final bool value => '$value' == text,
   final List<Object?> value => listEquals(value, const []) && text == '[]',
   _ => false,

@@ -3,6 +3,7 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 
 /// The upstream config, with native padding and clip values.
@@ -69,7 +70,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
       'layout': <String, Object?>{'padding': const EdgeInsets.all(24)},
       'elements': <String, Object?>{
-        'line': <String, Object?>{'fill': false, 'borderWidth': 20.0},
+        'line': <String, Object?>{'fill': FillTarget.none, 'borderWidth': 20.0},
         'point': <String, Object?>{'radius': 0.0},
       },
     },

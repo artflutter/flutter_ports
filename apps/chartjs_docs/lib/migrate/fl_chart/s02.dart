@@ -42,7 +42,7 @@ ChartConfig _config(List<num> ys, {required bool average}) {
           borderWidth: 5,
           pointRadius: 0,
           pointHoverRadius: 8,
-          fill: .origin,
+          fill: .toOrigin,
           extra: {
             'borderColor': horizontalGradient(colors),
             'backgroundColor': horizontalGradient([

@@ -4,9 +4,9 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show RelativeFill;
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -19,34 +19,32 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'backgroundColor': 'rgba(255, 0, 0, 0.25)',
           'data': <Object?>[null, null, 0, -1, 0, 1, 0, -1, 0],
-          'fill': <String, Object?>{'target': 1, 'above': 'transparent'},
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': const FillTarget.toDataset(1)
+              .split(above: nativeFixturePaint('transparent')),
         },
         <String, Object?>{
           'backgroundColor': 'rgba(0, 255, 0, 0.25)',
           'data': <Object?>[1, 0, null, 1, 0, null, -1, 0, 1],
-          'fill': <String, Object?>{
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'target': const RelativeFill(1),
-            'above': 'transparent',
-          },
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toNext.split(
+            above: nativeFixturePaint('transparent'),
+          ),
         },
         <String, Object?>{
           'backgroundColor': 'rgba(255, 0, 255, 0.25)',
           'data': <Object?>[2, 0, -2, 0, 2, 0, -2, 0, 2],
-          'fill': <String, Object?>{
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'target': const RelativeFill(-2),
-            'above': 'transparent',
-          },
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': const FillTarget.toRelative(-2)
+              .split(above: nativeFixturePaint('transparent')),
         },
         <String, Object?>{
           'backgroundColor': 'rgba(255, 255, 0, 0.25)',
           'data': <Object?>[3, 1, -1, -3, -1, 1, 3, 1, -1],
-          'fill': <String, Object?>{
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'target': const RelativeFill(-1),
-            'above': 'transparent',
-          },
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toPrevious.split(
+            above: nativeFixturePaint('transparent'),
+          ),
         },
       ],
     },

@@ -82,4 +82,3 @@ export 'package:flutter_chartjs_port/src/typed/groups.dart'
         ChartLegend,
         ChartTitle,
         ChartTooltip;
-export 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;

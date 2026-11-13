@@ -6,6 +6,7 @@ library;
 import 'dart:async';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -25,7 +26,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'backgroundColor': '#ff0000',
           'borderWidth': 0,
           'tension': 0.4,
-          'fill': true,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin,
         },
       ],
     },

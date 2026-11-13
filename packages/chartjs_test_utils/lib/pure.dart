@@ -30,7 +30,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:test/test.dart';
 
 export 'package:chartjs_test_utils/src/color_reference.dart'
-    show referenceColor;
+    show nativeFixturePaint, referenceColor;
 export 'package:chartjs_test_utils/src/color_values.dart' show equalColorValues;
 export 'package:chartjs_test_utils/src/native_easing.dart'
     show EffectCurve, nativeFixtureEasing;

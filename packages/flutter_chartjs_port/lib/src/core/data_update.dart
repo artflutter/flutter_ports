@@ -18,6 +18,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
+    show FillTarget, SplitFill;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
@@ -148,6 +150,12 @@ Iterable<String> _keys(Object object) => object is OptionScope
     ? object.ownKeys.map((key) => key is OptionKey ? key.jsName : key as String)
     : (object as Map<String, Object?>).keys;
 
+/// Whether [paint], a color of a split fill, is absent or a solid native
+/// color.
+bool _nativeFillPaint(ChartPaint? paint) =>
+    paint == null ||
+    (paint is SolidChartPaint && paint.color.runtimeType == Color);
+
 /// Static user settings only. Scale settings are frozen by the separate native
 /// scale contract; event handlers remain live and are not layout/style inputs.
 @internal
@@ -168,6 +176,12 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
         // The chart locale is a value (row adapt-intl-number-format).
         node is Locale ||
         node.runtimeType == EdgeInsets ||
+        // The fill is an immutable value; a split fill holds native colors
+        // (Chart.js ADR 0140).
+        (node is FillTarget &&
+            (node is! SplitFill ||
+                (_nativeFillPaint(node.above) &&
+                    _nativeFillPaint(node.below)))) ||
         // The dataset shadow is an immutable value (Chart.js ADR 0139).
         (node.runtimeType == ChartShadow &&
             (node as ChartShadow).color.runtimeType == Color) ||

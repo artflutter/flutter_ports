@@ -1,5 +1,15 @@
 ## 0.1.0
 
+- The option `fill` holds a `FillTarget`, also in a raw configuration:
+  `FillTarget.none` for `false`, `.toOrigin` for `true` and `'origin'`,
+  `.toStart`, `.toEnd`, `.toStacked`, `.shape`, `.toDataset(i)` for a number,
+  `.toPrevious`, `.toNext` and `.toRelative(n)` for `'-1'`, `'+1'` and
+  `'+n'`, `.toValue(v)` for `{value: v}`, and
+  `FillTarget.toOrigin.split(above: green, below: red)` for
+  `{target, above, below}`. A boolean, a number, a Map or a text stops a debug
+  build. `ChartFill`, `FillBoundary` and the typed `values.dart` are removed:
+  `LineDataset(fill: .toOrigin)`.
+
 - Use `ChartPaint` for paint-capable color options, including raw configurations.
   Solids use `.solid(color)`; `ChartGradient` and `ChartPattern` replace canvas
   gradient/pattern factories. Theme tokens, palette entries, shadow colors and

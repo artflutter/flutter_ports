@@ -7,6 +7,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 // `ctx.p0` is a point element. `ctx.p0.parsed` is the access by name of the
 // element (Chart.js ADR 0017, section 5): `jsGet` gives `undefined` for an
@@ -38,7 +39,8 @@ Map<String, Object?> fixture() => <String, Object?>{
                 ? <Object?>[10, 5]
                 : undefined,
           },
-          'fill': true,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.toOrigin,
         },
       ],
     },

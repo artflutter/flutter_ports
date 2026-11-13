@@ -34,19 +34,17 @@ import 'chart_twin.dart';
 // - The title of the Area sample is a function of the context
 //   (`line-boundaries.md:106`). `ChartTitle.text` is a `String`: the typed
 //   text of each variant is the constant of that function.
-// - The radar datasets have `fill: true` (`radar.md:22`, `:32`). The typed
-//   fill is `ChartFill.origin`: the filler reads `true` as `'origin'`
-//   (`parseFillOption`, `src/plugins/plugin.filler/filler.options.js:133`),
-//   so the fill and the draw calls are the same. The resolved `fill` option
-//   of the line element keeps the value form: the compare maps the raw
-//   `true` to `'origin'` (`_fillTrueAsOrigin`).
+// - The radar datasets have `fill: true` (`radar.md:22`, `:32`). The fill
+//   of the port is `FillTarget.toOrigin` in both twins (Chart.js ADR 0140):
+//   the filler reads `true` as `'origin'` (`parseFillOption`,
+//   `src/plugins/plugin.filler/filler.options.js:133`).
 //
 // The group "the chart types" has one chart of each of the 8 chart types
 // with more typed keys than the docs: the axes and their ticks, grids and
 // titles, the legend, the title and the subtitle, the tooltip with its text
 // callbacks, the interaction, the animation, the filler, the elements, the
 // padding, the time and logarithmic axes, the scriptable forms of the
-// colors in Lists, the radius lengths, `ChartFill` and the point styles.
+// colors in Lists, the radius lengths, `FillTarget` and the point styles.
 // Each raw twin is the raw form of the same chart: the Chart.js option
 // paths with the values of the typed lowering (Chart.js ADR 0052, section
 // 7). The callbacks of the raw twins read the raw objects and give the same
@@ -193,7 +191,7 @@ Map<String, Object?> _barHorizontalRaw() => <String, Object?>{
         'axis': const YAxis(),
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
-        'fill': false,
+        'fill': FillTarget.none,
         'backgroundColor': <Object?>[..._sevenBackgrounds],
         'borderColor': <Object?>[..._sevenBorders],
         'borderWidth': 1.0,
@@ -333,7 +331,7 @@ Map<String, Object?> _lineRaw() => <String, Object?>{
       <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
-        'fill': false,
+        'fill': FillTarget.none,
         'borderColor': const ChartPaint.solid(
           native_ui.Color.fromRGBO(75, 192, 192, 1),
         ),
@@ -369,7 +367,7 @@ Map<String, Object?> _lineVerticalRaw() => <String, Object?>{
         'axis': const YAxis(),
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 80.0, 81.0, 56.0, 55.0, 40.0],
-        'fill': false,
+        'fill': FillTarget.none,
         'backgroundColor': <Object?>[..._sevenBackgrounds],
         'borderColor': <Object?>[..._sevenBorders],
         'borderWidth': 1.0,
@@ -427,7 +425,7 @@ Map<String, Object?> _mixedRaw() => <String, Object?>{
         'type': 'line',
         'label': 'Line Dataset',
         'data': <Object?>[50.0, 50.0, 50.0, 50.0],
-        'fill': false,
+        'fill': FillTarget.none,
         'borderColor': const ChartPaint.solid(
           native_ui.Color.fromRGBO(54, 162, 235, 1),
         ),
@@ -525,7 +523,7 @@ Map<String, Object?> _radarRaw() => <String, Object?>{
       <String, Object?>{
         'label': 'My First Dataset',
         'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0, 55.0, 40.0],
-        'fill': true,
+        'fill': FillTarget.toOrigin,
         'backgroundColor': const ChartPaint.solid(
           native_ui.Color.fromRGBO(255, 99, 132, 0.2),
         ),
@@ -548,7 +546,7 @@ Map<String, Object?> _radarRaw() => <String, Object?>{
       <String, Object?>{
         'label': 'My Second Dataset',
         'data': <Object?>[28.0, 48.0, 40.0, 19.0, 96.0, 27.0, 100.0],
-        'fill': true,
+        'fill': FillTarget.toOrigin,
         'backgroundColor': const ChartPaint.solid(
           native_ui.Color.fromRGBO(54, 162, 235, 0.2),
         ),
@@ -577,7 +575,7 @@ Map<String, Object?> _radarRaw() => <String, Object?>{
   },
 };
 
-/// The typed `radar.md:7-61`, with `ChartFill.origin` for `fill: true`.
+/// The typed `radar.md:7-61`, with `FillTarget.toOrigin` for `fill: true`.
 ChartConfig _radarTyped() => const ChartConfig(
   type: .radar,
   labels: [
@@ -593,7 +591,7 @@ ChartConfig _radarTyped() => const ChartConfig(
     RadarDataset(
       label: 'My First Dataset',
       data: [65, 59, 90, 81, 56, 55, 40],
-      fill: .origin,
+      fill: .toOrigin,
       backgroundColor: ChartValue.constant(
         .solid(Color.fromRGBO(255, 99, 132, 0.2)),
       ),
@@ -606,7 +604,7 @@ ChartConfig _radarTyped() => const ChartConfig(
     RadarDataset(
       label: 'My Second Dataset',
       data: [28, 48, 40, 19, 96, 27, 100],
-      fill: .origin,
+      fill: .toOrigin,
       backgroundColor: ChartValue.constant(
         .solid(Color.fromRGBO(54, 162, 235, 0.2)),
       ),
@@ -619,22 +617,6 @@ ChartConfig _radarTyped() => const ChartConfig(
   ],
   elements: ChartElements(line: LineElementStyle(borderWidth: 3)),
 );
-
-/// [observation] with the value [FillBoundary.origin] for each
-/// `fill: true`: the filler reads `fill: true` as `'origin'`
-/// (`filler.options.js:133`).
-Object? _fillTrueAsOrigin(Object? observation) => switch (observation) {
-  final Map<String, Object?> map => <String, Object?>{
-    for (final MapEntry(:key, :value) in map.entries)
-      key: key == 'fill' && value == true
-          ? FillBoundary.origin
-          : _fillTrueAsOrigin(value),
-  },
-  final List<Object?> list => [
-    for (final item in list) _fillTrueAsOrigin(item),
-  ],
-  _ => observation,
-};
 
 /// The raw twin of `scatterConfig` of the gallery
 /// (`docs/charts/scatter.md:5-47`).
@@ -702,46 +684,46 @@ const List<num?> _areaData = [
 
 /// The raw twin of the Area config of the gallery at the fill [fill]
 /// (`docs/samples/area/line-boundaries.md:3-120`), with the title function
-/// of `:106`.
-Map<String, Object?> _areaRaw(Object fill) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>[..._areaMonths],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'Dataset',
-        'data': <Object?>[..._areaData],
-        'borderColor': const ChartPaint.solid(
-          native_ui.Color.fromRGBO(255, 99, 132, 1),
-        ),
-        'backgroundColor': const ChartPaint.solid(
-          native_ui.Color.fromRGBO(255, 99, 132, 0.5),
-        ),
-        'fill': fill,
+/// of `:106` for the text [name] of the fill.
+Map<String, Object?> _areaRaw(FillTarget fill, String name) =>
+    <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>[..._areaMonths],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'Dataset',
+            'data': <Object?>[..._areaData],
+            'borderColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 99, 132, 1),
+            ),
+            'backgroundColor': const ChartPaint.solid(
+              native_ui.Color.fromRGBO(255, 99, 132, 0.5),
+            ),
+            'fill': fill,
+          },
+        ],
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'plugins': <String, Object?>{
-      'filler': <String, Object?>{'propagate': false},
-      'title': <String, Object?>{'display': true, 'text': _areaTitleText},
-    },
-    'interaction': <String, Object?>{'intersect': false},
-  },
-};
+      'options': <String, Object?>{
+        'plugins': <String, Object?>{
+          'filler': <String, Object?>{'propagate': false},
+          'title': <String, Object?>{
+            'display': true,
+            'text': (Object? ctx) => _areaTitleText(name),
+          },
+        },
+        'interaction': <String, Object?>{'intersect': false},
+      },
+    };
 
 /// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
-/// (`line-boundaries.md:106`), as in the gallery.
-Object _areaTitleText(Object? ctx) {
-  final chart = _byName(ctx, 'chart')! as Chart;
-  final datasets = _byName(chart.data, 'datasets')! as List<Object?>;
-  final fill = _byName(datasets.first, 'fill');
-  return 'Fill: ${fill is FillBoundary ? fill.name : fill}';
-}
+/// (`line-boundaries.md:106`), as in the gallery: a `FillTarget` has no
+/// text, so the title takes the [name] of the fill.
+Object _areaTitleText(String name) => 'Fill: $name';
 
 /// The typed Area config at the fill [fill], with the constant title
 /// [title].
-ChartConfig _areaTyped(ChartFill fill, String title) => ChartConfig(
+ChartConfig _areaTyped(FillTarget fill, String title) => ChartConfig(
   type: .line,
   labels: _areaMonths,
   datasets: [
@@ -820,7 +802,7 @@ final List<_Twin> _docsTwins = [
     name: 'radar.md:7-61',
     typed: _radarTyped,
     raw: _radarRaw,
-    rawObservation: _fillTrueAsOrigin,
+    rawObservation: null,
   ),
   (
     name: 'scatter.md:5-47',
@@ -828,16 +810,16 @@ final List<_Twin> _docsTwins = [
     raw: _scatterRaw,
     rawObservation: null,
   ),
-  for (final (fill, raw, text) in const [
-    (ChartFill.origin, FillBoundary.origin, 'origin'),
-    (ChartFill.start, FillBoundary.start, 'start'),
-    (ChartFill.end, FillBoundary.end, 'end'),
-    (ChartFill.none, false, 'false'),
+  for (final (fill, text) in const [
+    (FillTarget.toOrigin, 'origin'),
+    (FillTarget.toStart, 'start'),
+    (FillTarget.toEnd, 'end'),
+    (FillTarget.none, 'false'),
   ])
     (
       name: 'line-boundaries.md:3-120, fill $text',
       typed: () => _areaTyped(fill, 'Fill: $text'),
-      raw: () => _areaRaw(raw),
+      raw: () => _areaRaw(fill, text),
       rawObservation: null,
     ),
 ];
@@ -1111,11 +1093,11 @@ Map<String, Object?> _barRaw() => <String, Object?>{
 /// gap, a stepped line, a category and a linear axis, the interaction, the
 /// subtitle, the legend with point styles, the animation, the filler and the
 /// aspect ratio.
-ChartConfig _lineTypeTyped() => ChartConfig(
+ChartConfig _lineTypeTyped() => const ChartConfig(
   type: .line,
-  labels: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   datasets: [
-    const LineDataset(
+    LineDataset(
       label: 'This week',
       data: [3, 5, null, 8, 6, 9, 7],
       backgroundColor: ChartValue.constant(
@@ -1123,7 +1105,7 @@ ChartConfig _lineTypeTyped() => ChartConfig(
       ),
       borderColor: ChartValue.constant(.solid(_red)),
       borderWidth: 2,
-      fill: .origin,
+      fill: .toOrigin,
       tension: 0.3,
       spanGaps: true,
       pointStyle: RectRotPointStyle(),
@@ -1137,18 +1119,18 @@ ChartConfig _lineTypeTyped() => ChartConfig(
     ),
     LineDataset(
       label: 'Last week',
-      data: const [2, 4, 6, 5, 4, 6, 5],
-      backgroundColor: const ChartValue.constant(
+      data: [2, 4, 6, 5, 4, 6, 5],
+      backgroundColor: ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(54, 162, 235, 0.25)),
       ),
-      borderColor: const ChartValue.constant(.solid(_blue)),
-      fill: ChartFill.relative(-1),
-      borderDash: const [6, 4],
+      borderColor: ChartValue.constant(.solid(_blue)),
+      fill: FillTarget.toPrevious,
+      borderDash: [6, 4],
       stepped: SteppedLine.before,
-      pointStyle: const TrianglePointStyle(),
+      pointStyle: TrianglePointStyle(),
     ),
   ],
-  scales: const {
+  scales: {
     'x': CategoryAxis(
       grid: AxisGrid(offset: true, drawTicks: false),
       ticks: AxisTicks(maxRotation: 0, autoSkip: false),
@@ -1165,23 +1147,23 @@ ChartConfig _lineTypeTyped() => ChartConfig(
     ),
   },
   aspectRatio: 1.5,
-  interaction: const ChartInteraction(
+  interaction: ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
     includeInvisible: true,
   ),
-  subtitle: const ChartTitle(
+  subtitle: ChartTitle(
     display: true,
     text: 'Steps in thousands',
     color: ChartPaint.solid(_navy),
     position: .bottom,
   ),
-  legend: const ChartLegend(usePointStyle: true, reverse: true),
-  animation: const ChartAnimation(
+  legend: ChartLegend(usePointStyle: true, reverse: true),
+  animation: ChartAnimation(
     duration: Duration(milliseconds: 400),
     easing: Curves.easeOutQuart,
   ),
-  filler: const ChartFiller(propagate: true),
+  filler: ChartFiller(propagate: true),
 );
 
 /// The raw twin of `_lineTypeTyped`.
@@ -1200,7 +1182,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
           native_ui.Color.fromRGBO(255, 99, 132, 1),
         ),
         'borderWidth': 2,
-        'fill': FillBoundary.origin,
+        'fill': FillTarget.toOrigin,
         'tension': 0.3,
         'spanGaps': true,
         'pointStyle': const RectRotPointStyle(),
@@ -1229,7 +1211,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         'borderColor': const ChartPaint.solid(
           native_ui.Color.fromRGBO(54, 162, 235, 1),
         ),
-        'fill': const RelativeFill(-1),
+        'fill': FillTarget.toPrevious,
         'borderDash': <Object?>[6, 4],
         'stepped': SteppedLine.before,
         'pointStyle': const TrianglePointStyle(),
@@ -1305,7 +1287,7 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
       borderColor: const ChartValue.constant(.solid(_purple)),
       borderWidth: 1,
       showLine: true,
-      fill: const ChartFill.value(10),
+      fill: const FillTarget.toValue(10),
       pointRadius: 6,
       pointStyle: const RectPointStyle(),
     ),
@@ -1359,7 +1341,7 @@ Map<String, Object?> _scatterTypeRaw() => <String, Object?>{
         ),
         'borderWidth': 1,
         'showLine': true,
-        'fill': <String, Object?>{'value': 10},
+        'fill': const FillTarget.toValue(10),
         'pointRadius': 6,
         'pointStyle': const RectPointStyle(),
       },
@@ -1848,7 +1830,7 @@ ChartConfig _radarTypeTyped() => ChartConfig(
         .solid(Color.fromRGBO(54, 162, 235, 0.2)),
       ),
       borderColor: ChartValue.constant(.solid(_blue)),
-      fill: .origin,
+      fill: .toOrigin,
       tension: 0.1,
       pointStyle: StarPointStyle(),
       pointRadius: 4,
@@ -1861,7 +1843,7 @@ ChartConfig _radarTypeTyped() => ChartConfig(
         .solid(Color.fromRGBO(255, 159, 64, 0.2)),
       ),
       borderColor: ChartValue.constant(.solid(_orange)),
-      fill: ChartFill.dataset(0),
+      fill: FillTarget.toDataset(0),
       borderDash: [4, 4],
       spanGaps: false,
       pointBackgroundColor: .constant(.solid(_orange)),
@@ -1921,7 +1903,7 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
         'borderColor': const ChartPaint.solid(
           native_ui.Color.fromRGBO(54, 162, 235, 1),
         ),
-        'fill': FillBoundary.origin,
+        'fill': FillTarget.toOrigin,
         'tension': 0.1,
         'pointStyle': const StarPointStyle(),
         'pointRadius': 4,
@@ -1936,7 +1918,7 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
         'borderColor': const ChartPaint.solid(
           native_ui.Color.fromRGBO(255, 159, 64, 1),
         ),
-        'fill': 0,
+        'fill': const FillTarget.toDataset(0),
         'borderDash': <Object?>[4, 4],
         'spanGaps': false,
         'pointBackgroundColor': const ChartPaint.solid(
