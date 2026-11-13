@@ -19,7 +19,7 @@ seams is `connects` or `zoom-side`. The column "Phase" gives the roadmap phase o
 | Upstream file | Lines | Dart file | Seams | Phase | Status |
 |---|---:|---|---|---:|---|
 | `src/types.ts` | 15 | `lib/src/types.dart` | none | 2 | ported |
-| `src/options.ts` | 209 | `lib/src/options.dart` | H1, H28 | 2 | ported; the facade `ZoomPluginOptions` has the port-only getter `rangeOnlyUpdates` (row `adapt-range-only-updates`) |
+| `src/options.ts` | 209 | `lib/src/options.dart` | H1, H28 | 2 | ported; the facade `ZoomPluginOptions` has the port-only getter `rangeOnlyUpdates` (row `adapt-range-only-updates`); the callback getters give typed functions, and a start callback returns `bool` (Zoom ADR 0004, row `adapt-native-callbacks`) |
 | `src/defaults.ts` | 26 | `lib/src/defaults.dart` | none | 2 | ported |
 | `src/state.ts` | 65 | `lib/src/state.dart` | H3, H6, H10 | 2 | ported |
 | `src/utils.ts` | 111 | `lib/src/utils.dart` | H6, H11, H21, H26 | 2 | ported |

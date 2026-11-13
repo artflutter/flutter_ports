@@ -4,8 +4,9 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ZoomChartContext;
-import 'package:flutter_chartjs_port/chartjs.dart' show CanvasEventTarget;
+    show Mode, ZoomChartContext, ZoomStartContext;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show CanvasEventTarget, NativeEvent;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart' show dispatchPointer, simulatePinch;
@@ -46,7 +47,10 @@ void main() {
                 'zoom': <String, Object?>{
                   'zoom': <String, Object?>{
                     'mode': Mode.xy,
-                    'onZoomStart': startSpy.call,
+                    'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                      startSpy.call(context);
+                      return true;
+                    },
                     'pinch': <String, Object?>{
                       'enabled': true,
                     },
@@ -81,7 +85,7 @@ void main() {
                   'zoom': <String, Object?>{
                     'zoom': <String, Object?>{
                       'mode': Mode.xy,
-                      'onZoomStart': () => false,
+                      'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
                       'onZoomRejected': rejectSpy.call,
                       'pinch': <String, Object?>{
                         'enabled': true,
@@ -143,7 +147,10 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'mode': Mode.xy,
-                  'onZoomStart': startSpy.call,
+                  'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                    startSpy.call(context);
+                    return true;
+                  },
                   'onZoomComplete': completeSpy.call,
                   'pinch': <String, Object?>{
                     'enabled': true,

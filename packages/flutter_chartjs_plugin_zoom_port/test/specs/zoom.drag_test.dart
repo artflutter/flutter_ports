@@ -4,7 +4,13 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ModifierKey, ZoomChart, ZoomTrigger;
+    show
+        Mode,
+        ModifierKey,
+        ZoomChart,
+        ZoomChartContext,
+        ZoomStartContext,
+        ZoomTrigger;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show CanvasEventTarget, Chart, NativeEvent, Scale, undefined;
 import 'package:flutter_test/flutter_test.dart';
@@ -88,7 +94,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
-                  'mode': () {
+                  'mode': (ZoomChartContext _) {
                     return Mode.x;
                   },
                 },
@@ -168,7 +174,7 @@ void main() {
               'zoom': <String, Object?>{
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
-                  'mode': () {
+                  'mode': (ZoomChartContext _) {
                     return Mode.y;
                   },
                 },
@@ -531,9 +537,12 @@ void main() {
                   'zoom': <String, Object?>{
                     'drag': <String, Object?>{'enabled': true},
                     'mode': Mode.xy,
-                    'onZoomStart': startSpy.call,
+                    'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                      startSpy.call(context);
+                      return true;
+                    },
                     'onZoom': zoomSpy.call,
-                    'onZoomComplete': () => done(),
+                    'onZoomComplete': (ZoomChartContext _) => done(),
                   },
                 },
               },
@@ -582,7 +591,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'drag': <String, Object?>{'enabled': true},
                   'mode': Mode.xy,
-                  'onZoomStart': () => false,
+                  'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
                   'onZoom': zoomSpy.call,
                   'onZoomComplete': doneSpy.call,
                   'onZoomRejected': rejectSpy.call,

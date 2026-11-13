@@ -101,6 +101,9 @@ in a spec can make more cases than its `it` calls.
 - [Zoom ADR 0003: The connection to the host port](adr/0003-host-connection.md) (proposed): public
   libraries only, host changes first, the Dart forms of the DOM uses, the typed plugin object, the
   option facades, the numeric limits and the data-only opt-in.
+- [Zoom ADR 0004: Native zoom and pan callbacks](adr/0004-native-zoom-pan-callbacks.md) (accepted):
+  the callback options and the `ModeFn` hold typed functions, a start callback returns `bool`, and
+  the plugin calls them directly.
 - [ADR 0009: Ports of add-on libraries](../../../docs/adr/0009-add-on-ports.md) (proposed): the
   rule for all add-on ports.
 - [Chart.js ADR 0108: The input surface and exports for add-on plugins](../../flutter_chartjs_port/doc/adr/0108-input-surface-and-exports-for-add-on-plugins.md)
