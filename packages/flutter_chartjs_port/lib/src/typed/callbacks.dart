@@ -2,9 +2,9 @@
 
 /// The callback types of the typed API (Chart.js ADR 0052, section 6).
 ///
-/// - The details objects [ChartEventDetails], [ChartLegendEventDetails]
-///   and [ChartAnimationDetails] hold the arguments of one call. A new
-///   field is an addition that breaks no callback.
+/// - The event callbacks take the function types of the core (Chart.js ADR
+///   0130): `ChartEventHandler`, `LegendEventHandler` and
+///   `AnimationEventHandler`, as a raw config does.
 /// - [ChartContext] is a view over the context objects of the chart. An
 ///   active element of an event is the core [ActiveElement].
 ///   A tooltip item is the core `TooltipItem`. [LegendItem] is the shared
@@ -22,10 +22,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableChartContext, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/types/index.dart'
-    show ActiveElement, ChartEvent, LegendElement;
+import 'package:flutter_chartjs_port/src/types/index.dart' show ActiveElement;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:meta/meta.dart' show immutable;
 
 /// A scriptable option: a function of the context of the element, the
 /// dataset or the chart that gives the value.
@@ -34,72 +32,6 @@ import 'package:meta/meta.dart' show immutable;
 /// value has no fallback: Chart.js takes the value of the function as it is
 /// (`helpers.config.ts:255-273`).
 typedef ChartScript<T> = T Function(ChartContext context);
-
-/// The arguments of the event callbacks `onClick` and `onHover` of a chart
-/// (`options.onClick`, `options.onHover`; `core.controller.js:1222-1226`).
-@immutable
-final class const ChartEventDetails({
-  /// The chart event: its `type` (`'click'`, `'mousemove'`, ...) and its
-  /// position `x` and `y` in the chart.
-  required final ChartEvent event,
-
-  /// The active elements of the event by the interaction options, in the
-  /// order of the interaction mode. Empty when the event hits no element.
-  required final List<ActiveElement> hits,
-
-  /// The chart of the event.
-  required final Chart chart,
-}) {
-  /// The details of one event.
-  this;
-}
-
-/// The arguments of the legend handlers `onClick`, `onHover` and `onLeave`
-/// (`plugins.legend.onClick`; `plugin.legend.js:539-550`).
-@immutable
-final class const ChartLegendEventDetails({
-  /// The chart event.
-  required final ChartEvent event,
-
-  /// The legend item under the event, or the item that the pointer left
-  /// for `onLeave`.
-  required final LegendItem item,
-
-  /// The legend box.
-  required final LegendElement legend,
-}) {
-  /// The details of one legend event.
-  this;
-}
-
-/// The arguments of the animation callbacks `onProgress` and `onComplete`
-/// of a chart (`options.animation.onProgress`; `AnimationEvent`,
-/// `animation.d.ts:13-18`; `core.animator.js:27-32`).
-///
-/// For example, a progress bar shows `currentStep / numSteps` in
-/// `onProgress` (`docs/configuration/animations.md`, "Animation
-/// Callbacks").
-@immutable
-final class const ChartAnimationDetails({
-  /// The chart of the animation.
-  required final Chart chart,
-
-  /// Whether the animation is the first animation of the chart, from its
-  /// start. `false` after the first `onComplete`.
-  required final bool initial,
-
-  /// The duration of the animations of the chart in milliseconds. `null`
-  /// in the `onComplete` of a chart that draws with no animation.
-  final double? numSteps,
-
-  /// The milliseconds since the start of the animations, at most
-  /// [numSteps]. `null` in the `onComplete` of a chart that draws with no
-  /// animation.
-  final double? currentStep,
-}) {
-  /// The details of one animation step.
-  this;
-}
 
 /// The context of a scriptable option (`docs/general/options.md`, "Option
 /// Context"): the chart context, a dataset context or a data context.

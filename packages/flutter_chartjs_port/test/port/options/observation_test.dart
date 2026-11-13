@@ -13,7 +13,13 @@ import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show TooltipCallbacks, TooltipItem;
+    show
+        LegendItem,
+        LegendItemComparator,
+        LegendItemFilter,
+        LegendLabelsGenerator,
+        TooltipCallbacks,
+        TooltipItem;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -824,6 +830,27 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
               return value.labelPointStyle!(tooltip, arg);
             },
     );
+  }
+  // The legend label callbacks return typed values (Chart.js ADR 0130): a
+  // recorder of `Object?` parameters returns `dynamic`, which is not one of
+  // their function types.
+  if (value is LegendLabelsGenerator) {
+    return (Chart chart) {
+      trace.add(_traceLine(path, [chart]));
+      return value(chart);
+    };
+  }
+  if (value is LegendItemFilter) {
+    return (LegendItem item, Object data) {
+      trace.add(_traceLine(path, [item, data]));
+      return value(item, data);
+    };
+  }
+  if (value is LegendItemComparator) {
+    return (LegendItem a, LegendItem b, Object data) {
+      trace.add(_traceLine(path, [a, b, data]));
+      return value(a, b, data);
+    };
   }
   // The explicit scale is the former JS this; trace the value and the index
   // (row adapt-native-tick).

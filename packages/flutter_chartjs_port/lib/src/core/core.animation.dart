@@ -27,8 +27,8 @@
 /// - A color animation keeps the parsed colors of its last call
 ///   (`adapt-animation-color-cache`).
 /// - The constructor resolves the interpolator one time, with no list and
-///   no lookup by name. A user `fn` gets one closure that calls it with
-///   [jsCall].
+///   no lookup by name. A user `fn` is an [Interpolator], called directly
+///   (Chart.js ADR 0130).
 ///
 /// The promises of [Animation.wait] settle in a job of `js_promise.dart`
 /// (`platform-animation-promise-checkpoint`, Chart.js ADR 0019, section 7).
@@ -50,7 +50,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show color, isPatternOrGradient;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -72,7 +71,8 @@ import 'package:meta/meta.dart';
 const ui.Color _transparent = ui.Color.fromRGBO(0, 0, 0, 0);
 
 /// core.animation.js:6-25 the type of a member of `interpolators`: the value
-/// at [factor] between [from] and [to].
+/// at [factor] between [from] and [to]. The animation option `fn`
+/// (index.d.ts:1775) holds a function of this type (Chart.js ADR 0130).
 typedef Interpolator = Object? Function(
   Object? from,
   Object? to,
@@ -223,8 +223,8 @@ class Animation.typed(
   /// [prop] of the typed table of `Animations` (Chart.js ADR 0054 §10).
   ///
   /// The constructor resolves the interpolator one time (Chart.js ADR 0019,
-  /// section 5). A truthy `cfg.fn` gets a closure that calls it through
-  /// [jsCall], with the animation as `this`. Else the interpolator of
+  /// section 5). An [Interpolator] in `cfg.fn` is the interpolator, with no
+  /// `this` (Chart.js ADR 0130). Else the interpolator of
   /// `cfg.type || typeof from` is the built-in function, or Dart `null`
   /// where upstream gives `undefined`. Then the first interpolation throws a
   /// [TypeError], as in JavaScript. `resolve([...])` of upstream is the
@@ -250,9 +250,15 @@ class Animation.typed(
 
     _active = true;
     final fn = _cfgFn(cfg);
-    if (jsTruthy(fn)) {
-      _fn = (f, t, x) => jsCall(fn, [f, t, x], thisArg: this);
+    // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
+    if (fn is Interpolator) {
+      _fn = fn;
     } else {
+      assert(
+        !jsTruthy(fn),
+        'The animation option fn holds an Interpolator (Chart.js ADR 0130), '
+        'not $fn.',
+      );
       final type = _cfgType(cfg);
       _fn = jsTruthy(type)
           ? _interpolatorNamed(jsToString(type))

@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
     show Mode, ZoomChart, ZoomChartContext;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
+    show ActiveElement, Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsNumberToString;
 
 /// A sample of the docs of chartjs-plugin-zoom: the `module.exports` of its
@@ -112,8 +112,9 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
               'Zoom: ${zoomStatus(_chartOf(ctx))}, Pan: ${panStatus()}',
         },
       },
-      'onClick': (Object? e) {
-        log((e! as ChartEvent).type);
+      // Chart.js ADR 0130: a ChartEventHandler, with all three parameters.
+      'onClick': (ChartEvent e, List<ActiveElement> elements, Chart chart) {
+        log(e.type);
       },
     },
   };

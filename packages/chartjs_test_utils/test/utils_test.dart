@@ -63,7 +63,8 @@ Chart _chart(List<String> log) {
   final chart = Chart(UiCanvasElement(), <String, Object?>{
     'options': <String, Object?>{
       'onResize': (Object? chart, Object? size) => log.add('onResize'),
-      'onHover': (Object? e) => log.add('onHover'),
+      'onHover': (Object? e, Object? elements, Object? chart) =>
+          log.add('onHover'),
     },
   });
   addTearDown(chart.destroy);

@@ -109,11 +109,11 @@ class _Sample13State() extends State<Sample13> {
     },
   };
 
-  void _hover(ChartEventDetails details) {
-    final next = details.hits.isEmpty ? -1 : details.hits.first.index;
+  void _hover(ChartEvent event, List<ActiveElement> hits, Chart chart) {
+    final next = hits.isEmpty ? -1 : hits.first.index;
     if (next == _hovered) return;
     _hovered = next;
-    details.chart.update('none');
+    chart.update('none');
   }
 
   ChartConfig _config() => fills(

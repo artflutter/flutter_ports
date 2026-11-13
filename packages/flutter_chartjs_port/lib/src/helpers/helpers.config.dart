@@ -1617,6 +1617,21 @@ bool boolOption(Object? value, OptionKey key, {bool absent = false}) {
   return absent;
 }
 
+/// The value [value] of the callback option [key] (Chart.js ADR 0130): the
+/// function itself when it is a [T], else Dart `null` for no callback.
+/// Upstream calls only a function (helpers.core.ts:103 `callback`): an absent
+/// value (Dart `null`, [undefined]) and `false` are no callback. A value of
+/// another type, also a function of another type, stops a debug build and
+/// is no callback in a release build. Port-only.
+T? functionOption<T extends Function>(Object? value, OptionKey key) {
+  if (value is T) return value;
+  assert(
+    value == null || value == false || value is Undefined,
+    'The option ${key.jsName} holds a $T (Chart.js ADR 0130), not $value.',
+  );
+  return null;
+}
+
 /// helpers.config.ts:118 `_attachContext`.
 ///
 /// Returns an Proxy for resolving option values with context.

@@ -64,9 +64,9 @@ import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show alignPixel, clipArea, measureText, renderText, unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextProxy, OptionView, readOption;
+    show ContextProxy, OptionView, functionOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, finiteOrDefault, isArray, isFinite, valueOrDefault;
+    show finiteOrDefault, isArray, isFinite, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, toLeftRightCenter;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -167,6 +167,15 @@ typedef TickCallback = List<String>? Function(
   int index,
   List<Tick> ticks,
 );
+
+/// The scale options `beforeUpdate`, `afterUpdate`, `beforeSetDimensions`,
+/// `afterSetDimensions`, `beforeDataLimits`, `afterDataLimits`,
+/// `beforeBuildTicks`, `afterBuildTicks`, `beforeTickToLabelConversion`,
+/// `afterTickToLabelConversion`, `beforeCalculateLabelRotation`,
+/// `afterCalculateLabelRotation`, `beforeFit` and `afterFit`
+/// (index.d.ts:1248-1300): the scale calls the hook with itself (Chart.js ADR
+/// 0130).
+typedef ScaleHook = void Function(Scale scale);
 
 /// The option `ticks.callback` as a [TickCallback], or null for no
 /// callback.
@@ -1073,7 +1082,7 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:381 `beforeUpdate()`.
   void beforeUpdate() {
-    callback(options.beforeUpdate, [this]);
+    _callHook(options.beforeUpdate, OptionKey.beforeUpdate);
   }
 
   /// core.scale.js:393 `update(maxWidth, maxHeight, margins)`.
@@ -1230,14 +1239,14 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:500 `afterUpdate()`.
   void afterUpdate() {
-    callback(options.afterUpdate, [this]);
+    _callHook(options.afterUpdate, OptionKey.afterUpdate);
   }
 
   //
 
   /// core.scale.js:506 `beforeSetDimensions()`.
   void beforeSetDimensions() {
-    callback(options.beforeSetDimensions, [this]);
+    _callHook(options.beforeSetDimensions, OptionKey.beforeSetDimensions);
   }
 
   /// core.scale.js:509 `setDimensions()`.
@@ -1265,8 +1274,15 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:530 `afterSetDimensions()`.
   void afterSetDimensions() {
-    callback(options.afterSetDimensions, [this]);
+    _callHook(options.afterSetDimensions, OptionKey.afterSetDimensions);
   }
+
+  /// helpers.core.ts:103 `callback` of the scale hook option
+  /// [key] with the value [value]: a typed [ScaleHook] gets the scale
+  /// (Chart.js ADR 0130). Another value is no hook.
+  // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
+  void _callHook(Object? value, OptionKey key) =>
+      functionOption<ScaleHook>(value, key)?.call(this);
 
   /// core.scale.js:534 `_callHooks(name)`.
   ///
@@ -1274,7 +1290,7 @@ class Scale(AnyObject cfg)
   /// name of the plugin hook, and the option reads with the typed key.
   void _callHooks(OptionKey name) {
     chart.notifyPlugins(name.jsName, getContext());
-    callback(options.readKey(name), [this]);
+    _callHook(options.readKey(name), name);
   }
 
   // Data limits
@@ -1316,7 +1332,10 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:562 `beforeTickToLabelConversion()`.
   void beforeTickToLabelConversion() {
-    callback(options.beforeTickToLabelConversion, [this]);
+    _callHook(
+      options.beforeTickToLabelConversion,
+      OptionKey.beforeTickToLabelConversion,
+    );
   }
 
   /// core.scale.js:569 `generateTickLabels(ticks)`.
@@ -1337,14 +1356,20 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:577 `afterTickToLabelConversion()`.
   void afterTickToLabelConversion() {
-    callback(options.afterTickToLabelConversion, [this]);
+    _callHook(
+      options.afterTickToLabelConversion,
+      OptionKey.afterTickToLabelConversion,
+    );
   }
 
   //
 
   /// core.scale.js:583 `beforeCalculateLabelRotation()`.
   void beforeCalculateLabelRotation() {
-    callback(options.beforeCalculateLabelRotation, [this]);
+    _callHook(
+      options.beforeCalculateLabelRotation,
+      OptionKey.beforeCalculateLabelRotation,
+    );
   }
 
   /// core.scale.js:586 `calculateLabelRotation()`.
@@ -1444,7 +1469,10 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:624 `afterCalculateLabelRotation()`.
   void afterCalculateLabelRotation() {
-    callback(options.afterCalculateLabelRotation, [this]);
+    _callHook(
+      options.afterCalculateLabelRotation,
+      OptionKey.afterCalculateLabelRotation,
+    );
   }
 
   /// core.scale.js:627 `afterAutoSkip()`.
@@ -1454,7 +1482,7 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:631 `beforeFit()`.
   void beforeFit() {
-    callback(options.beforeFit, [this]);
+    _callHook(options.beforeFit, OptionKey.beforeFit);
   }
 
   /// core.scale.js:634 `fit()`.
@@ -1634,7 +1662,7 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:752 `afterFit()`.
   void afterFit() {
-    callback(options.afterFit, [this]);
+    _callHook(options.afterFit, OptionKey.afterFit);
   }
 
   // Shared Methods

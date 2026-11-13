@@ -20,7 +20,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -1022,20 +1021,15 @@ void main() {
             'options': <String, Object?>{
               'responsive': true,
               'maintainAspectRatio': false,
-              // `onResize(chart, newSize)` reads `this`. `newSize` is the
-              // record of `getMaximumSize`.
-              'onResize': JsFunction((
-                Object? self,
-                Object? chart,
-                Object? newSize,
-              ) {
+              // Chart.js gives the chart as `this` and as the first
+              // argument. The port gives it as the argument only, and the
+              // size as a Flutter `Size` (Chart.js ADR 0130).
+              'onResize': (Chart chart, native_ui.Size newSize) {
                 count++;
-                correctThis = identical(self, chart);
-                final (:width, :height) =
-                    newSize! as ({double width, double height});
-                size['width'] = width;
-                size['height'] = height;
-              }),
+                correctThis = chart.canvas != null;
+                size['width'] = newSize.width;
+                size['height'] = newSize.height;
+              },
             },
           },
           <String, Object?>{

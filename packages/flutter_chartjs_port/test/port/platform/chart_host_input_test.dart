@@ -114,11 +114,11 @@ Map<String, Object?> _functions(_Logs logs) => {
     ]);
   },
   // (e, item) => { legend.push(`hover:${e.type}:${item.text}`); }
-  'legendHover': (Object? e, Object? item) {
+  'legendHover': (Object? e, Object? item, Object? _) {
     logs.legend.add(_entry('hover', e, item));
   },
   // (e, item) => { legend.push(`leave:${e.type}:${item.text}`); }
-  'legendLeave': (Object? e, Object? item) {
+  'legendLeave': (Object? e, Object? item, Object? _) {
     logs.legend.add(_entry('leave', e, item));
   },
   // function (e, item, legendBox) {

@@ -444,12 +444,12 @@ void main() {
           'x': _runtime(const CategoryAxis()),
           'y': LinearAxis(min: _runtime(0)),
         },
-        legend: ChartLegend(onClick: (details) {}),
+        legend: ChartLegend(onClick: (_, _, _) {}),
         tooltip: ChartTooltip(
           callbacks: TooltipCallbacks(label: (tooltip, item) => null),
         ),
         animation: ChartAnimation(onComplete: (details) {}),
-        onClick: (details) {},
+        onClick: (_, _, _) {},
         extra: {
           'plugins': {
             'decimation': {'enabled': _runtime(true)},
@@ -543,16 +543,16 @@ void main() {
 
     test('a callback behind a trampoline compares by its presence', () {
       _expectEqual(
-        ChartConfig(type: .bar, datasets: const [], onClick: (details) {}),
-        ChartConfig(type: .bar, datasets: const [], onClick: (details) {}),
+        ChartConfig(type: .bar, datasets: const [], onClick: (_, _, _) {}),
+        ChartConfig(type: .bar, datasets: const [], onClick: (_, _, _) {}),
       );
       expect(
-        ChartConfig(type: .bar, datasets: const [], onHover: (details) {}),
+        ChartConfig(type: .bar, datasets: const [], onHover: (_, _, _) {}),
         isNot(const ChartConfig(type: .bar, datasets: [])),
       );
       _expectEqual(
-        ChartLegend(onLeave: (details) {}),
-        ChartLegend(onLeave: (details) {}),
+        ChartLegend(onLeave: (_, _, _) {}),
+        ChartLegend(onLeave: (_, _, _) {}),
       );
       _expectEqual(
         ChartTooltip(
@@ -772,7 +772,7 @@ void main() {
         ChartConfig(
           type: .bar,
           datasets: const [],
-          onClick: (details) {},
+          onClick: (_, _, _) {},
         ).toString(),
         contains('onClick: set'),
       );

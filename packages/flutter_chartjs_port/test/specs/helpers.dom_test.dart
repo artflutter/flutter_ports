@@ -235,7 +235,7 @@ void main() {
             ],
           },
           'options': <String, Object?>{
-            'onHover': (Object e) {
+            'onHover': (Object e, Object? _, Object? _) {
               final canvasPosition = helpers.getRelativePosition(e, chart);
 
               dataX = canvasPosition.x;
@@ -270,7 +270,7 @@ void main() {
               ],
             },
             'options': <String, Object?>{
-              'onHover': (Object chartEvent) {
+              'onHover': (Object chartEvent, Object? _, Object? _) {
                 chartPosition = helpers.getRelativePosition(chartEvent, chart);
               },
             },

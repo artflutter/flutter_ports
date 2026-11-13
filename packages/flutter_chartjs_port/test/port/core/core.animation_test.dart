@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     as color_helpers;
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -455,15 +454,15 @@ void main() {
       expect(target['v'], 'b');
     });
 
-    test('a user fn with one parameter gets from only', () {
-      final calls = <Object?>[];
+    test('a user fn is an Interpolator: from, to and the factor', () {
+      final calls = <List<Object?>>[];
       final target = <String, Object?>{'v': true};
       final anim = Animation(
         {
           'duration': 1000,
-          'fn': (Object? v) {
-            calls.add(v);
-            return jsTruthy(v) ? 1.0 : 0.0;
+          'fn': (Object? from, Object? to, double factor) {
+            calls.add([from, to, factor]);
+            return 1.0;
           },
         },
         target,
@@ -471,42 +470,36 @@ void main() {
         false,
       );
       anim.tick(anim.start + 250);
-      expect(calls, [true]);
-      expect(target['v'], 1.0);
-    });
-
-    test('a JsFunction fn gets the animation as this', () {
-      final calls = <List<Object?>>[];
-      late final Animation anim;
-      final target = <String, Object?>{'v': true};
-      anim = Animation(
-        {
-          'duration': 1000,
-          'fn': JsFunction((
-            Object? self,
-            Object? from,
-            Object? to,
-            Object? factor,
-          ) {
-            calls.add([from, to, factor]);
-            return identical(self, anim);
-          }),
-        },
-        target,
-        'v',
-        false,
-      );
-      anim.tick(anim.start + 250);
-      expect(target['v'], isTrue);
       expect(calls, [
         [true, false, 0.25],
       ]);
+      expect(target['v'], 1.0);
     });
 
-    test('a truthy fn that is not a function throws at the interpolation', () {
-      final target = <String, Object?>{'v': 0.0};
-      final anim = Animation({'duration': 1000, 'fn': 5}, target, 'v', 10.0);
-      expect(() => anim.tick(anim.start + 250), throwsArgumentError);
+    test('a fn of another function type stops a debug build', () {
+      // Chart.js ADR 0130: the option holds an Interpolator, with no JS
+      // arity and no `this`.
+      expect(
+        () => Animation(
+          {'duration': 1000, 'fn': (Object? v) => v},
+          <String, Object?>{'v': true},
+          'v',
+          false,
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    test('a truthy fn that is not a function stops a debug build', () {
+      expect(
+        () => Animation(
+          {'duration': 1000, 'fn': 5},
+          <String, Object?>{'v': 0.0},
+          'v',
+          10.0,
+        ),
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('the number interpolator with null, undefined and booleans', () {

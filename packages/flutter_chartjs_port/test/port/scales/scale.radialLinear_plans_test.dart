@@ -959,9 +959,9 @@ void main() {
       tester,
     ) async {
       expectSameLabels(
-        (calls) => (Object? label, double index) {
+        (calls) => (Object? label, int index) {
           calls.add('$label $index');
-          return index % 2 == 0 ? label : '';
+          return index.isEven ? label : '';
         },
       );
     });
@@ -975,75 +975,48 @@ void main() {
       );
     });
 
-    testWidgets('a closure with one parameter', (tester) async {
-      expectSameLabels(
-        (calls) => (Object? label) {
-          calls.add('$label');
-          return label;
-        },
-      );
-    });
-
-    testWidgets('a closure with no parameter', (tester) async {
-      expectSameLabels(
-        (calls) => () {
-          calls.add('call');
-          return 'x';
-        },
-      );
-    });
-
-    testWidgets('a closure with a third required parameter gets undefined', (
-      tester,
-    ) async {
-      expectSameLabels(
-        (calls) => (Object? label, double index, Object? third) {
-          calls.add('$label $index $third');
-          return label;
-        },
-      );
-    });
-
     testWidgets('a closure with an optional third parameter gets two', (
       tester,
     ) async {
       expectSameLabels(
-        (calls) => (Object? label, double index, [Object? third = 'absent']) {
+        (calls) => (Object? label, int index, [Object? third = 'absent']) {
           calls.add('$label $index $third');
           return label;
         },
       );
     });
 
-    testWidgets('a closure with a narrow parameter takes the generic call', (
-      tester,
-    ) async {
-      expectSameLabels(
-        (calls) => (String label, double index) {
-          calls.add('$label $index');
-          return '$label!';
-        },
-      );
-    });
-
-    testWidgets('a JsFunction gets this', (tester) async {
-      expectSameLabels(
-        (calls) => JsFunction((Object? self, Object? label, double index) {
-          calls.add('${self is RadialLinearScale} $label $index');
-          return label;
-        }),
-      );
-    });
-
-    testWidgets('a callback that is no function gives empty labels', (
-      tester,
-    ) async {
-      // The value is outside the type of the key, on purpose.
-      final saved = foreignAudit;
-      foreignAudit = (_, _, _) {};
-      addTearDown(() => foreignAudit = saved);
-      expectSameLabels((calls) => 'no function');
-    });
+    // Chart.js ADR 0130: the option holds a PointLabelCallback, with no JS
+    // arity and no `this`. Another value stops a debug build.
+    for (final (name, callback) in <(String, Object)>[
+      ('a closure with one parameter', (Object? label) => label),
+      ('a closure with no parameter', () => 'x'),
+      (
+        'a closure with a third required parameter',
+        (Object? label, int index, Object? third) => label,
+      ),
+      ('a closure with a narrow parameter', (String label, int index) => label),
+      (
+        'a JsFunction',
+        JsFunction((Object? self, Object? label, Object? index) => label),
+      ),
+      ('a value that is no function', 'no function'),
+    ]) {
+      testWidgets('$name stops a debug build', (tester) async {
+        // The value is outside the type of the key, on purpose.
+        final saved = foreignAudit;
+        foreignAudit = (_, _, _) {};
+        addTearDown(() => foreignAudit = saved);
+        for (final scaleType in [null, 'ordinaryRadial']) {
+          expect(
+            () => acquireChart(
+              _config(scaleType: scaleType, n: 4, callback: callback),
+            ),
+            throwsA(isA<AssertionError>()),
+          );
+        }
+      });
+    }
 
     testWidgets('falsy results and 0 keep the rule of the upstream line', (
       tester,
@@ -1051,13 +1024,10 @@ void main() {
       final results = <Object?>[0.0, 0, false, null, '', double.nan, 1.5, 'a'];
       expectSameLabels(
         (calls) =>
-            (Object? label, double index) => results[index.toInt()],
+            (Object? label, int index) => results[index],
       );
       final chart = acquireChart(
-        _config(
-          n: 8,
-          callback: (Object? label, double index) => results[index.toInt()],
-        ),
+        _config(n: 8, callback: (Object? label, int index) => results[index]),
       );
       expect(_scaleOf(chart).pointLabels, <Object?>[
         0.0,
@@ -1078,7 +1048,7 @@ void main() {
           acquireChart(
             _config(
               scaleType: scaleType,
-              callback: (Object? label, double index) {
+              callback: (Object? label, int index) {
                 if (++calls == 3) throw StateError('three');
                 return label;
               },
@@ -1101,13 +1071,13 @@ void main() {
     ) async {
       List<String> run(String? scaleType) {
         final calls = <String>[];
-        Object? second(Object? label, double index) {
+        Object? second(Object? label, int index) {
           calls.add('second $label $index');
           return 'second';
         }
 
         late Chart chart;
-        Object? first(Object? label, double index) {
+        Object? first(Object? label, int index) {
           calls.add('first $label $index');
           if (index == 2) {
             (_scaleOf(chart).options.pointLabels.raw! as JsObjectFace).jsWrite(
@@ -1131,7 +1101,7 @@ void main() {
 
       final exact = run(null);
       expect(exact, run('ordinaryRadial'));
-      expect(exact, contains('second Label 3 3.0'));
+      expect(exact, contains('second Label 3 3'));
     });
 
     testWidgets('a closure can hide a label: the filter reads after all '
@@ -1146,7 +1116,7 @@ void main() {
                   'pointLabels',
                 )!
                 as JsObjectFace)
-            .jsWrite('callback', (Object? label, double index) {
+            .jsWrite('callback', (Object? label, int index) {
               if (index == 4) chart.toggleDataVisibility(1);
               return label;
             });

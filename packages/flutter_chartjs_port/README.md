@@ -318,7 +318,7 @@ horizontal bar chart: the index axis takes `XAxis` or `YAxis` only. `responsive`
 
 ### Callbacks
 
-The callbacks get a details object with `int` indexes:
+The callbacks are typed functions, with `int` indexes. A raw config takes the same types:
 
 ```dart
 class const VotesPage({super.key}) extends StatefulWidget {
@@ -329,19 +329,23 @@ class const VotesPage({super.key}) extends StatefulWidget {
 class _VotesPageState() extends State<VotesPage> {
   final List<num> _votes = [12, 19, 3, 5, 2, 3];
 
-  void _onClick(ChartEventDetails details) {
-    final hit = details.hits.firstOrNull;
+  void _onClick(ChartEvent event, List<ActiveElement> hits, Chart chart) {
+    final hit = hits.firstOrNull;
     if (hit == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${_votes[hit.index]} votes')),
     );
   }
 
-  void _onLegendClick(ChartLegendEventDetails details) {
-    final index = details.item.datasetIndex;
+  void _onLegendClick(
+    ChartEvent event,
+    LegendItem item,
+    LegendElement legend,
+  ) {
+    final index = item.datasetIndex;
     if (index == null) return;
     // The Chart methods take the int index.
-    final chart = details.legend.chart;
+    final chart = legend.chart;
     if (chart.isDatasetVisible(index)) {
       chart.hide(index);
     } else {
@@ -377,14 +381,18 @@ class _VotesPageState() extends State<VotesPage> {
 }
 ```
 
-- `onClick` and `onHover` get `ChartEventDetails`: the chart event, the elements under the
-  pointer (`hits`, a list of `ActiveElement`, each with an `int` `datasetIndex`, an `int` `index`
-  and the `element`) and the chart. `chart.setActiveElements` takes the same class:
+- `onClick` and `onHover` are a `ChartEventHandler`: they get the chart event, the elements under
+  the pointer (a list of `ActiveElement`, each with an `int` `datasetIndex`, an `int` `index` and
+  the `element`) and the chart. The chart option `onResize` is a `ChartResizeHandler`: it gets the
+  chart and its new `Size`. `chart.setActiveElements` takes the same class:
   `ActiveElement(datasetIndex: 0, index: 2)`.
-- The legend `onClick`, `onHover` and `onLeave` get `ChartLegendEventDetails`. A legend `onClick`
-  replaces the default click, which hides or shows the dataset. `details.item` is the same mutable
+- The legend `onClick`, `onHover` and `onLeave` are a `LegendEventHandler`: they get the event, the
+  item and the legend. A legend `onClick` replaces the default click, which hides or shows the
+  dataset. The item is the same mutable
   `LegendItem` used by rendering, with `List<String>` text, native `ChartPaint` styles and nullable
-  integer indexes. Custom label generators return `LegendItem` objects; plugins can extend or
+  integer indexes. A custom `labels.generateLabels` is a `LegendLabelsGenerator`, which returns a
+  `List<LegendItem>`; `labels.filter` and `labels.sort` are a `LegendItemFilter` and a
+  `LegendItemComparator`. Plugins can extend or
   implement the class. Its `copyWith` and `merge` methods are overridable.
   `legend.legendHitBoxes` exposes native `LegendHitBox` objects with mutable geometry, integer
   row/column membership, and overridable `contains`, `center`, `copyWith` and `merge`.
@@ -394,8 +402,12 @@ class _VotesPageState() extends State<VotesPage> {
   Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`
   override the six per-item hooks. Callback objects merge field by field with `merge`.
 - `AxisTicks.callback` is a `TickCallback`: it gets the scale, the value, the index and all ticks,
-  and gives the lines of the tick label. `ChartAnimation.onProgress` and `onComplete` get
-  `ChartAnimationDetails`.
+  and gives the lines of the tick label. `ChartAnimation.onProgress` and `onComplete` are an
+  `AnimationEventHandler`: they get the `AnimationEvent` of the animator.
+- In a raw config, the scale hooks (`beforeUpdate` to `afterFit`) are a `ScaleHook`, which gets the
+  scale; the animation `fn` is an `Interpolator`; a time `parser` function is a `TimeParser`; and
+  the radial `pointLabels.callback` is a `PointLabelCallback`, which gets the label and its `int`
+  index. A function of another type stops a debug build.
 - A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColor: .resolver(...)` get a
   `ChartContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `chart`)
   for each element.
@@ -742,7 +754,7 @@ The updates of a raw configuration:
 
 | Library | Contents |
 |---|---|
-| `package:flutter_chartjs_port/flutter_chartjs_port.dart` | The library of an app: `ChartView`, the typed API (`ChartConfig`, the dataset classes, the axes, the option groups and the callback details), `ChartTheme`, `ChartThemeData`, and the Chart.js API: `Chart`, the controllers, elements, scales and plugin objects, `registerables`, `defaults`, the types of the callbacks, the date zone functions, `notifyArrayListeners` and `undefined`. It leaves out `Animation` and `Element`, two names that Flutter also has, so an app imports it next to `material.dart` with no prefix. |
+| `package:flutter_chartjs_port/flutter_chartjs_port.dart` | The library of an app: `ChartView`, the typed API (`ChartConfig`, the dataset classes, the axes and the option groups), `ChartTheme`, `ChartThemeData`, and the Chart.js API: `Chart`, the controllers, elements, scales and plugin objects, `registerables`, `defaults`, the types of the callbacks, the date zone functions, `notifyArrayListeners` and `undefined`. It leaves out `Animation` and `Element`, two names that Flutter also has, so an app imports it next to `material.dart` with no prefix. |
 | `package:flutter_chartjs_port/chartjs.dart` | The `chart.js` entry of npm, for code that extends Chart.js (a plugin, a controller or a scale): the whole Chart.js API with `Animation` and `Element`, the Canvas 2D interface that a plugin draws on (`chart.ctx`), `ChartMeta`, `JsClass` (the class value of a subclass) and `JsObjectFace` (the read by name of an object of the chart). It has no typed API. Next to Flutter, import it with a prefix or with `hide Animation, Element`. |
 | `package:flutter_chartjs_port/helpers.dart` | The `chart.js/helpers` entry: the public helpers of Chart.js. An upper case constant has a lowerCamelCase name: `PI` is `pi`. Import it with a prefix. |
 

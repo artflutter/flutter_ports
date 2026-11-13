@@ -562,7 +562,7 @@ void main() {
           theme: _blueTheme,
           colors: true,
           legendLabels: <String, Object?>{
-            'generateLabels': (Object? chart) => <Object?>[
+            'generateLabels': (Object? chart) => <LegendItem>[
               LegendItem(text: ['x'], datasetIndex: 0),
             ],
           },

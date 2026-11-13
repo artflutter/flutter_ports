@@ -3,7 +3,4 @@
 # an animation target that is a Map (core.animation.js:29).
 # The mutable effects object of user easings: effects.linear
 # (core.animation.js:36).
-# A user fn of the animation options, called with JS arity
-# (core.animation.js:35).
 jsGet 2
-jsCall 1

@@ -57,8 +57,12 @@ export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
         HTMLCanvasElement,
         Path2D,
         TextMetrics;
+export 'package:flutter_chartjs_port/src/core/core.animation.dart'
+    show Interpolator;
+export 'package:flutter_chartjs_port/src/core/core.controller.dart'
+    show AnimationEventHandler, ChartEventHandler, ChartResizeHandler;
 export 'package:flutter_chartjs_port/src/core/core.scale.dart'
-    show TickCallback;
+    show ScaleHook, TickCallback;
 export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show defaultDateZone, setDefaultDateZone;
 export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -109,10 +113,16 @@ export 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 export 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
     show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
+export 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show LegendLabelsGenerator;
 export 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
     show AverageTooltipPositioner, NearestTooltipPositioner;
 export 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPosition, TooltipPositioner;
+export 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart'
+    show PointLabelCallback;
+export 'package:flutter_chartjs_port/src/scales/scale.time.dart'
+    show TimeParser;
 export 'package:flutter_chartjs_port/src/types.dart'
     hide
         ArcElementWrites,
@@ -133,6 +143,8 @@ export 'package:flutter_chartjs_port/src/types.dart'
         detectPlatform;
 export 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
+export 'package:flutter_chartjs_port/src/types/animation.dart'
+    show AnimationEvent;
 export 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 export 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
@@ -147,6 +159,7 @@ export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show SplinePoint, TRBLCorners;
 export 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutPosition, ScaleValuePosition;
+export 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
 export 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 export 'package:flutter_chartjs_port/src/types/legend_item.dart';
 export 'package:flutter_chartjs_port/src/types/line_option_enums.dart'

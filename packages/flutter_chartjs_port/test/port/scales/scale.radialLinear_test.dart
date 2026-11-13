@@ -55,11 +55,11 @@ import 'scale_radial_linear_reference.dart';
 
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'pointLabelCallback': (Object? label, double index) => switch (index) {
-    0.0 => 0.0,
-    1.0 => '',
-    2.0 => null,
-    3.0 => <Object?>[label, 'x${jsNumberToString(index)}'],
+  'pointLabelCallback': (Object? label, int index) => switch (index) {
+    0 => 0.0,
+    1 => '',
+    2 => null,
+    3 => <Object?>[label, 'x$index'],
     _ => '${jsToString(label)}!',
   },
   'pointLabelColor': (Object? ctx) => ChartPaint.solid(

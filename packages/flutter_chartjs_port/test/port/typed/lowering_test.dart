@@ -398,7 +398,7 @@ List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
     ['$value'];
 
 /// A legend handler.
-void _onLegend(ChartLegendEventDetails details) {}
+void _onLegend(ChartEvent event, LegendItem item, LegendElement legend) {}
 
 /// A tooltip text of the items.
 String? _title2(List<TooltipItem> items) => 'T';
@@ -407,10 +407,10 @@ String? _title2(List<TooltipItem> items) => 'T';
 String? _label(TooltipItem item) => 'L';
 
 /// An animation callback.
-void _onAnimation(ChartAnimationDetails details) {}
+void _onAnimation(AnimationEvent event) {}
 
 /// A chart callback.
-void _onEvent(ChartEventDetails details) {}
+void _onEvent(ChartEvent event, List<ActiveElement> hits, Chart chart) {}
 
 /// The options scope of the root scope of [config].
 JsObjectFace _options(ChartConfig config) =>

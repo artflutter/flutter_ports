@@ -826,19 +826,17 @@ void main() {
       final log = <String>[];
       final hover = <String>[];
       final options = <String, Object?>{
-        'onHover': JsFunction((
-          Object? self,
-          Object? e,
-          Object? active,
-          Object? chart,
-        ) {
+        // Chart.js gives the chart as `this` too, so the reference logs
+        // `this === chart` as `true`. The port gives the chart as the
+        // argument only (Chart.js ADR 0130).
+        'onHover': (Object? e, Object? active, Object? chart) {
           hover.add(
             'hover ${(e! as types.ChartEvent).type} '
             '${_activeText(active! as List<Object?>, o)} '
-            '${identical(self, chart)}',
+            '${chart is Chart}',
           );
-        }),
-        'onClick': (Object? e, Object? active) {
+        },
+        'onClick': (Object? e, Object? active, Object? _) {
           hover.add(
             'click ${(e! as types.ChartEvent).type} '
             '${_activeText(active! as List<Object?>, o)}',
@@ -1006,11 +1004,11 @@ void main() {
           [_points('a')],
           plugins: [_spy('spy', log, o)],
           options: <String, Object?>{
-            'onResize': JsFunction((Object? self, Object? c, Object? size) {
-              final (:width, :height) =
-                  size! as ({double width, double height});
-              sizes.add('${_n(width)}x${_n(height)} ${identical(self, c)}');
-            }),
+            // The reference logs `this === chart` as `true`: the port gives
+            // the chart as the argument only (Chart.js ADR 0130).
+            'onResize': (Object? c, ui.Size size) {
+              sizes.add('${_n(size.width)}x${_n(size.height)} ${c is Chart}');
+            },
           },
         ),
       );

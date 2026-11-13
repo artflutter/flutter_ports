@@ -265,13 +265,13 @@ class CoreDemoState() extends State<CoreDemo> {
   );
 
   /// The `onHover` of the chart: the readout shows the event type.
-  void _onHover(ChartEventDetails details) {
-    _event = details.event.type;
+  void _onHover(ChartEvent event, List<ActiveElement> hits, Chart chart) {
+    _event = event.type;
     _readout.value++;
   }
 
   /// The `onProgress` and `onComplete` of the animation.
-  void _onAnimationFrame(ChartAnimationDetails details) => _readout.value++;
+  void _onAnimationFrame(AnimationEvent event) => _readout.value++;
 
   /// Five value lines over the chart area, with no scale.
   static void _drawValueLines(Chart chart) {

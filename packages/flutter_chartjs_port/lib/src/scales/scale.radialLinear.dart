@@ -61,9 +61,9 @@ import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show addRoundedRectPath, isPointInArea, longestText, renderText;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
+    show OptionView, functionOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, isArray, isFinite, isNullOrUndef, valueOrDefault;
+    show isArray, isFinite, isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, normalizeAngle, pi, tau, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -160,6 +160,12 @@ final class _RoundedRect({
   @override required final double h,
   @override required final types.TRBLCorners radius,
 }) implements types.RoundedRect;
+
+/// The option `pointLabels.callback` (index.d.ts:3649,
+/// scale.radialLinear.js:458): the text of the point label of [label], the
+/// label of the chart at [index]. A text, a List of lines or a number;
+/// another falsy value than `0` gives no text (Chart.js ADR 0130).
+typedef PointLabelCallback = Object? Function(Object? label, int index);
 
 /// scale.radialLinear.js:9 `getTickBackdropHeight(opts)`.
 ///
@@ -993,7 +999,7 @@ class RadialLinearScale(super.cfg)
 
   /// scale.radialLinear.js:388 the point label `callback(label)`, which
   /// returns `label`.
-  static Object? _pointLabelCallback(Object? label) => label;
+  static Object? _pointLabelCallback(Object? label, int index) => label;
 
   /// scale.radialLinear.js:400 `static defaultRoutes`.
   static final AnyObject defaultRoutes = {
@@ -1109,17 +1115,16 @@ class RadialLinearScale(super.cfg)
   ///
   /// `LinearScaleBase.prototype.generateTickLabels.call(this, ticks)` is the
   /// `generateTickLabels` of [Scale]: [LinearScaleBase] does not override
-  /// it. The callback gets the index as a number. The filter reads the data
+  /// it. The callback is a [PointLabelCallback], called directly with the
+  /// index as an `int` (Chart.js ADR 0130). The filter reads the data
   /// visibility of the chart (`types.Chart.getDataVisibility`, Chart.js ADR
   /// 0025, section 4).
   ///
   /// On the exact class (Chart.js ADR 0095), the built-in callback and a native
   /// label list take the labels directly: no user code runs after its first
-  /// read. A closure of the shape `Object? Function(Object?, double)` gets the
-  /// call of [callback] with no argument list, tested once for each closure.
-  /// The other values go through [callback]. The option stays a read for each
-  /// label while a user closure runs. On the exact chart, which runs no user
-  /// code here, no hidden index gives the list of the callbacks.
+  /// read. The option stays a read for each label while a user callback
+  /// runs. On the exact chart, which runs no user code here, no hidden index
+  /// gives the list of the callbacks.
   @override
   void generateTickLabels(List<Tick> ticks) {
     super.generateTickLabels(ticks);
@@ -1131,8 +1136,6 @@ class RadialLinearScale(super.cfg)
     final mapped = List<Object?>.filled(length, null, growable: true);
     final exact = super.runtimeType == RadialLinearScale;
     final nativeLabels = exact && nativeDataUpdateList(labels);
-    Object? shaped;
-    Object? Function(Object?, double)? typed;
     for (var index = 0; index < length; index++) {
       final fn = options.pointLabels.callback;
       if (nativeLabels && identical(fn, _pointLabelCallback)) {
@@ -1141,15 +1144,13 @@ class RadialLinearScale(super.cfg)
         }
         break;
       }
-      if (exact && !identical(fn, shaped)) {
-        shaped = fn;
-        typed = fn is Object? Function(Object?, double) ? fn : null;
-      }
-      final direct = typed;
+      // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
+      final callback = functionOption<PointLabelCallback>(
+        fn,
+        OptionKey.callback,
+      );
       mapped[index] = _pointLabelOf(
-        direct != null
-            ? direct(labels[index], index * 1.0)
-            : callback(fn, [labels[index], index * 1.0], this),
+        callback == null ? undefined : callback(labels[index], index),
       );
     }
     final chart = this.chart;

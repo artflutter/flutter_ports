@@ -44,6 +44,7 @@ import 'package:flutter_chartjs_port/src/core/arc_options.dart'
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart'
     show CategoryLabelSource;
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
+import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -67,9 +68,9 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
         renderText,
         unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show IndexedElementStyles, OptionResolver, OptionView;
+    show IndexedElementStyles, OptionResolver, OptionView, functionOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, isFunction, isObject;
+    show isFunction, isObject;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, textX, toLeftRightCenter;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -85,7 +86,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -123,8 +123,14 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show EventHookArgs, Plugin, UpdateHookArgs;
 import 'package:meta/meta.dart';
 
+export 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
 export 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 export 'package:flutter_chartjs_port/src/types/legend_item.dart';
+
+/// The legend option `labels.generateLabels` (index.d.ts:2502,
+/// plugin.legend.js:105-106): the items of the legend for [chart]
+/// (Chart.js ADR 0130). Chart.js also gives the legend as `this`.
+typedef LegendLabelsGenerator = List<LegendItem> Function(Chart chart);
 
 /// `Math.SQRT2`.
 // DIVERGES(chartjs): adapt-native-legend-item, native item fields and identity.
@@ -597,41 +603,36 @@ class Legend(
 
   /// plugin.legend.js:104 `buildLabels()`.
   ///
-  /// `generateLabels` gives the array of the items. A truthy value that is
-  /// not a `List` throws a [TypeError] at the List cast. Upstream stores the
-  /// value and throws only at its first array read (differences.md
-  /// `adapt-legend-items-list`). `filter` and `sort` get the labels options
-  /// as `this`, as the method calls of :109 and :113 do. `sort` is the
-  /// stable sort of `Array.prototype.sort` ([jsSort]). Every item must
-  /// implement [LegendItem]; `reverse` reverses the List in place.
+  /// `generateLabels` gives the List of the items. `filter` and `sort` are
+  /// typed functions with no `this` (Chart.js ADR 0130). `sort` is the
+  /// stable sort of `Array.prototype.sort` ([jsSort]). `reverse` reverses the
+  /// List in place.
   void buildLabels() {
     final opts = LegendOptions(options);
     final labels = opts.labelsValue;
-    final labelOpts = jsTruthy(labels) ? labels : <String, Object?>{};
-    final generated = callback(LegendLabelOptions(labelOpts).generateLabels, [
-      chart,
-    ], this);
-    // DIVERGES(chartjs): adapt-legend-items-list, the items are a List.
-    var legendItems = jsTruthy(generated)
-        ? (generated is List<LegendItem>
-              ? generated
-              : List<LegendItem>.from(generated! as List))
-        : <LegendItem>[];
+    final labelOpts = LegendLabelOptions(
+      jsTruthy(labels) ? labels : <String, Object?>{},
+    );
+    // DIVERGES(chartjs): adapt-native-callbacks, typed functions.
+    final generate = functionOption<LegendLabelsGenerator>(
+      labelOpts.generateLabels,
+      OptionKey.generateLabels,
+    );
+    var legendItems = generate == null
+        ? <LegendItem>[]
+        : generate(chart as Chart);
 
-    final filter = LegendLabelOptions(labelOpts).filter;
-    if (jsTruthy(filter)) {
+    final filter = labelOpts.filter;
+    if (filter != null) {
       legendItems = [
         for (final item in legendItems)
-          if (jsTruthy(jsCall(filter, [item, chart.data], thisArg: labelOpts)))
-            item,
+          if (filter(item, chart.data)) item,
       ];
     }
 
-    final sort = LegendLabelOptions(labelOpts).sort;
-    if (jsTruthy(sort)) {
-      legendItems = jsSort(legendItems, (a, b) {
-        return jsToNumber(jsCall(sort, [a, b, chart.data], thisArg: labelOpts));
-      });
+    final sort = labelOpts.sort;
+    if (sort != null) {
+      legendItems = jsSort(legendItems, (a, b) => sort(a, b, chart.data));
     }
 
     if (opts.reverse) {
@@ -1306,16 +1307,16 @@ class Legend(
       final previous = _hoveredItem;
       final sameItem = _itemsEqual(previous, hoveredItem);
       if (jsTruthy(previous) && !sameItem) {
-        callback(opts.onLeave, [e, previous, this], this);
+        opts.onLeave?.call(e, previous!, this);
       }
 
       _hoveredItem = hoveredItem;
 
       if (jsTruthy(hoveredItem) && !sameItem) {
-        callback(opts.onHover, [e, hoveredItem, this], this);
+        opts.onHover?.call(e, hoveredItem!, this);
       }
     } else if (jsTruthy(hoveredItem)) {
-      callback(opts.onClick, [e, hoveredItem, this], this);
+      opts.onClick?.call(e, hoveredItem!, this);
     }
   }
 }

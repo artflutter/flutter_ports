@@ -1,7 +1,9 @@
 // Original code, not ported from Chart.js: core.animations.defaults tests.
 import 'package:flutter/animation.dart' show Curves;
+import 'package:flutter_chartjs_port/src/core/core.animation.dart'
+    show Interpolator;
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -84,7 +86,9 @@ void main() {
       final animations = hide['animations']! as JsObjectFace;
       final visible = animations['visible']! as JsObjectFace;
       final fn = visible['fn'];
-      Object? call(List<Object?> args) => jsCall(fn, args);
+      // Chart.js ADR 0130: an Interpolator; `v` is `from`.
+      Object? call(List<Object?> args) =>
+          (fn! as Interpolator)(args.single, undefined, 0.5);
       expect(call([true]), 1);
       expect(call([false]), 0);
       expect(call([0.7]), 0);
@@ -95,7 +99,7 @@ void main() {
       expect(call([null]), 0);
       expect(call(['3']), 3);
       // core.animation.js calls fn(from, to, factor). fn reads from only.
-      expect(call([true, false, 0.5]), 1);
+      expect((fn! as Interpolator)(true, false, 0.5), 1);
       expect(call([true]), isA<double>());
     });
   });
