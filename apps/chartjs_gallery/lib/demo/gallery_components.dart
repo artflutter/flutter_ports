@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: the gallery chart components.
 
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
+    show sankeyRegisterables;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show zoomPlugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
@@ -7,6 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 
 bool _registered = false;
 bool _zoomRegistered = false;
+bool _sankeyRegistered = false;
 
 /// Registers the built-in components once: `registerables`, as
 /// `src/index.umd.ts:28` does. They include the eight controllers and the
@@ -40,6 +43,20 @@ void registerZoomComponents() {
   if (_zoomRegistered) return;
   _zoomRegistered = true;
   Chart.register([zoomPlugin]);
+}
+
+/// Registers the built-in components ([registerGalleryComponents]), then
+/// the controller and the element of chartjs-chart-sankey once, as the docs
+/// of that chart type do (`docs/chart-runtime.js:7` of chartjs-chart-sankey).
+///
+/// Only the page "Sankey" calls it, at its first build. The two components
+/// add the chart type `sankey` and the element `flow` to the registry. They
+/// run no code in a chart of another type.
+void registerSankeyComponents() {
+  registerGalleryComponents();
+  if (_sankeyRegistered) return;
+  _sankeyRegistered = true;
+  Chart.register(sankeyRegisterables);
 }
 
 /// Two hidden linear scales of the fractions 0 to 1 (Chart.js ADR 0031

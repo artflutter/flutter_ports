@@ -12,6 +12,11 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  # The chartjs-chart-sankey port, an add-on of the Chart.js port (ADR
+  # 0009): the page "Sankey". A path dependency: the package has no release
+  # (Sankey ADR 0001).
+  flutter_chartjs_chart_sankey_port:
+    path: ../../packages/flutter_chartjs_chart_sankey_port
   # The chartjs-plugin-zoom port, an add-on of the Chart.js port (ADR 0009):
   # the page "Zoom and pan" and the global registration of the plugin. A path
   # dependency: the package has no release (Zoom ADR 0001).
