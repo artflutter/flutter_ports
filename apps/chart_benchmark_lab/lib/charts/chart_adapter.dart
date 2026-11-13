@@ -59,15 +59,15 @@ class const BenchmarkChart({
       .putIfAbsent(count, () => [for (var i = 0; i < count; i++) '$i']);
 
   /// One point-label callback per label step: a new closure is a new option
-  /// value for `ChartConfig ==`.
-  static final Map<int, Object? Function(Object?, num)> _radarLabelCallbacks =
-      {};
+  /// value for `ChartConfig ==`. A label between two steps is one empty line,
+  /// so it keeps its place and its height.
+  static final Map<int, cj.PointLabelCallback> _radarLabelCallbacks = {};
 
-  static Object? Function(Object?, num) _radarLabelCallback(int step) =>
+  static cj.PointLabelCallback _radarLabelCallback(int step) =>
       _radarLabelCallbacks.putIfAbsent(
         step,
         () =>
-            (label, index) => index % step == 0 ? label : '',
+            (scale, label, index) => index % step == 0 ? label : const [''],
       );
 
   /// The fl_chart line shadow. fl_chart converts the radius to a sigma with
@@ -398,16 +398,12 @@ class const BenchmarkChart({
               display: config.axes || config.grid,
               pointLabelsDisplay: config.axes,
               pointLabelsFont: const TextStyle(fontSize: 10),
+              pointLabelsCallback: _radarLabelCallback(_radarLabelStep),
               angleLinesDisplay: config.grid,
               angleLinesColor: const ChartPaint.solid(chartGrid),
               angleLinesLineWidth: 1,
               grid: grid.copyWith(extra: const {'circular': true}),
               ticks: ticks,
-              extra: {
-                'pointLabels': {
-                  'callback': _radarLabelCallback(_radarLabelStep),
-                },
-              },
             ),
           },
           _ => {
