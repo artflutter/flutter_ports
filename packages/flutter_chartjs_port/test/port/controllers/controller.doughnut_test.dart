@@ -7,6 +7,7 @@ import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     show overrides;
+import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
@@ -206,6 +207,52 @@ List<Object?> _arcs(Chart chart) => [
 ];
 
 void main() {
+  group('hit probes stay off platform-sensitive ties', () {
+    // Windows shard 1 of CI run 43391456447 selected different arcs at these
+    // exact ties. Tiny center perturbations reproduce the ambiguity locally.
+    for (final (name, stepIndex, pointIndex) in [
+      ('parsed: object items with the default key', -1, 2),
+      ('legend: click', 0, 1),
+      ('legend: click twice', 0, 1),
+    ]) {
+      testWidgets(name, (tester) async {
+        final c = _reference.firstWhere((c) => c.name == name);
+        final config = copyReference(c.config)! as AnyObject;
+        nativeFixtureColors(config);
+        final chart = acquireChart(
+          config,
+          copyReference(c.options)! as AnyObject,
+        );
+        var observation = c.expected['initial']! as AnyObject;
+        if (stepIndex >= 0) {
+          final step =
+              (c.expected['steps']! as List<Object?>)[stepIndex]! as AnyObject;
+          await runStep(tester, chart, step['do']! as List<Object?>);
+          observation = step['observations']! as AnyObject;
+        }
+        final hits = observation['hits']! as AnyObject;
+        final expected = hitItems(hits['items'])[pointIndex];
+        final arcs = chart.getDatasetMeta(0).data.cast<ArcElement>();
+        final centers = [for (final arc in arcs) (x: arc.x, y: arc.y)];
+        for (final dx in [-1e-10, 0.0, 1e-10]) {
+          for (final dy in [-1e-10, 0.0, 1e-10]) {
+            for (var i = 0; i < arcs.length; i++) {
+              arcs[i]
+                ..x = centers[i].x + dx
+                ..y = centers[i].y + dy;
+            }
+            final actual = observeHits(chart, hits)['items']! as List<Object?>;
+            expect(
+              actual[pointIndex],
+              expected,
+              reason: 'point $pointIndex; center shift ($dx, $dy)',
+            );
+          }
+        }
+      });
+    }
+  });
+
   testReferenceOrigin(
     node: controllerDoughnutReferenceNode,
     arch: controllerDoughnutReferenceArch,

@@ -33,6 +33,11 @@ A last-bit difference changes such a decision only for an input exactly on a bou
 4. The last bit of a result can differ from V8 and between the platforms. A reference test compares such a value with
    a tolerance. A hit point exactly on the border of two arcs, which upstream finds in both arcs, is listed in the
    `hitBorders` of its controller test: point 12 (286, 302) of the pie case `the step toggleDataVisibility`.
+   The doughnut reference generator offsets the tied midpoint in `parsed: object items with the default key`
+   and the hidden-arc seam after the first click in `legend: click` and `legend: click twice` by fractions of a
+   pixel. Every hit query remains checked. These three samples failed on Windows in
+   [CI run 43391456447](https://github.com/artflutter/flutter_ports/actions/runs/43391456447/job/131772126162).
+   A regression perturbs the arc centers by ±1e-10 pixels and requires the same hits at the adjusted probes.
 
 ## Consequences
 

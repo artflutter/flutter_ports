@@ -214,8 +214,7 @@ export function hitPoints(chart) {
  * the draw calls for each case): the phase lead decides (U0 report, Fixes,
  * R6).
  */
-export function hits(chart) {
-  const points = hitPoints(chart);
+export function hits(chart, points = hitPoints(chart)) {
   const queries = hitQueries(chart);
   const lines = points.map(([x, y]) => {
     const e = {type: 'mousemove', native: null, x, y};
@@ -409,11 +408,12 @@ function observeDataset(C, chart, i) {
  * Two options of the plugin reference tests (Chart.js ADR 0041, section 3
  * item 3): [observeExtra] is a function `(chart) => object` whose keys go
  * into the observation after `datasets`, and `hits: false` leaves out the
- * hit matrix. Without them, the observation is as before.
+ * hit matrix. [hitPoints] can supply case-specific probe positions; the full
+ * query matrix is still evaluated. Without them, the observation is as before.
  */
 export function observeControllers(
   chart,
-  {scaleOptions = false, hits: withHits = true, observeExtra} = {},
+  {scaleOptions = false, hits: withHits = true, observeExtra, hitPoints: pointSource} = {},
 ) {
   const C = chartModule;
   const {chartArea, scales} = observe(
@@ -429,7 +429,7 @@ export function observeControllers(
     }),
     ...(observeExtra ? jsonValue(observeExtra(chart)) : {}),
     // After jsonValue: `items` is a CallsText.
-    ...(withHits ? {hits: hits(chart)} : {}),
+    ...(withHits ? {hits: hits(chart, pointSource?.(chart))} : {}),
   };
 }
 
@@ -584,15 +584,15 @@ function copy(v) {
  * has the source text of each probe: writeControllerReference writes it in
  * a comment of the data file.
  *
- * [hits] and [observeExtra] go to each observeControllers call (Chart.js
+ * [hits], [hitPoints] and [observeExtra] go to each observeControllers call (Chart.js
  * ADR 0041, section 3 item 3).
  */
 export function runControllerCase(
   name,
   config,
-  {options = {}, steps = [], scaleOptions = false, extras = {}, hits = true, observeExtra} = {},
+  {options = {}, steps = [], scaleOptions = false, extras = {}, hits = true, observeExtra, hitPoints} = {},
 ) {
-  const observeOptions = {scaleOptions, hits, observeExtra};
+  const observeOptions = {scaleOptions, hits, observeExtra, hitPoints};
   if (!chartModule) throw new Error('Call loadChartJs() first.');
   const literal = copy(config);
   const optionsLiteral = copy(options);
