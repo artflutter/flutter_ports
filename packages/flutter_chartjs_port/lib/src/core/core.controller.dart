@@ -1265,8 +1265,8 @@ class Chart(
       // New controllers will be reset after the layout pass, so we only want
       // to modify elements added to new datasets
       controller!.buildOrUpdateElements(reset);
-      minPadding = math.max(
-        jsToNumber(controller.getMaxOverflow()),
+      minPadding = math.max<double>(
+        controller.getMaxOverflow() ?? 0,
         minPadding,
       );
     }
@@ -1508,7 +1508,7 @@ class Chart(
       var padding = 0.0;
       for (final controller in controllers) {
         controller.buildOrUpdateElements(false);
-        padding = math.max(jsToNumber(controller.getMaxOverflow()), padding);
+        padding = math.max<double>(controller.getMaxOverflow() ?? 0, padding);
       }
       padding =
           jsTruthy(
@@ -1715,8 +1715,8 @@ class Chart(
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
       final controller = getDatasetMeta(i).controller!
         ..buildOrUpdateElements(!animsDisabled);
-      minPadding = math.max(
-        jsToNumber(controller.getMaxOverflow()),
+      minPadding = math.max<double>(
+        controller.getMaxOverflow() ?? 0,
         minPadding,
       );
     }

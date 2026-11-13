@@ -225,7 +225,7 @@ final class _PointWrites({
 /// refresh of its points to it: the one size and a context reader of the mode
 /// `default`.
 // DIVERGES(chartjs): adapt-scatter-overflow-refresh, within one `update_`.
-typedef _OverflowPass = ({Object? overflow, NativePointContextReader contexts});
+typedef _OverflowPass = ({double? overflow, NativePointContextReader contexts});
 
 /// controller.scatter.js:6 `ScatterController extends DatasetController`.
 class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
@@ -680,7 +680,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       nativePointSize(fields.radius, fields.hoverRadius, fields.borderWidth) /
           2,
     );
-    return (overflow: max > 0 ? max : false, contexts: contexts);
+    return (overflow: max > 0 ? max : null, contexts: contexts);
   }
 
   /// controller.scatter.js:156 `getMaxOverflow()`.
@@ -688,15 +688,15 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// @protected
   ///
   /// - Without `showLine` (:160-166): `max > 0 && max` gives the number or
-  ///   `false`. `Math.max` gives NaN when a size is NaN, and `NaN > 0` is
-  ///   false.
+  ///   `false`, that is, Dart `null` (row `adapt-max-overflow`). `Math.max`
+  ///   gives NaN when a size is NaN, and `NaN > 0` is false.
   /// - With `showLine` (:168-177): `dataset.options &&
   ///   dataset.options.borderWidth || 0` keeps the raw value: a truthy
-  ///   `borderWidth` is the result, also for an empty data. `Math.max`
-  ///   applies `ToNumber` to it. A dataset element that is Dart `null`
-  ///   throws a [TypeError], as `undefined.options` does. The options of a
-  ///   line are a [LineOptions]; the options of a user element type read
-  ///   by name.
+  ///   `borderWidth` is the result, also for an empty data, where the port
+  ///   gives its `ToNumber`. `Math.max` applies `ToNumber` to it. A dataset
+  ///   element that is Dart `null` throws a [TypeError], as
+  ///   `undefined.options` does. The options of a line are a [LineOptions];
+  ///   the options of a user element type read by name.
   /// - The cast to `types.PointElement` stands at the upstream read of
   ///   `size` (Chart.js ADR 0028, section 1).
   /// - The size of a native point depends only on three static fields of its
@@ -705,7 +705,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// - The overflow of `update_` after a loop that left its context refreshes
   ///   to it writes them, in this order (row `adapt-scatter-overflow-refresh`).
   @override
-  Object? getMaxOverflow() {
+  double? getMaxOverflow() {
     final meta = cachedMeta;
     final data = meta.data;
     // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the last writer of the
@@ -766,7 +766,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           max = math.max(max, nativeSize / 2);
         }
       }
-      return max > 0 ? max : false;
+      return max > 0 ? max : null;
     }
 
     final dataset = meta.dataset;
@@ -780,7 +780,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     }
 
     if (data.isEmpty) {
-      return border;
+      return jsToNumber(border);
     }
 
     final firstPoint = (data[0] as types.PointElement).size(

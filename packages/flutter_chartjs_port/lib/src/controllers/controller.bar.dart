@@ -819,11 +819,10 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
 
   /// controller.bar.js:357 `getMaxOverflow()`.
   ///
-  /// @return {number|boolean}
   /// @protected
   @override
-  Object? getMaxOverflow() {
-    return 0.0;
+  double? getMaxOverflow() {
+    return 0;
   }
 
   /// controller.bar.js:364 `getLabelAndValue(index)`.

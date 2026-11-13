@@ -235,7 +235,7 @@ bool _sharing = true;
 
 /// The `getMaxOverflow` result of the test controller, or Dart `null` for
 /// the result of the base class.
-Object? _maxOverflow;
+double? _maxOverflow;
 
 /// The test controller: the option calls of controller.line.js:41-120. The
 /// pixels are 10 times the parsed values.
@@ -248,7 +248,7 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
   }
 
   @override
-  Object? getMaxOverflow() => _maxOverflow ?? super.getMaxOverflow();
+  double? getMaxOverflow() => _maxOverflow ?? super.getMaxOverflow();
 
   @override
   void update(String mode) {
@@ -638,7 +638,11 @@ final class _Run(final AnyObject spec) {
     _trace = [];
     _ids = Map.identity();
     _sharing = spec['sharing'] != false;
-    _maxOverflow = spec['maxOverflow'];
+    // JS `false` is Dart `null` (row `adapt-max-overflow`).
+    _maxOverflow = switch (spec['maxOverflow']) {
+      final num n => n.toDouble(),
+      _ => null,
+    };
     chart = _FakeChart(config, spec);
   }
 
