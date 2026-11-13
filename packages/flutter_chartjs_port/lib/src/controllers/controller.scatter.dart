@@ -40,6 +40,8 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
@@ -59,7 +61,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
@@ -674,7 +675,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final contexts = prepareNativePointContexts(this, 'default');
     if (fields == null || contexts == null) return null;
     // `max = Math.max(max, size / 2)` from 0, and `max > 0 && max`, of one size.
-    final max = jsMax(
+    final max = math.max<double>(
       0,
       nativePointSize(fields.radius, fields.hoverRadius, fields.borderWidth) /
           2,
@@ -737,7 +738,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           indexed = false;
         }
         if (nativeSize == null) {
-          max = jsMax(max, point.size(resolveDataElementOptions(i)) / 2);
+          max = math.max(max, point.size(resolveDataElementOptions(i)) / 2);
           // The first ordinary resolution makes the entry of constant options.
           if (i == last) nativeSize = _cachedPointSize();
           // No coordinate conversion occurs here: parsed/raw values are only
@@ -762,7 +763,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           if (indexed && contexts?.readQualified(point, i) == null) {
             getContext(i, false, 'default');
           }
-          max = jsMax(max, nativeSize / 2);
+          max = math.max(max, nativeSize / 2);
         }
       }
       return max > 0 ? max : false;
@@ -788,7 +789,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final lastPoint = (data[data.length - 1] as types.PointElement).size(
       resolveDataElementOptions(data.length - 1),
     );
-    return jsMax(jsMax(jsToNumber(border), firstPoint), lastPoint) / 2;
+    return math.max(math.max(jsToNumber(border), firstPoint), lastPoint) / 2;
   }
 
   /// The size of the frozen `point-default` entry for the exact controller:

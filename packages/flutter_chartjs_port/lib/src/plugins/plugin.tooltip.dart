@@ -40,6 +40,7 @@
 /// Not a pure layer: it imports `core.animations`.
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'dart:ui' show TextAlign;
 
@@ -72,7 +73,6 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show jsObjectKeys, jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsIsObjectLike, jsObjectFreeze, jsObjectOrNull;
@@ -300,7 +300,8 @@ types.TooltipItem _createTooltipItem(
 /// the tooltip, a record of the object `{width, height}`.
 ///
 /// A numeric option goes through `ToNumber` ([jsToNumber]) before its
-/// arithmetic, and `Math.max` is [jsMax] (Chart.js ADR 0039, section 7).
+/// arithmetic (Chart.js ADR 0039, section 7), and `Math.max` is `dart:math`
+/// `max` with `double` operands (Chart.js ADR 0134).
 /// `measureText` gets the `ToString` of a line that is not a string.
 ({double width, double height}) _getTooltipSize(
   Tooltip tooltip,
@@ -341,7 +342,7 @@ types.TooltipItem _createTooltipItem(
   if (jsTruthy(combinedBodyLength)) {
     // Body lines may include some extra height depending on boxHeight
     final bodyLineHeight = options.displayColors
-        ? jsMax(boxHeight, bodyFont.lineHeight!)
+        ? math.max(boxHeight, bodyFont.lineHeight!)
         : bodyFont.lineHeight!;
     height +=
         bodyLineItemCount * bodyLineHeight +
@@ -358,7 +359,7 @@ types.TooltipItem _createTooltipItem(
   // Title width
   var widthPadding = 0.0;
   void maxLineWidth(String line) {
-    width = jsMax(width, ctx.measureText(line).width + widthPadding);
+    width = math.max(width, ctx.measureText(line).width + widthPadding);
   }
 
   ctx
@@ -597,9 +598,9 @@ double _alignY(
       x -= paddingAndSize;
     }
   } else if (xAlign == TooltipXAlign.left) {
-    x -= jsMax(topLeft, bottomLeft) + caretSize;
+    x -= math.max(topLeft, bottomLeft) + caretSize;
   } else if (xAlign == TooltipXAlign.right) {
-    x += jsMax(topRight, bottomRight) + caretSize;
+    x += math.max(topRight, bottomRight) + caretSize;
   }
 
   return (
@@ -1435,9 +1436,9 @@ class Tooltip(({types.Chart chart, Object? options}) config)
       x3 = x1;
     } else {
       if (xAlign == TooltipXAlign.left) {
-        x2 = ptX + jsMax(topLeft, bottomLeft) + caretSize;
+        x2 = ptX + math.max<double>(topLeft, bottomLeft) + caretSize;
       } else if (xAlign == TooltipXAlign.right) {
-        x2 = ptX + width - jsMax(topRight, bottomRight) - caretSize;
+        x2 = ptX + width - math.max<double>(topRight, bottomRight) - caretSize;
       } else {
         x2 = caretX;
       }
@@ -1530,7 +1531,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
     if (options.usePointStyle) {
       final drawOptions = PointOptions()
         // fit the circle in the box
-        ..storeKey(OptionKey.radius, jsMin(boxWidth, boxHeight) / 2)
+        ..storeKey(OptionKey.radius, math.min(boxWidth, boxHeight) / 2)
         ..storeKey(OptionKey.pointStyle, labelPointStyle.pointStyle ?? false)
         ..storeKey(OptionKey.rotation, labelPointStyle.rotation)
         ..storeKey(OptionKey.borderWidth, 1.0);
@@ -1631,7 +1632,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   static double _maxOfValues(Object object) {
     var max = double.negativeInfinity;
     for (final key in jsObjectKeys(object)) {
-      max = jsMax(max, jsToNumber(jsGet(object, key)));
+      max = math.max(max, jsToNumber(jsGet(object, key)));
     }
     return max;
   }
@@ -1700,7 +1701,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
       // Draw Legend-like boxes if needed
       if (displayColors && lines.isNotEmpty) {
         _drawColorBox(ctx, pt, i, rtlHelper, options);
-        bodyLineHeight = jsMax(bodyFont.lineHeight!, boxHeight);
+        bodyLineHeight = math.max(bodyFont.lineHeight!, boxHeight);
       }
 
       for (var j = 0, jlen = lines.length; j < jlen; ++j) {

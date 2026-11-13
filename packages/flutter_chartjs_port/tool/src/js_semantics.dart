@@ -90,7 +90,8 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     '.clamp(',
     r'\.clamp\(',
     'num.clamp throws for reversed bounds and orders NaN and -0.0 another '
-        'way than Math.max(min, Math.min(max, value)). Port _limitValue.',
+        'way than Math.max(min, Math.min(max, value)). Port _limitValue with '
+        'dart:math max and min on doubles.',
   ),
   JsSemanticsRule(
     '%',
@@ -341,10 +342,10 @@ String _normalized(String path) {
 /// uses an `int` only as a list index, and its text is the JS text.
 ///
 /// The `max`/`min` rule flags the calls and tear-offs of `dart:math` `max`
-/// and `min` whose type argument is `double` or `num`. Ported code calls
-/// `jsMax` and `jsMin` for them (Chart.js ADR 0045): on dart2wasm, the
-/// generic functions box their `double` operands. The rule does not flag an
-/// `int` type argument.
+/// and `min` whose type argument is `num`, for example `max(0, x)` with a
+/// `double` x. On dart2wasm, a `num` type argument boxes the operands; two
+/// `double` operands take the unboxed `f64.max` and `f64.min` (Chart.js ADR
+/// 0134). The rule does not flag a `double` or an `int` type argument.
 Future<Map<String, List<JsSite>>> resolvedSites(List<String> files) async {
   if (files.isEmpty) return const {};
   final collection = AnalysisContextCollection(
@@ -418,16 +419,15 @@ final class _ResolvedSitesVisitor(final ResolvedUnitResult unit)
             : expression.staticType;
         type = function is FunctionType ? function.returnType : null;
       }
-      if (_isNumber(type)) {
+      if (type != null && type.isDartCoreNum) {
         final name = element.name!;
-        final js = name == 'max' ? 'jsMax' : 'jsMin';
         sites.add(
           JsSite(
             unit.lineInfo.getLocation(node.offset).lineNumber,
             '$name(',
-            'dart:math $name with ${type!.getDisplayString()} operands '
-                'boxes them on dart2wasm. Call $js of $jsRuntime (Chart.js '
-                'ADR 0045), or add js-ok with the reason.',
+            'dart:math $name with num operands boxes them on dart2wasm. '
+                'Call $name<double> or give it double operands (Chart.js '
+                'ADR 0134), or add js-ok with the reason.',
           ),
         );
       }

@@ -7,6 +7,8 @@
 /// @module utils
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 
 /// byte.js:10 `round`.
@@ -19,7 +21,7 @@ double round(double v) {
 }
 
 /// byte.js:14 `lim`.
-double lim(double v, double l, double h) => jsMax(jsMin(v, h), l);
+double lim(double v, double l, double h) => math.max(math.min(v, h), l);
 
 /// byte.js:20 `p2b`.
 ///

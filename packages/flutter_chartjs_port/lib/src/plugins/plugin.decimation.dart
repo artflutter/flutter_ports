@@ -42,8 +42,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show resolve;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsMax, jsMin, jsToInt32;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsToInt32;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsAdd, jsLessThan, jsToNumber, jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -170,7 +169,7 @@ List<Object?> lttbDecimation(
     // Adding offset
     final avgRangeStart = ((i + 1) * bucketWidth).floorToDouble() + 1 + start;
     final avgRangeEnd =
-        jsMin(((i + 2) * bucketWidth).floorToDouble() + 1, count) + start;
+        math.min(((i + 2) * bucketWidth).floorToDouble() + 1, count) + start;
     final avgRangeLength = avgRangeEnd - avgRangeStart;
 
     for (var j = avgRangeStart; j < avgRangeEnd; j++) {
@@ -184,7 +183,7 @@ List<Object?> lttbDecimation(
     // Adding offset
     final rangeOffs = (i * bucketWidth).floorToDouble() + 1 + start;
     final rangeTo =
-        jsMin(((i + 1) * bucketWidth).floorToDouble() + 1, count) + start;
+        math.min(((i + 1) * bucketWidth).floorToDouble() + 1, count) + start;
     // `const {x: pointAx, y: pointAy} = data[a]`: an `undefined` a reads
     // `data[undefined]`.
     final pointA = jsGetIndex(data, a ?? double.nan);
@@ -289,8 +288,8 @@ List<Object?> minMaxDecimation(
         // to determine which of the other points to add. We need to sort
         // these points to ensure the decimated data is still sorted and then
         // ensure there are no duplicates.
-        final intermediateIndex1 = jsMin(minIndex!, maxIndex!);
-        final intermediateIndex2 = jsMax(minIndex, maxIndex);
+        final intermediateIndex1 = math.min(minIndex!, maxIndex!);
+        final intermediateIndex2 = math.max(minIndex, maxIndex);
 
         if (intermediateIndex1 != startIndex &&
             intermediateIndex1 != lastIndex) {
@@ -353,7 +352,7 @@ AnyObject _withX(Object? item, double x) {
 List<Object?> _slice(List<Object?> list, double begin, double end) {
   final length = list.length.toDouble();
   double bound(double value) =>
-      value < 0 ? jsMax(length + value, 0) : jsMin(value, length);
+      value < 0 ? math.max(length + value, 0) : math.min(value, length);
   final from = bound(begin).toInt();
   final to = bound(end).toInt();
   return from < to ? list.sublist(from, to) : <Object?>[];

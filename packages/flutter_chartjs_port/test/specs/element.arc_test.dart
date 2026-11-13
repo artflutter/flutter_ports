@@ -5,7 +5,6 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -15,9 +14,10 @@ import 'package:test/test.dart';
 // The spec constructs Chart.elements.ArcElement. Here it is the ArcElement
 // of element.arc.dart (Chart.js ADR 0017). An object literal is a Dart Map
 // literal, and the constructor writes each number as a double. `Math` is
-// dart:math, with jsAtan2, jsMin, jsSin and jsCos of the JS runtime for
-// Math.atan2, Math.min, Math.sin and Math.cos (Chart.js ADR 0045: the inputs
-// of inRange are a hit test). `window.createMockContext()` is
+// dart:math, with jsAtan2, jsSin and jsCos of the JS runtime for
+// Math.atan2, Math.sin and Math.cos (Chart.js ADR 0045: the inputs of
+// inRange are a hit test), and Math.min is dart:math min on doubles
+// (Chart.js ADR 0134). `window.createMockContext()` is
 // createMockContext of chartjs_test_utils. A recorded call is a Map with the
 // keys 'name' and 'args'.
 
@@ -410,7 +410,7 @@ void main() {
             (alpha * avgNoSpacingRadius) / (avgNoSpacingRadius + spacing);
         const proportionalSpacingOffset = (alpha - adjustedAngle) / 2;
         final angularSpacingOffset = math.asin(
-          jsMin(1, spacing / avgNoSpacingRadius),
+          math.min<double>(1, spacing / avgNoSpacingRadius),
         );
 
         expect(

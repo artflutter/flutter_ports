@@ -57,7 +57,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -585,10 +584,10 @@ class TimeScale(super.cfg) extends Scale {
     /// labels acts as 0.
     void applyBounds(({double? min, double? max}) bounds) {
       if (!minDefined && !jsIsNaN(bounds.min)) {
-        min = jsMin(min, jsToNumber(bounds.min));
+        min = math.min(min, jsToNumber(bounds.min));
       }
       if (!maxDefined && !jsIsNaN(bounds.max)) {
-        max = jsMax(max, jsToNumber(bounds.max));
+        max = math.max(max, jsToNumber(bounds.max));
       }
     }
 
@@ -616,8 +615,8 @@ class TimeScale(super.cfg) extends Scale {
 
     // Make sure that max is strictly higher than min (required by the
     // timeseries lookup table)
-    this.min = jsMin(min, max - 1);
-    this.max = jsMax(min + 1, max);
+    this.min = math.min(min, max - 1);
+    this.max = math.max(min + 1, max);
   }
 
   /// scale.time.js:353 `_getLabelBounds()`.

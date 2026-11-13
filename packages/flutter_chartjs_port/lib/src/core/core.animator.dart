@@ -27,12 +27,13 @@
 /// This file imports `helpers.extras.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show requestAnimFrame;
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_map.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -141,7 +142,7 @@ class Animator() {
           chart: chart,
           initial: anims.initial,
           numSteps: numSteps,
-          currentStep: jsMin(
+          currentStep: math.min(
             date - (anims.start ?? double.nan),
             numSteps ?? double.nan,
           ),
@@ -316,7 +317,7 @@ class Animator() {
       ..start = jsDateNow()
       ..duration = anims.items.fold<double>(
         0,
-        (acc, cur) => jsMax(acc, cur.duration),
+        (acc, cur) => math.max(acc, cur.duration),
       );
     refresh();
   }

@@ -42,6 +42,7 @@
 /// neither `dart:ui` nor `package:flutter`.
 library;
 
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -385,8 +386,8 @@ _PathParams _pathParams(AnyObject? params) {
   final paramsEnd = params.end ?? count - 1;
   final segmentStart = segment.start;
   final segmentEnd = segment.end;
-  final start = jsMax(paramsStart, segmentStart);
-  final end = jsMin(paramsEnd, segmentEnd);
+  final start = math.max(paramsStart, segmentStart);
+  final end = math.min(paramsEnd, segmentEnd);
   final outside =
       (paramsStart < segmentStart && paramsEnd < segmentStart) ||
       (paramsStart > segmentEnd && paramsEnd > segmentEnd);

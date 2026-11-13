@@ -23,6 +23,8 @@
 /// Thus this library is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
@@ -37,7 +39,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show limitValue;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsRound;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -478,7 +480,7 @@ class CategoryScale(super.cfg)
         ? labels
         : _slice(labels, min, max + 1);
 
-    _valueRange = jsMax(labels.length - (offset ? 0.0 : 1.0), 1);
+    _valueRange = math.max(labels.length - (offset ? 0.0 : 1.0), 1);
     _startValue = this.min - (offset ? 0.5 : 0);
 
     for (var value = min; value <= max; value++) {

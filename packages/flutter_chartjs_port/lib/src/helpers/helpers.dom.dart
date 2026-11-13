@@ -24,6 +24,8 @@
 /// (`tool/src/lib_imports.dart`).
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show infinity;
@@ -211,10 +213,10 @@ double _round1(double v) => jsRound(v * 10) / 10;
   var width = containerSize.width;
   var height = containerSize.height;
 
-  width = jsMax(0, width);
-  height = jsMax(0, jsTruthy(aspectRatio) ? width / aspectRatio! : height);
-  width = _round1(jsMin(width, containerSize.maxWidth));
-  height = _round1(jsMin(height, containerSize.maxHeight));
+  width = math.max(0, width);
+  height = math.max(0, jsTruthy(aspectRatio) ? width / aspectRatio! : height);
+  width = _round1(math.min(width, containerSize.maxWidth));
+  height = _round1(math.min(height, containerSize.maxHeight));
   if (jsTruthy(width) && !jsTruthy(height)) {
     // https://github.com/chartjs/Chart.js/issues/4659
     // If the canvas has width, but no height, default to aspectRatio of 2

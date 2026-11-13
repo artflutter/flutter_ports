@@ -74,7 +74,6 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsObjectKeys, jsSetIndex, jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze, jsSet;
@@ -1805,8 +1804,8 @@ class DatasetController(
     // Math.min and Math.max read the value with ToNumber.
     final number = jsToNumber(value);
     range
-      ..min = jsMin(range.min, number)
-      ..max = jsMax(range.max, number);
+      ..min = math.min(range.min, number)
+      ..max = math.max(range.max, number);
   }
 
   /// core.datasetController.js:622 `getMinMax(scale, canStack)`.

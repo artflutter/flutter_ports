@@ -41,6 +41,7 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/animation.dart' show Curve, Curves;
@@ -50,7 +51,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show color, isPatternOrGradient;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_promise.dart';
@@ -437,10 +437,12 @@ class Animation.typed(
       final remain = _duration - elapsed;
       _start = date;
       // DIVERGES(chartjs): adapt-property-animations, the item of the app.
-      _duration = jsMax(
-        remain,
-        _milliseconds(item?.duration) ?? jsToNumber(_cfgDuration(cfg)),
-      ).floorToDouble();
+      _duration = math
+          .max(
+            remain,
+            _milliseconds(item?.duration) ?? jsToNumber(_cfgDuration(cfg)),
+          )
+          .floorToDouble();
       _total += elapsed;
       _loop = item?.loop ?? jsTruthy(_cfgLoop(cfg));
       // `resolve([cfg.to, to, currentValue, cfg.from])` and
@@ -499,7 +501,7 @@ class Animation.typed(
 
     factor = (elapsed / duration).remainder(2);
     factor = loop && factor > 1 ? 2 - factor : factor;
-    factor = _ease(jsMin(1, jsMax(0, factor)));
+    factor = _ease(math.min(1, math.max(0, factor)));
 
     _key.store(_target, _fn!(from, to, factor));
   }
@@ -591,7 +593,7 @@ class Animation.typed(
 
     factor = (elapsed / duration).remainder(2);
     factor = loop && factor > 1 ? 2 - factor : factor;
-    factor = _ease(jsMin(1, jsMax(0, factor)));
+    factor = _ease(math.min(1, math.max(0, factor)));
 
     _writeNumber(from + (to - from) * factor);
   }

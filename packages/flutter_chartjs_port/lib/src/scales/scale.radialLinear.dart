@@ -69,8 +69,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScalePointLabelContext, toFont, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart'
-    show jsMax, jsMin, jsRound;
+import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
@@ -454,17 +453,17 @@ void _updateLimits(
   double y;
   if (hLimits.start < orig.l) {
     x = (orig.l - hLimits.start) / math.sin(angle).abs();
-    limits.l = jsMin(limits.l, orig.l - x);
+    limits.l = math.min(limits.l, orig.l - x);
   } else if (hLimits.end > orig.r) {
     x = (hLimits.end - orig.r) / math.sin(angle).abs();
-    limits.r = jsMax(limits.r, orig.r + x);
+    limits.r = math.max(limits.r, orig.r + x);
   }
   if (vLimits.start < orig.t) {
     y = (orig.t - vLimits.start) / math.cos(angle).abs();
-    limits.t = jsMin(limits.t, orig.t - y);
+    limits.t = math.min(limits.t, orig.t - y);
   } else if (vLimits.end > orig.b) {
     y = (vLimits.end - orig.b) / math.cos(angle).abs();
-    limits.b = jsMax(limits.b, orig.b + y);
+    limits.b = math.max(limits.b, orig.b + y);
   }
 }
 
@@ -1097,7 +1096,7 @@ class RadialLinearScale(super.cfg)
     final h = height = maxHeight - padding.vertical;
     xCenter = (left + w / 2 + padding.left).floorToDouble();
     yCenter = (top + h / 2 + padding.top).floorToDouble();
-    drawingArea = (jsMin(w, h) / 2).floorToDouble();
+    drawingArea = (math.min(w, h) / 2).floorToDouble();
   }
 
   /// scale.radialLinear.js:436 `determineDataLimits()`.
@@ -1208,11 +1207,11 @@ class RadialLinearScale(super.cfg)
     yCenter =
         (yCenter ?? double.nan) +
         ((topMovement - bottomMovement) / 2).floorToDouble();
-    drawingArea -= jsMin(
+    drawingArea -= math.min<double>(
       drawingArea / 2,
-      jsMax(
-        jsMax(leftMovement, rightMovement),
-        jsMax(topMovement, bottomMovement),
+      math.max<double>(
+        math.max<double>(leftMovement, rightMovement),
+        math.max<double>(topMovement, bottomMovement),
       ),
     );
   }

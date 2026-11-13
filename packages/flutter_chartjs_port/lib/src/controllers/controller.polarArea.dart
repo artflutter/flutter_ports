@@ -39,6 +39,8 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart'
     show prepareNativeArcColors;
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
@@ -59,7 +61,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show pi, toRadians;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex;
@@ -394,20 +395,21 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// A chart without a layout has no `chartArea`: the read of an edge
   /// throws a [TypeError], as in JavaScript. `Math.min` and `Math.max` are
-  /// [jsMin] and [jsMax]. The raw option `cutoutPercentage` takes
+  /// `dart:math` `min` and `max` with `double` operands (Chart.js ADR 0134).
+  /// The raw option `cutoutPercentage` takes
   /// `ToNumber` at the arithmetic.
   void _updateRadius() {
     final chart = this.chart;
     final chartArea = chart.chartArea!;
     final opts = chart.options;
-    final minSize = jsMin(
+    final minSize = math.min(
       chartArea.right - chartArea.left,
       chartArea.bottom - chartArea.top,
     );
 
-    final outerRadius = jsMax(minSize / 2, 0);
+    final outerRadius = math.max<double>(minSize / 2, 0);
     final cutoutPercentage = readOption(opts, OptionKey.cutoutPercentage);
-    final innerRadius = jsMax(
+    final innerRadius = math.max<double>(
       // Upstream reads `opts.cutoutPercentage` twice: a read of the options
       // has no side effect.
       jsTruthy(cutoutPercentage)

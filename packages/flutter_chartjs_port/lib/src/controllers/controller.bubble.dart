@@ -40,6 +40,8 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
@@ -51,7 +53,6 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
@@ -442,7 +443,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
           if (indexed && contexts?.readQualified(point, i) == null) {
             getContext(i, false, 'default');
           }
-          max = jsMax(
+          max = math.max(
             max,
             nativePointSize(
                   // The `+=` of :165 from the 0 of :163.
@@ -457,7 +458,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
         fields = null;
         indexed = false;
       }
-      max = jsMax(max, point.size(resolveDataElementOptions(i)) / 2);
+      max = math.max(max, point.size(resolveDataElementOptions(i)) / 2);
       // The first ordinary resolution makes the entry of constant options, and
       // two warm the indexed plan. There is one attempt for each loop.
       if (i == last) {

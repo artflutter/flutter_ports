@@ -610,10 +610,7 @@ jsIsNaN
 jsIsObjectLike
 jsLessThan
 jsMapForEach
-jsMax
 jsMaxArity
-jsMaxMinCompare
-jsMin
 jsNumberToString
 jsObjectClass
 jsObjectFreeze

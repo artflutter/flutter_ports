@@ -14,7 +14,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show toRadians;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -101,7 +100,8 @@ final class _TestLinearBaseLimitScale(super.cfg) extends _TestLinearBaseScale {
     final sinOrCos = horizontal ? math.sin(minRotation) : math.cos(minRotation);
     final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
     final tickFont = resolveTickFontOptions(0);
-    return (length / jsMin(40, jsToNumber(tickFont.lineHeight) / ratio))
+    return (length /
+            math.min<double>(40, jsToNumber(tickFont.lineHeight) / ratio))
         .ceilToDouble();
   }
 }

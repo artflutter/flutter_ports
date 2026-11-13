@@ -288,11 +288,12 @@ display-only JS exactness. In short:
   site is a site whose result reaches a layout, a scale, an element property, a hit test, a value
   that a public member returns or a discrete decision. The other `Math.sin` and `Math.cos` calls
   and `Math.pow` use `dart:math` with `double` operands.
-- `Math.max` and `Math.min` with `double` operands are `jsMax` and `jsMin` of
-  `lib/src/js/js_math.dart`. On dart2wasm, these functions compare the operands in their own
-  code, because the generic `dart:math` `max` and `min` box `double` operands there. On the VM
-  and dart2js, they call `dart:math` `max` and `min`. With `int` operands, ported code calls
-  `dart:math` `max` and `min`.
+- `Math.max` and `Math.min` are `dart:math` `max` and `min` with `double` operands
+  ([Chart.js ADR 0134](adr/0134-dart-math-max-min.md)): `math.max<double>(x, 0)`, not
+  `math.max(x, 0)`, and `math.max<double>(a, b)` where the call is an operand of arithmetic (the
+  context `num` makes the type argument `num`). With two `double` operands, dart2wasm inlines one
+  `f64.max` or `f64.min`; a `num` type argument boxes the operands. With `int` operands, ported
+  code calls `dart:math` `max` and `min` too.
 - `Math.pow(x, 2)` is `jsSquare(x)` of `lib/src/js/js_math.dart`, which returns `x * x`. The
   product is correctly rounded. On the x64 engine, `Math.pow(x, 2)` gave the bits of `x * x`
   for all of 23 million probe inputs. Thus the result is the JS result on every target.
@@ -1125,8 +1126,9 @@ an add-on. It flags these forms:
   `log`. A display-only `sin` or `cos` carries `// js-ok: display only (Chart.js ADR 0045)`
   ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
 - the interpolation of a value with the static type `double` or `num`
-- the calls and tear-offs of `dart:math` `max` and `min` with the type argument `double` or `num`.
-  Use `jsMax` and `jsMin` ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
+- the calls and tear-offs of `dart:math` `max` and `min` with the type argument `num`. Give them
+  `double` operands or the type argument `double`
+  ([Chart.js ADR 0134](adr/0134-dart-math-max-min.md)).
 - from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
   `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
 - from phase 5, `DateTime.now(`. Ported code reads the time through `jsDateNow`, because only

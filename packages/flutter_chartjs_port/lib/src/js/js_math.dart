@@ -9,9 +9,11 @@
 /// `double`, as in JavaScript. `sin`, `cos`, `atan2` and `log` are `dart:math`
 /// as it is (Chart.js ADR 0122): their last bit can differ from V8.
 ///
-/// [jsMax] and [jsMin] take `double` operands, as `Math.max` and `Math.min`
-/// do. Ported code calls `dart:math` `max` and `min` only for `int` operands
-/// (Chart.js ADR 0045).
+/// `Math.max` and `Math.min` have no port here. Ported code calls
+/// `dart:math` `max` and `min` with `double` operands, which give the JS
+/// results on every target (Chart.js ADR 0134). An `int` literal operand or
+/// an arithmetic context makes the type argument `num`, which boxes on
+/// dart2wasm: write `math.max<double>(x, 0)`.
 ///
 /// [jsHypot] computes `Math.hypot` of two operands in the form of the V8
 /// builtin, with correctly rounded steps, so every target gives the V8 bits
@@ -60,47 +62,6 @@ double jsToInt32(double x) {
   if (int32 >= 2147483648) int32 -= twoTo32;
   // ToInt32 never returns -0.
   return int32 + 0;
-}
-
-/// Whether [jsMax] and [jsMin] compare their operands in their own code.
-///
-/// It is true on dart2wasm only. There, the generic `dart:math` `max` and
-/// `min` box their `double` operands, and `limitValue` is about 15 times
-/// slower than with the comparisons. On the VM and dart2js, the comparisons
-/// are slower than `dart:math`, so [jsMax] and [jsMin] call `max` and `min`.
-/// Tests read this value to confirm which code a test leg runs.
-const bool jsMaxMinCompare = bool.fromEnvironment('dart.tool.dart2wasm');
-
-/// `Math.max(a, b)` for two doubles: NaN if [a] or [b] is NaN, and +0 for
-/// +0 and -0 in either order (Chart.js ADR 0045).
-///
-/// The results are the `dart:math` `max` results on every target (see
-/// [jsMaxMinCompare]).
-@pragma('vm:prefer-inline')
-@pragma('wasm:prefer-inline')
-double jsMax(double a, double b) {
-  if (!jsMaxMinCompare) return math.max(a, b);
-  if (a > b) return a;
-  if (a < b) return b;
-  // Equal values, or a NaN operand. +0 + -0 is +0, and -0 + -0 is -0.
-  if (a == b) return a == 0 ? a + b : a;
-  return double.nan;
-}
-
-/// `Math.min(a, b)` for two doubles: NaN if [a] or [b] is NaN, and -0 for
-/// +0 and -0 in either order (Chart.js ADR 0045).
-///
-/// The results are the `dart:math` `min` results on every target (see
-/// [jsMaxMinCompare]).
-@pragma('vm:prefer-inline')
-@pragma('wasm:prefer-inline')
-double jsMin(double a, double b) {
-  if (!jsMaxMinCompare) return math.min(a, b);
-  if (a < b) return a;
-  if (a > b) return b;
-  // Equal values, or a NaN operand. Of +0 and -0, the result is -0.
-  if (a == b) return a == 0 && b.isNegative ? b : a;
-  return double.nan;
 }
 
 /// `Math.pow(x, 2)`: [x] times [x] (Chart.js ADR 0045).

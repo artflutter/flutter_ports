@@ -12,6 +12,8 @@
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasPath, CanvasRenderingContext2D;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
@@ -21,7 +23,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.dataset.dart'
     show getDatasetClipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
     show SegmentStyle;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
@@ -135,19 +136,19 @@ types.TRBL? clipToIndexBounds(types.ChartArea? area, types.Scale? iScale) {
   }
   final p1 = iScale.getPixelForValue(iScale.min);
   final p2 = iScale.getPixelForValue(iScale.max);
-  final lo = jsMin(p1, p2);
-  final hi = jsMax(p1, p2);
+  final lo = math.min(p1, p2);
+  final hi = math.max(p1, p2);
   return iScale.isHorizontal()
       ? _Trbl(
           top: area!.top,
-          right: jsMin(area.right, hi),
+          right: math.min(area.right, hi),
           bottom: area.bottom,
-          left: jsMax(area.left, lo),
+          left: math.max(area.left, lo),
         )
       : _Trbl(
-          top: jsMax(area!.top, lo),
+          top: math.max(area!.top, lo),
           right: area.right,
-          bottom: jsMin(area.bottom, hi),
+          bottom: math.min(area.bottom, hi),
           left: area.left,
         );
 }
@@ -514,10 +515,10 @@ void _clipBounds(
     ctx.beginPath();
 
     if (clip != null) {
-      left = jsMax(left, clip.left);
-      right = jsMin(right, clip.right);
-      top = jsMax(top, clip.top);
-      bottom = jsMin(bottom, clip.bottom);
+      left = math.max(left, clip.left);
+      right = math.min(right, clip.right);
+      top = math.max(top, clip.top);
+      bottom = math.min(bottom, clip.bottom);
     }
 
     ctx
