@@ -87,6 +87,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show dataLabelLinesOf;
 
 /// controller.polarArea.js:38 `generateLabels(chart)` of
 /// `overrides.plugins.legend.labels` (Chart.js ADR 0028, section 6).
@@ -294,7 +296,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// 0034). A parsed item that is `null` or `undefined` throws a [TypeError]
   /// at the read of `r`, as upstream.
   @override
-  ({Object? label, String value}) getLabelAndValue(int index) {
+  ({List<String> label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final chart = this.chart;
     // `chart.data.labels || []`
@@ -308,7 +310,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
 
     // `labels[index] || ''`
     final label = jsGetIndex(labels, index);
-    return (label: jsTruthy(label) ? label : '', value: value);
+    return (label: dataLabelLinesOf(label), value: value);
   }
 
   /// controller.polarArea.js:109 `parseObjectData(meta, data, start,

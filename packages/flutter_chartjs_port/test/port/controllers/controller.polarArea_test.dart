@@ -328,7 +328,9 @@ void main() {
   // The pin tests of the interfaces spec, section 7.3, that need no
   // generated value.
   group('interfaces', () {
-    testWidgets('getLabelAndValue keeps the label values', (tester) async {
+    testWidgets('getLabelAndValue gives the lines of the labels', (
+      tester,
+    ) async {
       final lines = <Object?>['line 1', 'line 2'];
       final chart = acquireChart(
         _one(
@@ -340,8 +342,14 @@ void main() {
       final labels = [
         for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label,
       ];
-      expect(labels[0], same(lines));
-      expect(labels.skip(1), [5.0, '', 'd', '', '']);
+      expect(labels[0], lines);
+      expect(labels.skip(1), [
+        ['5'],
+        <String>[],
+        ['d'],
+        <String>[],
+        <String>[],
+      ]);
       expect(controller.getLabelAndValue(1).value, '2');
     });
 

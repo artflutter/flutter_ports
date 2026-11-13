@@ -55,9 +55,9 @@ final Map<String, Object?> _radialAxis = {
 };
 
 /// `multiTuples: true`: the index, then one line for each type.
-String? _index(List<ChartTooltipItem> items) => _indexes[items.first.dataIndex];
+String? _index(List<TooltipItem> items) => _indexes[items.first.dataIndex];
 
-String? _typeValue(ChartTooltipItem item) =>
+String? _typeValue(TooltipItem item) =>
     '${_types[item.datasetIndex]}: ${item.raw}';
 
 final ChartConfig _config = ChartConfig(

@@ -21,7 +21,7 @@ import 'package:flutter_test/flutter_test.dart';
 // typed callbacks over the objects of a real chart. The raw callbacks of
 // these charts cast the arguments of the chart to the views, as the
 // lowering of the typed config does: `ActiveElement`, `ChartContext`,
-// `ChartTooltipItem` and `LegendItem` give `int` indexes and the
+// `TooltipItem` and `LegendItem` give `int` indexes and the
 // values of the objects, and a `List<ActiveElement>` is a `List<ActiveElement>`
 // with no copy. The unit cases pin the rule for the JS `undefined`, an
 // absent key and a value of another type.
@@ -255,18 +255,18 @@ void main() {
     });
   });
 
-  group('ChartTooltipItem', () {
+  group('TooltipItem', () {
     testWidgets('a tooltip label callback gets the item of the hit', (
       tester,
     ) async {
-      final items = <ChartTooltipItem>[];
+      final items = <TooltipItem>[];
       final chart = acquireChart(
         _bar(<String, Object?>{
           'plugins': <String, Object?>{
             'tooltip': <String, Object?>{
               'callbacks': TooltipCallbacks(
                 label: (tooltip, item) {
-                  items.add(item!);
+                  items.add(item);
                   return ['L'];
                 },
               ),
@@ -293,25 +293,45 @@ void main() {
           item.raw,
           item.datasetLabel,
         ],
-        ['c', '7', 1, 2, 7, 'B'],
+        [
+          ['c'],
+          '7',
+          1,
+          2,
+          7,
+          'B',
+        ],
       );
       expect((item.parsed! as JsObjectFace)['y'], 7);
     });
 
     test('a dataset without a String label gives no datasetLabel', () {
-      final item = <String, Object?>{
-        'dataset': <String, Object?>{'label': 3},
-        'raw': undefined,
-        'formattedValue': '1',
-        'datasetIndex': 0.0,
-        'dataIndex': 2.0,
-      } as ChartTooltipItem;
-      expect([item.datasetLabel, item.raw, item.label], [null, null, null]);
+      final item = TooltipItem(
+        chart: _NoChart(),
+        dataset: const <String, Object?>{'label': 3},
+        raw: null,
+        parsed: null,
+        label: const [],
+        formattedValue: '1',
+        datasetIndex: 0,
+        dataIndex: 2,
+      );
+      expect(
+        [item.datasetLabel, item.raw, item.label],
+        [null, null, <String>[]],
+      );
       expect([item.datasetIndex, item.dataIndex], [0, 2]);
       expect(
-        (<String, Object?>{
-          'dataset': undefined,
-        } as ChartTooltipItem).datasetLabel,
+        TooltipItem(
+          chart: _NoChart(),
+          dataset: undefined,
+          raw: null,
+          parsed: null,
+          label: const [],
+          formattedValue: '',
+          datasetIndex: 0,
+          dataIndex: 0,
+        ).datasetLabel,
         isNull,
       );
     });
@@ -534,7 +554,7 @@ void main() {
         final tooltip = chart.tooltip!;
         return [
           tooltip.title,
-          [for (final item in tooltip.body!) (item! as JsObjectFace)['lines']],
+          [for (final item in tooltip.body!) item.lines],
           tooltip.footer,
         ];
       }
@@ -663,4 +683,9 @@ void main() {
       );
     });
   });
+}
+
+final class _NoChart() implements Chart {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

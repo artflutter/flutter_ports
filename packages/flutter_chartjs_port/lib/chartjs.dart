@@ -132,7 +132,6 @@ export 'package:flutter_chartjs_port/src/types.dart'
         ScaleCache,
         ScaleRanges,
         SimpleArc,
-        TypedTooltipItem,
         VisualElementRange,
         adapters,
         detectPlatform;
@@ -148,7 +147,6 @@ export 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     hide chartPaintOf;
 export 'package:flutter_chartjs_port/src/types/chart_text_style.dart'
     show ChartTextStyle;
-export 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show SplinePoint, TRBLCorners;
 export 'package:flutter_chartjs_port/src/types/layout.dart'

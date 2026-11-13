@@ -39,9 +39,9 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -289,21 +289,23 @@ void main() {
           'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
         };
         final dataset0 = (data['datasets']! as List<Object?>)[0]! as AnyObject;
-        final tooltipItem = <String, Object?>{
-          'index': 1,
-          'datasetIndex': 0,
-          'dataset': dataset0,
-          'label': 'Point 2',
-          'formattedValue': '20',
-        };
+        // DIVERGES(chartjs): adapt-native-tooltip-item, a native item.
+        final tooltipItem = TooltipItem(
+          chart: _NoChart(),
+          dataIndex: 1,
+          datasetIndex: 0,
+          dataset: dataset0,
+          label: const ['Point 2'],
+          formattedValue: '20',
+          parsed: null,
+          raw: null,
+        );
 
         final callbacks =
             jsGet(jsGet(jsGet(_defaults(), 'plugins'), 'tooltip'), 'callbacks')!
                 as TooltipCallbacks;
-        Object? label() => callbacks.label!(
-          const _CallbackTooltip(),
-          ChartTooltipItem(tooltipItem),
-        );
+        Object? label() =>
+            callbacks.label!(const _CallbackTooltip(), tooltipItem);
 
         var value = label();
         expect(value, ['20']);
@@ -721,7 +723,7 @@ void main() {
               'mode': const IndexInteractionMode(),
               'callbacks': TooltipCallbacks(
                 beforeLabel: (tooltip, ctx) {
-                  final parsed = jsGet(ctx, 'parsed');
+                  final parsed = ctx.parsed;
                   return [
                     jsToString(
                       jsAdd(jsAdd(jsGet(parsed, 'x'), ','), jsGet(parsed, 'y')),
@@ -740,7 +742,7 @@ void main() {
 
       await triggerMouseEvent(chart, 'mousemove', point);
       expect(
-        jsGet(_tooltipOf(chart).body![0], 'before'),
+        _tooltipOf(chart).body![0].before,
         jasmineEquals(<Object?>['2,20']),
       );
     });
@@ -751,11 +753,9 @@ void main() {
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
             'mode': const IndexInteractionMode(),
-            'itemSort': (Object? a, Object? b) =>
-                (jsGet(a, 'datasetIndex')! as num) >
-                    (jsGet(b, 'datasetIndex')! as num)
-                ? -1
-                : 1,
+            // DIVERGES(chartjs): adapt-native-tooltip-item, a typed function.
+            'itemSort': (TooltipItem a, TooltipItem b, Object data) =>
+                a.datasetIndex > b.datasetIndex ? -1 : 1,
           }),
         ),
       );
@@ -885,20 +885,21 @@ void main() {
           _twoDatasets(extra1: const {'tooltipHidden': true}),
           _tooltipOptions(<String, Object?>{
             'mode': const IndexInteractionMode(),
+            // DIVERGES(chartjs): adapt-native-tooltip-item, a typed function.
             'filter':
                 (
-                  Object? tooltipItem,
-                  Object? index,
-                  Object? items,
-                  Object? data,
+                  TooltipItem tooltipItem,
+                  int index,
+                  List<TooltipItem> items,
+                  Object data,
                 ) {
                   // For testing purposes remove the first dataset that has a
                   // tooltipHidden property
                   return !jsTruthy(
                     jsGet(
-                      jsGet(
+                      jsGetIndex(
                         jsGet(data, 'datasets'),
-                        jsGet(tooltipItem, 'datasetIndex'),
+                        tooltipItem.datasetIndex.toDouble(),
                       ),
                       'tooltipHidden',
                     ),
@@ -982,21 +983,21 @@ void main() {
         final tooltip = chart.tooltip;
 
         expect(tooltip, isA<Object>());
-        expect(tooltip!.dataPoints, isA<List<Object?>>());
+        expect(tooltip!.dataPoints, isA<List<TooltipItem>>());
         expect(tooltip.dataPoints!.length, 1);
 
         final tooltipItem = tooltip.dataPoints![0];
 
-        expect(jsGet(tooltipItem, 'dataIndex'), pointIndex);
-        expect(jsGet(tooltipItem, 'datasetIndex'), datasetIndex);
-        expect(jsGet(tooltipItem, 'label'), isA<String>());
-        expect(
-          jsGet(tooltipItem, 'label'),
+        expect(tooltipItem.dataIndex, pointIndex);
+        expect(tooltipItem.datasetIndex, datasetIndex);
+        // DIVERGES(chartjs): adapt-native-tooltip-item, the label lines.
+        expect(tooltipItem.label, isA<List<String>>());
+        expect(tooltipItem.label, [
           ((chart.data as AnyObject)['labels']! as List<Object?>)[pointIndex],
-        );
-        expect(jsGet(tooltipItem, 'formattedValue'), isA<String>());
+        ]);
+        expect(tooltipItem.formattedValue, isA<String>());
         expect(
-          jsGet(tooltipItem, 'formattedValue'),
+          tooltipItem.formattedValue,
           jsAdd(
             '',
             jsGet(
@@ -1513,11 +1514,15 @@ void main() {
           'opacity': 1,
 
           // Text
-          'title': <Object?>['title'],
-          'beforeBody': <Object?>[],
-          'body': <Object?>[_bodyItem('label')],
-          'afterBody': <Object?>[],
-          'footer': <Object?>['footer'],
+          // DIVERGES(chartjs): adapt-native-tooltip-item, native lines and
+          // a native body item.
+          'title': <String>['title'],
+          'beforeBody': <String>[],
+          'body': <TooltipBodyItem>[
+            const TooltipBodyItem(before: [], lines: ['label'], after: []),
+          ],
+          'afterBody': <String>[],
+          'footer': <String>['footer'],
           'labelTextColors': <ChartPaint>[
             const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
           ],

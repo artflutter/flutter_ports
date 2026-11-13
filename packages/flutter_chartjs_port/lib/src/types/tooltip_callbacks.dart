@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBLCorners;
 import 'package:flutter_chartjs_port/src/types/index.dart' as core;
 import 'package:meta/meta.dart' show internal;
@@ -116,14 +115,41 @@ TooltipCallbacks tooltipCallbacksOf(Object? value) {
 /// A text hook over the ordered items, with the tooltip as explicit context.
 typedef TooltipItemsCallback = List<String>? Function(
   core.TooltipModel tooltip,
-  List<ChartTooltipItem> items,
+  List<core.TooltipItem> items,
 );
 
 /// A per-item hook. A null result requests the built-in callback.
 typedef TooltipItemCallback<T> = T? Function(
   core.TooltipModel tooltip,
-  ChartTooltipItem item,
+  core.TooltipItem item,
 );
+
+/// The option `filter` of the tooltip (index.d.ts:2821,
+/// plugin.tooltip.js:614-616): the tooltip keeps an item for a true result.
+/// [items] is the List of each item before the filter, and [data] is
+/// `chart.data`.
+typedef TooltipItemFilter = bool Function(
+  core.TooltipItem item,
+  int index,
+  List<core.TooltipItem> items,
+  Object data,
+);
+
+/// The option `itemSort` of the tooltip (index.d.ts:2819,
+/// plugin.tooltip.js:619-621): the order of two items, as a comparator of
+/// `List.sort`. The sort is stable. [data] is `chart.data`.
+typedef TooltipItemComparator = int Function(
+  core.TooltipItem a,
+  core.TooltipItem b,
+  Object data,
+);
+
+/// The option `external` of the tooltip (index.d.ts:2804,
+/// plugin.tooltip.js:686-688): the tooltip calls it after an update that
+/// changed its state. Chart.js gives the tooltip as `this` and in the
+/// object `{chart, tooltip, replay}`; the chart is `tooltip.chart`.
+/// [replay] is true for the update of a replayed event.
+typedef TooltipExternal = void Function(core.TooltipModel tooltip, bool replay);
 
 /// The four scalar radii of a tooltip label box.
 final class const TooltipCornerRadii({

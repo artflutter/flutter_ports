@@ -114,8 +114,8 @@ const Color _red = Color(0xFFFF0000);
 const TextStyle _font = TextStyle(fontSize: 12);
 const EdgeInsets _padding = EdgeInsets.all(4);
 
-String? _text(List<ChartTooltipItem> items) => null;
-String? _label(ChartTooltipItem item) => null;
+String? _text(List<TooltipItem> items) => null;
+String? _label(TooltipItem item) => null;
 List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
     null;
 ChartPaint _colorFor(ChartContext context) => const ChartPaint.solid(_red);

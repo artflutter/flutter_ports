@@ -277,20 +277,15 @@ void main() {
   });
 
   group('DatasetController.getLabelAndValue', () {
-    testWidgets('gives an Object? label and a String value', (tester) async {
+    testWidgets('gives the lines of the label and a String value', (
+      tester,
+    ) async {
       final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
       final controller = chart.getDatasetMeta(0).controller!;
       final result = controller.getLabelAndValue(1);
-      // The record type of Chart.js ADR 0028, section 2. The runtime type of
-      // a record comes from its field values, so the test examines the type
-      // of the torn-off method: the old type ({String label, String value})
-      // fails this test.
-      expect(
-        controller.getLabelAndValue
-            is ({String label, String value}) Function(double),
-        isFalse,
-      );
-      expect(result.label, 'b');
+      // The record type of the row `adapt-native-tooltip-item`.
+      expect(result.label, isA<List<String>>());
+      expect(result.label, ['b']);
       expect(result.value, '2');
     });
   });

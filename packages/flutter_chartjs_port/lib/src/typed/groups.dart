@@ -47,6 +47,8 @@ import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart'
+    show TooltipItem, TooltipModel;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
@@ -410,6 +412,19 @@ final class const ChartTooltip({
   /// The native callbacks of the tooltip. Null inherits the defaults.
   final TooltipCallbacks? callbacks,
 
+  /// Whether the tooltip shows an item: `filter`. The tooltip calls it for
+  /// each item, before `itemSort`.
+  final TooltipItemFilter? filter,
+
+  /// The order of two items of the tooltip: `itemSort`. The sort is
+  /// stable.
+  final TooltipItemComparator? itemSort,
+
+  /// The function that shows the tooltip of the app: `external`. The
+  /// tooltip calls it after an update that changed its state. With
+  /// `enabled: false`, the chart draws no tooltip.
+  final TooltipExternal? external,
+
   /// The text direction during drawing. Null keeps the canvas direction.
   final TextDirection? textDirection,
 
@@ -441,6 +456,9 @@ final class const ChartTooltip({
     double? cornerRadius,
     bool? displayColors,
     TooltipCallbacks? callbacks,
+    TooltipItemFilter? filter,
+    TooltipItemComparator? itemSort,
+    TooltipExternal? external,
     TextDirection? textDirection,
     Map<String, Object?>? extra,
   }) => ChartTooltip(
@@ -462,6 +480,9 @@ final class const ChartTooltip({
     cornerRadius: cornerRadius ?? this.cornerRadius,
     displayColors: displayColors ?? this.displayColors,
     callbacks: callbacks ?? this.callbacks,
+    filter: filter ?? this.filter,
+    itemSort: itemSort ?? this.itemSort,
+    external: external ?? this.external,
     textDirection: textDirection ?? this.textDirection,
     extra: extra ?? this.extra,
   );
@@ -485,6 +506,9 @@ final class const ChartTooltip({
     ('cornerRadius', cornerRadius),
     ('displayColors', displayColors),
     ('callbacks', tooltipCallbacksPresence(callbacks)),
+    ('filter', filter != null),
+    ('itemSort', itemSort != null),
+    ('external', external != null),
     ('textDirection', textDirection),
     ('extra', byEntries(extra)),
   ];
@@ -534,6 +558,26 @@ TooltipOptionsScope lowerTooltip(
       callbacks,
       () => lowering.config.tooltip?.callbacks,
     );
+  }
+  if (tooltip.filter != null) {
+    bool filter(
+      TooltipItem item,
+      int index,
+      List<TooltipItem> items,
+      Object data,
+    ) =>
+        lowering.config.tooltip?.filter?.call(item, index, items, data) ?? true;
+    scope.filter = filter;
+  }
+  if (tooltip.itemSort != null) {
+    int itemSort(TooltipItem a, TooltipItem b, Object data) =>
+        lowering.config.tooltip?.itemSort?.call(a, b, data) ?? 0;
+    scope.itemSort = itemSort;
+  }
+  if (tooltip.external != null) {
+    void external(TooltipModel model, bool replay) =>
+        lowering.config.tooltip?.external?.call(model, replay);
+    scope.external = external;
   }
   put(scope, OptionKey.textDirection, tooltip.textDirection);
   return mergeExtra(scope, tooltip.extra);

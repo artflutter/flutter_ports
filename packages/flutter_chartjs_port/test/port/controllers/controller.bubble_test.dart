@@ -184,7 +184,7 @@ void main() {
   // The pin tests of the interfaces spec, section 7.3, that need no
   // generated value: the label is `labels[index] || ''`, any value.
   group('interfaces', () {
-    testWidgets('getLabelAndValue gives the label value, or an empty string '
+    testWidgets('getLabelAndValue gives the lines of the label, or no line '
         'for a falsy label', (tester) async {
       for (final (labels, expected) in <(List<Object?>, List<Object?>)>[
         (
@@ -195,7 +195,13 @@ void main() {
             'd',
             undefined,
           ],
-          <Object?>[5.0, '', 'd', '', ''],
+          <Object?>[
+            ['5'],
+            <String>[],
+            ['d'],
+            <String>[],
+            <String>[],
+          ],
         ),
         (
           <Object?>[
@@ -205,15 +211,21 @@ void main() {
             null,
             'e',
           ],
-          <Object?>[7.0, '', '', 'e', ''],
+          <Object?>[
+            ['7'],
+            <String>[],
+            <String>[],
+            ['e'],
+            <String>[],
+          ],
         ),
       ]) {
         final chart = acquireChart(_labelsConfig(labels));
         final chartLabels = jsGet(chart.data, 'labels')! as List<Object?>;
         final controller = chart.getDatasetMeta(0).controller!;
         final first = controller.getLabelAndValue(0).label;
-        expect(first, same(chartLabels[0]));
-        expect(first, isA<List<Object?>>());
+        expect(first, chartLabels[0]);
+        expect(first, isA<List<String>>());
         expect([
           for (var i = 1; i < 6; i++) controller.getLabelAndValue(i).label,
         ], expected);

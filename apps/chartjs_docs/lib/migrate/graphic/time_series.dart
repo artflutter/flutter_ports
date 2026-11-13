@@ -35,10 +35,10 @@ final ({double min, double max}) _range = graphicRange([
   for (final sale in timeSeriesSales) sale.sales,
 ]);
 
-String? _time(List<ChartTooltipItem> items) =>
+String? _time(List<TooltipItem> items) =>
     'time: ${_monthDay(timeSeriesSales[items.first.dataIndex].time)}';
 
-String? _sales(ChartTooltipItem item) =>
+String? _sales(TooltipItem item) =>
     'sales: ${timeSeriesSales[item.dataIndex].sales}';
 
 final ChartConfig _config = ChartConfig(

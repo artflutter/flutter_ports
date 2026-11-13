@@ -67,6 +67,8 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show dataLabelLinesOf;
 
 /// controller.radar.js:4 `RadarController extends DatasetController`.
 class RadarController(super.chart, super.datasetIndex, [super.newTarget])
@@ -133,14 +135,14 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   /// `null` label, and a number or a `List` as it is (Chart.js ADR 0028,
   /// section 2). `'' + value` is [jsToString].
   @override
-  ({Object? label, String value}) getLabelAndValue(int index) {
+  ({List<String> label, String value}) getLabelAndValue(int index) {
     final vScale = cachedMeta.vScale;
     final parsed = getParsed(index);
     final label = jsGetIndex(vScale!.getLabels(), index);
     final axis = vScale.axis;
 
     return (
-      label: label,
+      label: dataLabelLinesOf(label),
       value: jsToString(vScale.getLabelForValue(parsedValueOf(parsed, axis))),
     );
   }

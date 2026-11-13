@@ -401,10 +401,10 @@ List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
 void _onLegend(ChartLegendEventDetails details) {}
 
 /// A tooltip text of the items.
-String? _title2(List<ChartTooltipItem> items) => 'T';
+String? _title2(List<TooltipItem> items) => 'T';
 
 /// A tooltip text of one item.
-String? _label(ChartTooltipItem item) => 'L';
+String? _label(TooltipItem item) => 'L';
 
 /// An animation callback.
 void _onAnimation(ChartAnimationDetails details) {}
@@ -2622,12 +2622,18 @@ void main() {
         jsGet(jsGet(options, 'plugins'), 'tooltip'),
         'callbacks',
       );
-      final item = <String, Object?>{'label': 'a'};
+      final item = TooltipItem(
+        chart: _NoChart(),
+        datasetIndex: 0,
+        dataIndex: 0,
+        label: const ['a'],
+        formattedValue: '',
+        dataset: const <String, Object?>{},
+        parsed: null,
+        raw: null,
+      );
       expect(
-        (label! as TooltipCallbacks).label!(
-          const _CallbackTooltip(),
-          ChartTooltipItem(item),
-        ),
+        (label! as TooltipCallbacks).label!(const _CallbackTooltip(), item),
         ['first'],
       );
       lowering.config = ChartConfig(
@@ -2643,20 +2649,19 @@ void main() {
         ),
       );
       expect(
-        (label as TooltipCallbacks).label!(
-          const _CallbackTooltip(),
-          ChartTooltipItem(item),
-        ),
+        (label as TooltipCallbacks).label!(const _CallbackTooltip(), item),
         isNull,
       );
       lowering.config = const ChartConfig(type: .bar, datasets: []);
-      expect(
-        label.label!(const _CallbackTooltip(), ChartTooltipItem(item)),
-        isNull,
-      );
+      expect(label.label!(const _CallbackTooltip(), item), isNull);
       expect(calls, ['first', 'second']);
     });
   });
+}
+
+final class _NoChart() implements callback_types.Chart {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 final class const _CallbackTooltip() implements callback_types.TooltipModel {

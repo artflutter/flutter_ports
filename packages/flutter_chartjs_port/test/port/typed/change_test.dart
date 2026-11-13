@@ -489,8 +489,7 @@ void main() {
       final chart = _chart(tester);
       final point = _barPoint(tester, chart, 1);
       List<Object?> lines() => [
-        for (final item in chart.tooltip!.body!)
-          ...(item! as JsObjectFace)['lines']! as List<Object?>,
+        for (final item in chart.tooltip!.body!) ...item.lines,
       ];
 
       text = 'typed';

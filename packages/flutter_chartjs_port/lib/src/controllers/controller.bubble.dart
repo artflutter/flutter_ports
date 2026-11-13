@@ -73,6 +73,8 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show dataLabelLinesOf;
 
 /// `options.radius` of the resolved options of a data element: the raw
 /// value ([ElementOptions.valueOf]), typed for a [PointOptions].
@@ -481,7 +483,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// The label is `labels[index] || ''`: any value (Chart.js ADR 0028,
   /// section 2). The `+` of the value joins the [jsToString] of each part.
   @override
-  ({Object? label, String value}) getLabelAndValue(int index) {
+  ({List<String> label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final dataLabels = jsGet(chart.data, 'labels');
     final labels = jsTruthy(dataLabels) ? dataLabels : <Object?>[];
@@ -494,7 +496,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
     final label = jsGetIndex(labels, index);
 
     return (
-      label: jsTruthy(label) ? label : '',
+      label: dataLabelLinesOf(label),
       value:
           '(${jsToString(x)}, ${jsToString(y)}'
           '${jsTruthy(r) ? ', ${jsToString(r)}' : ''})',

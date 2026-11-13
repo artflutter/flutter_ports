@@ -723,11 +723,11 @@ void main() {
     final items = tooltip.dataPoints!;
     expect(items, isNotEmpty);
     final expected = chart.getDatasetMeta(0).controller!.getLabelAndValue(5);
-    expect(expected.label, 'P6');
-    expect(jsGet(items.first, 'datasetIndex'), 0);
-    expect(jsGet(items.first, 'dataIndex'), 5);
-    expect(jsGet(items.first, 'label'), expected.label);
-    expect(jsGet(items.first, 'formattedValue'), expected.value);
+    expect(expected.label, ['P6']);
+    expect(items.first.datasetIndex, 0);
+    expect(items.first.dataIndex, 5);
+    expect(items.first.label, expected.label);
+    expect(items.first.formattedValue, expected.value);
     expect(tooltip.opacity, greaterThan(0));
     expect(tester.takeException(), isNull);
   });

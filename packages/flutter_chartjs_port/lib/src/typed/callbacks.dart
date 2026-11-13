@@ -7,7 +7,7 @@
 ///   field is an addition that breaks no callback.
 /// - [ChartContext] is a view over the context objects of the chart. An
 ///   active element of an event is the core [ActiveElement].
-///   `ChartTooltipItem` is the shared core view. [LegendItem] is the shared
+///   A tooltip item is the core `TooltipItem`. [LegendItem] is the shared
 ///   native mutable object; legend event details preserve its identity.
 /// - [ChartScript] is the type of a scriptable option.
 ///
@@ -26,8 +26,6 @@ import 'package:flutter_chartjs_port/src/types/index.dart'
     show ActiveElement, ChartEvent, LegendElement;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:meta/meta.dart' show immutable;
-
-export 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 
 /// A scriptable option: a function of the context of the element, the
 /// dataset or the chart that gives the value.

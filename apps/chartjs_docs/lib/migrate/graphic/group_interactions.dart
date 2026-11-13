@@ -63,11 +63,11 @@ List<String>? _dateLabel(
 final ({double min, double max}) _range = graphicRange(_points.values);
 
 /// `variables: ['date', 'name', 'points']`.
-String? _dateAndName(List<ChartTooltipItem> items) =>
+String? _dateAndName(List<TooltipItem> items) =>
     'date: ${_dates[items.first.dataIndex]}\n'
     'name: ${_names[items.first.datasetIndex]}';
 
-String? _value(ChartTooltipItem item) => 'points: ${item.raw}';
+String? _value(TooltipItem item) => 'points: ${item.raw}';
 
 final ChartConfig _config = ChartConfig(
   type: .line,

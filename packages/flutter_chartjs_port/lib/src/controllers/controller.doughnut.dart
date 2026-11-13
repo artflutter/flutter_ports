@@ -92,6 +92,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
+    show dataLabelLinesOf;
 
 /// controller.doughnut.js:34 the object `{ratioX, ratioY, offsetX,
 /// offsetY}` of `getRatioAndOffset` (Chart.js ADR 0003).
@@ -746,7 +748,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// The label is `labels[index] || ''`: any value (Chart.js ADR 0028,
   /// section 2). `formatNumber` applies `ToNumber` to the parsed item.
   @override
-  ({Object? label, String value}) getLabelAndValue(int index) {
+  ({List<String> label, String value}) getLabelAndValue(int index) {
     final meta = cachedMeta;
     final chart = this.chart;
     // `chart.data.labels || []`
@@ -759,7 +761,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 
     // `labels[index] || ''`
     final label = jsGetIndex(labels, index);
-    return (label: jsTruthy(label) ? label : '', value: value);
+    return (label: dataLabelLinesOf(label), value: value);
   }
 
   /// controller.doughnut.js:332 `getMaxBorderWidth(arcs)`.

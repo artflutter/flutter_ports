@@ -339,7 +339,9 @@ void main() {
   // The pin tests of the interfaces spec, section 7.3, that need no
   // generated value: the label of the bar is a String.
   group('interfaces', () {
-    testWidgets('getLabelAndValue gives a String label', (tester) async {
+    testWidgets('getLabelAndValue gives the String label as one line', (
+      tester,
+    ) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'bar',
         'data': <String, Object?>{
@@ -360,7 +362,14 @@ void main() {
       final controller = chart.getDatasetMeta(0).controller!;
       expect(
         [for (var i = 0; i < 6; i++) controller.getLabelAndValue(i).label],
-        ['line 1,line 2', '5', '0', 'd', 'undefined', 'undefined'],
+        [
+          ['line 1,line 2'],
+          ['5'],
+          ['0'],
+          ['d'],
+          ['undefined'],
+          ['undefined'],
+        ],
       );
     });
   });

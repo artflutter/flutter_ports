@@ -30,7 +30,6 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
@@ -43,14 +42,15 @@ import 'package:flutter_chartjs_port/src/types/align.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_tooltip_item.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     show tooltipCallbacksOf;
+import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/data_label.dart';
 import '../../support/easing_json.dart';
 import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
@@ -104,53 +104,60 @@ void _log(types.Chart chart, String entry) =>
 final Map<String, Object?> _functions = {
   // The custom positioner of the generator, `position: 'custom'`.
   'positioner:custom': const _CustomPositioner(),
-  'cbTitle': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
-      <String>['Title A', 'Title B'],
-  'cbAfterTitle': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+  'cbTitle': (types.TooltipModel tooltip, List<TooltipItem> items) => <String>[
+    'Title A',
+    'Title B',
+  ],
+  'cbAfterTitle': (types.TooltipModel tooltip, List<TooltipItem> items) =>
       <String>['After 1', 'After 2'],
-  'cbBeforeBody': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+  'cbBeforeBody': (types.TooltipModel tooltip, List<TooltipItem> items) =>
       <String>['5'],
-  'cbBeforeLabel': (types.TooltipModel tooltip, ChartTooltipItem item) =>
-      <String>['Item ${item.datasetIndex}.${item.dataIndex}'],
-  'cbLabel': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+  'cbBeforeLabel': (types.TooltipModel tooltip, TooltipItem item) => <String>[
+    'Item ${item.datasetIndex}.${item.dataIndex}',
+  ],
+  'cbLabel': (types.TooltipModel tooltip, TooltipItem item) =>
       item.datasetIndex == 0 ? <String>['Line 1', 'Line 2'] : null,
-  'cbAfterLabel': (types.TooltipModel tooltip, ChartTooltipItem item) =>
-      <String>[],
-  'cbAfterBody': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+  'cbAfterLabel': (types.TooltipModel tooltip, TooltipItem item) => <String>[],
+  'cbAfterBody': (types.TooltipModel tooltip, List<TooltipItem> items) =>
       <String>['End 1', 'End 2'],
-  'cbBeforeFooter': (
-    types.TooltipModel tooltip,
-    List<ChartTooltipItem> items,
-  ) => <String>['Before footer'],
-  'cbFooter': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
-      <String>['Count: ${items.length}'],
-  'cbAfterFooter': (types.TooltipModel tooltip, List<ChartTooltipItem> items) =>
+  'cbBeforeFooter': (types.TooltipModel tooltip, List<TooltipItem> items) =>
+      <String>['Before footer'],
+  'cbFooter': (types.TooltipModel tooltip, List<TooltipItem> items) => <String>[
+    'Count: ${items.length}',
+  ],
+  'cbAfterFooter': (types.TooltipModel tooltip, List<TooltipItem> items) =>
       <String>[],
-  'cbLabelTextColor': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+  'cbLabelTextColor': (types.TooltipModel tooltip, TooltipItem item) =>
       ChartPaint.solid(
         item.datasetIndex == 0
             ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
             : const native_ui.Color.fromRGBO(0, 0, 255, 1),
       ),
   // (item) => item.datasetIndex !== 1
-  'tooltipFilter': (Object? item) => jsGet(item, 'datasetIndex') != 1.0,
+  'tooltipFilter': (
+    TooltipItem item,
+    int index,
+    List<TooltipItem> items,
+    Object data,
+  ) => item.datasetIndex != 1,
   // (a, b) => b.datasetIndex - a.datasetIndex
-  'tooltipSort': (Object? a, Object? b) =>
-      jsToNumber(jsGet(b, 'datasetIndex')) -
-      jsToNumber(jsGet(a, 'datasetIndex')),
+  'tooltipSort': (TooltipItem a, TooltipItem b, Object data) =>
+      b.datasetIndex - a.datasetIndex,
   // function (context) { log(this.chart, 'external ' + ...) }
-  'tooltipExternal': JsFunction((Object? self, Object? context) {
+  // The native function gets the tooltip and `replay` (row
+  // `adapt-native-tooltip-item`). It writes the text of the upstream log:
+  // the `replay` of upstream is `true` or `undefined`, `context.tooltip` is
+  // `this`, and the keys of the context are `chart,tooltip,replay`.
+  'tooltipExternal': (types.TooltipModel tooltip, bool replay) {
     _log(
-      (self! as types.TooltipModel).chart,
-      'external ${jsToString(jsGet(context, 'replay'))} '
-      '${identical(jsGet(context, 'tooltip'), self)} '
-      '${jsObjectKeys(context).join(',')}',
+      tooltip.chart,
+      'external ${replay ? 'true' : 'undefined'} true chart,tooltip,replay',
     );
-  }),
+  },
   // (item) => ({borderColor: item.datasetIndex === 0 ? 'red' : 'green',
   // backgroundColor: 'blue', borderWidth: {top: 1, left: 2}, borderDash:
   // [2, 1], borderDashOffset: 1, borderRadius: 3})
-  'roundLabelColor': (types.TooltipModel tooltip, ChartTooltipItem item) =>
+  'roundLabelColor': (types.TooltipModel tooltip, TooltipItem item) =>
       TooltipLabelStyle(
         borderColor: ChartPaint.solid(
           item.datasetIndex == 0
@@ -247,20 +254,15 @@ Object? _observeTooltip(Chart chart) {
       'labelPointStyles',
       'labelTextColors',
     ])
-      key: plainValue(byName[key]),
+      key: key == 'body'
+          ? switch (model.body) {
+              null => undefined,
+              final body => [for (final item in body) plainBodyItem(item)],
+            }
+          : plainValue(byName[key]),
     'dataPoints': switch (model.dataPoints) {
       null => undefined,
-      final points => [
-        for (final p in points)
-          <String, Object?>{
-            'datasetIndex': jsGet(p, 'datasetIndex'),
-            'dataIndex': jsGet(p, 'dataIndex'),
-            'label': jsGet(p, 'label'),
-            'formattedValue': jsGet(p, 'formattedValue'),
-            'parsed': plainValue(jsGet(p, 'parsed')),
-            'raw': plainValue(jsGet(p, 'raw')),
-          },
-      ],
+      final points => [for (final p in points) plainTooltipItem(p, plainValue)],
     },
     'active': [
       for (final a in model.getActiveElements()) [a.datasetIndex, a.index],
@@ -355,7 +357,21 @@ final Map<String, Object? Function(Chart chart)> _extras = {
 final List<ScaleChartCase> _reference = _mapObservations([
   ...pluginTooltipReference(_functions),
   ...pluginTooltipMoreReference(_functions),
-], _undefinedAxisIds);
+], (observation) => _nativeItems(_undefinedAxisIds(observation)));
+
+/// [observation] with the native tooltip items in `plugins.tooltip` (row
+/// `adapt-native-tooltip-item`): the native label, and Dart `null` for an
+/// `undefined` `parsed` or `raw`.
+AnyObject _nativeItems(AnyObject observation) => <String, Object?>{
+  ...observation,
+  'plugins.tooltip': switch (observation['plugins.tooltip']) {
+    final Map<String, Object?> tooltip => <String, Object?>{
+      ...tooltip,
+      'dataPoints': nativeDataPoints(tooltip['dataPoints']),
+    },
+    final other => other,
+  },
+};
 
 /// The reference cases of the themed run: [_reference] with the parsed text
 /// colors of [_parseTextColors].
@@ -520,7 +536,7 @@ List<Object?> _pairs(List<types.ActiveElement> items) => [
 
 /// `[...[body item].lines]` of each body item of [tooltip].
 List<Object?> _bodyLines(Tooltip tooltip) => [
-  for (final item in tooltip.body!) jsGet(item, 'lines'),
+  for (final item in tooltip.body!) item.lines,
 ];
 
 /// Whether [actual] is the reference value [expected]: the same type and
@@ -610,7 +626,7 @@ void main() {
     testWidgets('hooks share the item list and result lists are copied', (
       tester,
     ) async {
-      List<ChartTooltipItem>? titleItems;
+      List<TooltipItem>? titleItems;
       final returned = <String>['one line'];
       final chart = acquireChart(
         _probeChart({
@@ -674,12 +690,11 @@ void main() {
     }
 
     test('merge uses each supplied field and retains the others', () {
-      List<String> title(types.TooltipModel t, List<ChartTooltipItem> items) =>
-          ['title'];
-      List<String> label(types.TooltipModel t, ChartTooltipItem item) => [
-        'label',
+      List<String> title(types.TooltipModel t, List<TooltipItem> items) => [
+        'title',
       ];
-      List<String> replacement(types.TooltipModel t, ChartTooltipItem item) => [
+      List<String> label(types.TooltipModel t, TooltipItem item) => ['label'];
+      List<String> replacement(types.TooltipModel t, TooltipItem item) => [
         'replacement',
       ];
       final base = TooltipCallbacks(title: title, label: label);
@@ -981,6 +996,9 @@ void main() {
       final t = _newTooltip();
       final chart = _FakeChart();
       final list = <Object?>['a'];
+      final lines = <String>['a'];
+      final body = <types.TooltipBodyItem>[];
+      final items = <TooltipItem>[];
       final active = <types.ActiveElement>[];
       final animations = Animations(chart, false);
       final context = <String, Object?>{};
@@ -992,12 +1010,12 @@ void main() {
         'caretY': 2.0,
         'xAlign': TooltipXAlign.left,
         'yAlign': TooltipYAlign.top,
-        'title': list,
-        'beforeBody': list,
-        'body': list,
-        'afterBody': list,
-        'footer': list,
-        'dataPoints': list,
+        'title': lines,
+        'beforeBody': lines,
+        'body': body,
+        'afterBody': lines,
+        'footer': lines,
+        'dataPoints': items,
         'labelColors': list,
         'labelPointStyles': list,
         'labelTextColors': list,
@@ -1006,7 +1024,7 @@ void main() {
         '_eventPosition': 'any value',
         '_size': (width: 3.0, height: 4.0),
         '_cachedAnimations': animations,
-        '_tooltipItems': list,
+        '_tooltipItems': items,
         r'$context': context,
         '_ignoreReplayEvents': true,
       };
@@ -1017,7 +1035,7 @@ void main() {
       }
       expect(t.chart, same(chart));
       expect(t.getActiveElements(), same(active));
-      expect(t.title, same(list));
+      expect(t.title, same(lines));
       expect(t.width, 10);
       // An int becomes a double.
       t['caretX'] = 7;
@@ -1361,9 +1379,10 @@ void main() {
       expect(callbacks.title, isNotNull);
     });
 
-    testWidgets('a scatter chart keeps the raw label', (tester) async {
+    testWidgets('a scatter chart gives the lines of the label', (tester) async {
       // The probe outputs `scatter0` {label: 7, title: [7]} and `scatter1`
-      // {label: '', title: []}.
+      // {label: '', title: []}. The native label is the line of the number,
+      // and no line for the empty label.
       final chart = acquireChart(<String, Object?>{
         'type': 'scatter',
         'data': <String, Object?>{
@@ -1384,10 +1403,10 @@ void main() {
       });
       final t = _tooltipOf(chart);
       _activate(chart, 0);
-      expect(jsGet(t.dataPoints![0], 'label'), 7);
+      expect(t.dataPoints![0].label, ['7']);
       expect(t.title, ['7']);
       _activate(chart);
-      expect(jsGet(t.dataPoints![0], 'label'), '');
+      expect(t.dataPoints![0].label, isEmpty);
       expect(t.title, isEmpty);
     });
 
@@ -1452,9 +1471,7 @@ void main() {
               'data': <Object?>[5, 15, 25],
               'tooltip': <String, Object?>{
                 'callbacks': TooltipCallbacks(
-                  label: (tooltip, item) => [
-                    jsToString(jsAdd('D1 ', jsGet(item, 'formattedValue'))),
-                  ],
+                  label: (tooltip, item) => ['D1 ${item.formattedValue}'],
                   beforeLabel: (tooltip, arg) => 'pre'.split('\n'),
                   labelTextColor: (tooltip, arg) => const ChartPaint.solid(
                     native_ui.Color.fromRGBO(255, 0, 0, 1),
@@ -1485,8 +1502,8 @@ void main() {
         ['one: 20'],
         ['D1 15'],
       ]);
-      expect(jsGet(t.body![0], 'before'), isEmpty);
-      expect(jsGet(t.body![1], 'before'), ['pre']);
+      expect(t.body![0].before, isEmpty);
+      expect(t.body![1].before, ['pre']);
       expect(
         t.labelTextColors!.cast<SolidChartPaint>().map((paint) => paint.color),
         [
@@ -1694,20 +1711,18 @@ void main() {
   });
 
   group('external', () {
-    testWidgets('external gets the tooltip as this and replay', (tester) async {
+    testWidgets('external gets the tooltip and replay', (tester) async {
       // The probe output `external`: [undefined, true,
       // 'chart,tooltip,replay'] for the mousemove, [true, ...] for the replay
-      // of chart.update(), [undefined, ...] for setActiveElements.
+      // of chart.update(), [undefined, ...] for setActiveElements. The native
+      // function gets the tooltip and a bool `replay`.
       final entries = <String>[];
-      final chart = acquireChart(
+      late final Chart chart;
+      chart = acquireChart(
         _probeChart(<String, Object?>{
-          'external': JsFunction((Object? self, Object? context) {
-            entries.add(
-              '${jsToString(jsGet(context, 'replay'))} '
-              '${identical(jsGet(context, 'tooltip'), self)} '
-              '${jsObjectKeys(context).join(',')}',
-            );
-          }),
+          'external': (types.TooltipModel tooltip, bool replay) {
+            entries.add('$replay ${identical(tooltip, chart.tooltip)}');
+          },
         }),
       );
       final point = chart.getDatasetMeta(0).data[1];
@@ -1716,11 +1731,7 @@ void main() {
       _tooltipOf(chart).setActiveElements([
         const ActiveElement(datasetIndex: 0, index: 2),
       ], _point(10, 10));
-      expect(entries, [
-        'undefined true chart,tooltip,replay',
-        'true true chart,tooltip,replay',
-        'undefined true chart,tooltip,replay',
-      ]);
+      expect(entries, ['false true', 'true true', 'false true']);
     });
   });
 
@@ -1746,13 +1757,13 @@ void main() {
     });
   });
 
-  group('this of filter and itemSort', () {
-    // plugin.tooltip.js:615 and :620 are method calls: `this` is the
-    // options resolver. The expected values come from a probe of phase 8
-    // (the pinned Chart.js build in Node.js v24.12.0 on x64), on the probe
-    // chart with a second dataset `two`
-    // (data 1, 2 and 3), mode index, intersect false, and the items
-    // {datasetIndex: 0, index: 1} and {datasetIndex: 1, index: 1}.
+  group('filter and itemSort', () {
+    // plugin.tooltip.js:615 and :620 call the two options. The native
+    // functions get no `this` (row `adapt-native-tooltip-item`). The
+    // expected values come from a probe of phase 8 (the pinned Chart.js
+    // build in Node.js v24.12.0 on x64), on the probe chart with a second
+    // dataset `two` (data 1, 2 and 3), mode index, intersect false, and the
+    // items {datasetIndex: 0, index: 1} and {datasetIndex: 1, index: 1}.
     AnyObject twoDatasets(AnyObject tooltipOptions) {
       final config = _probeChart(tooltipOptions);
       ((config['data']! as AnyObject)['datasets']! as List<Object?>).add(
@@ -1772,72 +1783,68 @@ void main() {
       <String, Object?>{'x': 150, 'y': 100},
     );
 
-    // The probe prints the name of the positioner, `average`. The option of
-    // the port holds the positioner object: the test prints its class.
-    String position(Object? self) => identical(self, undefined)
-        ? 'undefined'
-        : '${jsGet(self, 'position').runtimeType}';
-
-    testWidgets('filter and itemSort get the options as this', (tester) async {
-      // The probe output `thisOfCallbacks`: [[filter, average], [filter,
-      // average], [itemSort, average]].
-      final seen = <List<String>>[];
+    testWidgets('filter gets each item and itemSort gets a pair', (
+      tester,
+    ) async {
+      // The probe output `thisOfCallbacks`: two filter calls, then one
+      // itemSort call.
+      final seen = <List<Object?>>[];
       final chart = acquireChart(
         twoDatasets(<String, Object?>{
           'mode': const IndexInteractionMode(),
           'intersect': false,
-          'filter': JsFunction((
-            Object? self,
-            Object? a,
-            Object? b,
-            Object? c,
-            Object? d,
-          ) {
-            seen.add(['filter', position(self)]);
-            return true;
-          }),
-          'itemSort': JsFunction((
-            Object? self,
-            Object? a,
-            Object? b,
-            Object? c,
-          ) {
-            seen.add(['itemSort', position(self)]);
+          'filter':
+              (
+                TooltipItem item,
+                int index,
+                List<TooltipItem> items,
+                Object data,
+              ) {
+                seen.add([
+                  'filter',
+                  item.datasetIndex,
+                  index,
+                  items.length,
+                  identical(items[index], item),
+                ]);
+                return true;
+              },
+          'itemSort': (TooltipItem a, TooltipItem b, Object data) {
+            seen.add(['itemSort', identical(data, a.chart.data)]);
             return 0;
-          }),
+          },
         }),
       );
       activateBoth(chart);
       expect(seen, [
-        ['filter', 'AverageTooltipPositioner'],
-        ['filter', 'AverageTooltipPositioner'],
-        ['itemSort', 'AverageTooltipPositioner'],
+        ['filter', 0, 0, 2, true],
+        ['filter', 1, 1, 2, true],
+        ['itemSort', true],
       ]);
     });
 
-    testWidgets('a filter and an itemSort that read this', (tester) async {
+    testWidgets('a filter that keeps each item and a reversed itemSort', (
+      tester,
+    ) async {
       // The probe output `readsThis`: the data points [1, 0] and the body
       // [[two: 2], [one: 20]].
       final chart = acquireChart(
         twoDatasets(<String, Object?>{
           'mode': const IndexInteractionMode(),
           'intersect': false,
-          'filter': JsFunction(
-            (Object? self, Object? a, Object? b, Object? c, Object? d) =>
-                jsGet(self, 'position') is AverageTooltipPositioner,
-          ),
-          'itemSort': JsFunction(
-            (Object? self, Object? a, Object? b, Object? c) =>
-                jsGet(self, 'mode') is IndexInteractionMode
-                ? jsToNumber(jsGet(b, 'datasetIndex')) -
-                      jsToNumber(jsGet(a, 'datasetIndex'))
-                : 0,
-          ),
+          'filter': (
+            TooltipItem item,
+            int index,
+            List<TooltipItem> items,
+            Object data,
+          ) => true,
+          'itemSort': (TooltipItem a, TooltipItem b, Object data) =>
+              b.datasetIndex - a.datasetIndex,
         }),
       );
       activateBoth(chart);
       final t = _tooltipOf(chart);
-      expect([for (final p in t.dataPoints!) jsGet(p, 'datasetIndex')], [1, 0]);
+      expect([for (final p in t.dataPoints!) p.datasetIndex], [1, 0]);
       expect(_bodyLines(t), [
         ['two: 2'],
         ['one: 20'],

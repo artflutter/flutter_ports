@@ -30,7 +30,7 @@ Object? _segmentColor(JsObjectFace segment) =>
     ChartPaint.solid(_rainfall[(segment['p1DataIndex']! as num).toInt()].$2);
 
 // The marker in the tooltip takes the color of the point.
-TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, ChartTooltipItem item) =>
+TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, TooltipItem item) =>
     TooltipLabelStyle(
       borderColor: const ChartPaint.solid(Colors.white),
       backgroundColor: ChartPaint.solid(_rainfall[item.dataIndex].$2),
@@ -40,8 +40,8 @@ List<String>? _mm(Scale scale, double value, int index, List<Tick> ticks) => [
   '${value.round()}mm',
 ];
 
-String? _tooltipLabel(ChartTooltipItem item) =>
-    '${item.label} : ${item.formattedValue}mm';
+String? _tooltipLabel(TooltipItem item) =>
+    '${item.label.join(" ")} : ${item.formattedValue}mm';
 
 // TrackballBehavior draws a vertical line at the active point.
 final Map<String, Object?> _trackball = {
@@ -161,7 +161,7 @@ final ChartConfig _config = ChartConfig(
   },
 );
 
-List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
+List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
 
 class const SfMultiColoredLine({super.key}) extends StatelessWidget {
