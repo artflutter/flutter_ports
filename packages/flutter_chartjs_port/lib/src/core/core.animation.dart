@@ -55,8 +55,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
-    show Color;
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
@@ -65,6 +63,8 @@ import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    show Color;
 import 'package:meta/meta.dart';
 
 /// core.animation.js:5 `transparent`.

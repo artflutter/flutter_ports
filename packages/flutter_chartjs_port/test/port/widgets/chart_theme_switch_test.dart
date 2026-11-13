@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartConfigurationScope;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -29,6 +28,8 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    as kurkle;
 import 'package:flutter_test/flutter_test.dart';
 
 // theming.md §8 test 8: the runtime theme switch of ChartView (Chart.js ADR

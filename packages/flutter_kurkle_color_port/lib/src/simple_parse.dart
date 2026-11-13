@@ -1,6 +1,6 @@
-// Original code, not ported from Chart.js: guarded comma-color parsing.
+// Original code, not ported from @kurkle/color: guarded comma-color parsing.
 
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
 
 /// Parses only unsigned integral channels in canonical comma notation.
 /// Other forms return null so the upstream regular expressions decide them.

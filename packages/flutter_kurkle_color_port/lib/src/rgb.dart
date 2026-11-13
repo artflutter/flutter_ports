@@ -13,10 +13,10 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
-import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/simple_parse.dart';
+import 'package:flutter_kurkle_color_port/src/byte.dart';
+import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/src/numbers.dart';
+import 'package:flutter_kurkle_color_port/src/simple_parse.dart';
 
 /// rgb.js:15 `RGB_RE`.
 final RegExp _rgbRe = RegExp(
@@ -33,7 +33,7 @@ const bool _javascript =
 /// Parse rgb(a) string to RGBA. Dart `null` stands for the JS `undefined`
 /// result.
 RGBA? rgbParse(String str) {
-  // DIVERGES(chartjs): adapt-kurkle-simple-colors, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-simple-colors, performance optimisations.
   final start = _rgbStart(str);
   if (start != 0) {
     final simple = simpleColor(str, start, percentages: false);
@@ -57,7 +57,7 @@ RGBA? rgbParse(String str) {
   }
 
   // r is undefined
-  // DIVERGES(chartjs): adapt-kurkle-decimal-groups, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-decimal-groups, performance optimisations.
   if (m[7] != null) {
     final v = double.tryParse(m[7]!) ?? double.nan;
     a = m[8] != null ? p2b(v) : lim(v * 255, 0, 255);
@@ -85,7 +85,7 @@ String? rgbString(RGBA? v) {
   final g = v.g;
   final b = v.b;
   final opacity = alpha ? b2n(v.a) : 0.0;
-  // DIVERGES(chartjs): adapt-kurkle-color-strings, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-color-strings, performance optimisations.
   if (!_javascript && _byte(r) && _byte(g) && _byte(b)) {
     final codes = Uint8List(32);
     codes[0] = 114;

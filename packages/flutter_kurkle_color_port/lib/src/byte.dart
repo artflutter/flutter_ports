@@ -9,7 +9,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
+import 'package:flutter_kurkle_color_port/src/numbers.dart';
 
 /// byte.js:10 `round`.
 ///
@@ -28,7 +28,7 @@ double lim(double v, double l, double h) => math.max(math.min(v, h), l);
 /// convert percent to byte 0..255
 @pragma('vm:prefer-inline')
 double p2b(double v) {
-  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-byte-bounds, performance optimisations.
   if (v >= 0 && v <= 100) return (v * 2.55 + 0.5).truncateToDouble();
   return lim(round(v * 2.55), 0, 255);
 }
@@ -38,7 +38,7 @@ double p2b(double v) {
 /// convert byte to percet 0..100
 @pragma('vm:prefer-inline')
 double b2p(double v) {
-  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-byte-bounds, performance optimisations.
   if (v >= 0 && v <= 255) return (v / 2.55 + 0.5).truncateToDouble();
   return lim(round(v / 2.55), 0, 100);
 }
@@ -48,7 +48,7 @@ double b2p(double v) {
 /// convert normalized to byte 0..255
 @pragma('vm:prefer-inline')
 double n2b(double v) {
-  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-byte-bounds, performance optimisations.
   if (v >= 0 && v <= 1) return (v * 255 + 0.5).truncateToDouble();
   return lim(round(v * 255), 0, 255);
 }
@@ -58,7 +58,7 @@ double n2b(double v) {
 /// convert byte to normalized 0..1
 @pragma('vm:prefer-inline')
 double b2n(double v) {
-  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-byte-bounds, performance optimisations.
   if (v >= 0 && v <= 255) return (v / 2.55 + 0.5).truncateToDouble() / 100;
   return lim(round(v / 2.55) / 100, 0, 1);
 }
@@ -68,7 +68,7 @@ double b2n(double v) {
 /// convert normalized to percent 0..100
 @pragma('vm:prefer-inline')
 double n2p(double v) {
-  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-byte-bounds, performance optimisations.
   if (v >= 0 && v <= 1) return (v * 100 + 0.5).truncateToDouble();
   return lim(round(v * 100), 0, 100);
 }

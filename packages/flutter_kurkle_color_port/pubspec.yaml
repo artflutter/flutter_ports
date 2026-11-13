@@ -1,0 +1,31 @@
+name: flutter_kurkle_color_port
+description: >-
+  A native Dart port of @kurkle/color 0.3.2, the color library of Chart.js:
+  hex, rgb, hsl, hwb and hsv parsing, CSS color names, color manipulation and
+  conversion from a Flutter Color.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_kurkle_color_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - color
+  - css
+  - chartjs
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  # The Color constructor takes a Flutter Color (dart:ui).
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  # The tests use package:test; flutter test runs them on the VM and in
+  # Chrome. The constraint is the test constraint of flutter_chartjs_port.
+  test: ^1.32.0
+  # analysis_options.yaml includes its rules, as the root file does. The
+  # constraint is the constraint of the root pubspec.
+  very_good_analysis: ^11.0.0

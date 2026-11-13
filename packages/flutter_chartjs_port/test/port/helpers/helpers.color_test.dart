@@ -3,9 +3,9 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
-    show Color;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    show Color;
 import 'package:test/test.dart';
 
 // The behaviour of helpers.color that test/specs/helpers.color.tests.js does

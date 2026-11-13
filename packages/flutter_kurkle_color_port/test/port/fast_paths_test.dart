@@ -1,14 +1,15 @@
-// Original code, not ported from Chart.js: color fast-path equivalence tests.
+// Original code, not ported from @kurkle/color: color fast-path equivalence tests.
 
-import 'package:chartjs_test_utils/pure.dart' show referenceColor;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsToInt32;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsNumberToString;
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart';
+import 'package:flutter_kurkle_color_port/src/index.esm.dart';
 import 'package:test/test.dart';
+
+import '../support/reference.dart';
 
 ({double r, double g, double b, double a})? _members(RGBA? v) =>
     v == null ? null : (r: v.r, g: v.g, b: v.b, a: v.a);
+
+/// The JS text of a percentage `k / 100` that b2n gives.
+String _text(double v) => v == v.truncateToDouble() ? '${v.toInt()}' : '$v';
 
 void main() {
   group('adapt-kurkle-color-dispatch', () {
@@ -20,15 +21,15 @@ void main() {
         'rgb(255,0,0)',
         'hsl(0,100%,50%)',
       ]) {
-        expect(referenceColor(input).hexString(), '#F00');
+        expect(cssColor(input).hexString(), '#F00');
       }
       for (final input in ['', '#ab', 'rgb(', 'RGB(255,0,0)', 'constructor']) {
-        expect(referenceColor(input).valid, isFalse);
+        expect(cssColor(input).valid, isFalse);
       }
-      expect(referenceColor('#ggg').valid, isTrue);
-      expect(referenceColor('#ggg').hexString(), '#000');
-      expect(referenceColor('LİME').valid, isFalse);
-      expect(referenceColor('LIME').hexString(), '#0F0');
+      expect(cssColor('#ggg').valid, isTrue);
+      expect(cssColor('#ggg').hexString(), '#000');
+      expect(cssColor('LİME').valid, isFalse);
+      expect(cssColor('LIME').hexString(), '#0F0');
     });
   });
 
@@ -182,7 +183,7 @@ void main() {
         ([12, 34, 56, 0.5], [255, 128, 0, 0.5], -1, [242, 222, 201, 0.5]),
       ];
       for (final (from, to, weight, expected) in cases) {
-        final rgb = referenceColor(from).mix(referenceColor(to), weight).rgb!;
+        final rgb = cssColor(from).mix(cssColor(to), weight).rgb!;
         expect([rgb.r, rgb.g, rgb.b, rgb.a], expected);
       }
     });
@@ -213,11 +214,11 @@ void main() {
         ],
       ];
       final functions = <(double Function(double), double Function(double))>[
-        (p2b, (v) => lim(jsToInt32(v * 2.55 + 0.5), 0, 255)),
-        (b2p, (v) => lim(jsToInt32(v / 2.55 + 0.5), 0, 100)),
-        (n2b, (v) => lim(jsToInt32(v * 255 + 0.5), 0, 255)),
-        (b2n, (v) => lim(jsToInt32(v / 2.55 + 0.5) / 100, 0, 1)),
-        (n2p, (v) => lim(jsToInt32(v * 100 + 0.5), 0, 100)),
+        (p2b, (v) => lim(referenceToInt32(v * 2.55 + 0.5), 0, 255)),
+        (b2p, (v) => lim(referenceToInt32(v / 2.55 + 0.5), 0, 100)),
+        (n2b, (v) => lim(referenceToInt32(v * 255 + 0.5), 0, 255)),
+        (b2n, (v) => lim(referenceToInt32(v / 2.55 + 0.5) / 100, 0, 1)),
+        (n2p, (v) => lim(referenceToInt32(v * 100 + 0.5), 0, 100)),
       ];
       for (final (actual, reference) in functions) {
         for (final value in values) {
@@ -245,7 +246,7 @@ void main() {
         double.infinity,
         double.negativeInfinity,
       ]) {
-        final byte = jsToInt32(value).toInt() & 255;
+        final byte = referenceToInt32(value).toInt() & 255;
         final expected =
             '#${byte.toRadixString(16).padLeft(2, '0').toUpperCase()}1122';
         // Alpha 300 is omitted but forces the long form in upstream.
@@ -275,7 +276,7 @@ void main() {
             a: alpha,
           );
           final expected = alpha < 255
-              ? 'rgba($i, ${255 - i}, 17, ${jsNumberToString(b2n(alpha))})'
+              ? 'rgba($i, ${255 - i}, 17, ${_text(b2n(alpha))})'
               : 'rgb($i, ${255 - i}, 17)';
           expect(rgbString(v), expected);
         }
@@ -303,7 +304,7 @@ void main() {
 
   group('adapt-kurkle-color-copies', () {
     test('clone retains alpha quantization and independent mutation', () {
-      final original = referenceColor('rgba(1,2,3,0.5)');
+      final original = cssColor('rgba(1,2,3,0.5)');
       final copied = original.clone();
       expect(original.hexString(), '#0102037F');
       expect(copied.hexString(), '#01020380');
@@ -315,18 +316,18 @@ void main() {
     });
 
     test('clone of an invalid color with assigned RGB becomes valid', () {
-      final c = referenceColor('invalid')..rgb = [1, 2, 3, 0.4];
+      final c = cssColor('invalid')..rgb = [1, 2, 3, 0.4];
       expect(c.valid, isFalse);
       expect(c.clone().valid, isTrue);
       expect(_members(c.clone().rgb), (r: 1.0, g: 2.0, b: 3.0, a: 0.4));
-      expect(referenceColor('invalid').clone().valid, isFalse);
+      expect(cssColor('invalid').clone().valid, isFalse);
     });
 
     test('self-mixing keeps the setter alpha conversion', () {
-      final c = referenceColor('rgba(12,34,56,0.5)');
+      final c = cssColor('rgba(12,34,56,0.5)');
       c.mix(c, 0.25);
       expect(c.hexString(), '#0C223880');
-      final other = referenceColor('#ff638480');
+      final other = cssColor('#ff638480');
       final before = other.hexString();
       c.mix(other, 0.3);
       expect(other.hexString(), before);

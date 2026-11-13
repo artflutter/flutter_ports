@@ -29,6 +29,9 @@ dependencies:
   # (Chart.js ADR 0047).
   flutter_chartjs_port:
     path: ../../packages/flutter_chartjs_port
+  # The @kurkle/color port: the Color demo and the readout colors.
+  flutter_kurkle_color_port:
+    path: ../../packages/flutter_kurkle_color_port
   material_ui: ^1.10.0
 
 dev_dependencies:

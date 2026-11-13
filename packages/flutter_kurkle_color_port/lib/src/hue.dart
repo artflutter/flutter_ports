@@ -13,10 +13,10 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
-import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/simple_parse.dart';
+import 'package:flutter_kurkle_color_port/src/byte.dart';
+import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/src/numbers.dart';
+import 'package:flutter_kurkle_color_port/src/simple_parse.dart';
 
 /// hue.js:15 `HUE_RE`.
 final RegExp _hueRe = RegExp(
@@ -119,7 +119,7 @@ List<double> rgb2hsl(RGBA v) {
     h = h * 60 + 0.5;
   }
   // `h | 0` and `s || 0`: an undefined h is NaN for ToInt32, which gives 0.
-  // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-hue-arrays, performance optimisations.
   // An if-element grows a list; the expression keeps a three-element literal.
   // ignore: prefer_if_elements_to_conditional_expressions
   return [toInt32(h ?? double.nan).toDouble(), isNonZero(s) ? s! : 0, l];
@@ -145,7 +145,7 @@ List<double> _calln(
           b?.toDouble() ?? double.nan,
           c?.toDouble() ?? double.nan,
         );
-  // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-hue-arrays, performance optimisations.
   for (var i = 0; i < 3; i++) {
     rgb[i] = n2b(rgb[i]);
   }
@@ -191,7 +191,7 @@ double _hue(double h) {
 /// Parse hsl/hsv/hwb color string. Dart `null` stands for the JS
 /// `undefined` result.
 RGBA? hueParse(String str) {
-  // DIVERGES(chartjs): adapt-kurkle-simple-colors, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-simple-colors, performance optimisations.
   final start = _hueStart(str);
   if (start != 0) {
     final simple = simpleColor(str, start, percentages: true);
@@ -219,7 +219,7 @@ RGBA? hueParse(String str) {
     return null;
   }
   // v is undefined
-  // DIVERGES(chartjs): adapt-kurkle-decimal-groups, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-decimal-groups, performance optimisations.
   if (m[5] != null) {
     a = m[6] != null
         ? p2b(double.tryParse(m[5]!) ?? double.nan)

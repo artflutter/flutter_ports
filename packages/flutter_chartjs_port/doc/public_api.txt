@@ -912,7 +912,6 @@ hwb2rgb
 infinity
 initCanvas
 int16Range
-interpolate
 interpolatedLineTo
 invalidateCanvasTextMetrics
 isArray
@@ -964,6 +963,7 @@ jsToInt32
 jsToNumber
 jsToString
 jsTruthy
+kurkleColorVersion
 layoutCanvasText
 layouts
 legend
@@ -1076,7 +1076,6 @@ setsEqual
 shaderFor
 shouldApplyFill
 sign
-simpleColor
 splineCurve
 splineCurveDefault
 splineCurveMonotone
@@ -1118,7 +1117,6 @@ unclipArea
 undefined
 uniqueSortedBarValues
 unlistenArrayEvents
-unpack
 updateBezierControlPoints
 validateChartColors
 valueOrDefault

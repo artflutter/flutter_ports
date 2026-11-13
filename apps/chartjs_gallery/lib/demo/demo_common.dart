@@ -6,8 +6,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 // Not public: jsNumberToString, the JS text of a number in the readouts.
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
-// Not public: the Color class of the @kurkle/color port (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
+// The Color class of the @kurkle/color port.
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart' as kc;
 import 'package:material_ui/material_ui.dart';
 
 /// The JavaScript text of the number [value] (`Number.prototype.toString`),

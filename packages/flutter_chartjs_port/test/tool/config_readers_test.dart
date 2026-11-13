@@ -76,12 +76,8 @@ list:
       final sources = parsePortSources(
         File('tool/port_sources.yaml').readAsStringSync(),
       );
-      expect(sources.map((s) => s.header), [
-        'Chart.js',
-        '@kurkle/color',
-        'chartjs-test-utils',
-      ]);
-      expect(sources.map((s) => s.language), ['js', 'js', 'js']);
+      expect(sources.map((s) => s.header), ['Chart.js', 'chartjs-test-utils']);
+      expect(sources.map((s) => s.language), ['js', 'js']);
       final chartJs = sources.first;
       expect(
         chartJs.dartPathOf('src/helpers/helpers.math.ts'),
@@ -96,7 +92,7 @@ list:
         'packages/flutter_chartjs_port/test/flutter_test_config.dart',
       );
       expect(
-        sources[2].dartPathOf('src/utils.js'),
+        sources[1].dartPathOf('src/utils.js'),
         'packages/chartjs_test_utils/lib/src/utils.dart',
       );
       // A commit pin links its full commit, a tag pin its tag.
@@ -105,7 +101,7 @@ list:
         chartJs.treeRef,
         chartJs.isCommitPin ? chartJs.pinCommit : chartJs.version,
       );
-      expect(sources[2].treeRef, sources[2].version);
+      expect(sources[1].treeRef, sources[1].version);
     });
   });
 
@@ -252,7 +248,7 @@ list:
         host.sources.map(
           (s) => s.versionConstantIn('packages/flutter_chartjs_port'),
         ),
-        ['chartJsVersion', null, null],
+        ['chartJsVersion', null],
       );
       expect(host.sources.first.repository, 'chartjs/Chart.js');
 
@@ -291,6 +287,26 @@ list:
               '$zoomPackage/test/fixtures/hand/zoom/category.dart',
           'test/index.js': '$zoomPackage/test/flutter_test_config.dart',
         },
+      );
+
+      const colorPackage = 'packages/flutter_kurkle_color_port';
+      final color = parsePortSourcesFile(
+        File('../flutter_kurkle_color_port/tool/port_sources.yaml')
+            .readAsStringSync(),
+      );
+      expect(color.marker, 'kurkle');
+      expect(color.host, isNull);
+      final kurkle = color.sources.single;
+      expect(kurkle.header, '@kurkle/color');
+      expect(kurkle.versionConstantIn(colorPackage), 'kurkleColorVersion');
+      expect(kurkle.dartPathOf('src/hue.js'), '$colorPackage/lib/src/hue.dart');
+      expect(
+        kurkle.dartPathOf('packed.js'),
+        '$colorPackage/lib/src/packed.dart',
+      );
+      expect(
+        kurkle.dartPathOf('test/index.js'),
+        '$colorPackage/test/index_test.dart',
       );
     });
   });

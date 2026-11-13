@@ -990,7 +990,7 @@ The tests of `packages/chartjs_test_utils` without `@TestOn('vm')` follow the pu
 melos script `test:web` runs them in Chrome too (phase 3).
 
 A pure-layer file is a file whose transitive imports reach neither `dart:ui` nor
-`package:flutter`. The pure layers are `lib/src/js`, `lib/src/types`, `lib/src/kurkle_color`, the
+`package:flutter`. The pure layers are `lib/src/js`, `lib/src/types`, the
 canvas interface, the `core.defaults` closure, all helpers except `helpers.extras`, `core.element`
 and the files of `lib/src/elements/` ([Chart.js ADR 0017](adr/0017-element-properties.md), section
 10), and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`.
@@ -1049,8 +1049,8 @@ and 8. Tool 1 uses allowlists:
   `package:clock/clock.dart` ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
 - Pure layers: the same list without `dart:ui` and `package:flutter`, over the transitive closure.
   The roots of the closure are the list `pureRoots` of `tool/src/lib_imports.dart`:
-  - `lib/src/js/`, `lib/src/types/`, `lib/src/kurkle_color/` and the helpers except
-    `helpers.extras`
+  - `lib/src/js/`, `lib/src/types/` and the helpers except `helpers.extras`; the public
+    library of the color package `flutter_kurkle_color_port` is on the pure allowlist
   - `core.defaults`, `core.element`, `core.config`, `core.adapters`, `core.interaction`,
     `core.layouts`, `core.animation`, `animation_spec`, `tick_font_cache` and
     `core.typedRegistry`

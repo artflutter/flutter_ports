@@ -11,7 +11,9 @@ of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`,
 next. Fifth port: chartjs-chart-sankey 0.19.1, an add-on of the Chart.js port and the first chart
 type of another package → `packages/flutter_chartjs_chart_sankey_port`, phases 0-4 done (each
 file of `src/` ported; the unit tests, the specs and the fixtures pass; a gallery page), phase 5
-next.
+next. Sixth port: @kurkle/color 0.3.2, the color library of the Chart.js port →
+`packages/flutter_kurkle_color_port`, a package of its own (version 0.1.0, on pub.dev), with no
+import of another port.
 
 ## Commands
 
@@ -46,7 +48,8 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   each shard, for the `test/upstream_test.dart` of `flutter_chartjs_port`, `flutter_d3_port`,
   `flutter_echarts_port`, `flutter_chartjs_plugin_zoom_port` and
   `flutter_chartjs_chart_sankey_port`.
-- `dart run melos run test:web`: the `flutter_chartjs_port` and `chartjs_test_utils` tests without
+- `dart run melos run test:web`: the `flutter_chartjs_port`, `chartjs_test_utils` and
+  `flutter_kurkle_color_port` tests without
   `@TestOn('vm')`, in Chrome through Flutter (JavaScript/DDC and WebAssembly). `tool/test_web.dart`
   selects browser-capable files before compilation. A leg fails when it ends by a signal or exits
   with 0 without the summary of a run that passed: `flutter test` exits with 0 when a SIGTERM stops
@@ -78,11 +81,12 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     with the host only.
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of the home
     package and of each package that a `dart` target of its `tool/port_sources.yaml` names. The
-    script runs it three times: `flutter_chartjs_port` with `chartjs_test_utils`, then
+    script runs it four times: `flutter_chartjs_port` with `chartjs_test_utils`, then
     `packages/flutter_chartjs_plugin_zoom_port` alone, then
-    `packages/flutter_chartjs_chart_sankey_port` alone. The primary project of the home is the
+    `packages/flutter_chartjs_chart_sankey_port` alone, then `packages/flutter_kurkle_color_port`
+    alone. The primary project of the home is the
     entry whose `version_source` is `<constant> in <home>/lib/src/upstream.dart` (Chart.js,
-    chartjs-plugin-zoom, chartjs-chart-sankey). Its `version` is `v<constant value>`, the port-only marker names it, and
+    chartjs-plugin-zoom, chartjs-chart-sankey, @kurkle/color). Its `version` is `v<constant value>`, the port-only marker names it, and
     a backport line names the `<owner>/<repo>` of its `url`. The top-level key `marker` of the file
     gives the tag of the `DIVERGES(<tag>)` markers (default `chartjs`). A directory target maps
     `.tests.js` and `.spec.js` to `_test.dart`. Only a `differences.md` table with the first
@@ -280,8 +284,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `test/port/public_library_test.dart` imports the app library next to `material_ui.dart`,
     registers the line set and pumps a `ChartView`.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
-    `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color`
-    0.3.2 port), and `js/`, the JS runtime: port-only `js_*.dart` files. `js_webidl.dart` has the WebIDL
+    `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), and `js/`, the JS runtime: port-only `js_*.dart` files. `js_webidl.dart` has the WebIDL
     conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
     0020). `js_promise.dart` has the promise jobs (Chart.js ADR 0019). The animator walks a copy
     of its chart list (row `adapt-animator-chart-list`): a chart that a listener starts gets its
@@ -1298,7 +1301,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `docs_twins_test.dart`.
   - `test/flutter_test_config.dart`: the port of `test/index.js`. `flutter test` runs it around
     each test file of the package ([Tests](#tests)).
-  - `test/specs/`: ported upstream specs. `test/kurkle_color/`: the ported `@kurkle/color` tests.
+  - `test/specs/`: ported upstream specs.
     `test/port/`: port-only tests, at the path of the `lib/src/` file that they test.
     `test/port/options/` has the oracles of the typed internal model (Chart.js ADR 0054). O1,
     `observation_test.dart`, runs 727 configs (the hand fixtures, the pure data fixtures of
@@ -1986,6 +1989,34 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     item 6). `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
+- `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.1.0,
+  MIT), the color library of the Chart.js port. Its pubspec has no `publish_to`: it is on pub.dev.
+  It depends only on Flutter (`dart:ui`, for the Flutter `Color` input of the `Color`
+  constructor) and imports no other port. `flutter_chartjs_port` depends on it with `^0.1.0`, which
+  the workspace resolves to the package; `chartjs_test_utils` and the gallery name it as a path
+  dependency. Its `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive.
+  - `lib/flutter_kurkle_color_port.dart`: the public library (port-only). It exports
+    `lib/src/index.esm.dart` (the names of `src/index.esm.js`: `Color`, `RGBA`, `color` and the
+    functions of `byte`, `hex`, `hue`, `names` and `rgb`) and `lib/src/upstream.dart`
+    (`kurkleColorVersion`). The app library of `flutter_chartjs_port` exports it with
+    `hide Color, color`.
+  - `lib/src/`: the files of `src/` and `packed.js` at their mapped paths, `simple_parse.dart`
+    (the guarded comma notation) and `numbers.dart` (port-only): the plain Dart forms of `x | 0`
+    (`toInt32`), the number of an input value (`toNumber`), the test `if (x)` of a number
+    (`isNonZero`) and the text of a number in a CSS string (`numberText`). The package uses no JS
+    runtime. Dart `null` stands for JS `undefined`: `Color(null)` is a color that is not valid,
+    and a string method of such a color gives `null`. The constructor takes no CSS text (row
+    `adapt-direct-colors`); `hexParse`, `nameParse`, `rgbParse` and `hueParse` read it.
+  - `test/index_test.dart` ports `test/index.js`; `test/port/` has the port-only tests;
+    `test/support/reference.dart` has `cssColor` (the string branch of the upstream constructor)
+    and an independent ToInt32 reference. The tests use `package:test` and run on the VM and in
+    `test:web`.
+  - `tool/port_sources.yaml`: the pin of `third_party/kurkle-color`, with the top-level key
+    `marker: kurkle` (the tag of `DIVERGES(kurkle)`). `doc/differences.md` has its rows.
+  - `check:headers` examines the package as its own home. `test:web` and `test --no-select` run
+    its tests. `check:lib-imports`, `check:js-semantics`, `test:cases`, `parity`, `port:next` and
+    `check:typed-reads` do not examine it. The core layers of `flutter_chartjs_port` may import its
+    public library (`colorLibrary` of `tool/src/lib_imports.dart`).
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the tag `v4.6.1`
@@ -2254,8 +2285,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `package:chartjs_test_utils/pure.dart` first in `main()`. Tests of behavior without an upstream
   spec go in `test/port/`. `check:headers` already compares each spec path with the mapped path.
 - The source list `packages/flutter_chartjs_port/tool/port_sources.yaml`: Chart.js ADR 0035. It has
-  one entry for each project that the package ports code from: Chart.js, `@kurkle/color` and
-  chartjs-test-utils. Code from another project also needs an entry, with the license and
+  one entry for each project that the package ports code from: Chart.js and chartjs-test-utils.
+  The `@kurkle/color` entry is in `packages/flutter_kurkle_color_port/tool/port_sources.yaml`. Code from another project also needs an entry, with the license and
   holder of the header. A Chart.js bump (rule 6) also updates the Chart.js `version`, `ref` and
   `commit` in the entry. `check:headers` already fails on a
   mismatch.
@@ -2397,7 +2428,7 @@ sankey ADRs are proposed. The doc paths are relative to
   `package:flutter/painting.dart` with `show EdgeInsets, TextOverflow, TextStyle` for padding and fonts (Chart.js ADRs
   0123 and 0116). `check:lib-imports` computes the core layers from the roots in
   `packages/flutter_chartjs_port/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
-  `lib/src/types/`, `lib/src/kurkle_color/`, the helpers except `helpers.extras`, the files of
+  `lib/src/types/`, the helpers except `helpers.extras`, the files of
   `lib/src/elements/`, `plugin.decimation` and the files of `plugin.filler/` of `lib/src/plugins/`,
   and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. Of
   `lib/src/core/`, the roots are `core.defaults`, `core.element`, `core.config`, `core.adapters`,
@@ -2691,6 +2722,12 @@ sankey ADRs are proposed. The doc paths are relative to
   `Copyright (c) 2013-2024 chartjs-plugin-zoom contributors` and `Copyright (c) 2026 Vasiliy
   Ditsyak`. The `packages/flutter_chartjs_plugin_zoom_port/**` table of `REUSE.toml` comes after
   the ECharts table. The package ports no Chart.js code (Zoom ADR 0001).
+- @kurkle/color is MIT. The code of the color port is MIT too.
+  `packages/flutter_kurkle_color_port/LICENSE` is the MIT text with
+  `Copyright (c) 2018-2021 Jukka Kurkela` and `Copyright (c) 2026 Vasiliy Ditsyak`. The
+  `packages/flutter_kurkle_color_port/**` table of `REUSE.toml` comes after the sankey table. The
+  package ports no Chart.js code, and `packages/flutter_chartjs_port/LICENSE` no longer lists
+  Jukka Kurkela.
 - Code taken from any other project needs three things in the same change:
   1. its notice in the `LICENSE` of the package that contains the code;
   2. a `REUSE.toml` annotation for the files, placed last because the last matching table wins
@@ -2698,7 +2735,7 @@ sankey ADRs are proposed. The doc paths are relative to
   3. the file header from rule 2.
 
   For an MIT source, the notice is its copyright line, added to the existing MIT text. For example,
-  the `@kurkle/color` port added `Copyright (c) 2018-2021 Jukka Kurkela`
+  `packages/flutter_kurkle_color_port/LICENSE` has `Copyright (c) 2018-2021 Jukka Kurkela`
   (`third_party/kurkle-color/LICENSE.md` at `v0.3.2`). For an Apache-2.0 source, include the full
   license text as a separate component of the package LICENSE, along with its `NOTICE` content,
   and add `LICENSES/Apache-2.0.txt`. For another license, add its notice as a separate component
@@ -2715,7 +2752,8 @@ sankey ADRs are proposed. The doc paths are relative to
 
 - Package names: ADR 0007. The library package of a port has the name `flutter_<library>_port`,
   with the suffix `_port`: `flutter_chartjs_port`, `flutter_d3_port`, `flutter_echarts_port` and
-  `flutter_chartjs_plugin_zoom_port` and `flutter_chartjs_chart_sankey_port`. A later port uses
+  `flutter_chartjs_plugin_zoom_port`, `flutter_chartjs_chart_sankey_port` and
+  `flutter_kurkle_color_port`. A later port uses
   the same form. An add-on port takes the
   npm name of the add-on (ADR 0009 item 5). A harness package is `<library>_test_utils`, or the npm name
   of the upstream harness in snake case (`chartjs_test_utils`). A gallery app is
@@ -2733,7 +2771,8 @@ sankey ADRs are proposed. The doc paths are relative to
   `feat(flutter_chartjs_port): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
   The scope of the ECharts port is `flutter_echarts_port`. The scope of the zoom port is
   `flutter_chartjs_plugin_zoom_port`. The scope of the sankey port is
-  `flutter_chartjs_chart_sankey_port`. Checks:
+  `flutter_chartjs_chart_sankey_port`. The scope of the color port is
+  `flutter_kurkle_color_port`. Checks:
   - lefthook ≥ 1.0 `commit-msg` hook (`lefthook install`): `commitlint_cli` checks the type, and
     the scope when one is given, against the list in `commitlint.yaml`; a second command requires a
     `Signed-off-by` trailer;

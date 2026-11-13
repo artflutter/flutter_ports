@@ -1,3 +1,0 @@
-# Not an option read: the unpack of the named color tables of @kurkle/color
-# (packed.js:171-184), in the Object.keys order.
-jsObjectKeys 2
