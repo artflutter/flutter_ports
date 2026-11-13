@@ -23,6 +23,7 @@ rules:
       - flutter_d3_port
       - flutter_echarts_port
       - flutter_chartjs_plugin_zoom_port
+      - flutter_chartjs_chart_sankey_port
       - ci
       - deps
       - docs

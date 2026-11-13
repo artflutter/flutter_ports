@@ -26,6 +26,12 @@
 # with <sha8> and the tag "v<last version>". The gitlink must also equal the
 # "commit" of the entry in
 # packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml.
+#
+# Also fails unless the third_party/chartjs-chart-sankey gitlink is the commit
+# of the tag "v<chartjsChartSankeyVersion>"
+# (packages/flutter_chartjs_chart_sankey_port/lib/src/upstream.dart, Sankey
+# ADR 0001) and the "commit" of its entry in
+# packages/flutter_chartjs_chart_sankey_port/tool/port_sources.yaml.
 # Also fails on a submodule of .gitmodules that no entry of a
 # packages/*/tool/port_sources.yaml file pins.
 # Reads the gitlinks from the index. Thus it needs no submodule checkout. It
@@ -336,7 +342,45 @@ if [ "$zoom_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, ECharts and zoom entries. This loop finds a
+# chartjs-chart-sankey (Sankey ADR 0001). A release pin: the gitlink is the
+# commit of the tag "v<chartjsChartSankeyVersion>" and the "commit" of the
+# entry.
+sankey_upstream=packages/flutter_chartjs_chart_sankey_port/lib/src/upstream.dart
+sankey_sources=packages/flutter_chartjs_chart_sankey_port/tool/port_sources.yaml
+sankey_path=third_party/chartjs-chart-sankey
+sankey_version=$(sed -n "s/^const String chartjsChartSankeyVersion = '\(.*\)';\$/\1/p" "$sankey_upstream")
+if [ -z "$sankey_version" ]; then
+  echo "chartjsChartSankeyVersion not found in $sankey_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$sankey_sources" ]; then
+  echo "$sankey_sources not found" >&2
+  exit 1
+fi
+if ! [[ $sankey_version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "chartjsChartSankeyVersion $sankey_version is not <version>" >&2
+  exit 1
+fi
+sankey_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$sankey_path" ]; then
+    echo "$sankey_sources pins $path. It must pin only $sankey_path." >&2
+    failed=1
+    continue
+  fi
+  sankey_seen=1
+  if [ "$ref" != "v$sankey_version" ]; then
+    echo "$sankey_sources gives ref $ref for $path, but chartjsChartSankeyVersion is $sankey_version." >&2
+    failed=1
+  fi
+  check_pin "$path" "v$sankey_version" "$recorded" "$sankey_sources"
+done 3< <(read_pins "$sankey_sources")
+if [ "$sankey_seen" = 0 ]; then
+  echo "$sankey_sources has no entry for $sankey_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

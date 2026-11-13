@@ -158,3 +158,7 @@
 	path = third_party/chartjs-plugin-zoom
 	url = https://github.com/chartjs/chartjs-plugin-zoom
 	shallow = true
+[submodule "third_party/chartjs-chart-sankey"]
+	path = third_party/chartjs-chart-sankey
+	url = https://github.com/kurkle/chartjs-chart-sankey
+	shallow = true

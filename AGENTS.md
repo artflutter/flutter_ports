@@ -8,6 +8,9 @@ ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port
 (scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
 of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, phases 1-4 done
 (each file of `src/` ported; the specs, the fixtures and the tests of real input pass), phase 5
+next. Fifth port: chartjs-chart-sankey 0.19.1, an add-on of the Chart.js port and the first chart
+type of another package → `packages/flutter_chartjs_chart_sankey_port`, phases 0-4 done (each
+file of `src/` ported; the unit tests, the specs and the fixtures pass; a gallery page), phase 5
 next.
 
 ## Commands
@@ -39,9 +42,10 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   them. Delete these folders before `format:check`. package:test puts a part of the tests of each
   file in each shard, in the order of the file ([Tests](#tests)). A shard with no tests fails. On
   ubuntu, CI also fetches the three Chart.js submodules, `third_party/d3`, the two ECharts
-  submodules and `third_party/chartjs-plugin-zoom` by path in each shard, for the
-  `test/upstream_test.dart` of `flutter_chartjs_port`, `flutter_d3_port`, `flutter_echarts_port`
-  and `flutter_chartjs_plugin_zoom_port`.
+  submodules, `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey` by path in
+  each shard, for the `test/upstream_test.dart` of `flutter_chartjs_port`, `flutter_d3_port`,
+  `flutter_echarts_port`, `flutter_chartjs_plugin_zoom_port` and
+  `flutter_chartjs_chart_sankey_port`.
 - `dart run melos run test:web`: the `flutter_chartjs_port` and `chartjs_test_utils` tests without
   `@TestOn('vm')`, in Chrome through Flutter (JavaScript/DDC and WebAssembly). `tool/test_web.dart`
   selects browser-capable files before compilation. A leg fails when it ends by a signal or exits
@@ -50,10 +54,11 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8)
   and tool 9, and `options:gen:check`, as melos steps. The CI job `port-checks` runs the seven
-  checks with a shallow checkout of the three Chart.js submodules and
-  `third_party/chartjs-plugin-zoom`. `check:lib-imports`, `check:headers` and `check:js-semantics`
-  also examine the add-on port `flutter_chartjs_plugin_zoom_port` (ADR 0009 item 6). The other four
-  checks examine only `flutter_chartjs_port`.
+  checks with a shallow checkout of the three Chart.js submodules,
+  `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`. `check:lib-imports`,
+  `check:headers` and `check:js-semantics` also examine the add-on ports
+  `flutter_chartjs_plugin_zoom_port` and `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6).
+  The other four checks examine only `flutter_chartjs_port`.
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
@@ -68,14 +73,16 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     `lib/` and `test/` import only the libraries directly in the `lib/` of the host
     (`package:<host>/<name>.dart`), never `package:<host>/src/` (ADR 0009 item 3). Its `test/`
     imports only `package:chartjs_test_utils/flutter.dart` and `pure.dart` of the harness. The
-    script passes `packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port`, host
-    first: the check examines the harness closure with the host only.
+    script passes `packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port
+    packages/flutter_chartjs_chart_sankey_port`, host first: the check examines the harness closure
+    with the host only.
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of the home
     package and of each package that a `dart` target of its `tool/port_sources.yaml` names. The
-    script runs it twice: `flutter_chartjs_port` with `chartjs_test_utils`, then
-    `packages/flutter_chartjs_plugin_zoom_port` alone. The primary project of the home is the entry
-    whose `version_source` is `<constant> in <home>/lib/src/upstream.dart` (Chart.js,
-    chartjs-plugin-zoom). Its `version` is `v<constant value>`, the port-only marker names it, and
+    script runs it three times: `flutter_chartjs_port` with `chartjs_test_utils`, then
+    `packages/flutter_chartjs_plugin_zoom_port` alone, then
+    `packages/flutter_chartjs_chart_sankey_port` alone. The primary project of the home is the
+    entry whose `version_source` is `<constant> in <home>/lib/src/upstream.dart` (Chart.js,
+    chartjs-plugin-zoom, chartjs-chart-sankey). Its `version` is `v<constant value>`, the port-only marker names it, and
     a backport line names the `<owner>/<repo>` of its `url`. The top-level key `marker` of the file
     gives the tag of the `DIVERGES(<tag>)` markers (default `chartjs`). A directory target maps
     `.tests.js` and `.spec.js` to `_test.dart`. Only a `differences.md` table with the first
@@ -144,6 +151,13 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   Without the submodule `third_party/chartjs-plugin-zoom`, each fixture skips with a reason that
   names it; with `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` also checks out that
   submodule and runs the script with `FIXTURES_REQUIRED=1`. `test --no-select` excludes the tag.
+- `dart run melos run test:fixtures:sankey`: the 44 fixtures of
+  `flutter_chartjs_chart_sankey_port` (`test/specs/fixtures_test.dart`, the tag `fixtures`). Each
+  fixture builds its chart and compares the nodes, the flows and the draw calls with
+  `test/fixtures/fixtures_reference.dart`, the values of the JavaScript chart, not an image (row
+  `harness-fixture-observations`). Without the submodule `third_party/chartjs-chart-sankey`, each
+  fixture skips with a reason that names it; with `FIXTURES_REQUIRED=1`, it fails. The CI job
+  `fixtures` runs it with `FIXTURES_REQUIRED=1`. `test --no-select` excludes the tag.
 - `dart run melos run test:zoom:range-only`: the tests of `flutter_chartjs_plugin_zoom_port`, the
   fixtures among them, with `--dart-define=ZOOM_RANGE_ONLY_UPDATES=true`: `test/flutter_test_config.dart`
   writes the zoom option `rangeOnlyUpdates: true` into `Chart.defaults.plugins.zoom`, so each zoom
@@ -185,7 +199,7 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   with WebAssembly.
 - `dart run melos run upstream`: check out the pinned reference sources (every `third_party/`
   submodule, at depth 1). These are the three Chart.js submodules, the 34 D3 submodules, the
-  two ECharts submodules and the chartjs-plugin-zoom submodule.
+  two ECharts submodules, the chartjs-plugin-zoom submodule and the chartjs-chart-sankey submodule.
 - `dart run melos run upstream:manifest`: tool 4. It writes
   `packages/flutter_chartjs_port/doc/upstream/` from `third_party/Chart.js`. It needs Node.js 22.18 or
   later. The CI job `upstream-manifest` fails when the committed files differ.
@@ -200,7 +214,10 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   `third_party/chartjs-plugin-zoom` is at the commit of `chartjsPluginZoomVersion`: for the commit
   pin `<last version>+<sha8>`, a gitlink that starts with `<sha8>`, equals the `ref` and the
   `commit` in `packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml`, and is not the
-  commit of the tag `v<last version>`, which must exist. The script reads the gitlinks from the
+  commit of the tag `v<last version>`, which must exist. It also fails unless
+  `third_party/chartjs-chart-sankey` is at the release tag `v<chartjsChartSankeyVersion>` and
+  equals the `commit` in `packages/flutter_chartjs_chart_sankey_port/tool/port_sources.yaml`. The
+  script reads the gitlinks from the
   index and the tags with `git ls-remote`. It needs no submodule checkout. It also fails on a submodule of `.gitmodules` that no entry of a
   `packages/*/tool/port_sources.yaml` pins. The pin readers (the script and the
   `test/upstream_test.dart` of each port) skip the top-level keys of a `port_sources.yaml` other
@@ -211,7 +228,8 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
 Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `test:cases`,
-`test:fixtures`, `test:fixtures:zoom`, `test:zoom:range-only` and `check:port`.
+`test:fixtures`, `test:fixtures:zoom`, `test:fixtures:sankey`, `test:zoom:range-only` and
+`check:port`.
 
 ## Layout
 
@@ -246,9 +264,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     entry:
     `lib/src/helpers/index.dart` without the Dart names of the upstream `_` exports, except
     `isPointInArea`, which a ported add-on imports, Chart.js ADR 0108) and `lib/js_semantics.dart`
-    (the JS runtime for add-on ports, Chart.js ADR 0108: `jsObjectKeys`, `jsCall`, `jsGet`,
-    `jsHypot`, `jsMax`, `jsMin`, `jsRound`, `jsNumberToString`, `jsToNumber`, `jsToString` and
-    `jsTruthy`; no other library exports it). An app imports the app library next to
+    (the JS runtime for add-on ports: each library of `lib/src/js/` with each of its names, with
+    no `show` list, Chart.js ADR 0132; no other library exports it). `lib/chartjs.dart` also
+    exports the names that a chart type of another package needs (Chart.js ADR 0132):
+    `ParsedItem`, `ElementPoint` and `VisualElementRange`. An app imports the app library next to
     `material_ui.dart` with no prefix. `doc/public_api.txt` is the committed list of their export
     names. `test/tool/public_api_test.dart` compares the list, checks that the app library shares
     no name with the Flutter libraries and `dart:ui`, checks the `@internal` rule of Chart.js ADR
@@ -1405,12 +1424,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       section 10. Chart.js ADR 0126 (a native plugin contract) is proposed (2026-11-13): it waits for
       the review of the maintainer, and no code implements it. Chart.js ADR 0130 (native callback
       options) is accepted (2026-11-13): its code passes the tests. It supersedes the details objects
-      of Chart.js ADR 0052 §6 and the point-label closure call of Chart.js ADR 0095.
+      of Chart.js ADR 0052 §6 and the point-label closure call of Chart.js ADR 0095. Chart.js ADR
+      0132 (exports for add-on chart types) is accepted (2026-11-13): its code passes the tests. It
+      supersedes the list of 11 names of `lib/js_semantics.dart` of Chart.js ADR 0108 and the hide of
+      `VisualElementRange` of Chart.js ADR 0048 §6.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
-      `packages/flutter_chartjs_plugin_zoom_port/doc/adr/`. An accepted ADR does not change. A changed decision
+      `packages/flutter_chartjs_plugin_zoom_port/doc/adr/`. "Sankey ADR NNNN" is a file of
+      `packages/flutter_chartjs_chart_sankey_port/doc/adr/`. An accepted ADR does not change. A changed decision
       gets a new ADR that states the complete decision and supersedes the old ADR.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
     - `doc/status.yaml`: the hand-written parts of `parity.md`: the text outside the tables, the
@@ -1497,6 +1520,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `flutter_chartjs_plugin_zoom_port` once for all charts, as the upstream docs of the plugin do;
     the zoom page and the input probe call it, so the stress entry and the benchmark cases
     outside the mode `zoom` run no zoom hook) and `unitScales` (the two hidden unit scales).
+  - After the tile "Zoom and pan", the home list has the tile "Sankey" (key
+    `gallery.chart.sankey`). It opens `lib/plugins/sankey_page.dart`, a `ChartView.raw` of the type
+    `sankey`. Its variants are the ports of four samples of the docs of chartjs-chart-sankey
+    (`src/content/docs/samples/basic.md`, `vertical.md`, `flow-colors.md` and `node-labels.md`) in
+    `lib/docs/sankey/samples/`, with rule-2 headers; `lib/docs/sankey/scripts/utils.dart` ports
+    `docs/scripts/utils.js`. Only that page calls `registerSankeyComponents` of
+    `lib/demo/gallery_components.dart`, which registers `sankeyRegisterables` once.
+    `test/sankey_page_test.dart` pins the page.
   - After the nine entries, the home list has the tile "Zoom and pan" (key `gallery.plugin.zoom`).
     It opens the zoom page `lib/plugins/zoom_page.dart`. Its variants are the ports of four samples
     of the docs of chartjs-plugin-zoom (`docs/samples/basic.md`, `drag/linear.md`,
@@ -1792,6 +1823,69 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     item 6). `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
+- `packages/flutter_chartjs_chart_sankey_port`: the chartjs-chart-sankey port (library,
+  `publish_to: none` until 0.1.0, MIT), the second add-on port (ADR 0009) and the first chart type
+  of another package. Sankey phases 0-4 are done (2026-11-13). `doc/README.md` has the plan and the
+  roadmap. Phase 5, next, is the work on the public API of the host for its seams.
+  - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
+    libraries (Sankey ADR 0003). Chart.js ADR 0132 is the host change for it.
+  - `lib/flutter_chartjs_chart_sankey_port.dart`: the public library (port-only). It exports
+    `lib/src/index.esm.dart` (`SankeyController`, `Flow`, `SankeyDataPoint`, `SankeyNode`,
+    `FromToElement`, `SankeyNodeGap`, `SankeyNodeCallback`, `SankeyParsedCustom` and the six
+    enums) and `lib/src/upstream.dart` (`chartjsChartSankeyVersion`, `0.19.1`), and has the
+    port-only List `sankeyRegisterables`. An app calls `Chart.register(sankeyRegisterables)` once
+    and gives a `ChartView.raw` the type `sankey`: the typed `ChartConfig` has no chart kind of
+    another package (seam S9). `Flow` is also a Flutter widget name: a library that imports Flutter
+    and names the element imports the port with a prefix (seam S21).
+  - `lib/src/`: the files of `src/` at their mapped paths: `types`, `lib/helpers`, `lib/core`,
+    `lib/layout`, `labels`, `flow`, `controller` and `index.esm`; `src/index.ts`, the entry that
+    registers at its import, has no Dart file (Sankey ADR 0002).
+    - A string union of an option is an enum (`SankeyOrientation`, `SankeyLabelPosition`,
+      `SankeyColorMode`, `SankeyModeX`, `SankeyNodePaddingMode`, `SankeySize`, row
+      `adapt-sankey-option-enums`); a name in a raw config stops a debug build. A color is a
+      `ChartPaint` or a `Color` (row `adapt-sankey-native-colors`). The static `defaults` and
+      `overrides` are Maps with the Dart objects of the host options (row
+      `adapt-sankey-native-defaults`).
+    - `SankeyNode` has `inFlow` and `outFlow` for the upstream `in` and `out` (row
+      `adapt-sankey-node-fields`). A data item is a `SankeyDataPoint`, or a Map that the keys of
+      `parsing` read (row `adapt-sankey-data-point`). A parsed item is a `ParsedItem` of the host
+      with a `SankeyParsedCustom` as `custom` (row `adapt-sankey-parsed-item`).
+    - The options are objects of the host resolver, read by name through extension-type facades
+      (`SankeyControllerDatasetOptions`, `FlowOptionsFace`). A Map option (`labels`, `column`,
+      `priority`, a node-scoped option by node key) comes from the resolver as a view of the Map,
+      not as a `Map`: read it with `jsGet`, never with an `is Map` test (seam S10).
+      `resolveNodeOption<T>` of `labels.dart` reads a node-scoped option: a value, a Map by node
+      key or a `SankeyNodeCallback<T>` (row `adapt-sankey-node-option`).
+    - The layout sorts with `jsSort`: the order of two equal nodes decides their positions.
+    - `SankeyController.nodes` gives the nodes of the last parse (the upstream `_nodes`).
+  - `test/flutter_test_config.dart` ports `test/setup.js`: DPR 1 and 800 x 600, the built-in
+    components and `sankeyRegisterables`, the colors plugin off, the defaults restore, the
+    release of the charts and the test font.
+  - `test/specs/`: the 5 unit tests of `src/**/*.test.ts` (`lib/helpers_test.dart`,
+    `lib/core_test.dart`, `lib/layout_test.dart`, `labels_test.dart`, `flow_test.dart`) and the 5
+    specs of `test/specs/*.spec.js`. `resize_test.dart` reads the progress of the flows, not
+    pixels (row `harness-resize-ink`). `test/specs/fixtures_test.dart` runs the fixtures of
+    `test/fixtures/`: the registry `index.dart`, `manifest.json`, the hand ports `hand/**.dart`
+    of the 44 fixture configs, and `fixtures_reference.dart`, written by
+    `tool/reference/fixtures_reference.mjs` from the upstream sources (`test:fixtures:sankey`).
+    `test/support/fake_context.dart` is the context of the two element unit tests.
+    `test/port/public_library_test.dart` imports the library next to the app library of the host
+    and `material_ui.dart`, and draws a chart of `SankeyDataPoint` items in a `ChartView.raw`.
+  - `test/upstream_test.dart` (`@TestOn('vm')`) compares the entry of `tool/port_sources.yaml`
+    with `chartjsChartSankeyVersion`, and the gitlink with its `commit`.
+  - `tool/port_sources.yaml`: the pin, with the top-level keys `marker: sankey` and
+    `host: flutter_chartjs_port`. A unit test `src/**/*.test.ts` has a file target.
+  - `doc/`: `README.md` (overview, use, roadmap), `host-seams.md` (each place where a chart type of
+    another package needs a part of the host, with the state `connects`, `sankey-side` or `gap`:
+    the input for the work on the public API of the host), `parity.md` (a person writes it),
+    `differences.md`, `upstream-ledger.md` and `prior-art/README.md` (2026-11-13: no Dart port of
+    this library exists).
+    - `doc/adr/`: Sankey ADRs 0001-0003, all proposed: 0001 (upstream source, name and license),
+      0002 (file naming, layout and the Dart forms) and 0003 (the connection to the host port).
+  - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
+    item 6). `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
+    `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
+    tests without the tag `fixtures`.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the tag `v4.6.1`
@@ -1807,6 +1901,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `chartjs-plugin-zoom`, also shallow, at the commit `fb81d331` of `master`, 34 commits after the
     tag `v2.2.0` (Zoom ADR 0001). `packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml`
     gives the commit.
+  - `chartjs-chart-sankey`, also shallow, at the release tag `v0.19.1` (Sankey ADR 0001).
+    `packages/flutter_chartjs_chart_sankey_port/tool/port_sources.yaml` gives the commit. The
+    `version` of its `package.json` is a placeholder: the release version is the tag name.
 - `tool/`: repository scripts (`check_upstream_pin.sh`). `tool/pages/index.html` is the root page of
   the GitHub Pages site, a template that the workflow `pages` fills in.
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
@@ -1969,8 +2066,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036), `jsHypot` (`Math.hypot` of two doubles in the
   V8 form: the infinities first, then NaN, then the operands scaled by the larger magnitude;
   `math.sqrt(a * a + b * b)` differs in the last bit for about one pair in three, Chart.js ADR
-  0108) and the `undefined` sentinel (Chart.js ADR 0043). `lib/js_semantics.dart` exports 11 of
-  these names for add-on ports (Chart.js ADR 0108). `JsStringList` of `js_array.dart` is a string
+  0108) and the `undefined` sentinel (Chart.js ADR 0043). `lib/js_semantics.dart` exports each
+  name of `lib/src/js/` for add-on ports (Chart.js ADR 0132). `JsStringList` of `js_array.dart` is a string
   as an array-like value: the reads `s[i]` and `s.length`, and a `TypeError` for each write.
   `_dataCheck` keeps a string `data` in it.
   `jsToString` of a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with
@@ -2135,6 +2232,33 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 - The JS numeric rules of Chart.js ADRs 0045 and 0034 apply. The zoom port takes the JS runtime
   from `package:flutter_chartjs_port/js_semantics.dart` (Chart.js ADR 0108, seam H13), and from the
   package `js_semantics` when ADR 0008 makes it. It does not copy `lib/src/js/` of the host.
+
+The chartjs-chart-sankey port applies the rules of the Chart.js port with these changes. The
+sankey ADRs are proposed. The doc paths are relative to
+`packages/flutter_chartjs_chart_sankey_port/doc/`.
+
+- Rule 1: read the upstream file in `third_party/chartjs-chart-sankey` at the pinned tag. Never
+  port from d3-sankey or from another sankey package (`prior-art/README.md`).
+- Rule 2: the header is
+  `// Ported from chartjs-chart-sankey v0.19.1 <path> (MIT, Jukka Kurkela).` The port-only marker
+  is `// Original code, not ported from chartjs-chart-sankey: <reason>.` `src/<path>.ts` becomes
+  `lib/src/<path>.dart`. A unit test `src/<path>.test.ts` and a spec `test/specs/<name>.spec.js`
+  become `test/specs/<path>_test.dart`. A fixture `test/fixtures/<path>.js` becomes
+  `test/fixtures/hand/<path>.dart`. `test/setup.js` becomes `test/flutter_test_config.dart`. A file
+  whose name has a hyphen has `// ignore_for_file: file_names` after its header (Sankey ADR 0002).
+- Rules 3 and 4: port the specs. Update the row of the file in `parity.md` in the same change. A
+  person writes `parity.md`.
+- Rule 6: a bump moves the submodule to a later release tag, `chartjsChartSankeyVersion`, the entry
+  in `tool/port_sources.yaml` and the headers, and runs `tool/reference/fixtures_reference.mjs`
+  again. `upstream:check` and `test/upstream_test.dart` fail on a mismatch.
+- The host connection (ADR 0009, Sankey ADR 0003): the port imports only the public libraries of
+  the host. A part of the host that they do not give is a host change with a Chart.js ADR. A Dart
+  form in the port that stands for a host change is a seam: `host-seams.md` has a row for it. A
+  change that closes a seam updates its row.
+- A difference carries `// DIVERGES(sankey): <row id>, <reason>` and a row in `differences.md`.
+- An option that is a keyword upstream is an enum, and an option that the host holds as a Dart
+  object has that object (Sankey ADR 0002 items 7 and 8). The port takes the JS runtime from
+  `package:flutter_chartjs_port/js_semantics.dart`: each sort is `jsSort`.
 
 ## Tests
 
@@ -2399,6 +2523,14 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 - The ECharts tests use `package:test` (ECharts ADR 0005). In phase 0, `test/upstream_test.dart`
   is the only ECharts test. It has `@TestOn('vm')`. Thus `test:web` does not run the ECharts
   package yet. The first pure ECharts test adds the package to `test:web`.
+- Each chartjs-chart-sankey test file has `@TestOn('vm')`: `test:web` does not run the package.
+  The unit tests of the pure modules use `package:test`. A spec that creates a chart is a
+  `testWidgets` case with `acquireChart` of `package:chartjs_test_utils/flutter.dart`. A spec that
+  spies on `chart.ctx.fillRect` puts a mock context of `package:chartjs_test_utils/pure.dart` in
+  `chart.ctx` and calls `controller.draw()`: the mock context has no `resetTransform` for
+  `chart.draw()` (seam S13). A test of an option gives the enum value, a `ChartPaint`, or a
+  `SankeyNodeGap`, never the upstream keyword or CSS text. A test that names the element next to a
+  Flutter import gives the sankey library a prefix.
 - Each chartjs-plugin-zoom test file has `@TestOn('vm')`: `test:web` does not run the package.
   The specs that create a chart follow the chart spec rules of the Chart.js port: `testWidgets`,
   `package:chartjs_test_utils/flutter.dart` (without its `triggerMouseEvent`) and the event
@@ -2428,6 +2560,12 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   zrender (BSD-3-Clause, `Baidu Inc.`), the d3 code in five ECharts files (BSD-3-Clause), and
   node-timsort, jsdiff and tween.js in zrender files. The change that ports the first file of a
   component adds that component by the three steps below.
+- chartjs-chart-sankey is MIT. The code of the sankey port is MIT too.
+  `packages/flutter_chartjs_chart_sankey_port/LICENSE` is the MIT text with
+  `Copyright (c) 2019-2026 Jukka Kurkela` and `Copyright (c) 2026 Vasiliy Ditsyak`. The
+  `packages/flutter_chartjs_chart_sankey_port/**` table of `REUSE.toml` comes after the zoom table.
+  The last table annotates the gallery samples `apps/chartjs_gallery/lib/docs/sankey/**`. The
+  package ports no Chart.js code (Sankey ADR 0001).
 - chartjs-plugin-zoom is MIT. The code of the zoom port is MIT too.
   `packages/flutter_chartjs_plugin_zoom_port/LICENSE` is the MIT text with
   `Copyright (c) 2013-2024 chartjs-plugin-zoom contributors` and `Copyright (c) 2026 Vasiliy
@@ -2457,7 +2595,8 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 
 - Package names: ADR 0007. The library package of a port has the name `flutter_<library>_port`,
   with the suffix `_port`: `flutter_chartjs_port`, `flutter_d3_port`, `flutter_echarts_port` and
-  `flutter_chartjs_plugin_zoom_port`. A later port uses the same form. An add-on port takes the
+  `flutter_chartjs_plugin_zoom_port` and `flutter_chartjs_chart_sankey_port`. A later port uses
+  the same form. An add-on port takes the
   npm name of the add-on (ADR 0009 item 5). A harness package is `<library>_test_utils`, or the npm name
   of the upstream harness in snake case (`chartjs_test_utils`). A gallery app is
   `apps/<library>_gallery`. A design-system adapter is `<library package>_<system>`, for example
@@ -2473,7 +2612,8 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
 - Commits: Conventional Commits, signed off (`git commit -s`, DCO), for example
   `feat(flutter_chartjs_port): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
   The scope of the ECharts port is `flutter_echarts_port`. The scope of the zoom port is
-  `flutter_chartjs_plugin_zoom_port`. Checks:
+  `flutter_chartjs_plugin_zoom_port`. The scope of the sankey port is
+  `flutter_chartjs_chart_sankey_port`. Checks:
   - lefthook ≥ 1.0 `commit-msg` hook (`lefthook install`): `commitlint_cli` checks the type, and
     the scope when one is given, against the list in `commitlint.yaml`; a second command requires a
     `Signed-off-by` trailer;
