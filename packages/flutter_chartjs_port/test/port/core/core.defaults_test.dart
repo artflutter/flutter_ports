@@ -142,39 +142,36 @@ void main() {
     });
 
     test('has the upstream keys, values and key order', () {
-      expect(
-        _keys(defaults),
-        [
-          'animation',
-          'backgroundColor',
-          'borderColor',
-          'color',
-          'datasets',
-          'devicePixelRatio',
-          'elements',
-          'events',
-          'font',
-          'hover',
-          'hoverBackgroundColor',
-          'hoverBorderColor',
-          'hoverColor',
-          'indexAxis',
-          'interaction',
-          'maintainAspectRatio',
-          'onHover',
-          'onClick',
-          'parsing',
-          'plugins',
-          'responsive',
-          'scale',
-          'scales',
-          'showLine',
-          'drawActiveElementsOnTop',
-          'animations',
-          'transitions',
-          'layout',
-        ],
-      );
+      expect(_keys(defaults), [
+        'animation',
+        'backgroundColor',
+        'borderColor',
+        'color',
+        'datasets',
+        'devicePixelRatio',
+        'elements',
+        'events',
+        'font',
+        'hover',
+        'hoverBackgroundColor',
+        'hoverBorderColor',
+        'hoverColor',
+        'indexAxis',
+        'interaction',
+        'maintainAspectRatio',
+        'onHover',
+        'onClick',
+        'parsing',
+        'plugins',
+        'responsive',
+        'scale',
+        'scales',
+        'showLine',
+        'drawActiveElementsOnTop',
+        'animations',
+        'transitions',
+        'layout',
+      ]);
       expect(
         _json(defaults),
         referenceColorTokens(
@@ -239,10 +236,7 @@ void main() {
           '"_indexable":"<fn>"}},"scales":{"_fallback":"scale"}}',
         ),
       );
-      expect(
-        _json(overrides),
-        referenceColorTokens('{}'),
-      );
+      expect(_json(overrides), referenceColorTokens('{}'));
       expect(jsCall(descriptors['_scriptable'], ['onClick']), false);
       expect(jsCall(descriptors['_scriptable'], ['color']), true);
       expect(jsCall(descriptors['_indexable'], ['events']), false);
@@ -432,10 +426,7 @@ void main() {
           <String, Object?>{'a': 1.0},
           <String, Object?>{'b': 2.0},
         ]);
-      expect(
-        _json(d['v']),
-        referenceColorTokens('{"a":1,"b":2}'),
-      );
+      expect(_json(d['v']), referenceColorTokens('{"a":1,"b":2}'));
     });
 
     test('returns the scope object', () {
@@ -455,10 +446,7 @@ void main() {
         _json(descriptors['dd']),
         referenceColorTokens('{"_fallback":"x"}'),
       );
-      expect(
-        _json(overrides['oo']),
-        referenceColorTokens('{"y":1}'),
-      );
+      expect(_json(overrides['oo']), referenceColorTokens('{"y":1}'));
       _defaults().describe(<String, Object?>{'_rootDesc': true});
       expect(descriptors['_rootDesc'], true);
     });
@@ -486,23 +474,14 @@ void main() {
       final d = _defaults()
         ..set('k', <String, Object?>{'z': 0.0})
         ..set('k.z', <String, Object?>{'w': 1.0});
-      expect(
-        _json(d['k']),
-        referenceColorTokens('{"z":{"w":1}}'),
-      );
+      expect(_json(d['k']), referenceColorTokens('{"z":{"w":1}}'));
       d['k2'] = null;
       d.set('k2', <String, Object?>{'w': 1.0});
-      expect(
-        _json(d['k2']),
-        referenceColorTokens('{"w":1}'),
-      );
+      expect(_json(d['k2']), referenceColorTokens('{"w":1}'));
       d['k3'] = undefined;
       d.set('k3', <String, Object?>{'w': 1.0});
       expect(_keys(d).skip(_keys(d).length - 3), ['k', 'k2', 'k3']);
-      expect(
-        _json(d['k3']),
-        referenceColorTokens('{"w":1}'),
-      );
+      expect(_json(d['k3']), referenceColorTokens('{"w":1}'));
     });
 
     test('a routed name reads the target for undefined, not for null', () {
@@ -576,10 +555,7 @@ void main() {
           'font': <String, Object?>{'weight': 'bold'},
         });
       final a = d['a'];
-      expect(
-        _json(_local(a, 'font')),
-        referenceColorTokens('{"size":10}'),
-      );
+      expect(_json(_local(a, 'font')), referenceColorTokens('{"size":10}'));
       expect(
         _json(_get(a, 'font')),
         referenceColorTokens('{"size":10,"style":"bold"}'),
@@ -630,10 +606,7 @@ void main() {
         _json(_get(d['g'], 'o')),
         referenceColorTokens('{"0":"a","1":"b","2":"c","k":1}'),
       );
-      expect(
-        _json(_get(d['h'], 'o')),
-        referenceColorTokens('{"k":1}'),
-      );
+      expect(_json(_get(d['h'], 'o')), referenceColorTokens('{"k":1}'));
       expect(
         _json(_get(d['i'], 'o')),
         referenceColorTokens('{"0":"x","1":"y","k":1}'),
@@ -670,10 +643,7 @@ void main() {
         _json(d['nr']),
         referenceColorTokens('{"inner":{"x":"<undefined>"}}'),
       );
-      expect(
-        _json(d['nt']),
-        referenceColorTokens('{}'),
-      );
+      expect(_json(d['nt']), referenceColorTokens('{}'));
     });
 
     test('a copy of a routed scope reads the routes', () {
@@ -683,10 +653,7 @@ void main() {
         })
         ..route('g', 'o', '', 'font');
       d['font'] = <String, Object?>{'size': 3.0};
-      expect(
-        _json(d['g']),
-        referenceColorTokens('{"o":{"size":3,"k":1}}'),
-      );
+      expect(_json(d['g']), referenceColorTokens('{"o":{"size":3,"k":1}}'));
     });
 
     test('a new routed name is not configurable', () {
@@ -700,10 +667,7 @@ void main() {
         _get(d['e'], 'z'),
         const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
-      expect(
-        () => jsDeleteKey(d['e'], 'z'),
-        _throwsTypeError,
-      );
+      expect(() => jsDeleteKey(d['e'], 'z'), _throwsTypeError);
       expect(_keys(d['e']), ['p', 'z']);
     });
 
@@ -742,14 +706,8 @@ void main() {
       d['nonobj'] = 5.0;
       expect(() => d.route('nonobj', 'x', '', 'color'), _throwsTypeError);
       // The target scope exists before the throw.
-      expect(
-        () => d.route('nonobj', 'x', 'newTarget', 'y'),
-        _throwsTypeError,
-      );
-      expect(
-        _json(d['newTarget']),
-        referenceColorTokens('{}'),
-      );
+      expect(() => d.route('nonobj', 'x', 'newTarget', 'y'), _throwsTypeError);
+      expect(_json(d['newTarget']), referenceColorTokens('{}'));
     });
 
     test('a route on a scope that a route reads goes to the owner', () {
@@ -769,17 +727,9 @@ void main() {
         referenceColorTokens('{"size":"#666"}'),
       );
       expect(_local(d['p'], 'font'), same(undefined));
-      jsSet(d['t'], 'font', <String, Object?>{
-        'size': 7.0,
-      });
-      expect(
-        _json(_get(d['p'], 'font')),
-        referenceColorTokens('{"size":7}'),
-      );
-      expect(
-        _json(_get(d['t'], 'font')),
-        referenceColorTokens('{"size":7}'),
-      );
+      jsSet(d['t'], 'font', <String, Object?>{'size': 7.0});
+      expect(_json(_get(d['p'], 'font')), referenceColorTokens('{"size":7}'));
+      expect(_json(_get(d['t'], 'font')), referenceColorTokens('{"size":7}'));
     });
 
     test('a route on a routed undefined value goes to the target', () {
@@ -800,13 +750,8 @@ void main() {
         referenceColorTokens('{"size":20,"x":"#666"}'),
       );
       expect(_keys(_get(d['b'], 'font')), ['size', 'x']);
-      jsSet(d['b'], 'font', <String, Object?>{
-        'size': 30.0,
-      });
-      expect(
-        _json(_get(d['a'], 'font')),
-        referenceColorTokens('{"size":30}'),
-      );
+      jsSet(d['b'], 'font', <String, Object?>{'size': 30.0});
+      expect(_json(_get(d['a'], 'font')), referenceColorTokens('{"size":30}'));
     });
   });
 
@@ -871,10 +816,7 @@ void main() {
         ..set('c', <String, Object?>{'_x': 1.0, 'x': 2.0})
         ..route('c', 'x', '', 'color');
       // Upstream gives {"_x":2,"x":2}.
-      expect(
-        _json(d['c']),
-        referenceColorTokens('{"_x":1,"x":2}'),
-      );
+      expect(_json(d['c']), referenceColorTokens('{"_x":1,"x":2}'));
       jsSet(d['c'], '_x', undefined);
       // Upstream gives '#666'.
       expect(_get(d['c'], 'x'), 2.0);
@@ -946,10 +888,7 @@ void main() {
     void checkSnapshot() {
       expect(_json(defaults), defaultsJson);
       expect(_json(descriptors), descriptorsJson);
-      expect(
-        _json(overrides),
-        referenceColorTokens('{}'),
-      );
+      expect(_json(overrides), referenceColorTokens('{}'));
       final scale = defaults['scale']! as JsObjectFace;
       expect(identical(scale['ticks'], ticks), true);
       expect(identical(defaults['events'], events), true);

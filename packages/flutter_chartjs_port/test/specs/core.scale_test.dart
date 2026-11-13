@@ -148,24 +148,9 @@ _gridLineTests = [
     offset: true,
     expected: [0.5, 102.5, 204.5, 307.5, 409.5, 512.5],
   ),
-  (
-    labels: ['tick1'],
-    offsetGridLines: false,
-    offset: false,
-    expected: [0.5],
-  ),
-  (
-    labels: ['tick1'],
-    offsetGridLines: false,
-    offset: true,
-    expected: [256.5],
-  ),
-  (
-    labels: ['tick1'],
-    offsetGridLines: true,
-    offset: false,
-    expected: [512.5],
-  ),
+  (labels: ['tick1'], offsetGridLines: false, offset: false, expected: [0.5]),
+  (labels: ['tick1'], offsetGridLines: false, offset: true, expected: [256.5]),
+  (labels: ['tick1'], offsetGridLines: true, offset: false, expected: [512.5]),
   (
     labels: ['tick1'],
     offsetGridLines: true,
@@ -632,9 +617,7 @@ void main() {
         expect(_getLabels(scale), labels.sublist(1));
       });
 
-      testWidgets('should allow no return value from callback', (
-        tester,
-      ) async {
+      testWidgets('should allow no return value from callback', (tester) async {
         final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
         final chart = acquireChart({
           'type': 'line',

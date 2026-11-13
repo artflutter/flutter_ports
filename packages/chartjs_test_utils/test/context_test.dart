@@ -95,10 +95,7 @@ void main() {
         ],
       );
       expect(ctx.fillStyle, 'a');
-      expect(
-        ctx.font,
-        const TextStyle(fontFamily: 'Arial', fontSize: 12),
-      );
+      expect(ctx.font, const TextStyle(fontFamily: 'Arial', fontSize: 12));
       expect(ctx.lineCap, StrokeCap.round);
       expect(ctx.lineDashOffset, 1.5);
       expect(ctx.lineJoin, StrokeJoin.bevel);
@@ -385,10 +382,7 @@ void main() {
       expect(() => ctx.canvas, throwsUnsupportedError);
       expect(() => ctx.scale(1, 1), throwsUnsupportedError);
       expect(() => ctx.ellipse(0, 0, 1, 1, 0, 0, 1), throwsUnsupportedError);
-      expect(
-        () => ctx.transform(1, 0, 0, 1, 0, 0),
-        throwsUnsupportedError,
-      );
+      expect(() => ctx.transform(1, 0, 0, 1, 0, 0), throwsUnsupportedError);
       expect(ctx.resetTransform, throwsUnsupportedError);
       expect(ctx.getLineDash, throwsUnsupportedError);
       ctx

@@ -57,9 +57,7 @@ Map<String, Object?> fixture() {
   return <String, Object?>{
     'config': <String, Object?>{
       'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': datasets,
-      },
+      'data': <String, Object?>{'datasets': datasets},
       'options': <String, Object?>{
         'responsive': false,
         'elements': <String, Object?>{
@@ -76,9 +74,7 @@ Map<String, Object?> fixture() {
             'borderColor': '#cccccc',
           },
         },
-        'layout': <String, Object?>{
-          'padding': const EdgeInsets.all(20),
-        },
+        'layout': <String, Object?>{'padding': const EdgeInsets.all(20)},
         'scales': <String, Object?>{
           'x': <String, Object?>{'display': false},
           'y': <String, Object?>{'display': false},
@@ -86,10 +82,7 @@ Map<String, Object?> fixture() {
       },
     },
     'options': <String, Object?>{
-      'canvas': <String, Object?>{
-        'height': 256,
-        'width': 512,
-      },
+      'canvas': <String, Object?>{'height': 256, 'width': 512},
     },
   };
 }

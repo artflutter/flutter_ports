@@ -66,11 +66,10 @@ int run(List<String> args, {required IOSink out}) {
     final file = File('${dir.path}/$name')..writeAsStringSync(text);
     paths.add(file.path);
   }
-  final format = Process.runSync(
-    Platform.resolvedExecutable,
-    ['format', ...paths],
-    workingDirectory: package,
-  );
+  final format = Process.runSync(Platform.resolvedExecutable, [
+    'format',
+    ...paths,
+  ], workingDirectory: package);
   if (format.exitCode != 0) {
     out.writeln('options_gen: dart format failed:\n${format.stderr}');
     return 1;

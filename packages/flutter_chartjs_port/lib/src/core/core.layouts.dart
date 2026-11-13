@@ -612,10 +612,7 @@ void _updateMaxPadding(_Edges maxPadding, TRBL boxPadding) {
     }
     final stack =
         stacks[layout.stack] ?? _Stack(count: 1, placed: 0, weight: 0);
-    stack.size = jsMax(
-      stack.size,
-      layout.horizontal ? box.height : box.width,
-    );
+    stack.size = jsMax(stack.size, layout.horizontal ? box.height : box.width);
     layout.size = stack.size / stack.count;
     chartArea[pos] += layout.size;
   }
@@ -880,11 +877,7 @@ void _removeBox(types.Chart chart, LayoutItem? layoutItem) {
 /// `core.layouts` test only its truthiness. [LayoutItem.weight] is an
 /// `Object?`: `configure` stores the `weight` option as it is, as upstream
 /// does, because `sortByWeight` compares the raw values with `===`.
-void _configure(
-  types.Chart chart,
-  LayoutItem item,
-  Object options,
-) {
+void _configure(types.Chart chart, LayoutItem item, Object options) {
   item
     // DIVERGES(chartjs): adapt-layout-configure-types, a bool, not the value.
     ..fullSize = jsTruthy(readOption(options, OptionKey.fullSize))
@@ -1068,12 +1061,7 @@ void _update(
 const ({
   void Function(types.Chart chart, LayoutItem item) addBox,
   void Function(types.Chart chart, LayoutItem? layoutItem) removeBox,
-  void Function(
-    types.Chart chart,
-    LayoutItem item,
-    Object options,
-  )
-  configure,
+  void Function(types.Chart chart, LayoutItem item, Object options) configure,
   void Function(
     types.Chart? chart,
     double width,

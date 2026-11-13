@@ -146,17 +146,13 @@ final class _Chart implements types.Chart {
 
 /// A chart on a canvas of [rw] x [rh] with the inline style [style]. The
 /// chart has the size of the render size divided by [ratio].
-_Chart _chartOn(
-  int rw,
-  int rh, [
-  String style = '',
-  double ratio = 1,
-]) => _Chart(
-  canvas: _Canvas(rw, rh, style),
-  width: rw / ratio,
-  height: rh / ratio,
-  platformRatio: ratio,
-);
+_Chart _chartOn(int rw, int rh, [String style = '', double ratio = 1]) =>
+    _Chart(
+      canvas: _Canvas(rw, rh, style),
+      width: rw / ratio,
+      height: rh / ratio,
+      platformRatio: ratio,
+    );
 
 /// The mismatch text of [matcher] for [actual].
 String _mismatch(Matcher matcher, Object? actual) {
@@ -213,10 +209,7 @@ void main() {
     test('compares x and y after rounding to 2 places', () {
       expect(
         const _Point(11.6161, 12.6559),
-        toBeCloseToPoint({
-          'x': 11.616,
-          'y': 12.656,
-        }),
+        toBeCloseToPoint({'x': 11.616, 'y': 12.656}),
       );
       expect(
         const _Point(11.6161, 12.6559),
@@ -278,10 +271,7 @@ void main() {
 
   group('toEqualOptions', () {
     test('compares the keys of the expected object only', () {
-      expect(
-        {'a': 1, 'b': 'x', 'c': true},
-        toEqualOptions({'a': 1, 'b': 'x'}),
-      );
+      expect({'a': 1, 'b': 'x', 'c': true}, toEqualOptions({'a': 1, 'b': 'x'}));
       expect({'a': 1}, isNot(toEqualOptions({'a': 1, 'b': 'x'})));
     });
 
@@ -362,10 +352,9 @@ void main() {
       final scales = resolver['scales']! as JsProxyObject;
       expect(scales.ownKeys(), ['grid']);
       expect((scales['grid']! as JsProxyObject)['grid'], isA<JsProxyObject>());
-      expect(
-        <String, Object?>{'scales': <String, Object?>{}},
-        toEqualOptions(resolver),
-      );
+      expect(<String, Object?>{
+        'scales': <String, Object?>{},
+      }, toEqualOptions(resolver));
       expect(createResolver(scopes()), toEqualOptions(resolver));
       expect(
         _mismatch(toEqualOptions(resolver), <String, Object?>{}),
@@ -407,12 +396,9 @@ void main() {
 
     test('formats objects and arrays as JSON', () {
       expect(
-        _mismatch(
-          toEqualOptions({'a': 1}),
-          {
-            'a': [1, 'x'],
-          },
-        ),
+        _mismatch(toEqualOptions({'a': 1}), {
+          'a': [1, 'x'],
+        }),
         'a: Expected [1,"x"] to equal 1',
       );
     });
@@ -506,20 +492,17 @@ void main() {
           final element = point();
           expect({'el': element}, toEqualOptions({'el': element}));
           expect({'el': point()}, isNot(toEqualOptions({'el': element})));
-          expect(
-            {
-              'el': <String, Object?>{
-                'x': 1,
-                'y': 2,
-                'active': false,
-                'options': <String, Object?>{
-                  'radius': 3,
-                  'nested': <String, Object?>{'a': 1},
-                },
+          expect({
+            'el': <String, Object?>{
+              'x': 1,
+              'y': 2,
+              'active': false,
+              'options': <String, Object?>{
+                'radius': 3,
+                'nested': <String, Object?>{'a': 1},
               },
             },
-            isNot(toEqualOptions({'el': element})),
-          );
+          }, isNot(toEqualOptions({'el': element})));
         });
       });
     });
@@ -528,9 +511,9 @@ void main() {
       // package:matcher calls describeMismatch also after a throw in
       // matches. Then the report shows the throw.
       expect(
-        toEqualOptions({
-          'a': 1,
-        }).describeMismatch(1, StringDescription(), {}, false).toString(),
+        toEqualOptions({'a': 1})
+            .describeMismatch(1, StringDescription(), {}, false)
+            .toString(),
         '',
       );
     });

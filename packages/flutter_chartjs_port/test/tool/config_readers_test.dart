@@ -258,9 +258,8 @@ list:
 
       const zoomPackage = 'packages/flutter_chartjs_plugin_zoom_port';
       final zoom = parsePortSourcesFile(
-        File(
-          '../flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml',
-        ).readAsStringSync(),
+        File('../flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml')
+            .readAsStringSync(),
       );
       expect(zoom.marker, 'zoom');
       expect(zoom.host, 'flutter_chartjs_port');

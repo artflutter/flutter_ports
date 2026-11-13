@@ -501,9 +501,8 @@ List<DifferenceRow> parseDifferences(String text) {
     if (!isIdTable || cells.every((c) => RegExp(r'^:?-+:?$').hasMatch(c))) {
       continue;
     }
-    final anchor = RegExp(
-      r'''<a\s+(?:id|name)=["']([^"']+)["']''',
-    ).firstMatch(cells.first);
+    final anchor = RegExp(r'''<a\s+(?:id|name)=["']([^"']+)["']''')
+        .firstMatch(cells.first);
     final id =
         anchor?.group(1) ??
         cells.first
@@ -553,9 +552,7 @@ final class PortVersion {
   final String? commit;
 }
 
-final RegExp _portVersion = RegExp(
-  r'^v?(\d+(?:\.\d+)*)(?:\+([0-9a-f]{8}))?$',
-);
+final RegExp _portVersion = RegExp(r'^v?(\d+(?:\.\d+)*)(?:\+([0-9a-f]{8}))?$');
 
 /// The parts of a `v`-prefixed or plain dotted version with an optional
 /// `+<sha8>`, for example `v4.5.1+7169e651`, or null.
@@ -698,9 +695,7 @@ final class _Marker {
 typedef _VersionPin = ({String constant, String? pinned});
 
 /// Runs the header check.
-({List<Finding> findings, int files}) checkPortHeaders(
-  HeaderCheckInput input,
-) {
+({List<Finding> findings, int files}) checkPortHeaders(HeaderCheckInput input) {
   final findings = <Finding>[];
   final repo = input.repository;
   String rel(String path) => relativePath(repo, path);
@@ -724,9 +719,9 @@ typedef _VersionPin = ({String constant, String? pinned});
   for (final source in sources) {
     final constant = source.versionConstantIn(rel(input.home));
     if (constant == null) continue;
-    final pinned = _versionConstantPattern(
-      constant,
-    ).firstMatch(upstreamText)?.group(1);
+    final pinned = _versionConstantPattern(constant)
+        .firstMatch(upstreamText)
+        ?.group(1);
     if (pinned == null) {
       findings.add(Finding(rel(upstreamFile), null, 'no $constant found.'));
     }
@@ -781,10 +776,7 @@ typedef _VersionPin = ({String constant, String? pinned});
     findings: findings,
   );
   final packages = <String>[];
-  for (final package in [
-    ...input.packages,
-    ...targetPackages(repo, sources),
-  ]) {
+  for (final package in [...input.packages, ...targetPackages(repo, sources)]) {
     if (!packages.contains(package)) packages.add(package);
   }
   var files = 0;

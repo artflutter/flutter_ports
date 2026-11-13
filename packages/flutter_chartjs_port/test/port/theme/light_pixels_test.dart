@@ -59,9 +59,7 @@ const List<String> _chartTypes = [
 AnyObject _config(String type, {required bool colors, Object? theme}) {
   final cartesian = const {'bar', 'bubble', 'line', 'scatter'}.contains(type);
   final radial = type == 'polarArea' || type == 'radar';
-  final bordered = const {'bar', 'doughnut', 'pie', 'polarArea'}.contains(
-    type,
-  );
+  final bordered = const {'bar', 'doughnut', 'pie', 'polarArea'}.contains(type);
   List<Object?> data(int d) => switch (type) {
     'bubble' => <Object?>[
       for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])

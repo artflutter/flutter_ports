@@ -30,13 +30,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
         'x': <String, Object?>{
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
           'grid': <String, Object?>{
             'color': (Object? context) {
               return (jsGet(context, 'tick')! as Tick).value == 0
@@ -52,9 +48,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'width': 128,
-      'height': 128,
-    },
+    'canvas': <String, Object?>{'width': 128, 'height': 128},
   },
 };

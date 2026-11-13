@@ -44,18 +44,12 @@ void main() {
         isPassedSummary('::error::4370 tests passed, 5 failed, 2 skipped.'),
         isFalse,
       );
-      expect(
-        isPassedSummary('✅ test/a_test.dart: 🎉 1 test passed.'),
-        isFalse,
-      );
+      expect(isPassedSummary('✅ test/a_test.dart: 🎉 1 test passed.'), isFalse);
     });
 
     test('rejects a failed run, a progress line and other output', () {
       expect(isPassedSummary('00:30 +2 -1: Some tests failed.'), isFalse);
-      expect(
-        isPassedSummary('00:30 +2 -1: switch over a double [E]'),
-        isFalse,
-      );
+      expect(isPassedSummary('00:30 +2 -1: switch over a double [E]'), isFalse);
       expect(
         isPassedSummary('00:00 +2: test/a_test.dart: All tests passed!'),
         isFalse,

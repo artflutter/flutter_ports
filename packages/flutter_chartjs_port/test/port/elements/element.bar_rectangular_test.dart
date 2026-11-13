@@ -116,11 +116,8 @@ Object? _calls(BarElement bar) {
   return _normalize(context.getCalls());
 }
 
-void _expectCalls(Map<String, Object?> cfg, String reason) => expect(
-  _calls(BarElement(cfg)),
-  _calls(_ReferenceBar(cfg)),
-  reason: reason,
-);
+void _expectCalls(Map<String, Object?> cfg, String reason) =>
+    expect(_calls(BarElement(cfg)), _calls(_ReferenceBar(cfg)), reason: reason);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

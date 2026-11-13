@@ -598,22 +598,19 @@ void main() {
     setUp(_setUpScaleTypes);
 
     test('the keys of defaults.scale', () {
-      expect(
-        jsObjectKeys(defaults['scale']! as JsObjectFace),
-        [
-          'display',
-          'offset',
-          'reverse',
-          'beginAtZero',
-          'bounds',
-          'clip',
-          'grace',
-          'grid',
-          'border',
-          'title',
-          'ticks',
-        ],
-      );
+      expect(jsObjectKeys(defaults['scale']! as JsObjectFace), [
+        'display',
+        'offset',
+        'reverse',
+        'beginAtZero',
+        'bounds',
+        'clip',
+        'grace',
+        'grid',
+        'border',
+        'title',
+        'ticks',
+      ]);
     });
 
     test('the scales of the chart type overrides for each dataset', () {
@@ -1053,9 +1050,7 @@ void main() {
         referenceColorTokens('{"a":1}'),
       );
       expect(
-        jsObjectKeys(
-          (config.options as AnyObject)['scales']! as JsObjectFace,
-        ),
+        jsObjectKeys((config.options as AnyObject)['scales']! as JsObjectFace),
         ['x', 'y'],
       );
       config
@@ -1066,9 +1061,7 @@ void main() {
         }
         ..update();
       expect(
-        jsObjectKeys(
-          (config.options as AnyObject)['scales']! as JsObjectFace,
-        ),
+        jsObjectKeys((config.options as AnyObject)['scales']! as JsObjectFace),
         ['x', 'y', 'xx'],
       );
       config
@@ -1076,9 +1069,7 @@ void main() {
         ..update();
       expect(jsObjectKeys(config.options), ['plugins', 'scales']);
       expect(
-        jsObjectKeys(
-          (config.options as AnyObject)['scales']! as JsObjectFace,
-        ),
+        jsObjectKeys((config.options as AnyObject)['scales']! as JsObjectFace),
         ['xx', 'y'],
       );
     });
@@ -1469,10 +1460,7 @@ void main() {
       ]);
       final noType = Config(<String, Object?>{});
       final scopes = noType.chartOptionScopes();
-      expect(
-        _json(scopes[3]),
-        referenceColorTokens('{"type":"<undefined>"}'),
-      );
+      expect(_json(scopes[3]), referenceColorTokens('{"type":"<undefined>"}'));
       expect(jsObjectKeys(scopes[3]! as Map<String, Object?>), ['type']);
     });
   });
@@ -1499,11 +1487,14 @@ void main() {
     });
 
     test('static options are shared', () {
-      final result = config.resolveNamedOptions(
-        scopes,
-        ['radius', 'pointStyle', 'nul', 'und', 'missing', 'extra'],
-        () => throw StateError('no context'),
-      );
+      final result = config.resolveNamedOptions(scopes, [
+        'radius',
+        'pointStyle',
+        'nul',
+        'und',
+        'missing',
+        'extra',
+      ], () => throw StateError('no context'));
       expect(
         _json(result),
         referenceColorTokens(
@@ -1571,10 +1562,7 @@ void main() {
       ];
       final result = config.resolveNamedOptions(
         scriptable,
-        [
-          'radius',
-          'other',
-        ],
+        ['radius', 'other'],
         () {
           calls++;
           return context;
@@ -1774,10 +1762,7 @@ void main() {
         <String, Object?>{},
       );
       expect(jsObjectKeys(scriptable), [r'$shared', 'a']);
-      expect(
-        _json(scriptable),
-        referenceColorTokens(r'{"$shared":"x","a":1}'),
-      );
+      expect(_json(scriptable), referenceColorTokens(r'{"$shared":"x","a":1}'));
       expect(
         jsObjectKeys(
           config.resolveNamedOptions(
@@ -1887,9 +1872,7 @@ void main() {
       config.resolveNamedOptions(
         scopes,
         ['radius'],
-        <String, Object?>{
-          'index': 0.0,
-        },
+        <String, Object?>{'index': 0.0},
       );
       expect(
         config.createResolver(scopes),
@@ -2236,10 +2219,7 @@ void main() {
       );
       expect(result, isNot(isA<ElementOptions>()));
       expect(result, isA<Map<String, Object?>>());
-      expect(
-        _json(result),
-        referenceColorTokens(r'{"$shared":true,"x":1}'),
-      );
+      expect(_json(result), referenceColorTokens(r'{"$shared":true,"x":1}'));
     });
   });
 
@@ -2866,24 +2846,21 @@ void main() {
         ),
       );
       expect(_at(themed.options, 'scales.x.ticks.color'), 'theme-ticks');
-      expect(
-        jsObjectKeys(_at(themed.options, 'scales.x')! as JsObjectFace),
-        [
-          'axis',
-          'grid',
-          'type',
-          'ticks',
-          'display',
-          'offset',
-          'reverse',
-          'beginAtZero',
-          'bounds',
-          'clip',
-          'grace',
-          'border',
-          'title',
-        ],
-      );
+      expect(jsObjectKeys(_at(themed.options, 'scales.x')! as JsObjectFace), [
+        'axis',
+        'grid',
+        'type',
+        'ticks',
+        'display',
+        'offset',
+        'reverse',
+        'beginAtZero',
+        'bounds',
+        'clip',
+        'grace',
+        'border',
+        'title',
+      ]);
       // No theme equals upstream.
       final plain = Config(raw(themed: false));
       expect(
@@ -2894,24 +2871,21 @@ void main() {
           '"tickColor":"<fn>","offset":false,"color":"rgba(0,0,0,0.1)"}',
         ),
       );
-      expect(
-        jsObjectKeys(_at(plain.options, 'scales.x')! as JsObjectFace),
-        [
-          'axis',
-          'grid',
-          'type',
-          'display',
-          'offset',
-          'reverse',
-          'beginAtZero',
-          'bounds',
-          'clip',
-          'grace',
-          'border',
-          'title',
-          'ticks',
-        ],
-      );
+      expect(jsObjectKeys(_at(plain.options, 'scales.x')! as JsObjectFace), [
+        'axis',
+        'grid',
+        'type',
+        'display',
+        'offset',
+        'reverse',
+        'beginAtZero',
+        'bounds',
+        'clip',
+        'grace',
+        'border',
+        'title',
+        'ticks',
+      ]);
     });
 
     test('a theme without scales, and scales that are not a Map', () {

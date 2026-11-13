@@ -61,11 +61,7 @@ Color? flutterColor(kc.Color color) {
 /// sliders and its chart). A tab has at most a few cards.
 class DemoPageBody extends StatelessWidget {
   /// Creates the body with [children], padded and capped at [maxWidth].
-  const DemoPageBody({
-    required this.children,
-    this.maxWidth = 1100,
-    super.key,
-  });
+  const DemoPageBody({required this.children, this.maxWidth = 1100, super.key});
 
   /// The sections of the page.
   final List<Widget> children;
@@ -166,10 +162,7 @@ class ColorSwatchBox extends StatelessWidget {
       child: SizedBox.square(
         dimension: size,
         child: CustomPaint(
-          painter: _SwatchPainter(
-            color,
-            Theme.of(context).colorScheme.outline,
-          ),
+          painter: _SwatchPainter(color, Theme.of(context).colorScheme.outline),
         ),
       ),
     );

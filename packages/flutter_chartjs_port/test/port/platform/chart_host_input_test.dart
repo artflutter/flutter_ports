@@ -186,10 +186,7 @@ final class _Pointers {
 
   Offset _at(List<Object?> action) =>
       origin +
-      Offset(
-        (action[1]! as num).toDouble(),
-        (action[2]! as num).toDouble(),
-      );
+      Offset((action[1]! as num).toDouble(), (action[2]! as num).toDouble());
 
   /// Runs the actions of [step] and pumps one frame. A `wait` action gives
   /// the duration of the pump. The generator keeps a `wait` alone in its

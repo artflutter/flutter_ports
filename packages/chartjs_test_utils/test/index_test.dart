@@ -32,12 +32,10 @@ Map<String, Object?> _destroyLog(String name) => <String, Object?>{
 };
 
 /// A chart of [acquireChart] whose plugin logs as [name].
-Chart _acquire(String name, [Map<String, Object?>? options]) => acquireChart(
-  <String, Object?>{
-    'plugins': [_destroyLog(name)],
-  },
-  options,
-);
+Chart _acquire(String name, [Map<String, Object?>? options]) =>
+    acquireChart(<String, Object?>{
+      'plugins': [_destroyLog(name)],
+    }, options);
 
 /// The wrapper of the chart of the unmount test.
 late HarnessElement _released;

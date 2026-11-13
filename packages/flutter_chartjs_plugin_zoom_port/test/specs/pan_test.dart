@@ -25,18 +25,9 @@ void main() {
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 1,
-              'y': 3,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 2,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 1,
-            },
+            <String, Object?>{'x': 1, 'y': 3},
+            <String, Object?>{'x': 2, 'y': 2},
+            <String, Object?>{'x': 3, 'y': 1},
           ],
         },
       ],
@@ -50,17 +41,11 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
-                'pan': <String, Object?>{
-                  'enabled': true,
-                  'mode': Mode.x,
-                },
+                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
               },
             },
             'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'min': 1,
-                'max': 2,
-              },
+              'x': <String, Object?>{'min': 1, 'max': 2},
             },
           },
         });
@@ -86,21 +71,13 @@ void main() {
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
                 'limits': <String, Object?>{
-                  'x': <String, Object?>{
-                    'max': 4,
-                  },
+                  'x': <String, Object?>{'max': 4},
                 },
-                'pan': <String, Object?>{
-                  'enabled': true,
-                  'mode': Mode.x,
-                },
+                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
               },
             },
             'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'min': 1,
-                'max': 3,
-              },
+              'x': <String, Object?>{'min': 1, 'max': 3},
             },
           },
         });
@@ -125,18 +102,11 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
-                'pan': <String, Object?>{
-                  'enabled': true,
-                  'mode': Mode.y,
-                },
+                'pan': <String, Object?>{'enabled': true, 'mode': Mode.y},
               },
             },
             'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'linear',
-                'min': 2,
-                'max': 2,
-              },
+              'y': <String, Object?>{'type': 'linear', 'min': 2, 'max': 2},
             },
           },
         });
@@ -157,23 +127,14 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
-                'pan': <String, Object?>{
-                  'enabled': true,
-                  'mode': Mode.x,
-                },
+                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
                 'limits': <String, Object?>{
-                  'x': <String, Object?>{
-                    'min': 'original',
-                    'max': 'original',
-                  },
+                  'x': <String, Object?>{'min': 'original', 'max': 'original'},
                 },
               },
             },
             'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'min': 1,
-                'max': 2,
-              },
+              'x': <String, Object?>{'min': 1, 'max': 2},
             },
           },
         });
@@ -194,15 +155,9 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'zoom': <String, Object?>{
-                'pan': <String, Object?>{
-                  'enabled': true,
-                  'mode': Mode.x,
-                },
+                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
                 'limits': <String, Object?>{
-                  'x': <String, Object?>{
-                    'min': 'original',
-                    'max': 'original',
-                  },
+                  'x': <String, Object?>{'min': 'original', 'max': 'original'},
                 },
               },
             },
@@ -259,42 +214,41 @@ void main() {
         });
       });
 
-      testWidgets(
-        'should call onPanRejected when onStartPan returns false',
-        (tester) async {
-          await waitForDone((done) {
-            final rejectSpy = createSpy('rejected');
-            final chart = acquireChart(<String, Object?>{
-              'type': 'scatter',
-              'data': data,
-              'options': <String, Object?>{
-                'plugins': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'pan': <String, Object?>{
-                      'enabled': true,
-                      'mode': Mode.xy,
-                      'onPanStart': (ZoomStartContext<GestureEvent> _) => false,
-                      'onPanRejected': rejectSpy.call,
-                    },
+      testWidgets('should call onPanRejected when onStartPan returns false', (
+        tester,
+      ) async {
+        await waitForDone((done) {
+          final rejectSpy = createSpy('rejected');
+          final chart = acquireChart(<String, Object?>{
+            'type': 'scatter',
+            'data': data,
+            'options': <String, Object?>{
+              'plugins': <String, Object?>{
+                'zoom': <String, Object?>{
+                  'pan': <String, Object?>{
+                    'enabled': true,
+                    'mode': Mode.xy,
+                    'onPanStart': (ZoomStartContext<GestureEvent> _) => false,
+                    'onPanRejected': rejectSpy.call,
                   },
                 },
               },
-            });
-
-            simulatePan(
-              chart,
-              deltaX: -350,
-              done: () {
-                // The rejection must not be repeated for every move of the
-                // same gesture.
-                expect(rejectSpy, toHaveBeenCalledTimes(1));
-                expect(chart.scales['x']!.min, toBe(1));
-                done();
-              },
-            );
+            },
           });
-        },
-      );
+
+          simulatePan(
+            chart,
+            deltaX: -350,
+            done: () {
+              // The rejection must not be repeated for every move of the
+              // same gesture.
+              expect(rejectSpy, toHaveBeenCalledTimes(1));
+              expect(chart.scales['x']!.min, toBe(1));
+              done();
+            },
+          );
+        });
+      });
 
       testWidgets(
         'should call onPanRejected when the modifier key is not pressed',
@@ -351,10 +305,7 @@ void main() {
             'options': <String, Object?>{
               'plugins': <String, Object?>{
                 'zoom': <String, Object?>{
-                  'pan': <String, Object?>{
-                    'enabled': true,
-                    'mode': Mode.xy,
-                  },
+                  'pan': <String, Object?>{'enabled': true, 'mode': Mode.xy},
                 },
               },
             },
@@ -441,44 +392,43 @@ void main() {
         expect(completeSpy, toHaveBeenCalledTimes(1));
       });
 
-      testWidgets(
-        'should not complete the pan when the gesture is cancelled',
-        (tester) async {
-          final completeSpy = createSpy('completed');
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'pan': <String, Object?>{
-                    'enabled': true,
-                    'mode': Mode.xy,
-                    'onPanComplete': completeSpy.call,
-                  },
+      testWidgets('should not complete the pan when the gesture is cancelled', (
+        tester,
+      ) async {
+        final completeSpy = createSpy('completed');
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': data,
+          'options': <String, Object?>{
+            'plugins': <String, Object?>{
+              'zoom': <String, Object?>{
+                'pan': <String, Object?>{
+                  'enabled': true,
+                  'mode': Mode.xy,
+                  'onPanComplete': completeSpy.call,
                 },
               },
             },
-          });
+          },
+        });
 
-          final node = chart.canvas!;
-          final rect = node.getBoundingClientRect();
-          final x = rect.left + rect.width / 2;
-          final y = rect.top + rect.height / 2;
-          const dispatch = dispatchPointer;
+        final node = chart.canvas!;
+        final rect = node.getBoundingClientRect();
+        final x = rect.left + rect.width / 2;
+        final y = rect.top + rect.height / 2;
+        const dispatch = dispatchPointer;
 
-          dispatch(node, 'pointerdown', 1, x, y);
-          dispatch(node, 'pointermove', 1, x - 50, y);
-          dispatch(node, 'pointercancel', 1, x - 50, y);
-          expect(completeSpy, isNot(toHaveBeenCalled()));
+        dispatch(node, 'pointerdown', 1, x, y);
+        dispatch(node, 'pointermove', 1, x - 50, y);
+        dispatch(node, 'pointercancel', 1, x - 50, y);
+        expect(completeSpy, isNot(toHaveBeenCalled()));
 
-          // The aborted pan must not be resumed by the next one.
-          final min = chart.scales['x']!.min;
-          dispatch(node, 'pointerdown', 1, x, y);
-          dispatch(node, 'pointermove', 1, x - 5, y);
-          expect(chart.scales['x']!.min, toBe(min));
-        },
-      );
+        // The aborted pan must not be resumed by the next one.
+        final min = chart.scales['x']!.min;
+        dispatch(node, 'pointerdown', 1, x, y);
+        dispatch(node, 'pointermove', 1, x - 5, y);
+        expect(chart.scales['x']!.min, toBe(min));
+      });
     });
   });
 }

@@ -604,14 +604,12 @@ final class ScopeState {
 /// [cell] as a cell of the type `T` of a field: [cell] itself when it is an
 /// `Opt<T>`, else the cell of its raw value by [classify] (a cell of another
 /// kind with another type for the same key name). Dart `null` stays null.
-Opt<T>? fitCell<T>(
-  Opt<Object?>? cell,
-  Opt<T> Function(Object? raw) classify,
-) => switch (cell) {
-  null => null,
-  final Opt<T> fit => fit,
-  _ => classify(cell.raw),
-};
+Opt<T>? fitCell<T>(Opt<Object?>? cell, Opt<T> Function(Object? raw) classify) =>
+    switch (cell) {
+      null => null,
+      final Opt<T> fit => fit,
+      _ => classify(cell.raw),
+    };
 
 /// The deep copy of [cell] for [OptionScope.cloneScope].
 Opt<T> cloneCell<T>(Opt<T> cell) => switch (cell) {

@@ -95,11 +95,7 @@ Map<String, Object?> _xConfig() => <String, Object?>{
 /// [easing] is the `animation.easing` of the chart options. The frame tests
 /// give the upstream formula ([EffectCurve]): their expected values come
 /// from upstream.
-Animations _resolveAnimations(
-  types.Chart chart,
-  String mode, {
-  Curve? easing,
-}) {
+Animations _resolveAnimations(types.Chart chart, String mode, {Curve? easing}) {
   final config = Config(<String, Object?>{
     'type': 'line',
     if (easing != null)
@@ -243,9 +239,7 @@ void main() {
       tester,
     ) async {
       final chart = _Chart();
-      final point = PointElement({
-        'options': _shared(animationHoverFrom, 3),
-      });
+      final point = PointElement({'options': _shared(animationHoverFrom, 3)});
       final hover = _shared(animationHoverTo, 4);
       _resolveAnimations(
         chart,
@@ -511,10 +505,7 @@ void main() {
       }
       final extra = PointProperties()..['other'] = 1;
       expect(animatedPropOf(extra, 0).name, 'other');
-      expect(
-        AnimatedProp.builtIns,
-        isNot(contains(animatedPropOf(extra, 0))),
-      );
+      expect(AnimatedProp.builtIns, isNot(contains(animatedPropOf(extra, 0))));
     });
 
     test('a property object animates as the same object by name', () {

@@ -117,10 +117,7 @@ final JsClass _otherLine = JsClass(
 
 /// `chart.data.datasets[index].data`.
 List<Object?> _data(Chart chart, int index) =>
-    jsGet(
-          (jsGet(chart.data, 'datasets')! as List<Object?>)[index],
-          'data',
-        )!
+    jsGet((jsGet(chart.data, 'datasets')! as List<Object?>)[index], 'data')!
         as List<Object?>;
 
 /// The config of a line chart with the labels a to e and the [datasets].
@@ -244,9 +241,7 @@ void main() {
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
       final snapshot = jsonDecode(
-        File(
-          'test/port/theme/light_snapshot.json',
-        ).readAsStringSync(),
+        File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
       final config =
           copyReference(controllerLineReference.first.config, _functions)!
@@ -332,9 +327,7 @@ void main() {
       }
     });
 
-    testWidgets("spanGaps '2' gives the points of spanGaps 2", (
-      tester,
-    ) async {
+    testWidgets("spanGaps '2' gives the points of spanGaps 2", (tester) async {
       AnyObject config(Object? spanGaps) => <String, Object?>{
         'type': 'line',
         'data': <String, Object?>{

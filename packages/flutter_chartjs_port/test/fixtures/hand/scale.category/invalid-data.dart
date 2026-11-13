@@ -30,22 +30,15 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'scales': <String, Object?>{
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
         'x': <String, Object?>{
-          'grid': <String, Object?>{
-            'display': false,
-          },
+          'grid': <String, Object?>{'display': false},
         },
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 256,
-      'height': 256,
-    },
+    'canvas': <String, Object?>{'width': 256, 'height': 256},
   },
 };

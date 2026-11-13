@@ -151,10 +151,7 @@ void main() {
     });
 
     test('should respect aspect ratio and skip container height', () {
-      expect(
-        getMaximumSize(_nodeIn(500, 200), null, null, 1),
-        _size(500, 500),
-      );
+      expect(getMaximumSize(_nodeIn(500, 200), null, null, 1), _size(500, 500));
     });
 
     test('should round non-integer container dimensions', () {

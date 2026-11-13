@@ -27,14 +27,7 @@ void main() {
       ];
       expect(
         [for (final p in positions) p.name],
-        [
-          'top',
-          'left',
-          'bottom',
-          'right',
-          'center',
-          'chartArea',
-        ],
+        ['top', 'left', 'bottom', 'right', 'center', 'chartArea'],
       );
     });
   });

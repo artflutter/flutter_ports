@@ -123,10 +123,7 @@ void main() {
           final warnings = <String>[];
           Chart.unregister([filler]);
           _acquireWithWarnSpy(
-            _line(
-              [<String, Object?>{}],
-              <String, Object?>{'fill': true},
-            ),
+            _line([<String, Object?>{}], <String, Object?>{'fill': true}),
             warnings,
           );
 

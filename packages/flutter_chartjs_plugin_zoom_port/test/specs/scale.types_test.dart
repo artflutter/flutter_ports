@@ -35,10 +35,7 @@ Scale createCategoryScale({
   final chart = acquireChart(
     <String, Object?>{
       'type': 'bar',
-      'data': <String, Object?>{
-        'labels': labels,
-        'datasets': <Object?>[],
-      },
+      'data': <String, Object?>{'labels': labels, 'datasets': <Object?>[]},
       'options': <String, Object?>{
         'layout': <String, Object?>{'padding': EdgeInsets.zero},
         'plugins': <String, Object?>{
@@ -265,11 +262,7 @@ void main() {
           width: 400,
         );
 
-        panFunctions['category']!(
-          scale,
-          -10,
-          const LimitOptions(emptyObject),
-        );
+        panFunctions['category']!(scale, -10, const LimitOptions(emptyObject));
 
         expect(scale.options.min, toBe(5000));
         expect(scale.options.max, toBe(9999));

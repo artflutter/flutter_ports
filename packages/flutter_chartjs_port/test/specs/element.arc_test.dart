@@ -311,15 +311,11 @@ void main() {
           'borderWidth': 0,
           'scales': <String, Object?>{
             'r': <String, Object?>{
-              'grid': <String, Object?>{
-                'circular': false,
-              },
+              'grid': <String, Object?>{'circular': false},
             },
           },
           'elements': <String, Object?>{
-            'arc': <String, Object?>{
-              'circular': false,
-            },
+            'arc': <String, Object?>{'circular': false},
           },
         },
       });
@@ -457,54 +453,46 @@ void main() {
       expect(_arg(arcCalls[1], 3), lessThan(_arg(arcCalls[1], 4)));
     });
 
-    test(
-      'should not reverse end separator angle in parallel mode with large '
-      'spacing',
-      () {
-        final arc = ArcElement({
-          'startAngle': 0,
-          'endAngle': math.pi / 3,
-          'x': 0,
-          'y': 0,
-          'innerRadius': 40,
-          'outerRadius': 100,
-          'options': <String, Object?>{
-            'circular': true,
-            'spacingMode': ArcSpacingMode.parallel,
-            'spacing': 20,
-            'offset': 0,
-            'borderWidth': 0,
-            'borderRadius': 0,
-            'backgroundColor': const ChartPaint.solid(
-              ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-            'borderColor': const ChartPaint.solid(
-              ui.Color.fromRGBO(0, 0, 0, 1),
-            ),
-          },
-        });
+    test('should not reverse end separator angle in parallel mode with large '
+        'spacing', () {
+      final arc = ArcElement({
+        'startAngle': 0,
+        'endAngle': math.pi / 3,
+        'x': 0,
+        'y': 0,
+        'innerRadius': 40,
+        'outerRadius': 100,
+        'options': <String, Object?>{
+          'circular': true,
+          'spacingMode': ArcSpacingMode.parallel,
+          'spacing': 20,
+          'offset': 0,
+          'borderWidth': 0,
+          'borderRadius': 0,
+          'backgroundColor': const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 0, 0, 1),
+          ),
+          'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
+        },
+      });
 
-        final ctx = createMockContext();
-        arc.draw(ctx);
+      final ctx = createMockContext();
+      arc.draw(ctx);
 
-        final arcCalls = ctx
-            .getCalls()
-            .where((x) => x['name'] == 'arc')
-            .toList();
-        final lineToCalls = ctx
-            .getCalls()
-            .where((x) => x['name'] == 'lineTo')
-            .toList();
+      final arcCalls = ctx.getCalls().where((x) => x['name'] == 'arc').toList();
+      final lineToCalls = ctx
+          .getCalls()
+          .where((x) => x['name'] == 'lineTo')
+          .toList();
 
-        final outerEndAngle = _arg(arcCalls[1], 4);
-        final innerEndAngle = math.atan2(
-          _arg(lineToCalls[0], 1) - arc.y,
-          _arg(lineToCalls[0], 0) - arc.x,
-        );
+      final outerEndAngle = _arg(arcCalls[1], 4);
+      final innerEndAngle = math.atan2(
+        _arg(lineToCalls[0], 1) - arc.y,
+        _arg(lineToCalls[0], 0) - arc.x,
+      );
 
-        expect(innerEndAngle, lessThan(outerEndAngle));
-      },
-    );
+      expect(innerEndAngle, lessThan(outerEndAngle));
+    });
 
     test(
       'should create a non-zero root for parallel spacing when innerRadius is '
@@ -584,9 +572,8 @@ void main() {
             .toList();
         // Array.from(new Set(...)): a Dart Set literal keeps the insertion
         // order.
-        final radii = {
-          for (final x in arcCalls) _arg(x, 2).toStringAsFixed(3),
-        }.toList();
+        final radii = {for (final x in arcCalls) _arg(x, 2).toStringAsFixed(3)}
+            .toList();
 
         expect(radii.length, 2);
         expect(

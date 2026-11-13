@@ -278,10 +278,7 @@ final class ChartConfigLowering {
 
   /// The `data` scope of [config]: `labels` by reference and a new
   /// `datasets` List of the live dataset scopes.
-  static ChartDataScope _data(
-    ChartConfig config,
-    List<_LiveDataset> datasets,
-  ) {
+  static ChartDataScope _data(ChartConfig config, List<_LiveDataset> datasets) {
     final data = ChartDataScope();
     put(data, OptionKey.labels, config.labels);
     data.datasets = <Object?>[for (final dataset in datasets) dataset.scope];

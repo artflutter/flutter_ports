@@ -47,10 +47,7 @@ import 'package:flutter_chartjs_port/src/kurkle_color/srgb.dart' as srgb_js;
 void _modHSL(RGBA? v, int i, double ratio) {
   if (v != null) {
     var tmp = rgb2hsl(v);
-    tmp[i] = jsMax(
-      0,
-      jsMin(tmp[i] + tmp[i] * ratio, i == 0 ? 360 : 1),
-    );
+    tmp[i] = jsMax(0, jsMin(tmp[i] + tmp[i] * ratio, i == 0 ? 360 : 1));
     // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
     tmp = hsl2rgb(tmp[0], tmp[1], tmp[2]);
     v
@@ -183,21 +180,15 @@ class Color {
 
   /// Internal numerical construction with alpha in byte units. Native inputs
   /// do not require parsing or premature alpha rounding.
-  factory Color.fromRgbaBytes(RGBA value) => Color._(
-    RGBA(r: value.r, g: value.g, b: value.b, a: value.a),
-  );
+  factory Color.fromRgbaBytes(RGBA value) =>
+      Color._(RGBA(r: value.r, g: value.g, b: value.b, a: value.a));
 
   /// A copy of the numerical channels, including the unrounded byte alpha.
   RGBA? get rgbaBytes {
     final value = _rgb;
     return value == null
         ? null
-        : RGBA(
-            r: value.r,
-            g: value.g,
-            b: value.b,
-            a: value.a,
-          );
+        : RGBA(r: value.r, g: value.g, b: value.b, a: value.a);
   }
 
   /// color.js:96 `_rgb`. The [RGBA] with `a` as a byte [0..255]. Dart `null`
@@ -296,9 +287,7 @@ class Color {
     final v = _rgb;
     return v == null
         ? Color(undefined)
-        : Color._(
-            RGBA(r: v.r, g: v.g, b: v.b, a: n2b(b2n(v.a))),
-          );
+        : Color._(RGBA(r: v.r, g: v.g, b: v.b, a: n2b(b2n(v.a))));
   }
 
   /// color.js:202 `alpha`.

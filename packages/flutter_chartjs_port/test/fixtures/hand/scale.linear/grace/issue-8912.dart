@@ -13,25 +13,17 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        'Red',
-        'Blue',
-      ],
+      'labels': <Object?>['Red', 'Blue'],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            10,
-            -10,
-          ],
+          'data': <Object?>[10, -10],
         },
       ],
     },
     'options': <String, Object?>{
       'plugins': false,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
         'y': <String, Object?>{
           // DIVERGES(chartjs): adapt-length-objects, the length
           // class.
@@ -40,7 +32,5 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
     },
   },
-  'options': <String, Object?>{
-    'spriteText': true,
-  },
+  'options': <String, Object?>{'spriteText': true},
 };

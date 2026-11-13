@@ -213,10 +213,7 @@ final class _Clip implements types.ChartMetaClip {
 }
 
 /// core.datasetController.js:59 `getSortedDatasetIndices`.
-List<double> _getSortedDatasetIndices(
-  types.Chart chart,
-  bool filterVisible,
-) {
+List<double> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
   final keys = <double>[];
   final metasets = chart.getSortedDatasetMetas(filterVisible);
 
@@ -592,11 +589,7 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
       if (jsTruthy(other)) {
         setStackValue(other, datasetIndex, value);
       } else {
-        _setIndexValue(
-          stack.visualValues = IndexValues(),
-          datasetIndex,
-          value,
-        );
+        _setIndexValue(stack.visualValues = IndexValues(), datasetIndex, value);
       }
     }
   }
@@ -607,9 +600,9 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
 /// `undefined`.
 String? _getFirstScaleId(types.Chart chart, ScaleAxis axis) {
   final scales = chart.scales;
-  return jsObjectKeys(
-    scales,
-  ).where((key) => sameAxis(scales[key]!.axis, axis)).firstOrNull;
+  return jsObjectKeys(scales)
+      .where((key) => sameAxis(scales[key]!.axis, axis))
+      .firstOrNull;
 }
 
 /// core.datasetController.js:182 `createDatasetContext`.
@@ -1474,9 +1467,7 @@ class DatasetController
   /// core.datasetController.js:404 `buildOrUpdateElements(resetNewElements)`.
   ///
   /// Dart `null` for [resetNewElements] stands for JS `undefined`.
-  void buildOrUpdateElements([
-    bool? resetNewElements,
-  ]) {
+  void buildOrUpdateElements([bool? resetNewElements]) {
     final meta = cachedMeta;
     final dataset = getDataset();
     var stackChanged = false;
@@ -2052,10 +2043,7 @@ class DatasetController
   ///
   /// Dart `null` for [index] and [active] stands for JS `undefined`.
   @override
-  ElementOptions getStyle(
-    double? index, [
-    bool? active,
-  ]) {
+  ElementOptions getStyle(double? index, [bool? active]) {
     // DIVERGES(chartjs): adapt-hidden-legend-items, a later build, no writes.
     final legend = legendStyles;
     if (legend != null) {
@@ -2082,11 +2070,7 @@ class DatasetController
   /// not a context, or for a built-in element class a context that is not a
   /// [ScriptableContext]) reads as Dart `null`, and a new data context takes
   /// its place (row `adapt-typed-contexts`).
-  ContextObject getContext([
-    double? index,
-    bool? active,
-    String? mode,
-  ]) {
+  ContextObject getContext([double? index, bool? active, String? mode]) {
     final dataset = getDataset();
     if (index != null && index >= 0 && index < cachedMeta.data.length) {
       final element = _at(cachedMeta.data, index)! as Element;
@@ -2530,12 +2514,7 @@ class DatasetController
   ///
   /// The element is of any class. Thus the object `{options}` stays a Map
   /// of one key, the key of each props class of Chart.js ADR 0054 §9.
-  void _setStyle(
-    Element element,
-    double? index,
-    String mode,
-    bool active,
-  ) {
+  void _setStyle(Element element, double? index, String mode, bool active) {
     element.active = active;
     final options = getStyle(index, active);
     resolveAnimations(index, mode, active).update(element, <String, Object?>{
@@ -2630,11 +2609,7 @@ class DatasetController
   /// the other callers compute [start] from the lengths. A [start] past the
   /// length throws a [RangeError] at the move, where upstream leaves holes
   /// (differences.md row `platform-array-events`).
-  void _insertElements(
-    double start,
-    double count, [
-    bool? resetNewElements,
-  ]) {
+  void _insertElements(double start, double count, [bool? resetNewElements]) {
     final meta = cachedMeta;
     final data = meta.data;
     final end = start + count;

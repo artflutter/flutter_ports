@@ -12,68 +12,33 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        '2030',
-        '2034',
-        '2038',
-        '2042',
-      ],
+      'labels': <Object?>['2030', '2034', '2038', '2042'],
       'datasets': <Object?>[
         <String, Object?>{
           'backgroundColor': '#FF6384',
           'data': <Object?>[
             11,
-            <Object?>[
-              6,
-              2,
-            ],
-            <Object?>[
-              -4,
-              -7,
-            ],
+            <Object?>[6, 2],
+            <Object?>[-4, -7],
             -2,
           ],
         },
         <String, Object?>{
           'backgroundColor': '#36A2EB',
           'data': <Object?>[
-            <Object?>[
-              1,
-              2,
-            ],
-            <Object?>[
-              3,
-              4,
-            ],
-            <Object?>[
-              -2,
-              -3,
-            ],
-            <Object?>[
-              1,
-              4,
-            ],
+            <Object?>[1, 2],
+            <Object?>[3, 4],
+            <Object?>[-2, -3],
+            <Object?>[1, 4],
           ],
         },
         <String, Object?>{
           'backgroundColor': '#FFCE56',
           'data': <Object?>[
-            <Object?>[
-              0,
-              1,
-            ],
-            <Object?>[
-              1,
-              2,
-            ],
-            <Object?>[
-              -2,
-              -1,
-            ],
-            <Object?>[
-              1,
-              -7,
-            ],
+            <Object?>[0, 1],
+            <Object?>[1, 2],
+            <Object?>[-2, -1],
+            <Object?>[1, -7],
           ],
         },
       ],
@@ -83,22 +48,13 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-          'stacked': true,
-        },
-        'y': <String, Object?>{
-          'display': false,
-          'stacked': true,
-        },
+        'x': <String, Object?>{'display': false, 'stacked': true},
+        'y': <String, Object?>{'display': false, 'stacked': true},
       },
     },
   },
   'debug': false,
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

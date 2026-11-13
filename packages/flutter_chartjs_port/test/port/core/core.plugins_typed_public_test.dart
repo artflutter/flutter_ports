@@ -302,27 +302,26 @@ void main() {
     });
 
     for (final approved in [false, true]) {
-      testWidgets(
-        'supportsDataUpdates: $approved '
-        '${approved ? 'keeps' : 'does not keep'} the data-only update',
-        (tester) async {
-          final plugin = _zoomLike(supportsDataUpdates: approved);
-          final config = _config(plugins: [plugin]);
-          final chart = acquireChart(config);
-          final dataset =
-              ((config['data']! as Map<String, Object?>)['datasets']!
-                          as List<Object?>)
-                      .single!
-                  as Map<String, Object?>;
-          (dataset['data']! as List<Object?>)[0] = 2.5;
+      testWidgets('supportsDataUpdates: $approved '
+          '${approved ? 'keeps' : 'does not keep'} the data-only update', (
+        tester,
+      ) async {
+        final plugin = _zoomLike(supportsDataUpdates: approved);
+        final config = _config(plugins: [plugin]);
+        final chart = acquireChart(config);
+        final dataset =
+            ((config['data']! as Map<String, Object?>)['datasets']!
+                        as List<Object?>)
+                    .single!
+                as Map<String, Object?>;
+        (dataset['data']! as List<Object?>)[0] = 2.5;
 
-          _calls.clear();
-          expect(chart.updateData(), approved);
-          expect(_calls.first, 'beforeUpdate none');
-          expect(_calls, contains('afterDraw'));
-          expect(chart.getDatasetMeta(0).data, hasLength(3));
-        },
-      );
+        _calls.clear();
+        expect(chart.updateData(), approved);
+        expect(_calls.first, 'beforeUpdate none');
+        expect(_calls, contains('afterDraw'));
+        expect(chart.getDatasetMeta(0).data, hasLength(3));
+      });
     }
   });
 }

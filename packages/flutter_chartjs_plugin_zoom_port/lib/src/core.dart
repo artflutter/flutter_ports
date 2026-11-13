@@ -112,10 +112,7 @@ void _doZoomRect(Scale scale, double from, double to, LimitOptions limits) {
 /// core.ts:61 `getCenter(chart)`: the center of the chart area.
 Point _getCenter(Chart chart) {
   final ca = chart.chartArea!;
-  return (
-    x: (ca.left + ca.right) / 2,
-    y: (ca.top + ca.bottom) / 2,
-  );
+  return (x: (ca.left + ca.right) / 2, y: (ca.top + ca.bottom) / 2);
 }
 
 /// core.ts:69 `zoom(chart, amount, transition, trigger)`: zooms the enabled
@@ -141,11 +138,7 @@ void zoom(
 
   final xEnabled = x != 1;
   final yEnabled = y != 1;
-  final enabledScales = getEnabledScalesByPoint(
-    zoomOptions,
-    focalPoint,
-    chart,
-  );
+  final enabledScales = getEnabledScalesByPoint(zoomOptions, focalPoint, chart);
 
   for (final scale in enabledScales) {
     if (scale.isHorizontal() && xEnabled) {

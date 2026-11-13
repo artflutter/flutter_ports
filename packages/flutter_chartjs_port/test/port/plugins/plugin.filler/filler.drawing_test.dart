@@ -183,10 +183,7 @@ void main() {
 
     test('a cartesian index scale without an area throws a TypeError', () {
       final iScale = _IndexScale(horizontal: true, min: 10, max: 60);
-      expect(
-        () => clipToIndexBounds(null, iScale),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => clipToIndexBounds(null, iScale), throwsA(isA<TypeError>()));
     });
   });
 }

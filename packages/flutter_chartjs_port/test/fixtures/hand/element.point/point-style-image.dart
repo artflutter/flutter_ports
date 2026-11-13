@@ -64,9 +64,7 @@ Map<String, Object?> fixture() {
             'rotation': <Object?>[0, 45, 90, 135, 180, 225, 270, 315],
           },
         },
-        'layout': <String, Object?>{
-          'padding': const EdgeInsets.all(20),
-        },
+        'layout': <String, Object?>{'padding': const EdgeInsets.all(20)},
         'scales': <String, Object?>{
           'x': <String, Object?>{'display': false},
           'y': <String, Object?>{'display': false},
@@ -74,10 +72,7 @@ Map<String, Object?> fixture() {
       },
     },
     'options': <String, Object?>{
-      'canvas': <String, Object?>{
-        'height': 256,
-        'width': 512,
-      },
+      'canvas': <String, Object?>{'height': 256, 'width': 512},
     },
   };
 }

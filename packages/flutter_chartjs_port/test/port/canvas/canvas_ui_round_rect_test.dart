@@ -55,13 +55,8 @@ const List<_Box> _boxes = [
 ];
 
 /// `roundRect` of [box] with the radii list of `addRoundedRectPath`.
-void _roundRect(CanvasPath ctx, _Box box) => ctx.roundRect(
-  box.x,
-  box.y,
-  box.w,
-  box.h,
-  [box.tl, box.tr, box.br, box.bl],
-);
+void _roundRect(CanvasPath ctx, _Box box) =>
+    ctx.roundRect(box.x, box.y, box.w, box.h, [box.tl, box.tr, box.br, box.bl]);
 
 /// The upstream arcs and lines of [box].
 void _arcs(CanvasPath ctx, _Box box) => upstreamRoundedRectPath(
@@ -1040,13 +1035,12 @@ void main() {
                 ..beginPath();
               if (flip) {
                 // A negative width: the segments, counterclockwise.
-                ctx.roundRect(
-                  box.x + box.w,
-                  box.y,
-                  -box.w,
-                  box.h,
-                  [box.tr, box.tl, box.bl, box.br],
-                );
+                ctx.roundRect(box.x + box.w, box.y, -box.w, box.h, [
+                  box.tr,
+                  box.tl,
+                  box.bl,
+                  box.br,
+                ]);
               } else {
                 _roundRect(ctx, box);
               }

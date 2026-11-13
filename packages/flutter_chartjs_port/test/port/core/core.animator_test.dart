@@ -211,9 +211,7 @@ void main() {
 
     testWidgets(
       'an instant update in the last frame keeps the earlier options',
-      (
-        tester,
-      ) async {
+      (tester) async {
         // A chain to h1 ends in a frame. The progress listener of that frame
         // starts an update to h2 with the duration 0, so its awaitAll is
         // empty. Upstream, `Promise.all` of the h1 chain settles in the
@@ -370,9 +368,7 @@ void main() {
       expect(SchedulerBinding.instance.transientCallbackCount, 0);
     });
 
-    testWidgets('unmute without animations schedules no frame', (
-      tester,
-    ) async {
+    testWidgets('unmute without animations schedules no frame', (tester) async {
       final chart = _Chart();
       animator
         ..mute(chart)

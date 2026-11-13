@@ -32,28 +32,25 @@ final List<ChartType> _zoomTypes = [
 
 /// [library] with [config] in a box of [_size], below a repaint boundary,
 /// with the values of [_frame] at the tick [step].
-Widget _scene(
-  ChartLibrary library,
-  BenchmarkConfig config, {
-  int step = 0,
-}) => MaterialApp(
-  home: Scaffold(
-    body: Center(
-      child: RepaintBoundary(
-        key: _boundary,
-        child: SizedBox.fromSize(
-          size: _size,
-          child: BenchmarkChart(
-            library: library,
-            config: config,
-            frame: DatasetFrame(_frame.values, step),
-            size: _size,
+Widget _scene(ChartLibrary library, BenchmarkConfig config, {int step = 0}) =>
+    MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: RepaintBoundary(
+            key: _boundary,
+            child: SizedBox.fromSize(
+              size: _size,
+              child: BenchmarkChart(
+                library: library,
+                config: config,
+                frame: DatasetFrame(_frame.values, step),
+                size: _size,
+              ),
+            ),
           ),
         ),
       ),
-    ),
-  ),
-);
+    );
 
 Future<void> _pump(WidgetTester tester, Widget scene) async {
   await tester.pumpWidget(scene);
@@ -76,7 +73,7 @@ Future<Uint8List> _baseline(WidgetTester tester, ChartLibrary library) async {
     _chart().update('none');
     await tester.pump(const Duration(milliseconds: 20));
   }
-  return _pixels(tester);
+  return await _pixels(tester);
 }
 
 /// The pixels of the chart.
@@ -143,9 +140,7 @@ Future<void> _trackpad(
   double scale = 1,
 }) async {
   final center = _center(tester);
-  final gesture = await tester.createGesture(
-    kind: PointerDeviceKind.trackpad,
-  );
+  final gesture = await tester.createGesture(kind: PointerDeviceKind.trackpad);
   await gesture.panZoomStart(center);
   await tester.pump(const Duration(milliseconds: 16));
   for (var i = 1; i <= 6; i++) {
@@ -277,9 +272,7 @@ void main() {
               }
             case ChartLibrary.syncfusion:
               final behavior = tester
-                  .widget<sf.SfCartesianChart>(
-                    find.byType(sf.SfCartesianChart),
-                  )
+                  .widget<sf.SfCartesianChart>(find.byType(sf.SfCartesianChart))
                   .zoomPanBehavior;
               if (zoom) {
                 expect(behavior, isNotNull, reason: reason);
@@ -451,11 +444,7 @@ void main() {
       final zoomed = await _pixels(tester);
       expect(listEquals(zoomed, full), isFalse, reason: 'pinch');
       await _drag(tester, 150);
-      expect(
-        listEquals(await _pixels(tester), zoomed),
-        isFalse,
-        reason: 'pan',
-      );
+      expect(listEquals(await _pixels(tester), zoomed), isFalse, reason: 'pan');
       await _end(tester);
     });
   }

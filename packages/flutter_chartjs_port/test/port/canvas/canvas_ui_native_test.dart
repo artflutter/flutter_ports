@@ -26,24 +26,21 @@ import 'pixel_compare.dart';
 
 /// The fill (nonzero and even-odd) and the stroke of [path], each in a
 /// band of 160 x 160 pixels.
-Future<Render> _renderPath(ui.Path path) => _renderUi(
-  (canvas) {
-    final fill = ui.Paint()..color = const ui.Color(0x80FF0000);
-    final stroke = ui.Paint()
-      ..style = ui.PaintingStyle.stroke
-      ..strokeWidth = 3
-      ..color = const ui.Color(0xFF0000FF);
-    canvas
-      ..drawPath(path..fillType = ui.PathFillType.nonZero, fill)
-      ..save()
-      ..translate(0, 160)
-      ..drawPath(path..fillType = ui.PathFillType.evenOdd, fill)
-      ..translate(0, 160)
-      ..drawPath(path, stroke)
-      ..restore();
-  },
-  height: 480,
-);
+Future<Render> _renderPath(ui.Path path) => _renderUi((canvas) {
+  final fill = ui.Paint()..color = const ui.Color(0x80FF0000);
+  final stroke = ui.Paint()
+    ..style = ui.PaintingStyle.stroke
+    ..strokeWidth = 3
+    ..color = const ui.Color(0xFF0000FF);
+  canvas
+    ..drawPath(path..fillType = ui.PathFillType.nonZero, fill)
+    ..save()
+    ..translate(0, 160)
+    ..drawPath(path..fillType = ui.PathFillType.evenOdd, fill)
+    ..translate(0, 160)
+    ..drawPath(path, stroke)
+    ..restore();
+}, height: 480);
 
 /// The length of each contour of [path].
 List<double> _contours(ui.Path path) => [
@@ -781,10 +778,9 @@ void main() {
 
     /// A context of 320 x 320 pixels under `retinaScale` at a device pixel
     /// ratio of 2.
-    UiCanvasContext retina() => UiCanvasElement(
-      width: 320,
-      height: 320,
-    ).getContext2d()..setTransform(2, 0, 0, 2, 0, 0);
+    UiCanvasContext retina() =>
+        UiCanvasElement(width: 320, height: 320).getContext2d()
+          ..setTransform(2, 0, 0, 2, 0, 0);
 
     UiSector? sectorOf(
       void Function(UiCanvasContext ctx) calls, {
@@ -1032,23 +1028,19 @@ void main() {
     });
 
     test('styles and transforms of a sector fill', () async {
-      await expectSectorPixels(
-        'a gradient',
-        (ctx) {
-          const gradient = ChartGradient.linear(
-            native_ui.Offset(20, 0),
-            native_ui.Offset(140, 0),
-            [
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-              native_ui.Color.fromRGBO(0, 0, 255, 1),
-            ],
-          );
-          ctx
-            ..scale(2, 2)
-            ..fillStyle = gradient;
-        },
-        (p) => sectorCalls(p, 80, 80, 60, 30, -0.5, 2.5),
-      );
+      await expectSectorPixels('a gradient', (ctx) {
+        const gradient = ChartGradient.linear(
+          native_ui.Offset(20, 0),
+          native_ui.Offset(140, 0),
+          [
+            native_ui.Color.fromRGBO(255, 0, 0, 1),
+            native_ui.Color.fromRGBO(0, 0, 255, 1),
+          ],
+        );
+        ctx
+          ..scale(2, 2)
+          ..fillStyle = gradient;
+      }, (p) => sectorCalls(p, 80, 80, 60, 30, -0.5, 2.5));
       await expectSectorPixels(
         'globalAlpha and a rotation',
         (ctx) => ctx

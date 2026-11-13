@@ -222,10 +222,8 @@ class _CurvePainter extends CustomPainter {
   final Color dot;
   final double? t;
 
-  Offset _at(Size size, double t, double v) => Offset(
-    t * size.width,
-    size.height * (_yMax - v) / (_yMax - _yMin),
-  );
+  Offset _at(Size size, double t, double v) =>
+      Offset(t * size.width, size.height * (_yMax - v) / (_yMax - _yMin));
 
   @override
   void paint(Canvas canvas, Size size) {

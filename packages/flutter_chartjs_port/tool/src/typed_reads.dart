@@ -196,9 +196,9 @@ final class FormCounts {
 
   /// Each form with its count, in the order of [ByNameForm]:
   /// `jsGet 3, jsGetKey 0, ...`.
-  String describeAll() => [
-    for (final form in ByNameForm.values) '${form.name} ${this[form]}',
-  ].join(', ');
+  String describeAll() =>
+      [for (final form in ByNameForm.values) '${form.name} ${this[form]}']
+          .join(', ');
 
   @override
   String toString() => describeAll();
@@ -260,9 +260,9 @@ final RegExp _implementsKeyword = RegExp(r'(?<![\w$])implements(?![\w$])');
 
 /// Whether the clause [entry] is the type [name], with an optional prefix,
 /// type arguments and `?`.
-bool _typeNamed(String entry, String name) => RegExp(
-  '^(?:[A-Za-z_\$][\\w\$]*\\s*\\.\\s*)?$name(?![\\w\$])',
-).hasMatch(entry);
+bool _typeNamed(String entry, String name) =>
+    RegExp('^(?:[A-Za-z_\$][\\w\$]*\\s*\\.\\s*)?$name(?![\\w\$])')
+        .hasMatch(entry);
 
 /// The entries of each [keyword] clause of [code], each with the offset of
 /// its first character. A clause ends at `{` or `;`, and a `with` clause also
@@ -610,9 +610,7 @@ TypedReadsReport compareTypedReads(
     try {
       baseline = text == null ? FormCounts() : parseBaseline(text);
     } on BaselineFormatException catch (e) {
-      findings.add(
-        Finding('$baselinePrefix$baselinePath', e.line, e.message),
-      );
+      findings.add(Finding('$baselinePrefix$baselinePath', e.line, e.message));
       continue;
     }
     for (final form in ByNameForm.values) {

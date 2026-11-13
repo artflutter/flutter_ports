@@ -41,7 +41,7 @@ final class _Instance {
 }
 
 /// A subclass of a scope class: the merge reads and writes it by name.
-final class _SubScale extends ScaleOptionsScope {}
+final class _SubScale extends ScaleOptionsScope;
 
 /// The structure of [value]: the keys in their order, the class of each
 /// cell, the values and the classes of the objects. A function and a class
@@ -62,9 +62,9 @@ String _describe(Object? value) => switch (value) {
 };
 
 /// Each own key of [scope] in the `Object.keys` order, with its cell.
-String _scopeEntries(OptionScope scope) => [
-  for (final name in scope.jsKeys()) '$name: ${_cell(scope.lookup(name))}',
-].join(', ');
+String _scopeEntries(OptionScope scope) =>
+    [for (final name in scope.jsKeys()) '$name: ${_cell(scope.lookup(name))}']
+        .join(', ');
 
 /// Each entry of [map] in its order.
 String _mapEntries(Map<String, Object?> map) => [
@@ -224,9 +224,7 @@ void main() {
     test('a Map source into a typed target', () {
       _expectTwins(
         () => mergeIf(_target(), <String, Object?>{
-          'ticks': <String, Object?>{
-            'font': const ChartTextStyle(fontSize: 3),
-          },
+          'ticks': <String, Object?>{'font': const ChartTextStyle(fontSize: 3)},
           'title': MajorTickOptionsScope()..jsWrite('enabled', true),
         }),
       );

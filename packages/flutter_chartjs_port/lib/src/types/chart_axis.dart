@@ -37,10 +37,10 @@ library;
 
 /// The axis of a scale: [XAxis], [YAxis] or [RAxis]. The core keeps an axis
 /// of either kind in this type; no option has it.
-abstract class ScaleAxis {}
+abstract class ScaleAxis;
 
 /// The axis of a cartesian chart or scale: [XAxis] or [YAxis] only.
-abstract class CartesianAxis implements ScaleAxis {}
+abstract class CartesianAxis implements ScaleAxis;
 
 /// The horizontal axis: `'x'` upstream.
 final class XAxis implements CartesianAxis {

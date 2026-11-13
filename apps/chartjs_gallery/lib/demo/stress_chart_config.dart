@@ -150,7 +150,7 @@ enum StressChartType {
   /// `RadarController`: one line of N points on a hidden radial axis.
   radar(stressArcCounts, sharing: false);
 
-  const StressChartType(this.counts, {required this.sharing});
+  StressChartType(this.counts, {required this.sharing});
 
   /// The N choices of the type, in ascending order.
   final List<int> counts;
@@ -306,9 +306,8 @@ Map<String, Object?> stressHiddenScale(
 /// The scales of a type of the stress mode `chart` (Chart.js ADR 0031
 /// sections 3 and 5), or Dart `null` for no `scales` option.
 Map<String, Object?>? _stressScales(StressChartType type) => switch (type) {
-  StressChartType.line || StressChartType.scatter => unitScales(
-    hideTicks: true,
-  ),
+  StressChartType.line ||
+  StressChartType.scatter => unitScales(hideTicks: true),
   StressChartType.bar => <String, Object?>{
     'x': stressHiddenScale('category'),
     'y': stressHiddenScale('linear', min: 0, max: 1),

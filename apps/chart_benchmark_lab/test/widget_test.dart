@@ -121,10 +121,7 @@ void main() {
       expect(tester.widget<Text>(version).data, startsWith('Lab version '));
       // In view, and below the header and the content of the page.
       expect(tester.getBottomLeft(version).dy, lessThanOrEqualTo(size.height));
-      expect(
-        tester.getTopLeft(version).dy,
-        greaterThan(size.height - 60),
-      );
+      expect(tester.getTopLeft(version).dy, greaterThan(size.height - 60));
       await tester.pumpWidget(const SizedBox());
       await tester.pump(const Duration(milliseconds: 20));
     });

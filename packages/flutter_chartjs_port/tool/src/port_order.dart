@@ -813,9 +813,8 @@ enum ParityState {
 ({ParityState state, Set<String> symbols}) classifyStatus(String status) {
   final text = status.trim();
   final lower = text.toLowerCase();
-  bool starts(String value) => RegExp(
-    '^${RegExp.escape(value)}(?![\\w/-])',
-  ).hasMatch(lower);
+  bool starts(String value) =>
+      RegExp('^${RegExp.escape(value)}(?![\\w/-])').hasMatch(lower);
   if (starts('not started')) {
     return (state: ParityState.notStarted, symbols: const {});
   }
@@ -1120,9 +1119,7 @@ PortOrder computePortOrder(PortOrderInput input) {
   ]..sort();
 
   final graph = _Graph(
-    {
-      for (final path in paths) path: File('$pin/$path').readAsStringSync(),
-    },
+    {for (final path in paths) path: File('$pin/$path').readAsStringSync()},
     externals: {for (final s in sources) s.header},
     pinPath: source.pinPath,
     pinFile: (path) => File('$pin/$path').existsSync(),

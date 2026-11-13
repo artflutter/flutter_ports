@@ -84,7 +84,7 @@ final class _Listener with ArrayListener<double> {
 }
 
 /// A listener that keeps the empty default members.
-final class _EmptyListener with ArrayListener<double> {}
+final class _EmptyListener with ArrayListener<double>;
 
 /// A listener of any element type, as a dataset controller of
 /// `unknown[]` data is.
@@ -231,12 +231,7 @@ void main() {
     });
 
     test('reads x and y of point elements', () {
-      final points = [
-        _Point(0, 9),
-        _Point(2, 6),
-        _Point(6, 2),
-        _Point(9, 0),
-      ];
+      final points = [_Point(0, 9), _Point(2, 6), _Point(6, 2), _Point(9, 0)];
       expect(lookupByKey(points, 'x', 3), (lo: 1, hi: 2));
       expect(lookupByKey(points, 'x', 9, true), (lo: 2, hi: 3));
       expect(rlookupByKey(points, 'y', 5), (lo: 1, hi: 2));

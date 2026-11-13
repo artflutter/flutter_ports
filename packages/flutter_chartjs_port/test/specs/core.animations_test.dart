@@ -103,47 +103,41 @@ void main() {
       );
     });
 
-    test(
-      'should assign options directly, if target does not have previous '
-      'options',
-      () {
-        final chart = _Chart();
-        final anims = Animations(chart, <String, Object?>{
-          'option': <String, Object?>{'duration': 200},
-        });
-        final target = <String, Object?>{};
-        expect(
-          anims.update(target, <String, Object?>{
-            'options': <String, Object?>{'option': 1},
-          }),
-          isNull,
-        );
-      },
-    );
+    test('should assign options directly, if target does not have previous '
+        'options', () {
+      final chart = _Chart();
+      final anims = Animations(chart, <String, Object?>{
+        'option': <String, Object?>{'duration': 200},
+      });
+      final target = <String, Object?>{};
+      expect(
+        anims.update(target, <String, Object?>{
+          'options': <String, Object?>{'option': 1},
+        }),
+        isNull,
+      );
+    });
 
-    test(
-      'should clone the target options, if those are shared and new options '
-      'are not',
-      () {
-        final chart = _Chart();
-        final anims = Animations(chart, <String, Object?>{
-          'option': <String, Object?>{'duration': 200},
-        });
-        final options = <String, Object?>{'option': 0, r'$shared': true};
-        final target = <String, Object?>{'options': options};
-        expect(
-          anims.update(target, <String, Object?>{
-            'options': <String, Object?>{'option': 1},
-          }),
-          isTrue,
-        );
-        expect(
-          (target['options']! as Map<String, Object?>)[r'$shared'],
-          isNot(isTrue),
-        );
-        expect(!identical(target['options'], options), isTrue);
-      },
-    );
+    test('should clone the target options, if those are shared and new options '
+        'are not', () {
+      final chart = _Chart();
+      final anims = Animations(chart, <String, Object?>{
+        'option': <String, Object?>{'duration': 200},
+      });
+      final options = <String, Object?>{'option': 0, r'$shared': true};
+      final target = <String, Object?>{'options': options};
+      expect(
+        anims.update(target, <String, Object?>{
+          'options': <String, Object?>{'option': 1},
+        }),
+        isTrue,
+      );
+      expect(
+        (target['options']! as Map<String, Object?>)[r'$shared'],
+        isNot(isTrue),
+      );
+      expect(!identical(target['options'], options), isTrue);
+    });
 
     testWidgets(
       'should assign shared options to target after animations complete',
@@ -223,55 +217,49 @@ void main() {
       },
     );
 
-    testWidgets(
-      'should assign final shared options to target after animations '
-      'complete',
-      (tester) async {
-        await waitForDone((done) {
-          final chart = _Chart();
-          final anims = Animations(chart, <String, Object?>{
-            'value': <String, Object?>{'duration': 100},
-            'option': <String, Object?>{'duration': 200},
-          });
+    testWidgets('should assign final shared options to target after animations '
+        'complete', (tester) async {
+      await waitForDone((done) {
+        final chart = _Chart();
+        final anims = Animations(chart, <String, Object?>{
+          'value': <String, Object?>{'duration': 100},
+          'option': <String, Object?>{'duration': 200},
+        });
 
-          final origOpts = <String, Object?>{'option': 2};
-          final target = <String, Object?>{'value': 1, 'options': origOpts};
-          final sharedOpts = <String, Object?>{'option': 10, r'$shared': true};
-          final sharedOpts2 = <String, Object?>{
-            'option': 20,
-            r'$shared': true,
-          };
+        final origOpts = <String, Object?>{'option': 2};
+        final target = <String, Object?>{'value': 1, 'options': origOpts};
+        final sharedOpts = <String, Object?>{'option': 10, r'$shared': true};
+        final sharedOpts2 = <String, Object?>{'option': 20, r'$shared': true};
+
+        expect(
+          anims.update(target, <String, Object?>{'options': sharedOpts}),
+          isTrue,
+        );
+
+        expect(!identical(target['options'], sharedOpts), isTrue);
+
+        animator.start(chart);
+
+        setTimeout(() {
+          expect(animator.running(chart), isTrue);
+
+          expect(identical(target['options'], origOpts), isTrue);
 
           expect(
-            anims.update(target, <String, Object?>{'options': sharedOpts}),
-            isTrue,
+            anims.update(target, <String, Object?>{'options': sharedOpts2}),
+            isNull,
           );
 
-          expect(!identical(target['options'], sharedOpts), isTrue);
-
-          animator.start(chart);
+          expect(identical(target['options'], origOpts), isTrue);
 
           setTimeout(() {
-            expect(animator.running(chart), isTrue);
+            expect(identical(target['options'], sharedOpts2), isTrue);
 
-            expect(identical(target['options'], origOpts), isTrue);
-
-            expect(
-              anims.update(target, <String, Object?>{'options': sharedOpts2}),
-              isNull,
-            );
-
-            expect(identical(target['options'], origOpts), isTrue);
-
-            setTimeout(() {
-              expect(identical(target['options'], sharedOpts2), isTrue);
-
-              animator.remove(chart);
-              done();
-            }, 250);
-          }, 50);
-        });
-      },
-    );
+            animator.remove(chart);
+            done();
+          }, 250);
+        }, 50);
+      });
+    });
   });
 }

@@ -527,11 +527,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: StressDemo(
-            initialN: 500,
-            initialM: 10,
-            onStats: stats.add,
-          ),
+          body: StressDemo(initialN: 500, initialM: 10, onStats: stats.add),
         ),
       ),
     );

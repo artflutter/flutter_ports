@@ -226,10 +226,7 @@ void main() {
       // on the List of getDataTimestamps.
       final x = _x(
         [_t0 + _day, _t0 + 3 * _day],
-        {
-          'min': _t0,
-          'max': _t0 + 5 * _day,
-        },
+        {'min': _t0, 'max': _t0 + 5 * _day},
       );
       final data = x.getDataTimestamps();
       expect(data, same(x.cache.data));

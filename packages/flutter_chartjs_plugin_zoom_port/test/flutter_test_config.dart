@@ -398,14 +398,7 @@ void simulatePan(
       init,
     );
   }
-  dispatchPointer(
-    node,
-    'pointerup',
-    1,
-    startX + deltaX,
-    startY + deltaY,
-    init,
-  );
+  dispatchPointer(node, 'pointerup', 1, startX + deltaX, startY + deltaY, init);
 
   if (done != null) {
     done();

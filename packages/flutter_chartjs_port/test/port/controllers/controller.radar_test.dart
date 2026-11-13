@@ -154,9 +154,7 @@ void main() {
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
       final snapshot = jsonDecode(
-        File(
-          'test/port/theme/light_snapshot.json',
-        ).readAsStringSync(),
+        File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
       final config =
           copyReference(controllerRadarReference.first.config)! as AnyObject;
@@ -209,9 +207,7 @@ void main() {
     testWidgets('a label index past the end gives the label undefined', (
       tester,
     ) async {
-      final chart = acquireChart(
-        _radar(const [1.0, 2.0], labels: const ['a']),
-      );
+      final chart = acquireChart(_radar(const [1.0, 2.0], labels: const ['a']));
       final controller = chart.getDatasetMeta(0).controller!;
       expect(controller.getLabelAndValue(0).label, 'a');
       expect(identical(controller.getLabelAndValue(1).label, undefined), true);

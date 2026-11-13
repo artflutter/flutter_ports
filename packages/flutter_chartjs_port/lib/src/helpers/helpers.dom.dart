@@ -279,11 +279,7 @@ int _toUint32(double value) {
 /// The `dart:ui` context paints its bitmap with
 /// `scale(1 / devicePixelRatio)`, so the `setTransform` of the pixel ratio
 /// gives the identity in logical pixels (Chart.js ADR 0013).
-bool retinaScale(
-  Chart chart,
-  double? forceRatio, [
-  bool? forceStyle,
-]) {
+bool retinaScale(Chart chart, double? forceRatio, [bool? forceStyle]) {
   final pixelRatio = jsTruthy(forceRatio) ? forceRatio! : 1.0;
   final deviceHeight = _round1(chart.height * pixelRatio);
   final deviceWidth = _round1(chart.width * pixelRatio);

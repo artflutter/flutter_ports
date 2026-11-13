@@ -633,11 +633,7 @@ double _alignY(
 
 /// plugin.tooltip.js:331 `getAlignedX(tooltip, align, options)`.
 // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-double _getAlignedX(
-  Tooltip tooltip,
-  TextAlign? align,
-  TooltipOptions options,
-) {
+double _getAlignedX(Tooltip tooltip, TextAlign? align, TooltipOptions options) {
   final padding = options.padding;
 
   return align == TextAlign.center
@@ -751,9 +747,8 @@ Object? _defaultLabelValue(types.TooltipModel self, Object? tooltipItem) {
 /// plugin.tooltip.js:405-406 and :420-421.
 Object _styleOf(Object? tooltipItem) {
   final item = _TooltipItemView(tooltipItem);
-  final meta = _chartOf(
-    tooltipItem,
-  ).getDatasetMeta(jsToNumber(item.datasetIndex));
+  final meta = _chartOf(tooltipItem)
+      .getDatasetMeta(jsToNumber(item.datasetIndex));
   return meta.controller!.getStyle(jsToNumber(item.dataIndex));
 }
 
@@ -1320,11 +1315,12 @@ class Tooltip extends Element implements types.TooltipModel {
       tooltipItems = [
         for (var index = 0; index < array.length; index++)
           if (jsTruthy(
-            jsCall(
-              filter,
-              [array[index], index.toDouble(), array, data],
-              thisArg: options.object,
-            ),
+            jsCall(filter, [
+              array[index],
+              index.toDouble(),
+              array,
+              data,
+            ], thisArg: options.object),
           ))
             array[index],
       ];
@@ -1336,9 +1332,8 @@ class Tooltip extends Element implements types.TooltipModel {
     if (jsTruthy(itemSort)) {
       tooltipItems = jsSort(
         tooltipItems,
-        (a, b) => jsToNumber(
-          jsCall(itemSort, [a, b, data], thisArg: options.object),
-        ),
+        (a, b) =>
+            jsToNumber(jsCall(itemSort, [a, b, data], thisArg: options.object)),
       );
     }
 
@@ -1471,17 +1466,9 @@ class Tooltip extends Element implements types.TooltipModel {
     if (jsTruthy(changed)) {
       final external = options.external;
       if (jsTruthy(external)) {
-        jsCall(
-          external,
-          [
-            <String, Object?>{
-              'chart': chart,
-              'tooltip': this,
-              'replay': replay,
-            },
-          ],
-          thisArg: this,
-        );
+        jsCall(external, [
+          <String, Object?>{'chart': chart, 'tooltip': this, 'replay': replay},
+        ], thisArg: this);
       }
     }
   }
@@ -2814,11 +2801,7 @@ final class TooltipBodyItem extends TypedRecord {
   /// An object without own keys.
   TooltipBodyItem();
 
-  static const List<String> _fieldNames = [
-    'before',
-    'lines',
-    'after',
-  ];
+  static const List<String> _fieldNames = ['before', 'lines', 'after'];
 
   @override
   List<String> get fieldNames => _fieldNames;

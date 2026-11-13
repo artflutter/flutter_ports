@@ -16,9 +16,7 @@ void main() {
       const setLayout =
           '["set","layout",{"autoPadding":true,'
           '"padding":{"top":0,"right":0,"bottom":0,"left":0}}]';
-      expect(defaults.calls.map(probeJson), [
-        setLayout,
-      ]);
+      expect(defaults.calls.map(probeJson), [setLayout]);
     });
   });
 }

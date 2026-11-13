@@ -7,8 +7,6 @@ import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// A category scale with ordinary, already-resolved label-source reads.
-// A runtime capability, not a standalone operation.
-// ignore: one_member_abstracts
 abstract interface class NativeCategoryParseScale {
   /// Whether [labels] is still the native source used by ordinary parsing.
   bool supportsNativeCategoryParse(List<Object?> labels);

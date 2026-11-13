@@ -786,9 +786,7 @@ void main() {
     test('is reported when it cannot be read', () {
       tree.write('$_package/tool/port_sources.yaml', ['sources: [a]']);
       expect(run(), [
-        _error(
-          'tool/port_sources.yaml: line 1: unsupported YAML syntax: [a]',
-        ),
+        _error('tool/port_sources.yaml: line 1: unsupported YAML syntax: [a]'),
       ]);
       tree.delete('$_package/tool/port_sources.yaml');
       expect(run(), [
@@ -1350,10 +1348,7 @@ void main() {
     );
     expect(
       [for (final r in rows) '${r.id}:${r.line}'],
-      [
-        'adapt-x:3',
-        'harness-y:4',
-      ],
+      ['adapt-x:3', 'harness-y:4'],
     );
     expect(isDifferenceId('js-semantics-sort'), isTrue);
     expect(isDifferenceId('not-followed-12238'), isTrue);

@@ -34,31 +34,17 @@ Map<String, Object?> fixture() => <String, Object?>{
         'mode': const NearestInteractionMode(),
         'intersect': false,
       },
-      'plugins': <String, Object?>{
-        'tooltip': true,
-        'legend': false,
-      },
+      'plugins': <String, Object?>{'tooltip': true, 'legend': false},
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'min': 5,
-          'max': 50,
-        },
-        'y': <String, Object?>{
-          'min': 0,
-          'max': 2,
-        },
+        'x': <String, Object?>{'min': 5, 'max': 50},
+        'y': <String, Object?>{'min': 0, 'max': 2},
       },
-      'layout': <String, Object?>{
-        'padding': const EdgeInsets.all(50),
-      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(50)},
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 256,
-      'height': 256,
-    },
+    'canvas': <String, Object?>{'width': 256, 'height': 256},
     'run': (Chart chart) async {
       final point = chart.getDatasetMeta(0).data[0];
       await triggerMouseEvent(chart, 'click', <String, Object?>{

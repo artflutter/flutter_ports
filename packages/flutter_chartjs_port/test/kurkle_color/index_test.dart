@@ -163,17 +163,14 @@ void main() {
       _rgba(128, 128, 128, 0.6),
     );
   });
-  test(
-    "new Color('hsla(240.0384227364303,...,0.3)').rgb (:38)",
-    () {
-      expect(
-        referenceColor(
-          'hsla(240.0384227364303,4.12843378950259%,48.71943371204973%,0.3)',
-        ).rgb,
-        _rgba(119, 119, 129, 0.3),
-      );
-    },
-  );
+  test("new Color('hsla(240.0384227364303,...,0.3)').rgb (:38)", () {
+    expect(
+      referenceColor(
+        'hsla(240.0384227364303,4.12843378950259%,48.71943371204973%,0.3)',
+      ).rgb,
+      _rgba(119, 119, 129, 0.3),
+    );
+  });
   test("new Color('hsla(-10.0, 100%, 50%, -0.2)').hslString() (:39)", () {
     expect(
       referenceColor('hsla(-10.0, 100%, 50%, -0.2)').hslString(),
@@ -426,18 +423,15 @@ void main() {
       );
     },
   );
-  test(
-    "new Color('#fefa').interpolate(new Color('#ced5'), 0.6).hexString() "
-    '(:102)',
-    () {
-      expect(
-        referenceColor('#fefa')
-            .interpolate(referenceColor('#ced5'), 0.6)
-            .hexString(),
-        '#E2EDEC77',
-      );
-    },
-  );
+  test("new Color('#fefa').interpolate(new Color('#ced5'), 0.6).hexString() "
+      '(:102)', () {
+    expect(
+      referenceColor('#fefa')
+          .interpolate(referenceColor('#ced5'), 0.6)
+          .hexString(),
+      '#E2EDEC77',
+    );
+  });
 
   // invalid values
   test("new Color('rgba(267,292,60,0.2)').rgbString() (:105)", () {

@@ -181,11 +181,11 @@ void main() {
           _Point(5, -100),
         ];
         expect(
-          boundSegment(
-            const _Segment(start: 0, end: 4, loop: false),
-            points2,
-            (property: 'y', start: 60, end: 60),
-          ),
+          boundSegment(const _Segment(start: 0, end: 4, loop: false), points2, (
+            property: 'y',
+            start: 60,
+            end: 60,
+          )),
           [
             _toEqual(start: 0, end: 1, loop: false),
             _toEqual(start: 1, end: 2, loop: false),
@@ -194,53 +194,50 @@ void main() {
         );
       });
 
-      test(
-        'should find correct segments when there are multiple points with '
-        'same property value',
-        () {
-          final repeatedPoints = [
-            _Point(1, 5),
-            _Point(1, 6),
-            _Point(2, 5),
-            _Point(2, 6),
-            _Point(3, 5),
-            _Point(3, 6),
-            _Point(3, 7),
-          ];
-          expect(
-            boundSegment(
-              const _Segment(start: 0, end: 6, loop: false),
-              repeatedPoints,
-              (property: 'x', start: 1, end: 1.1),
-            ),
-            [_toEqual(start: 0, end: 2, loop: false)],
-          );
-          expect(
-            boundSegment(
-              const _Segment(start: 0, end: 6, loop: false),
-              repeatedPoints,
-              (property: 'x', start: 2, end: 2.1),
-            ),
-            [_toEqual(start: 2, end: 4, loop: false)],
-          );
-          expect(
-            boundSegment(
-              const _Segment(start: 0, end: 6, loop: false),
-              repeatedPoints,
-              (property: 'x', start: 2, end: 3.1),
-            ),
-            [_toEqual(start: 2, end: 6, loop: false)],
-          );
-          expect(
-            boundSegment(
-              const _Segment(start: 0, end: 6, loop: false),
-              repeatedPoints,
-              (property: 'x', start: 0, end: 8),
-            ),
-            [_toEqual(start: 0, end: 6, loop: false)],
-          );
-        },
-      );
+      test('should find correct segments when there are multiple points with '
+          'same property value', () {
+        final repeatedPoints = [
+          _Point(1, 5),
+          _Point(1, 6),
+          _Point(2, 5),
+          _Point(2, 6),
+          _Point(3, 5),
+          _Point(3, 6),
+          _Point(3, 7),
+        ];
+        expect(
+          boundSegment(
+            const _Segment(start: 0, end: 6, loop: false),
+            repeatedPoints,
+            (property: 'x', start: 1, end: 1.1),
+          ),
+          [_toEqual(start: 0, end: 2, loop: false)],
+        );
+        expect(
+          boundSegment(
+            const _Segment(start: 0, end: 6, loop: false),
+            repeatedPoints,
+            (property: 'x', start: 2, end: 2.1),
+          ),
+          [_toEqual(start: 2, end: 4, loop: false)],
+        );
+        expect(
+          boundSegment(
+            const _Segment(start: 0, end: 6, loop: false),
+            repeatedPoints,
+            (property: 'x', start: 2, end: 3.1),
+          ),
+          [_toEqual(start: 2, end: 6, loop: false)],
+        );
+        expect(
+          boundSegment(
+            const _Segment(start: 0, end: 6, loop: false),
+            repeatedPoints,
+            (property: 'x', start: 0, end: 8),
+          ),
+          [_toEqual(start: 0, end: 6, loop: false)],
+        );
+      });
     });
   });
 }

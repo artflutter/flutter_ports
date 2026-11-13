@@ -2355,9 +2355,7 @@ class Chart
   /// throws a [TypeError], as the read `meta.visible` of `undefined` does.
   @internal
   @override
-  List<ChartMeta> getSortedDatasetMetas(
-    bool filterVisible,
-  ) {
+  List<ChartMeta> getSortedDatasetMetas(bool filterVisible) {
     final metasets = sortedMetasets;
     final result = <ChartMeta>[];
 
@@ -2602,11 +2600,7 @@ class Chart
   /// `resolveAnimations` (Chart.js ADR 0012). `meta.data[dataIndex].hidden`
   /// is a write of [Element.hidden]. An index without an element throws
   /// a [TypeError], as in JavaScript.
-  void _updateVisibility(
-    double datasetIndex,
-    double? dataIndex,
-    bool visible,
-  ) {
+  void _updateVisibility(double datasetIndex, double? dataIndex, bool visible) {
     final mode = visible ? 'show' : 'hide';
     final meta = getDatasetMeta(datasetIndex);
     final anims = meta.controller!.resolveAnimations(null, mode);
@@ -3001,9 +2995,7 @@ class Chart
     }
 
     if (activated.isNotEmpty) {
-      final mode = InteractionMode.of(
-        readOption(hoverOptions, OptionKey.mode),
-      );
+      final mode = InteractionMode.of(readOption(hoverOptions, OptionKey.mode));
       if (mode != null) {
         updateHoverStyle(activated, mode, true);
       }
@@ -3026,10 +3018,7 @@ class Chart
   ///
   /// The event filter reads `plugin.options.events || this.options.events`
   /// and `includes` the type of the native event. Upstream returns `this`.
-  void _eventHandlerMethod(
-    types.ChartEvent e, [
-    bool? replay,
-  ]) {
+  void _eventHandlerMethod(types.ChartEvent e, [bool? replay]) {
     final args = EventHookArgs(
       event: e,
       replay: replay ?? undefined,
@@ -3140,11 +3129,7 @@ class Chart
   /// (controller.line.tests.js:1067, Chart.js ADR 0012). [inChartArea] is the
   /// value of `args.inChartArea`: the tests are ToBoolean tests.
   @internal
-  bool handleEvent(
-    types.ChartEvent e, [
-    bool? replay,
-    Object? inChartArea,
-  ]) {
+  bool handleEvent(types.ChartEvent e, [bool? replay, Object? inChartArea]) {
     final lastActive = this.active;
     final options = _options;
 

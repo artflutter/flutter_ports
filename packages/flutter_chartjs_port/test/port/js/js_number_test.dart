@@ -447,20 +447,16 @@ void main() {
         (ms) => at(ms).timeZoneOffset == Duration.zero,
       );
 
-      test(
-        'gives the Date.prototype.toString text in UTC',
-        () {
-          for (final MapEntry(key: ms, value: text) in utcTexts.entries) {
-            expect(jsToString(at(ms)), text, reason: '$ms');
-            expect(
-              jsToString(DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true)),
-              text,
-              reason: '$ms, isUtc',
-            );
-          }
-        },
-        skip: utcHost ? false : 'the platform zone is not UTC',
-      );
+      test('gives the Date.prototype.toString text in UTC', () {
+        for (final MapEntry(key: ms, value: text) in utcTexts.entries) {
+          expect(jsToString(at(ms)), text, reason: '$ms');
+          expect(
+            jsToString(DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true)),
+            text,
+            reason: '$ms, isUtc',
+          );
+        }
+      }, skip: utcHost ? false : 'the platform zone is not UTC');
 
       test('gives the local time of the platform zone', () {
         // The same text in each zone, from the fields of the local time.

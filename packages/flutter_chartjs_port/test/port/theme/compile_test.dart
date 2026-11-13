@@ -492,11 +492,10 @@ void main() {
         },
       };
       for (final (token, compile) in _colorTokens) {
-        expect(
-          _leaves(compile(_red)),
-          {...expected[token]!, ..._transitionLeaves},
-          reason: token,
-        );
+        expect(_leaves(compile(_red)), {
+          ...expected[token]!,
+          ..._transitionLeaves,
+        }, reason: token);
       }
     });
 
@@ -919,10 +918,7 @@ void main() {
         ui.FontWeight.bold,
       );
       expect(_at(weightOnly, 'plugins.title'), same(undefined));
-      expect(_keys(_at(weightOnly, 'plugins')), [
-        'legend',
-        'tooltip',
-      ]);
+      expect(_keys(_at(weightOnly, 'plugins')), ['legend', 'tooltip']);
     });
 
     test('the title color is the color token', () {
@@ -932,16 +928,10 @@ void main() {
         _at(compiled, 'plugins.title.color'),
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 0.8)),
       );
-      expect(
-        _keys(_at(compiled, 'plugins.title')),
-        ['color'],
-      );
+      expect(_keys(_at(compiled, 'plugins.title')), ['color']);
       // The legend reads the root color (plugin.legend.js:661, 707).
       expect(_at(compiled, 'plugins.legend'), same(undefined));
-      expect(_keys(_at(compiled, 'plugins')), [
-        'title',
-        'subtitle',
-      ]);
+      expect(_keys(_at(compiled, 'plugins')), ['title', 'subtitle']);
     });
   });
 
@@ -964,10 +954,7 @@ void main() {
         _at(compiled, 'plugins.subtitle.color'),
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 0.8)),
       );
-      expect(
-        _keys(_at(compiled, 'plugins.subtitle')),
-        ['color'],
-      );
+      expect(_keys(_at(compiled, 'plugins.subtitle')), ['color']);
       // The other color tokens give no subtitle key.
       for (final (token, compile) in _colorTokens) {
         if (!['borderColor', 'backgroundColor', 'surface'].contains(token)) {
@@ -1051,10 +1038,7 @@ void main() {
         'legend',
         'tooltip',
       ]);
-      expect(_keys(_at(both, 'plugins.subtitle')), [
-        'color',
-        'font',
-      ]);
+      expect(_keys(_at(both, 'plugins.subtitle')), ['color', 'font']);
     });
   });
 
@@ -1112,9 +1096,8 @@ void main() {
       // color 'rgba(0,0,0,0)' (plugin.tooltip.js:1308) has no token.
       for (final (token, compile) in _colorTokens.take(4)) {
         expect(
-          _leaves(
-            compile(_blue),
-          ).keys.where((path) => path.startsWith('plugins.tooltip.')),
+          _leaves(compile(_blue)).keys
+              .where((path) => path.startsWith('plugins.tooltip.')),
           isEmpty,
           reason: token,
         );
@@ -1221,10 +1204,12 @@ void main() {
         'legend',
         'tooltip',
       ]);
-      expect(
-        _keys(_at(tooltipOnly, 'plugins.tooltip')),
-        [...tooltipColors.skip(1), 'titleFont', 'bodyFont', 'footerFont'],
-      );
+      expect(_keys(_at(tooltipOnly, 'plugins.tooltip')), [
+        ...tooltipColors.skip(1),
+        'titleFont',
+        'bodyFont',
+        'footerFont',
+      ]);
     });
   });
 
@@ -1292,10 +1277,7 @@ void main() {
       final second = compileChartTheme(color: _red);
       expect(second, isNot(same(first)));
       expect(_json(second), _json(first));
-      expect(
-        _json(compileLightTheme()),
-        _json(compileLightTheme()),
-      );
+      expect(_json(compileLightTheme()), _json(compileLightTheme()));
     });
 
     test('tokens that compile to null stay null', () {
@@ -1451,10 +1433,7 @@ void main() {
       expect(animation(theme, 'default', 'animation.duration'), 1000.0);
       // No theme: the upstream defaults (core.animations.defaults.js:4-5).
       expect(animation(null, 'theme', 'animation.duration'), 1000.0);
-      expect(
-        animation(null, 'theme', 'animation.easing'),
-        Curves.easeOutQuart,
-      );
+      expect(animation(null, 'theme', 'animation.easing'), Curves.easeOutQuart);
     });
   });
 

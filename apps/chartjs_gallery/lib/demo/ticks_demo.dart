@@ -218,10 +218,7 @@ class _TickLabels extends StatelessWidget {
               final text = label(i);
               final empty = text == '';
               return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: empty
                       ? theme.colorScheme.surfaceContainerLow

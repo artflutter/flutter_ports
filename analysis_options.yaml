@@ -5,3 +5,7 @@ analyzer:
     - "**/*.g.dart"
     - "**/build/**"
     - "third_party/**"
+
+linter:
+  rules:
+    unnecessary_type_name_in_constructor: false

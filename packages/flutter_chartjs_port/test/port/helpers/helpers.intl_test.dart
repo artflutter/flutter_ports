@@ -61,16 +61,8 @@ const List<(String, Locale, List<(double, int?, String)>)> _specCases = [
     Locale('en', 'US'),
     [(2.5, 1, '2.5'), (5, 0, '5'), (7.5, 1, '7.5'), (10, 0, '10')],
   ),
-  (
-    'scale.linear.tests.js:786',
-    Locale('en', 'US'),
-    [(1, 0, '1'), (2, 0, '2')],
-  ),
-  (
-    'scale.linear.tests.js:814',
-    Locale('en', 'US'),
-    [(0.01, 2, '0.01')],
-  ),
+  ('scale.linear.tests.js:786', Locale('en', 'US'), [(1, 0, '1'), (2, 0, '2')]),
+  ('scale.linear.tests.js:814', Locale('en', 'US'), [(0.01, 2, '0.01')]),
   (
     'scale.linear.tests.js:840',
     Locale('en', 'US'),
@@ -223,11 +215,7 @@ const List<(String, Locale, List<(double, int?, String)>)> _specCases = [
       (80, 0, '80'),
     ],
   ),
-  (
-    'scale.logarithmic.tests.js:719',
-    Locale('en', 'US'),
-    [(150, null, '150')],
-  ),
+  ('scale.logarithmic.tests.js:719', Locale('en', 'US'), [(150, null, '150')]),
   (
     'scale.logarithmic.tests.js:752',
     Locale('de', 'DE'),
@@ -293,11 +281,7 @@ const List<(String, Locale, List<(double, int?, String)>)> _specCases = [
       (2.8, 1, '2.8'),
     ],
   ),
-  (
-    'scale.radialLinear.tests.js:436',
-    Locale('en', 'US'),
-    [(5, null, '5')],
-  ),
+  ('scale.radialLinear.tests.js:436', Locale('en', 'US'), [(5, null, '5')]),
 ];
 
 void main() {

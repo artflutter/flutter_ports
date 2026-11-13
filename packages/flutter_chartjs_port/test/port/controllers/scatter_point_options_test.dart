@@ -96,10 +96,7 @@ Map<String, Object?> _config({bool line = false, int datasets = 1}) => {
             for (var i = 0; i < 8; i++)
               <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
           ],
-          'backgroundColor': <ChartPaint>[
-            if (d == 0) red else green,
-            blue,
-          ],
+          'backgroundColor': <ChartPaint>[if (d == 0) red else green, blue],
           'borderColor': blue,
           'radius': 3.0,
           'borderWidth': 1.0,
@@ -142,9 +139,7 @@ Chart _chart(Object cfg, {bool reference = false}) {
 
 List<_ProbePoint> _probes(Chart chart, [int dataset = 0]) {
   final points = chart.getDatasetMeta(dataset).data;
-  return [
-    for (var i = 0; i < points.length; i++) points[i] = _ProbePoint(),
-  ];
+  return [for (var i = 0; i < points.length; i++) points[i] = _ProbePoint()];
 }
 
 Object? _plain(Object? value) {

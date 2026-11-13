@@ -13,10 +13,7 @@ import '../../../flutter_test_config.dart' show triggerMouseEvent;
 Map<String, Object?> fixture() {
   final data = <Object?>[];
   for (var i = 0; i < 100; i++) {
-    data.add(<String, Object?>{
-      'x': i,
-      'y': math.sin((i / 25) * math.pi) * 10,
-    });
+    data.add(<String, Object?>{'x': i, 'y': math.sin((i / 25) * math.pi) * 10});
   }
 
   return <String, Object?>{

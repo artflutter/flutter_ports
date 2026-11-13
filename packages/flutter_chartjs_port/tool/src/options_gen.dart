@@ -421,9 +421,8 @@ final class Schema {
 
   /// The distinct key names, sorted by their code units.
   List<String> get keyNames {
-    final names = <String>{
-      for (final kind in kinds) ...kind.keys.keys,
-    }.toList()..sort();
+    final names = <String>{for (final kind in kinds) ...kind.keys.keys}.toList()
+      ..sort();
     return names;
   }
 }
@@ -807,9 +806,7 @@ String _resolved(Schema schema) {
       final bit = 1 << slot;
       out
         ..write('\n  $type _$id = ${_absentValue(type)};\n\n')
-        ..write(
-          '  /// `$key`: the JS conversion of the value of the key.\n',
-        )
+        ..write('  /// `$key`: the JS conversion of the value of the key.\n')
         ..write('  $type get $id => _$id;\n\n')
         ..write(
           '  /// `$key`: the raw value, or [undefined] for an absent key.\n',
@@ -922,10 +919,7 @@ String _resolved(Schema schema) {
       ..write(
         _switchMember('Object? valueOf(OptionKey key)', 'key', [
           for (final key in typed)
-            (
-              'OptionKey.${keyIdentifier(key)}',
-              '${keyIdentifier(key)}Value',
-            ),
+            ('OptionKey.${keyIdentifier(key)}', '${keyIdentifier(key)}Value'),
         ], 'super.valueOf(key)'),
       )
       ..write('\n  @override\n')
@@ -1145,7 +1139,18 @@ String _scopeKinds(Schema schema) {
   return out.toString();
 }
 
+/// The imports of `scopes.g.dart` besides the typed atoms.
+const _scopesImports = [
+  'package:flutter_chartjs_port/src/options/opt.dart',
+  'package:flutter_chartjs_port/src/options/option_keys.g.dart',
+  'package:flutter_chartjs_port/src/options/option_scope.dart',
+  'package:flutter_chartjs_port/src/options/scope_kinds.g.dart',
+];
+
 String _scopes(Schema schema) {
+  final imports = typedAtomImports([
+    for (final a in typedAtoms.values) a.type,
+  ], _scopesImports);
   final out = StringBuffer()
     ..write(_header)
     ..write(_generated)
@@ -1160,12 +1165,7 @@ String _scopes(Schema schema) {
       '///\n'
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
-      '${typedAtomImports([for (final a in typedAtoms.values) a.type], [
-        'package:flutter_chartjs_port/src/options/opt.dart',
-        'package:flutter_chartjs_port/src/options/option_keys.g.dart',
-        'package:flutter_chartjs_port/src/options/option_scope.dart',
-        'package:flutter_chartjs_port/src/options/scope_kinds.g.dart',
-      ])}',
+      '$imports',
     );
   for (final kind in schema.kinds) {
     out

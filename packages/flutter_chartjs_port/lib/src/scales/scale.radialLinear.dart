@@ -234,10 +234,7 @@ _LabelSize _measureLabelSize(
 ) {
   // Upstream reassigns its parameter with the List of the lines.
   final lines = isArray(label) ? label! as List<Object?> : <Object?>[label];
-  return (
-    w: longestText(ctx, font, lines),
-    h: lines.length * font.lineHeight!,
-  );
+  return (w: longestText(ctx, font, lines), h: lines.length * font.lineHeight!);
 }
 
 /// scale.radialLinear.js:27 `determineLimits(angle, pos, size, min, max)`.
@@ -1449,9 +1446,7 @@ class RadialLinearScale extends LinearScaleBase
           ..setLineDash(canvasLineDash(optsAtIndex.borderDash))
           ..lineDashOffset = canvasNumber(optsAtIndex.borderDashOffset);
 
-        final offset = getDistanceFromCenterForValue(
-          opts.reverse ? min : max,
-        );
+        final offset = getDistanceFromCenterForValue(opts.reverse ? min : max);
         final position = getPointPosition(i * 1.0, offset);
         ctx
           ..beginPath()

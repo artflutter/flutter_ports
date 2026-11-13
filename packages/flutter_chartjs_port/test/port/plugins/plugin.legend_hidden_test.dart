@@ -296,15 +296,8 @@ Map<String, Object?> _reader(List<Object?> log, bool Function() armed) => {
 
 /// The colors of the raw twins.
 const _indexedColors = <String, Object?>{
-  'backgroundColor': <Object?>[
-    _red,
-    _green,
-  ],
-  'borderColor': <Object?>[
-    _blue,
-    _black,
-    _red,
-  ],
+  'backgroundColor': <Object?>[_red, _green],
+  'borderColor': <Object?>[_blue, _black, _red],
 };
 
 /// The plain form of a value that user code can read.
@@ -1340,9 +1333,7 @@ void main() {
         final seen = <Object?>[];
         final twinSeen = <Object?>[];
         Map<String, Object?> reader(List<Object?> log) =>
-            _hook('beforeUpdate', (
-              chart,
-            ) {
+            _hook('beforeUpdate', (chart) {
               if (armed) log.add(chart.legend!.legendItems!.length);
               return null;
             });
@@ -1565,10 +1556,8 @@ void main() {
         tester,
       ) async {
         var armed = false;
-        Map<String, Object?> cancel() => _hook(
-          'beforeUpdate',
-          (chart) => armed ? false : null,
-        );
+        Map<String, Object?> cancel() =>
+            _hook('beforeUpdate', (chart) => armed ? false : null);
         var calls = 0;
         final chart = acquireChart(_config(type, plugins: [cancel()]));
         final twin = acquireChart(_eager(type, plugins: [cancel()]));
@@ -1618,10 +1607,7 @@ void main() {
             each.legend!.legendItems![0].pointStyle,
             const StarPointStyle(),
           );
-          expect(
-            each.legend!.legendItems![0].fontColor,
-            _green,
-          );
+          expect(each.legend!.legendItems![0].fontColor, _green);
           expect(readOption(each.options, OptionKey.color), _green);
         }
         expect(
@@ -1764,10 +1750,7 @@ void main() {
           },
         ),
       );
-      expect(
-        chart.legend!.legendItems![0].fontColor,
-        _green,
-      );
+      expect(chart.legend!.legendItems![0].fontColor, _green);
     });
   });
 
@@ -1977,10 +1960,7 @@ void main() {
               _black;
         }
         // The cached entry of the last update answers both builds.
-        expect(
-          chart.legend!.legendItems![0].fillStyle,
-          _red,
-        );
+        expect(chart.legend!.legendItems![0].fillStyle, _red);
         expect(
           _items(chart.legend!),
           legendObservationMatcher(_items(twin.legend!)),
@@ -1998,9 +1978,7 @@ void main() {
         'id': 'colorReader',
         'afterDatasetsUpdate': (Chart chart, Object? args, Object? options) {
           if (armed) {
-            log.add(
-              chart.legend!.legendItems![0].fillStyle,
-            );
+            log.add(chart.legend!.legendItems![0].fillStyle);
           }
           return null;
         },
@@ -2082,19 +2060,15 @@ void main() {
 
       testWidgets(
         '$type: a read between the configure and the dataset update',
-        (
-          tester,
-        ) async {
+        (tester) async {
           var armed = false;
           final seen = <Object?>[];
           final twinSeen = <Object?>[];
-          Map<String, Object?> reader(List<Object?> log) => _hook(
-            'beforeDatasetUpdate',
-            (chart) {
-              if (armed) log.add(_texts(chart));
-              return null;
-            },
-          );
+          Map<String, Object?> reader(List<Object?> log) =>
+              _hook('beforeDatasetUpdate', (chart) {
+                if (armed) log.add(_texts(chart));
+                return null;
+              });
           final chart = acquireChart(_config(type, plugins: [reader(seen)]));
           final twin = acquireChart(_eager(type, plugins: [reader(twinSeen)]));
           expect(_texts(chart), ['a', 'b', 'c']);
@@ -2143,16 +2117,10 @@ void main() {
           // The controller of the remaining dataset has another index: the
           // last built items, as the snapshot of upstream here. Never a default
           // color, and never a color of the dataset behind another index.
-          expect(
-            chart.legend!.legendItems![0].fillStyle,
-            _blue,
-          );
+          expect(chart.legend!.legendItems![0].fillStyle, _blue);
           expect(_legendOf(chart).legendItemsPending, isTrue);
           chart.update(mode);
-          expect(
-            chart.legend!.legendItems![0].fillStyle,
-            _green,
-          );
+          expect(chart.legend!.legendItems![0].fillStyle, _green);
           releaseChart(chart);
         }
       });
@@ -2399,9 +2367,7 @@ void main() {
     for (final type in _kinds) {
       testWidgets(
         '$type: ChartView.raw: a new config and a beforeUpdate read',
-        (
-          tester,
-        ) async {
+        (tester) async {
           var reads = 0;
           final plugin = _hook('beforeUpdate', (chart) {
             chart.legend!.legendItems;
@@ -2524,10 +2490,7 @@ void main() {
         typed.ChartThemeData.dark(),
       ]) {
         testWidgets('$kind: indexed colors wait under a theme', (tester) async {
-          const indexed = typed.ChartValue<ChartPaint>.indexed([
-            _red,
-            _green,
-          ]);
+          const indexed = typed.ChartValue<ChartPaint>.indexed([_red, _green]);
           await tester.pumpWidget(
             view(config([1, 2, 3], kind: kind, color: indexed), theme),
           );
@@ -2659,10 +2622,7 @@ void main() {
       testWidgets('$type: a dataset with no arcs and with labels', (
         tester,
       ) async {
-        final dataset = {
-          ..._indexedColors,
-          'data': <Object?>[],
-        };
+        final dataset = {..._indexedColors, 'data': <Object?>[]};
         final chart = acquireChart(_config(type, dataset: dataset));
         final twin = acquireChart(_eager(type, dataset: dataset));
         chart.update('none');
@@ -2816,20 +2776,12 @@ void main() {
         _config(
           'pie',
           dataset: {
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-              _blue,
-              _keepItem,
-            ],
+            'backgroundColor': <Object?>[_red, _green, _blue, _keepItem],
           },
         ),
       )..update('none');
       expect(_legendOf(chart).legendItemsPending, isTrue);
-      expect(
-        chart.legend!.legendItems![2].fillStyle,
-        _blue,
-      );
+      expect(chart.legend!.legendItems![2].fillStyle, _blue);
     });
 
     // `configure` of the update starts new scopes and a new resolver: a write
@@ -2872,10 +2824,7 @@ void main() {
           _items(chart.legend!),
           legendObservationMatcher(_items(twin.legend!)),
         );
-        expect(
-          chart.legend!.legendItems![1].fillStyle,
-          _black,
-        );
+        expect(chart.legend!.legendItems![1].fillStyle, _black);
       });
 
       testWidgets('a write of a function in $hook', (tester) async {
@@ -2999,11 +2948,7 @@ void main() {
       for (final hook in _hooks)
         hook: (Chart chart, Object? args, Object? options) {
           if (armed()) {
-            log.add([
-              hook,
-              if (read) _items(chart.legend!),
-              _contexts(chart),
-            ]);
+            log.add([hook, if (read) _items(chart.legend!), _contexts(chart)]);
           }
           return null;
         },
@@ -3074,11 +3019,7 @@ void main() {
           _config(type, dataset: _indexedColors, options: options(log)),
         );
         final twin = acquireChart(
-          _config(
-            type,
-            dataset: _indexedColors,
-            options: options(twinLog),
-          ),
+          _config(type, dataset: _indexedColors, options: options(twinLog)),
         );
         // The twin takes the filter through its own label options.
         _labelOptionsOf(twin)['filter'] = _keepItem;
@@ -3107,19 +3048,13 @@ void main() {
                   function(ctx);
                   return _red;
                 },
-                'borderColor': <Object?>[
-                  _blue,
-                  _black,
-                ],
+                'borderColor': <Object?>[_blue, _black],
               },
             ),
             (
               'a function on another key',
               (function) => {
-                'backgroundColor': <Object?>[
-                  _red,
-                  _green,
-                ],
+                'backgroundColor': <Object?>[_red, _green],
                 'borderWidth': function,
               },
             ),
@@ -3285,25 +3220,16 @@ void main() {
           {
             // A number key with a string.
             'borderWidth': '3',
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-            ],
+            'backgroundColor': <Object?>[_red, _green],
           },
           {
             'borderWidth': <Object?>['3', 2.0],
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-            ],
+            'backgroundColor': <Object?>[_red, _green],
           },
           {
             // An empty list has no value for an index.
             'borderAlign': <Object?>[],
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-            ],
+            'backgroundColor': <Object?>[_red, _green],
           },
           {
             // A list of another class can run user code at each read.
@@ -3315,32 +3241,20 @@ void main() {
               ArcBorderAlign.inner,
               ArcBorderAlign.center,
             ],
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-            ],
+            'backgroundColor': <Object?>[_red, _green],
             '_indexable': (String name) => name != 'borderAlign',
           },
           {
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-            ],
+            'backgroundColor': <Object?>[_red, _green],
             '_scriptable': (String name) => true,
           },
           {
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-            ],
+            'backgroundColor': <Object?>[_red, _green],
             '_indexable': (String name) => true,
           },
           {
             // A raw list of `borderDash` with an object at item 0.
-            'backgroundColor': <Object?>[
-              _red,
-              _green,
-            ],
+            'backgroundColor': <Object?>[_red, _green],
             'borderDash': <Object?>[
               <String, Object?>{'a': 1},
             ],
@@ -3368,10 +3282,7 @@ void main() {
         // With `_indexable: false`, no value needs a context: the entry of the
         // cached options is the proof of Chart.js ADR 0092.
         final dataset = <String, Object?>{
-          'borderAlign': <Object?>[
-            ArcBorderAlign.inner,
-            ArcBorderAlign.center,
-          ],
+          'borderAlign': <Object?>[ArcBorderAlign.inner, ArcBorderAlign.center],
           '_indexable': false,
         };
         final chart = acquireChart(_config(type, dataset: dataset))
@@ -3520,19 +3431,13 @@ void main() {
     test('the proof takes the exact Config', () {
       Map<String, Object?> make() => _config('pie', dataset: _indexedColors);
       expect(
-        Config(make()).prepareIndexedArcStyles(
-          0,
-          controllerType: 'pie',
-          count: 3,
-        ),
+        Config(make())
+            .prepareIndexedArcStyles(0, controllerType: 'pie', count: 3),
         isNotNull,
       );
       expect(
-        _TrivialConfig(make()).prepareIndexedArcStyles(
-          0,
-          controllerType: 'pie',
-          count: 3,
-        ),
+        _TrivialConfig(make())
+            .prepareIndexedArcStyles(0, controllerType: 'pie', count: 3),
         isNull,
       );
     });
@@ -3573,11 +3478,7 @@ void main() {
                 labelValues: <Object?>[...labels],
                 dataset: {
                   'data': <Object?>[...before],
-                  'backgroundColor': <Object?>[
-                    _red,
-                    _green,
-                    _blue,
-                  ],
+                  'backgroundColor': <Object?>[_red, _green, _blue],
                 },
                 plugins: [
                   _hook('beforeLayout', (chart) {
@@ -3611,11 +3512,7 @@ void main() {
                 labelValues: <Object?>[...labels],
                 dataset: {
                   'data': <Object?>[...before],
-                  'backgroundColor': <Object?>[
-                    _red,
-                    _green,
-                    _blue,
-                  ],
+                  'backgroundColor': <Object?>[_red, _green, _blue],
                 },
                 options: {
                   'plugins': <String, Object?>{
@@ -3662,13 +3559,8 @@ void main() {
           final steps = <void Function(Chart chart)>[
             (chart) => _dataset0(chart)['data'] = <Object?>[5.0],
             (chart) => _dataset0(chart)['data'] = <Object?>[],
-            (chart) => _dataset0(chart)['data'] = <Object?>[
-              1.0,
-              2.0,
-              3.0,
-              4.0,
-              5.0,
-            ],
+            (chart) =>
+                _dataset0(chart)['data'] = <Object?>[1.0, 2.0, 3.0, 4.0, 5.0],
             (chart) => _dataset0(chart)['backgroundColor'] = <Object?>[
               _blue,
               _red,
@@ -3773,10 +3665,7 @@ void main() {
                 type,
                 legend: {'display': display},
                 dataset: {
-                  'borderColor': <Object?>[
-                    _blue,
-                    _black,
-                  ],
+                  'borderColor': <Object?>[_blue, _black],
                   'borderRadius': <String, Object?>{'outerStart': 1.0},
                   '_fallback': (Object? prop, Object? value) {
                     if (armed) log.add([prop, _firstArcState(chart)]);
@@ -3809,10 +3698,7 @@ void main() {
                 type,
                 legend: {'display': display},
                 dataset: {
-                  'borderColor': <Object?>[
-                    _blue,
-                    _black,
-                  ],
+                  'borderColor': <Object?>[_blue, _black],
                   'borderRadius': <String, Object?>{'outerStart': 1.0},
                   '_fallback': (Object? prop, Object? value) {
                     if (armed) throw StateError('fallback');
@@ -3846,10 +3732,7 @@ void main() {
                 type,
                 legend: {'display': display},
                 dataset: {
-                  'borderColor': <Object?>[
-                    _blue,
-                    _black,
-                  ],
+                  'borderColor': <Object?>[_blue, _black],
                   'borderRadius': _ObservedMap(
                     <String, Object?>{'outerStart': 1.0},
                     (key) {
@@ -3985,10 +3868,7 @@ void main() {
         final exact = run(exact: true);
         expect(
           ((exact.first! as List<Object?>).first! as List<Object?>).first,
-          [
-            _red,
-            9.0,
-          ],
+          [_red, 9.0],
         );
         expect(exact, legendObservationMatcher(run(exact: false)));
       });
@@ -4008,15 +3888,9 @@ void main() {
         colors[1] = _black;
       }
       // Upstream, and the twin: the snapshot of the last update.
-      expect(
-        twin.legend!.legendItems![1].fillStyle,
-        _green,
-      );
+      expect(twin.legend!.legendItems![1].fillStyle, _green);
       // A pending build: the entry of the list at the first read.
-      expect(
-        chart.legend!.legendItems![1].fillStyle,
-        _black,
-      );
+      expect(chart.legend!.legendItems![1].fillStyle, _black);
     });
 
     testWidgets('a read after an entry became an object', (tester) async {
@@ -4034,10 +3908,7 @@ void main() {
       expect(_items(chart.legend!), legendObservationMatcher(built));
       expect(_legendOf(chart).legendItemsPending, isTrue);
       colors[1] = _black;
-      expect(
-        chart.legend!.legendItems![1].fillStyle,
-        _black,
-      );
+      expect(chart.legend!.legendItems![1].fillStyle, _black);
       expect(_legendOf(chart).legendItemsPending, isFalse);
     });
 
@@ -4093,11 +3964,7 @@ void main() {
             _config(
               'pie',
               dataset: {
-                'backgroundColor': <Object?>[
-                  _red,
-                  _red,
-                  _red,
-                ],
+                'backgroundColor': <Object?>[_red, _red, _red],
                 'borderWidth': <Object?>[1.0, 1.0, 1.0],
                 'borderDash': <Object?>[1.0, 1.0],
               },
@@ -4149,10 +4016,7 @@ void main() {
         _items(chart.legend!),
         legendObservationMatcher(_items(twin.legend!)),
       );
-      expect(
-        chart.legend!.legendItems![1].fillStyle,
-        _green,
-      );
+      expect(chart.legend!.legendItems![1].fillStyle, _green);
     });
 
     testWidgets('a read with more labels than the mark', (tester) async {
@@ -4177,10 +4041,7 @@ void main() {
       expect(_items(chart.legend!), legendObservationMatcher(built));
       expect(_legendOf(chart).legendItemsPending, isTrue);
       chart.update('none');
-      expect(
-        chart.legend!.legendItems![0].fillStyle,
-        _black,
-      );
+      expect(chart.legend!.legendItems![0].fillStyle, _black);
     });
 
     testWidgets('a direct build writes the contexts of a resolve', (
@@ -4245,10 +4106,7 @@ void main() {
         ) async {
           const blue = ChartPaint.solid(Color(0xff4f6bed));
           const teal = ChartPaint.solid(Color(0xff14b8a6));
-          const color = typed.ChartValue<ChartPaint>.indexed([
-            blue,
-            teal,
-          ]);
+          const color = typed.ChartValue<ChartPaint>.indexed([blue, teal]);
           const radius = typed.PercentRadius(90);
           final labels = <String>[for (var i = 0; i < 200; i++) '$i'];
 

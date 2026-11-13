@@ -699,9 +699,7 @@ void main() {
 
   test('the typed set covers a share of the defaults inventory', () {
     final defaults = check.covered.intersection(_defaults);
-    final share = (100 * defaults.length / _defaults.length).toStringAsFixed(
-      1,
-    );
+    final share = (100 * defaults.length / _defaults.length).toStringAsFixed(1);
     // The share is a report of the test (ADR 0052, section 13).
     // ignore: avoid_print
     print(

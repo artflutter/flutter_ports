@@ -199,9 +199,7 @@ void main() {
 
       test('should not fail on when options are frozen', () {
         Resolver create() {
-          final defaults = Map<String, Object?>.unmodifiable({
-            'default': true,
-          });
+          final defaults = Map<String, Object?>.unmodifiable({'default': true});
           final options = Map<String, Object?>.unmodifiable({'value': true});
           return createResolver([options, defaults]);
         }
@@ -845,34 +843,29 @@ void main() {
         },
       );
 
-      test(
-        'should call _fallback with proper value from array when descriptor '
-        'and defaults are objects',
-        () {
-          final spy = _Spy();
-          final descriptors = <String, Object?>{
-            'items': <String, Object?>{'_fallback': spy.call},
-          };
-          final defaults = <String, Object?>{
-            'items': <String, Object?>{'type': 'defaultType'},
-          };
-          final options = <String, Object?>{
-            'items': [
-              <String, Object?>{'test': true},
-            ],
-          };
-          final resolver = createResolver([options, defaults, descriptors]);
-          final opts = attachContext(resolver, {'dymmy': true});
-          final item0 = (opts['items']! as List<Object?>)[0];
-          expect(item0['test'], true);
-          expect(
-            spy.calls,
-            contains(
-              equals(['items', (options['items']! as List<Object?>)[0]]),
-            ),
-          );
-        },
-      );
+      test('should call _fallback with proper value from array when descriptor '
+          'and defaults are objects', () {
+        final spy = _Spy();
+        final descriptors = <String, Object?>{
+          'items': <String, Object?>{'_fallback': spy.call},
+        };
+        final defaults = <String, Object?>{
+          'items': <String, Object?>{'type': 'defaultType'},
+        };
+        final options = <String, Object?>{
+          'items': [
+            <String, Object?>{'test': true},
+          ],
+        };
+        final resolver = createResolver([options, defaults, descriptors]);
+        final opts = attachContext(resolver, {'dymmy': true});
+        final item0 = (opts['items']! as List<Object?>)[0];
+        expect(item0['test'], true);
+        expect(
+          spy.calls,
+          contains(equals(['items', (options['items']! as List<Object?>)[0]])),
+        );
+      });
 
       test('should support overriding options', () {
         final options = <String, Object?>{

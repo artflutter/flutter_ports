@@ -1396,10 +1396,7 @@ final Map<String, HandFixture> handFixtures = {
     load: mixed_bar_line_stacked.fixture,
     sha256: '9bc9ec2e5a3e',
   ),
-  'mixed/bar+line.js': (
-    load: mixed_bar_line.fixture,
-    sha256: 'f125d76e617a',
-  ),
+  'mixed/bar+line.js': (load: mixed_bar_line.fixture, sha256: 'f125d76e617a'),
   'plugin.colors/dynamic-datasets-default.js': (
     load: plugin_colors_dynamic_datasets_default.fixture,
     sha256: 'f855a092e685',

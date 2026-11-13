@@ -31,16 +31,11 @@ Map<String, Object?> fixture() => <String, Object?>{
           );
         },
       },
-      'plugins': <String, Object?>{
-        'legend': false,
-      },
+      'plugins': <String, Object?>{'legend': false},
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',
-          'ticks': <String, Object?>{
-            'maxRotation': 0,
-            'autoSkip': false,
-          },
+          'ticks': <String, Object?>{'maxRotation': 0, 'autoSkip': false},
         },
         'y': <String, Object?>{
           'type': 'linear',
@@ -52,9 +47,6 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'height': 150,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 150, 'width': 512},
   },
 };

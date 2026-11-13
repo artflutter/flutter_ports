@@ -45,16 +45,11 @@ Map<String, Object?> fixture() => <String, Object?>{
         'x': <String, Object?>{'display': false, 'bounds': ScaleBounds.data},
         'y': <String, Object?>{'display': false},
       },
-      'layout': <String, Object?>{
-        'padding': const EdgeInsets.all(24),
-      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(24)},
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 256,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 256},
     'run': (Chart chart) {
       chart
         ..setActiveElements(<Object?>[

@@ -462,9 +462,7 @@ void main() {
       expect(
         controller
             .resolveAnimations(0, 'active')
-            .itemOf(
-              AnimatedProp.borderColor,
-            ),
+            .itemOf(AnimatedProp.borderColor),
         same(mode),
       );
       expect(

@@ -48,7 +48,7 @@ class _RegisteredItem implements TypedDataItem {
   Never noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }
 
-class _OtherItem extends _RegisteredItem {}
+class _OtherItem extends _RegisteredItem;
 
 void main() {
   test('typed items classify by their class, one class after another', () {

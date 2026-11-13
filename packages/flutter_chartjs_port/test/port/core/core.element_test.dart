@@ -318,9 +318,7 @@ void main() {
 
     test('a bool and the declared objects are written by name', () {
       final options = <String, Object?>{'radius': 3.0};
-      final animations = <String, types.Animation>{
-        'x': _Animation(4.0),
-      };
+      final animations = <String, types.Animation>{'x': _Animation(4.0)};
       final elem = Element()
         ..['active'] = true
         ..['options'] = options
@@ -392,12 +390,7 @@ void main() {
     test('writes each key through operator []=', () {
       final options = <String, Object?>{'radius': 2};
       final elem = Element()
-        ..assign({
-          'options': options,
-          'x': 10,
-          'y': 15,
-          r'$context': 'ctx',
-        });
+        ..assign({'options': options, 'x': 10, 'y': 15, r'$context': 'ctx'});
       expect(elem.options, same(options));
       expect(elem['x'], isA<double>());
       expect(elem.x, 10.0);
@@ -611,10 +604,7 @@ void main() {
       final elem = Element()
         ..x = 1
         ..y = 2
-        ..$animations = {
-          'x': _Animation(undefined),
-          'y': _Animation('3'),
-        };
+        ..$animations = {'x': _Animation(undefined), 'y': _Animation('3')};
       expect(elem.tooltipPosition(true), const ElementPoint(double.nan, 3));
     });
   });
@@ -768,10 +758,7 @@ void main() {
 
     test('prints as the object literal', () {
       expect(const ElementPoint(1, 2.5).toString(), '{x: 1, y: 2.5}');
-      expect(
-        const ElementPoint(double.nan, -0).toString(),
-        '{x: NaN, y: 0}',
-      );
+      expect(const ElementPoint(double.nan, -0).toString(), '{x: NaN, y: 0}');
     });
   });
 

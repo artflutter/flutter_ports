@@ -321,10 +321,7 @@ void main() {
             nativeColorBytes(value) != null;
         if (!inputs.every(supported)) {
           for (final input in inputs.where((value) => !supported(value))) {
-            expect(
-              () => color_helpers.color(input),
-              throwsArgumentError,
-            );
+            expect(() => color_helpers.color(input), throwsArgumentError);
           }
           continue;
         }
@@ -363,10 +360,7 @@ void main() {
         );
         if (invalid.isNotEmpty) {
           for (final value in invalid) {
-            expect(
-              () => color_helpers.color(value),
-              throwsArgumentError,
-            );
+            expect(() => color_helpers.color(value), throwsArgumentError);
           }
           continue;
         }
@@ -517,14 +511,7 @@ void main() {
 
     test('the number interpolator with null, undefined and booleans', () {
       for (final (from, to, active, value)
-          in const <
-            (
-              Object?,
-              Object?,
-              bool,
-              Object?,
-            )
-          >[
+          in const <(Object?, Object?, bool, Object?)>[
             (null, 10.0, true, 2.5),
             (undefined, 10.0, true, double.nan),
             (true, false, true, 0.75),

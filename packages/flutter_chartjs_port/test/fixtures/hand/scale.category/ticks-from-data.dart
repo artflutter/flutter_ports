@@ -15,43 +15,24 @@ Map<String, Object?> fixture() => <String, Object?>{
     'data': <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            10,
-            5,
-            0,
-            25,
-            78,
-          ],
+          'data': <Object?>[10, 5, 0, 25, 78],
           'backgroundColor': 'transparent',
         },
       ],
-      'labels': <Object?>[
-        'tick1',
-        'tick2',
-        'tick3',
-        'tick4',
-        'tick5',
-      ],
+      'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
     },
     'options': <String, Object?>{
       // DIVERGES(chartjs): adapt-axis-objects, the axis
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': true,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': true},
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'width': 128,
-      'height': 256,
-    },
+    'canvas': <String, Object?>{'width': 128, 'height': 256},
   },
 };

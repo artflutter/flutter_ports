@@ -535,11 +535,7 @@ List<Object?> _datasets(types.Chart chart) =>
 /// The options are read through the facade [DecimationOptions], and the
 /// chart options through their typed reads ([optionOf]). The reads of the
 /// datasets of the user are reads by name ([_Dataset]).
-void _beforeElementsUpdate(
-  types.Chart chart,
-  Object args,
-  Object options,
-) {
+void _beforeElementsUpdate(types.Chart chart, Object args, Object options) {
   final opts = DecimationOptions(options);
   if (!opts.enabled) {
     // The decimation plugin may have been previously enabled. Need to remove

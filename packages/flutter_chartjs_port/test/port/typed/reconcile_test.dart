@@ -207,14 +207,10 @@ void main() {
       tester,
     ) async {
       final data = [1, 2, 3];
-      await tester.pumpWidget(
-        _view(_bars([BarDataset(key: _a, data: data)])),
-      );
+      await tester.pumpWidget(_view(_bars([BarDataset(key: _a, data: data)])));
       final chart = _chart(tester);
       final first = _dataset(chart, 0);
-      await tester.pumpWidget(
-        _view(_bars([BarDataset(key: _b, data: data)])),
-      );
+      await tester.pumpWidget(_view(_bars([BarDataset(key: _b, data: data)])));
       final second = _dataset(chart, 0);
       expect(second, isNot(same(first)));
       await tester.pumpWidget(_view(_bars([BarDataset(data: data)])));
@@ -344,11 +340,7 @@ void main() {
       expect(_dataset(chart, 1), same(other));
       expect(
         {for (final key in other.jsKeys()) key: other[key]},
-        {
-          'label': 'B',
-          'data': data,
-          'clip': 5,
-        },
+        {'label': 'B', 'data': data, 'clip': 5},
       );
     });
 
@@ -359,9 +351,7 @@ void main() {
       _spyOnUpdates((chart) => atUpdate.add(_dataset(chart, 0)['borderColor']));
       final data = [1, 2, 3];
       await tester.pumpWidget(
-        _view(
-          _bars([BarDataset(label: 'A', data: data)], extra: _colorsOn),
-        ),
+        _view(_bars([BarDataset(label: 'A', data: data)], extra: _colorsOn)),
       );
       final chart = _chart(tester);
       final written = _dataset(chart, 0)['borderColor'];
@@ -371,9 +361,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        _view(
-          _bars([BarDataset(label: 'B', data: data)], extra: _colorsOn),
-        ),
+        _view(_bars([BarDataset(label: 'B', data: data)], extra: _colorsOn)),
       );
       expect(_dataset(chart, 0)['label'], 'B');
       // The reconcile kept the key: `beforeUpdate` runs before the colors
@@ -406,10 +394,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 100));
       final yNew = chart.scales['y']!.getPixelForValue(40);
-      expect(
-        chart.getDatasetMeta(0).data[1].y,
-        inExclusiveRange(yNew, yOld),
-      );
+      expect(chart.getDatasetMeta(0).data[1].y, inExclusiveRange(yNew, yOld));
       await tester.pump(const Duration(seconds: 2));
       expect(chart.getDatasetMeta(0).data[1].y, closeTo(yNew, 1e-9));
 
@@ -422,10 +407,7 @@ void main() {
         ),
       );
       await tester.pump(const Duration(milliseconds: 100));
-      expect(
-        chart.getDatasetMeta(0).data[1].y,
-        inExclusiveRange(yOld, yBase),
-      );
+      expect(chart.getDatasetMeta(0).data[1].y, inExclusiveRange(yOld, yBase));
       await tester.pump(const Duration(seconds: 2));
     });
   });
@@ -558,17 +540,14 @@ void main() {
       final modes = _spyOnUpdates();
       const themeA = ChartThemeData(palette: [_green]);
       const themeB = ChartThemeData(palette: [_blue]);
-      ChartConfig config(List<num?> data, {Color? borderColor}) => _bars(
-        [
-          BarDataset(
-            data: data,
-            borderColor: borderColor == null
-                ? null
-                : ChartValue.constant(.solid(borderColor)),
-          ),
-        ],
-        extra: _colorsOn,
-      );
+      ChartConfig config(List<num?> data, {Color? borderColor}) => _bars([
+        BarDataset(
+          data: data,
+          borderColor: borderColor == null
+              ? null
+              : ChartValue.constant(.solid(borderColor)),
+        ),
+      ], extra: _colorsOn);
       await tester.pumpWidget(_Host(config: config([1, 2, 3]), theme: themeA));
       final host = tester.state<_HostState>(find.byType(_Host));
       final chart = _chart(tester);
@@ -601,9 +580,7 @@ void main() {
       ];
       ChartConfig config(List<DataPoint> points, String label) => ChartConfig(
         type: ChartKind.line,
-        datasets: [
-          LineDataset(label: label, points: points, pointRadius: 0),
-        ],
+        datasets: [LineDataset(label: label, points: points, pointRadius: 0)],
         scales: const {'x': LinearAxis()},
         animation: ChartAnimation.none,
         extra: const {

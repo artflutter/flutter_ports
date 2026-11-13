@@ -190,16 +190,12 @@ void main() {
       for (final source in sources) {
         final header = source['header'];
         final path = source['pin.path'];
-        test(
-          '$header: the gitlink of $path is the commit of the entry',
-          () {
-            expect(source['pin.kind'], 'submodule');
-            expect(source['pin.ref'], source['version']);
-            expect(source['pin.commit'], matches(RegExp(r'^[0-9a-f]{40}$')));
-            expect(_gitlink(root!, path!), source['pin.commit']);
-          },
-          skip: git ? false : 'git is not available in the repository',
-        );
+        test('$header: the gitlink of $path is the commit of the entry', () {
+          expect(source['pin.kind'], 'submodule');
+          expect(source['pin.ref'], source['version']);
+          expect(source['pin.commit'], matches(RegExp(r'^[0-9a-f]{40}$')));
+          expect(_gitlink(root!, path!), source['pin.commit']);
+        }, skip: git ? false : 'git is not available in the repository');
       }
     },
     skip: sourcesFile == null

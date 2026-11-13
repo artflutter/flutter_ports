@@ -53,18 +53,13 @@ Map<String, Object?> fixture() {
         },
         'scales': <String, Object?>{
           'r': <String, Object?>{
-            'ticks': <String, Object?>{
-              'display': false,
-            },
+            'ticks': <String, Object?>{'display': false},
           },
         },
       },
     },
     'options': <String, Object?>{
-      'canvas': <String, Object?>{
-        'height': 512,
-        'width': 512,
-      },
+      'canvas': <String, Object?>{'height': 512, 'width': 512},
       'run': (Chart chart) {
         (chart.options['animation']! as JsObjectFace)['duration'] = 8000;
         chart

@@ -14,23 +14,13 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'type': 'line',
-          'data': <Object?>[
-            6,
-            16,
-            3,
-            19,
-          ],
+          'data': <Object?>[6, 16, 3, 19],
           'borderColor': '#0000ff',
           'fill': false,
         },
         <String, Object?>{
           'type': 'bar',
-          'data': <Object?>[
-            5,
-            20,
-            1,
-            10,
-          ],
+          'data': <Object?>[5, 20, 1, 10],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
         },
@@ -41,28 +31,18 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'position': 'top',
-        },
+        'x': <String, Object?>{'position': 'top'},
         'y': <String, Object?>{
           // DIVERGES(chartjs): adapt-axis-objects, the axis
           // class.
           'axis': const YAxis(),
-          'labels': <Object?>[
-            'a',
-            'b',
-            'c',
-            'd',
-          ],
+          'labels': <Object?>['a', 'b', 'c', 'd'],
         },
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

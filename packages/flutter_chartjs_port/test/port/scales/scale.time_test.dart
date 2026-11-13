@@ -206,11 +206,7 @@ void _lineTwin(String name, void Function() body) =>
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
-  Chart.register([
-    TimeScale.jsClass,
-    LinearScale.jsClass,
-    _timeTestController,
-  ]);
+  Chart.register([TimeScale.jsClass, LinearScale.jsClass, _timeTestController]);
 
   testReferenceOrigin(
     node: scaleTimeReferenceNode,
@@ -493,18 +489,12 @@ void main() {
       tester,
     ) async {
       final x = _x(labelsChart({}));
-      expect(x.getLabelTimestamps(), [
-        null,
-        _t0,
-        _t0 + 16 * _day,
-      ]);
+      expect(x.getLabelTimestamps(), [null, _t0, _t0 + 16 * _day]);
       // Math.min(min, null) is Math.min(min, 0).
       expect(x.min, 0);
     });
 
-    testWidgets('a null tick of the labels has the value NaN', (
-      tester,
-    ) async {
+    testWidgets('a null tick of the labels has the value NaN', (tester) async {
       final x = _x(
         labelsChart({
           'ticks': <String, Object?>{'source': TickSource.labels},
@@ -519,10 +509,7 @@ void main() {
       expect(x.getPixelForTick(0), isNaN);
       expect(
         [for (final tick in ticks.skip(1)) tick.value],
-        [
-          _t0,
-          _t0 + 16 * _day,
-        ],
+        [_t0, _t0 + 16 * _day],
       );
     });
 
@@ -598,9 +585,7 @@ void main() {
     testWidgets('init gives the chart options to the adapter, and the '
         'scale gets a new adapter in each update', (tester) async {
       final options = <Object?>[];
-      DateAdapterBase.override({
-        'init': options.add,
-      });
+      DateAdapterBase.override({'init': options.add});
       addTearDown(() => DateAdapterBase.prototype.remove('init'));
       final chart = _chart(_xy([_t0, _t0 + _day]));
       final first = _x(chart).adapter;
@@ -815,13 +800,7 @@ void main() {
 
             expect(scale.min, _ms('2012', 'yyyy'));
             expect(scale.max, _ms('2051', 'yyyy'));
-            expect(_getLabels(scale), [
-              '2017',
-              '2019',
-              '2020',
-              '2025',
-              '2042',
-            ]);
+            expect(_getLabels(scale), ['2017', '2019', '2020', '2025', '2042']);
           },
         );
 
@@ -838,13 +817,7 @@ void main() {
 
             expect(scale.min, _ms('2017', 'yyyy'));
             expect(scale.max, _ms('2042', 'yyyy'));
-            expect(_getLabels(scale), [
-              '2017',
-              '2019',
-              '2020',
-              '2025',
-              '2042',
-            ]);
+            expect(_getLabels(scale), ['2017', '2019', '2020', '2025', '2042']);
           },
         );
       });
@@ -946,21 +919,18 @@ void main() {
           },
         );
 
-        _lineTwin(
-          'should correctly handle empty `data.labels` using "day" if '
-          '`time.unit` is undefined`',
-          () {
-            final chart = dataChart();
-            final scale = chart.scales['x']!;
+        _lineTwin('should correctly handle empty `data.labels` using "day" if '
+            '`time.unit` is undefined`', () {
+          final chart = dataChart();
+          final scale = chart.scales['x']!;
 
-            (chart.data as AnyObject)['labels'] = <Object?>[];
-            chart.update();
+          (chart.data as AnyObject)['labels'] = <Object?>[];
+          chart.update();
 
-            expect(scale.min, _ms('2018', 'yyyy'));
-            expect(scale.max, _ms('2043', 'yyyy'));
-            expect(_getLabels(scale), ['2018', '2020', '2043']);
-          },
-        );
+          expect(scale.min, _ms('2018', 'yyyy'));
+          expect(scale.max, _ms('2043', 'yyyy'));
+          expect(_getLabels(scale), ['2018', '2020', '2043']);
+        });
       });
     });
 
@@ -1585,10 +1555,7 @@ void main() {
             'year': 'yyyy',
           };
 
-          expect(
-            _displayFormats(chart.scales['x']!.options),
-            equals(expected),
-          );
+          expect(_displayFormats(chart.scales['x']!.options), equals(expected));
           expect(_displayFormats(_scaleOptions(chart)), equals(expected));
         });
 
@@ -1630,10 +1597,7 @@ void main() {
             'year': 'yyyy',
           };
 
-          expect(
-            _displayFormats(chart.scales['x']!.options),
-            equals(expected),
-          );
+          expect(_displayFormats(chart.scales['x']!.options), equals(expected));
           expect(_displayFormats(_scaleOptions(chart)), equals(expected));
         });
       });

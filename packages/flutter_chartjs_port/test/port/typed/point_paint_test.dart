@@ -79,38 +79,33 @@ void main() {
       }
       expect(calls, 0);
     });
-    testWidgets(
-      '${entry.key.name}: indexed and scriptable point paints '
-      'resolve in both modes',
-      (tester) async {
-        for (final value in <ChartValue<ChartPaint>>[
-          const .indexed([_red, _gradient]),
-          .resolver(
-            (context) => context.dataIndex!.isEven ? _red : _gradient,
-          ),
-        ]) {
-          final chart = acquireChartRoot(
-            ChartConfigLowering(
-              ChartConfig(
-                type: entry.key,
-                labels: const ['a', 'b', 'c'],
-                datasets: [entry.value(value)],
-                animation: ChartAnimation.none,
-              ),
-            ).lower(),
-          );
-          final controller = chart.getDatasetMeta(0).controller!;
-          for (var i = 0; i < 3; i++) {
-            final expected = i.isEven ? _red : _gradient;
-            for (final active in [false, true]) {
-              final style =
-                  controller.getStyle(i.toDouble(), active) as JsObjectFace;
-              expect(style['backgroundColor'], same(expected));
-              expect(style['borderColor'], same(expected));
-            }
+    testWidgets('${entry.key.name}: indexed and scriptable point paints '
+        'resolve in both modes', (tester) async {
+      for (final value in <ChartValue<ChartPaint>>[
+        const .indexed([_red, _gradient]),
+        .resolver((context) => context.dataIndex!.isEven ? _red : _gradient),
+      ]) {
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: entry.key,
+              labels: const ['a', 'b', 'c'],
+              datasets: [entry.value(value)],
+              animation: ChartAnimation.none,
+            ),
+          ).lower(),
+        );
+        final controller = chart.getDatasetMeta(0).controller!;
+        for (var i = 0; i < 3; i++) {
+          final expected = i.isEven ? _red : _gradient;
+          for (final active in [false, true]) {
+            final style =
+                controller.getStyle(i.toDouble(), active) as JsObjectFace;
+            expect(style['backgroundColor'], same(expected));
+            expect(style['borderColor'], same(expected));
           }
         }
-      },
-    );
+      }
+    });
   }
 }

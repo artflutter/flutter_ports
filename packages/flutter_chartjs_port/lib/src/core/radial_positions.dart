@@ -10,8 +10,6 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:meta/meta.dart';
 
 /// A radial scale whose position methods have the built-in behavior.
-// A runtime capability, not a standalone operation.
-// ignore: one_member_abstracts
 abstract interface class NativeRadialPositionScale {
   /// The current inputs of the position methods, or null for their ordinary
   /// calls. Unknown subclasses and an option that no ordinary read resolved yet

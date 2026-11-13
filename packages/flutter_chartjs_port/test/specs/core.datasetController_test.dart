@@ -177,9 +177,7 @@ void main() {
       }
     });
 
-    testWidgets('should not try to delete non existent stacks', (
-      tester,
-    ) async {
+    testWidgets('should not try to delete non existent stacks', (tester) async {
       void createAndUpdateChart() {
         acquireChart(<String, Object?>{
             'data': <String, Object?>{
@@ -815,54 +813,51 @@ void main() {
       },
     );
 
-    testWidgets(
-      'should re-synchronize metadata when the data object reference '
-      'changes, with animation',
-      (tester) async {
-        final data0 = <Object?>[0, 1, 2, 3, 4, 5];
-        final data1 = <Object?>[6, 7, 8];
-        final data2 = <Object?>[1, 2, 3, 4, 5, 6, 7, 8];
+    testWidgets('should re-synchronize metadata when the data object reference '
+        'changes, with animation', (tester) async {
+      final data0 = <Object?>[0, 1, 2, 3, 4, 5];
+      final data1 = <Object?>[6, 7, 8];
+      final data2 = <Object?>[1, 2, 3, 4, 5, 6, 7, 8];
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data0},
-            ],
-          },
-          'options': <String, Object?>{'animation': true},
-        });
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': data0},
+          ],
+        },
+        'options': <String, Object?>{'animation': true},
+      });
 
-        final meta = chart.getDatasetMeta(0);
+      final meta = chart.getDatasetMeta(0);
 
-        expect(meta.data.length, 6);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
-        final point0 = meta.data[0];
+      expect(meta.data.length, 6);
+      expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
+      final point0 = meta.data[0];
 
-        _dataset(chart, 0)['data'] = data1;
-        chart.update();
+      _dataset(chart, 0)['data'] = data1;
+      chart.update();
 
-        expect(meta.data.length, 3);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data1));
-        expect(meta.data[0], jasmineEquals(point0));
+      expect(meta.data.length, 3);
+      expect(_parsedOf(meta, 'y'), jasmineEquals(data1));
+      expect(meta.data[0], jasmineEquals(point0));
 
-        _push(data1, [9]);
-        chart.update();
-        expect(meta.data.length, 4);
+      _push(data1, [9]);
+      chart.update();
+      expect(meta.data.length, 4);
 
-        _dataset(chart, 0)['data'] = data0;
-        chart.update();
+      _dataset(chart, 0)['data'] = data0;
+      chart.update();
 
-        expect(meta.data.length, 6);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
+      expect(meta.data.length, 6);
+      expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
 
-        _dataset(chart, 0)['data'] = data2;
-        chart.update();
+      _dataset(chart, 0)['data'] = data2;
+      chart.update();
 
-        expect(meta.data.length, 8);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data2));
-      },
-    );
+      expect(meta.data.length, 8);
+      expect(_parsedOf(meta, 'y'), jasmineEquals(data2));
+    });
 
     testWidgets(
       'should re-synchronize metadata when data are unusually altered',
@@ -1531,32 +1526,31 @@ void main() {
         }
       }
 
-      testWidgets(
-        'should resolve to empty Animations when globally disabled',
-        (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[1],
-                  'animation': <String, Object?>{
-                    'test': <String, Object?>{'duration': 10},
-                  },
+      testWidgets('should resolve to empty Animations when globally disabled', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1],
+                'animation': <String, Object?>{
+                  'test': <String, Object?>{'duration': 10},
                 },
-              ],
-            },
-            'options': <String, Object?>{'animation': false},
-          });
+              },
+            ],
+          },
+          'options': <String, Object?>{'animation': false},
+        });
 
-          final controller = chart.getDatasetMeta(0).controller!;
+        final controller = chart.getDatasetMeta(0).controller!;
 
-          expect(
-            controller.resolveAnimations(0).properties.length,
-            jasmineEquals(0),
-          );
-        },
-      );
+        expect(
+          controller.resolveAnimations(0).properties.length,
+          jasmineEquals(0),
+        );
+      });
 
       testWidgets(
         'should resolve to empty Animations when disabled at dataset level',

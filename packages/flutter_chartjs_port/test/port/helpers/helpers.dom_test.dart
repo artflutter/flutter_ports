@@ -249,10 +249,7 @@ void main() {
         final canvas = _Canvas(
           parentNode: const _Container(double.infinity, 200),
         );
-        expect(
-          getMaximumSize(canvas),
-          _size(double.infinity, 200),
-        );
+        expect(getMaximumSize(canvas), _size(double.infinity, 200));
       });
     });
 
@@ -318,10 +315,10 @@ void main() {
           [chart.canvas.width, chart.canvas.height],
           [canvasWidth, canvasHeight],
         );
-        expect(
-          chart.canvas.style.values,
-          {'height': styleHeight, 'width': styleWidth},
-        );
+        expect(chart.canvas.style.values, {
+          'height': styleHeight,
+          'width': styleWidth,
+        });
         expect(chart.ctx.calls, [
           {
             'name': 'setTransform',
@@ -475,16 +472,9 @@ void main() {
           offsetX: offset,
           offsetY: offset,
         );
-        expect(
-          getRelativePosition(event, chart),
-          _point(expected, expected),
-        );
+        expect(getRelativePosition(event, chart), _point(expected, expected));
       }
-      final event = NativeEvent(
-        type: 'mousemove',
-        offsetX: -0.25,
-        offsetY: 0,
-      );
+      final event = NativeEvent(type: 'mousemove', offsetX: -0.25, offsetY: 0);
       final position = getRelativePosition(event, chart);
       expect(position.x, _negativeZero);
       expect(position.y, 0);
@@ -531,11 +521,7 @@ void main() {
       final fractional = _Chart(300.5, 150);
       retinaScale(fractional, 1);
       expect(fractional.canvas.width, 300);
-      final event = NativeEvent(
-        type: 'mousemove',
-        offsetX: 150.6,
-        offsetY: 75,
-      );
+      final event = NativeEvent(type: 'mousemove', offsetX: 150.6, offsetY: 75);
       expect(getRelativePosition(event, fractional), _point(151, 75));
     });
 

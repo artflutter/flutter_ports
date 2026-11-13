@@ -88,12 +88,7 @@ void main() {
     test('reads the keys of a list from an object', () {
       expect(
         readValueToProps(
-          <String, Object?>{
-            'a': 1.0,
-            'b': '2',
-            'c': null,
-            'd': 'x',
-          },
+          <String, Object?>{'a': 1.0, 'b': '2', 'c': null, 'd': 'x'},
           ['a', 'b', 'c', 'd', 'e'],
         ),
         {'a': 1, 'b': 2, 'c': 0, 'd': 0, 'e': 0},
@@ -115,20 +110,14 @@ void main() {
     test('falls back only for an undefined value', () {
       expect(
         readValueToProps(
-          <String, Object?>{
-            'top': undefined,
-            'y': 3.0,
-          },
+          <String, Object?>{'top': undefined, 'y': 3.0},
           <String, Object?>{'top': 'y'},
         ),
         {'top': 3},
       );
       expect(
         readValueToProps(
-          <String, Object?>{
-            'top': null,
-            'y': 3.0,
-          },
+          <String, Object?>{'top': null, 'y': 3.0},
           <String, Object?>{'top': 'y'},
         ),
         {'top': 0},
@@ -353,32 +342,32 @@ void main() {
   group('_addGrace', () {
     test('adds the grace to both ends', () {
       // The grace is a GraceLength (row adapt-length-objects).
-      expect(
-        addGrace((min: 0, max: 10), const PercentGrace(10), false),
-        (min: -0.5, max: 10.5),
-      );
-      expect(
-        addGrace((min: 0, max: 10), const PercentGrace(-10), false),
-        (min: -0.5, max: 9.5),
-      );
-      expect(
-        addGrace((min: -5, max: 5), const ValueGrace(2), true),
-        (min: -7.0, max: 7.0),
-      );
-      expect(
-        addGrace((min: 1, max: 3), const ValueGrace(0.5), false),
-        (min: 0.5, max: 3.5),
-      );
-      expect(
-        addGrace((min: 5, max: 6), const ValueGrace(0), false),
-        (min: 5.0, max: 6.0),
-      );
+      expect(addGrace((min: 0, max: 10), const PercentGrace(10), false), (
+        min: -0.5,
+        max: 10.5,
+      ));
+      expect(addGrace((min: 0, max: 10), const PercentGrace(-10), false), (
+        min: -0.5,
+        max: 9.5,
+      ));
+      expect(addGrace((min: -5, max: 5), const ValueGrace(2), true), (
+        min: -7.0,
+        max: 7.0,
+      ));
+      expect(addGrace((min: 1, max: 3), const ValueGrace(0.5), false), (
+        min: 0.5,
+        max: 3.5,
+      ));
+      expect(addGrace((min: 5, max: 6), const ValueGrace(0), false), (
+        min: 5.0,
+        max: 6.0,
+      ));
     });
     test('keeps a zero end at 0 with beginAtZero', () {
-      expect(
-        addGrace((min: 0, max: 10), const PercentGrace(10), true),
-        (min: 0.0, max: 10.5),
-      );
+      expect(addGrace((min: 0, max: 10), const PercentGrace(10), true), (
+        min: 0.0,
+        max: 10.5,
+      ));
       final range = addGrace((min: -0.0, max: 6), const ValueGrace(1), true);
       expect(range.min, _isNumber(0));
       expect(range.max, 7);
@@ -423,30 +412,27 @@ void main() {
       expect(context.ownKeyCount, 4);
     });
     test('containsKey is the in operator', () {
-      expect(
-        ['chart', 'n', 'u', 'missing'].map(context.hasProperty),
-        [true, true, true, false],
-      );
-      expect(
-        ['chart', 'type', 'u'].map(context.hasOwnProperty),
-        [false, true, true],
-      );
+      expect(['chart', 'n', 'u', 'missing'].map(context.hasProperty), [
+        true,
+        true,
+        true,
+        false,
+      ]);
+      expect(['chart', 'type', 'u'].map(context.hasOwnProperty), [
+        false,
+        true,
+        true,
+      ]);
     });
     test('sees later changes of the prototype, and writes own keys', () {
       parent['later'] = 'L';
       context['chart'] = 'own';
       expect(
         [context['later'], context['chart'], parent['chart']],
-        [
-          'L',
-          'own',
-          'c',
-        ],
+        ['L', 'own', 'c'],
       );
 
-      final child = createContext(context, <String, Object?>{
-        'dataIndex': 0.0,
-      });
+      final child = createContext(context, <String, Object?>{'dataIndex': 0.0});
       expect(
         [child['chart'], child['type'], child['later'], child['dataIndex']],
         ['own', 'dataset', 'L', 0],

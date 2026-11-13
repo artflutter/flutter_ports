@@ -177,35 +177,25 @@ void main() {
     expect(_typedNames.where(upstream.contains), isEmpty);
   });
 
-  test(
-    'rule 2: no typed name is a Flutter name',
-    () async {
-      for (final uri in _flutterLibraries) {
-        final flutter = await _exportsOfUri(uri);
-        expect(_typedNames.where(flutter.contains), isEmpty, reason: uri);
-      }
-      // The control of the rule: `Easing` is a name of material.dart.
-      expect(
-        await _exportsOfUri('package:flutter/material.dart'),
-        contains('Easing'),
-      );
-    },
-    timeout: const Timeout(Duration(minutes: 3)),
-  );
+  test('rule 2: no typed name is a Flutter name', () async {
+    for (final uri in _flutterLibraries) {
+      final flutter = await _exportsOfUri(uri);
+      expect(_typedNames.where(flutter.contains), isEmpty, reason: uri);
+    }
+    // The control of the rule: `Easing` is a name of material.dart.
+    expect(
+      await _exportsOfUri('package:flutter/material.dart'),
+      contains('Easing'),
+    );
+  }, timeout: const Timeout(Duration(minutes: 3)));
 
-  test(
-    'rule 3: no typed name is another name of the port libraries',
-    () async {
-      final typed = await _exportsOf('lib/src/typed/typed.dart');
-      final port = {
-        ...await _exportsOf('lib/chartjs.dart'),
-        ...await _exportsOf('lib/helpers.dart'),
-        ...(await _exportsOf('lib/flutter_chartjs_port.dart')).difference(
-          typed,
-        ),
-      };
-      expect(_typedNames.where(port.contains), isEmpty);
-    },
-    timeout: const Timeout(Duration(minutes: 3)),
-  );
+  test('rule 3: no typed name is another name of the port libraries', () async {
+    final typed = await _exportsOf('lib/src/typed/typed.dart');
+    final port = {
+      ...await _exportsOf('lib/chartjs.dart'),
+      ...await _exportsOf('lib/helpers.dart'),
+      ...(await _exportsOf('lib/flutter_chartjs_port.dart')).difference(typed),
+    };
+    expect(_typedNames.where(port.contains), isEmpty);
+  }, timeout: const Timeout(Duration(minutes: 3)));
 }

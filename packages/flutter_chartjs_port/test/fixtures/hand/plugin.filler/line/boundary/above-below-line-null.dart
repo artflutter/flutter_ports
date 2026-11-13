@@ -82,17 +82,11 @@ Map<String, Object?> fixture() => <String, Object?>{
       'responsive': false,
       'spanGaps': false,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
       'elements': <String, Object?>{
-        'point': <String, Object?>{
-          'radius': 0,
-        },
+        'point': <String, Object?>{'radius': 0},
         'line': <String, Object?>{
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
@@ -108,9 +102,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

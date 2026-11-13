@@ -159,9 +159,8 @@ void main() {
     final temp = Directory.systemTemp.createTempSync('point_implementers_');
     addTearDown(() => temp.deleteSync(recursive: true));
     Directory('${temp.path}/.dart_tool').createSync();
-    File(
-      '${temp.path}/.dart_tool/package_config.json',
-    ).writeAsStringSync(_absolutePackageConfig());
+    File('${temp.path}/.dart_tool/package_config.json')
+        .writeAsStringSync(_absolutePackageConfig());
     File('${temp.path}/probe.dart').writeAsStringSync(_probe);
     final uri = Uri.file(_normalized('${temp.path}/probe.dart'));
     final found = await pointImplementers(temp.path);

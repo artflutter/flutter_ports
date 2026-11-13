@@ -320,11 +320,8 @@ class _HostState extends State<_Host> {
   });
 
   @override
-  Widget build(BuildContext context) => _view(
-    config,
-    theme: theme,
-    updateMode: updateMode,
-  );
+  Widget build(BuildContext context) =>
+      _view(config, theme: theme, updateMode: updateMode);
 }
 
 void main() {
@@ -489,10 +486,7 @@ void main() {
       for (var i = 0; i < 2; i++) {
         expect(_datasets(chart)[i], same(datasets[i]));
         expect(jsGet(datasets[i], 'data'), same(data[i]));
-        expect(
-          chart.getDatasetMeta(i).controller,
-          same(controllers[i]),
-        );
+        expect(chart.getDatasetMeta(i).controller, same(controllers[i]));
       }
       expect(_dataset(chart, 0)['borderColor'], ChartPaint.solid(_rgba(_blue)));
     });

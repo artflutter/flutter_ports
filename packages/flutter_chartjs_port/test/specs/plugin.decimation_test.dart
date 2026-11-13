@@ -36,10 +36,7 @@ List<Object?> _originalData() => <Object?>[
 
 /// `chart.data.datasets[0].data`.
 List<Object?> _data(Chart chart) =>
-    jsGet(
-          (jsGet(chart.data, 'datasets')! as List<Object?>)[0],
-          'data',
-        )!
+    jsGet((jsGet(chart.data, 'datasets')! as List<Object?>)[0], 'data')!
         as List<Object?>;
 
 /// The acquireChart options of a canvas and a wrapper of [width] x
@@ -60,10 +57,7 @@ void main() {
           'type': 'line',
           'data': <String, Object?>{
             'datasets': <Object?>[
-              <String, Object?>{
-                'data': _originalData(),
-                'label': 'dataset1',
-              },
+              <String, Object?>{'data': _originalData(), 'label': 'dataset1'},
             ],
           },
           'scales': <String, Object?>{
@@ -89,10 +83,7 @@ void main() {
           'type': 'line',
           'data': <String, Object?>{
             'datasets': <Object?>[
-              <String, Object?>{
-                'data': _originalData(),
-                'label': 'dataset1',
-              },
+              <String, Object?>{'data': _originalData(), 'label': 'dataset1'},
             ],
           },
           'options': <String, Object?>{
@@ -119,10 +110,7 @@ void main() {
           'type': 'line',
           'data': <String, Object?>{
             'datasets': <Object?>[
-              <String, Object?>{
-                'data': _originalData(),
-                'label': 'dataset1',
-              },
+              <String, Object?>{'data': _originalData(), 'label': 'dataset1'},
             ],
           },
           'options': <String, Object?>{

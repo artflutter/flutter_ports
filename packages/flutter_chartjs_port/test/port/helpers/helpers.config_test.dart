@@ -363,10 +363,7 @@ void main() {
               'x': <String, Object?>{'a': 1},
             },
           ]);
-          expect(
-            _read(resolver['x'], 'a'),
-            state.name == 'null' ? isNull : 1,
-          );
+          expect(_read(resolver['x'], 'a'), state.name == 'null' ? isNull : 1);
         });
 
         test('${state.name} with a context', () {
@@ -850,9 +847,7 @@ void main() {
 
     test('a set on a target that is not a Map throws a TypeError', () {
       final resolver = createResolver(
-        [
-          <String, Object?>{},
-        ],
+        [<String, Object?>{}],
         [''],
         null,
         undefined,

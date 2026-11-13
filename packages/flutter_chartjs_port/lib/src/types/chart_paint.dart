@@ -60,7 +60,7 @@ final class const SolidChartPaint(
 /// as immutable configuration. The
 /// canvas caches the shader by paint, list contents and transform: make a
 /// gradient once and use it again.
-sealed class const ChartShaderPaint() extends ChartPaint {}
+sealed class const ChartShaderPaint() extends ChartPaint;
 
 /// A gradient of [colors] in the user space of the canvas.
 ///

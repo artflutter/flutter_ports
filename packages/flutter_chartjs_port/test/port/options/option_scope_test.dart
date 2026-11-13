@@ -14,7 +14,7 @@ import 'package:test/test.dart';
 Object? _fn(Object? ctx) => ctx;
 
 /// A subclass of a scope class: it could change the face.
-final class _SubScope extends PointOptionsScope {}
+final class _SubScope extends PointOptionsScope;
 
 /// A scope class of its own that reports a generated kind.
 final class _OwnScope extends OptionScope {
@@ -146,10 +146,7 @@ void main() {
         ..jsWrite('_scriptable', _fn)
         ..jsWrite('elements', <String, Object?>{});
       expect(descriptors.descScriptableCell, isA<OptFunction<Object>>());
-      expect(
-        descriptors.lookup('elements'),
-        isA<OptScope<DescriptorsScope>>(),
-      );
+      expect(descriptors.lookup('elements'), isA<OptScope<DescriptorsScope>>());
     });
   });
 

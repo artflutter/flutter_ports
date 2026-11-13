@@ -60,11 +60,8 @@ class BenchmarkChart extends StatelessWidget {
   /// so a new data List does not also replace the labels of the chart.
   static final Map<int, List<String>> _chartJsLabels = {};
 
-  static List<String> _chartJsLabelsFor(int count) =>
-      _chartJsLabels.putIfAbsent(
-        count,
-        () => [for (var i = 0; i < count; i++) '$i'],
-      );
+  static List<String> _chartJsLabelsFor(int count) => _chartJsLabels
+      .putIfAbsent(count, () => [for (var i = 0; i < count; i++) '$i']);
 
   /// One point-label callback per label step: a new closure is a new option
   /// value for `ChartConfig ==`.
@@ -574,10 +571,8 @@ class BenchmarkChart extends StatelessWidget {
                 shadow: _flShadow,
                 dotData: fl.FlDotData(
                   show: config.markers,
-                  getDotPainter: (_, _, _, _) => fl.FlDotCirclePainter(
-                    radius: 3,
-                    color: chartBlue,
-                  ),
+                  getDotPainter: (_, _, _, _) =>
+                      fl.FlDotCirclePainter(radius: 3, color: chartBlue),
                 ),
                 belowBarData: fl.BarAreaData(
                   show: config.fill,

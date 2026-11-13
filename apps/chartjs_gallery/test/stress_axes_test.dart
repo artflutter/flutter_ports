@@ -122,23 +122,13 @@ Map<String, Object?> _item(WidgetTester tester, int i) =>
 const Map<StressAxisType, List<double>> _tabAreas0e0ab93 = {
   StressAxisType.linear: [50, 10.2, 715, 413.2],
   StressAxisType.logarithmic: [50, 10.2, 721.9689600190867, 353.9961251985197],
-  StressAxisType.category: [
-    56.99415921366931,
-    10.2,
-    736,
-    335.61105856366424,
-  ],
+  StressAxisType.category: [56.99415921366931, 10.2, 736, 335.61105856366424],
 };
 
 /// See [_tabAreas0e0ab93].
 const Map<StressAxisType, List<double>> _benchAreas0e0ab93 = {
   StressAxisType.linear: [50, 10.2, 779, 451.59999999999997],
-  StressAxisType.logarithmic: [
-    50,
-    10.2,
-    785.9689600190867,
-    392.39612519851966,
-  ],
+  StressAxisType.logarithmic: [50, 10.2, 785.9689600190867, 392.39612519851966],
   StressAxisType.category: [
     56.994159213669306,
     10.2,
@@ -360,9 +350,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('axes: the mode takes the call draw for animate', (
-    tester,
-  ) async {
+  testWidgets('axes: the mode takes the call draw for animate', (tester) async {
     await _pumpAxes(
       tester,
       mode: StressMode.chart,

@@ -95,9 +95,7 @@ void main() {
         expect(find.text('0 commits / 90 days'), findsNothing);
       }
       expect(
-        find.text(
-          'Activity: this package · Issues & PRs: shared repository',
-        ),
+        find.text('Activity: this package · Issues & PRs: shared repository'),
         findsOneWidget,
       );
       await tester.tap(find.text(available ? '3 PRs' : '— PRs'));

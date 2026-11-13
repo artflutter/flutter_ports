@@ -108,15 +108,11 @@ void main() {
             'x': <String, Object?>{
               'type': 'linear',
               'position': ChartPosition.bottom,
-              'ticks': <String, Object?>{
-                'callback': jsToString,
-              },
+              'ticks': <String, Object?>{'callback': jsToString},
             },
             'y': <String, Object?>{
               'type': 'linear',
-              'ticks': <String, Object?>{
-                'callback': jsToString,
-              },
+              'ticks': <String, Object?>{'callback': jsToString},
             },
           },
         },
@@ -201,10 +197,7 @@ void main() {
         );
         // numeric.apply(scale, args) is jsCall with scale as thisArg.
         final numeric = _member(ticks['formatters'], 'numeric');
-        expect(
-          jsCall(numeric, [1.0, 0.0, <Tick>[]], thisArg: scale),
-          '1',
-        );
+        expect(jsCall(numeric, [1.0, 0.0, <Tick>[]], thisArg: scale), '1');
         expect(
           jsCall(numeric, [
             1.0,

@@ -236,12 +236,8 @@ void _expectScene(LayoutsReferenceScene scene) {
     }
   }
 
-  void update() => layouts.update(
-    chart,
-    scene.width,
-    scene.height,
-    scene.minPadding,
-  );
+  void update() =>
+      layouts.update(chart, scene.width, scene.height, scene.minPadding);
   if (scene.error != null) {
     expect(scene.error, 'TypeError');
     expect(update, throwsA(isA<TypeError>()));
@@ -272,9 +268,7 @@ void _expectScene(LayoutsReferenceScene scene) {
   }
   expect(
     [for (final box in chart.boxes) (box as _Box).spec.name],
-    [
-      ...scene.order,
-    ],
+    [...scene.order],
   );
 }
 

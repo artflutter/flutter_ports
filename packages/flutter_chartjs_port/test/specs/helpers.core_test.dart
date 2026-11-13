@@ -487,18 +487,14 @@ void main() {
         expect(
           helpers.merge(
             <String, Object?>{'a': 42},
-            <String, Object?>{
-              'a': null,
-            },
+            <String, Object?>{'a': null},
           ),
           {'a': null},
         );
         final result =
             helpers.merge(
                   <String, Object?>{'a': 42},
-                  <String, Object?>{
-                    'a': undefined,
-                  },
+                  <String, Object?>{'a': undefined},
                 )!
                 as Map<String, Object?>;
         expect(result, {'a': same(undefined)});
@@ -646,9 +642,7 @@ void main() {
           expect(
             helpers.mergeIf(
               <String, Object?>{'a': null},
-              <String, Object?>{
-                'a': 42,
-              },
+              <String, Object?>{'a': 42},
             ),
             {'a': null},
           );

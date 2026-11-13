@@ -195,9 +195,7 @@ const List<String> pureRoots = [
 /// Files that match [pureRoots] but are not pure-layer roots.
 /// `helpers.extras` imports `package:flutter/scheduler.dart` (Chart.js ADR
 /// 0007, decision 10).
-const List<String> pureRootExceptions = [
-  'lib/src/helpers/helpers.extras.dart',
-];
+const List<String> pureRootExceptions = ['lib/src/helpers/helpers.extras.dart'];
 
 /// The test libraries that a test without `@TestOn('vm')` can import, in
 /// addition to [pureDartLibraries]. An entry that ends with `/` is a prefix.

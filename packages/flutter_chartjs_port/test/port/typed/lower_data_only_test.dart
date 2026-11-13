@@ -144,9 +144,7 @@ void main() {
         ..apply(_config([BarDataset(key: _a, data: _data())]));
       expect(lowering.lastApplyDataOnly, isTrue);
       final last = lowering.config;
-      lowering.apply(
-        last.copyWith(datasets: <Dataset>[...last.datasets]),
-      );
+      lowering.apply(last.copyWith(datasets: <Dataset>[...last.datasets]));
       expect(lowering.lastApplyDataOnly, isFalse);
     });
 
@@ -174,12 +172,7 @@ void main() {
       expect(
         _report(
           _config([BarDataset(data: _data())]),
-          _config(
-            [
-              BarDataset(data: _data()),
-            ],
-            labels: <Object>[..._labels],
-          ),
+          _config([BarDataset(data: _data())], labels: <Object>[..._labels]),
         ),
         isFalse,
       );
@@ -211,9 +204,7 @@ void main() {
         _report(
           _config([BarDataset(data: _data())]),
           _config(
-            [
-              BarDataset(data: _data()),
-            ],
+            [BarDataset(data: _data())],
             extra: const {'locale': Locale('de', 'DE')},
           ),
         ),
@@ -225,17 +216,13 @@ void main() {
       expect(
         _report(
           _config(
-            [
-              BarDataset(data: _data()),
-            ],
+            [BarDataset(data: _data())],
             plugins: [
               <String, Object?>{'id': 'a'},
             ],
           ),
           _config(
-            [
-              BarDataset(data: _data()),
-            ],
+            [BarDataset(data: _data())],
             plugins: [
               <String, Object?>{'id': 'b'},
             ],
@@ -501,10 +488,9 @@ void main() {
     test('an animation', () {
       expect(
         off(
-          _config(
-            [BarDataset(data: _data())],
-            animation: const ChartAnimation(duration: Duration(seconds: 1)),
-          ),
+          _config([
+            BarDataset(data: _data()),
+          ], animation: const ChartAnimation(duration: Duration(seconds: 1))),
         ),
         isFalse,
       );

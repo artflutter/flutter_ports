@@ -31,7 +31,6 @@ abstract interface class NativePointChart {
 }
 
 /// A chart that finds the meta of a dataset with no write (Chart.js ADR 0092).
-// ignore: one_member_abstracts
 abstract interface class DatasetMetaSource {
   /// The meta of `getDatasetMeta(datasetIndex)` when it has one, or Dart
   /// `null`. `getDatasetMeta` adds a meta for a dataset that has none.

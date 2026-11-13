@@ -99,9 +99,7 @@ int _datasetCount(Chart chart) =>
 /// outerRadius, and whether the options of each arc are frozen.
 Object? _polarState(Chart chart) => [
   for (var i = 0; i < _datasetCount(chart); i++)
-    _state(
-      chart.getDatasetMeta(i).controller! as PolarAreaController,
-    ),
+    _state(chart.getDatasetMeta(i).controller! as PolarAreaController),
 ];
 
 /// The values of the probe `polarState` for the controller [c].
@@ -274,9 +272,7 @@ void main() {
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
       final snapshot = jsonDecode(
-        File(
-          'test/port/theme/light_snapshot.json',
-        ).readAsStringSync(),
+        File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
       final config =
           copyReference(controllerPolarAreaReference.first.config)!
@@ -369,10 +365,7 @@ void main() {
       tester,
     ) async {
       var updates = 0;
-      final config = _one(
-        <Object?>['a', 'b', 'c'],
-        <Object?>[1.0, 2.0, 3.0],
-      );
+      final config = _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]);
       config['plugins'] = <Object?>[
         <String, Object?>{
           'id': 'countUpdates',
@@ -393,10 +386,7 @@ void main() {
       expect(chart.getDataVisibility(1), isFalse);
       expect(chart.getDataVisibility(0), isTrue);
       expect(chart.getDataVisibility(2), isTrue);
-      expect(
-        (chart.getDatasetMeta(0).data[1] as Element)['outerRadius'],
-        0,
-      );
+      expect((chart.getDatasetMeta(0).data[1] as Element)['outerRadius'], 0);
     });
 
     // The key `ToString(index)` of core.controller.js:882 (the fix F1 of the
@@ -488,9 +478,7 @@ void main() {
         <Object?>['a', 'b', 'c', 'd'],
         <Object?>[1.0, 2.0, 3.0],
       );
-      config['options'] = <String, Object?>{
-        'animation': <String, Object?>{},
-      };
+      config['options'] = <String, Object?>{'animation': <String, Object?>{}};
       config['plugins'] = <Object?>[
         <String, Object?>{
           'id': 'probeLayout',
@@ -571,9 +559,7 @@ void main() {
         <Object?>['January', 'February', 'March', 'April', 'May'],
         <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
       );
-      config['options'] = <String, Object?>{
-        'animation': <String, Object?>{},
-      };
+      config['options'] = <String, Object?>{'animation': <String, Object?>{}};
       final chart = acquireChart(config);
       await tester.pump(const Duration(milliseconds: 1100));
       final meta = chart.getDatasetMeta(0);
@@ -606,9 +592,7 @@ void main() {
         <Object?>['a', 'b', 'c', 'd', 'e'],
         <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
       );
-      config['options'] = <String, Object?>{
-        'animation': <String, Object?>{},
-      };
+      config['options'] = <String, Object?>{'animation': <String, Object?>{}};
       final chart = acquireChart(config);
       await tester.pump(const Duration(milliseconds: 5000));
       final meta = chart.getDatasetMeta(0);

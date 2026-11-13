@@ -723,12 +723,7 @@ final class OptionResolver implements ResolverProxy {
   // holds one.
   // ignore: prefer_function_declarations_over_variables
   late final OptionResolver Function(Object scope) _override = (scope) =>
-      createResolver(
-        [scope, ..._scopes],
-        _prefixes,
-        _rootScopes,
-        _fallback,
-      );
+      createResolver([scope, ..._scopes], _prefixes, _rootScopes, _fallback);
 
   /// The cached option values, and the own properties of the slot names
   /// that the `set` trap writes.
@@ -2329,9 +2324,8 @@ final class _Descriptor implements Descriptor {
 
   /// helpers.config.ts:209 `isScriptable`.
   @override
-  bool isScriptable(String key) => jsTruthy(
-    isFunction(scriptable) ? jsCall1(scriptable, key) : scriptable,
-  );
+  bool isScriptable(String key) =>
+      jsTruthy(isFunction(scriptable) ? jsCall1(scriptable, key) : scriptable);
 
   /// helpers.config.ts:210 `isIndexable`.
   @override
@@ -2491,10 +2485,7 @@ Object? _resolveArray(
   final index = jsGet(context, 'index');
   if (!identical(index, undefined) && isIndexable(prop)) {
     final remainder = jsToNumber(index).remainder(value.length);
-    return jsGet(
-      value,
-      jsNumberToString(remainder),
-    );
+    return jsGet(value, jsNumberToString(remainder));
   } else if (isObject(value[0])) {
     // Array of objects, return array or resolvers
     final arr = value;
@@ -2947,13 +2938,8 @@ List<ParsedItem> _parseObjectDataRadialScale(
   List<Object?> data,
   double start,
   double count,
-) => parseObjectDataRadialScaleOf(
-  meta.iScale,
-  self.parsing,
-  data,
-  start,
-  count,
-);
+) =>
+    parseObjectDataRadialScaleOf(meta.iScale, self.parsing, data, start, count);
 
 /// helpers.config.ts:437 `_parseObjectDataRadialScale`, the typed body for
 /// the radar and polar area controllers: no [jsCall].

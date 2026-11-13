@@ -467,10 +467,7 @@ class CategoryScale extends Scale implements NativeCategoryParseScale {
         ? labels
         : _slice(labels, min, max + 1);
 
-    _valueRange = jsMax(
-      labels.length - (offset ? 0.0 : 1.0),
-      1,
-    );
+    _valueRange = jsMax(labels.length - (offset ? 0.0 : 1.0), 1);
     _startValue = this.min - (offset ? 0.5 : 0);
 
     for (var value = min; value <= max; value++) {

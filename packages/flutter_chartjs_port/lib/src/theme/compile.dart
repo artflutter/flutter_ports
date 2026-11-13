@@ -283,10 +283,7 @@ final class _ThemeTree {
   late final ScaleOptionsScope _radialLinear = () {
     final scales = root.scales = add(ScaleOptionsByIdScope());
     final radialLinear = add(ScaleOptionsScope());
-    scales.store(
-      'radialLinear',
-      OptScope<ScaleOptionsScope>(radialLinear),
-    );
+    scales.store('radialLinear', OptScope<ScaleOptionsScope>(radialLinear));
     return radialLinear;
   }();
 
@@ -310,14 +307,10 @@ final class _ThemeTree {
 
   /// `plugins.subtitle`.
   late final TitleOptionsScope subtitle = _plugins.subtitle =
-      add<TitleOptionsScope>(
-        TitleOptionsScope(),
-      );
+      add<TitleOptionsScope>(TitleOptionsScope());
 
   late final LegendOptionsScope _legend = _plugins.legend =
-      add<LegendOptionsScope>(
-        LegendOptionsScope(),
-      );
+      add<LegendOptionsScope>(LegendOptionsScope());
 
   /// `plugins.legend.labels`.
   late final LegendLabelOptionsScope legendLabels = _legend.labels = add(
@@ -331,15 +324,11 @@ final class _ThemeTree {
 
   /// `plugins.tooltip`.
   late final TooltipOptionsScope tooltip = _plugins.tooltip =
-      add<TooltipOptionsScope>(
-        TooltipOptionsScope(),
-      );
+      add<TooltipOptionsScope>(TooltipOptionsScope());
 
   /// `plugins.colors`.
   late final ColorsOptionsScope colors = _plugins.colors =
-      add<ColorsOptionsScope>(
-        ColorsOptionsScope(),
-      );
+      add<ColorsOptionsScope>(ColorsOptionsScope());
 
   late final ElementOptionsByTypeScope _elements = root.elements = add(
     ElementOptionsByTypeScope(),

@@ -158,9 +158,7 @@ final class _JasmineEquals extends Matcher {
     List<String> path,
   ) {
     if (a is LegendHitBox && b is Map<String, Object?>) {
-      return a.equalsTo(
-        legendHitBoxFromReference(b),
-      );
+      return a.equalsTo(legendHitBoxFromReference(b));
     }
     if (a is LegendItem && b is Map<String, Object?>) {
       return legendItemEquals(legendItemFromReference(b)).matches(a, {});

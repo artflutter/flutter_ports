@@ -637,11 +637,9 @@ void main() {
                   'label',
                 )!
                 as String;
-        expect(
-          jsGet(tooltip.body!.single, 'lines'),
-          ['$datasetLabel: $value'],
-          reason: id,
-        );
+        expect(jsGet(tooltip.body!.single, 'lines'), [
+          '$datasetLabel: $value',
+        ], reason: id);
 
         // A tap on the help text, outside the chart: the chart gets a
         // `mouseout`, and the tooltip hides (plugin.tooltip.js:1186-1188).

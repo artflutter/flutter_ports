@@ -32,9 +32,7 @@ Map<String, Object?> _config(String type, {required double borderWidth}) => {
     'labels': <Object?>[for (var i = 0; i < 8; i++) 'L$i'],
     'datasets': <Object?>[
       <String, Object?>{
-        'data': <Object?>[
-          for (var i = 0; i < 8; i++) 3.0 + i,
-        ],
+        'data': <Object?>[for (var i = 0; i < 8; i++) 3.0 + i],
         'backgroundColor': <Object?>[..._colors],
         'borderWidth': borderWidth,
       },

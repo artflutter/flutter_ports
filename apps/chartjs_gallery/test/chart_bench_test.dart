@@ -114,11 +114,8 @@ List<String> _figureKeys(ChartBenchCall call, List<String> parts) => [
 ];
 
 /// The case `tooltip.fade` with [datasets] datasets.
-ChartBenchCase _fade(int datasets) => _pluginCase(
-  'tooltip.fade',
-  ChartBenchCall.frame,
-  {'datasets': datasets},
-);
+ChartBenchCase _fade(int datasets) =>
+    _pluginCase('tooltip.fade', ChartBenchCall.frame, {'datasets': datasets});
 
 /// The median of the figure [part] of [line], in ms.
 double _median(Map<String, Object?> line, String part) =>
@@ -130,9 +127,9 @@ ChartBenchCase _zoomCase(
   String selection, {
   String scale = 'linear',
   ChartBenchCall call = ChartBenchCall.frame,
-}) => selectChartBenchCases(selection).singleWhere(
-  (c) => c.keys['scale'] == scale && c.call == call,
-);
+}) =>
+    selectChartBenchCases(selection)
+        .singleWhere((c) => c.keys['scale'] == scale && c.call == call);
 
 /// The scene of [benchCase] for [n] points and a chart of its config, as
 /// the benchmark makes them. The end of the test destroys the chart, then
@@ -343,10 +340,7 @@ void main() {
     expect(line['platform'], isA<String>());
     expect(line['startMs'], isA<int>());
     expect(line['wallMs'], isA<int>());
-    expect(
-      find.byKey(const ValueKey('bench.status')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('bench.status')), findsOneWidget);
     expect(find.text('Done (1 of 1)'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -465,12 +459,9 @@ void main() {
     );
   });
 
-  testWidgets('an axes case maps the points with its scales', (
-    tester,
-  ) async {
-    final benchCase = selectChartBenchCases(
-      'axes.category',
-    ).singleWhere((c) => c.call == ChartBenchCall.update);
+  testWidgets('an axes case maps the points with its scales', (tester) async {
+    final benchCase = selectChartBenchCases('axes.category')
+        .singleWhere((c) => c.call == ChartBenchCall.update);
     int? ticks;
     double? rotation;
     final line = runChartBenchCase(
@@ -524,9 +515,8 @@ void main() {
 
     // A draw has no layout and no dataset update.
     final draw = runChartBenchCase(
-      selectChartBenchCases(
-        'axes.time',
-      ).singleWhere((c) => c.call == ChartBenchCall.draw),
+      selectChartBenchCases('axes.time')
+          .singleWhere((c) => c.call == ChartBenchCall.draw),
       30,
       _settings,
       onChart: (c) => expect(c.scales['x'], isA<TimeScale>()),
@@ -618,10 +608,7 @@ void main() {
     );
     expect(
       [for (final c in selectChartBenchCases('time')) c.call],
-      [
-        ChartBenchCall.draw,
-        ChartBenchCall.update,
-      ],
+      [ChartBenchCall.draw, ChartBenchCall.update],
     );
     final b = selectChartBenchCases('b');
     expect(b, hasLength(2));
@@ -645,12 +632,7 @@ void main() {
     final cases = selectChartBenchCases('a,b,c');
     expect(
       [for (final c in cases) c.id],
-      [
-        'chart.a',
-        'chart.b',
-        'chart.b',
-        'chart.c',
-      ],
+      ['chart.a', 'chart.b', 'chart.b', 'chart.c'],
     );
     expect(
       [for (final c in cases) c.keys],
@@ -679,13 +661,10 @@ void main() {
       ],
     );
     // The cases of phase 8 come after them.
-    expect(
-      [
-        for (final c in chartBenchCases.sublist(lastAxes + 13))
-          if (_phase7Modes.contains(c.mode)) c.id,
-      ],
-      isEmpty,
-    );
+    expect([
+      for (final c in chartBenchCases.sublist(lastAxes + 13))
+        if (_phase7Modes.contains(c.mode)) c.id,
+    ], isEmpty);
     expect(types, hasLength(12));
     for (final c in types) {
       final type = StressChartType.values.byName(c.name);
@@ -813,9 +792,8 @@ void main() {
       'polarArea',
       'radar',
     ]) {
-      final benchCase = selectChartBenchCases(
-        'chart.$name',
-      ).singleWhere((c) => c.call == ChartBenchCall.update);
+      final benchCase = selectChartBenchCases('chart.$name')
+          .singleWhere((c) => c.call == ChartBenchCall.update);
       final scene = benchCase.scene(10);
       final datasets =
           (scene.config['data']! as Map<String, Object?>)['datasets']!
@@ -1091,9 +1069,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tooltip.fade gives a new opacity in each frame', (
-    tester,
-  ) async {
+  testWidgets('tooltip.fade gives a new opacity in each frame', (tester) async {
     final scene = _fade(3).scene(12);
     final chart = Chart(
       UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
@@ -1220,9 +1196,8 @@ void main() {
       'legend.line',
       'title.line',
     ]) {
-      final benchCase = selectChartBenchCases(
-        selection,
-      ).firstWhere((c) => c.call == ChartBenchCall.update);
+      final benchCase = selectChartBenchCases(selection)
+          .firstWhere((c) => c.call == ChartBenchCall.update);
       final scene = benchCase.scene(24);
       final datasets =
           (scene.config['data']! as Map<String, Object?>)['datasets']!
@@ -1545,10 +1520,7 @@ void main() {
     expect(selectChartBenchCases('chart'), hasLength(16));
     expect(
       [for (final c in selectChartBenchCases('motion')) c.id],
-      [
-        'motion.line',
-        'motion.bar',
-      ],
+      ['motion.line', 'motion.bar'],
     );
     expect(selectChartBenchCases('line'), [
       for (final c in chartBenchCases)
@@ -1556,11 +1528,7 @@ void main() {
     ]);
     expect(
       [for (final c in chartBenchExplicitCases) c.id],
-      [
-        'motion.line.delay',
-        'chart.c.indexable',
-        'chart.line.primitive',
-      ],
+      ['motion.line.delay', 'chart.c.indexable', 'chart.line.primitive'],
     );
     for (final c in chartBenchExplicitCases) {
       expect(c.explicit, isTrue, reason: c.id);
@@ -1569,9 +1537,7 @@ void main() {
       expect(() => selectChartBenchCases(c.name), throwsArgumentError);
     }
     expect(
-      [
-        for (final c in selectChartBenchCases('motion,motion.line.delay')) c.id,
-      ],
+      [for (final c in selectChartBenchCases('motion,motion.line.delay')) c.id],
       ['motion.line', 'motion.bar', 'motion.line.delay'],
     );
     expect(
@@ -1590,10 +1556,7 @@ void main() {
       expect(c.primary, 'update+draw+end', reason: c.id);
     }
     expect(
-      stressDelayByIndex(<String, Object?>{
-        'type': 'data',
-        'dataIndex': 3.0,
-      }),
+      stressDelayByIndex(<String, Object?>{'type': 'data', 'dataIndex': 3.0}),
       3.0,
     );
     expect(stressDelayByIndex(<String, Object?>{'type': 'dataset'}), 0.0);

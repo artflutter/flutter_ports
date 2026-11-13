@@ -87,12 +87,7 @@ final class TooltipPosition extends TypedRecord {
   /// An object without own keys.
   TooltipPosition();
 
-  static const List<String> _fieldNames = [
-    'x',
-    'y',
-    'xAlign',
-    'yAlign',
-  ];
+  static const List<String> _fieldNames = ['x', 'y', 'xAlign', 'yAlign'];
 
   @override
   List<String> get fieldNames => _fieldNames;

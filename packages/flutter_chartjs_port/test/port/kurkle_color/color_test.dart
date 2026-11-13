@@ -49,10 +49,12 @@ void main() {
         a: 1.0,
       ));
       // b2n(NaN) is 0, and NaN < 255 is false.
-      expect(
-        _members(referenceColor('#fffg').rgb),
-        (r: 255.0, g: 255.0, b: 255.0, a: 0.0),
-      );
+      expect(_members(referenceColor('#fffg').rgb), (
+        r: 255.0,
+        g: 255.0,
+        b: 255.0,
+        a: 0.0,
+      ));
       expect(referenceColor('#fffg').hexString(), '#FFF');
       expect(referenceColor('#fffg').rgbString(), 'rgb(255, 255, 255)');
     });
@@ -198,17 +200,21 @@ void main() {
     });
 
     test('greyscale', () {
-      expect(
-        _members(referenceColor('#ff0080').greyscale().rgb),
-        (r: 91.0, g: 91.0, b: 91.0, a: 1.0),
-      );
+      expect(_members(referenceColor('#ff0080').greyscale().rgb), (
+        r: 91.0,
+        g: 91.0,
+        b: 91.0,
+        a: 1.0,
+      ));
     });
 
     test('rotate by a negative fraction', () {
-      expect(
-        _members(referenceColor('#7743CE').rotate(-400.5).rgb),
-        (r: 67.0, g: 110.0, b: 206.0, a: 1.0),
-      );
+      expect(_members(referenceColor('#7743CE').rotate(-400.5).rgb), (
+        r: 67.0,
+        g: 110.0,
+        b: 206.0,
+        a: 1.0,
+      ));
       expect(
         referenceColor('#7743CE').rotate(33.3).hslString(),
         'hsl(295, 59%, 54%)',
@@ -239,14 +245,18 @@ void main() {
     });
 
     test('hwb and hsv with alpha', () {
-      expect(
-        _members(referenceColor('hwb(120, 10%, 20%)').rgb),
-        (r: 26.0, g: 204.0, b: 26.0, a: 1.0),
-      );
-      expect(
-        _members(referenceColor('hsv(300, 30%, 70%, 50%)').rgb),
-        (r: 179.0, g: 125.0, b: 179.0, a: 0.5),
-      );
+      expect(_members(referenceColor('hwb(120, 10%, 20%)').rgb), (
+        r: 26.0,
+        g: 204.0,
+        b: 26.0,
+        a: 1.0,
+      ));
+      expect(_members(referenceColor('hsv(300, 30%, 70%, 50%)').rgb), (
+        r: 179.0,
+        g: 125.0,
+        b: 179.0,
+        a: 0.5,
+      ));
     });
   });
 }

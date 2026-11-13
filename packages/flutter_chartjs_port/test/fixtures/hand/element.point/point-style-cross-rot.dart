@@ -16,36 +16,12 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 0,
-              'y': 3,
-              'r': 0,
-            },
-            <String, Object?>{
-              'x': 1,
-              'y': 3,
-              'r': 2,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 3,
-              'r': 4,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 3,
-              'r': 8,
-            },
-            <String, Object?>{
-              'x': 4,
-              'y': 3,
-              'r': 16,
-            },
-            <String, Object?>{
-              'x': 5,
-              'y': 3,
-              'r': 32,
-            },
+            <String, Object?>{'x': 0, 'y': 3, 'r': 0},
+            <String, Object?>{'x': 1, 'y': 3, 'r': 2},
+            <String, Object?>{'x': 2, 'y': 3, 'r': 4},
+            <String, Object?>{'x': 3, 'y': 3, 'r': 8},
+            <String, Object?>{'x': 4, 'y': 3, 'r': 16},
+            <String, Object?>{'x': 5, 'y': 3, 'r': 32},
           ],
           'backgroundColor': '#00ff00',
           'borderColor': 'transparent',
@@ -53,36 +29,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 0,
-              'y': 2,
-              'r': 0,
-            },
-            <String, Object?>{
-              'x': 1,
-              'y': 2,
-              'r': 2,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 2,
-              'r': 4,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 2,
-              'r': 8,
-            },
-            <String, Object?>{
-              'x': 4,
-              'y': 2,
-              'r': 16,
-            },
-            <String, Object?>{
-              'x': 5,
-              'y': 2,
-              'r': 32,
-            },
+            <String, Object?>{'x': 0, 'y': 2, 'r': 0},
+            <String, Object?>{'x': 1, 'y': 2, 'r': 2},
+            <String, Object?>{'x': 2, 'y': 2, 'r': 4},
+            <String, Object?>{'x': 3, 'y': 2, 'r': 8},
+            <String, Object?>{'x': 4, 'y': 2, 'r': 16},
+            <String, Object?>{'x': 5, 'y': 2, 'r': 32},
           ],
           'backgroundColor': 'transparent',
           'borderColor': '#0000ff',
@@ -90,36 +42,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         <String, Object?>{
           'data': <Object?>[
-            <String, Object?>{
-              'x': 0,
-              'y': 1,
-              'r': 0,
-            },
-            <String, Object?>{
-              'x': 1,
-              'y': 1,
-              'r': 2,
-            },
-            <String, Object?>{
-              'x': 2,
-              'y': 1,
-              'r': 4,
-            },
-            <String, Object?>{
-              'x': 3,
-              'y': 1,
-              'r': 8,
-            },
-            <String, Object?>{
-              'x': 4,
-              'y': 1,
-              'r': 16,
-            },
-            <String, Object?>{
-              'x': 5,
-              'y': 1,
-              'r': 32,
-            },
+            <String, Object?>{'x': 0, 'y': 1, 'r': 0},
+            <String, Object?>{'x': 1, 'y': 1, 'r': 2},
+            <String, Object?>{'x': 2, 'y': 1, 'r': 4},
+            <String, Object?>{'x': 3, 'y': 1, 'r': 8},
+            <String, Object?>{'x': 4, 'y': 1, 'r': 16},
+            <String, Object?>{'x': 5, 'y': 1, 'r': 32},
           ],
           'backgroundColor': '#00ff00',
           'borderColor': '#0000ff',
@@ -136,23 +64,14 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const CrossRotPointStyle(),
         },
       },
-      'layout': <String, Object?>{
-        'padding': const EdgeInsets.all(40),
-      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(40)},
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

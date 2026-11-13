@@ -24,9 +24,7 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'scales': <String, Object?>{
         'r': <String, Object?>{
-          'pointLabels': <String, Object?>{
-            'display': true,
-          },
+          'pointLabels': <String, Object?>{'display': true},
         },
       },
     },

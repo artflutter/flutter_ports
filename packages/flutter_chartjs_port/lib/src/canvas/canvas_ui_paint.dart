@@ -253,11 +253,7 @@ ui.Shader? _gradientShader(ChartGradient gradient, Float64List? matrix) {
         ui.TileMode.clamp,
         matrix,
       );
-    case RadialChartGradient(
-      :final center,
-      :final radius,
-      :final focalRadius,
-    ):
+    case RadialChartGradient(:final center, :final radius, :final focalRadius):
       final focal = gradient.focal ?? center;
       if (radius < 0 || focalRadius < 0) {
         throw RangeError('The radius is negative');

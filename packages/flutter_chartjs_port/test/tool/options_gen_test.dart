@@ -95,10 +95,7 @@ void main() {
         expect(text, startsWith('// Original code, not ported from Chart.js:'));
       }
       expect(files['scopes.g.dart'], contains('base class FontSpecScope'));
-      expect(
-        files['option_keys.g.dart'],
-        contains(r"dollarTheme(r'$theme')"),
-      );
+      expect(files['option_keys.g.dart'], contains(r"dollarTheme(r'$theme')"));
     });
 
     test('the committed schema reads', () {

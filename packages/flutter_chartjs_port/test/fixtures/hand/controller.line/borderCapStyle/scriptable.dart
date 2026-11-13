@@ -53,26 +53,16 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderWidth': 32,
           'fill': false,
         },
-        'point': <String, Object?>{
-          'radius': 10,
-        },
+        'point': <String, Object?>{'radius': 10},
       },
-      'layout': <String, Object?>{
-        'padding': const EdgeInsets.all(32),
-      },
+      'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
       'scales': <String, Object?>{
         'x': <String, Object?>{'display': false},
-        'y': <String, Object?>{
-          'display': false,
-          'beginAtZero': true,
-        },
+        'y': <String, Object?>{'display': false, 'beginAtZero': true},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

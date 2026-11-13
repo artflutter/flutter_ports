@@ -187,13 +187,9 @@ void main() {
 
     test('propagate false (:235)', () {
       final sources = _sources(fills, visible);
-      expect(
-        [
-          for (var i = 0; i < fills.length; i++)
-            resolveTarget(sources, i, false),
-        ],
-        fills,
-      );
+      expect([
+        for (var i = 0; i < fills.length; i++) resolveTarget(sources, i, false),
+      ], fills);
     });
 
     test('the recursive propagation (:271)', () {
@@ -209,10 +205,8 @@ void main() {
 
     test('a null source or an index past the end gives false', () {
       // Dataset 1 fills to the null source 0, dataset 2 to the index 5.
-      final sources = _sources(
-        const [0.0, 0.0, 5.0],
-        const [true, true, true],
-      )..[0] = null;
+      final sources = _sources(const [0.0, 0.0, 5.0], const [true, true, true])
+        ..[0] = null;
       expect(resolveTarget(sources, 1, true), false);
       expect(resolveTarget(sources, 2, true), false);
     });

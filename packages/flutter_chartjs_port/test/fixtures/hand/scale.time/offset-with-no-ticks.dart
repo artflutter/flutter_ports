@@ -18,52 +18,25 @@ Map<String, Object?> fixture() {
     'datasets': <Object?>[
       <String, Object?>{
         'data': <Object?>[
-          <String, Object?>{
-            'x': day(15),
-            'y': 55,
-          },
-          <String, Object?>{
-            'x': day(18),
-            'y': 10,
-          },
-          <String, Object?>{
-            'x': day(19),
-            'y': 15,
-          },
+          <String, Object?>{'x': day(15), 'y': 55},
+          <String, Object?>{'x': day(18), 'y': 10},
+          <String, Object?>{'x': day(19), 'y': 15},
         ],
         'backgroundColor': 'blue',
       },
       <String, Object?>{
         'data': <Object?>[
-          <String, Object?>{
-            'x': day(15),
-            'y': 6,
-          },
-          <String, Object?>{
-            'x': day(18),
-            'y': 11,
-          },
-          <String, Object?>{
-            'x': day(19),
-            'y': 16,
-          },
+          <String, Object?>{'x': day(15), 'y': 6},
+          <String, Object?>{'x': day(18), 'y': 11},
+          <String, Object?>{'x': day(19), 'y': 16},
         ],
         'backgroundColor': 'green',
       },
       <String, Object?>{
         'data': <Object?>[
-          <String, Object?>{
-            'x': day(15),
-            'y': 7,
-          },
-          <String, Object?>{
-            'x': day(18),
-            'y': 12,
-          },
-          <String, Object?>{
-            'x': day(19),
-            'y': 17,
-          },
+          <String, Object?>{'x': day(15), 'y': 7},
+          <String, Object?>{'x': day(18), 'y': 12},
+          <String, Object?>{'x': day(19), 'y': 17},
         ],
         'backgroundColor': 'red',
       },
@@ -84,9 +57,7 @@ Map<String, Object?> fixture() {
               'unit': TimeUnit.month,
             },
           },
-          'y': <String, Object?>{
-            'display': false,
-          },
+          'y': <String, Object?>{'display': false},
         },
       },
     },

@@ -70,16 +70,14 @@ Object? _scaleValuePosition(Object? value) {
 /// The values of the enum of the scale option [key] of the object of the
 /// key [owner], or Dart `null` for another option: `bounds` of a scale, and
 /// `source`, `align` and `crossAlign` of `ticks`.
-List<Enum>? _scaleEnumValues(String key, String? owner) => switch ((
-  key,
-  owner,
-)) {
-  ('bounds', _) => ScaleBounds.values,
-  ('source', 'ticks') => TickSource.values,
-  ('align', 'ticks') => TickAlign.values,
-  ('crossAlign', 'ticks') => TickCrossAlign.values,
-  _ => null,
-};
+List<Enum>? _scaleEnumValues(String key, String? owner) =>
+    switch ((key, owner)) {
+      ('bounds', _) => ScaleBounds.values,
+      ('source', 'ticks') => TickSource.values,
+      ('align', 'ticks') => TickAlign.values,
+      ('crossAlign', 'ticks') => TickCrossAlign.values,
+      _ => null,
+    };
 
 /// Migrates color options, an upstream easing name to its curve, and the
 /// keyword of a line cap, a line join or a scale option of

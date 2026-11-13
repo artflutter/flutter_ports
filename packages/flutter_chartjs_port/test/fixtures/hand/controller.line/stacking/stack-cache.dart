@@ -50,9 +50,7 @@ Map<String, Object?> fixture() {
           'y': <String, Object?>{'display': false},
         },
         'elements': <String, Object?>{
-          'point': <String, Object?>{
-            'backgroundColor': '#444',
-          },
+          'point': <String, Object?>{'backgroundColor': '#444'},
         },
         'layout': <String, Object?>{
           'padding': const EdgeInsets.only(left: 24, right: 24),
@@ -60,10 +58,7 @@ Map<String, Object?> fixture() {
       },
     },
     'options': <String, Object?>{
-      'canvas': <String, Object?>{
-        'height': 128,
-        'width': 256,
-      },
+      'canvas': <String, Object?>{'height': 128, 'width': 256},
       'run': (Chart chart) async {
         chart
           ..data = <String, Object?>{

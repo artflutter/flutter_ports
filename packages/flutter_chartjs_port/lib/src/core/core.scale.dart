@@ -371,11 +371,7 @@ ScriptableScaleContext _createScaleContext(Object parent, Scale scale) {
 /// The index of the context is a number, which a scriptable option reads.
 /// The context of the type `'tick'` is a [ScriptableScaleContext] (Chart.js ADR
 /// 0054 §11).
-ScriptableScaleContext _createTickContext(
-  Object parent,
-  int index,
-  Tick tick,
-) {
+ScriptableScaleContext _createTickContext(Object parent, int index, Tick tick) {
   // DIVERGES(chartjs): adapt-tick-context-construction, no temporary Map.
   return ScriptableScaleContext.tick(parent, tick, index.toDouble());
 }
@@ -384,11 +380,7 @@ ScriptableScaleContext _createTickContext(
 ///
 /// [align] is a [ChartAlign] (row `adapt-chart-align-enum`); Dart `null`, a
 /// value that is not an align, gives `'center'`.
-TextAlign? _titleAlign(
-  ChartAlign? align,
-  Object? position,
-  Object? reverse,
-) {
+TextAlign? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
   /** @type {CanvasTextAlign} */
   TextAlign? ret = toLeftRightCenter(align);
   if ((jsTruthy(reverse) && position != ChartPosition.right) ||
@@ -1503,11 +1495,7 @@ class Scale extends _ScalePrototype
 
     // Estimate the width of each grid based on the canvas width, the maximum
     // label width and the number of tick intervals
-    final maxWidth = limitValue(
-      chart.width - maxLabelWidth,
-      0,
-      this.maxWidth,
-    );
+    final maxWidth = limitValue(chart.width - maxLabelWidth, 0, this.maxWidth);
     tickWidth = options.offset
         ? this.maxWidth / numTicks
         : maxWidth / (numTicks - 1);
@@ -1958,10 +1946,8 @@ class Scale extends _ScalePrototype
     final widest = widths.indexOf(widestLabelSize);
     final highest = heights.indexOf(highestLabelSize);
 
-    ({double width, double height}) valueAt(int idx) => (
-      width: _orZero(_at(widths, idx)),
-      height: _orZero(_at(heights, idx)),
-    );
+    ({double width, double height}) valueAt(int idx) =>
+        (width: _orZero(_at(widths, idx)), height: _orZero(_at(heights, idx)));
 
     final result = _LabelSizes(
       valueAt(0),
@@ -2260,9 +2246,7 @@ class Scale extends _ScalePrototype
       ty2 = jsToNumber(jsAdd(ty1, tl));
     } else if (axis is YAxis) {
       if (position == ChartPosition.center) {
-        borderValue = alignBorderValue(
-          (chartArea!.left + chartArea.right) / 2,
-        );
+        borderValue = alignBorderValue((chartArea!.left + chartArea.right) / 2);
       } else if (position is ScaleValuePosition) {
         // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
         final ScaleValuePosition(scaleId: positionAxisID, :value) = position;

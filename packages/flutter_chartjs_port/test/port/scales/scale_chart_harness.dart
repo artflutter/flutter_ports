@@ -514,9 +514,7 @@ double referenceAbsoluteTolerance = 1e-9;
 Object? referenceMatcher(Object? expected) => switch (expected) {
   final Map<String, Object?> m when isLegendHitBoxReference(m) =>
     predicate<LegendHitBox>(
-      (actual) => actual.equalsTo(
-        legendHitBoxFromReference(m),
-      ),
+      (actual) => actual.equalsTo(legendHitBoxFromReference(m)),
       'hit box matching the upstream geometry and membership',
     ),
   final Map<String, Object?> m when isLegendItemReference(m) =>
@@ -654,9 +652,7 @@ Object? _argMatcher(Object? arg) => switch (arg) {
       when arg.length == 2 =>
     <String, Object?>{
       'path': id,
-      'calls': [
-        for (final call in calls) _callMatcher(call! as List<Object?>),
-      ],
+      'calls': [for (final call in calls) _callMatcher(call! as List<Object?>)],
     },
   final List<Object?> list => [for (final item in list) _argMatcher(item)],
   _ => referenceMatcher(arg),
@@ -742,11 +738,7 @@ Set<int> _barClipsToRemove(List<Object?> actual, List<Object?> matchers) {
   if (expectedFills.length != actualFills.length) return const {};
   return {
     for (var k = 0; k < expectedFills.length; k++)
-      if (expectedFills[k]
-          case (
-            ring: true,
-            :final int clip,
-          )
+      if (expectedFills[k] case (ring: true, :final int clip)
           when actualFills[k].ring && actualFills[k].clip == null)
         clip,
   };
@@ -993,11 +985,7 @@ void testReferenceWidths(List<ScaleChartWidth> widths) {
         reason: 'the canvas takes the font',
       );
       for (final (font: _, :text, :width) in texts) {
-        expect(
-          ctx.measureText(text).width,
-          closeTo(width, 1e-9),
-          reason: text,
-        );
+        expect(ctx.measureText(text).width, closeTo(width, 1e-9), reason: text);
       }
     });
   }

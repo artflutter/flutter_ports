@@ -24,9 +24,7 @@ Directory? _repositoryRoot() {
 
 /// A release version, `<major>.<minor>.<patch>`, and for a commit pin
 /// `+<sha8>` (doc/upstream-tracking.md §2.4).
-final RegExp _versionPattern = RegExp(
-  r'^(\d+\.\d+\.\d+)(?:\+([0-9a-f]{8}))?$',
-);
+final RegExp _versionPattern = RegExp(r'^(\d+\.\d+\.\d+)(?:\+([0-9a-f]{8}))?$');
 
 /// The gitlink of [path] in the index of [root], or null when git fails or
 /// [path] is not a submodule.

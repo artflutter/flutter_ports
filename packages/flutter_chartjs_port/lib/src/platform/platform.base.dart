@@ -106,10 +106,7 @@ class BasePlatform implements types.BasePlatform {
     double? height,
     double? aspectRatio,
   ]) {
-    final w = jsMax(
-      0,
-      jsTruthy(width) ? width! : element.width.toDouble(),
-    );
+    final w = jsMax(0, jsTruthy(width) ? width! : element.width.toDouble());
     final h = jsTruthy(height) ? height! : element.height.toDouble();
     return (
       width: w,

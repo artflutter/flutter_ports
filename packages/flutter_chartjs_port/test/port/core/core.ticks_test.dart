@@ -54,12 +54,10 @@ final class _Tick implements Tick {
 }
 
 /// `{chart: {options: {locale}}, options: {ticks: {format}}}`.
-_Scale _scale(Locale? locale, [NumberFormat? format]) => _Scale(
-  _Chart(<String, Object?>{'locale': ?locale}),
-  <String, Object?>{
-    'ticks': <String, Object?>{'format': ?format},
-  },
-);
+_Scale _scale(Locale? locale, [NumberFormat? format]) =>
+    _Scale(_Chart(<String, Object?>{'locale': ?locale}), <String, Object?>{
+      'ticks': <String, Object?>{'format': ?format},
+    });
 
 /// The ticks with the values [values].
 List<Tick> _ticks(List<double> values) => [
@@ -196,10 +194,7 @@ void main() {
 
     test('throws a TypeError without options.ticks', () {
       // this.options.ticks.format reads a property of undefined.
-      final scale = _Scale(
-        _Chart(<String, Object?>{}),
-        <String, Object?>{},
-      );
+      final scale = _Scale(_Chart(<String, Object?>{}), <String, Object?>{});
       expect(
         () => _apply(numeric, 1, 0, <Tick>[], scale),
         throwsA(isA<TypeError>()),
@@ -232,10 +227,7 @@ void main() {
         '',
       );
       // 150 / 100 is 1.5.
-      expect(
-        _apply(logarithmic, 150, 2, _ticks([100, 120, 150, 200])),
-        '',
-      );
+      expect(_apply(logarithmic, 150, 2, _ticks([100, 120, 150, 200])), '');
       final tens = _ticks([10, 15, 20, 30, 40, 50, 60, 70, 80, 90]);
       expect(_apply(logarithmic, 30, 3, tens), '30');
       expect(_apply(logarithmic, 15, 1, _ticks([10, 15, 20, 30])), '');

@@ -96,10 +96,7 @@ void main() {
     ]);
     expect(controllers['BarController'], same(BarController.jsClass));
     expect(controllers['BubbleController'], same(BubbleController.jsClass));
-    expect(
-      controllers['DoughnutController'],
-      same(DoughnutController.jsClass),
-    );
+    expect(controllers['DoughnutController'], same(DoughnutController.jsClass));
     expect(controllers['LineController'], same(LineController.jsClass));
     expect(controllers['PieController'], same(PieController.jsClass));
     expect(
@@ -107,10 +104,7 @@ void main() {
       same(PolarAreaController.jsClass),
     );
     expect(controllers['RadarController'], same(RadarController.jsClass));
-    expect(
-      controllers['ScatterController'],
-      same(ScatterController.jsClass),
-    );
+    expect(controllers['ScatterController'], same(ScatterController.jsClass));
     expect(
       () => controllers['X'] = BarController.jsClass,
       throwsA(isA<UnsupportedError>()),
@@ -138,10 +132,7 @@ void main() {
     expect(plugins['SubTitle'], same(subTitle));
     expect(plugins['Title'], same(title));
     expect(plugins['Tooltip'], same(tooltip));
-    expect(
-      () => plugins['X'] = colors,
-      throwsA(isA<UnsupportedError>()),
-    );
+    expect(() => plugins['X'] = colors, throwsA(isA<UnsupportedError>()));
   });
 
   test('a namespace is unmodifiable, as a frozen object', () {
@@ -209,10 +200,7 @@ void main() {
       registry.controllers.items['polarArea'],
       same(PolarAreaController.jsClass),
     );
-    expect(
-      registry.controllers.items['radar'],
-      same(RadarController.jsClass),
-    );
+    expect(registry.controllers.items['radar'], same(RadarController.jsClass));
     expect(
       registry.controllers.items['scatter'],
       same(ScatterController.jsClass),

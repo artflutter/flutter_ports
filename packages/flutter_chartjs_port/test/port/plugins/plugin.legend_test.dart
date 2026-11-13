@@ -377,9 +377,7 @@ void main() {
   group('theming.md §8 test 3: the light preset', () {
     testPluginChartCases(
       _themedReference,
-      observers: {
-        'legend': (chart) => _parseItemColors(_observeLegend(chart)),
-      },
+      observers: {'legend': (chart) => _parseItemColors(_observeLegend(chart))},
       functions: _functions,
       theme: compileLightTheme(),
     );
@@ -433,10 +431,7 @@ void main() {
 
     test('the keys of the plugin object are the upstream keys', () {
       expect(jsObjectKeys(legend), _upstreamKeys);
-      expect(
-        jsObjectKeys(legend['defaults']),
-        _upstreamDefaultsKeys,
-      );
+      expect(jsObjectKeys(legend['defaults']), _upstreamDefaultsKeys);
     });
   });
 
@@ -623,9 +618,7 @@ void main() {
       // wait for the legend).
       final chart = acquireChart(
         _line(<String, Object?>{
-          'labels': <String, Object?>{
-            'font': _arial17,
-          },
+          'labels': <String, Object?>{'font': _arial17},
         }),
       );
       final ctx = chart.ctx!
@@ -692,22 +685,10 @@ void main() {
     /// the mock context), and the box reads the singleton `defaults.color`
     /// (plugin.legend.js:286, :314 and :319), not the chart option.
     const expected = [
-      [
-        'setStrokeStyle',
-        native_ui.Color.fromRGBO(0, 128, 0, 1),
-      ],
-      [
-        'setFillStyle',
-        native_ui.Color.fromRGBO(0, 128, 0, 1),
-      ],
-      [
-        'setFillStyle',
-        native_ui.Color.fromRGBO(102, 102, 102, 1),
-      ],
-      [
-        'setStrokeStyle',
-        native_ui.Color.fromRGBO(102, 102, 102, 1),
-      ],
+      ['setStrokeStyle', native_ui.Color.fromRGBO(0, 128, 0, 1)],
+      ['setFillStyle', native_ui.Color.fromRGBO(0, 128, 0, 1)],
+      ['setFillStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
+      ['setStrokeStyle', native_ui.Color.fromRGBO(102, 102, 102, 1)],
     ];
 
     testWidgets('the box reads defaults.color, not the chart color', (
@@ -959,15 +940,12 @@ void main() {
         'position': ChartPosition.left,
         'align': ChartAlign.start,
         'labels': <String, Object?>{'padding': 0},
-        'onClick': (Object? e, Object? item, Object? l) => log.add(
-          'click ${jsToString((item! as LegendItem).text)}',
-        ),
-        'onHover': (Object? e, Object? item, Object? l) => log.add(
-          'hover ${jsToString((item! as LegendItem).text)}',
-        ),
-        'onLeave': (Object? e, Object? item, Object? l) => log.add(
-          'leave ${jsToString((item! as LegendItem).text)}',
-        ),
+        'onClick': (Object? e, Object? item, Object? l) =>
+            log.add('click ${jsToString((item! as LegendItem).text)}'),
+        'onHover': (Object? e, Object? item, Object? l) =>
+            log.add('hover ${jsToString((item! as LegendItem).text)}'),
+        'onLeave': (Object? e, Object? item, Object? l) =>
+            log.add('leave ${jsToString((item! as LegendItem).text)}'),
       }),
     );
 

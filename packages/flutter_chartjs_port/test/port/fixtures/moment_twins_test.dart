@@ -319,13 +319,10 @@ void main() {
 
     test('the twins match exactly the paths of the list', () {
       final regex = RegExp('^${_exactly(_twins)}.+\\.(json|js)\$');
-      expect(
-        [
-          for (final item in source.items)
-            if (regex.hasMatch(item.path)) item.path,
-        ],
-        _twins,
-      );
+      expect([
+        for (final item in source.items)
+          if (regex.hasMatch(item.path)) item.path,
+      ], _twins);
     });
 
     test('_toIcu changes each moment pattern and keeps the Map', () {
@@ -373,10 +370,7 @@ void main() {
     });
 
     test('_toIcu throws for another pattern and for no pattern', () {
-      expect(
-        () => _toIcu({'parser': 'MMM D'}),
-        throwsA(isA<StateError>()),
-      );
+      expect(() => _toIcu({'parser': 'MMM D'}), throwsA(isA<StateError>()));
       expect(
         () => _toIcu({
           'displayFormats': <String, Object?>{'day': 'HH:mm'},

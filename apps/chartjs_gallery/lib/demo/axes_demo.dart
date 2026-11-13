@@ -362,10 +362,7 @@ class AxesDemoState extends State<AxesDemo> {
       'align': _align,
       'font': ChartTextStyle(fontSize: _fontSize),
     },
-    'grid': <String, Object?>{
-      'display': _gridDisplay,
-      'offset': _gridOffset,
-    },
+    'grid': <String, Object?>{'display': _gridDisplay, 'offset': _gridOffset},
     'border': <String, Object?>{'display': _borderDisplay},
     'title': <String, Object?>{
       'display': _titleDisplay,
@@ -592,9 +589,7 @@ class AxesDemoState extends State<AxesDemo> {
         Icons.grid_on,
         'grid.display',
         _gridDisplay,
-        (
-          v,
-        ) {
+        (v) {
           _gridDisplay = v;
         },
       ),

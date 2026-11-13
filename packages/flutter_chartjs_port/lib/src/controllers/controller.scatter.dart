@@ -565,9 +565,7 @@ class ScatterController extends DatasetController {
           held ??
               (i > 0 &&
                   (jsToNumber(iValue) -
-                              jsToNumber(
-                                parsedValueOf(prevParsed, iAxis),
-                              ))
+                              jsToNumber(parsedValueOf(prevParsed, iAxis)))
                           .abs() >
                       maxGapLength),
         );
@@ -739,10 +737,7 @@ class ScatterController extends DatasetController {
           indexed = false;
         }
         if (nativeSize == null) {
-          max = jsMax(
-            max,
-            point.size(resolveDataElementOptions(i * 1.0)) / 2,
-          );
+          max = jsMax(max, point.size(resolveDataElementOptions(i * 1.0)) / 2);
           // The first ordinary resolution makes the entry of constant options.
           if (i == last) nativeSize = _cachedPointSize();
           // No coordinate conversion occurs here: parsed/raw values are only

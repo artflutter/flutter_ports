@@ -308,10 +308,8 @@ void main() {
 
     testWidgets('a reversed scale with a start angle', (tester) async {
       _expectTwin(
-        (type) => _config(
-          type,
-          scale: () => {'reverse': true, 'startAngle': 33.0},
-        ),
+        (type) =>
+            _config(type, scale: () => {'reverse': true, 'startAngle': 33.0}),
       );
     });
 
@@ -435,28 +433,25 @@ void main() {
       tester,
     ) async {
       final calls = <String>[];
-      _expectTwin(
-        (type) {
-          late Chart chart;
-          return _config(
-            type,
-            dataset: () => {
-              'pointRadius': (Object? ctx) {
-                final context = ctx! as JsObjectFace;
-                final index = context.jsRead('index')! as double;
-                final scale = context.jsRead('chart')! as Chart;
-                chart = scale;
-                final r = chart.scales['r']!;
-                // The next points of the loop read the new range.
-                if (index == 5) r.max = 50;
-                calls.add('$index ${r.max}');
-                return 2.0;
-              },
+      _expectTwin((type) {
+        late Chart chart;
+        return _config(
+          type,
+          dataset: () => {
+            'pointRadius': (Object? ctx) {
+              final context = ctx! as JsObjectFace;
+              final index = context.jsRead('index')! as double;
+              final scale = context.jsRead('chart')! as Chart;
+              chart = scale;
+              final r = chart.scales['r']!;
+              // The next points of the loop read the new range.
+              if (index == 5) r.max = 50;
+              calls.add('$index ${r.max}');
+              return 2.0;
             },
-          );
-        },
-        calls: calls,
-      );
+          },
+        );
+      }, calls: calls);
     });
   });
 

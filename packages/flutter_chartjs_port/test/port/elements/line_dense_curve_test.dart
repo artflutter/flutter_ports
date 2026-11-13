@@ -289,7 +289,7 @@ _Diff _compare(_Shot a, _Shot b, Uint8List band) {
   );
 }
 
-class _UserLine extends LineElement {}
+class _UserLine extends LineElement;
 
 void main() {
   setUp(() => denseCurveMergeEnabled = true);
@@ -428,34 +428,32 @@ void main() {
   // chart), and the largest share above 64 of 255 is 0.4%.
   for (final size in const [_mac, _phone]) {
     for (final count in const [5000, 20000]) {
-      testWidgets(
-        'merged against the curves: ${size.$1}, $count points',
-        (tester) async {
-          for (final variant in const [
-            'base',
-            'markers',
-            'fill',
-            'markersFill',
-            'monotone',
-            'gaps',
-            'spanGaps',
-            'fillTo',
-            'segment',
-          ]) {
-            final off = await _shot(tester, size, count, variant, on: false);
-            final on = await _shot(tester, size, count, variant, on: true);
-            final d = _compare(off, on, _band(off));
-            final reason = '${size.$1} $count $variant: $d';
-            expect(off.merged, 0, reason: reason);
-            expect(on.merged, greaterThan(count ~/ 2), reason: reason);
-            // Each pixel that differs is on a line or within 2 pixels of it.
-            expect(d.outside, 0, reason: reason);
-            expect(d.differing, lessThan(d.band * .08), reason: reason);
-            expect(d.above64, lessThan(d.band * .006), reason: reason);
-          }
-        },
-        timeout: const Timeout(Duration(minutes: 5)),
-      );
+      testWidgets('merged against the curves: ${size.$1}, $count points', (
+        tester,
+      ) async {
+        for (final variant in const [
+          'base',
+          'markers',
+          'fill',
+          'markersFill',
+          'monotone',
+          'gaps',
+          'spanGaps',
+          'fillTo',
+          'segment',
+        ]) {
+          final off = await _shot(tester, size, count, variant, on: false);
+          final on = await _shot(tester, size, count, variant, on: true);
+          final d = _compare(off, on, _band(off));
+          final reason = '${size.$1} $count $variant: $d';
+          expect(off.merged, 0, reason: reason);
+          expect(on.merged, greaterThan(count ~/ 2), reason: reason);
+          // Each pixel that differs is on a line or within 2 pixels of it.
+          expect(d.outside, 0, reason: reason);
+          expect(d.differing, lessThan(d.band * .08), reason: reason);
+          expect(d.above64, lessThan(d.band * .006), reason: reason);
+        }
+      }, timeout: const Timeout(Duration(minutes: 5)));
     }
   }
 
@@ -491,9 +489,7 @@ void main() {
     }
   });
 
-  testWidgets('a dashed line keeps its curves: the same bytes', (
-    tester,
-  ) async {
+  testWidgets('a dashed line keeps its curves: the same bytes', (tester) async {
     final off = await _shot(tester, _phone, 20000, 'dash', on: false);
     final on = await _shot(tester, _phone, 20000, 'dash', on: true);
     expect(on.merged, 0);

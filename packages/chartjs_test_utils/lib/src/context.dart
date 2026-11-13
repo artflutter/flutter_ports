@@ -430,14 +430,8 @@ class MockContext implements CanvasRenderingContext2D {
   void scale(double x, double y) => _missing('scale');
 
   @override
-  void transform(
-    double a,
-    double b,
-    double c,
-    double d,
-    double e,
-    double f,
-  ) => _missing('transform');
+  void transform(double a, double b, double c, double d, double e, double f) =>
+      _missing('transform');
 
   @override
   void resetTransform() => _missing('resetTransform');

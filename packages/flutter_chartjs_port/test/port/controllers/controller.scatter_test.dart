@@ -155,9 +155,7 @@ void main() {
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
       final snapshot = jsonDecode(
-        File(
-          'test/port/theme/light_snapshot.json',
-        ).readAsStringSync(),
+        File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
       final config =
           copyReference(controllerScatterReference.first.config, _functions)!
@@ -375,9 +373,7 @@ void main() {
         expect(controller.getMaxOverflow(), maxOverflow);
       }
 
-      testWidgets('a dataset showLine switched on, off and on', (
-        tester,
-      ) async {
+      testWidgets('a dataset showLine switched on, off and on', (tester) async {
         final chart = acquireChart(
           config(<String, Object?>{'borderWidth': 4.0}),
         );
@@ -408,9 +404,7 @@ void main() {
       testWidgets('a dataset showLine at the creation, then off', (
         tester,
       ) async {
-        final chart = acquireChart(
-          config(<String, Object?>{'showLine': true}),
-        );
+        final chart = acquireChart(config(<String, Object?>{'showLine': true}));
         expectState(chart, line: true, maxOverflow: 5);
 
         _dataset(chart, 0)['showLine'] = false;

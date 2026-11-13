@@ -113,10 +113,7 @@ void main() {
         fontSize: 100,
         letterSpacing: 2,
       );
-      expect(
-        _width(spaced),
-        closeTo(_regular + 2 * _text.length, 0.5),
-      );
+      expect(_width(spaced), closeTo(_regular + 2 * _text.length, 0.5));
     });
   });
 
@@ -134,9 +131,7 @@ void main() {
       final before = canvasMetricsCacheLength;
       const removed = (metricsCacheSize + 1) ~/ 4;
       expect(before, lessThan(removed - 1));
-      final texts = [
-        for (var i = before; i < metricsCacheSize; i++) 'fill $i',
-      ];
+      final texts = [for (var i = before; i < metricsCacheSize; i++) 'fill $i'];
       final metrics = [for (final text in texts) measureCanvasText(font, text)];
       expect(canvasMetricsCacheLength, metricsCacheSize);
       // A hit moves the first fill text to the end of the order.

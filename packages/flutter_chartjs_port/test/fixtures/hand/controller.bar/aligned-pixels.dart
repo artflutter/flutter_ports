@@ -12,19 +12,13 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        'a',
-      ],
+      'labels': <Object?>['a'],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            -1,
-          ],
+          'data': <Object?>[-1],
         },
         <String, Object?>{
-          'data': <Object?>[
-            1,
-          ],
+          'data': <Object?>[1],
         },
       ],
     },
@@ -36,21 +30,12 @@ Map<String, Object?> fixture() => <String, Object?>{
       'backgroundColor': 'navy',
       'devicePixelRatio': 1.25,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-          'alignToPixels': true,
-        },
-        'y': <String, Object?>{
-          'display': false,
-          'stacked': true,
-        },
+        'x': <String, Object?>{'display': false, 'alignToPixels': true},
+        'y': <String, Object?>{'display': false, 'stacked': true},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'width': 100,
-      'height': 500,
-    },
+    'canvas': <String, Object?>{'width': 100, 'height': 500},
   },
 };

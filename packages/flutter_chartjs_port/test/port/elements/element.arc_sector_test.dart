@@ -498,9 +498,7 @@ void main() {
       'a spacing': _cfg(options: _options(spacing: 4.0)),
       'rounded corners': _cfg(options: _options(borderRadius: 3.0)),
       'corners of an object': _cfg(
-        options: _options(
-          borderRadius: <String, Object?>{'outerStart': 0.0},
-        ),
+        options: _options(borderRadius: <String, Object?>{'outerStart': 0.0}),
       ),
       'the inner border align': _cfg(
         options: _options(borderAlign: ArcBorderAlign.inner),
@@ -558,10 +556,9 @@ void main() {
     test('an absent color keeps the style of the canvas', () async {
       final options = _options()..remove('backgroundColor');
       final cfg = _cfg(options: options);
-      final (a, b) = await _twin(
-        [cfg],
-        setUp: (c) => c.fillStyle = const ui.Color(0xFF00AA00),
-      );
+      final (a, b) = await _twin([
+        cfg,
+      ], setUp: (c) => c.fillStyle = const ui.Color(0xFF00AA00));
       _expectSame(a, b);
       expect(a.ink, greaterThan(100));
     });
@@ -571,11 +568,10 @@ void main() {
       () async {
         for (final background in <Object Function(UiCanvasContext)>[
           (_) => const _OtherColor(0xFF118822),
-          (c) => const ChartGradient.linear(
-            ui.Offset.zero,
-            ui.Offset(160, 0),
-            [ui.Color(0xFFFF0000), ui.Color(0xFF0000FF)],
-          ),
+          (c) => const ChartGradient.linear(ui.Offset.zero, ui.Offset(160, 0), [
+            ui.Color(0xFFFF0000),
+            ui.Color(0xFF0000FF),
+          ]),
         ]) {
           Future<Render> render({required bool native}) => renderContext((ctx) {
             final cfg = _cfg(
@@ -590,10 +586,7 @@ void main() {
     );
 
     test('a transform that is no similarity takes the ordinary path', () async {
-      final (a, b) = await _twin(
-        _slices(),
-        setUp: (c) => c.scale(1.5, 0.5),
-      );
+      final (a, b) = await _twin(_slices(), setUp: (c) => c.scale(1.5, 0.5));
       _expectSame(a, b);
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
@@ -738,10 +731,7 @@ void main() {
             start: i * 1.047 - 1.5,
             sweep: 1.047,
             inner: i.isEven ? 0 : 20,
-            options: _options(
-              backgroundColor: _colors[i],
-              borderWidth: 2.0,
-            ),
+            options: _options(backgroundColor: _colors[i], borderWidth: 2.0),
           ),
       ];
       // The ordinary sequence translates by zero: the arc comes out the same.
@@ -790,10 +780,9 @@ void main() {
         final recorded = _DriftingArc(_cfg(options: options));
         final calls = MockContext();
         recorded.draw(calls);
-        expect(
-          [for (final c in calls.getCalls()) c['name']],
-          contains('translate'),
-        );
+        expect([
+          for (final c in calls.getCalls()) c['name'],
+        ], contains('translate'));
         final native = _DriftingArc(_cfg(options: options));
         final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
         addTearDown(ctx.dispose);

@@ -516,11 +516,7 @@ class PointElement extends Element
   /// as the upstream property read of `undefined` does. Dart `null` for
   /// [mouseX] or [mouseY] is JS `null`, which the subtraction reads as 0.
   @override
-  bool inRange(
-    double? mouseX,
-    double? mouseY, [
-    bool? useFinalPosition,
-  ]) {
+  bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) {
     final options = this.options;
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
     final x = finalNumber(AnimatedProp.x, this.x, useFinalPosition);
@@ -534,19 +530,13 @@ class PointElement extends Element
 
   /// element.point.ts:68 `inXRange(mouseX, useFinalPosition?)`.
   @override
-  bool inXRange(
-    double? mouseX, [
-    bool? useFinalPosition,
-  ]) {
+  bool inXRange(double? mouseX, [bool? useFinalPosition]) {
     return _inRange(this, mouseX, 'x', useFinalPosition);
   }
 
   /// element.point.ts:72 `inYRange(mouseY, useFinalPosition?)`.
   @override
-  bool inYRange(
-    double? mouseY, [
-    bool? useFinalPosition,
-  ]) {
+  bool inYRange(double? mouseY, [bool? useFinalPosition]) {
     return _inRange(this, mouseY, 'y', useFinalPosition);
   }
 
@@ -556,9 +546,7 @@ class PointElement extends Element
   /// section 9). A property in the `undefined` state gives NaN, the
   /// `ToNumber` of a copied `undefined`, as in [tooltipPosition].
   @override
-  ElementPoint getCenterPoint([
-    bool? useFinalPosition,
-  ]) {
+  ElementPoint getCenterPoint([bool? useFinalPosition]) {
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
     return ElementPoint(
       finalNumber(AnimatedProp.x, x, useFinalPosition),

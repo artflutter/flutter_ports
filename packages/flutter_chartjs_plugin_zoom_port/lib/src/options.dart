@@ -46,7 +46,7 @@ enum Mode {
   /// `'xy'`: both directions.
   xy(usesX: true, usesY: true);
 
-  const Mode({required this.usesX, required this.usesY});
+  Mode({required this.usesX, required this.usesY});
 
   /// Whether the mode has the direction `x`.
   final bool usesX;

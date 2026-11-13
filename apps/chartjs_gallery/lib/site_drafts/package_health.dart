@@ -73,9 +73,7 @@ class PackageHealth extends StatelessWidget {
       final path = data['activity_path']! as String;
       final repoUrl = 'https://github.com/$repo';
       final commitsUrl =
-          '$repoUrl/commits?${Uri(queryParameters: {
-            if (path.isNotEmpty) 'path': path,
-          }).query}';
+          '$repoUrl/commits?${Uri(queryParameters: {if (path.isNotEmpty) 'path': path}).query}';
       // dart2wasm of Dart 3.14.0-315.3.beta traps on a String switch over a
       // value that is neither null nor a String. Such a value switches as null
       // and takes the default branch, as before.
@@ -186,10 +184,7 @@ class PackageHealth extends StatelessWidget {
       const SizedBox(height: 4),
       Text(
         value,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
       ),
     ],
   );

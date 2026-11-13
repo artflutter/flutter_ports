@@ -63,9 +63,8 @@ import 'dart_source.dart';
 /// The upstream spec file of the Dart spec file [dartPath]
 /// (`test/specs/<base>_test.dart` to `<base>.tests.js`), or null.
 String? upstreamSpecOf(String dartPath) {
-  final match = RegExp(r'(?:^|/)test/specs/(.+)_test\.dart$').firstMatch(
-    posixPath(dartPath),
-  );
+  final match = RegExp(r'(?:^|/)test/specs/(.+)_test\.dart$')
+      .firstMatch(posixPath(dartPath));
   return match == null ? null : '${match[1]}.tests.js';
 }
 
@@ -994,9 +993,7 @@ String renderTable(List<SpecReport> reports, {bool verbose = false}) {
     }
   }
   if (others.isNotEmpty) {
-    buffer.writeln(
-      row(othersLabel, countsOf(others), ''),
-    );
+    buffer.writeln(row(othersLabel, countsOf(others), ''));
   }
   buffer.writeln(row('total', countsOf(reports), ''));
   return buffer.toString();
@@ -1168,9 +1165,7 @@ FixturesResult compareFixtures(
           portPassed++;
         case TestResult.failure:
           portFailed++;
-          findings.add(
-            Finding(shown, test.line, '"${test.fullName}" failed.'),
-          );
+          findings.add(Finding(shown, test.line, '"${test.fullName}" failed.'));
         case TestResult.skipped:
           if (_skipFinding(test, shown) case final finding?) {
             findings.add(finding);
@@ -1242,9 +1237,7 @@ FixturesResult compareFixtures(
           report.passed++;
         case TestResult.failure:
           report.failed++;
-          findings.add(
-            Finding(shown, test.line, '"${test.fullName}" failed.'),
-          );
+          findings.add(Finding(shown, test.line, '"${test.fullName}" failed.'));
         case TestResult.skipped:
           final reason = test.skipReason ?? '';
           report.skipped[reason] = (report.skipped[reason] ?? 0) + 1;

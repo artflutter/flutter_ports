@@ -59,10 +59,7 @@ SemanticsHandle? stressSemanticsHandle;
 /// `--dart-define=WINDOWS=1`. The default is 0. See [stressWindows].
 final bool stressWindowsOn = _flag(
   'WINDOWS',
-  const String.fromEnvironment(
-    'WINDOWS',
-    defaultValue: '0',
-  ),
+  const String.fromEnvironment('WINDOWS', defaultValue: '0'),
 );
 
 /// The widget that hosts the chart of the modes `chart`, `axes` and
@@ -211,10 +208,7 @@ const bool stressSpin = bool.fromEnvironment('SPIN');
 /// that compares with it (Chart.js ADR 0021, section 8, the acceptance).
 final bool stressLine = _flag(
   'LINE',
-  const String.fromEnvironment(
-    'LINE',
-    defaultValue: '1',
-  ),
+  const String.fromEnvironment('LINE', defaultValue: '1'),
 );
 
 /// The call of each frame in the modes `chart`, `axes` and `plugins`
@@ -374,10 +368,7 @@ StressAxisType _valueScale(String name) {
 /// `--dart-define=AUTOSKIP=1` (the default) or `--dart-define=AUTOSKIP=0`.
 final bool stressAutoSkip = _flag(
   'AUTOSKIP',
-  const String.fromEnvironment(
-    'AUTOSKIP',
-    defaultValue: '1',
-  ),
+  const String.fromEnvironment('AUTOSKIP', defaultValue: '1'),
 );
 
 /// The chart type of the mode `chart`: `--dart-define=TYPE=<name>` of
@@ -427,11 +418,7 @@ final bool stressShowLine = parseStressShowLine(
 
 /// The value of the define `SHOWLINE` [value] for the chart type [type] in
 /// the mode [mode]: see [stressShowLine].
-bool parseStressShowLine(
-  String value,
-  StressChartType type,
-  StressMode mode,
-) {
+bool parseStressShowLine(String value, StressChartType type, StressMode mode) {
   final showLine = _flag('SHOWLINE', value);
   if (showLine && (mode != StressMode.chart || !type.points)) {
     throw ArgumentError.value(
@@ -448,10 +435,7 @@ bool parseStressShowLine(
 /// (c). The default is 0.
 final bool stressScriptable = _flag(
   'SCRIPTABLE',
-  const String.fromEnvironment(
-    'SCRIPTABLE',
-    defaultValue: '0',
-  ),
+  const String.fromEnvironment('SCRIPTABLE', defaultValue: '0'),
 );
 
 /// Alternating indexed colors in chart mode: `--dart-define=INDEXED=1`.
@@ -502,11 +486,8 @@ List<(int, int)> stressDefaultScenarios(
     (20000, 200),
   ],
   StressMode.chart => [for (final n in (type ?? stressType).counts) (n, 0)],
-  StressMode.bars || StressMode.axes => const [
-    (1000, 0),
-    (5000, 0),
-    (20000, 0),
-  ],
+  StressMode.bars ||
+  StressMode.axes => const [(1000, 0), (5000, 0), (20000, 0)],
   StressMode.arcs => const [(100, 0), (1000, 0), (5000, 0)],
   StressMode.plugins => [for (final n in mode.counts) (n, 0)],
 };

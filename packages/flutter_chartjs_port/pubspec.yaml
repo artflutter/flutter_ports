@@ -57,4 +57,4 @@ dev_dependencies:
   # analysis_options.yaml includes its rules, as the root file does. pana
   # formats the package with them (Chart.js ADR 0047). The constraint is the
   # constraint of the root pubspec.
-  very_good_analysis: ^10.3.0
+  very_good_analysis: ^11.0.0

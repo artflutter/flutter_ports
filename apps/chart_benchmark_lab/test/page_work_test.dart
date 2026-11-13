@@ -44,10 +44,7 @@ int _renderBlocks() {
 /// Runs [action] twice, first with a count of the layouts and then with a count
 /// of the paints. The action must be repeatable. Each run counts the builds,
 /// and the result keeps the larger count.
-Future<_Work> _measure(
-  String name,
-  Future<void> Function() action,
-) async {
+Future<_Work> _measure(String name, Future<void> Function() action) async {
   final work = _Work();
   debugOnRebuildDirtyWidget = (element, _) {
     work.builds++;
@@ -384,18 +381,15 @@ void staleSections() {
         'back to a chart': () {
           c
             ..selectLibrary(ChartLibrary.chartjs)
-            ..configure(
-              const BenchmarkConfig(count: 100, overlayLabels: 50),
-            );
+            ..configure(const BenchmarkConfig(count: 100, overlayLabels: 50));
         },
         // The notes of the library selector follow the shadow and the zoom.
         'a shadow': () => c.configure(c.config.copyWith(shadow: true)),
         'a zoom': () => c.configure(c.config.copyWith(zoom: true)),
         'a type without zoom': () =>
             c.configure(c.config.copyWith(type: ChartType.pie)),
-        'no shadow and no zoom': () => c.configure(
-          const BenchmarkConfig(count: 100, overlayLabels: 50),
-        ),
+        'no shadow and no zoom': () =>
+            c.configure(const BenchmarkConfig(count: 100, overlayLabels: 50)),
         'a run': c.start,
         'a pause': c.pause,
         'a capture': () => c.start(capture: true),

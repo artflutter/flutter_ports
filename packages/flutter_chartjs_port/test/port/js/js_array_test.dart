@@ -65,10 +65,11 @@ void main() {
       // The differences are fractions: List.sort with toInt() sees 0.
       expect(jsSort(list, (a, b) => a - b), [0.1, 0.2, 0.3]);
       expect(jsSort(list, (a, b) => (b - a) * 1e300), [0.3, 0.2, 0.1]);
-      expect(
-        jsSort(list, (a, b) => a < b ? double.negativeInfinity : 1),
-        [0.1, 0.2, 0.3],
-      );
+      expect(jsSort(list, (a, b) => a < b ? double.negativeInfinity : 1), [
+        0.1,
+        0.2,
+        0.3,
+      ]);
     });
 
     test('reads -0 as equal', () {

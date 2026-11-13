@@ -78,11 +78,7 @@ void main() {
       final part = parts.single;
       expect(
         [part.source.start, part.source.end, part.source.loop],
-        [
-          3,
-          1,
-          false,
-        ],
+        [3, 1, false],
       );
       expect(part.target, isA<types.Segment>());
       // Math.max and Math.min of the bounds and the sub-bounds
@@ -170,11 +166,7 @@ void main() {
 
     test('a SimpleArc takes the simpleArc branch (filler.segment.js:15)', () {
       final line = source();
-      final parts = segments(
-        line,
-        SimpleArc(x: 0, y: 0, radius: 1),
-        'x',
-      );
+      final parts = segments(line, SimpleArc(x: 0, y: 0, radius: 1), 'x');
       expect(parts, hasLength(1));
       expect(parts.single.target, (property: 'x', start: 10.0, end: 30.0));
       expect(parts.single.start, same(line.points[0]));

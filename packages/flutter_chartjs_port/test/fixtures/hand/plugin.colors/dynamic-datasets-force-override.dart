@@ -36,10 +36,7 @@ Map<String, Object?> fixture() {
         },
         'plugins': <String, Object?>{
           'legend': false,
-          'colors': <String, Object?>{
-            'enabled': true,
-            'forceOverride': true,
-          },
+          'colors': <String, Object?>{'enabled': true, 'forceOverride': true},
         },
       },
     },

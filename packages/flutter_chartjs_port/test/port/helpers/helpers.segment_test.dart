@@ -263,9 +263,7 @@ void main() {
     });
 
     test('gives one segment for points without gaps', () {
-      expect(computeSegments(_Line(_points('ooooo'))), [
-        _segment(0, 4, false),
-      ]);
+      expect(computeSegments(_Line(_points('ooooo'))), [_segment(0, 4, false)]);
     });
 
     test('splits at a skipped point', () {
@@ -291,9 +289,7 @@ void main() {
         ),
         [_segment(1, 3, false)],
       );
-      expect(computeSegments(_Line(_points('sooos'))), [
-        _segment(1, 3, false),
-      ]);
+      expect(computeSegments(_Line(_points('sooos'))), [_segment(1, 3, false)]);
     });
 
     test('gives a loop only for a full loop', () {
@@ -666,9 +662,7 @@ void main() {
             1,
             3,
             false,
-            _style(
-              borderColor: const ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
+            _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
           _segment(3, 5, false, _style()),
         ],
@@ -705,9 +699,7 @@ void main() {
             1,
             3,
             false,
-            _style(
-              borderColor: const ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
+            _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
           _segment(3, 5, false, _style()),
         ],
@@ -742,9 +734,7 @@ void main() {
             2,
             3,
             true,
-            _style(
-              borderColor: const ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
+            _style(borderColor: const ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
         ],
       );
@@ -890,20 +880,16 @@ void main() {
       );
       // Without the escape of '\', both styles would give "\u0000".
       expect(
-        split(
-          {'borderCapStyle': '\u0000'},
-          {'borderCapStyle': r'\u0000'},
-          {'borderCapStyle': '\u0000'},
-        ),
+        split({'borderCapStyle': '\u0000'}, {'borderCapStyle': r'\u0000'}, {
+          'borderCapStyle': '\u0000',
+        }),
         three,
       );
       // JSON.stringify writes a lone surrogate as \ud800, not as U+FFFD.
       expect(
-        split(
-          {'borderCapStyle': '\uD800'},
-          {'borderCapStyle': '�'},
-          {'borderCapStyle': '\uD800'},
-        ),
+        split({'borderCapStyle': '\uD800'}, {'borderCapStyle': '�'}, {
+          'borderCapStyle': '\uD800',
+        }),
         three,
       );
       // Equal strings that are not the same object give the same text.

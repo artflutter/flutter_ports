@@ -108,10 +108,7 @@ void main() {
   });
 
   test('no key is both a hand port and a skip', () {
-    expect(
-      handFixtures.keys.where(fixtureSkips.containsKey).toList(),
-      isEmpty,
-    );
+    expect(handFixtures.keys.where(fixtureSkips.containsKey).toList(), isEmpty);
   });
 
   test('each impure fixture of a ported spec file has a hand port or a '

@@ -40,9 +40,7 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'elements': <String, Object?>{
-        'line': <String, Object?>{
-          'fill': false,
-        },
+        'line': <String, Object?>{'fill': false},
         'point': <String, Object?>{
           'borderColor': '#ff0000',
           'rotation': (Object? ctx) {
@@ -64,17 +62,11 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'display': false,
-          'min': -15,
-        },
+        'r': <String, Object?>{'display': false, 'min': -15},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 512,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
 };

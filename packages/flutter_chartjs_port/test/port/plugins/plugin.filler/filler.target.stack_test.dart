@@ -46,11 +46,7 @@ List<List<Object?>> _segs(List<types.Segment> segments) => [
 
 void main() {
   group('adapt-line-points-elements', () {
-    const bounds = (
-      property: 'x',
-      start: 30.681640625,
-      end: 505.6630859375,
-    );
+    const bounds = (property: 'x', start: 30.681640625, end: 505.6630859375);
 
     test('P4: a bare point gives the bound segments of the Array', () {
       final line = LineElement(<String, Object?>{

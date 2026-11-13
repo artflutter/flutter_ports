@@ -333,11 +333,11 @@ void main() {
       r
         ..test('A works', [root, a], line: 7)
         ..test('A inner draws', [root, a, inner], result: 'error')
-        ..test(
-          'A inner draws #2',
-          [root, a, inner],
-          skip: 'blocked: core.controller',
-        );
+        ..test('A inner draws #2', [
+          root,
+          a,
+          inner,
+        ], skip: 'blocked: core.controller');
       final output = parseReporterOutput(r.output);
       expect(output.loadErrors, isEmpty);
       expect(output.tests.map((t) => t.file).toSet(), {
@@ -558,12 +558,7 @@ void main() {
         describeFindings(
           staleBlockedSkips(parity(fillerSimpleArc: 'ported'), sources),
         ),
-        [
-          error(
-            'test/specs/plugin.filler_test.dart:1',
-            stale('plugin.filler'),
-          ),
-        ],
+        [error('test/specs/plugin.filler_test.dart:1', stale('plugin.filler'))],
       );
     });
 
@@ -589,9 +584,7 @@ void main() {
             ].join('\n'),
           }),
         ),
-        [
-          error('test/port/a_test.dart:2', unknown('plugin.legnd')),
-        ],
+        [error('test/port/a_test.dart:2', unknown('plugin.legnd'))],
       );
     });
 
@@ -619,9 +612,7 @@ void main() {
             'test/a_test.dart': r"final a = 'blocked: plugin.\$x';",
           }),
         ),
-        [
-          error('test/a_test.dart:1', unknown(r'plugin.\$x')),
-        ],
+        [error('test/a_test.dart:1', unknown(r'plugin.\$x'))],
       );
     });
 
@@ -675,10 +666,9 @@ void main() {
       final sources = readStaleScanSources(tree.root);
       expect(sources.keys, ['test/specs/plugin.title_test.dart']);
       expect(isStaleScanPath('test/tool/spec_cases_test.dart'), isFalse);
-      expect(
-        describeFindings(staleBlockedSkips(parity(), sources)),
-        [error('test/specs/plugin.title_test.dart:1', title)],
-      );
+      expect(describeFindings(staleBlockedSkips(parity(), sources)), [
+        error('test/specs/plugin.title_test.dart:1', title),
+      ]);
     });
 
     test('(8) a generated *_reference*.dart file is not read', () {
@@ -763,10 +753,7 @@ void main() {
     test('both modes of the command fail on a stale skip', () async {
       final tree = FileTree()
         ..writeText('doc/upstream/manifest.json', jsonEncode(_manifestJson()))
-        ..writeText(
-          'fixtures.json',
-          jsonEncode(_fixtureManifestJson()),
-        )
+        ..writeText('fixtures.json', jsonEncode(_fixtureManifestJson()))
         ..write('doc/parity.md', [row('src/plugins/plugin.title.js', 'ported')])
         ..write('test/port/a_test.dart', [
           '// A port-only test.',
@@ -1119,11 +1106,11 @@ void main() {
     test('counts the skips by reason and fails on a bad reason', () {
       suiteA();
       r
-        ..test(
-          'A auto a/one.json',
-          [aRoot, aGroup, aAuto],
-          skip: 'blocked: plugin.filler',
-        )
+        ..test('A auto a/one.json', [
+          aRoot,
+          aGroup,
+          aAuto,
+        ], skip: 'blocked: plugin.filler')
         ..test('A auto a/two.js', [aRoot, aGroup, aAuto], skip: noSubmodule)
         ..test(
           'A auto a/three.js',

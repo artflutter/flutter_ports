@@ -12,18 +12,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        'A',
-        'B',
-        'C',
-      ],
+      'labels': <Object?>['A', 'B', 'C'],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            10,
-            10,
-            10,
-          ],
+          'data': <Object?>[10, 10, 10],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -33,11 +25,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const LinePointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            15,
-            15,
-            15,
-          ],
+          'data': <Object?>[15, 15, 15],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -47,11 +35,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const TrianglePointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            20,
-            20,
-            20,
-          ],
+          'data': <Object?>[20, 20, 20],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -61,22 +45,14 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const RectRoundedPointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            30,
-            30,
-            30,
-          ],
+          'data': <Object?>[30, 30, 30],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
           'label': '',
         },
         <String, Object?>{
-          'data': <Object?>[
-            40,
-            40,
-            40,
-          ],
+          'data': <Object?>[40, 40, 40],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -86,11 +62,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const RectPointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            25,
-            25,
-            25,
-          ],
+          'data': <Object?>[25, 25, 25],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -100,11 +72,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const RectRotPointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            35,
-            35,
-            35,
-          ],
+          'data': <Object?>[35, 35, 35],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -114,11 +82,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const CrossRotPointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            45,
-            45,
-            45,
-          ],
+          'data': <Object?>[45, 45, 45],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -128,11 +92,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const CrossPointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            50,
-            50,
-            50,
-          ],
+          'data': <Object?>[50, 50, 50],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -142,11 +102,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointStyle': const StarPointStyle(),
         },
         <String, Object?>{
-          'data': <Object?>[
-            55,
-            55,
-            55,
-          ],
+          'data': <Object?>[55, 55, 55],
           'backgroundColor': '#00ff00',
           'borderColor': '#ff0000',
           'borderWidth': 1,
@@ -161,25 +117,16 @@ Map<String, Object?> fixture() => <String, Object?>{
       'plugins': <String, Object?>{
         'legend': <String, Object?>{
           'display': true,
-          'labels': <String, Object?>{
-            'usePointStyle': true,
-          },
+          'labels': <String, Object?>{'usePointStyle': true},
         },
       },
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 512,
-      'width': 1024,
-    },
+    'canvas': <String, Object?>{'height': 512, 'width': 1024},
   },
 };

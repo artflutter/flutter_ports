@@ -48,12 +48,7 @@ import '../../support/light_theme.dart';
 const Color _red = Color.from(alpha: 1, red: 200 / 255, green: 0, blue: 0);
 
 /// The green of the tests: `rgba(0, 128, 0, 0.5)`.
-const Color _green = Color.from(
-  alpha: 0.5,
-  red: 0,
-  green: 128 / 255,
-  blue: 0,
-);
+const Color _green = Color.from(alpha: 0.5, red: 0, green: 128 / 255, blue: 0);
 
 /// A new instance of [color], equal to it.
 Color _copy(Color color) =>
@@ -546,10 +541,7 @@ void main() {
         compileThemeData(const ChartThemeData(paletteBackgroundAlpha: 1)),
         isNull,
       );
-      expect(
-        compileThemeData(const ChartThemeData(font: TextStyle())),
-        isNull,
-      );
+      expect(compileThemeData(const ChartThemeData(font: TextStyle())), isNull);
     });
 
     test('a TextStyle with color and letterSpacing reaches each slot as it '

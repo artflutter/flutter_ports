@@ -401,9 +401,7 @@ void main() {
               const DatasetInteractionMode().itemsAt(
                 chart,
                 evt,
-                <String, Object?>{
-                  'intersect': true,
-                },
+                <String, Object?>{'intersect': true},
               ),
             );
             expect(elements, jasmineEquals(meta.data));
@@ -455,10 +453,7 @@ void main() {
             const DatasetInteractionMode().itemsAt(
               chart,
               evt,
-              <String, Object?>{
-                'axis': InteractionAxis.x,
-                'intersect': false,
-              },
+              <String, Object?>{'axis': InteractionAxis.x, 'intersect': false},
             ),
           );
           expect(elements, jasmineEquals(chart.getDatasetMeta(0).data));
@@ -476,10 +471,7 @@ void main() {
             const DatasetInteractionMode().itemsAt(
               chart,
               evt,
-              <String, Object?>{
-                'axis': InteractionAxis.y,
-                'intersect': false,
-              },
+              <String, Object?>{'axis': InteractionAxis.y, 'intersect': false},
             ),
           );
           expect(elements, jasmineEquals(chart.getDatasetMeta(1).data));
@@ -497,9 +489,7 @@ void main() {
             const DatasetInteractionMode().itemsAt(
               chart,
               evt,
-              <String, Object?>{
-                'intersect': false,
-              },
+              <String, Object?>{'intersect': false},
             ),
           );
           expect(elements, jasmineEquals(chart.getDatasetMeta(1).data));
@@ -558,9 +548,7 @@ void main() {
               const NearestInteractionMode().itemsAt(
                 chart,
                 evt,
-                <String, Object?>{
-                  'intersect': false,
-                },
+                <String, Object?>{'intersect': false},
               ),
             );
             final meta = chart.getDatasetMeta(1);
@@ -588,9 +576,7 @@ void main() {
               const NearestInteractionMode().itemsAt(
                 chart,
                 evt,
-                <String, Object?>{
-                  'intersect': false,
-                },
+                <String, Object?>{'intersect': false},
               ),
             );
             expect(
@@ -739,9 +725,7 @@ void main() {
               const NearestInteractionMode().itemsAt(
                 chart,
                 evt,
-                <String, Object?>{
-                  'axis': InteractionAxis.r,
-                },
+                <String, Object?>{'axis': InteractionAxis.r},
               ),
             );
             expect(elements, jasmineEquals(<Object?>[meta0.data[1]]));
@@ -801,9 +785,7 @@ void main() {
               const NearestInteractionMode().itemsAt(
                 chart,
                 evt,
-                <String, Object?>{
-                  'intersect': true,
-                },
+                <String, Object?>{'intersect': true},
               ),
             );
             expect(elements, jasmineEquals(<Object?>[]));
@@ -813,9 +795,7 @@ void main() {
               const NearestInteractionMode().itemsAt(
                 chart,
                 evt,
-                <String, Object?>{
-                  'intersect': true,
-                },
+                <String, Object?>{'intersect': true},
               ),
             );
             expect(elements, jasmineEquals(<Object?>[point]));
@@ -844,9 +824,7 @@ void main() {
               const NearestInteractionMode().itemsAt(
                 chart,
                 evt,
-                <String, Object?>{
-                  'intersect': true,
-                },
+                <String, Object?>{'intersect': true},
               ),
             );
             expect(elements, jasmineEquals(<Object?>[meta0.data[1]]));
@@ -876,9 +854,7 @@ void main() {
                 const NearestInteractionMode().itemsAt(
                   chart,
                   evt,
-                  <String, Object?>{
-                    'intersect': true,
-                  },
+                  <String, Object?>{'intersect': true},
                 ),
               );
               expect(
@@ -1153,47 +1129,42 @@ void main() {
     for (var i = 0; i < _testCases.length; i++) {
       final (:data, :clickPointIndex, :expectedNearestPointIndex) =
           _testCases[i];
-      testWidgets(
-        'should select nearest non-null element with index '
-        '$expectedNearestPointIndex when clicking on element with index '
-        '$clickPointIndex in test case ${i + 1} if spanGaps=true',
-        (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>[1, 2, 3, 4, 5, 6, 7, 8, 9],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  // The `data` of a const record cannot change. The chart
-                  // listens to the array of its dataset, and a chart writes
-                  // no item into it here. Thus a copy gives the same result.
-                  'data': List<Object?>.of(data),
-                  'spanGaps': true,
-                },
-              ],
-            },
-          })..update();
-          final meta = chart.getDatasetMeta(0);
-          final point = _data(meta, clickPointIndex);
-
-          final evt = _Event(chart, point.x, point.y);
-
-          final elements = _elements(
-            const NearestInteractionMode().itemsAt(
-              chart,
-              evt,
+      testWidgets('should select nearest non-null element with index '
+          '$expectedNearestPointIndex when clicking on element with index '
+          '$clickPointIndex in test case ${i + 1} if spanGaps=true', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>[1, 2, 3, 4, 5, 6, 7, 8, 9],
+            'datasets': <Object?>[
               <String, Object?>{
-                'axis': InteractionAxis.x,
-                'intersect': false,
+                // The `data` of a const record cannot change. The chart
+                // listens to the array of its dataset, and a chart writes
+                // no item into it here. Thus a copy gives the same result.
+                'data': List<Object?>.of(data),
+                'spanGaps': true,
               },
-            ),
-          );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[meta.data[expectedNearestPointIndex]]),
-          );
-        },
-      );
+            ],
+          },
+        })..update();
+        final meta = chart.getDatasetMeta(0);
+        final point = _data(meta, clickPointIndex);
+
+        final evt = _Event(chart, point.x, point.y);
+
+        final elements = _elements(
+          const NearestInteractionMode().itemsAt(chart, evt, <String, Object?>{
+            'axis': InteractionAxis.x,
+            'intersect': false,
+          }),
+        );
+        expect(
+          elements,
+          jasmineEquals(<Object?>[meta.data[expectedNearestPointIndex]]),
+        );
+      });
     }
   });
 }

@@ -25,13 +25,8 @@ Map<String, Object?> fixture() => <String, Object?>{
                 ? <Object?>[6, 3]
                 : <Object?>[],
           },
-          'grid': <String, Object?>{
-            'color': 'lightGray',
-            'lineWidth': 3,
-          },
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
+          'ticks': <String, Object?>{'display': false},
         },
         'y': <String, Object?>{
           // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
@@ -44,13 +39,8 @@ Map<String, Object?> fixture() => <String, Object?>{
                 ? <Object?>[6, 3]
                 : <Object?>[],
           },
-          'grid': <String, Object?>{
-            'color': 'lightGray',
-            'lineWidth': 3,
-          },
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
+          'ticks': <String, Object?>{'display': false},
         },
       },
     },

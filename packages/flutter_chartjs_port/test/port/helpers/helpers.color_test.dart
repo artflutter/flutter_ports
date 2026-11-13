@@ -25,9 +25,7 @@ void main() {
       expect(isPatternOrGradient(_gradient()), isTrue);
       expect(isPatternOrGradient(_radial()), isTrue);
       expect(
-        isPatternOrGradient(
-          const ui.Color.fromRGBO(255, 255, 255, 1),
-        ),
+        isPatternOrGradient(const ui.Color.fromRGBO(255, 255, 255, 1)),
         isFalse,
       );
       expect(isPatternOrGradient(<String, Object?>{}), isFalse);

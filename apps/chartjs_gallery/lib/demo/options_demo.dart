@@ -92,9 +92,7 @@ class OptionsDemo extends StatelessWidget {
           child: _table(
             context,
             const ['dataset scope', 'resolved', 'from'],
-            [
-              for (final s in _scopes) _resolveRow(s),
-            ],
+            [for (final s in _scopes) _resolveRow(s)],
           ),
         ),
         DemoCard(
@@ -133,9 +131,7 @@ class OptionsDemo extends StatelessWidget {
               'width',
               'height',
             ],
-            [
-              for (final p in _paddings) _paddingRow(p.label, p.value),
-            ],
+            [for (final p in _paddings) _paddingRow(p.label, p.value)],
           ),
         ),
       ],
@@ -176,11 +172,7 @@ class OptionsDemo extends StatelessWidget {
             ['font.fontWeight', '${font.fontWeight?.value}', 'dataset'],
             ['font.fontFamily', '${font.fontFamily}', 'defaults.font'],
             ['font.lineHeight', showJs(font.lineHeight), 'fontSize × height'],
-            [
-              'hoverBackgroundColor',
-              showJs(hover),
-              _hoverSource,
-            ],
+            ['hoverBackgroundColor', showJs(hover), _hoverSource],
           ],
         ),
         const SizedBox(height: 8),
@@ -221,10 +213,7 @@ class OptionsDemo extends StatelessWidget {
     );
     Widget cell(String text, {bool head = false}) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      child: Text(
-        text,
-        style: head ? theme.textTheme.labelLarge : mono,
-      ),
+      child: Text(text, style: head ? theme.textTheme.labelLarge : mono),
     );
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

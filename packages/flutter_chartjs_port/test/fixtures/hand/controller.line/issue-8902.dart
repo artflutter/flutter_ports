@@ -20,19 +20,12 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'plugins': false,
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'linear',
-          'min': 1,
-          'max': 3,
-        },
+        'x': <String, Object?>{'type': 'linear', 'min': 1, 'max': 3},
       },
     },
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

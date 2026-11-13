@@ -300,10 +300,7 @@ final class _Repo {
       ..write('third_party/Chart.js/src/core/core.scale.js', ['a'])
       ..write('third_party/Chart.js/src/index.ts', ['a', 'b', 'c', 'd'])
       ..write('third_party/Chart.js/test/specs/helpers.math.tests.js', ['a'])
-      ..write('third_party/Chart.js/test/specs/core.scale.tests.js', [
-        'a',
-        'b',
-      ])
+      ..write('third_party/Chart.js/test/specs/core.scale.tests.js', ['a', 'b'])
       ..write('third_party/Chart.js/test/index.js', ['a'])
       ..write('third_party/kurkle-color/src/byte.js', ['a'])
       ..write('third_party/kurkle-color/packed.js', ['a', 'b'])
@@ -628,10 +625,9 @@ void main() {
         model.rowOf('Chart.js', 'src/helpers/helpers.math.ts')!.differences,
         ['adapt-b', 'adapt-a', 'platform-a'],
       );
-      expect(
-        model.rowOf('chartjs-test-utils', 'src/context.js')!.differences,
-        ['harness-c'],
-      );
+      expect(model.rowOf('chartjs-test-utils', 'src/context.js')!.differences, [
+        'harness-c',
+      ]);
       // A spec row also has the rows of its `diverges:` skip reasons.
       final scale = model.rowOf('Chart.js', 'test/specs/core.scale.tests.js')!;
       expect(scale.differences, ['platform-d']);
@@ -837,15 +833,11 @@ void main() {
       expect(status.dart, _status().dart);
       expect(status.prose, {
         ..._status().prose,
-        'summary': [
-          'The types area has 1 rows.',
-        ],
+        'summary': ['The types area has 1 rows.'],
       });
       expect(
         [for (final row in status.portOnly) row.cells],
-        [
-          for (final row in _status().portOnly) row.cells,
-        ],
+        [for (final row in _status().portOnly) row.cells],
       );
       expect(describeFindings(result.findings), [
         _parityWarning(
@@ -1279,9 +1271,7 @@ void main() {
             repository: repository!,
             package: package,
             sources: {
-              for (final source in parsePortSources(
-                sources.readAsStringSync(),
-              ))
+              for (final source in parsePortSources(sources.readAsStringSync()))
                 source.header: source,
             },
             rows: const [],

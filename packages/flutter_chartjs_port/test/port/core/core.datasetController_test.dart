@@ -897,9 +897,8 @@ final class _Run {
       case 'stacks':
         out.add('stacks: ${_enc(chart.stacks ?? undefined)}');
       case 'minmax':
-        final range = controller(
-          args[0],
-        ).getMinMax(chart.scales[args[1]]!, args[2] as bool?);
+        final range = controller(args[0])
+            .getMinMax(chart.scales[args[1]]!, args[2] as bool?);
         out.add(
           'minmax ${_s(args[0])} ${args[1]} ${_s(args[2])}: '
           '${_enc({'min': range.min, 'max': range.max})}',
@@ -916,38 +915,35 @@ final class _Run {
           '${_s(args[3])}: ${_enc(value)}',
         );
       case 'labelAndValue':
-        final (:label, :value) = controller(
-          args[0],
-        ).getLabelAndValue(jsToNumber(args[1]));
+        final (:label, :value) = controller(args[0])
+            .getLabelAndValue(jsToNumber(args[1]));
         out.add(
           'labelAndValue ${_s(args[0])} ${_s(args[1])}: '
           '${_enc({'label': label, 'value': value})}',
         );
       case 'allParsed':
-        final values = controller(
-          args[0],
-        ).getAllParsedValues(chart.scales[args[1]]!);
+        final values = controller(args[0])
+            .getAllParsedValues(chart.scales[args[1]]!);
         out.add('allParsed ${_s(args[0])} ${args[1]}: ${_enc(values)}');
       case 'meta':
         final m = meta(args[0]);
         Object scale(types.Scale? s) => s?.id ?? 'none';
-        out.add(
-          'meta ${_s(args[0])}: ${_enc({
-            'xAxisID': _none(m.xAxisID),
-            'yAxisID': _none(m.yAxisID),
-            'rAxisID': _none(m.rAxisID),
-            'iAxisID': _none(m.iAxisID),
-            'vAxisID': _none(m.vAxisID),
-            'xScale': scale(m.xScale),
-            'yScale': scale(m.yScale),
-            'rScale': scale(m.rScale),
-            'iScale': scale(m.iScale),
-            'vScale': scale(m.vScale),
-            'indexAxis': m.indexAxis ?? undefined,
-            'stack': m.stack,
-            'stacked': m.stacked,
-          })}',
-        );
+        final fields = <String, Object?>{
+          'xAxisID': _none(m.xAxisID),
+          'yAxisID': _none(m.yAxisID),
+          'rAxisID': _none(m.rAxisID),
+          'iAxisID': _none(m.iAxisID),
+          'vAxisID': _none(m.vAxisID),
+          'xScale': scale(m.xScale),
+          'yScale': scale(m.yScale),
+          'rScale': scale(m.rScale),
+          'iScale': scale(m.iScale),
+          'vScale': scale(m.vScale),
+          'indexAxis': m.indexAxis ?? undefined,
+          'stack': m.stack,
+          'stacked': m.stacked,
+        };
+        out.add('meta ${_s(args[0])}: ${_enc(fields)}');
       case 'clip':
         final clip = meta(args[0]).clip;
         final edges = {
@@ -979,10 +975,8 @@ final class _Run {
           '${_encOptions(_options(args[0], args[1], args[2]))}',
         );
       case 'style':
-        final options = controller(args[0]).getStyle(
-          (args[1] as num?)?.toDouble(),
-          args[2] as bool?,
-        );
+        final options = controller(args[0])
+            .getStyle((args[1] as num?)?.toDouble(), args[2] as bool?);
         out.add(
           'style ${_s(args[0])} ${_s(args[1])} ${_s(args[2])}: '
           '${_encOptions(options)}',
@@ -998,9 +992,8 @@ final class _Run {
           '${_encOptions(controller(args[0]).sharedOptions)}',
         );
       case 'getSharedOptions':
-        final (:sharedOptions, :includeOptions) = controller(
-          args[0],
-        ).getSharedOptions_(jsToNumber(args[1]), args[2]! as String);
+        final (:sharedOptions, :includeOptions) = controller(args[0])
+            .getSharedOptions_(jsToNumber(args[1]), args[2]! as String);
         out.add(
           'getSharedOptions ${_s(args[0])} ${_s(args[1])} ${args[2]}: '
           '${_encOptions(sharedOptions)} include=$includeOptions',
@@ -1047,9 +1040,8 @@ final class _Run {
   JsObjectFace _options(Object? ds, Object? index, Object? mode) =>
       index == null
       ? controller(ds).resolveDatasetElementOptions(mode as String?)
-      : controller(
-          ds,
-        ).resolveDataElementOptions(jsToNumber(index), mode as String?);
+      : controller(ds)
+            .resolveDataElementOptions(jsToNumber(index), mode as String?);
 
   // core.controller.js:415-451, without the registry.
   void _build() {
@@ -1448,12 +1440,7 @@ void main() {
       // 'undefined', so both items share one stack, as upstream.
       final stack = jsGetKey(stacksOf(items[0]), 'y');
       expect(jsGetKey(stacksOf(items[1]), 'y'), same(stack));
-      expect(jsObjectKeys(stack), [
-        '0',
-        '_top',
-        '_bottom',
-        '_visualValues',
-      ]);
+      expect(jsObjectKeys(stack), ['0', '_top', '_bottom', '_visualValues']);
       expect(jsGetKey(stack, '0'), same(undefined));
       // The Expando entry belongs to the List object, not to its items.
       expect(stacksOf(<Object?>[0.0, 1.0]), isNull);
@@ -1559,9 +1546,7 @@ void main() {
       expect(jsObjectKeys(itemStacks), ['y']);
       expect(stacksOf(a), same(itemStacks));
       expect(stacksOf(b), same(itemStacks));
-      expect(jsObjectKeys(run.chart.stacks!['x.y.test']! as AnyObject), [
-        '0',
-      ]);
+      expect(jsObjectKeys(run.chart.stacks!['x.y.test']! as AnyObject), ['0']);
       expect(jsGetKey(jsGetKey(itemStacks, 'y'), '0'), 1.0);
     });
 

@@ -15,11 +15,7 @@ Map<String, Object?> fixture() => <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
           'label': '# of Votes',
-          'data': <String, Object?>{
-            'a': 1,
-            'b': 3,
-            'c': 2,
-          },
+          'data': <String, Object?>{'a': 1, 'b': 3, 'c': 2},
         },
       ],
     },
@@ -31,9 +27,6 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
   'options': <String, Object?>{
     'spriteText': true,
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

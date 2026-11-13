@@ -12,9 +12,7 @@ import 'package:test/test.dart';
 
 /// A release version `<major>.<minor>.<patch>`, or a commit pin
 /// `<last version>+<sha8>` (Zoom ADR 0001).
-final RegExp _versionPattern = RegExp(
-  r'^(\d+\.\d+\.\d+)(?:\+([0-9a-f]{8}))?$',
-);
+final RegExp _versionPattern = RegExp(r'^(\d+\.\d+\.\d+)(?:\+([0-9a-f]{8}))?$');
 
 /// The closest ancestor of the working directory that has a `.gitmodules`
 /// file: the repository root. Null outside the repository.
@@ -139,16 +137,13 @@ void main() {
     expect(_versionPattern.hasMatch('v2.2.0'), isFalse);
   });
 
-  test(
-    'chartjsPluginZoomPackageVersion is the part of '
-    'chartjsPluginZoomVersion before +',
-    () {
-      expect(
-        chartjsPluginZoomPackageVersion,
-        _versionPattern.firstMatch(chartjsPluginZoomVersion)!.group(1),
-      );
-    },
-  );
+  test('chartjsPluginZoomPackageVersion is the part of '
+      'chartjsPluginZoomVersion before +', () {
+    expect(
+      chartjsPluginZoomPackageVersion,
+      _versionPattern.firstMatch(chartjsPluginZoomVersion)!.group(1),
+    );
+  });
 
   // CI compares the pinned commit with the upstream tag
   // (tool/check_upstream_pin.sh). These tests find a version mismatch

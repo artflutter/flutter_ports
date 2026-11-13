@@ -474,9 +474,8 @@ class DoughnutController extends DatasetController {
     final maxHeight = (chartArea.height - jsToNumber(spacing)) / ratioY;
     final maxRadius = jsMax(jsMin(maxWidth, maxHeight) / 2, 0);
     // DIVERGES(chartjs): adapt-length-objects, the length computes itself.
-    final outerRadius = _radiusLength(
-      options.readKey(OptionKey.radius),
-    ).pixelsOf(maxRadius);
+    final outerRadius = _radiusLength(options.readKey(OptionKey.radius))
+        .pixelsOf(maxRadius);
     final innerRadius = jsMax(outerRadius * cutout, 0);
     final radiusLength =
         (outerRadius - innerRadius) / _getVisibleDatasetWeightTotal();
@@ -486,10 +485,7 @@ class DoughnutController extends DatasetController {
     meta.total = calculateTotal();
 
     this.outerRadius = outerRadius - radiusLength * _getRingWeightOffset(index);
-    this.innerRadius = jsMax(
-      this.outerRadius! - radiusLength * chartWeight,
-      0,
-    );
+    this.innerRadius = jsMax(this.outerRadius! - radiusLength * chartWeight, 0);
 
     updateElements(arcs, 0, arcs.length.toDouble(), mode);
   }

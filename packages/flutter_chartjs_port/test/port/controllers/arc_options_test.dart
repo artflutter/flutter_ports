@@ -160,7 +160,7 @@ class _ObservedMap extends MapBase<String, Object?> {
   void clear() => fields.clear();
 }
 
-final class _UserScope extends ChartOptionsScope {}
+final class _UserScope extends ChartOptionsScope;
 
 class _UserRadial extends RadialLinearScale {
   _UserRadial(super.cfg);
@@ -351,9 +351,7 @@ void _growData(Chart chart, Map<String, Object?> cfg) {
 // contexts after the throw.
 void _throwInActiveResolve(Chart chart, Map<String, Object?> cfg) {
   _first(cfg)
-    ..['data'] = <Object?>[
-      for (var i = 0; i < 8; i++) (i * 7 + 3).toDouble(),
-    ]
+    ..['data'] = <Object?>[for (var i = 0; i < 8; i++) (i * 7 + 3).toDouble()]
     ..['borderColor'] = null;
   expect(() => chart.update('none'), throwsArgumentError);
   _first(cfg).remove('borderColor');
@@ -405,10 +403,7 @@ void _twins(
         final traces = [<Object?>[], <Object?>[]];
         final refType = reference == _Reference.config ? type : _refType(type);
         final configs = [build(type, traces[0]), build(refType, traces[1])];
-        final charts = [
-          _native(configs[0]),
-          _reference(configs[1], reference),
-        ];
+        final charts = [_native(configs[0]), _reference(configs[1], reference)];
         _rawConfig[charts[0]] = configs[0];
         _rawConfig[charts[1]] = configs[1];
         expect(_observe(charts[0]), _observe(charts[1]));
@@ -452,11 +447,7 @@ void main() {
   _twins(
     'constants',
     (type, _) => _config(type, [
-      _dataset({
-        'backgroundColor': red,
-        'borderColor': blue,
-        'offset': 2.0,
-      }),
+      _dataset({'backgroundColor': red, 'borderColor': blue, 'offset': 2.0}),
     ]),
   );
 
@@ -464,15 +455,8 @@ void main() {
     'indexed colors',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-          green,
-        ],
-        'borderColor': const <ChartPaint>[
-          blue,
-          red,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue, green],
+        'borderColor': const <ChartPaint>[blue, red],
       }),
     ]),
   );
@@ -481,10 +465,7 @@ void main() {
     'a non-empty borderDash',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'borderDash': <double>[2, 3],
         'borderWidth': 2.0,
       }),
@@ -495,10 +476,7 @@ void main() {
     'a borderDash of objects',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'borderDash': <Object?>[
           <String, Object?>{'a': 1.0},
         ],
@@ -510,11 +488,7 @@ void main() {
     'hover options of active arcs',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-          green,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue, green],
         'hoverBackgroundColor': green,
         'hoverBorderWidth': 5.0,
         'hoverOffset': 7.0,
@@ -531,11 +505,7 @@ void main() {
     'an active first arc',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-          green,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue, green],
         'hoverBackgroundColor': (Object? ctx) => green,
       }),
     ]),
@@ -575,10 +545,7 @@ void main() {
     'an indexed borderWidth and offset',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'borderWidth': <double>[1, 2, 7],
         'offset': <double>[0, 4, 9, 1],
       }),
@@ -589,10 +556,7 @@ void main() {
     'a user indexable predicate',
     (type, trace) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         '_indexable': (String name) {
           trace.add(name);
           return name != 'borderDash';
@@ -605,10 +569,7 @@ void main() {
     'a user scriptable predicate',
     (type, trace) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         '_scriptable': (String name) {
           trace.add(name);
           return true;
@@ -621,10 +582,7 @@ void main() {
     'a foreign borderWidth, a foreign borderAlign and a string offset',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'borderWidth': '3',
         'borderAlign': ArcBorderAlign.inner,
         'offset': '2',
@@ -636,10 +594,7 @@ void main() {
     'an inner border',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'borderWidth': 9.0,
         'borderAlign': ArcBorderAlign.inner,
       }),
@@ -659,10 +614,7 @@ void main() {
     'color lists that change between the updates',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
       }),
     ]),
     steps: [
@@ -690,11 +642,7 @@ void main() {
     'hidden data',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-          green,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue, green],
       }),
     ]),
     prepare: (chart, _) {
@@ -721,10 +669,7 @@ void main() {
     'a hidden arc through its property',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
       }),
     ]),
     prepare: (chart, _) {
@@ -736,10 +681,7 @@ void main() {
     'a raw angle and spacing of a polar area',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'angle': 30.0,
         'spacing': 2.0,
         'spacingMode': ArcSpacingMode.proportional,
@@ -760,10 +702,7 @@ void main() {
     'an indexed and a scriptable angle of a polar area',
     (type, trace) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'angle': <double>[10, 20, 30],
       }),
       _dataset({
@@ -780,21 +719,12 @@ void main() {
     'the first visible dataset of another ring gives the border',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'borderWidth': 6.0,
       }),
+      _dataset({'backgroundColor': green, 'borderWidth': 1.0}),
       _dataset({
-        'backgroundColor': green,
-        'borderWidth': 1.0,
-      }),
-      _dataset({
-        'backgroundColor': <ChartPaint>[
-          blue,
-          green,
-        ],
+        'backgroundColor': <ChartPaint>[blue, green],
         'offset': 3.0,
       }),
     ]),
@@ -804,18 +734,12 @@ void main() {
     'a hidden first dataset',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'borderWidth': 6.0,
         'hidden': true,
       }),
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          green,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[green, blue],
         'borderWidth': 2.0,
       }),
     ]),
@@ -826,10 +750,7 @@ void main() {
     (type, _) => _config(type, [
       _dataset({'backgroundColor': red, 'borderWidth': 6.0}),
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          green,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[green, blue],
         'borderWidth': 2.0,
       }),
     ]),
@@ -839,10 +760,7 @@ void main() {
     'a dataset option that reads an arc context during the update',
     (type, trace) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'cutout': (Object? ctx) {
           final chart = jsGet(ctx, 'chart')! as Chart;
           final data = chart.getDatasetMeta(0).data;
@@ -863,10 +781,7 @@ void main() {
     'parsing false',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'parsing': false,
         'data': type.endsWith('polarArea')
             ? <Object?>[
@@ -882,10 +797,7 @@ void main() {
     'a rotation, a circumference and a ring weight',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'rotation': 30.0,
         'circumference': 180.0,
         'weight': 2.0,
@@ -898,10 +810,7 @@ void main() {
     'a key that the arc defaults gain',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'hoverOffset': <double>[4, 8],
         'hoverBorderWidth': 3.0,
       }),
@@ -919,10 +828,7 @@ void main() {
     'a custom data list',
     (type, trace) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'data': _ObservedList(<Object?>[1.0, 2.0, 3.0, 4.0, 5.0, 6.0], trace),
       }),
     ]),
@@ -934,10 +840,7 @@ void main() {
     (type, trace) => _config(type, [
       _ObservedMap(
         _dataset({
-          'backgroundColor': <ChartPaint>[
-            red,
-            blue,
-          ],
+          'backgroundColor': <ChartPaint>[red, blue],
         }),
         trace,
       ),
@@ -952,10 +855,7 @@ void main() {
     );
     return _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue],
         'offset': 3.0,
         'borderWidth': 2.0,
       }),
@@ -966,11 +866,7 @@ void main() {
     'static hover colors of an active arc after the first two',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-          green,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue, green],
         'hoverBackgroundColor': red,
         'hoverBorderColor': blue,
       }),
@@ -983,11 +879,7 @@ void main() {
     'a hover callback reads the contexts of the other arcs',
     (type, trace) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-          green,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue, green],
         'hoverBorderWidth': (Object? ctx) {
           trace.add(_arcContexts(jsGet(ctx, 'chart')! as Chart));
           return 3.0;
@@ -1002,11 +894,7 @@ void main() {
     'a throw in the resolve of an active arc',
     (type, _) => _config(type, [
       _dataset({
-        'backgroundColor': <ChartPaint>[
-          red,
-          blue,
-          green,
-        ],
+        'backgroundColor': <ChartPaint>[red, blue, green],
       }),
     ]),
     prepare: (chart, _) => _activate(chart, 2),
@@ -1017,17 +905,10 @@ void main() {
     ('a visible dataset', <String, Object?>{}),
     ('a hidden dataset', <String, Object?>{'hidden': true}),
   ]) {
-    Map<String, Object?> observed(
-      String type,
-      List<Object?> trace,
-    ) {
+    Map<String, Object?> observed(String type, List<Object?> trace) {
       final cfg = _config(type, [
         _dataset({
-          'backgroundColor': <ChartPaint>[
-            red,
-            blue,
-            green,
-          ],
+          'backgroundColor': <ChartPaint>[red, blue, green],
           ...fields,
         }),
       ]);
@@ -1068,20 +949,12 @@ void main() {
         final configs = [
           _config(type, [
             _dataset({
-              'backgroundColor': <ChartPaint>[
-                red,
-                blue,
-                green,
-              ],
+              'backgroundColor': <ChartPaint>[red, blue, green],
             }),
           ]),
           _config(_refType(type), [
             _dataset({
-              'backgroundColor': <ChartPaint>[
-                red,
-                blue,
-                green,
-              ],
+              'backgroundColor': <ChartPaint>[red, blue, green],
             }),
           ]),
         ];
@@ -1108,17 +981,11 @@ void main() {
 
     for (final type in ['pie', 'doughnut']) {
       for (final (name, fields) in [
-        (
-          'shared options',
-          <String, Object?>{'backgroundColor': red},
-        ),
+        ('shared options', <String, Object?>{'backgroundColor': red}),
         (
           'indexed colors',
           <String, Object?>{
-            'backgroundColor': <ChartPaint>[
-              red,
-              blue,
-            ],
+            'backgroundColor': <ChartPaint>[red, blue],
           },
         ),
       ]) {
@@ -1135,10 +1002,7 @@ void main() {
               ..onHidden = () {
                 if (!armed) return;
                 armed = false;
-                meta.controller!.options.jsWrite(
-                  'circumference',
-                  90.0,
-                );
+                meta.controller!.options.jsWrite('circumference', 90.0);
               };
             meta.data[4] = user;
             chart.update('none');
@@ -1167,10 +1031,7 @@ void main() {
           type,
           [
             _dataset({
-              'backgroundColor': <ChartPaint>[
-                red,
-                blue,
-              ],
+              'backgroundColor': <ChartPaint>[red, blue],
             }),
           ],
           {
@@ -1206,11 +1067,7 @@ void main() {
     }) {
       final cfg = _config(type, [
         _dataset({
-          'backgroundColor': <ChartPaint>[
-            red,
-            blue,
-            green,
-          ],
+          'backgroundColor': <ChartPaint>[red, blue, green],
           ...?fields,
         }),
       ]);
@@ -1264,16 +1121,10 @@ void main() {
       test('a second dataset keeps each scan of $type', () {
         final cfg = _config(type, [
           _dataset({
-            'backgroundColor': <ChartPaint>[
-              red,
-              blue,
-            ],
+            'backgroundColor': <ChartPaint>[red, blue],
           }),
           _dataset({
-            'backgroundColor': <ChartPaint>[
-              red,
-              green,
-            ],
+            'backgroundColor': <ChartPaint>[red, green],
           }),
         ]);
         final chart = _native(cfg);
@@ -1314,11 +1165,7 @@ void main() {
       test('a user options Map keeps each scan of $type', () {
         final cfg = _config(type, [
           _dataset({
-            'backgroundColor': <ChartPaint>[
-              red,
-              blue,
-              green,
-            ],
+            'backgroundColor': <ChartPaint>[red, blue, green],
           }),
         ]);
         cfg['options'] = _ObservedMap(
@@ -1421,15 +1268,8 @@ void main() {
       test('prepared colors give fresh options equal to a resolve', () {
         final cfg = _config(type, [
           _dataset({
-            'backgroundColor': <ChartPaint>[
-              red,
-              blue,
-              green,
-            ],
-            'borderColor': <ChartPaint>[
-              blue,
-              red,
-            ],
+            'backgroundColor': <ChartPaint>[red, blue, green],
+            'borderColor': <ChartPaint>[blue, red],
             'offset': 2.0,
           }),
         ]);
@@ -1473,10 +1313,7 @@ void main() {
         'polarArea',
         [
           _dataset({
-            'backgroundColor': <ChartPaint>[
-              red,
-              blue,
-            ],
+            'backgroundColor': <ChartPaint>[red, blue],
           }),
         ],
         {
@@ -1546,10 +1383,7 @@ void main() {
       List<double> values(int shift) => [
         for (var i = 0; i < 8; i++) (i + shift + 1).toDouble(),
       ];
-      const color = ChartValue<ChartPaint>.indexed([
-        red,
-        blue,
-      ]);
+      const color = ChartValue<ChartPaint>.indexed([red, blue]);
       final datasets = <String, Dataset Function(List<double>)>{
         'pie': (data) =>
             PieDataset(data: data, backgroundColor: color, borderWidth: 0),
@@ -1671,42 +1505,24 @@ void main() {
     test('no plan exists for a custom Config', () {
       final cfg = _config('pie', [
         _dataset({
-          'backgroundColor': <ChartPaint>[
-            red,
-            blue,
-          ],
+          'backgroundColor': <ChartPaint>[red, blue],
         }),
       ]);
       final chart = _reference(cfg, _Reference.config);
       final meta = chart.getDatasetMeta(0);
-      expect(
-        prepareNativeArcColors(
-          meta.controller!,
-          meta.data,
-        ),
-        isNull,
-      );
+      expect(prepareNativeArcColors(meta.controller!, meta.data), isNull);
     });
 
     test('no plan exists for a varying non-color key', () {
       final cfg = _config('pie', [
         _dataset({
-          'backgroundColor': <ChartPaint>[
-            red,
-            blue,
-          ],
+          'backgroundColor': <ChartPaint>[red, blue],
           'offset': <double>[1, 2],
         }),
       ]);
       final chart = _native(cfg);
       final meta = chart.getDatasetMeta(0);
-      expect(
-        prepareNativeArcColors(
-          meta.controller!,
-          meta.data,
-        ),
-        isNull,
-      );
+      expect(prepareNativeArcColors(meta.controller!, meta.data), isNull);
     });
   });
 }

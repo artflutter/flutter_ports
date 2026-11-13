@@ -80,9 +80,7 @@ AnyObject _config(String type) => <String, Object?>{
 void main() {
   group('Default Configs', () {
     group('Doughnut Chart', () {
-      testWidgets('should return correct legend label objects', (
-        tester,
-      ) async {
+      testWidgets('should return correct legend label objects', (tester) async {
         final chart = acquireChart(_config('doughnut'));
 
         final expectedCommon = <String, Object?>{
@@ -216,9 +214,7 @@ void main() {
     });
 
     group('Polar Area Chart', () {
-      testWidgets('should return correct legend label objects', (
-        tester,
-      ) async {
+      testWidgets('should return correct legend label objects', (tester) async {
         final chart = acquireChart(_config('polarArea'));
 
         final expected = <Object?>[

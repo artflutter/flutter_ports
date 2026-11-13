@@ -49,10 +49,8 @@ final class _Chart implements types.Chart {
   ContextObject? _context;
 
   @override
-  ContextObject getContext() => _context ??= createContext(null, {
-    'chart': this,
-    'type': 'chart',
-  });
+  ContextObject getContext() =>
+      _context ??= createContext(null, {'chart': this, 'type': 'chart'});
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

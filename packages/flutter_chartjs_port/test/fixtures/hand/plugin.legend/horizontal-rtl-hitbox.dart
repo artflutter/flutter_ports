@@ -60,12 +60,7 @@ Map<String, Object?> fixture() => <String, Object?>{
 
           final legend = chart.legend! as Legend;
           for (final box in legend.legendHitBoxes) {
-            ctx.strokeRect(
-              box.left,
-              box.top,
-              box.width,
-              box.height,
-            );
+            ctx.strokeRect(box.left, box.top, box.width, box.height);
           }
 
           ctx.restore();

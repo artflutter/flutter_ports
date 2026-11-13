@@ -23,26 +23,11 @@ Map<String, Object?> fixture() {
             // date.clone().add(n, 'day') for each x except the third.
             // DIVERGES(chartjs): harness-fixture-sources, a moment value.
             'data': <Object?>[
-              <String, Object?>{
-                'x': DateTime.utc(2020, 5, 24 - 2),
-                'y': 20,
-              },
-              <String, Object?>{
-                'x': DateTime.utc(2020, 5, 24 - 1),
-                'y': 30,
-              },
-              <String, Object?>{
-                'x': date,
-                'y': 40,
-              },
-              <String, Object?>{
-                'x': DateTime.utc(2020, 5, 24 + 1),
-                'y': 50,
-              },
-              <String, Object?>{
-                'x': DateTime.utc(2020, 5, 24 + 7),
-                'y': 10,
-              },
+              <String, Object?>{'x': DateTime.utc(2020, 5, 24 - 2), 'y': 20},
+              <String, Object?>{'x': DateTime.utc(2020, 5, 24 - 1), 'y': 30},
+              <String, Object?>{'x': date, 'y': 40},
+              <String, Object?>{'x': DateTime.utc(2020, 5, 24 + 1), 'y': 50},
+              <String, Object?>{'x': DateTime.utc(2020, 5, 24 + 7), 'y': 10},
             ],
           },
         ],
@@ -61,14 +46,10 @@ Map<String, Object?> fixture() {
               'unit': TimeUnit.day,
             },
           },
-          'y': <String, Object?>{
-            'display': false,
-          },
+          'y': <String, Object?>{'display': false},
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-    },
+    'options': <String, Object?>{'spriteText': true},
   };
 }

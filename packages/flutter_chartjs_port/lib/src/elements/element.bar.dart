@@ -255,12 +255,7 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
   return _Corners(
     topLeft: _skipOrLimit(edges.top || edges.left, o.topLeft, 0, maxR),
     topRight: _skipOrLimit(edges.top || edges.right, o.topRight, 0, maxR),
-    bottomLeft: _skipOrLimit(
-      edges.bottom || edges.left,
-      o.bottomLeft,
-      0,
-      maxR,
-    ),
+    bottomLeft: _skipOrLimit(edges.bottom || edges.left, o.bottomLeft, 0, maxR),
     bottomRight: _skipOrLimit(
       edges.bottom || edges.right,
       o.bottomRight,
@@ -309,12 +304,7 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
 /// interaction mode passes to `inRange`. Upstream also tests that `bar` is
 /// truthy. The callers pass `this`, which is never null. Thus the port omits
 /// that test.
-bool _inRange(
-  BarElement bar,
-  double? x,
-  double? y,
-  bool? useFinalPosition,
-) {
+bool _inRange(BarElement bar, double? x, double? y, bool? useFinalPosition) {
   final skipX = x == null;
   final skipY = y == null;
   final skipBoth = skipX && skipY;
@@ -926,11 +916,7 @@ class BarElement extends Element
     final y = finalNumber(AnimatedProp.y, this.y, useFinalPosition);
     final base = finalNumber(AnimatedProp.base, _base, useFinalPosition);
     final horizontal = jsTruthy(
-      finalValue(
-        _horizontalProp,
-        _horizontal ?? undefined,
-        useFinalPosition,
-      ),
+      finalValue(_horizontalProp, _horizontal ?? undefined, useFinalPosition),
     );
     return ElementPoint(
       horizontal ? (x + base) / 2 : x,

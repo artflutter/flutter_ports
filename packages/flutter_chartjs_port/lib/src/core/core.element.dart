@@ -319,9 +319,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// as the [Point] rules of `geometric.dart` state for a copied
   /// `undefined`. Dart `null` for [useFinalPosition] stands for JS
   /// `undefined`: `plugin.tooltip.js:34` calls it with no argument.
-  ElementPoint tooltipPosition([
-    bool? useFinalPosition,
-  ]) {
+  ElementPoint tooltipPosition([bool? useFinalPosition]) {
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
     return ElementPoint(
       finalNumber(AnimatedProp.x, x, useFinalPosition),
@@ -402,10 +400,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// itself, or an [ElementProps] over a new Map with an own key for each
   /// name of [props]. A caller reads a number from it with `jsToNumber` and
   /// a boolean with `jsTruthy`.
-  ElementProps getProps(
-    List<String> props, [
-    bool? isFinal,
-  ]) {
+  ElementProps getProps(List<String> props, [bool? isFinal]) {
     final anims = $animations;
     if (isFinal != true || anims == null) {
       // let's not create an object, if not needed
@@ -602,10 +597,8 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// `undefined` state. Throws an [ArgumentError] for another value, also
   /// for Dart `null` (JS `null`).
   @protected
-  bool? toBoolProp(String prop, Object? value) => toObjectProp<bool>(
-    prop,
-    value,
-  );
+  bool? toBoolProp(String prop, Object? value) =>
+      toObjectProp<bool>(prop, value);
 
   /// The value that a write by name of [value] stores in the boolean
   /// property [prop] that upstream never sets to `undefined`, for example
@@ -721,8 +714,6 @@ final class ElementYProp extends AnimatedBy<YAnimation> {
 /// [Element] implements it, because `getProps` can return the element
 /// itself (core.element.ts:35-37). The other result is a new plain object
 /// (core.element.ts:39).
-// The result object of getProps has one member, the property read.
-// ignore: one_member_abstracts
 abstract interface class ElementProps {
   /// The JS property read `props[prop]`.
   ///

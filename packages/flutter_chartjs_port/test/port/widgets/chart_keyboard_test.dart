@@ -154,10 +154,7 @@ Widget _pair(Widget keys, Widget mouse) => _top(
   final (group, item) = target;
   if (group == _legend) {
     final box = chart.legend!.legendHitBoxes[item];
-    return (
-      x: box.left + box.width / 2,
-      y: box.top + box.height / 2,
-    );
+    return (x: box.left + box.width / 2, y: box.top + box.height / 2);
   }
   final element = chart.getDatasetMeta(group).data[item] as types.VisualElement;
   final center = element.getCenterPoint(true);
@@ -271,10 +268,7 @@ List<Object?> _ringCalls(double x, double y, double w, double h) => [
   ['save'],
   ['setStrokeStyle', const native_ui.Color.fromRGBO(102, 102, 102, 1)],
   ['setLineWidth', 2.0],
-  [
-    'setLineDash',
-    <double>[],
-  ],
+  ['setLineDash', <double>[]],
   ['strokeRect', x, y, w, h],
   ['restore'],
 ];
@@ -365,24 +359,18 @@ void main() {
         },
       );
       await charts.pump(tester);
-      await charts.both(
-        tester,
-        LogicalKeyboardKey.arrowDown,
-        'mousemove',
-        (_legend, 0),
-      );
-      await charts.both(
-        tester,
-        LogicalKeyboardKey.arrowRight,
-        'mousemove',
-        (_legend, 1),
-      );
-      await charts.both(
-        tester,
-        LogicalKeyboardKey.arrowDown,
-        'mousemove',
-        (0, 1),
-      );
+      await charts.both(tester, LogicalKeyboardKey.arrowDown, 'mousemove', (
+        _legend,
+        0,
+      ));
+      await charts.both(tester, LogicalKeyboardKey.arrowRight, 'mousemove', (
+        _legend,
+        1,
+      ));
+      await charts.both(tester, LogicalKeyboardKey.arrowDown, 'mousemove', (
+        0,
+        1,
+      ));
       expect(charts.keysState, charts.mouseState);
       expect(charts.keysState['active'], ['0.0:1.0', '1.0:1.0']);
       expect(charts.keysState['tooltip'], ['0.0:1.0', '1.0:1.0']);
@@ -494,14 +482,8 @@ void main() {
       await charts.pump(tester);
       await _key(tester, LogicalKeyboardKey.arrowDown);
       expect(await tester.sendKeyDownEvent(LogicalKeyboardKey.enter), isTrue);
-      expect(
-        await tester.sendKeyRepeatEvent(LogicalKeyboardKey.enter),
-        isTrue,
-      );
-      expect(
-        await tester.sendKeyRepeatEvent(LogicalKeyboardKey.enter),
-        isTrue,
-      );
+      expect(await tester.sendKeyRepeatEvent(LogicalKeyboardKey.enter), isTrue);
+      expect(await tester.sendKeyRepeatEvent(LogicalKeyboardKey.enter), isTrue);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.enter);
       await tester.pump(const Duration(milliseconds: 16));
       expect(clicks, 1);
@@ -566,9 +548,7 @@ void main() {
       addTearDown(node.dispose);
       late Chart chart;
       await tester.pumpWidget(
-        _top(
-          _view(config, focusNode: node, onChartCreated: (c) => chart = c),
-        ),
+        _top(_view(config, focusNode: node, onChartCreated: (c) => chart = c)),
       );
       node.requestFocus();
       await tester.pump();
@@ -622,18 +602,14 @@ void main() {
     testWidgets('Escape clears the hover and the tooltip', (tester) async {
       final charts = _Charts('line');
       await charts.pump(tester);
-      await charts.both(
-        tester,
-        LogicalKeyboardKey.arrowDown,
-        'mousemove',
-        (_legend, 0),
-      );
-      await charts.both(
-        tester,
-        LogicalKeyboardKey.arrowDown,
-        'mousemove',
-        (0, 0),
-      );
+      await charts.both(tester, LogicalKeyboardKey.arrowDown, 'mousemove', (
+        _legend,
+        0,
+      ));
+      await charts.both(tester, LogicalKeyboardKey.arrowDown, 'mousemove', (
+        0,
+        0,
+      ));
       expect(charts.keys.getActiveElements(), isNotEmpty);
       expect(charts.keys.tooltip!.getActiveElements(), isNotEmpty);
       await charts.leave(tester, LogicalKeyboardKey.escape);
@@ -668,12 +644,10 @@ void main() {
     ) async {
       final charts = _Charts('line');
       await charts.pump(tester);
-      await charts.both(
-        tester,
-        LogicalKeyboardKey.arrowDown,
-        'mousemove',
-        (_legend, 0),
-      );
+      await charts.both(tester, LogicalKeyboardKey.arrowDown, 'mousemove', (
+        _legend,
+        0,
+      ));
       expect(charts.keysLog.last, startsWith('hover mousemove'));
       charts.node.unfocus();
       await tester.pump();
@@ -890,11 +864,7 @@ void main() {
         properties(
           ChartView.raw(config: const {}, focusNode: node, autofocus: true),
         ),
-        [
-          'type: null',
-          startsWith('focusNode: FocusNode#'),
-          'autofocus',
-        ],
+        ['type: null', startsWith('focusNode: FocusNode#'), 'autofocus'],
       );
       expect(properties(const ChartView.raw(config: {})), ['type: null']);
     });
@@ -998,9 +968,7 @@ void main() {
         ],
       );
       await tester.pumpWidget(
-        _top(
-          _view(config, focusNode: node, onChartCreated: (c) => chart = c),
-        ),
+        _top(_view(config, focusNode: node, onChartCreated: (c) => chart = c)),
       );
       expect(_ring(chart), isEmpty);
 

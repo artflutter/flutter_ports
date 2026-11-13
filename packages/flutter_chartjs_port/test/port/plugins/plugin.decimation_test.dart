@@ -522,9 +522,7 @@ void main() {
       expect(DecimationAlgorithm.of(lttb), same(lttb));
     });
 
-    testWidgets('an algorithm of a program decimates the data', (
-      tester,
-    ) async {
+    testWidgets('an algorithm of a program decimates the data', (tester) async {
       // The option holds a subclass of a program, with no registration: the
       // plugin calls its `decimate`.
       final (:chart, :dataset, data: _) = _accessorChart(
@@ -560,9 +558,7 @@ void main() {
 
     testWidgets('a user _data key without the accessor', (tester) async {
       final own = _series(200, (i) => i % 9);
-      final (:chart, :dataset, :data) = _accessorChart(
-        dataset: {'_data': own},
-      );
+      final (:chart, :dataset, :data) = _accessorChart(dataset: {'_data': own});
       // A12: `_data` is set, so plugin.decimation.js:249 sees no first time
       // and `data` stays the plain raw data.
       expect(jsObjectKeys(dataset), [
@@ -620,28 +616,27 @@ void main() {
   group('js-semantics-narrow-datasets', () {
     /// A line chart with the dataset [dataset] and the decimation on when
     /// [enabled] is true.
-    Chart narrowChart(Object dataset, {bool enabled = true}) => acquireChart(
-      <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[dataset],
-        },
-        'options': <String, Object?>{
-          'parsing': false,
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear'},
+    Chart narrowChart(Object dataset, {bool enabled = true}) =>
+        acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[dataset],
           },
-          'plugins': <String, Object?>{
-            'decimation': <String, Object?>{
-              'enabled': enabled,
-              'algorithm': const LttbDecimationAlgorithm(),
-              'samples': 10,
-              'threshold': 20,
+          'options': <String, Object?>{
+            'parsing': false,
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear'},
+            },
+            'plugins': <String, Object?>{
+              'decimation': <String, Object?>{
+                'enabled': enabled,
+                'algorithm': const LttbDecimationAlgorithm(),
+                'samples': 10,
+                'threshold': 20,
+              },
             },
           },
-        },
-      },
-    );
+        });
 
     /// 40 items `{x: i, y: i % 7}` with the narrow type `Map<String, int>`.
     List<Map<String, int>> narrowData() => [
@@ -660,9 +655,8 @@ void main() {
     testWidgets('a Map<String, List<Map<String, int>>> dataset throws a '
         'TypeError at the write of the getter value', (tester) async {
       expect(
-        () => narrowChart(<String, List<Map<String, int>>>{
-          'data': narrowData(),
-        }),
+        () =>
+            narrowChart(<String, List<Map<String, int>>>{'data': narrowData()}),
         throwsA(isA<TypeError>()),
       );
     });

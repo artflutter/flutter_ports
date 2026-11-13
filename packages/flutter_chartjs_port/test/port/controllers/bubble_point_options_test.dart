@@ -245,9 +245,7 @@ List<Map<String, Object?>> _pair(
 
 List<_ProbePoint> _probes(Chart chart) {
   final points = chart.getDatasetMeta(0).data;
-  return [
-    for (var i = 0; i < points.length; i++) points[i] = _ProbePoint(),
-  ];
+  return [for (var i = 0; i < points.length; i++) points[i] = _ProbePoint()];
 }
 
 Object? _plain(Object? value) {
@@ -295,12 +293,7 @@ void main() {
     PointElement.jsClass,
     LinearScale.jsClass,
   ]);
-  registerDataUpdateTypes(
-    [
-      <DataPoint>[].runtimeType,
-    ],
-    [DataPoint],
-  );
+  registerDataUpdateTypes([<DataPoint>[].runtimeType], [DataPoint]);
 
   /// The cases of the data and of the indexed colors, in two forms of parsing.
   final datas = <String, List<Object?> Function({double step})>{
@@ -385,10 +378,7 @@ void main() {
       ((cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>)
           .add(<String, Object?>{
             'data': _maps(step: 2),
-            'backgroundColor': <ChartPaint>[
-              green,
-              red,
-            ],
+            'backgroundColor': <ChartPaint>[green, red],
             'borderColor': red,
             'borderWidth': 2.0,
           });
@@ -592,10 +582,7 @@ void main() {
     expect(probes.every((p) => p.sizeCalls == 0), isTrue);
     expect(probes.every((p) => p.planReads == 1), isTrue);
 
-    final reference = _chart(
-      _config(type: 'referenceBubble'),
-      reference: true,
-    );
+    final reference = _chart(_config(type: 'referenceBubble'), reference: true);
     final others = _probes(reference);
     expect(reference.getDatasetMeta(0).controller!.getMaxOverflow(), overflow);
     expect(others.every((p) => p.sizeCalls == 1), isTrue);
@@ -613,9 +600,7 @@ void main() {
   });
 
   test('an indexed overflow keeps each context write and the mode', () {
-    final chart = _chart(
-      _config(backgroundColor: <ChartPaint>[red, blue]),
-    );
+    final chart = _chart(_config(backgroundColor: <ChartPaint>[red, blue]));
     final meta = chart.getDatasetMeta(0);
     final controller = meta.controller!;
     final probes = _probes(chart);
@@ -688,10 +673,7 @@ void main() {
 
     test('indexed colors keep the context writes of the resolve', () {
       final configs = _pair(
-        (type) => _config(
-          type: type,
-          backgroundColor: <ChartPaint>[red, blue],
-        ),
+        (type) => _config(type: type, backgroundColor: <ChartPaint>[red, blue]),
       );
       final a = _chart(configs[0]);
       final b = _chart(configs[1], reference: true);
@@ -935,9 +917,7 @@ void main() {
         };
         meta.controller!.buildOrUpdateElements(false);
         counts.add(calls);
-        results.add([
-          for (final p in meta.parsed.cast<ParsedItem>()) p.custom,
-        ]);
+        results.add([for (final p in meta.parsed.cast<ParsedItem>()) p.custom]);
       }
       expect(counts[1], greaterThan(0));
       expect(counts[0], counts[1]);
@@ -1494,10 +1474,7 @@ void main() {
       expect(second.parsed.first, isA<DataPoint>());
       expect(first.parsed.first, isA<ParsedItem>());
       for (var i = 0; i < _length; i++) {
-        expect(
-          _plain(second.data[i].options),
-          _plain(first.data[i].options),
-        );
+        expect(_plain(second.data[i].options), _plain(first.data[i].options));
         expect(
           (second.data[i] as PointElement).x,
           (first.data[i] as PointElement).x,

@@ -39,9 +39,7 @@ void main() {
           'drawTime': DrawTime.beforeDatasetsDraw,
           'modifierKey': null,
         },
-        'pinch': <String, Object?>{
-          'enabled': false,
-        },
+        'pinch': <String, Object?>{'enabled': false},
         'mode': Mode.xy,
       },
       // The run with the port-only option of Chart.js ADR 0111 in the
@@ -64,9 +62,7 @@ void main() {
         'type': 'line',
         'data': <String, Object?>{
           'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[],
-            },
+            <String, Object?>{'data': <Object?>[]},
           ],
         },
       });

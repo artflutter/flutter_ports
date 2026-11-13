@@ -108,46 +108,41 @@ final class _Meta implements ChartMeta {
 }
 
 List<BenchCase> _extrasCases() => [
-  BenchCase(
-    'data',
-    'extras/visible_points_100k',
-    () {
-      const count = 100000;
-      final meta = _Meta(
-        _Scale(const XAxis(), (
-          min: 40000.5,
-          max: 60000.5,
-          minDefined: true,
-          maxDefined: true,
-        )),
-        _Scale(const YAxis(), (
-          min: double.negativeInfinity,
-          max: double.infinity,
-          minDefined: false,
-          maxDefined: false,
-        )),
-        [
-          for (var i = 0; i < count; i++)
-            <String, Object?>{'x': i.toDouble(), 'y': (i % 31).toDouble()},
-        ],
-      );
-      final points = <PointElement>[
-        for (var i = 0; i < count; i++) _Point(i * 3.0, (i % 31).toDouble()),
-      ];
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          acc += getStartAndCountOfVisiblePoints(
-            meta,
-            points,
-            false,
-          ).count.toInt();
-        }
-        return acc;
-      };
-    },
-    per: '_getStartAndCountOfVisiblePoints, 100k sorted points, zoomed',
-  ),
+  BenchCase('data', 'extras/visible_points_100k', () {
+    const count = 100000;
+    final meta = _Meta(
+      _Scale(const XAxis(), (
+        min: 40000.5,
+        max: 60000.5,
+        minDefined: true,
+        maxDefined: true,
+      )),
+      _Scale(const YAxis(), (
+        min: double.negativeInfinity,
+        max: double.infinity,
+        minDefined: false,
+        maxDefined: false,
+      )),
+      [
+        for (var i = 0; i < count; i++)
+          <String, Object?>{'x': i.toDouble(), 'y': (i % 31).toDouble()},
+      ],
+    );
+    final points = <PointElement>[
+      for (var i = 0; i < count; i++) _Point(i * 3.0, (i % 31).toDouble()),
+    ];
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        acc += getStartAndCountOfVisiblePoints(
+          meta,
+          points,
+          false,
+        ).count.toInt();
+      }
+      return acc;
+    };
+  }, per: '_getStartAndCountOfVisiblePoints, 100k sorted points, zoomed'),
 ];
 
 void main() {

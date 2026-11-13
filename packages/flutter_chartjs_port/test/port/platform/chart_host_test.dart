@@ -709,10 +709,7 @@ void main() {
         tester,
         (host) => Align(
           alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 400,
-            child: ListView(children: [host]),
-          ),
+          child: SizedBox(width: 400, child: ListView(children: [host])),
         ),
       );
       expect((chart.width, chart.height), (400.0, 200.0));
@@ -726,10 +723,7 @@ void main() {
         tester,
         (host) => Align(
           alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: 400,
-            child: ListView(children: [host]),
-          ),
+          child: SizedBox(width: 400, child: ListView(children: [host])),
         ),
         maintainAspectRatio: false,
       );
@@ -840,9 +834,7 @@ void main() {
       chart.destroy();
     });
 
-    testWidgets('an unmount reports a detach after the frame', (
-      tester,
-    ) async {
+    testWidgets('an unmount reports a detach after the frame', (tester) async {
       final canvas = UiCanvasElement();
       await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
       final chart = FakeChart(canvas);
@@ -855,9 +847,7 @@ void main() {
       chart.destroy();
     });
 
-    testWidgets('a new host attaches the detached chart again', (
-      tester,
-    ) async {
+    testWidgets('a new host attaches the detached chart again', (tester) async {
       final canvas = UiCanvasElement();
       await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
       final chart = FakeChart(canvas, maintainAspectRatio: false);
@@ -1105,9 +1095,7 @@ void main() {
       observer.disconnect();
     });
 
-    testWidgets('reports a detach and a later attach in order', (
-      tester,
-    ) async {
+    testWidgets('reports a detach and a later attach in order', (tester) async {
       final canvas = UiCanvasElement();
       final show = ValueNotifier(true);
       addTearDown(show.dispose);
@@ -1477,10 +1465,9 @@ void main() {
         'mouseup document',
         'click document',
       ]);
-      expect(
-        [for (final e in document) (e.offsetX, e.clientX, e.clientY)],
-        everyElement((700.0, 700.0, 500.0)),
-      );
+      expect([
+        for (final e in document) (e.offsetX, e.clientX, e.clientY),
+      ], everyElement((700.0, 700.0, 500.0)));
 
       // An up inside the box still gives mouseup. It bubbles to the
       // document with the canvas as the target.
@@ -1541,10 +1528,9 @@ void main() {
       );
       // The client point is the position in the view: the host is at
       // (40, 0).
-      expect(
-        [for (final e in log) (e.clientX - e.offsetX, e.clientY - e.offsetY)],
-        everyElement((40.0, 0.0)),
-      );
+      expect([
+        for (final e in log) (e.clientX - e.offsetX, e.clientY - e.offsetY),
+      ], everyElement((40.0, 0.0)));
       expect((log.first.clientX, log.first.clientY), (100.0, 50.0));
       expect(log.every((e) => identical(e.target, canvas)), isTrue);
       expect(
@@ -1747,20 +1733,18 @@ void main() {
       await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
       log.clear();
       await gesture.moveTo(const Offset(110, 50));
-      expect(
-        [for (final e in log) (e.ctrlKey, e.shiftKey, e.altKey, e.metaKey)],
-        everyElement((true, true, false, false)),
-      );
+      expect([
+        for (final e in log) (e.ctrlKey, e.shiftKey, e.altKey, e.metaKey),
+      ], everyElement((true, true, false, false)));
       await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
       await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
       log.clear();
       await gesture.moveTo(const Offset(120, 50));
-      expect(
-        [for (final e in log) (e.ctrlKey, e.shiftKey, e.altKey, e.metaKey)],
-        everyElement((false, false, true, true)),
-      );
+      expect([
+        for (final e in log) (e.ctrlKey, e.shiftKey, e.altKey, e.metaKey),
+      ], everyElement((false, false, true, true)));
       await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
     });
@@ -1859,11 +1843,7 @@ void main() {
       expect((cancel.offsetX, cancel.offsetY), (-40.0, 0.0));
       expect(
         (cancel.cancelable, cancel.button, cancel.buttons),
-        (
-          false,
-          -1,
-          0,
-        ),
+        (false, -1, 0),
       );
       expect(
         [
@@ -2310,10 +2290,9 @@ void main() {
         'click document',
       ]);
       // The offsets are in the coordinates of the host at (40, 0).
-      expect(
-        [for (final e in document) (e.offsetX, e.clientX)],
-        everyElement((-20.0, 20.0)),
-      );
+      expect([
+        for (final e in document) (e.offsetX, e.clientX),
+      ], everyElement((-20.0, 20.0)));
       // A later up inside the box after a down outside gives no click. The
       // pointer did not go down on the host: the document gets nothing.
       document.clear();
@@ -2505,9 +2484,7 @@ void main() {
       await second.up();
     });
 
-    testWidgets('D2: a move to the same point gives no event', (
-      tester,
-    ) async {
+    testWidgets('D2: a move to the same point gives no event', (tester) async {
       final log = <NativeEvent>[];
       await _pumpHost(tester, log);
       final gesture = await tester.startGesture(const Offset(100, 50));
@@ -2828,10 +2805,7 @@ void main() {
         'MouseTracker boundary event', (tester) async {
       final log = <NativeEvent>[];
       await _pumpHost(tester, log);
-      await tester.tapAt(
-        const Offset(100, 50),
-        kind: PointerDeviceKind.stylus,
-      );
+      await tester.tapAt(const Offset(100, 50), kind: PointerDeviceKind.stylus);
       await tester.pump();
       expect(_types(log), [
         'pointerover',
@@ -2964,10 +2938,7 @@ void main() {
       final routes = _globalRoutes(tester);
       await tester.tapAt(const Offset(100, 50));
       log.clear();
-      await tester.tapAt(
-        const Offset(20, 50),
-        kind: PointerDeviceKind.stylus,
-      );
+      await tester.tapAt(const Offset(20, 50), kind: PointerDeviceKind.stylus);
       expect(_types(log), ['mouseout', 'mouseleave']);
       expect(_owner, isNull);
       expect(_globalRoutes(tester), routes);
@@ -3216,11 +3187,7 @@ void main() {
         for (final event in log.where((e) => e.type == 'pointermove')) {
           expect(
             (event.pointerId, event.pointerType, event.buttons),
-            (
-              id,
-              'touch',
-              1,
-            ),
+            (id, 'touch', 1),
           );
         }
         log.clear();
@@ -3347,12 +3314,7 @@ void main() {
       ) async {
         final log = <NativeEvent>[];
         final probe = _ArenaProbe();
-        await pumpStyled(
-          tester,
-          log,
-          touchAction: 'auto',
-          wrap: probed(probe),
-        );
+        await pumpStyled(tester, log, touchAction: 'auto', wrap: probed(probe));
         final first = await tester.startGesture(const Offset(100, 50));
         final second = await tester.startGesture(const Offset(200, 50));
         await first.moveBy(const Offset(30, 0));
@@ -3687,11 +3649,7 @@ void main() {
         ..addEventListener('mouseup', onCanvas)
         ..addEventListener('mouseup', (e) => calls.add('canvas 2'));
       expect(canvas.dispatchEvent(event('mouseup')), isTrue);
-      expect(calls, [
-        'canvas $canvas',
-        'canvas 2',
-        'document $canvas',
-      ]);
+      expect(calls, ['canvas $canvas', 'canvas 2', 'document $canvas']);
       canvas.removeEventListener('mouseup', onCanvas);
       calls.clear();
       canvas.dispatchEvent(event('mouseup'));
@@ -3921,18 +3879,15 @@ void main() {
         'click canvas',
       ]);
       // The canvas gets none of the events outside the box.
-      expect(
-        _types(log).where(mouseTypes.contains),
-        [
-          'pointerdown',
-          'mousedown',
-          'pointermove',
-          'mousemove',
-          'pointerup',
-          'mouseup',
-          'click',
-        ],
-      );
+      expect(_types(log).where(mouseTypes.contains), [
+        'pointerdown',
+        'mousedown',
+        'pointermove',
+        'mousemove',
+        'pointerup',
+        'mouseup',
+        'click',
+      ]);
       final outside = document[2];
       expect((outside.offsetX, outside.clientX), (340.0, 380.0));
       expect((outside.button, outside.buttons), (-1, 1));
@@ -4189,9 +4144,7 @@ void main() {
       expect((move.offsetX, move.offsetY), (110.5, 40.25));
     });
 
-    testWidgets('the display size of the style gives the size', (
-      tester,
-    ) async {
+    testWidgets('the display size of the style gives the size', (tester) async {
       final canvas = UiCanvasElement();
       await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
       canvas.style

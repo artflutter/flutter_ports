@@ -75,10 +75,7 @@ Map<String, Object?> fixture() {
       ],
     },
     'options': <String, Object?>{
-      'canvas': <String, Object?>{
-        'height': 512,
-        'width': 512,
-      },
+      'canvas': <String, Object?>{'height': 512, 'width': 512},
       'run': (Chart chart) {
         // `const animator = Chart.animator`: the singleton `animator` of
         // core.animator.dart.

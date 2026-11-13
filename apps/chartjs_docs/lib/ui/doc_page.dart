@@ -229,9 +229,8 @@ class _DocPageState extends State<DocPage> {
                   Text(
                     content.title,
                     key: const ValueKey('page.title'),
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 12),
                   ...content.intro,
@@ -422,9 +421,8 @@ class _DocPageState extends State<DocPage> {
           children: [
             Text(
               'Chart.js for Flutter',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
             const Text(
               'flutter_chartjs_port · based on Chart.js $chartJsVersion',

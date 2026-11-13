@@ -229,18 +229,13 @@ Map<String, Object?> _fontLeaves(String path, TextStyle font) => {
 List<String> _families(String text) => [
   for (final name in text.split(','))
     if (name.trim().isNotEmpty)
-      name.trim().replaceAllMapped(
-        RegExp(r'''^(['"])(.*)\1$'''),
-        (m) => m[2]!,
-      ),
+      name.trim().replaceAllMapped(RegExp(r'''^(['"])(.*)\1$'''), (m) => m[2]!),
 ];
 
 /// The leaves of the compiled light preset without the `transitions` keys:
 /// the content of the snapshot.
 Map<String, Object?> _lightLeaves() => {
-  for (final MapEntry(:key, :value) in _leaves(
-    compileLightTheme(),
-  ).entries)
+  for (final MapEntry(:key, :value) in _leaves(compileLightTheme()).entries)
     if (!key.startsWith('transitions.')) key: value,
 };
 
@@ -672,10 +667,7 @@ void main() {
           'weight': 'bold',
         },
       };
-      final withRoute = <String, Object?>{
-        ...manifest,
-        title: fontRoute,
-      };
+      final withRoute = <String, Object?>{...manifest, title: fontRoute};
       expect(
         report({
           ...emitted,
@@ -785,15 +777,12 @@ void main() {
         },
       );
       // Without the notThemed keys, the route fields are ADDED.
-      expect(
-        _report(fontsEmitted, fonts('bold', null), notThemed, const {}),
-        {
-          'ADDED': [
-            '$title.weight: {"route":"bold"}',
-            '$body.weight: {"route":null}',
-          ],
-        },
-      );
+      expect(_report(fontsEmitted, fonts('bold', null), notThemed, const {}), {
+        'ADDED': [
+          '$title.weight: {"route":"bold"}',
+          '$body.weight: {"route":null}',
+        ],
+      });
       // A leaf that is not a route field compares its value too.
       expect(
         _report(
@@ -831,9 +820,7 @@ void main() {
           withPalette,
           {
             ...manifest,
-            palette: <Object?>[
-              const native_ui.Color.fromRGBO(54, 162, 235, 1),
-            ],
+            palette: <Object?>[const native_ui.Color.fromRGBO(54, 162, 235, 1)],
           },
           notThemed,
           constants,

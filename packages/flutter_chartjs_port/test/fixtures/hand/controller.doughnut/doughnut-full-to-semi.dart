@@ -26,15 +26,10 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       ],
     },
-    'options': <String, Object?>{
-      'rotation': -90,
-    },
+    'options': <String, Object?>{'rotation': -90},
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'width': 512,
-      'height': 512,
-    },
+    'canvas': <String, Object?>{'width': 512, 'height': 512},
     'run': (Chart chart) {
       chart.options['circumference'] = 180;
       chart.update();

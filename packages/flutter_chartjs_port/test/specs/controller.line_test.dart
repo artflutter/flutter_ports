@@ -1166,9 +1166,7 @@ void main() {
       expect(createChart, returnsNormally);
     });
 
-    testWidgets('should set skipped points to the reset state', (
-      tester,
-    ) async {
+    testWidgets('should set skipped points to the reset state', (tester) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{

@@ -477,10 +477,7 @@ Map<String, Object?> _parseObservationColors(
 /// the compare fails.
 Object? _expectedKeysOnly(Object? observed, Object? expected) =>
     switch ((observed, expected)) {
-      (
-        final Map<String, Object?> o,
-        final Map<String, Object?> e,
-      ) =>
+      (final Map<String, Object?> o, final Map<String, Object?> e) =>
         <String, Object?>{
           for (final key in e.keys)
             if (o.containsKey(key)) key: _expectedKeysOnly(o[key], e[key]),
@@ -718,9 +715,7 @@ void expectControllerObservations(
   );
   expect(
     _withoutBorders(observedHits['items'], hitBorders, label),
-    equals(
-      _withoutBorders(hitItems(expectedHits['items']), hitBorders, label),
-    ),
+    equals(_withoutBorders(hitItems(expectedHits['items']), hitBorders, label)),
     reason:
         '$label: hits (items[point][query], see hits.points and '
         'hits.queries)',
@@ -733,11 +728,7 @@ void expectControllerObservations(
 /// A border point lies exactly on the border of two arcs. Upstream finds it
 /// in both with the V8 `Math.atan2`; `dart:math` `atan2` can put it on one
 /// side (Chart.js ADR 0122, row `adapt-dart-math-transcendentals`).
-Object? _withoutBorders(
-  Object? items,
-  Set<String> hitBorders,
-  String label,
-) {
+Object? _withoutBorders(Object? items, Set<String> hitBorders, String label) {
   if (hitBorders.isEmpty) return items;
   final rows = [
     for (final row in items! as List<Object?>) [...row! as List<Object?>],
@@ -887,9 +878,7 @@ const Set<String> _caseKeys = {
 
 /// The Dart matchers of the JS error names of the `error` key. A JS
 /// `TypeError` is a Dart [TypeError] (Chart.js ADR 0030, section 4).
-final Map<String, Matcher> _defaultErrorTypes = {
-  'TypeError': isA<TypeError>(),
-};
+final Map<String, Matcher> _defaultErrorTypes = {'TypeError': isA<TypeError>()};
 
 /// The matcher of the throw of the error [error] `{at, name}` of a case.
 Matcher _throwsError(
@@ -1070,11 +1059,9 @@ Future<void> _runCaseSteps(
     final action = step['do']! as List<Object?>;
     if (!step.containsKey('observations')) {
       expect(at, 'step $k', reason: 'step $k: a step without observations');
-      expect(
-        step.keys,
-        ['do'],
-        reason: 'step $k: the keys of the step that throws',
-      );
+      expect(step.keys, [
+        'do',
+      ], reason: 'step $k: the keys of the step that throws');
       await expectLater(
         () => runStep(tester, chart, action),
         _throwsError(error!, errorTypes),

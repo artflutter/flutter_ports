@@ -298,10 +298,11 @@ void main() {
 
         expect(config['data'], same(chart.data));
         expect(jsGet(config['data'], 'labels'), [1, 2, 3]);
-        expect(
-          jsGet(jsGet(jsGet(config['data'], 'datasets'), 0), 'data'),
-          [4, 5, 6],
-        );
+        expect(jsGet(jsGet(jsGet(config['data'], 'datasets'), 0), 'data'), [
+          4,
+          5,
+          6,
+        ]);
 
         config['data'] = <String, Object?>{
           'labels': <Object?>[7, 8, 9],
@@ -314,10 +315,11 @@ void main() {
 
         expect(chart.data, same(config['data']));
         expect(jsGet(chart.data, 'labels'), [7, 8, 9]);
-        expect(
-          jsGet(jsGet(jsGet(chart.data, 'datasets'), 0), 'data'),
-          [10, 11, 12],
-        );
+        expect(jsGet(jsGet(jsGet(chart.data, 'datasets'), 0), 'data'), [
+          10,
+          11,
+          12,
+        ]);
       });
 
       testWidgets('should initialize config with default interaction options', (
@@ -332,10 +334,7 @@ void main() {
         final chart = acquireChart(<String, Object?>{'type': 'line'});
 
         final options = chart.options;
-        expect(
-          jsGet(options['font'], 'size'),
-          jsGet(defaults['font'], 'size'),
-        );
+        expect(jsGet(options['font'], 'size'), jsGet(defaults['font'], 'size'));
         expect(options['onHover'], same(callback));
         expect(jsGet(options['hover'], 'mode'), 'test');
 
@@ -355,10 +354,7 @@ void main() {
         final chart = acquireChart(<String, Object?>{'type': 'line'});
 
         final options = chart.options;
-        expect(
-          jsGet(options['font'], 'size'),
-          jsGet(defaults['font'], 'size'),
-        );
+        expect(jsGet(options['font'], 'size'), jsGet(defaults['font'], 'size'));
         expect(options['onHover'], same(callback));
         expect(jsGet(options['hover'], 'mode'), 'test');
 
@@ -587,11 +583,7 @@ void main() {
         expect(
           _activeElements(chart),
           jasmineEquals(<Object?>[
-            <String, Object?>{
-              'datasetIndex': 0,
-              'index': 1,
-              'element': point1,
-            },
+            <String, Object?>{'datasetIndex': 0, 'index': 1, 'element': point1},
           ]),
         );
 
@@ -602,11 +594,7 @@ void main() {
         expect(
           _activeElements(chart),
           jasmineEquals(<Object?>[
-            <String, Object?>{
-              'datasetIndex': 0,
-              'index': 2,
-              'element': point2,
-            },
+            <String, Object?>{'datasetIndex': 0, 'index': 2, 'element': point2},
           ]),
         );
       });
@@ -1146,12 +1134,7 @@ void main() {
 
                 expect(
                   chart,
-                  toBeChartOfSize({
-                    'dw': 300,
-                    'dh': 350,
-                    'rw': 300,
-                    'rh': 350,
-                  }),
+                  toBeChartOfSize({'dw': 300, 'dh': 350, 'rw': 300, 'rh': 350}),
                 );
 
                 chart.resize = original;
@@ -1212,12 +1195,7 @@ void main() {
               waitForResize(chart, () {
                 expect(
                   chart,
-                  toBeChartOfSize({
-                    'dw': 150,
-                    'dh': 350,
-                    'rw': 150,
-                    'rh': 350,
-                  }),
+                  toBeChartOfSize({'dw': 150, 'dh': 350, 'rw': 150, 'rh': 350}),
                 );
 
                 done();
@@ -2768,76 +2746,75 @@ void main() {
         expect(chart.getDataVisibility(1), false);
       });
 
-      testWidgets(
-        'should maintain data visibility indices when data changes',
-        (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'pie',
-            'data': <String, Object?>{
-              'labels': <Object?>['0', '1', '2', '3'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3],
-                },
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3],
-                },
-              ],
-            },
-          })..toggleDataVisibility(3);
+      testWidgets('should maintain data visibility indices when data changes', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'pie',
+          'data': <String, Object?>{
+            'labels': <Object?>['0', '1', '2', '3'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[0, 1, 2, 3],
+              },
+              <String, Object?>{
+                'data': <Object?>[0, 1, 2, 3],
+              },
+            ],
+          },
+        })..toggleDataVisibility(3);
 
-          _splice(_labels(chart), 1, 1);
-          _splice(_data(chart, 0), 1, 1);
-          _splice(_data(chart, 1), 1, 1);
-          chart.update();
+        _splice(_labels(chart), 1, 1);
+        _splice(_data(chart, 0), 1, 1);
+        _splice(_data(chart, 1), 1, 1);
+        chart.update();
 
-          expect(chart.getDataVisibility(0), true);
-          expect(chart.getDataVisibility(1), true);
-          expect(chart.getDataVisibility(2), false);
+        expect(chart.getDataVisibility(0), true);
+        expect(chart.getDataVisibility(1), true);
+        expect(chart.getDataVisibility(2), false);
 
-          _unshift(_labels(chart), <Object?>['-1', '-2']);
-          _unshift(_data(chart, 0), <Object?>[-1, -2]);
-          _unshift(_data(chart, 1), <Object?>[-1, -2]);
-          chart.update();
+        _unshift(_labels(chart), <Object?>['-1', '-2']);
+        _unshift(_data(chart, 0), <Object?>[-1, -2]);
+        _unshift(_data(chart, 1), <Object?>[-1, -2]);
+        chart.update();
 
-          expect(chart.getDataVisibility(0), true);
-          expect(chart.getDataVisibility(1), true);
-          expect(chart.getDataVisibility(2), true);
-          expect(chart.getDataVisibility(3), true);
-          expect(chart.getDataVisibility(4), false);
+        expect(chart.getDataVisibility(0), true);
+        expect(chart.getDataVisibility(1), true);
+        expect(chart.getDataVisibility(2), true);
+        expect(chart.getDataVisibility(3), true);
+        expect(chart.getDataVisibility(4), false);
 
-          _shift(_labels(chart));
-          _shift(_data(chart, 0));
-          _shift(_data(chart, 1));
-          chart.update();
+        _shift(_labels(chart));
+        _shift(_data(chart, 0));
+        _shift(_data(chart, 1));
+        chart.update();
 
-          expect(chart.getDataVisibility(0), true);
-          expect(chart.getDataVisibility(1), true);
-          expect(chart.getDataVisibility(2), true);
-          expect(chart.getDataVisibility(3), false);
+        expect(chart.getDataVisibility(0), true);
+        expect(chart.getDataVisibility(1), true);
+        expect(chart.getDataVisibility(2), true);
+        expect(chart.getDataVisibility(3), false);
 
-          _pop(_labels(chart));
-          _pop(_data(chart, 0));
-          _pop(_data(chart, 1));
-          chart.update();
+        _pop(_labels(chart));
+        _pop(_data(chart, 0));
+        _pop(_data(chart, 1));
+        chart.update();
 
-          expect(chart.getDataVisibility(0), true);
-          expect(chart.getDataVisibility(1), true);
-          expect(chart.getDataVisibility(2), true);
-          expect(chart.getDataVisibility(3), true);
+        expect(chart.getDataVisibility(0), true);
+        expect(chart.getDataVisibility(1), true);
+        expect(chart.getDataVisibility(2), true);
+        expect(chart.getDataVisibility(3), true);
 
-          chart.toggleDataVisibility(1);
-          _splice(_labels(chart), 1, 0, <Object?>['b']);
-          _splice(_data(chart, 0), 1, 0, <Object?>[1]);
-          _splice(_data(chart, 1), 1, 0, <Object?>[1]);
-          chart.update();
+        chart.toggleDataVisibility(1);
+        _splice(_labels(chart), 1, 0, <Object?>['b']);
+        _splice(_data(chart, 0), 1, 0, <Object?>[1]);
+        _splice(_data(chart, 1), 1, 0, <Object?>[1]);
+        chart.update();
 
-          expect(chart.getDataVisibility(0), true);
-          expect(chart.getDataVisibility(1), true);
-          expect(chart.getDataVisibility(2), false);
-          expect(chart.getDataVisibility(3), true);
-        },
-      );
+        expect(chart.getDataVisibility(0), true);
+        expect(chart.getDataVisibility(1), true);
+        expect(chart.getDataVisibility(2), false);
+        expect(chart.getDataVisibility(3), true);
+      });
 
       testWidgets(
         'should leave data visibility indices intact when data changes in '
@@ -2930,13 +2907,10 @@ void main() {
         expect(Chart.getChart(chart.ctx), same(chart));
       });
 
-      test(
-        'should return undefined when a chart is not found or bad data is '
-        'provided',
-        () {
-          expect(Chart.getChart(1), isNull);
-        },
-      );
+      test('should return undefined when a chart is not found or bad data is '
+          'provided', () {
+        expect(Chart.getChart(1), isNull);
+      });
     });
 
     group('active elements', () {
@@ -3026,11 +3000,7 @@ void main() {
         expect(
           _activeElements(chart),
           jasmineEquals(<Object?>[
-            <String, Object?>{
-              'datasetIndex': 0,
-              'index': 0,
-              'element': point0,
-            },
+            <String, Object?>{'datasetIndex': 0, 'index': 0, 'element': point0},
           ]),
         );
         expect(
@@ -3052,11 +3022,7 @@ void main() {
         expect(
           _activeElements(chart),
           jasmineEquals(<Object?>[
-            <String, Object?>{
-              'datasetIndex': 0,
-              'index': 1,
-              'element': point1,
-            },
+            <String, Object?>{'datasetIndex': 0, 'index': 1, 'element': point1},
           ]),
         );
         expect(
@@ -3076,11 +3042,7 @@ void main() {
         expect(
           _activeElements(chart),
           jasmineEquals(<Object?>[
-            <String, Object?>{
-              'datasetIndex': 0,
-              'index': 1,
-              'element': point1,
-            },
+            <String, Object?>{'datasetIndex': 0, 'index': 1, 'element': point1},
           ]),
         );
         expect(

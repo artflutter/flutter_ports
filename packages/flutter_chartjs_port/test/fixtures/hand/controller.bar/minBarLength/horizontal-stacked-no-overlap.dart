@@ -12,50 +12,25 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        1,
-        2,
-        3,
-        4,
-      ],
+      'labels': <Object?>[1, 2, 3, 4],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            1,
-            -1,
-            1,
-            20,
-          ],
+          'data': <Object?>[1, -1, 1, 20],
           'backgroundColor': '#bb000066',
           'minBarLength': 50,
         },
         <String, Object?>{
-          'data': <Object?>[
-            1,
-            -1,
-            -1,
-            -20,
-          ],
+          'data': <Object?>[1, -1, -1, -20],
           'backgroundColor': '#00bb0066',
           'minBarLength': 50,
         },
         <String, Object?>{
-          'data': <Object?>[
-            1,
-            -1,
-            1,
-            40,
-          ],
+          'data': <Object?>[1, -1, 1, 40],
           'backgroundColor': '#0000bb66',
           'minBarLength': 50,
         },
         <String, Object?>{
-          'data': <Object?>[
-            1,
-            -1,
-            -1,
-            -40,
-          ],
+          'data': <Object?>[1, -1, -1, -40],
           'backgroundColor': '#00000066',
           'minBarLength': 50,
         },
@@ -66,25 +41,17 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-          'stacked': true,
-        },
+        'x': <String, Object?>{'display': false, 'stacked': true},
         'y': <String, Object?>{
           'type': 'linear',
           'position': 'left',
           'stacked': true,
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
         },
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 512,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
 };

@@ -12,22 +12,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'doughnut',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        'A',
-        'B',
-        'C',
-        'D',
-        'E',
-      ],
+      'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            1,
-            5,
-            10,
-            50,
-            100,
-          ],
+          'data': <Object?>[1, 5, 10, 50, 100],
           'backgroundColor': <Object?>[
             'rgba(255, 99, 132, 0.8)',
             'rgba(54, 162, 235, 0.8)',

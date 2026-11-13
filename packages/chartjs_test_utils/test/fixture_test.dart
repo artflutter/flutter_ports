@@ -337,9 +337,7 @@ void main() {
     expect(
       () => specsFromFixtures(
         'rule/',
-        hand: {
-          'rule/nope.js': (load: () => <String, Object?>{}, sha256: ''),
-        },
+        hand: {'rule/nope.js': (load: () => <String, Object?>{}, sha256: '')},
         source: source,
       ),
       throwsStateError,

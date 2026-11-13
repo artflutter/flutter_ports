@@ -12,18 +12,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        0,
-        1,
-        2,
-      ],
+      'labels': <Object?>[0, 1, 2],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            0,
-            -0.01,
-            -30,
-          ],
+          'data': <Object?>[0, -0.01, -30],
           'backgroundColor': '#00ff00',
           'borderColor': '#000',
           'borderWidth': 4,
@@ -37,20 +29,13 @@ Map<String, Object?> fixture() => <String, Object?>{
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
         'x': <String, Object?>{
-          'ticks': <String, Object?>{
-            'display': false,
-          },
+          'ticks': <String, Object?>{'display': false},
         },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
       },
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 512,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
 };

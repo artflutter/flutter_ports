@@ -717,16 +717,15 @@ AnyObject _radialData() => <String, Object?>{
 
 /// A radial chart of the type `themeRadial` with the user scale options [r]
 /// and the theme [theme] (no key for Dart `null`).
-Chart _radialChart(AnyObject r, [Object? theme]) => acquireChart(
-  <String, Object?>{
-    'type': 'themeRadial',
-    'data': _radialData(),
-    'options': <String, Object?>{
-      'scales': <String, Object?>{'r': r},
-    },
-    themeConfigKey: ?theme,
-  },
-);
+Chart _radialChart(AnyObject r, [Object? theme]) =>
+    acquireChart(<String, Object?>{
+      'type': 'themeRadial',
+      'data': _radialData(),
+      'options': <String, Object?>{
+        'scales': <String, Object?>{'r': r},
+      },
+      themeConfigKey: ?theme,
+    });
 
 /// The radial scale `r` of [chart].
 RadialLinearScale _r(Chart chart) => chart.scales['r']! as RadialLinearScale;
@@ -780,10 +779,7 @@ List<String> _axes(String type, Object? theme) {
     themeConfigKey: ?theme,
   });
   observe('scales', jsObjectKeys(chart.scales).join(','));
-  observe(
-    'option scales',
-    jsObjectKeys(chart.options['scales']).join(','),
-  );
+  observe('option scales', jsObjectKeys(chart.options['scales']).join(','));
   observe('config scales', jsGet(chart.config.options, 'scales'));
   return lines;
 }
@@ -1799,10 +1795,7 @@ void main() {
           final themed =
               levels.contains('themeType') || levels.contains('themeGrid');
           final options = _r(_radialChart(r, themed ? theme : null)).options;
-          return [
-            _at(options, 'angleLines.color'),
-            _at(options, 'grid.color'),
-          ];
+          return [_at(options, 'angleLines.color'), _at(options, 'grid.color')];
         },
       );
     });
@@ -2192,10 +2185,7 @@ void main() {
         tester,
       ) async {
         final name = 'light palette $type';
-        final themed = _lightPalette(
-          type,
-          compileLightTheme(),
-        );
+        final themed = _lightPalette(type, compileLightTheme());
         expect(themed.join('\n'), themePrecedencePrototype[name]);
         final unthemed = _lightPalette(type, null);
         expect(unthemed.join('\n'), themePrecedenceUpstream[name]);
@@ -2211,9 +2201,7 @@ void main() {
     // scales.radialLinear.pointLabels.font, and through the scale keys.
     testWidgets(
       'a radial chart without a theme resolves the upstream options',
-      (
-        tester,
-      ) async {
+      (tester) async {
         expect(
           _radialSnapshot(null).join('\n'),
           themePrecedenceUpstream['a radial chart without a theme'],
@@ -2355,9 +2343,7 @@ void main() {
       );
     });
 
-    testWidgets('a theme tick font with a size hides the read', (
-      tester,
-    ) async {
+    testWidgets('a theme tick font with a size hides the read', (tester) async {
       expect(
         _text(
           backdrop(<String, Object?>{
@@ -2469,14 +2455,9 @@ void main() {
 
     testWidgets(
       'the light preset creates no radial axis on a cartesian chart',
-      (
-        tester,
-      ) async {
+      (tester) async {
         const name = 'axes of a cartesian chart with the light preset';
-        final observed = _axes(
-          'themeReal',
-          compileLightTheme(),
-        ).join('\n');
+        final observed = _axes('themeReal', compileLightTheme()).join('\n');
         expect(observed, themePrecedencePrototype[name]);
         expect(_prototype(name, 'scales'), 'x,y');
       },
@@ -2511,11 +2492,7 @@ void main() {
           },
         },
       ),
-      (
-        'axes of a bar chart with the light preset',
-        'bar',
-        compileLightTheme(),
-      ),
+      ('axes of a bar chart with the light preset', 'bar', compileLightTheme()),
       ('axes of a doughnut chart without a theme', 'doughnut', null),
       (
         'axes of a doughnut chart with cartesian theme keys',
@@ -2548,10 +2525,7 @@ void main() {
     // come from the mock measureText of the generator. Thus each side hovers
     // the center of its own elements, and the lines have no position.
     test('the hover theme compiles to the theme of the generator', () {
-      expect(
-        _json(_hoverTheme()),
-        _prototype('hover theme', 'theme'),
-      );
+      expect(_json(_hoverTheme()), _prototype('hover theme', 'theme'));
     });
 
     for (final type in _chartTypes) {

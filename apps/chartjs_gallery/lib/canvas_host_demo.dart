@@ -23,12 +23,7 @@ canvasHostDemoTabs = [
     icon: Icons.touch_app_outlined,
     build: EventsDemo.new,
   ),
-  (
-    key: 'text',
-    label: 'Text',
-    icon: Icons.text_fields,
-    build: TextDemo.new,
-  ),
+  (key: 'text', label: 'Text', icon: Icons.text_fields, build: TextDemo.new),
   (key: 'stress', label: 'Stress', icon: Icons.speed, build: StressDemo.new),
   (
     key: 'elements',

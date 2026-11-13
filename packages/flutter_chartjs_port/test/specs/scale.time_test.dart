@@ -298,16 +298,13 @@ void main() {
         },
       );
 
-      testWidgets(
-        'should use the min option when greater than first label for '
-        'building ticks',
-        (tester) async {
-          config['min'] = '2015-01-02T04:00:00';
+      testWidgets('should use the min option when greater than first label for '
+          'building ticks', (tester) async {
+        config['min'] = '2015-01-02T04:00:00';
 
-          final labels = _getLabels(_createScale(mockData, config));
-          expect(labels[0], equals('Jan 2'));
-        },
-      );
+        final labels = _getLabels(_createScale(mockData, config));
+        expect(labels[0], equals('Jan 2'));
+      });
 
       testWidgets(
         'should use the max option when greater than last label for building '
@@ -711,9 +708,7 @@ void main() {
       skip: 'diverges: adapt-date-moment-format',
     );
 
-    testWidgets('should get the correct label for a timestamp', (
-      tester,
-    ) async {
+    testWidgets('should get the correct label for a timestamp', (tester) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{

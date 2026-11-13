@@ -93,9 +93,7 @@ void main() {
   });
 
   test('misses and unsupported bounds do not leave a stale cursor', () {
-    final target = _line([
-      for (var i = 0; i < 8; i++) _point(i * 2.0, 3),
-    ]);
+    final target = _line([for (var i = 0; i < 8; i++) _point(i * 2.0, 3)]);
     final search = BoundaryPointSearch.create(target, 'x')!;
     for (final bounds in [
       null,

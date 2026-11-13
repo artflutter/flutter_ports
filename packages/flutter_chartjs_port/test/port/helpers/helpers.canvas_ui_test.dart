@@ -235,14 +235,12 @@ void main() {
       _upstream(upstream, box);
       // The port: the single-point subpath, the closed rounded rectangle
       // and the single-point subpath at (x, y). Upstream: one subpath.
-      expect(
-        upstream.debugPath.path.computeMetrics().map((m) => m.isClosed),
-        [false],
-      );
-      expect(
-        port.debugPath.path.computeMetrics().map((m) => m.isClosed),
-        [true],
-      );
+      expect(upstream.debugPath.path.computeMetrics().map((m) => m.isClosed), [
+        false,
+      ]);
+      expect(port.debugPath.path.computeMetrics().map((m) => m.isClosed), [
+        true,
+      ]);
       port.dispose();
       upstream.dispose();
     });

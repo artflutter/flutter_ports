@@ -267,149 +267,130 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test(
-    'the export names are the list of doc/public_api.txt',
-    () async {
-      final sections = <String>[];
-      for (final path in _libraries) {
-        final names = _exportNames(await _library(path)).toList()..sort();
-        sections.add(['[$path]', ...names].join('\n'));
-      }
-      final text = '${sections.join('\n\n')}\n';
-      final file = File('doc/public_api.txt');
-      if (Platform.environment['PUBLIC_API_UPDATE'] == '1') {
-        file.writeAsStringSync(text);
-      }
-      expect(
-        file.readAsStringSync().replaceAll('\r\n', '\n'),
-        text,
-        reason:
-            'The public API changed. Review the change, then write the list '
-            'again with PUBLIC_API_UPDATE=1.',
-      );
-    },
-    timeout: const Timeout(Duration(minutes: 3)),
-  );
+  test('the export names are the list of doc/public_api.txt', () async {
+    final sections = <String>[];
+    for (final path in _libraries) {
+      final names = _exportNames(await _library(path)).toList()..sort();
+      sections.add(['[$path]', ...names].join('\n'));
+    }
+    final text = '${sections.join('\n\n')}\n';
+    final file = File('doc/public_api.txt');
+    if (Platform.environment['PUBLIC_API_UPDATE'] == '1') {
+      file.writeAsStringSync(text);
+    }
+    expect(
+      file.readAsStringSync().replaceAll('\r\n', '\n'),
+      text,
+      reason:
+          'The public API changed. Review the change, then write the list '
+          'again with PUBLIC_API_UPDATE=1.',
+    );
+  }, timeout: const Timeout(Duration(minutes: 3)));
 
-  test(
-    'the app library shares no name with Flutter',
-    () async {
-      final app = _exportNames(
-        await _library('lib/flutter_chartjs_port.dart'),
-      );
-      for (final uri in _flutterLibraries) {
-        final flutter = _exportNames(await _libraryByUri(uri));
-        expect(app.intersection(flutter), isEmpty, reason: uri);
-      }
-    },
-    timeout: const Timeout(Duration(minutes: 3)),
-  );
+  test('the app library shares no name with Flutter', () async {
+    final app = _exportNames(await _library('lib/flutter_chartjs_port.dart'));
+    for (final uri in _flutterLibraries) {
+      final flutter = _exportNames(await _libraryByUri(uri));
+      expect(app.intersection(flutter), isEmpty, reason: uri);
+    }
+  }, timeout: const Timeout(Duration(minutes: 3)));
 
-  test(
-    'no export is internal, and each upstream _ member is',
-    () async {
-      final findings = <String>{};
-      for (final path in _libraries) {
-        final names = (await _library(path)).exportNamespace.definedNames2;
-        for (final MapEntry(key: name, value: element) in names.entries) {
-          if (name.endsWith('=')) continue;
-          if (element.metadata.hasInternal) {
-            findings.add('$name has @internal');
-          }
-          if (element is! ClassElement || element.isAbstract) continue;
-          for (final member in _members(element)) {
-            final doc = member.documentationComment?.split('\n').first;
-            final match = doc == null ? null : _underscoreDoc.firstMatch(doc);
-            if (match == null) continue;
-            final key = '$name.${member.displayName}';
-            if (_internalFalseHits.containsKey(key)) continue;
-            if (!member.metadata.hasInternal) {
-              findings.add('$key (upstream ${match[1]}) has no @internal');
-            }
+  test('no export is internal, and each upstream _ member is', () async {
+    final findings = <String>{};
+    for (final path in _libraries) {
+      final names = (await _library(path)).exportNamespace.definedNames2;
+      for (final MapEntry(key: name, value: element) in names.entries) {
+        if (name.endsWith('=')) continue;
+        if (element.metadata.hasInternal) {
+          findings.add('$name has @internal');
+        }
+        if (element is! ClassElement || element.isAbstract) continue;
+        for (final member in _members(element)) {
+          final doc = member.documentationComment?.split('\n').first;
+          final match = doc == null ? null : _underscoreDoc.firstMatch(doc);
+          if (match == null) continue;
+          final key = '$name.${member.displayName}';
+          if (_internalFalseHits.containsKey(key)) continue;
+          if (!member.metadata.hasInternal) {
+            findings.add('$key (upstream ${match[1]}) has no @internal');
           }
         }
       }
-      expect(findings.toList()..sort(), isEmpty);
-    },
-    timeout: const Timeout(Duration(minutes: 3)),
-  );
+    }
+    expect(findings.toList()..sort(), isEmpty);
+  }, timeout: const Timeout(Duration(minutes: 3)));
 
-  test(
-    'types',
-    () async {
-      final manifest = jsonDecode(
-        File('doc/upstream/manifest.json').readAsStringSync(),
-      ) as Map<String, Object?>;
-      final exports = manifest['exports']! as Map<String, Object?>;
-      List<String> list(String key) => [
-        for (final name
-            in (exports[key]! as Map<String, Object?>)['names']!
-                as List<Object?>)
-          name! as String,
-      ];
+  test('types', () async {
+    final manifest = jsonDecode(
+      File('doc/upstream/manifest.json').readAsStringSync(),
+    ) as Map<String, Object?>;
+    final exports = manifest['exports']! as Map<String, Object?>;
+    List<String> list(String key) => [
+      for (final name
+          in (exports[key]! as Map<String, Object?>)['names']! as List<Object?>)
+        name! as String,
+    ];
 
-      final chartjs = await _library('lib/chartjs.dart');
-      final chartjsNames = _exportNames(chartjs);
-      final hidden = _hiddenNames(chartjs);
-      final findings = <String>[];
+    final chartjs = await _library('lib/chartjs.dart');
+    final chartjsNames = _exportNames(chartjs);
+    final hidden = _hiddenNames(chartjs);
+    final findings = <String>[];
 
-      // src/index.ts: each runtime export, a `_` export as a hidden name.
-      for (final name in list('index')) {
-        if (name.startsWith('_')) {
-          final dart = name.substring(1);
-          if (chartjsNames.contains(dart) || !hidden.contains(dart)) {
-            findings.add('chartjs.dart: $name is not hidden as $dart');
-          }
-        } else {
-          final dart = _dartNames[name] ?? name;
-          if (!chartjsNames.contains(dart)) {
-            findings.add('chartjs.dart: $name ($dart) is not exported');
-          }
+    // src/index.ts: each runtime export, a `_` export as a hidden name.
+    for (final name in list('index')) {
+      if (name.startsWith('_')) {
+        final dart = name.substring(1);
+        if (chartjsNames.contains(dart) || !hidden.contains(dart)) {
+          findings.add('chartjs.dart: $name is not hidden as $dart');
+        }
+      } else {
+        final dart = _dartNames[name] ?? name;
+        if (!chartjsNames.contains(dart)) {
+          findings.add('chartjs.dart: $name ($dart) is not exported');
         }
       }
+    }
 
-      // src/types/*.d.ts: each declaration that lib/src/ declares.
-      final declared = _declaredNames();
-      for (final name in list('types')) {
-        if (!declared.contains(name)) continue;
-        if (chartjsNames.contains(name) ||
-            hidden.contains(name) ||
-            _notExported.containsKey(name)) {
-          continue;
-        }
-        findings.add('chartjs.dart: the type $name is not exported');
+    // src/types/*.d.ts: each declaration that lib/src/ declares.
+    final declared = _declaredNames();
+    for (final name in list('types')) {
+      if (!declared.contains(name)) continue;
+      if (chartjsNames.contains(name) ||
+          hidden.contains(name) ||
+          _notExported.containsKey(name)) {
+        continue;
       }
-      for (final name in _notExported.keys) {
-        if (!declared.contains(name) || chartjsNames.contains(name)) {
-          findings.add('_notExported: $name is stale');
-        }
+      findings.add('chartjs.dart: the type $name is not exported');
+    }
+    for (final name in _notExported.keys) {
+      if (!declared.contains(name) || chartjsNames.contains(name)) {
+        findings.add('_notExported: $name is stale');
       }
+    }
 
-      // src/helpers/index.ts: each runtime export but the `_` exports that
-      // no ported add-on imports.
-      final helpers = _exportNames(await _library('lib/helpers.dart'));
-      for (final name in _addOnHelpers) {
-        if (!list('helpers').contains(name)) {
-          findings.add('_addOnHelpers: $name is stale');
+    // src/helpers/index.ts: each runtime export but the `_` exports that
+    // no ported add-on imports.
+    final helpers = _exportNames(await _library('lib/helpers.dart'));
+    for (final name in _addOnHelpers) {
+      if (!list('helpers').contains(name)) {
+        findings.add('_addOnHelpers: $name is stale');
+      }
+    }
+    for (final name in list('helpers')) {
+      if (name.startsWith('_')) {
+        final exported = helpers.contains(name.substring(1));
+        if (_addOnHelpers.contains(name) && !exported) {
+          findings.add('helpers.dart: $name is not exported');
+        } else if (!_addOnHelpers.contains(name) && exported) {
+          findings.add('helpers.dart: $name is exported');
+        }
+      } else if (!_notExportedHelpers.containsKey(name)) {
+        final dart = _helperConstants[name] ?? name;
+        if (!helpers.contains(dart)) {
+          findings.add('helpers.dart: $name ($dart) is not exported');
         }
       }
-      for (final name in list('helpers')) {
-        if (name.startsWith('_')) {
-          final exported = helpers.contains(name.substring(1));
-          if (_addOnHelpers.contains(name) && !exported) {
-            findings.add('helpers.dart: $name is not exported');
-          } else if (!_addOnHelpers.contains(name) && exported) {
-            findings.add('helpers.dart: $name is exported');
-          }
-        } else if (!_notExportedHelpers.containsKey(name)) {
-          final dart = _helperConstants[name] ?? name;
-          if (!helpers.contains(dart)) {
-            findings.add('helpers.dart: $name ($dart) is not exported');
-          }
-        }
-      }
-      expect(findings, isEmpty);
-    },
-    timeout: const Timeout(Duration(minutes: 3)),
-  );
+    }
+    expect(findings, isEmpty);
+  }, timeout: const Timeout(Duration(minutes: 3)));
 }

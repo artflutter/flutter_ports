@@ -8,3 +8,7 @@ analyzer:
     - "**/*.g.dart"
     - "**/build/**"
     - build/**
+
+linter:
+  rules:
+    unnecessary_type_name_in_constructor: false

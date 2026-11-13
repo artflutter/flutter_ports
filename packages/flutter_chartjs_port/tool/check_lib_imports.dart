@@ -34,9 +34,9 @@ Future<void> main(List<String> args) async {
     check: (packages) {
       final findings = <Finding>[];
       var files = 0;
-      final harness = withHarnessPackage(
-        packages,
-      ).skip(packages.length).firstOrNull;
+      final harness = withHarnessPackage(packages)
+          .skip(packages.length)
+          .firstOrNull;
       String display(String package) {
         final prefix = relativePath(Directory.current.path, package);
         return prefix.isEmpty ? '' : '$prefix/';

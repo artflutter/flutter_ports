@@ -196,9 +196,7 @@ AnyObject _config(
 }) {
   final cartesian = const {'bar', 'bubble', 'line', 'scatter'}.contains(type);
   final radial = type == 'polarArea' || type == 'radar';
-  final bordered = const {'bar', 'doughnut', 'pie', 'polarArea'}.contains(
-    type,
-  );
+  final bordered = const {'bar', 'doughnut', 'pie', 'polarArea'}.contains(type);
   List<Object?> data(int d) => switch (type) {
     'bubble' => <Object?>[
       for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])
@@ -350,10 +348,7 @@ bool _keepsBlue(Object? value) {
 List<(int, String)> _leaks(List<Object?> calls) => [
   for (var i = 0; i < calls.length; i++)
     if (calls[i]
-        case {
-          'name': final String name,
-          'args': [final Object value, ...],
-        }
+        case {'name': final String name, 'args': [final Object value, ...]}
         when _styleSetters.contains(name) && !_keepsBlue(value))
       (i, '$name $value'),
 ];

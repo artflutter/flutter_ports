@@ -393,9 +393,7 @@ void main() {
             // `toEqualOptions` of the harness takes a Map: the copy of the
             // own keys of the typed defaults (`Object.keys`) with their
             // values, the keys and values that the matcher reads.
-            toEqualOptions(
-              jsGet(jsGet(Chart.defaults, 'plugins'), 'title')!,
-            ),
+            toEqualOptions(jsGet(jsGet(Chart.defaults, 'plugins'), 'title')!),
           );
         },
       );

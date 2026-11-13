@@ -283,10 +283,7 @@ void main() {
       'the chart with plugins false (section 10, config B)', () {
     expect(
       [for (final c in pluginDispatchReference) c.name],
-      [
-        'three datasets, a title and a fill',
-        'plugins false',
-      ],
+      ['three datasets, a title and a fill', 'plugins false'],
     );
   });
 
@@ -305,22 +302,18 @@ void main() {
           },
       ];
       for (final c in pluginDispatchReference) {
-        expect(
-          keys,
-          [
-            for (final plugin
-                in (c.expected['plugins']! as List<Object?>)
-                    .cast<Map<String, Object?>>())
-              <String, Object?>{
-                'id': plugin['id'],
-                'keys': [
-                  for (final text in plugin['keys']! as List<Object?>)
-                    _referenceKeyText(text! as String),
-                ],
-              },
-          ],
-          reason: c.name,
-        );
+        expect(keys, [
+          for (final plugin
+              in (c.expected['plugins']! as List<Object?>)
+                  .cast<Map<String, Object?>>())
+            <String, Object?>{
+              'id': plugin['id'],
+              'keys': [
+                for (final text in plugin['keys']! as List<Object?>)
+                  _referenceKeyText(text! as String),
+              ],
+            },
+        ], reason: c.name);
       }
     });
 

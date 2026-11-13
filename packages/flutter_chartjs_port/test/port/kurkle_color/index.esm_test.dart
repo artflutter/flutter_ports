@@ -74,15 +74,19 @@ void main() {
     });
 
     test('hueParse', () {
-      expect(
-        _members(hueParse('hsl(1.5e2, 30%, 40%)')),
-        (r: 71.0, g: 133.0, b: 102.0, a: 255.0),
-      );
+      expect(_members(hueParse('hsl(1.5e2, 30%, 40%)')), (
+        r: 71.0,
+        g: 133.0,
+        b: 102.0,
+        a: 255.0,
+      ));
       // ToNumber('1..2') is NaN, and NaN gives 0 in each member.
-      expect(
-        _members(hueParse('hsl(1..2, 30%, 40%)')),
-        (r: 0.0, g: 0.0, b: 0.0, a: 255.0),
-      );
+      expect(_members(hueParse('hsl(1..2, 30%, 40%)')), (
+        r: 0.0,
+        g: 0.0,
+        b: 0.0,
+        a: 255.0,
+      ));
       expect(hueParse('hsl(120deg 40% 60% / 0.3)'), isNull);
     });
 
@@ -113,45 +117,61 @@ void main() {
       );
 
       test('mixed-case digits keep every supported hex length', () {
-        expect(
-          _members(hexParse('#0Af')),
-          (r: 0.0, g: 170.0, b: 255.0, a: 255.0),
-        );
-        expect(
-          _members(hexParse('#9aF0')),
-          (r: 153.0, g: 170.0, b: 255.0, a: 0.0),
-        );
-        expect(
-          _members(hexParse('#09AfF0')),
-          (r: 9.0, g: 175.0, b: 240.0, a: 255.0),
-        );
-        expect(
-          _members(hexParse('#09AfF0bE')),
-          (r: 9.0, g: 175.0, b: 240.0, a: 190.0),
-        );
+        expect(_members(hexParse('#0Af')), (
+          r: 0.0,
+          g: 170.0,
+          b: 255.0,
+          a: 255.0,
+        ));
+        expect(_members(hexParse('#9aF0')), (
+          r: 153.0,
+          g: 170.0,
+          b: 255.0,
+          a: 0.0,
+        ));
+        expect(_members(hexParse('#09AfF0')), (
+          r: 9.0,
+          g: 175.0,
+          b: 240.0,
+          a: 255.0,
+        ));
+        expect(_members(hexParse('#09AfF0bE')), (
+          r: 9.0,
+          g: 175.0,
+          b: 240.0,
+          a: 190.0,
+        ));
       });
 
       test('invalid nibbles retain the upstream bitwise conversions', () {
-        expect(
-          _members(hexParse('#g1g2g3g4')),
-          (r: 1.0, g: 2.0, b: 3.0, a: 4.0),
-        );
-        expect(
-          _members(hexParse('#1g2g3g4g')),
-          (r: 16.0, g: 32.0, b: 48.0, a: 64.0),
-        );
-        expect(
-          _members(hexParse('#\u{1f600}f')),
-          (r: 0.0, g: 0.0, b: 255.0, a: 255.0),
-        );
+        expect(_members(hexParse('#g1g2g3g4')), (
+          r: 1.0,
+          g: 2.0,
+          b: 3.0,
+          a: 4.0,
+        ));
+        expect(_members(hexParse('#1g2g3g4g')), (
+          r: 16.0,
+          g: 32.0,
+          b: 48.0,
+          a: 64.0,
+        ));
+        expect(_members(hexParse('#\u{1f600}f')), (
+          r: 0.0,
+          g: 0.0,
+          b: 255.0,
+          a: 255.0,
+        ));
       });
     });
 
     test('hexParse', () {
-      expect(
-        _members(hexParse('#abc')),
-        (r: 170.0, g: 187.0, b: 204.0, a: 255.0),
-      );
+      expect(_members(hexParse('#abc')), (
+        r: 170.0,
+        g: 187.0,
+        b: 204.0,
+        a: 255.0,
+      ));
       expect(hexParse('abc'), isNull);
       expect(hexParse('#ab'), isNull);
       expect(hexParse(''), isNull);
@@ -167,14 +187,18 @@ void main() {
 
   group('rgb.js', () {
     test('rgbParse', () {
-      expect(
-        _members(rgbParse('rgb(1 2 3 / 50%)')),
-        (r: 1.0, g: 2.0, b: 3.0, a: 127.0),
-      );
-      expect(
-        _members(rgbParse('rgba(1, 2, 3)')),
-        (r: 1.0, g: 2.0, b: 3.0, a: 255.0),
-      );
+      expect(_members(rgbParse('rgb(1 2 3 / 50%)')), (
+        r: 1.0,
+        g: 2.0,
+        b: 3.0,
+        a: 127.0,
+      ));
+      expect(_members(rgbParse('rgba(1, 2, 3)')), (
+        r: 1.0,
+        g: 2.0,
+        b: 3.0,
+        a: 255.0,
+      ));
       expect(rgbParse('rgb(1,2)'), isNull);
     });
 
@@ -189,22 +213,25 @@ void main() {
 
   group('names.js', () {
     test('nameParse', () {
-      expect(
-        _members(nameParse('Red')),
-        (r: 255.0, g: 0.0, b: 0.0, a: 255.0),
-      );
-      expect(
-        _members(nameParse('rebeccapurple')),
-        (r: 102.0, g: 51.0, b: 153.0, a: 255.0),
-      );
-      expect(
-        _members(nameParse('lightgoldenrodyellow')),
-        (r: 250.0, g: 250.0, b: 210.0, a: 255.0),
-      );
-      expect(
-        _members(nameParse('darkslategrey')),
-        (r: 47.0, g: 79.0, b: 79.0, a: 255.0),
-      );
+      expect(_members(nameParse('Red')), (r: 255.0, g: 0.0, b: 0.0, a: 255.0));
+      expect(_members(nameParse('rebeccapurple')), (
+        r: 102.0,
+        g: 51.0,
+        b: 153.0,
+        a: 255.0,
+      ));
+      expect(_members(nameParse('lightgoldenrodyellow')), (
+        r: 250.0,
+        g: 250.0,
+        b: 210.0,
+        a: 255.0,
+      ));
+      expect(_members(nameParse('darkslategrey')), (
+        r: 47.0,
+        g: 79.0,
+        b: 79.0,
+        a: 255.0,
+      ));
       expect(
         [
           'aliceblue',
@@ -229,9 +256,7 @@ void main() {
   group('srgb.js', () {
     test('interpolate', () {
       expect(
-        _members(
-          interpolate(_rgba(255, 0, 0, 255), _rgba(0, 0, 255, 0), 0.3),
-        ),
+        _members(interpolate(_rgba(255, 0, 0, 255), _rgba(0, 0, 255, 0), 0.3)),
         (r: 218.0, g: 0.0, b: 149.0, a: 178.5),
       );
     });

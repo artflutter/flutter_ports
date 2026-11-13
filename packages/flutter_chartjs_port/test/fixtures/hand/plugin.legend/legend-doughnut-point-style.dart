@@ -12,14 +12,10 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'doughnut',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        '',
-      ],
+      'labels': <Object?>[''],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            10,
-          ],
+          'data': <Object?>[10],
           'backgroundColor': '#00ff00',
           'borderWidth': 0,
         },
@@ -39,9 +35,6 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
   },
   'options': <String, Object?>{
-    'canvas': <String, Object?>{
-      'height': 256,
-      'width': 512,
-    },
+    'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
 };

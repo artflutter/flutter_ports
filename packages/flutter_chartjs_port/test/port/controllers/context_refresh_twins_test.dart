@@ -529,9 +529,7 @@ void _expectTwin(
 
 List<_ProbePoint> _probes(Chart chart, [int dataset = 0]) {
   final points = chart.getDatasetMeta(dataset).data;
-  return [
-    for (var i = 0; i < points.length; i++) points[i] = _ProbePoint(),
-  ];
+  return [for (var i = 0; i < points.length; i++) points[i] = _ProbePoint()];
 }
 
 /// Deletes and reinserts keys of the contexts at a hook, as user code can.
@@ -887,11 +885,7 @@ void main() {
     test('a foreign coordinate reads the waiting contexts', () {
       List<String> run(String id) {
         final seen = <String>[];
-        final config = _config(
-          'scatter',
-          id: id,
-          options: {'parsing': false},
-        );
+        final config = _config('scatter', id: id, options: {'parsing': false});
         final chart = _chart(config);
         final data = config['data']! as Map<String, Object?>;
         final dataset =
@@ -936,11 +930,7 @@ void main() {
         options: {
           'parsing': false,
           'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'min': 3.0,
-              'max': 6.0,
-            },
+            'x': <String, Object?>{'type': 'linear', 'min': 3.0, 'max': 6.0},
             'y': <String, Object?>{'type': 'linear'},
           },
         },

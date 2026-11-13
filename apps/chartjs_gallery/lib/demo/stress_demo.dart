@@ -85,7 +85,7 @@ enum StressMode {
   /// ([StressPluginScene.calls]).
   plugins(chartBenchPluginCounts, 'points per dataset');
 
-  const StressMode(this.counts, this.items);
+  StressMode(this.counts, this.items);
 
   /// The scripted benchmark counts, independent of [stressItemCounts].
   final List<int> counts;
@@ -153,19 +153,17 @@ enum StressChartCall {
 /// The calls of the mode [mode]: the scene [scene] gives the calls of the
 /// mode [StressMode.plugins]. The element modes have the calls of the mode
 /// [StressMode.chart], which they do not use.
-List<StressChartCall> stressCallsOf(
-  StressMode mode,
-  StressPluginScene scene,
-) => switch (mode) {
-  StressMode.axes => const [StressChartCall.draw, StressChartCall.update],
-  StressMode.plugins => scene.calls,
-  _ => const [
-    StressChartCall.draw,
-    StressChartCall.update,
-    StressChartCall.data,
-    StressChartCall.animate,
-  ],
-};
+List<StressChartCall> stressCallsOf(StressMode mode, StressPluginScene scene) =>
+    switch (mode) {
+      StressMode.axes => const [StressChartCall.draw, StressChartCall.update],
+      StressMode.plugins => scene.calls,
+      _ => const [
+        StressChartCall.draw,
+        StressChartCall.update,
+        StressChartCall.data,
+        StressChartCall.animate,
+      ],
+    };
 
 /// The call [call] in the mode [mode] with the plugin scene [scene]: [call]
 /// when the mode has it ([stressCallsOf]), else the first call of the mode.
@@ -231,7 +229,7 @@ enum StressPluginScene {
   /// `fill.radar`: a radar with the fills `origin`, `-1` and `-1`.
   radar('fill', 'radar', _drawAndUpdate);
 
-  const StressPluginScene(this.benchMode, this.benchName, this.calls);
+  StressPluginScene(this.benchMode, this.benchName, this.calls);
 
   /// The mode of the benchmark case, for example `tooltip`.
   final String benchMode;
@@ -289,10 +287,8 @@ final class StressPluginCase {
       'title': false,
     },
     StressPluginScene.title => {'datasets': 3, 'legend': false, 'title': true},
-    StressPluginScene.hover || StressPluginScene.still => {
-      'datasets': datasets,
-      'tooltip': tooltip,
-    },
+    StressPluginScene.hover ||
+    StressPluginScene.still => {'datasets': datasets, 'tooltip': tooltip},
     StressPluginScene.fade => {'datasets': datasets, 'tooltip': true},
     StressPluginScene.gaps ||
     StressPluginScene.stack ||
@@ -1338,10 +1334,7 @@ class StressDemoState extends State<StressDemo> {
       return;
     }
     final now = _clock.elapsed;
-    final dt = math.min(
-      (now - _lastTick).inMicroseconds / 1e6,
-      0.05,
-    );
+    final dt = math.min((now - _lastTick).inMicroseconds / 1e6, 0.05);
     _lastTick = now;
     _step(dt);
     if (stressChart != null && _mode.runsChart) {
@@ -1907,9 +1900,7 @@ class StressDemoState extends State<StressDemo> {
           top: 4,
           width: titleWidth + 8,
           height: _titleFont.lineHeight! + 4,
-          color: const ChartPaint.solid(
-            ui.Color.fromRGBO(255, 255, 255, 0.85),
-          ),
+          color: const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 0.85)),
         ),
       ),
     );

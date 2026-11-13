@@ -159,9 +159,7 @@ void main() {
     tearDownAll(() {
       final path = Platform.environment['TEXT_METRICS_REPORT'];
       if (path == null || path.isEmpty) return;
-      File(path).writeAsStringSync(
-        _report(measured, flutterAscents),
-      );
+      File(path).writeAsStringSync(_report(measured, flutterAscents));
     });
   });
 }

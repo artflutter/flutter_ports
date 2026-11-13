@@ -78,21 +78,16 @@ final class _Point implements Point {
 /// The helper cases.
 List<BenchCase> helperCases() => [
   // helpers.core
-  BenchCase(
-    'core',
-    'clone/bar_config',
-    () {
-      final config = barChartConfig();
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          acc += (clone(config)! as AnyObject).length;
-        }
-        return acc;
-      };
-    },
-    per: 'clone of a bar config, 3 datasets x 100 points',
-  ),
+  BenchCase('core', 'clone/bar_config', () {
+    final config = barChartConfig();
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        acc += (clone(config)! as AnyObject).length;
+      }
+      return acc;
+    };
+  }, per: 'clone of a bar config, 3 datasets x 100 points'),
   BenchCase('core', 'merge/bar_config', () {
     final config = barChartConfig();
     return (n) {
@@ -103,77 +98,67 @@ List<BenchCase> helperCases() => [
       return acc;
     };
   }, per: 'merge({}, config) of a bar config'),
-  BenchCase(
-    'core',
-    'mergeIf/options_over_defaults',
-    () {
-      final options = barChartOptions();
-      final scaleDefaults = <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'type': 'category',
-            'offset': true,
-            'grid': <String, Object?>{'offset': true, 'display': true},
-            'ticks': <String, Object?>{'autoSkip': true, 'padding': 3.0},
-          },
-          'y': <String, Object?>{
-            'type': 'linear',
-            'beginAtZero': true,
-            'grace': 0.0,
-            'ticks': <String, Object?>{'padding': 3.0},
-          },
+  BenchCase('core', 'mergeIf/options_over_defaults', () {
+    final options = barChartOptions();
+    final scaleDefaults = <String, Object?>{
+      'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': 'category',
+          'offset': true,
+          'grid': <String, Object?>{'offset': true, 'display': true},
+          'ticks': <String, Object?>{'autoSkip': true, 'padding': 3.0},
         },
-        'plugins': <String, Object?>{
-          'legend': <String, Object?>{'display': true, 'align': 'center'},
-          'tooltip': <String, Object?>{'enabled': true},
+        'y': <String, Object?>{
+          'type': 'linear',
+          'beginAtZero': true,
+          'grace': 0.0,
+          'ticks': <String, Object?>{'padding': 3.0},
         },
-      };
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          final target = <String, Object?>{};
-          mergeIf(target, <Object?>[options, scaleDefaults]);
-          acc += target.length;
-        }
-        return acc;
-      };
-    },
-    per: 'mergeIf({}, [options, scale and plugin defaults])',
-  ),
+      },
+      'plugins': <String, Object?>{
+        'legend': <String, Object?>{'display': true, 'align': 'center'},
+        'tooltip': <String, Object?>{'enabled': true},
+      },
+    };
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        final target = <String, Object?>{};
+        mergeIf(target, <Object?>[options, scaleDefaults]);
+        acc += target.length;
+      }
+      return acc;
+    };
+  }, per: 'mergeIf({}, [options, scale and plugin defaults])'),
   // helpers.options
-  BenchCase(
-    'options',
-    'createContext/chain3',
-    () {
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          final chart = createContext(null, <String, Object?>{
-            'chart': 'chart',
-            'type': 'chart',
-          });
-          final dataset = createContext(chart, <String, Object?>{
-            'active': false,
-            'datasetIndex': 0.0,
-            'index': 0.0,
-            'mode': 'default',
-            'type': 'dataset',
-          });
-          final data = createContext(dataset, <String, Object?>{
-            'active': false,
-            'dataIndex': 1.0,
-            'raw': 1.0,
-            'index': 1.0,
-            'mode': 'default',
-            'type': 'data',
-          });
-          acc += data.ownKeyCount;
-        }
-        return acc;
-      };
-    },
-    per: '3 createContext calls, chart > dataset > data',
-  ),
+  BenchCase('options', 'createContext/chain3', () {
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        final chart = createContext(null, <String, Object?>{
+          'chart': 'chart',
+          'type': 'chart',
+        });
+        final dataset = createContext(chart, <String, Object?>{
+          'active': false,
+          'datasetIndex': 0.0,
+          'index': 0.0,
+          'mode': 'default',
+          'type': 'dataset',
+        });
+        final data = createContext(dataset, <String, Object?>{
+          'active': false,
+          'dataIndex': 1.0,
+          'raw': 1.0,
+          'index': 1.0,
+          'mode': 'default',
+          'type': 'data',
+        });
+        acc += data.ownKeyCount;
+      }
+      return acc;
+    };
+  }, per: '3 createContext calls, chart > dataset > data'),
   BenchCase(
     'options',
     'createContext/read_chain3',
@@ -305,13 +290,9 @@ List<BenchCase> helperCases() => [
     () {
       final scale = _Scale(
         _Chart(<String, Object?>{'locale': const ui.Locale('en', 'US')}),
-        {
-          'ticks': <String, Object?>{},
-        },
+        {'ticks': <String, Object?>{}},
       );
-      final ticks = <Tick>[
-        for (var i = 0; i <= 10; i++) _Tick(i * 10.0),
-      ];
+      final ticks = <Tick>[for (var i = 0; i <= 10; i++) _Tick(i * 10.0)];
       final numeric = formatters['numeric'];
       jsCall(numeric, [10.0, 1.0, ticks], thisArg: scale);
       return (n) {
@@ -332,44 +313,34 @@ List<BenchCase> helperCases() => [
     items: 11,
     per: 'formatters.numeric over 11 ticks 0..100, intl cache hit',
   ),
-  BenchCase(
-    'ticks',
-    'formatNumber/cache_hit',
-    () {
-      const locale = ui.Locale('en', 'US');
-      formatNumberDigits(12.5, locale, scientific: false, fractionDigits: 1);
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          acc += formatNumberDigits(
-            12.5,
-            locale,
-            scientific: false,
-            fractionDigits: 1,
-          ).length;
-        }
-        return acc;
-      };
-    },
-    per: 'formatNumber with a cached NumberFormat (key + format)',
-  ),
-  BenchCase(
-    'ticks',
-    'formatNumber/cache_miss',
-    () {
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          final format = NumberFormat.decimalPattern('en_US')
-            ..maximumFractionDigits = 1
-            ..minimumFractionDigits = 1;
-          acc += format.format(12.5).length;
-        }
-        return acc;
-      };
-    },
-    per: 'first call: new NumberFormat + format (the cache miss cost)',
-  ),
+  BenchCase('ticks', 'formatNumber/cache_hit', () {
+    const locale = ui.Locale('en', 'US');
+    formatNumberDigits(12.5, locale, scientific: false, fractionDigits: 1);
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        acc += formatNumberDigits(
+          12.5,
+          locale,
+          scientific: false,
+          fractionDigits: 1,
+        ).length;
+      }
+      return acc;
+    };
+  }, per: 'formatNumber with a cached NumberFormat (key + format)'),
+  BenchCase('ticks', 'formatNumber/cache_miss', () {
+    return (n) {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        final format = NumberFormat.decimalPattern('en_US')
+          ..maximumFractionDigits = 1
+          ..minimumFractionDigits = 1;
+        acc += format.format(12.5).length;
+      }
+      return acc;
+    };
+  }, per: 'first call: new NumberFormat + format (the cache miss cost)'),
   // helpers.easing
   BenchCase(
     'easing',

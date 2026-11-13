@@ -868,9 +868,8 @@ class _BenchmarkPageState extends State<BenchmarkPage>
                     Text(
                       '${controller.config.type.label} · '
                       '${_number(controller.config.count)} items',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     _badge(
                       controller.config.workload.label,
@@ -1411,9 +1410,9 @@ String _libraryNote(ChartLibrary engine, BenchmarkConfig config) =>
     engine.runs(config) ? 'v${engine.version}' : engine.shortReasonFor(config);
 
 /// The notes of all libraries, which the library selector shows.
-String _libraryNotes(BenchmarkConfig config) => [
-  for (final engine in ChartLibrary.values) _libraryNote(engine, config),
-].join('\n');
+String _libraryNotes(BenchmarkConfig config) =>
+    [for (final engine in ChartLibrary.values) _libraryNote(engine, config)]
+        .join('\n');
 
 /// How a person zooms and pans, and the libraries that cannot. A desktop
 /// trackpad differs by library (ChartLibrary.zoomsWith), so the hint names

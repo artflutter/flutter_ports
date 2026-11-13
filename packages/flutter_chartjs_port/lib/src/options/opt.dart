@@ -368,7 +368,7 @@ Opt<T>? _special<T>(Object? raw) {
 
 /// A typed option object that a cell can hold as a nested scope: the base
 /// of the typed scope classes (`option_scope.dart`).
-abstract interface class OptionObject {}
+abstract interface class OptionObject;
 
 /// The cell of [raw] for a key of the shape `number`.
 Opt<double> classifyNumber(Object? raw) =>
@@ -413,9 +413,7 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
     ),
     bool() when mask & ShapeBits.boolean != 0 => OptValue<Object>(value),
     String() when mask & ShapeBits.string != 0 => OptValue<Object>(value),
-    _ when _typedFits(value, mask & ShapeBits.typed) => OptValue<Object>(
-      value,
-    ),
+    _ when _typedFits(value, mask & ShapeBits.typed) => OptValue<Object>(value),
     _ => OptForeign<Object>(value),
   };
 }

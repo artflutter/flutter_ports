@@ -979,7 +979,7 @@ final class _ElementBox extends MultiChildRenderObjectWidget {
   }
 }
 
-final class _ElementParentData extends ContainerBoxParentData<RenderBox> {}
+final class _ElementParentData extends ContainerBoxParentData<RenderBox>;
 
 /// The render box of one [HarnessElement] (see its CSS subset).
 final class _RenderHarnessElement extends RenderBox

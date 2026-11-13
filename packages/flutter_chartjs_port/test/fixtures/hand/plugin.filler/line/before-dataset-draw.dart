@@ -12,38 +12,17 @@ Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'line',
     'data': <String, Object?>{
-      'labels': <Object?>[
-        '15:00',
-        '16:00',
-        '17:00',
-        '18:00',
-        '19:00',
-        '20:00',
-      ],
+      'labels': <Object?>['15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
       'datasets': <Object?>[
         <String, Object?>{
           'borderColor': '#00ADEE80',
           'backgroundColor': '#00ADEE',
-          'data': <Object?>[
-            0,
-            1,
-            1,
-            2,
-            2,
-            0,
-          ],
+          'data': <Object?>[0, 1, 1, 2, 2, 0],
         },
         <String, Object?>{
           'borderColor': '#BD262880',
           'backgroundColor': '#BD2628',
-          'data': <Object?>[
-            0,
-            2,
-            2,
-            1,
-            1,
-            1,
-          ],
+          'data': <Object?>[0, 2, 2, 1, 1, 1],
         },
       ],
     },
@@ -57,17 +36,11 @@ Map<String, Object?> fixture() => <String, Object?>{
       'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
       'plugins': <String, Object?>{
         'legend': false,
-        'filler': <String, Object?>{
-          'drawTime': 'beforeDatasetDraw',
-        },
+        'filler': <String, Object?>{'drawTime': 'beforeDatasetDraw'},
       },
       'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'display': false,
-        },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'x': <String, Object?>{'display': false},
+        'y': <String, Object?>{'display': false},
       },
     },
   },

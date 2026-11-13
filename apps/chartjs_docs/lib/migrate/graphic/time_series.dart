@@ -83,11 +83,7 @@ final ChartConfig _config = ChartConfig(
     title: _time,
     label: _sales,
   ),
-  plugins: [
-    regionColor(const Color(0xffdddddd)),
-    crosshair(),
-    tooltipShadow,
-  ],
+  plugins: [regionColor(const Color(0xffdddddd)), crosshair(), tooltipShadow],
 );
 
 /// `selected: {'touchMove': {1}}`: the second point starts selected.

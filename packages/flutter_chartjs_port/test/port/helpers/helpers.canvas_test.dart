@@ -460,10 +460,7 @@ void main() {
         // Object.prototype: both are truthy functions, so upstream measures
         // neither and gives 30 for this array.
         final ctx = createMockContext();
-        expect(
-          longestText(ctx, _f, ['constructor', 'toString', 'ab']),
-          110,
-        );
+        expect(longestText(ctx, _f, ['constructor', 'toString', 'ab']), 110);
         expect(ctx.getCalls().map((call) => call['args']), [
           <Object?>[],
           [_f],
@@ -616,26 +613,23 @@ void main() {
     });
 
     for (final c in _drawPointCases) {
-      test(
-        'draws ${_styleName(c.style)}, rotation ${c.rotation}, w ${c.w}, '
-        'radius ${c.radius}, borderWidth ${c.borderWidth}',
-        () {
-          final ctx = _RecordingContext();
-          drawPointLegend(
-            ctx,
-            _PointOptions(
-              pointStyle: c.style,
-              rotation: c.rotation,
-              radius: c.radius,
-              borderWidth: c.borderWidth,
-            ),
-            50,
-            40,
-            c.w,
-          );
-          expect(ctx.getCalls(), _calls(c.calls));
-        },
-      );
+      test('draws ${_styleName(c.style)}, rotation ${c.rotation}, w ${c.w}, '
+          'radius ${c.radius}, borderWidth ${c.borderWidth}', () {
+        final ctx = _RecordingContext();
+        drawPointLegend(
+          ctx,
+          _PointOptions(
+            pointStyle: c.style,
+            rotation: c.rotation,
+            radius: c.radius,
+            borderWidth: c.borderWidth,
+          ),
+          50,
+          40,
+          c.w,
+        );
+        expect(ctx.getCalls(), _calls(c.calls));
+      });
     }
 
     test('treats a w of 0 or NaN as no w', () {
@@ -1015,11 +1009,12 @@ void main() {
             strokeWidth: width,
           ),
         );
-        expect(
-          ctx.getCalls().map((call) => call['name']),
-          ['save', 'setFont', 'fillText', 'restore'],
-          reason: '$width',
-        );
+        expect(ctx.getCalls().map((call) => call['name']), [
+          'save',
+          'setFont',
+          'fillText',
+          'restore',
+        ], reason: '$width');
       }
     });
 

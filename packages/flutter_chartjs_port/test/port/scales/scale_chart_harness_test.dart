@@ -343,10 +343,7 @@ void main() {
         isEmpty,
         reason: 'the points draw on the other context',
       );
-      expect(
-        other.getCalls().where((c) => c['name'] == 'arc'),
-        hasLength(2),
-      );
+      expect(other.getCalls().where((c) => c['name'] == 'arc'), hasLength(2));
       expect(identical(controller.ctx, other), isTrue);
     });
   });

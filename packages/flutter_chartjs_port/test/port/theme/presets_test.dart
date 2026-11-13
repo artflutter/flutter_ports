@@ -303,10 +303,7 @@ void main() {
       final pointActive = themeLightElements.firstWhere(
         (c) => c.type == 'point' && c.mode == 'active',
       );
-      expect(
-        pointActive.options['backgroundColor'],
-        '#00000019',
-      );
+      expect(pointActive.options['backgroundColor'], '#00000019');
       expect(
         _resolveElement(pointActive, theme)['backgroundColor'],
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 26 / 255)),

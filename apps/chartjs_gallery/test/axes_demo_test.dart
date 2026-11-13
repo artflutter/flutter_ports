@@ -580,10 +580,9 @@ void main() {
     expect(labels, contains('1,000'));
     await _tap(tester, 'axes.locale.de-DE');
     expect(chart.options['locale'], const ui.Locale('de', 'DE'));
-    expect(
-      [for (final tick in _scale(chart, 'x').ticks!) tick.label],
-      contains('1.000'),
-    );
+    expect([
+      for (final tick in _scale(chart, 'x').ticks!) tick.label,
+    ], contains('1.000'));
 
     // 1000 days from 2024-01-01. The default date adapter formats the
     // ticks with the display format of the unit.
@@ -697,9 +696,7 @@ void main() {
     final legend = chart.legend! as Legend;
     expect(jsGet(legend.options, 'display'), true);
     expect(
-      [
-        for (final item in legend.legendItems!) item.text.single,
-      ],
+      [for (final item in legend.legendItems!) item.text.single],
       ['A', 'B'],
     );
     expect(legend.height, greaterThan(0));

@@ -46,7 +46,7 @@ import 'package:meta/meta.dart' show immutable;
 ///
 /// [ChartPosition] gives the names of the union, and [ScaleValuePosition]
 /// its object form. A box of a plugin takes a [ChartPosition].
-abstract interface class LayoutPosition {}
+abstract interface class LayoutPosition;
 
 /// The names of layout.d.ts:3 `LayoutPosition`: the side of a box, or the
 /// center of the chart area for an axis, or the chart area for a legend.

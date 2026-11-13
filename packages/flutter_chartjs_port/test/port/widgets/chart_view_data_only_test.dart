@@ -54,9 +54,7 @@ const Map<String, ChartAxis> _radialAxis = {
 /// The labels of the charts of [_count] items: one growable List for a test
 /// run, as an app with stable labels keeps it.
 const int _count = 6;
-List<Object> _newLabels() => <Object>[
-  for (var i = 0; i < _count; i++) '$i',
-];
+List<Object> _newLabels() => <Object>[for (var i = 0; i < _count; i++) '$i'];
 
 double _value(int i, int step) => (10 + (i * 7 + step * 13) % 80).toDouble();
 
@@ -507,10 +505,7 @@ void main() {
         animation: ChartAnimation.none,
       );
       Future<Object> run({required bool dataOnly}) async {
-        await _warm(
-          tester,
-          (_) => _view(bubbles(0), dataOnly: dataOnly),
-        );
+        await _warm(tester, (_) => _view(bubbles(0), dataOnly: dataOnly));
         spy.clear();
         await tester.pumpWidget(_view(bubbles(3), dataOnly: dataOnly));
         expect(spy.layouts, 1);
@@ -718,10 +713,7 @@ void main() {
     });
 
     for (final (name, dataset) in <(String, Dataset Function(List<double>))>[
-      (
-        'a label',
-        (data) => BarDataset(key: _a, label: 'new', data: data),
-      ),
+      ('a label', (data) => BarDataset(key: _a, label: 'new', data: data)),
       (
         'a constant color',
         (data) => BarDataset(
@@ -1155,13 +1147,8 @@ void main() {
           ChartLegend? legend = const ChartLegend(display: false),
         }) async {
           final labels = _newLabels();
-          ChartConfig at(int step, ChartTitle? title) => coloredConfig(
-            type,
-            step,
-            labels,
-            legend: legend,
-            title: title,
-          );
+          ChartConfig at(int step, ChartTitle? title) =>
+              coloredConfig(type, step, labels, legend: legend, title: title);
           Widget view(int step, {double width = 400, ChartTitle? title}) =>
               _box(
                 ChartView(
@@ -1744,9 +1731,11 @@ void main() {
           // A full update makes new hit boxes from the kept state.
           await tester.pumpWidget(
             _view(
-              legendBars(6, labels, position).copyWith(
-                title: const ChartTitle(display: true, text: 'new'),
-              ),
+              legendBars(
+                6,
+                labels,
+                position,
+              ).copyWith(title: const ChartTitle(display: true, text: 'new')),
               dataOnly: dataOnly,
             ),
           );

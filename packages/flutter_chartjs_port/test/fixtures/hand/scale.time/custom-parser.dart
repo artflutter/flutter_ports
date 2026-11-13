@@ -46,9 +46,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             'source': TickSource.labels,
           },
         },
-        'y': <String, Object?>{
-          'display': false,
-        },
+        'y': <String, Object?>{'display': false},
       },
     },
   },
