@@ -13,10 +13,9 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/simple_parse.dart';
 
 /// rgb.js:15 `RGB_RE`.
@@ -68,12 +67,9 @@ RGBA? rgbParse(String str) {
   g = double.tryParse(m[3]!) ?? double.nan;
   b = double.tryParse(m[5]!) ?? double.nan;
   // 255 & x: ToInt32(x) & 255.
-  r = (255 & jsToInt32(m[2] != null ? p2b(r) : lim(r, 0, 255)).toInt())
-      .toDouble();
-  g = (255 & jsToInt32(m[4] != null ? p2b(g) : lim(g, 0, 255)).toInt())
-      .toDouble();
-  b = (255 & jsToInt32(m[6] != null ? p2b(b) : lim(b, 0, 255)).toInt())
-      .toDouble();
+  r = (255 & toInt32(m[2] != null ? p2b(r) : lim(r, 0, 255))).toDouble();
+  g = (255 & toInt32(m[4] != null ? p2b(g) : lim(g, 0, 255))).toDouble();
+  b = (255 & toInt32(m[6] != null ? p2b(b) : lim(b, 0, 255))).toDouble();
 
   return RGBA(r: r, g: g, b: b, a: a);
 }
@@ -128,10 +124,10 @@ String? rgbString(RGBA? v) {
     return String.fromCharCodes(codes, 0, i);
   }
   return alpha
-      ? 'rgba(${jsNumberToString(r)}, ${jsNumberToString(g)}, '
-            '${jsNumberToString(b)}, ${jsNumberToString(opacity)})'
-      : 'rgb(${jsNumberToString(r)}, ${jsNumberToString(g)}, '
-            '${jsNumberToString(b)})';
+      ? 'rgba(${numberText(r)}, ${numberText(g)}, '
+            '${numberText(b)}, ${numberText(opacity)})'
+      : 'rgb(${numberText(r)}, ${numberText(g)}, '
+            '${numberText(b)})';
 }
 
 @pragma('vm:prefer-inline')

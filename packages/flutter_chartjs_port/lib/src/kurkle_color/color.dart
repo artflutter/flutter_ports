@@ -11,9 +11,10 @@
 /// functions have a prefix with the name of their upstream module.
 ///
 /// A [Color] whose input does not parse has no color: its `_rgb` is JS
-/// `undefined`, Dart `null` here. The methods that read `_rgb` without a test
-/// throw for such a color, as they throw a `TypeError` in JavaScript. A Dart
-/// null check throws a `TypeError` too.
+/// `undefined`, Dart `null` here. Dart `null` stands for JS `undefined` in
+/// each input and result of the library. The methods that read `_rgb`
+/// without a test throw for such a color, as they throw a `TypeError` in
+/// JavaScript. A Dart null check throws a `TypeError` too.
 ///
 /// @packageDocumentation
 /// @module index
@@ -22,9 +23,6 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart'
     show b2n, n2b, round;
 import 'package:flutter_chartjs_port/src/kurkle_color/hex.dart'
@@ -36,6 +34,7 @@ import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
 import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
     show hsl2rgb, rgb2hsl;
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart'
     as rgb_js
     show rgbString;
@@ -63,13 +62,14 @@ void _modHSL(RGBA? v, int i, double ratio) {
 
 /// color.js:41 `clone`.
 ///
-/// `v ? Object.assign(proto || {}, v) : v`. A falsy [v] gives Dart `null`.
-/// The callers then throw, as JavaScript throws a `TypeError` when it sets
-/// `a` on `null`, `undefined` or another falsy primitive in strict mode. A
+/// `v ? Object.assign(proto || {}, v) : v`. A falsy [v] (`null`, `false`,
+/// 0, NaN or `''`) gives Dart `null`. The callers then throw, as JavaScript
+/// throws a `TypeError` when it sets `a` on `undefined` or another falsy
+/// primitive in strict mode. A
 /// truthy value that is not an [RGBA] or a `Map` has no own `r`, `g`, `b`
 /// and `a`, so the copy changes nothing.
 RGBA? _clone(Object? v, [RGBA? proto]) {
-  if (!jsTruthy(v)) {
+  if (_falsy(v)) {
     return null;
   }
   // The members of `{}` are undefined, which ToNumber makes NaN.
@@ -83,10 +83,10 @@ RGBA? _clone(Object? v, [RGBA? proto]) {
       ..b = v.b
       ..a = v.a;
   } else if (v is Map) {
-    if (v.containsKey('r')) target.r = jsToNumber(v['r']);
-    if (v.containsKey('g')) target.g = jsToNumber(v['g']);
-    if (v.containsKey('b')) target.b = jsToNumber(v['b']);
-    if (v.containsKey('a')) target.a = jsToNumber(v['a']);
+    if (v.containsKey('r')) target.r = toNumber(v['r']);
+    if (v.containsKey('g')) target.g = toNumber(v['g']);
+    if (v.containsKey('b')) target.b = toNumber(v['b']);
+    if (v.containsKey('a')) target.a = toNumber(v['a']);
   }
   return target;
 }
@@ -100,13 +100,13 @@ RGBA _fromObject(Object? input) {
     if (input.length >= 3) {
       v = RGBA(
         // DIVERGES(chartjs): adapt-kurkle-rgba, ToNumber of r, g and b.
-        r: jsToNumber(input[0]),
-        g: jsToNumber(input[1]),
-        b: jsToNumber(input[2]),
+        r: toNumber(input[0]),
+        g: toNumber(input[1]),
+        b: toNumber(input[2]),
         a: 255,
       );
       if (input.length > 3) {
-        v.a = n2b(jsToNumber(input[3]));
+        v.a = n2b(toNumber(input[3]));
       }
     }
   } else {
@@ -117,11 +117,20 @@ RGBA _fromObject(Object? input) {
   return v;
 }
 
-/// `typeof value` for the Dart values that stand for JS values
-/// (js_number.dart): `null` and every object that is not a function are
-/// `'object'`.
+/// The JS falsy values among the inputs of [_clone]: Dart `null` (JS
+/// `undefined`), `false`, 0, NaN and `''`.
+bool _falsy(Object? v) => switch (v) {
+  null => true,
+  final bool b => !b,
+  final num n => n == 0 || n.isNaN,
+  final String s => s.isEmpty,
+  _ => false,
+};
+
+/// `typeof value` for the Dart values that stand for JS values: Dart `null`
+/// is `'undefined'`, and every object that is not a function is `'object'`.
 String _typeOf(Object? value) => switch (value) {
-  Undefined() => 'undefined',
+  null => 'undefined',
   bool() => 'boolean',
   num() => 'number',
   String() => 'string',
@@ -148,8 +157,7 @@ class Color._(
   ///
   /// A [Color] input gives that instance, as the JS constructor returns it.
   /// Another input that is not an object or a string gives a color that is
-  /// not [valid]. Dart `null` is JS `null`: as in JavaScript, it throws. Pass
-  /// the `undefined` sentinel for JS `undefined`.
+  /// not [valid], also Dart `null` (JS `undefined`).
   factory(Object? input) {
     if (input is Color) {
       return input;
@@ -288,7 +296,7 @@ class Color._(
     // DIVERGES(chartjs): adapt-kurkle-color-copies, performance optimisations.
     final v = _rgb;
     return v == null
-        ? Color(undefined)
+        ? Color._(null)
         : Color._(RGBA(r: v.r, g: v.g, b: v.b, a: n2b(b2n(v.a))));
   }
 
@@ -391,6 +399,6 @@ double _mixByte(double value) {
   // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
   final integer = value > -2147483649.0 && value < 2147483648.0
       ? value.toInt()
-      : jsToInt32(value).toInt();
+      : toInt32(value);
   return (integer & 255) * 1.0;
 }

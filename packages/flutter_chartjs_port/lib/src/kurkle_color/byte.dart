@@ -9,7 +9,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
+import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
 
 /// byte.js:10 `round`.
 ///
@@ -17,7 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart';
 /// (ToInt32), so it is not `Math.round` for a negative [v]: `round(-50.5)` is
 /// -50, and `round(-0.7)` is 0.
 double round(double v) {
-  return jsToInt32(v + 0.5);
+  return toInt32(v + 0.5).toDouble();
 }
 
 /// byte.js:14 `lim`.

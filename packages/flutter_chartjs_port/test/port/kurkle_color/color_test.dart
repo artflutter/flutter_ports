@@ -1,13 +1,12 @@
 // Original code, not ported from Chart.js: tests of the Color port.
 import 'package:chartjs_test_utils/pure.dart' show referenceColor;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart';
 import 'package:test/test.dart';
 
 // The behaviour of Color that the upstream test/index.js does not check. The
 // expected values come from src/index.esm.js of @kurkle/color 0.3.2 in
-// Node.js v24.12.0 on x64 (V8 13.6.233.17-node.37). JS undefined results are
-// Dart null.
+// Node.js v24.12.0 on x64 (V8 13.6.233.17-node.37). Dart null stands for JS
+// undefined, in the inputs and in the results.
 
 /// The members of [v] as a record, for `expect`.
 ({double r, double g, double b, double a})? _members(RGBA? v) =>
@@ -22,15 +21,11 @@ void main() {
     });
 
     test('inputs that are not objects or strings are not valid', () {
-      expect(referenceColor(undefined).valid, isFalse);
+      expect(referenceColor(null).valid, isFalse);
       expect(referenceColor(5).valid, isFalse);
       expect(referenceColor(true).valid, isFalse);
       expect(referenceColor(() => 1).valid, isFalse);
       expect(referenceColor('').valid, isFalse);
-    });
-
-    test('JS null throws, as the TypeError of `v.a` does', () {
-      expect(() => referenceColor(null), throwsA(isA<TypeError>()));
     });
 
     test('short arrays and empty objects give opaque black', () {
@@ -69,8 +64,8 @@ void main() {
 
   group('adapt-kurkle-rgba', () {
     // JavaScript keeps the member values as they are. A template literal
-    // then prints them: 'rgb(010, 20, 30)', 'rgb(null, 20, 30)' and
-    // 'rgb(undefined, 20, 30)'. The port converts them with ToNumber.
+    // then prints them: 'rgb(010, 20, 30)' and 'rgb(undefined, 20, 30)'. The
+    // port converts them to numbers.
     test('object and array members are numbers', () {
       expect(
         referenceColor(<String, Object?>{'r': '010', 'g': 20, 'b': 30})
@@ -83,11 +78,6 @@ void main() {
       );
       expect(
         referenceColor(<String, Object?>{'r': null, 'g': 20, 'b': 30})
-            .rgbString(),
-        'rgb(0, 20, 30)',
-      );
-      expect(
-        referenceColor(<String, Object?>{'r': undefined, 'g': 20, 'b': 30})
             .rgbString(),
         'rgb(NaN, 20, 30)',
       );
@@ -135,10 +125,7 @@ void main() {
 
     test('throws for a falsy value', () {
       expect(() => referenceColor('red').rgb = 0, throwsA(isA<TypeError>()));
-      expect(
-        () => referenceColor('red').rgb = undefined,
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => referenceColor('red').rgb = null, throwsA(isA<TypeError>()));
     });
 
     test('does not make an invalid color valid', () {
