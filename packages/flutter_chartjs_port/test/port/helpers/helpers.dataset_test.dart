@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: helpers.dataset cases with no spec.
 import 'package:flutter_chartjs_port/src/helpers/helpers.dataset.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -52,18 +53,36 @@ final class _Scale(
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// The `_clip` object of `toClip` (core.datasetController.js:38).
-final class const _Clip(
-  @override final Object? left,
-  @override final Object? top,
-  @override final Object? right,
-  @override final Object? bottom, {
-  @override final bool disabled = false,
-}) implements ChartMetaClip;
+/// The `_clip` object of `toClip` (core.datasetController.js:38) for the JS
+/// side values [left], [top], [right] and [bottom]: a side of a
+/// [ChartClip] is a `double?` (row `adapt-native-chart-meta`). `false` is
+/// Dart `null`, `true` is 0 and another value is its `ToNumber`, as `toClip`
+/// gives them.
+ChartClip _clip(
+  Object? left,
+  Object? top,
+  Object? right,
+  Object? bottom, {
+  bool disabled = false,
+}) {
+  double? side(Object? value) => switch (value) {
+    false => null,
+    true => 0.0,
+    final num n => n.toDouble(),
+    _ => jsToNumber(value),
+  };
+  return ChartClip(
+    left: side(left),
+    top: side(top),
+    right: side(right),
+    bottom: side(bottom),
+    disabled: disabled,
+  );
+}
 
 /// A JavaScript object `{_clip, xScale, yScale}`, passed as a [ChartMeta].
 final class _Meta(
-  @override final ChartMetaClip clip, [
+  @override final ChartClip clip, [
   @override final Scale? xScale,
   @override final Scale? yScale,
 ]) implements ChartMeta {
@@ -101,7 +120,7 @@ void main() {
 
   group('getDatasetClipArea', () {
     test('returns false (null) when the clip is disabled', () {
-      const clip = _Clip(false, false, false, false, disabled: true);
+      final clip = _clip(false, false, false, false, disabled: true);
       expect(
         getDatasetClipArea(chart, _Meta(clip, xScale(true), yScale(true))),
         isNull,
@@ -109,7 +128,7 @@ void main() {
     });
 
     test('uses the chart area without both scales', () {
-      const clip = _Clip(5, 5, 5, 5);
+      final clip = _clip(5, 5, 5, 5);
       expect(getDatasetClipArea(chart, _Meta(clip)), _isArea(5, 15, 305, 205));
       expect(
         getDatasetClipArea(chart, _Meta(clip, xScale(true))),
@@ -122,7 +141,7 @@ void main() {
     });
 
     test('uses the chart area edges of a scale whose clip is falsy', () {
-      const clip = _Clip(5, 5, 5, 5);
+      final clip = _clip(5, 5, 5, 5);
       expect(
         getDatasetClipArea(chart, _Meta(clip, xScale(false), yScale(null))),
         _isArea(5, 15, 305, 205),
@@ -147,7 +166,7 @@ void main() {
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(const _Clip(5, 5, 5, 5), xScale(true), yScale(1)),
+          _Meta(_clip(5, 5, 5, 5), xScale(true), yScale(1)),
         ),
         _isArea(10, 20, 295, 195),
       );
@@ -155,21 +174,21 @@ void main() {
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(const _Clip(1, 2, 3, 4), xScale(0), yScale('yes')),
+          _Meta(_clip(1, 2, 3, 4), xScale(0), yScale('yes')),
         ),
         _isArea(9, 23, 303, 194),
       );
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(const _Clip(1, 2, 3, 4), xScale(<Object?>[]), yScale({})),
+          _Meta(_clip(1, 2, 3, 4), xScale(<Object?>[]), yScale({})),
         ),
         _isArea(14, 23, 293, 194),
       );
     });
 
     test('uses the chart edges for false', () {
-      const clip = _Clip(false, false, false, false);
+      final clip = _clip(false, false, false, false);
       expect(
         getDatasetClipArea(chart, _Meta(clip, xScale(true), yScale(true))),
         _isArea(0, 0, 320, 240),
@@ -177,7 +196,7 @@ void main() {
     });
 
     test('uses the dataset area edges for true', () {
-      const clip = _Clip(true, true, true, true);
+      final clip = _clip(true, true, true, true);
       expect(
         getDatasetClipArea(chart, _Meta(clip, xScale(true), yScale(true))),
         _isArea(15, 25, 290, 190),
@@ -185,22 +204,22 @@ void main() {
     });
 
     test('mixes false, true and numbers per edge', () {
-      const clip = _Clip(false, true, 7, false);
+      final clip = _clip(false, true, 7, false);
       expect(getDatasetClipArea(chart, _Meta(clip)), _isArea(0, 20, 307, 240));
     });
 
     test('moves the edges by negative and fractional numbers', () {
       expect(
-        getDatasetClipArea(chart, _Meta(const _Clip(-5, -2.5, -0.5, -100))),
+        getDatasetClipArea(chart, _Meta(_clip(-5, -2.5, -0.5, -100))),
         _isArea(15, 22.5, 299.5, 100),
       );
       expect(
-        getDatasetClipArea(chart, _Meta(const _Clip(0.1, 0.2, 0.1, 0.2))),
+        getDatasetClipArea(chart, _Meta(_clip(0.1, 0.2, 0.1, 0.2))),
         _isArea(9.9, 19.8, 300.1, 200.2),
       );
       // jsonDecode gives int values.
       expect(
-        getDatasetClipArea(chart, _Meta(const _Clip(1, 1, 1, 1))),
+        getDatasetClipArea(chart, _Meta(_clip(1, 1, 1, 1))),
         _isArea(9, 19, 301, 201),
       );
     });
@@ -209,14 +228,14 @@ void main() {
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(const _Clip(null, null, undefined, undefined)),
+          _Meta(_clip(null, null, undefined, undefined)),
         ),
         _isArea(10, 20, double.nan, double.nan),
       );
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(const _Clip(undefined, undefined, null, null)),
+          _Meta(_clip(undefined, undefined, null, null)),
         ),
         _isArea(double.nan, double.nan, 300, 200),
       );
@@ -227,7 +246,7 @@ void main() {
         getDatasetClipArea(
           chart,
           _Meta(
-            const _Clip(
+            _clip(
               double.nan,
               double.infinity,
               double.negativeInfinity,
@@ -256,52 +275,48 @@ void main() {
       expect(
         getDatasetClipArea(
           zeroChart,
-          _Meta(const _Clip(0, 0, _negativeZero, _negativeZero)),
+          _Meta(_clip(0, 0, _negativeZero, _negativeZero)),
         ),
         _isArea(_negativeZero, _negativeZero, _negativeZero, _negativeZero),
       );
       // true subtracts or adds 0: -0 + 0 is +0.
       expect(
-        getDatasetClipArea(
-          zeroChart,
-          _Meta(const _Clip(true, true, true, true)),
-        ),
+        getDatasetClipArea(zeroChart, _Meta(_clip(true, true, true, true))),
         _isArea(_negativeZero, _negativeZero, 0, 0),
       );
       // false gives +0 for left and top.
       expect(
-        getDatasetClipArea(
-          zeroChart,
-          _Meta(const _Clip(false, false, true, true)),
-        ),
+        getDatasetClipArea(zeroChart, _Meta(_clip(false, false, true, true))),
         _isArea(0, 0, 0, 0),
       );
     });
 
-    test('subtracts strings as numbers and adds them as strings', () {
+    test('takes the ToNumber of a string side', () {
       // Upstream returns the strings '3005' and '200x' for right and bottom.
-      // The port returns their ToNumber.
+      // A side of the port is a number: '5' adds 5 (row
+      // `adapt-native-chart-meta`).
       expect(
-        getDatasetClipArea(chart, _Meta(const _Clip('5', ' 7 ', '5', 'x'))),
-        _isArea(5, 13, 3005, double.nan),
+        getDatasetClipArea(chart, _Meta(_clip('5', ' 7 ', '5', 'x'))),
+        _isArea(5, 13, 305, double.nan),
       );
     });
 
     test('converts arrays and objects as JavaScript does', () {
-      // Upstream returns '3005' and '200' for right and bottom.
+      // Upstream returns '3005' and '200' for right and bottom. A side of
+      // the port is the ToNumber of the array: 5 and 0.
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(const _Clip([5], <Object?>[], [5], <Object?>[])),
+          _Meta(_clip([5], <Object?>[], [5], <Object?>[])),
         ),
-        _isArea(5, 20, 3005, 200),
+        _isArea(5, 20, 305, 200),
       );
       // Upstream returns '300[object Object]' and '200[object Object]'.
       expect(
         getDatasetClipArea(
           chart,
           _Meta(
-            const _Clip(
+            _clip(
               <String, Object?>{},
               <String, Object?>{},
               <String, Object?>{},

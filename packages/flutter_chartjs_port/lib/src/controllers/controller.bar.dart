@@ -55,6 +55,7 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
         axisStackOf,
         controllerArgs,
         dataItemValue,
+        metaStringOf,
         parsedValueOf,
         setStackValue,
         stacksOf,
@@ -869,7 +870,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
 
     // `const meta = this._cachedMeta; meta.stack = ...`: the dataset object
     // of the user.
-    cachedMeta.stack = jsGet(getDataset(), 'stack');
+    cachedMeta.stack = metaStringOf(jsGet(getDataset(), 'stack'), 'stack');
   }
 
   /// controller.bar.js:388 `update(mode)`.
@@ -1016,7 +1017,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         !identical(cachedMeta.vScale, valueScale) ||
         !sameAxis(valueScale.axis, valueAxis) ||
         !(valueAxis is XAxis || valueAxis is YAxis) ||
-        !identical(cachedMeta.stacked, false) ||
+        cachedMeta.stacked != types.StackMode.off ||
         !identical(ruler.grouped, true) ||
         !(owner as SingleBarIndexSource).hasSingleBarIndexLayout(
           this,
@@ -1243,10 +1244,12 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       // false     |   x   |     x     |     x
       // true      |       |     x     |
       // undefined |       |     x     |     x
+      // Dart `null` of the meta is the `undefined` of an absent stack.
+      final metaStack = meta.stack ?? undefined;
       if (stacked == false ||
-          !stacks.any((stack) => _strictEquals(stack, meta.stack)) ||
-          (identical(stacked, undefined) && identical(meta.stack, undefined))) {
-        stacks.add(meta.stack);
+          !stacks.any((stack) => _strictEquals(stack, metaStack)) ||
+          (identical(stacked, undefined) && identical(metaStack, undefined))) {
+        stacks.add(metaStack);
       }
       if (meta.index == last) {
         break;
@@ -1461,7 +1464,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     final vAxis = vScale!.axis;
     var value = parsedValueOf(parsed, vAxis);
     Object? start = 0.0;
-    var length = jsTruthy(stacked)
+    var length = stacked != types.StackMode.off
         ? applyStack(vScale, parsed, stacked)
         : value;
     double head;
@@ -1521,7 +1524,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       base = jsMax(jsMin(base, max), min);
       head = base + size;
 
-      if (jsTruthy(stacked) && !floating) {
+      if (stacked != types.StackMode.off && !floating) {
         // visual data coordinates after applying minBarLength
         // :615 `parsed._stacks[vScale.axis]._visualValues[datasetIndex] =
         // ...`. DC writes `_visualValues` as an IndexValues
@@ -1613,7 +1616,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         stackIndex =
             getStackIndex(
               this.index,
-              cachedMeta.stack,
+              cachedMeta.stack ?? undefined,
               jsTruthy(skipNull) ? index : null,
             ) +
             axisNumber;

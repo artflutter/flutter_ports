@@ -9,12 +9,10 @@ import 'package:chartjs_test_utils/flutter.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillBoundary, RelativeFill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -53,9 +51,9 @@ List<Object?> _decodedFillValues(Chart chart) {
 /// The body of the `map` callback of `decodedFillValues` for [index].
 Object? _decodedFillValue(Chart chart, int index) {
   final meta = chart.getDatasetMeta(index);
-  final source = (meta as types.PropertyAccess)[r'$filler'];
-  expect(source, isNot(same(undefined)));
-  return (source! as FillerSource).fill;
+  final source = fillerSourceOf(meta);
+  expect(source, isNotNull);
+  return source!.fill;
 }
 
 /// `acquireChart(config)` in a zone that records each `print` line into

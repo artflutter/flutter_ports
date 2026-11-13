@@ -196,8 +196,6 @@ void main() {
               (readByName(chart.data, 'datasets')! as List<Object?>).single!
                   as Map<String, Object?>;
           expect(dataset['showLine'], false);
-          // `_clip` of the meta is internal (Chart.js ADR 0048, section 6).
-          // ignore: invalid_use_of_internal_member
           expect(chart.getDatasetMeta(0).clip.disabled, isTrue);
           final before = _tabAreas0e0ab93[scale];
           if (before != null) {
@@ -236,8 +234,6 @@ void main() {
               greaterThan(jsToNumber(_item(tester, i - 1)['x'])),
             );
           }
-          // `_sorted` of the meta is internal (Chart.js ADR 0048, section 6).
-          // ignore: invalid_use_of_internal_member
           expect(chart.getDatasetMeta(0).sorted, isTrue);
           expect(
             _scale(tester, 'x').min,

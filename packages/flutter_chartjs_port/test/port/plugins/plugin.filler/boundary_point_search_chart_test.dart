@@ -131,7 +131,7 @@ void main() {
                 },
               },
             });
-            final source = chart.getDatasetMeta(0).$filler! as FillerSource;
+            final source = fillerSourceOf(chart.getDatasetMeta(0))!;
             final target = getTarget(source)! as types.LineElement;
             final search = BoundaryPointSearch.create(target, axis);
             if (!reverse) {

@@ -314,6 +314,13 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// `undefined` of the constructor. [update] writes a number.
   double? offsetY;
 
+  /// controller.doughnut.js:235 `meta.total`, index.d.ts:374
+  /// `DoughnutMetaExtensions.total`: the total of the dataset. The state of
+  /// one chart type goes to its controller (row `adapt-native-chart-meta`).
+  /// Dart `null` stands for the JS `undefined` before [update] writes it.
+  // DIVERGES(chartjs): adapt-native-chart-meta, the total of the controller.
+  double? total;
+
   /// Whether [update] runs [getMaxBorderWidth] and [getMaxOffset] now, in the
   /// mode `none`. Dart `false` for a call of user code (Chart.js ADR 0093).
   // DIVERGES(chartjs): adapt-arc-native-options, state of one update.
@@ -485,7 +492,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     this.offsetX = offsetX * outerRadius;
     this.offsetY = offsetY * outerRadius;
 
-    meta.total = calculateTotal();
+    total = calculateTotal();
 
     this.outerRadius = outerRadius - radiusLength * _getRingWeightOffset(index);
     this.innerRadius = jsMax(this.outerRadius! - radiusLength * chartWeight, 0);
@@ -733,10 +740,9 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 
   /// controller.doughnut.js:312 `calculateCircumference(value)`.
   ///
-  /// Dart `null` for `meta.total` is the JS `undefined` of `total > 0`:
-  /// false.
+  /// Dart `null` for [total] is the JS `undefined` of `total > 0`: false.
   double calculateCircumference(double value) {
-    final total = cachedMeta.total;
+    final total = this.total;
     if (total != null && total > 0 && !value.isNaN) {
       return tau * (value.abs() / total);
     }

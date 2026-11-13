@@ -586,13 +586,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       with the statics of `core.controller.js:105-120` (Chart.js ADR 0048 §2), as are
       `Animation.jsClass`, `Animations.jsClass` and `FlutterPlatform.jsClass`. `toBase64Image`
       returns a `Future<String>` from `HTMLCanvasElement.toDataURL` (row
-      `platform-to-base64-image`): each fake canvas of the tests has that member. The dataset meta is the class
-      `ChartMeta`. Its `_dataset` is `dataset_` (Chart.js ADR 0023). `getDataVisibility` returns
+      `platform-to-base64-image`): each fake canvas of the tests has that member. The dataset meta is the public
+      open class `ChartMeta<C extends DatasetController>` of `lib/src/types/chart_meta.dart` (row
+      `adapt-native-chart-meta`, doc/native-chart-meta-design-draft.md), with no access by name;
+      the chart gives `ChartMeta<DatasetController>`. `getDatasetMeta` computes its `final` `type`,
+      its `label` and its `indexAxis`. Its `_dataset` is `datasetConfig`. `getDataVisibility` returns
       `true` at once for an empty `_hiddenIndices`. `toggleDataVisibility` takes any JS value
-      (`Object?`) and writes the key `ToString(index)`, as upstream. `ChartMeta.total` is a typed
-      field (Chart.js ADR 0028). The axis ids of `ChartMeta` (`xAxisID`, `yAxisID`, `rAxisID`,
-      `iAxisID` and `vAxisID`) are `Object?`: `linkScales` keeps the raw id of the dataset, and
-      `getScaleForId` reads `chart.scales[ToString(id)]`. `_lastEvent` is `lastEvent` with
+      (`Object?`) and writes the key `ToString(index)`, as upstream. `visible` is a `bool`,
+      `stacked` the enum `StackMode`, `clip` a `ChartClip` with `double?` sides, and `stack` and
+      the axis ids (`xAxisID`, `yAxisID`, `rAxisID`, `iAxisID`, `vAxisID`) are `String?`: a value
+      that is not a string stops a debug build. The doughnut `total` is a field of
+      `DoughnutController`. `_lastEvent` is `lastEvent` with
       `@internal`: the input reference test reads it after each step. `Chart.legend` is a field that
       the legend plugin writes. It is not a pure layer: it imports the platform layer.
     - Chart.js ADR 0090: `update` and `updateData` replay the last event through
@@ -929,7 +933,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `stepped: true` and `borderSkipped` go through `extra`.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
-      is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream
+      is an entry of its own `Expando` (`fillerSourceOf`). The filler wraps each plain point of upstream
       in a `PointElement` with only the properties of the plain object (row
       `adapt-line-points-elements`): the boundary points, the radial polygon, the edge objects of
       `segments` and the results of `interpolate` in the stack line (`stackResultPoint`; an Array
@@ -2235,7 +2239,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   cases) puts the no-op `updateConfig` of `BasePlatform` on `BasicPlatform` first.
 - The doughnut and pie test files map the expected JS `null` of `xAxisID` and `yAxisID` to
   `undefined` (`_undefinedAxisIds`): their empty `linkScales` keeps the JS `null`, and the Dart
-  field `ChartMeta.xAxisID` (an `Object?`, the raw id) has Dart `null` for both.
+  field `ChartMeta.xAxisID` (a `String?`) has Dart `null` for both.
 - The doughnut, pie and polar area generators have the `legend:` cases of Chart.js ADR 0041 §5: the
   real legend with the label options of the old test legend, and the step `clickLegend`. The probe
   `realLegend` reads `legendItems` through `types.LegendElement` and `legendHitBoxes` through a cast

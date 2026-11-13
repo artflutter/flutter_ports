@@ -12,7 +12,6 @@ library;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -69,51 +68,24 @@ TRBL? _getDatasetArea(ChartMeta meta, ChartArea? chartArea) {
   return chartArea;
 }
 
-/// The JavaScript `area - edge` for an edge of [ChartMetaClip] that is not a
-/// `bool`: the subtraction applies `ToNumber` to [edge].
-double _subtract(double area, Object? edge) => area - jsToNumber(edge);
-
-/// The JavaScript `area + edge` for an edge of [ChartMetaClip] that is not a
-/// `bool`.
-///
-/// For a number, Dart `null` (JS `null`) and [undefined], the addition
-/// applies `ToNumber` to [edge]. For a string, an array or an object, `+`
-/// joins the strings, and the JS result is a string such as `'1005'`. The
-/// port returns `ToNumber` of that string. Each reader of the area applies
-/// `ToNumber` to it: `ctx.rect` and `-` in `clipArea`
-/// (helpers.canvas.ts:331), and `Math.min` in `clipBounds`
-/// (filler.drawing.js:190, :192).
-double _add(double area, Object? edge) => switch (edge) {
-  null || num() || Undefined() => area + jsToNumber(edge),
-  _ => jsToNumber(jsNumberToString(area) + jsToString(edge)),
-};
-
 /// helpers.dataset.ts:20 `getDatasetClipArea`.
 ///
 /// Returns Dart `null` where upstream returns `false`: when
-/// `meta._clip.disabled` is true. An edge of `false` gives the chart edge,
-/// `true` gives the dataset area edge, and any other value moves the
-/// dataset area edge outwards by the value. See [ChartMetaClip] for the
-/// edge values.
+/// `meta._clip.disabled` is true. A side of Dart `null` (JS `false`) gives
+/// the chart edge, and a number moves the dataset area edge outwards by the
+/// number: `true` is 0 (row `adapt-native-chart-meta`, [ChartClip]).
 TRBL? getDatasetClipArea(Chart chart, ChartMeta meta) {
   final clip = meta.clip;
   if (clip.disabled) {
     return null;
   }
   final area = _getDatasetArea(meta, chart.chartArea);
+  final ChartClip(:left, :right, :top, :bottom) = clip;
 
   return _Trbl(
-    left: clip.left == false
-        ? 0
-        : _subtract(area!.left, clip.left == true ? 0 : clip.left),
-    right: clip.right == false
-        ? chart.width
-        : _add(area!.right, clip.right == true ? 0 : clip.right),
-    top: clip.top == false
-        ? 0
-        : _subtract(area!.top, clip.top == true ? 0 : clip.top),
-    bottom: clip.bottom == false
-        ? chart.height
-        : _add(area!.bottom, clip.bottom == true ? 0 : clip.bottom),
+    left: left == null ? 0 : area!.left - left,
+    right: right == null ? chart.width : area!.right + right,
+    top: top == null ? 0 : area!.top - top,
+    bottom: bottom == null ? chart.height : area!.bottom + bottom,
   );
 }

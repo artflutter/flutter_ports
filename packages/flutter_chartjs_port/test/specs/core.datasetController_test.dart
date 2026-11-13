@@ -75,7 +75,7 @@ Element _element(types.ChartMeta meta, int index) =>
 
 /// `meta._parsed.map(p => p[key])`.
 List<Object?> _parsedOf(types.ChartMeta meta, String key) => [
-  for (final p in (meta as ChartMeta).parsed) jsGet(p, key),
+  for (final p in meta.parsed) jsGet(p, key),
 ];
 
 /// `data.push(...items)`: the change, then the notification of the hooked

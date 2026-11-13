@@ -312,7 +312,7 @@ void main() {
       expect(_dataset(chart, 0)['data'], 'abc');
       expect(meta.data, hasLength(3));
       expect(meta.parsed, [isNaN, isNaN, isNaN]);
-      expect(meta.total, 0);
+      expect((meta.controller! as DoughnutController).total, 0);
       expect(
         [
           for (final arc in meta.data)
@@ -330,7 +330,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       expect(meta.data, hasLength(3));
       expect(meta.parsed, ['1', '2', '3']);
-      expect(meta.total, 6);
+      expect((meta.controller! as DoughnutController).total, 6);
       expect(
         [
           for (final arc in meta.data)
@@ -398,22 +398,19 @@ void main() {
   // The pin tests of the interfaces spec, section 7.3, that need no
   // generated value.
   group('interfaces', () {
-    testWidgets('meta.total after an update is calculateTotal(), and the '
-        'read by name gives it', (tester) async {
+    testWidgets('total after an update is calculateTotal()', (tester) async {
       final chart = acquireChart(
         _one(const {}, <Object?>[10.0, -5.0, null, 20.0]),
       );
-      final meta = chart.getDatasetMeta(0);
-      final controller = meta.controller! as DoughnutController;
-      expect(meta.total, 35);
-      expect(meta.total, controller.calculateTotal());
-      expect(meta['total'], 35);
+      final controller =
+          chart.getDatasetMeta(0).controller! as DoughnutController;
+      expect(controller.total, 35);
+      expect(controller.total, controller.calculateTotal());
 
       chart
         ..toggleDataVisibility(3)
         ..update();
-      expect(meta.total, 15);
-      expect(meta['total'], 15);
+      expect(controller.total, 15);
     });
 
     testWidgets('getLabelAndValue gives the lines of the label of '

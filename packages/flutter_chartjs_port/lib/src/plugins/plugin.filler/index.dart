@@ -17,9 +17,8 @@
 /// [FillerSource] is the source object of `index.js:26-34`. The other
 /// filler files import it with `show FillerSource`: the Dart form of the
 /// JSDoc type of their `source` parameters (Chart.js ADR 0040, section 6).
-/// `meta.$filler` is the typed field of the port-only interface
-/// `types.ChartMetaFiller`, which the meta of `core.controller.dart`
-/// implements (the access by name of the meta reads and writes it too).
+/// `meta.$filler` is an entry of the `Expando` of this file
+/// ([fillerSourceOf], row `adapt-native-chart-meta`).
 ///
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
@@ -82,6 +81,15 @@ final class FillerSource({
   this;
 }
 
+/// index.js:37 `meta.$filler`: the source of each meta. The plugin keeps it
+/// in its own `Expando`, not on the meta (row `adapt-native-chart-meta`). A
+/// meta with no line keeps no source, as the `null` of upstream.
+// DIVERGES(chartjs): adapt-native-chart-meta, the state of the plugin.
+final _fillerSources = Expando<FillerSource>('filler');
+
+/// The source of [meta] (`meta.$filler`), or Dart `null`. The specs read it.
+FillerSource? fillerSourceOf(types.ChartMeta meta) => _fillerSources[meta];
+
 /// The axis argument of `source.line.updateControlPoints(area, source.axis)`
 /// (index.js:61): the [ScaleAxis] of the option, else Dart `null`, the
 /// `undefined` that the line takes as [XAxis] (row `adapt-axis-objects`).
@@ -115,7 +123,7 @@ void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
       );
     }
 
-    (meta as types.ChartMetaFiller).$filler = source;
+    _fillerSources[meta] = source;
     sources.add(source);
   }
 
@@ -140,7 +148,7 @@ void _beforeDraw(types.Chart chart, Object _, Object options) {
   final metasets = chart.getSortedVisibleDatasetMetas();
   final area = chart.chartArea;
   for (var i = metasets.length - 1; i >= 0; --i) {
-    final source = (metasets[i] as types.ChartMetaFiller).$filler;
+    final source = _fillerSources[metasets[i]];
     if (source is! FillerSource) {
       continue;
     }
@@ -162,10 +170,10 @@ void _beforeDatasetsDraw(types.Chart chart, Object _, Object options) {
 
   final metasets = chart.getSortedVisibleDatasetMetas();
   for (var i = metasets.length - 1; i >= 0; --i) {
-    final source = (metasets[i] as types.ChartMetaFiller).$filler;
+    final source = _fillerSources[metasets[i]];
 
     if (shouldApplyFill(source)) {
-      drawfill(chart.ctx!, source! as FillerSource, chart.chartArea);
+      drawfill(chart.ctx!, source!, chart.chartArea);
     }
   }
 }
@@ -179,7 +187,7 @@ void _beforeDatasetDraw(
   DatasetDrawHookArgs args,
   Object options,
 ) {
-  final source = (args.meta! as types.ChartMetaFiller).$filler;
+  final source = _fillerSources[args.meta!];
 
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
   if (!shouldApplyFill(source) ||
@@ -188,7 +196,7 @@ void _beforeDatasetDraw(
     return;
   }
 
-  drawfill(chart.ctx!, source! as FillerSource, chart.chartArea);
+  drawfill(chart.ctx!, source!, chart.chartArea);
 }
 
 /// index.js:12 the default export, `Filler` of `src/plugins/index.js:3`

@@ -120,19 +120,14 @@ void main() {
   });
 
   group('types.ChartMeta', () {
-    testWidgets('dataset_ and total', (tester) async {
+    testWidgets('datasetConfig', (tester) async {
       final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
       final meta = chart.getDatasetMeta(0);
       final types.ChartMeta t = meta;
       final dataset = jsGet(jsGet(chart.data, 'datasets'), 0.0);
-      expect(identical(t.dataset_, dataset), isTrue);
-      expect(identical(t.dataset_, meta.dataset_), isTrue);
-      // No doughnut update wrote the total.
-      expect(t.total, isNull);
-      expect(meta['total'], same(undefined));
-      t.total = 3;
-      expect(meta.total, 3.0);
-      expect(meta['total'], 3.0);
+      expect(identical(t.datasetConfig, dataset), isTrue);
+      expect(t.type, 'bar');
+      expect(t.controller, same(meta.controller));
     });
   });
 

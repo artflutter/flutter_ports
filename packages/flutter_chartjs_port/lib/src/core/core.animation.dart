@@ -713,11 +713,38 @@ Object? _cfgType(Object cfg) =>
 @internal
 Object? readProperty(Object target, String prop) => switch (target) {
   final types.PropertyAccess access => access[prop],
+  final types.ChartMeta meta => _metaRead(meta, prop),
   final JsObjectFace face => face.jsRead(prop),
   // `<dynamic, dynamic>` matches every Map, as in `jsGet`.
   final Map<dynamic, dynamic> map => jsGet(map, prop),
   _ => throw ArgumentError.value(target, 'target', 'is not an object'),
 };
+
+/// The read `meta[prop]` of the `visible` animation of a dataset
+/// (core.controller.js:903): the typed fields of the meta. Another name gives
+/// [undefined], as the meta has no such property (row
+/// `adapt-native-chart-meta`).
+Object? _metaRead(types.ChartMeta meta, String prop) => switch (prop) {
+  'visible' => meta.visible,
+  r'$animations' => meta.animations ?? undefined,
+  _ => undefined,
+};
+
+/// The write `meta[prop] = value` of the `visible` animation of a dataset.
+/// [types.ChartMeta.visible] takes the ToBoolean of the value: the `hide`
+/// animation writes `v | 0` (core.animations.defaults.js:67), and each
+/// reader applies ToBoolean. Another name throws an [ArgumentError]: the
+/// meta has only the typed fields.
+void _metaWrite(types.ChartMeta meta, String prop, Object? value) {
+  switch (prop) {
+    case 'visible':
+      meta.visible = jsTruthy(value);
+    case r'$animations':
+      meta.animations = value as Map<String, Object?>?;
+    default:
+      throw ArgumentError.value(prop, 'prop', 'is not a property of the meta');
+  }
+}
 
 /// The JS property write `target[prop] = value` of an animation target
 /// (Chart.js ADR 0019, section 2).
@@ -732,6 +759,8 @@ void writeProperty(Object target, String prop, Object? value) {
   switch (target) {
     case final types.PropertyAccess access:
       access[prop] = value;
+    case final types.ChartMeta meta:
+      _metaWrite(meta, prop, value);
     case final JsObjectFace face:
       face.jsWrite(prop, value);
     case final Map<dynamic, dynamic> map:

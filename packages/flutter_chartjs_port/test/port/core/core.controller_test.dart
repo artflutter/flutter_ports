@@ -41,6 +41,7 @@ import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -501,7 +502,7 @@ void main() {
           'meta',
           '${meta.type} ${_n(meta.index)} ${_n(meta.order)} ${meta.label} '
               '${meta.visible} '
-              '${meta.indexAxis is ScaleAxis ? axisMarker : meta.indexAxis} '
+              '$axisMarker '
               '${meta.xAxisID} '
               '${meta.yAxisID}',
         )
@@ -1184,73 +1185,41 @@ void main() {
     });
   });
 
-  group('the meta read by name', () {
-    test('_clip reads undefined before the first write, then the clip', () {
+  group('the meta clip', () {
+    test('clip throws before the first write, then gives the clip', () {
       // core.datasetController.js:704 writes `meta._clip`. The literal of
       // `_getMetaForDataset` has no `_clip` (core.controller.js:836-853).
       final chart = Chart(5, <String, Object?>{});
       addTearDown(chart.destroy);
       final meta = chart.getDatasetMeta(0);
-      expect(meta['_clip'], same(undefined));
-      expect(() => meta.clip, throwsA(isA<TypeError>()));
-      final clip = _TestClip();
-      meta['_clip'] = clip;
-      expect(meta['_clip'], same(clip));
+      expect(() => meta.clip, throwsA(isA<Error>()));
+      const clip = ChartClip(left: 1, top: 2, right: 3, bottom: 4);
+      meta.clip = clip;
       expect(meta.clip, same(clip));
     });
   });
 
   group('a number axis id', () {
-    // A probe of the pinned build in x64 Node.js v24.12.0 with the axis id
-    // 1: `meta.xAxisID` stays the number 1, and
-    // `getScaleForId(1)` reads `chart.scales['1']`
-    // (core.datasetController.js:306, 331-333). The `===` of
-    // core.scale.js:1688 leaves dataset 0 out of the metas of the scale, and
-    // `indexOf(1)` of controller.bar.js:649 gives -1.
-    testWidgets('keeps the number and gives the upstream bars', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b', 'c', 'd'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1.0, 2.0, 3.0, 4.0],
-              'xAxisID': 1.0,
-            },
-            <String, Object?>{
-              'data': <Object?>[2.0, 3.0, 1.0, 2.0],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            '1': <String, Object?>{
-              'type': 'category',
-              'axis': const XAxis(),
-              'position': ChartPosition.top,
-            },
-          },
-        },
-      });
-      expect(jsObjectKeys(chart.scales), ['1', 'y', 'x']);
-      final meta0 = chart.getDatasetMeta(0);
-      final meta1 = chart.getDatasetMeta(1);
-      expect(meta0.xAxisID, 1.0);
-      expect(meta0['xAxisID'], 1.0);
-      expect(meta0.xScale?.id, '1');
-      expect(meta1.xAxisID, '1');
-      expect(meta1.xScale?.id, '1');
-      List<double> xs(types.ChartMeta meta) => [for (final e in meta.data) e.x];
-      expect(xs(meta0), [
-        for (final x in [-5.417, 114.912, 235.242, 355.572]) closeTo(x, 1e-3),
-      ]);
-      expect(xs(meta1), [
-        for (final x in [90.846, 211.176, 331.506, 451.835]) closeTo(x, 1e-3),
-      ]);
+    // The axis id of the meta is a `String?` (row `adapt-native-chart-meta`).
+    // The schema shape of `xAxisID` is `string`: a number stops a debug
+    // build in `linkScales`.
+    testWidgets('stops a debug build', (tester) async {
       expect(
-        jsToNumber((meta0.data.first as Element)['width']),
-        closeTo(86.637, 1e-3),
+        () => acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'labels': <Object?>['a', 'b'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1.0, 2.0],
+                'xAxisID': 1.0,
+              },
+            ],
+          },
+        }),
+        throwsA(isA<AssertionError>()),
       );
+      releaseCharts();
     });
   });
 
@@ -1417,28 +1386,6 @@ void main() {
       ]);
       chart.update();
       expectVisibility([true, true, false, true]);
-    });
-  });
-
-  group('ChartMeta.total', () {
-    // index.d.ts:374 `DoughnutMetaExtensions.total` (Chart.js ADR 0028,
-    // section 1): a typed field with the read and the write by name.
-    test('a meta without a doughnut gives undefined, and the write by name '
-        'sets the field', () {
-      final chart = Chart(5, <String, Object?>{});
-      addTearDown(chart.destroy);
-      final meta = chart.getDatasetMeta(0);
-      expect(meta.total, isNull);
-      expect(meta['total'], same(undefined));
-      meta['total'] = 5;
-      expect(meta.total, 5.0);
-      expect(meta.total, isA<double>());
-      expect(meta['total'], 5.0);
-      meta['total'] = undefined;
-      expect(meta.total, isNull);
-      expect(meta['total'], same(undefined));
-      expect(() => meta['total'] = 'a', throwsA(isA<TypeError>()));
-      expect(meta.total, isNull);
     });
   });
 
@@ -2060,22 +2007,4 @@ final class _ResizeSpyChart(super.item, [super.userConfig]) extends Chart {
     calls.add('resize($w, $h)');
     super.resize(w, h);
   };
-}
-
-/// A clip `{left, top, right, bottom, disabled}`.
-final class _TestClip() implements types.ChartMetaClip {
-  @override
-  Object? get left => 1;
-
-  @override
-  Object? get top => 2;
-
-  @override
-  Object? get right => 3;
-
-  @override
-  Object? get bottom => 4;
-
-  @override
-  bool get disabled => false;
 }

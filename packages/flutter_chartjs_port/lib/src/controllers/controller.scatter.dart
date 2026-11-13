@@ -353,7 +353,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         addElements();
       }
       final line = meta.dataset;
-      final dataset = meta.dataset_;
+      final dataset = meta.datasetConfig;
 
       // Update Line
       final target = line!;
@@ -462,7 +462,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final iScale = meta.iScale;
     final vScale = meta.vScale;
     final stacked = meta.stacked;
-    final dataset = meta.dataset_;
+    final dataset = meta.datasetConfig;
     final firstOpts = resolveDataElementOptions(start, mode);
     final sharedOptions = getSharedOptions(firstOpts);
     final includeOptions = this.includeOptions(mode, sharedOptions);
@@ -473,7 +473,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final segment = options.readKey(OptionKey.segment);
     // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:130)
     // and `if (segment)` (:134) test two locals of this call: once here.
-    final hasStack = jsTruthy(stacked);
+    final hasStack = stacked != types.StackMode.off;
     final hasSegment = jsTruthy(segment);
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)

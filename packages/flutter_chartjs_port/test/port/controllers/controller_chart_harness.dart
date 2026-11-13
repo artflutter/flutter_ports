@@ -40,6 +40,8 @@ import 'dart:convert';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart'
+    show DoughnutController;
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -57,6 +59,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show jsObjectKeys, jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -209,11 +212,13 @@ Object? plainValue(Object? value, [int depth = 0]) {
   }
   return switch (value) {
     Function() || JsClass() => '<fn>',
-    final types.ChartMetaClip clip => <String, Object?>{
-      'top': clip.top,
-      'right': clip.right,
-      'bottom': clip.bottom,
-      'left': clip.left,
+    // A side of Dart `null` is the JS `false` of `toClip` (row
+    // `adapt-native-chart-meta`).
+    final types.ChartClip clip => <String, Object?>{
+      'top': clip.top ?? false,
+      'right': clip.right ?? false,
+      'bottom': clip.bottom ?? false,
+      'left': clip.left ?? false,
       'disabled': clip.disabled,
     },
     final List<Object?> list => [
@@ -304,30 +309,57 @@ Map<String, Object?>? _datasetElement(types.Element? element) {
   };
 }
 
+/// The `_clip` of the reference data as the port gives it: a side that is
+/// not a boolean is its `ToNumber`, as `toClip` reads it (row
+/// `adapt-native-chart-meta`). Upstream keeps a string side.
+Object? _nativeClip(Object? clip) => switch (clip) {
+  final Map<String, Object?> map => <String, Object?>{
+    for (final MapEntry(:key, :value) in map.entries)
+      key: key == 'disabled' || value is bool || value is num
+          ? value
+          : jsToNumber(value),
+  },
+  _ => clip,
+};
+
+/// The plain `_clip` of [meta], or [undefined] before the first update writes
+/// it: the read of a meta with no clip throws.
+Object? _clipOf(types.ChartMeta meta) {
+  try {
+    return plainValue(meta.clip);
+    // The read of a `late` field before its first write.
+    // ignore: avoid_catching_errors
+  } on Error {
+    return undefined;
+  }
+}
+
 /// The `datasets` observation of the dataset [index] of [chart].
 Map<String, Object?> _observeDataset(Chart chart, int index) {
   final i = index;
   final meta = chart.getDatasetMeta(i);
   final controller = meta.controller!;
-  final type = meta['type'];
-  final total = meta.total;
+  final type = meta.type;
+  // controller.doughnut.js:235 `meta.total`: a field of the doughnut
+  // controller (row `adapt-native-chart-meta`).
+  final total = controller is DoughnutController ? controller.total : null;
   final drawStart = controller.drawStart;
   final drawCount = controller.drawCount;
   final data = meta.data;
   return <String, Object?>{
     'type': type,
-    'indexAxis': meta['indexAxis'],
+    'indexAxis': meta.indexAxis,
     // linkScales gives a scale id or JS `undefined`
     // (core.datasetController.js:306-308). The Dart field gives Dart `null`
     // for `undefined`.
     'xAxisID': meta.xAxisID ?? undefined,
     'yAxisID': meta.yAxisID ?? undefined,
-    'rAxisID': meta['rAxisID'],
-    'stack': meta['stack'],
+    'rAxisID': meta.rAxisID ?? undefined,
+    'stack': meta.stack ?? undefined,
     'order': meta.order,
     'visible': chart.isDatasetVisible(i),
     'hidden': meta.hidden,
-    '_clip': plainValue(meta['_clip']),
+    '_clip': _clipOf(meta),
     'total': ?total,
     '_drawStart': ?drawStart,
     '_drawCount': ?drawCount,
@@ -688,11 +720,11 @@ void expectControllerObservations(
         dataset[key],
         // The native label of the upstream label (row
         // `adapt-native-tooltip-item`).
-        referenceMatcher(
-          key == 'labelAndValue'
-              ? nativeLabelAndValue(expectedDataset[key])
-              : expectedDataset[key],
-        ),
+        referenceMatcher(switch (key) {
+          'labelAndValue' => nativeLabelAndValue(expectedDataset[key]),
+          '_clip' => _nativeClip(expectedDataset[key]),
+          _ => expectedDataset[key],
+        }),
         reason: '$label: datasets.$i.$key',
       );
     }

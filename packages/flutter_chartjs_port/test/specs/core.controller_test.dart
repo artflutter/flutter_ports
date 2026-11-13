@@ -2545,7 +2545,10 @@ void main() {
         expect(metasets.length, jasmineEquals(_datasets(chart).length));
         for (var i = 0; i < metasets.length; i++) {
           expect(metasets[i]!.index, jasmineEquals(i));
-          expect(metasets[i]!.dataset_, jasmineEquals(_datasets(chart)[i]));
+          expect(
+            metasets[i]!.datasetConfig,
+            jasmineEquals(_datasets(chart)[i]),
+          );
         }
       }
 

@@ -158,8 +158,9 @@ final class _ClipEdges({
 /// An absent key of an object [value] gives the [undefined] sentinel, as the
 /// property read of upstream does. The `clip` option of the user is a view
 /// of the resolver for an object (helpers.config.ts:215-221): the reads
-/// are typed.
-types.ChartMetaClip _toClip(Object? value) {
+/// are typed. Each side is a `double?` of [types.ChartClip] (row
+/// `adapt-native-chart-meta`).
+types.ChartClip _toClip(Object? value) {
   Object? t;
   Object? r;
   Object? b;
@@ -179,18 +180,24 @@ types.ChartMetaClip _toClip(Object? value) {
     t = r = b = l = value;
   }
 
-  return _Clip(top: t, right: r, bottom: b, left: l, disabled: value == false);
+  return types.ChartClip(
+    top: _clipSide(t),
+    right: _clipSide(r),
+    bottom: _clipSide(b),
+    left: _clipSide(l),
+    disabled: value == false,
+  );
 }
 
-/// core.datasetController.js:50 the object `{top, right, bottom, left,
-/// disabled}` of `toClip`.
-final class _Clip({
-  @override required final Object? top,
-  @override required final Object? right,
-  @override required final Object? bottom,
-  @override required final Object? left,
-  @override required final bool disabled,
-}) implements types.ChartMetaClip;
+/// A side of `toClip` as `getDatasetClipArea` reads it
+/// (helpers.dataset.ts:28-31): `false` is no clip (Dart `null`), `true` is
+/// 0, and another value is its `ToNumber`: `undefined` gives NaN.
+double? _clipSide(Object? side) => switch (side) {
+  false => null,
+  true => 0.0,
+  final num n => n.toDouble(),
+  _ => jsToNumber(side),
+};
 
 /// core.datasetController.js:59 `getSortedDatasetIndices`.
 List<int> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
@@ -206,8 +213,8 @@ List<int> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
 /// core.datasetController.js:70 `applyStack(stack, value, dsIndex, options
 /// = {})`.
 ///
-/// [mode] and [all] are the keys of `options`. Dart `null` for [mode] stands
-/// for JS `undefined`.
+/// [mode] and [all] are the keys of `options`: [mode] is the `_stacked`
+/// value of the meta, and Dart `null` stands for JS `undefined`.
 ///
 /// The result is the upstream result: [undefined] for a `null` [value], 0
 /// when the stack does not contain [dsIndex], else the sum. The sum keeps
@@ -217,11 +224,11 @@ Object? _applyStack(
   DatasetStack stack,
   Object? value,
   int dsIndex, {
-  Object? mode,
+  types.StackMode? mode,
   bool all = false,
 }) {
   final keys = stack.keys;
-  final singleMode = mode == 'single';
+  final singleMode = mode == types.StackMode.single;
   int datasetIndex;
   Object? otherValue;
 
@@ -300,14 +307,31 @@ List<Object?> _convertObjectDataToArray(Object data, types.ChartMeta meta) {
 
 /// core.datasetController.js:119 `isStacked`.
 ///
-/// The result is the `stacked` option when it is truthy, else a `bool`.
-Object? _isStacked(types.Scale? scale, types.ChartMeta meta) {
+/// `stacked || (stacked === undefined && meta.stack !== undefined)`: the
+/// `'single'` of the scale option is [types.StackMode.single], another truthy
+/// value [types.StackMode.on] (row `adapt-native-chart-meta`).
+types.StackMode _isStacked(types.Scale? scale, types.ChartMeta meta) {
   final stacked = scale == null
       ? undefined
       : readOption(scale.options, OptionKey.stacked);
-  return jsTruthy(stacked)
-      ? stacked
-      : (identical(stacked, undefined) && !identical(meta.stack, undefined));
+  if (jsTruthy(stacked)) {
+    return stacked == 'single' ? types.StackMode.single : types.StackMode.on;
+  }
+  return identical(stacked, undefined) && meta.stack != null
+      ? types.StackMode.on
+      : types.StackMode.off;
+}
+
+/// A `stack` or an axis id of a dataset as the value of the meta: Dart
+/// `null` for JS `undefined` and `null`, else the string. The schema shape of
+/// both is `string`: another value stops a debug build, and a release build
+/// takes its string form (row `adapt-native-chart-meta`).
+@internal
+String? metaStringOf(Object? value, String option) {
+  if (value is String) return value;
+  if (value == null || value is Undefined) return null;
+  assert(false, 'The dataset option $option takes a String, not $value.');
+  return jsToString(value);
 }
 
 /// core.datasetController.js:124 `getStackKey`.
@@ -316,8 +340,9 @@ String _getStackKey(
   types.Scale valueScale,
   types.ChartMeta meta,
 ) {
-  final stack = jsTruthy(meta.stack) ? meta.stack : meta.type;
-  return '${indexScale.id}.${valueScale.id}.${jsToString(stack)}';
+  final stack = meta.stack;
+  return '${indexScale.id}.${valueScale.id}.'
+      '${stack != null && stack.isNotEmpty ? stack : meta.type}';
 }
 
 /// core.datasetController.js:128 `getUserBounds`.
@@ -665,7 +690,10 @@ DatasetStack? _createStack(
   Object? canStack,
   types.ChartMeta meta,
   types.Chart chart,
-) => jsTruthy(canStack) && !jsTruthy(meta.hidden) && jsTruthy(meta.stacked)
+) =>
+    jsTruthy(canStack) &&
+        !jsTruthy(meta.hidden) &&
+        meta.stacked != types.StackMode.off
     ? DatasetStack(_getSortedDatasetIndices(chart, true), null)
     : null;
 
@@ -1260,40 +1288,41 @@ class DatasetController(
 
   /// core.datasetController.js:299 `linkScales()`.
   ///
-  /// The meta keeps the raw axis id of the dataset, as upstream does: a
-  /// number id stays a number (index.d.ts:489-493 types it as a string, but
-  /// the code reads any value). Dart `null` stands for JS `undefined` and
-  /// `null`.
+  /// An axis id is a `String?` of the meta (row `adapt-native-chart-meta`):
+  /// Dart `null` stands for JS `undefined` and `null`.
   void linkScales() {
     final chart = this.chart;
     final meta = cachedMeta;
     final dataset = getDataset();
 
     // `axis === 'x' ? x : axis === 'r' ? r : y`.
-    Object? chooseId(ScaleAxis? axis, Object? x, Object? y, Object? r) =>
+    String? chooseId(ScaleAxis? axis, String? x, String? y, String? r) =>
         switch (axis) {
           XAxis() => x,
           RAxis() => r,
           _ => y,
         };
 
-    final xid = meta.xAxisID = _axisId(
+    final xid = meta.xAxisID = metaStringOf(
       valueOrDefault(
         jsGet(dataset, 'xAxisID'),
         _getFirstScaleId(chart, const XAxis()) ?? undefined,
       ),
+      'xAxisID',
     );
-    final yid = meta.yAxisID = _axisId(
+    final yid = meta.yAxisID = metaStringOf(
       valueOrDefault(
         jsGet(dataset, 'yAxisID'),
         _getFirstScaleId(chart, const YAxis()) ?? undefined,
       ),
+      'yAxisID',
     );
-    final rid = meta.rAxisID = _axisId(
+    final rid = meta.rAxisID = metaStringOf(
       valueOrDefault(
         jsGet(dataset, 'rAxisID'),
         _getFirstScaleId(chart, const RAxis()) ?? undefined,
       ),
+      'rAxisID',
     );
     final indexAxis = meta.indexAxis;
     final iid = meta.iAxisID = chooseId(indexAxis, xid, yid, rid);
@@ -1305,10 +1334,6 @@ class DatasetController(
       ..iScale = getScaleForId(iid)
       ..vScale = getScaleForId(vid);
   }
-
-  /// The axis id [value] of [linkScales] as the value of the meta: Dart
-  /// `null` for JS `undefined` and `null`, else the raw value.
-  Object? _axisId(Object? value) => value is Undefined ? null : value;
 
   /// core.datasetController.js:319 `getDataset()`.
   ///
@@ -1358,7 +1383,7 @@ class DatasetController(
     if (data != null) {
       unlistenArrayEvents(data, this);
     }
-    if (jsTruthy(meta.stacked)) {
+    if (meta.stacked != types.StackMode.off) {
       _clearStacks(meta);
     }
   }
@@ -1445,7 +1470,7 @@ class DatasetController(
     // `!==`: Dart `!=` gives its result for the JS values of the option.
     // Upstream reads `dataset.stack` twice, with `clearStacks` between the
     // reads. No user code runs there: one read gives the same value.
-    final stack = jsGet(dataset, 'stack');
+    final stack = metaStringOf(jsGet(dataset, 'stack'), 'stack');
     if (meta.stack != stack) {
       stackChanged = true;
       // remove values from old stack
@@ -1562,7 +1587,7 @@ class DatasetController(
       meta.sorted = sorted;
     }
 
-    if (jsTruthy(stacked)) {
+    if (stacked != types.StackMode.off) {
       _updateStacks(this, parsed);
     }
   }
@@ -1735,10 +1760,14 @@ class DatasetController(
   /// core.datasetController.js:593 `applyStack(scale, parsed, mode)`.
   /// @protected
   ///
-  /// [mode] is the `_stacked` value of the meta, for example `'single'`. The
+  /// [mode] is the `_stacked` value of the meta. The
   /// result is the upstream result: [undefined] for a `null` value, else a
   /// number, or a string for a string value.
-  Object? applyStack(types.Scale scale, Object? parsed, [Object? mode]) {
+  Object? applyStack(
+    types.Scale scale,
+    Object? parsed, [
+    types.StackMode? mode,
+  ]) {
     final chart = this.chart;
     final meta = cachedMeta;
     final axis = scale.axis;
@@ -2622,7 +2651,7 @@ class DatasetController(
     final meta = cachedMeta;
     if (jsTruthy(parsing)) {
       final removed = jsSplice(meta.parsed, start, count);
-      if (jsTruthy(meta.stacked)) {
+      if (meta.stacked != types.StackMode.off) {
         _clearStacks(meta, removed);
       }
     }

@@ -80,7 +80,7 @@ bool canPrepareNativePointUpdate({
   required String mode,
   required Object? sharedOptions,
   required bool includeOptions,
-  required Object? stacked,
+  required types.StackMode stacked,
   required Object? segment,
   required ScaleAxis iAxis,
   required ScaleAxis vAxis,
@@ -90,7 +90,7 @@ bool canPrepareNativePointUpdate({
     mode == 'none' &&
     sharedOptions == null &&
     includeOptions &&
-    !jsTruthy(stacked) &&
+    stacked == types.StackMode.off &&
     !jsTruthy(segment) &&
     (iAxis is XAxis || iAxis is YAxis) &&
     (vAxis is XAxis || vAxis is YAxis) &&
