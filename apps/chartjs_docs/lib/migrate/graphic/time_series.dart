@@ -63,6 +63,7 @@ final ChartConfig _config = ChartConfig(
       max: _max,
       grid: noGrid,
       ticks: graphicTicks(callback: _timeLabel, source: .labels),
+      border: bottomBorder,
       extra: bottomAxis,
     ),
     'y': LinearAxis(
@@ -70,6 +71,7 @@ final ChartConfig _config = ChartConfig(
       max: _range.max,
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel, stepSize: 20),
+      border: leftBorder,
       extra: leftAxis,
     ),
   },

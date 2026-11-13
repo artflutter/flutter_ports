@@ -174,6 +174,8 @@ export 'package:flutter_chartjs_port/src/types/animation.dart'
     show AnimationEvent;
 export 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+export 'package:flutter_chartjs_port/src/types/axis_border.dart'
+    show AxisBorder, RadialAxisBorder, ScaleBorder;
 export 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 export 'package:flutter_chartjs_port/src/types/chart_axis.dart'

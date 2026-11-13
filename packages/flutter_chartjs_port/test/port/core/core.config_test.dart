@@ -32,6 +32,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -46,6 +47,7 @@ import '../../support/cubic_mode_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/point_style_json.dart';
+import '../../support/scale_border.dart';
 
 // Upstream has no spec for src/core/core.config.js (AGENTS.md rule 3). The
 // expected values come from src/core/core.config.js at v4.5.1, with the
@@ -93,6 +95,8 @@ String _jsonRaw(Object? value) => switch (value) {
   ScaleAxis() => axisJson,
   // A fill is a FillTarget (Chart.js ADR 0140): its Dart text.
   final FillTarget fill => jsonEncode('$fill'),
+  // The upstream object of a scale border (row adapt-native-scale-border).
+  ScaleBorder() => _jsonRaw(upstreamBorderOf(value)),
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when map is Map<String, Object?> || map is JsObjectFace =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -125,12 +129,16 @@ String Function(Object?) _labeller(List<(Object?, String)> named) {
 }
 
 /// The summary of a merged scale of the probe: each own key, with `"{...}"`
-/// for a value that is an object.
+/// for a value that is an object, also the border object (row
+/// adapt-native-scale-border).
 Map<String, Object?> _scaleSummary(Object? scale) {
   final map = scale! as JsObjectFace;
   return {
     for (final key in jsObjectKeys(map))
-      key: map[key] is Map || map[key] is JsObjectFace ? '{...}' : map[key],
+      key:
+          map[key] is Map || map[key] is JsObjectFace || map[key] is ScaleBorder
+          ? '{...}'
+          : map[key],
   };
 }
 

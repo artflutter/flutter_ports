@@ -31,6 +31,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart'
+    show AxisBorder, RadialAxisBorder, ScaleBorder;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart' show internal;
@@ -92,6 +94,10 @@ abstract final class const ChartAxis({
   /// The parameters of each axis class.
   this;
 
+  /// The border of the axis: `border` (Chart.js ADR 0141). A cartesian axis
+  /// takes an [AxisBorder], and [RadialLinearAxis] a [RadialAxisBorder].
+  ScaleBorder? get border;
+
   /// A copy of this axis with the given parameters. A parameter that is
   /// `null` keeps its value.
   ChartAxis copyWith({
@@ -127,6 +133,7 @@ abstract final class const ChartAxis({
   List<TypedProperty> get _tailProps => [
     ('ticks', ticks),
     ('grid', grid),
+    ('border', border),
     ('title', title),
     ('extra', byEntries(extra)),
   ];
@@ -161,6 +168,8 @@ ScaleOptionsScope lowerAxis(ChartAxis axis) {
   axis._lowerOwn(scope);
   if (_lowerTicks(axis.ticks) case final ticks?) scope.ticks = ticks;
   if (_lowerGrid(axis.grid) case final grid?) scope.grid = grid;
+  // The object itself, with the typed setter (Chart.js ADR 0141).
+  if (axis.border case final border?) scope.border = border;
   if (_lowerTitle(axis.title) case final title?) scope.title = title;
   return mergeExtra(scope, axis.extra);
 }
@@ -191,6 +200,11 @@ final class const CategoryAxis({
   final ScaleBounds? bounds,
   super.ticks,
   super.grid,
+
+  /// The axis line and the dash of the grid lines: `border` (Chart.js ADR
+  /// 0141). A null field takes the default: a solid line of 1 pixel in the
+  /// default `borderColor`.
+  @override final AxisBorder? border,
   super.title,
   super.extra,
 }) extends ChartAxis {
@@ -209,6 +223,7 @@ final class const CategoryAxis({
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
+    AxisBorder? border,
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => CategoryAxis(
@@ -222,6 +237,7 @@ final class const CategoryAxis({
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
+    border: border ?? this.border,
     title: title ?? this.title,
     extra: extra ?? this.extra,
   );
@@ -286,6 +302,11 @@ final class const LinearAxis({
   final ScaleBounds? bounds,
   super.ticks,
   super.grid,
+
+  /// The axis line and the dash of the grid lines: `border` (Chart.js ADR
+  /// 0141). A null field takes the default: a solid line of 1 pixel in the
+  /// default `borderColor`.
+  @override final AxisBorder? border,
   super.title,
   super.extra,
 }) extends ChartAxis {
@@ -306,6 +327,7 @@ final class const LinearAxis({
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
+    AxisBorder? border,
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => LinearAxis(
@@ -321,6 +343,7 @@ final class const LinearAxis({
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
+    border: border ?? this.border,
     title: title ?? this.title,
     extra: extra ?? this.extra,
   );
@@ -375,6 +398,11 @@ final class const LogarithmicAxis({
   final ScaleBounds? bounds,
   super.ticks,
   super.grid,
+
+  /// The axis line and the dash of the grid lines: `border` (Chart.js ADR
+  /// 0141). A null field takes the default: a solid line of 1 pixel in the
+  /// default `borderColor`.
+  @override final AxisBorder? border,
   super.title,
   super.extra,
 }) extends ChartAxis {
@@ -394,6 +422,7 @@ final class const LogarithmicAxis({
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
+    AxisBorder? border,
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => LogarithmicAxis(
@@ -408,6 +437,7 @@ final class const LogarithmicAxis({
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
+    border: border ?? this.border,
     title: title ?? this.title,
     extra: extra ?? this.extra,
   );
@@ -499,6 +529,11 @@ final class const TimeAxis({
   final ScaleBounds? bounds,
   super.ticks,
   super.grid,
+
+  /// The axis line and the dash of the grid lines: `border` (Chart.js ADR
+  /// 0141). A null field takes the default: a solid line of 1 pixel in the
+  /// default `borderColor`.
+  @override final AxisBorder? border,
   super.title,
   super.extra,
 }) extends ChartAxis with _TimeOptions {
@@ -518,6 +553,7 @@ final class const TimeAxis({
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
+    AxisBorder? border,
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => TimeAxis(
@@ -532,6 +568,7 @@ final class const TimeAxis({
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
+    border: border ?? this.border,
     title: title ?? this.title,
     extra: extra ?? this.extra,
   );
@@ -581,6 +618,11 @@ final class const TimeSeriesAxis({
   final ScaleBounds? bounds,
   super.ticks,
   super.grid,
+
+  /// The axis line and the dash of the grid lines: `border` (Chart.js ADR
+  /// 0141). A null field takes the default: a solid line of 1 pixel in the
+  /// default `borderColor`.
+  @override final AxisBorder? border,
   super.title,
   super.extra,
 }) extends ChartAxis with _TimeOptions {
@@ -600,6 +642,7 @@ final class const TimeSeriesAxis({
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
+    AxisBorder? border,
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => TimeSeriesAxis(
@@ -614,6 +657,7 @@ final class const TimeSeriesAxis({
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
+    border: border ?? this.border,
     title: title ?? this.title,
     extra: extra ?? this.extra,
   );
@@ -697,6 +741,10 @@ final class const RadialLinearAxis({
   final double? angleLinesLineWidth,
   super.ticks,
   super.grid,
+
+  /// The dash of the grid lines: `border` (Chart.js ADR 0141). The radial
+  /// axis has no axis line. The default is a solid line.
+  @override final RadialAxisBorder? border,
   super.title,
   super.extra,
 }) extends ChartAxis {
@@ -725,6 +773,7 @@ final class const RadialLinearAxis({
     double? angleLinesLineWidth,
     AxisTicks? ticks,
     AxisGrid? grid,
+    RadialAxisBorder? border,
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => RadialLinearAxis(
@@ -748,6 +797,7 @@ final class const RadialLinearAxis({
     angleLinesLineWidth: angleLinesLineWidth ?? this.angleLinesLineWidth,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
+    border: border ?? this.border,
     title: title ?? this.title,
     extra: extra ?? this.extra,
   );

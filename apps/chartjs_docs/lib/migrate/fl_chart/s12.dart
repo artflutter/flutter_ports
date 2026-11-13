@@ -135,7 +135,7 @@ class _Sample12State() extends State<Sample12> {
           min: _start,
           max: _end,
           grid: const AxisGrid(display: false),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           ticks: AxisTicks(
             maxRotation: 45,
             color: const ChartPaint.solid(Fl.green),
@@ -151,7 +151,7 @@ class _Sample12State() extends State<Sample12> {
         ),
         'y': LinearAxis(
           grid: flGrid(),
-          extra: flGridDash,
+          border: flGridDash,
           ticks: const AxisTicks(color: ChartPaint.solid(Colors.white)),
         ),
       },

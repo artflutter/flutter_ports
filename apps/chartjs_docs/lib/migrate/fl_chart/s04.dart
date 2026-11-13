@@ -45,7 +45,7 @@ final ChartConfig _config = fills(
     scales: {
       'x': const CategoryAxis(
         grid: AxisGrid(display: false),
-        extra: Fl.noBorder,
+        border: Fl.noBorder,
         title: AxisTitle(
           display: true,
           text: '2019',
@@ -62,7 +62,7 @@ final ChartConfig _config = fills(
       'y': LinearAxis(
         min: 0,
         grid: flGrid(show: (v) => v == 1 || v == 4 || v == 5 || v == 6),
-        extra: flGridDash,
+        border: flGridDash,
         title: const AxisTitle(
           display: true,
           text: 'Value',

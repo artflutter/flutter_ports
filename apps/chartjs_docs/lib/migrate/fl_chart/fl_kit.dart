@@ -22,9 +22,9 @@ abstract final class Fl() {
   static const white38 = Color(0x61FFFFFF);
   static const white10 = Color(0x1AFFFFFF);
   static const blueGrey = Color(0xFF607D8B);
-  static const noBorder = {
-    'border': {'display': false},
-  };
+
+  /// No axis line.
+  static const noBorder = AxisBorder(display: false);
 }
 
 typedef Scriptable = Object? Function(JsObjectFace context);
@@ -69,13 +69,8 @@ double tickOf(JsObjectFace context) {
   return tick is Tick ? tick.value : double.nan;
 }
 
-/// The default grid line of fl_chart.
-const Map<String, Map<String, Object>> flGridDash = {
-  'border': {
-    'dash': [8.0, 4.0],
-    'display': false,
-  },
-};
+/// The default grid line of fl_chart: a dash, and no axis line.
+const AxisBorder flGridDash = AxisBorder(dash: [8, 4], display: false);
 
 AxisGrid flGrid({bool Function(double value)? show}) => AxisGrid(
   drawTicks: false,

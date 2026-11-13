@@ -53,6 +53,7 @@ import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
@@ -81,6 +82,7 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -306,6 +308,20 @@ void _garbageCollect(Map<TextStyle, _TextCache> caches, int length) {
 /// example `'8' + 0` gives `'80'` (core.scale.js:649).
 Object? _getTickMarkLength(GridLineOptions options) {
   return options.drawTicks ? options.tickLength : 0.0;
+}
+
+/// The border [value] of a cartesian scale: the resolved scale option
+/// `border` (Chart.js ADR 0141, row `adapt-native-scale-border`).
+///
+/// A cartesian scale takes an [AxisBorder]. Another value stops a debug
+/// build; a release build draws no axis line and solid grid lines for it.
+// DIVERGES(chartjs): adapt-native-scale-border, one AxisBorder.
+AxisBorder _axisBorderOf(ScaleBorder? value) {
+  assert(
+    value is AxisBorder,
+    'A cartesian scale takes an AxisBorder as its border, not $value.',
+  );
+  return value is AxisBorder ? value : const AxisBorder();
 }
 
 /// core.scale.js:95 `getTitleHeight`.
@@ -2083,7 +2099,7 @@ class Scale(AnyObject cfg)
     final options = this.options;
     final grid = options.grid;
     final position = options.position;
-    final border = options.border;
+    final border = _axisBorderOf(options.border);
     final offset = grid.offset;
     final isHorizontal = this.isHorizontal();
     final ticks = this.ticks!;
@@ -2091,16 +2107,17 @@ class Scale(AnyObject cfg)
     final tl = _getTickMarkLength(grid);
     final items = <_GridLineItem>[];
 
-    final borderOpts = border.setContext(getContext());
-    final axisWidth = borderOpts.display ? borderOpts.width : 0.0;
-    final axisHalfWidth = jsToNumber(axisWidth) / 2;
-    // `_alignPixel` tests `width !== 0` and divides the width
-    // (helpers.canvas.ts:127). For a number and for `undefined`, the ToNumber
-    // of the width gives the same result: `undefined` gives NaN. The type of
-    // `border.width` is number (index.d.ts:3056).
-    final alignWidth = jsToNumber(axisWidth);
+    // DIVERGES(chartjs): adapt-native-scale-border, one AxisBorder.
+    // `options` has the context of the scale: `border.setContext(
+    // this.getContext())` of upstream.
+    final borderOpts = border;
+    // An absent width is the NaN of the `undefined` of upstream.
+    final axisWidth = borderOpts.display == true
+        ? borderOpts.width ?? double.nan
+        : 0.0;
+    final axisHalfWidth = axisWidth / 2;
     double alignBorderValue(double pixel) {
-      return alignPixel(chart, pixel, alignWidth);
+      return alignPixel(chart, pixel, axisWidth);
     }
 
     var borderValue = double.nan;
@@ -2185,13 +2202,18 @@ class Scale(AnyObject cfg)
       final index = i.toInt();
       final context = getContext(index);
       final optsAtIndex = grid.setContext(context);
-      final optsAtIndexBorder = border.setContext(context);
+      // DIVERGES(chartjs): adapt-native-scale-border, the border of the
+      // options of the tick context: a border function gets each context.
+      final optsAtIndexBorder = _axisBorderOf(
+        CoreScaleOptions(options.setContext(context)).border,
+      );
 
       final lineWidth = optsAtIndex.lineWidth;
       final lineColor = optsAtIndex.color;
-      final dash = optsAtIndexBorder.dash;
-      final borderDash = jsTruthy(dash) ? dash : <Object?>[];
-      final borderDashOffset = optsAtIndexBorder.dashOffset;
+      final borderDash = optsAtIndexBorder.dash ?? const <double>[];
+      // An absent offset is the `undefined` of upstream: the canvas ignores
+      // it.
+      final borderDashOffset = optsAtIndexBorder.dashOffset ?? undefined;
 
       final tickWidth = optsAtIndex.tickWidth;
       final tickColor = optsAtIndex.tickColor;
@@ -2718,14 +2740,19 @@ class Scale(AnyObject cfg)
     final chart = this.chart;
     final ctx = this.ctx;
     final options = this.options;
-    final border = options.border;
+    // DIVERGES(chartjs): adapt-native-scale-border, one AxisBorder. `options`
+    // has the context of the scale: `border.setContext(this.getContext())`.
+    final border = _axisBorderOf(options.border);
     final grid = options.grid;
-    final borderOpts = border.setContext(getContext());
-    final axisWidth = border.display ? borderOpts.width : 0.0;
-    if (!jsTruthy(axisWidth)) {
+    final borderOpts = border;
+    final axisWidth = border.display == true
+        ? borderOpts.width ?? double.nan
+        : 0.0;
+    // `!axisWidth`: 0 and the NaN of an absent width.
+    if (axisWidth == 0 || axisWidth.isNaN) {
       return;
     }
-    final width = jsToNumber(axisWidth);
+    final width = axisWidth;
     final lastLineWidth = jsToNumber(grid.setContext(getContext(0)).lineWidth);
     final borderValue = _borderValue;
     double x1;
@@ -2744,8 +2771,12 @@ class Scale(AnyObject cfg)
     }
     ctx!
       ..save()
-      ..lineWidth = canvasNumber(borderOpts.width)
-      ..strokeStyle = canvasStyle(borderOpts.color)
+      ..lineWidth = width
+      // The default `borderColor` is the value of the upstream route
+      // `scale.border.color`, read at each draw.
+      ..strokeStyle =
+          borderOpts.color ??
+          canvasStyle(defaults.lookup(OptionKey.borderColor)?.raw)
       ..beginPath()
       ..moveTo(x1, y1)
       ..lineTo(x2, y2)
@@ -2878,12 +2909,9 @@ class Scale(AnyObject cfg)
     final gz = jsToNumber(
       valueOrDefault<Object?>(jsTruthy(grid.raw) ? grid.z : grid.raw, -1.0),
     );
-    final bz = jsToNumber(
-      valueOrDefault<Object?>(
-        jsTruthy(border.raw) ? border.z : border.raw,
-        0.0,
-      ),
-    );
+    // DIVERGES(chartjs): adapt-native-scale-border, the z of the border
+    // object. The radial border has no z: 0, as `undefined` gives.
+    final bz = (border is AxisBorder ? border.z : null) ?? 0.0;
 
     if (!_isVisible() || draw != super.draw) {
       // backward compatibility: draw has been overridden by custom scale

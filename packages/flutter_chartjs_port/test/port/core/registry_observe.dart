@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
 import '../../support/axis_json.dart';
@@ -29,6 +30,7 @@ import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/scale_border.dart';
 
 /// The observations of one scenario: one line `<label>: <value>` for each
 /// [observe] call, and the labels of the known objects.
@@ -75,6 +77,8 @@ final class Observations() {
       RadiusLength() || GraceLength() => lengthJson,
       ScaleAxis() => axisJson,
       InteractionMode() => modeJson,
+      // The upstream object of a scale border (row adapt-native-scale-border).
+      ScaleBorder() => json(upstreamBorderOf(value)),
       final List<Object?> list => '[${list.map(json).join(',')}]',
       final Object map
           when map is Map<String, Object?> || map is JsObjectFace =>

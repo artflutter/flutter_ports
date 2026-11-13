@@ -46,7 +46,7 @@ final ChartConfig _config = fills(
     scales: {
       'x': const CategoryAxis(
         grid: AxisGrid(display: false),
-        extra: Fl.noBorder,
+        border: Fl.noBorder,
         ticks: AxisTicks(
           maxRotation: 0,
           autoSkip: false,
@@ -57,7 +57,7 @@ final ChartConfig _config = fills(
       'y': LinearAxis(
         min: 0,
         grid: flGrid(show: (v) => v == 1 || v == 4 || v == 5 || v == 6),
-        extra: flGridDash,
+        border: flGridDash,
         ticks: AxisTicks(
           stepSize: 1,
           autoSkip: false,

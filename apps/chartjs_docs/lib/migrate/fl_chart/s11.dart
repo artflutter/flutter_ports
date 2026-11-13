@@ -65,10 +65,8 @@ class _Sample11State() extends State<Sample11> {
             (tickOf(c) - base).abs() <= 0.1 ? _bold : _plain,
       },
     ),
-    extra: {
-      ...flGridDash,
-      'afterBuildTicks': (Object? s) => _ticksFrom(s, base),
-    },
+    border: flGridDash,
+    extra: {'afterBuildTicks': (Object? s) => _ticksFrom(s, base)},
   );
 
   @override

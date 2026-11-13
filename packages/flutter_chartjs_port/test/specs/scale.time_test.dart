@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -1234,7 +1235,7 @@ void main() {
               },
               'y': <String, Object?>{
                 'type': 'linear',
-                'border': <String, Object?>{'display': false},
+                'border': const AxisBorder(display: false),
               },
             },
           },

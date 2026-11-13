@@ -24,6 +24,7 @@ import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -55,6 +56,8 @@ String _describe(Object? value) => switch (value) {
   final Function function => 'function#${identityHashCode(function)}',
   // A font is an immutable value (Chart.js ADR 0116): its fields.
   final TextStyle font => '$font',
+  // A scale border is an immutable value too (Chart.js ADR 0141).
+  final ScaleBorder border => '$border',
   _ => '${value.runtimeType}#${identityHashCode(value)}',
 };
 

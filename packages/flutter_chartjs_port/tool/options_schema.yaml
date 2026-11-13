@@ -59,7 +59,9 @@
 # `chartClip` (a `ChartClip`, the dataset `clip`; a number, a bool or an object is a foreign value),
 # `chartShadow` (a `ChartShadow`, the port-only dataset `shadow` of Chart.js ADR 0139),
 # `lineSegmentStyle` (a `LineSegmentStyle`, the line `segment` of Chart.js ADR 0142; a Map is a
-# foreign value), `any` (any
+# foreign value),
+# `scaleBorder` (a `ScaleBorder`, the scale `border` of Chart.js ADR 0141; an object is a foreign
+# value), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -862,7 +864,7 @@ kinds:
       axis: scaleAxis
       offset: bool
       grid: scope GridLineOptions
-      border: scope BorderOptions
+      border: scaleBorder
       title: scope ScaleTitleOptions
       stacked: bool | string
       ticks: scope TickOptions
@@ -933,15 +935,6 @@ kinds:
       tickLength: number
       tickWidth: number
       offset: bool
-      z: number
-  BorderOptions:
-    doc: index.d.ts:3042 BorderOptions, the scope `border` of a scale.
-    keys:
-      display: bool
-      dash: list
-      dashOffset: number
-      color: chartPaint
-      width: number
       z: number
   ScaleTitleOptions:
     doc: Port-only name for index.d.ts:3309 CartesianScaleOptions `title`, the title of a scale.

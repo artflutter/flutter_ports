@@ -363,6 +363,19 @@ import 'hand/core.layouts/hidden-vertical-boxes.dart'
 import 'hand/core.layouts/no-boxes-all-padding.dart'
     as core_layouts_no_boxes_all_padding;
 import 'hand/core.layouts/scriptable.dart' as core_layouts_scriptable;
+import 'hand/core.layouts/stacked-boxes-max-index-without-clip.dart'
+    as core_layouts_stacked_boxes_max_index_without_clip;
+import 'hand/core.layouts/stacked-boxes-max-index.dart'
+    as core_layouts_stacked_boxes_max_index;
+import 'hand/core.layouts/stacked-boxes-max-without-clip.dart'
+    as core_layouts_stacked_boxes_max_without_clip;
+import 'hand/core.layouts/stacked-boxes-max.dart'
+    as core_layouts_stacked_boxes_max;
+import 'hand/core.layouts/stacked-boxes-with-weight.dart'
+    as core_layouts_stacked_boxes_with_weight;
+import 'hand/core.layouts/stacked-boxes.dart' as core_layouts_stacked_boxes;
+import 'hand/core.scale/border-behind-elements.dart'
+    as core_scale_border_behind_elements;
 import 'hand/core.scale/cartesian-axis-border-settings.dart'
     as core_scale_cartesian_axis_border_settings;
 import 'hand/core.scale/crossAlignment/cross-align-left-center.dart'
@@ -393,6 +406,9 @@ import 'hand/core.scale/crossAlignment/mirror-cross-align-right-far.dart'
     as core_scale_crossalignment_mirror_cross_align_right_far;
 import 'hand/core.scale/crossAlignment/mirror-cross-align-right-near.dart'
     as core_scale_crossalignment_mirror_cross_align_right_near;
+import 'hand/core.scale/grid/border-over-grid.dart'
+    as core_scale_grid_border_over_grid;
+import 'hand/core.scale/grid/colors.dart' as core_scale_grid_colors;
 import 'hand/core.scale/grid/scriptable-borderDash.dart'
     as core_scale_grid_scriptable_borderdash;
 import 'hand/core.scale/label-offset-vertical-axes.dart'
@@ -647,6 +663,10 @@ import 'hand/scale.logarithmic/small-range.dart'
     as scale_logarithmic_small_range;
 import 'hand/scale.radialLinear/anglelines-scriptable.dart'
     as scale_radiallinear_anglelines_scriptable;
+import 'hand/scale.radialLinear/border-dash.dart'
+    as scale_radiallinear_border_dash;
+import 'hand/scale.radialLinear/circular-border-dash.dart'
+    as scale_radiallinear_circular_border_dash;
 import 'hand/scale.radialLinear/gridlines-scriptable.dart'
     as scale_radiallinear_gridlines_scriptable;
 import 'hand/scale.radialLinear/pointLabels/background.dart'
@@ -2108,6 +2128,50 @@ final Map<String, HandFixture> handFixtures = {
   'scale.timeseries/data-timestamps.js': (
     load: scale_timeseries_data_timestamps.fixture,
     sha256: '6f5160d4e038',
+  ),
+  'core.layouts/stacked-boxes-max-index-without-clip.js': (
+    load: core_layouts_stacked_boxes_max_index_without_clip.fixture,
+    sha256: '5fd3d94af843',
+  ),
+  'core.layouts/stacked-boxes-max-index.js': (
+    load: core_layouts_stacked_boxes_max_index.fixture,
+    sha256: '11ec7a29bd91',
+  ),
+  'core.layouts/stacked-boxes-max-without-clip.js': (
+    load: core_layouts_stacked_boxes_max_without_clip.fixture,
+    sha256: 'c60139535633',
+  ),
+  'core.layouts/stacked-boxes-max.js': (
+    load: core_layouts_stacked_boxes_max.fixture,
+    sha256: '49fe800eca9e',
+  ),
+  'core.layouts/stacked-boxes-with-weight.js': (
+    load: core_layouts_stacked_boxes_with_weight.fixture,
+    sha256: '18b738bc7f49',
+  ),
+  'core.layouts/stacked-boxes.js': (
+    load: core_layouts_stacked_boxes.fixture,
+    sha256: '29d14ae0cdd4',
+  ),
+  'core.scale/border-behind-elements.js': (
+    load: core_scale_border_behind_elements.fixture,
+    sha256: 'c7bb57a9a680',
+  ),
+  'core.scale/grid/border-over-grid.js': (
+    load: core_scale_grid_border_over_grid.fixture,
+    sha256: 'ce9325e1ccf6',
+  ),
+  'core.scale/grid/colors.js': (
+    load: core_scale_grid_colors.fixture,
+    sha256: '49074bd4571b',
+  ),
+  'scale.radialLinear/border-dash.json': (
+    load: scale_radiallinear_border_dash.fixture,
+    sha256: '9ff3945a6d4f',
+  ),
+  'scale.radialLinear/circular-border-dash.json': (
+    load: scale_radiallinear_circular_border_dash.fixture,
+    sha256: '17246932f778',
   ),
 };
 

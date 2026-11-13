@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -35,6 +36,7 @@ import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
+import '../../support/scale_border.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, only the token paths, the
@@ -78,6 +80,8 @@ String _jsonRaw(Object? value) => switch (value) {
   RadiusLength() || GraceLength() => lengthJson,
   ScaleAxis() => axisJson,
   InteractionMode() => modeJson,
+  // The upstream object of a scale border (row adapt-native-scale-border).
+  ScaleBorder() => _jsonRaw(upstreamBorderOf(value)),
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
     '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
@@ -107,6 +111,8 @@ String _entry(Object map, String key) =>
 
 /// The leaves of [value] by dot path, in key order. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
+  // A border gives its fields (row adapt-native-scale-border).
+  if (value is ScaleBorder) return borderLeaves(prefix, value);
   if (!_isObject(value)) return {prefix: value};
   return {
     for (final key in _keys(value))

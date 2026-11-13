@@ -293,9 +293,17 @@ const SCALE_OPTION_KEYS = ['grid', 'border', 'ticks', 'title'];
 const RADIAL_SCALE_OPTION_KEYS = ['angleLines', 'pointLabels'];
 
 /**
+ * The keys of the `border` of a `radialLinear` scale: the port holds its
+ * border as a RadialAxisBorder, with no axis line (row
+ * adapt-native-scale-border).
+ */
+const RADIAL_BORDER_KEYS = ['dash', 'dashOffset'];
+
+/**
  * The `options` of a scale for `scaleOptions`: the plain copy of `grid`,
  * `border`, `ticks` without `callback` and `title`, and for `radialLinear`
- * also `angleLines` and `pointLabels`.
+ * also `angleLines` and `pointLabels`. The `border` of a `radialLinear` scale
+ * has only the keys of RADIAL_BORDER_KEYS.
  */
 function scaleOptionsOf(scale) {
   const options = scale.options;
@@ -303,8 +311,11 @@ function scaleOptionsOf(scale) {
   if (scale.type === 'radialLinear') keys.push(...RADIAL_SCALE_OPTION_KEYS);
   const out = {};
   for (const key of keys) {
-    const value = plain(options[key]);
+    let value = plain(options[key]);
     if (key === 'ticks' && value && typeof value === 'object') delete value.callback;
+    if (key === 'border' && scale.type === 'radialLinear' && value && typeof value === 'object') {
+      value = Object.fromEntries(RADIAL_BORDER_KEYS.filter((k) => k in value).map((k) => [k, value[k]]));
+    }
     out[key] = value;
   }
   return out;

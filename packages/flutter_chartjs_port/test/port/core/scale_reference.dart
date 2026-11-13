@@ -4,11 +4,15 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. 93 cases.
+import 'dart:ui' show Color;
+
 import 'package:flutter/painting.dart' show EdgeInsets;
 
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
 /// The Node.js version that generated the data.
@@ -15526,12 +15530,12 @@ const List<ScaleReferenceCase> scaleReference = [
         'tickBorderDashOffset': 1.0,
         'tickColor': 'orange',
       },
-      'border': <String, Object?>{
-        'dash': <Object?>[4.0, 4.0],
-        'dashOffset': 2.0,
-        'color': 'navy',
-        'width': 3.0,
-      },
+      'border': AxisBorder(
+        dash: <double>[4, 4],
+        dashOffset: 2,
+        color: ChartPaint.solid(Color.fromRGBO(0, 0, 128, 1)),
+        width: 3,
+      ),
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -16588,7 +16592,7 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': XAxis(),
       'position': ChartPosition.bottom,
-      'border': <String, Object?>{'display': false},
+      'border': AxisBorder(display: false),
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -24076,7 +24080,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.bottom,
       'ticks': <String, Object?>{'z': 5.0},
       'grid': <String, Object?>{'z': 2.0},
-      'border': <String, Object?>{'z': 1.0},
+      'border': AxisBorder(z: 1),
     },
     expected: <String, Object?>{
       'hooks': <Object?>[

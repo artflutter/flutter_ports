@@ -133,9 +133,7 @@ final ChartConfig _config = ChartConfig(
         color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 15),
       ),
-      extra: {
-        'border': {'color': ChartPaint.solid(_axisLine)},
-      },
+      border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
     'y': LinearAxis(
       min: 200,
@@ -152,9 +150,7 @@ final ChartConfig _config = ChartConfig(
         font: TextStyle(fontSize: 12),
         callback: _mm,
       ),
-      extra: {
-        'border': {'display': false},
-      },
+      border: AxisBorder(display: false),
     ),
   },
 );

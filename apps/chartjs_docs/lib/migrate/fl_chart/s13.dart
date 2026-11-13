@@ -139,7 +139,7 @@ class _Sample13State() extends State<Sample13> {
           min: 0,
           max: 31,
           grid: const AxisGrid(display: false),
-          extra: Fl.noBorder,
+          border: Fl.noBorder,
           title: const AxisTitle(
             display: true,
             text: 'Day of month',
@@ -179,12 +179,13 @@ class _Sample13State() extends State<Sample13> {
               'lineWidth': (JsObjectFace c) => tickOf(c) == 0 ? 0.8 : 0.4,
             },
           ),
+          // The dash of each grid line follows its tick: a function of the
+          // context gives the border.
           extra: {
-            'border': {
-              'display': false,
-              'dash': (JsObjectFace c) =>
-                  tickOf(c) == 0 ? const <double>[] : const <double>[8, 4],
-            },
+            'border': (JsObjectFace c) => AxisBorder(
+              display: false,
+              dash: tickOf(c) == 0 ? const [] : const [8, 4],
+            ),
           },
           ticks: AxisTicks(
             stepSize: 5,

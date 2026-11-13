@@ -161,7 +161,6 @@ const Map<String, String> _notExported = {
   // The typed scale option facades of Chart.js ADR 0054 section 4
   // (lib/src/core/scale_options.dart, extension types over the resolver
   // view): internal in 0.1.0.
-  'BorderOptions': 'an internal typed scale facade of Chart.js ADR 0054',
   'CartesianScaleOptions':
       'an internal typed scale facade of Chart.js ADR 0054',
   'CategoryScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',

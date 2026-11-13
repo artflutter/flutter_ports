@@ -12,12 +12,8 @@ const _font = TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
 ChartPaint _zero(JsObjectFace c, Color color) =>
     .solid(tickOf(c) == 0 ? color : Colors.transparent);
 
-Map<String, Object?> _axis(Color color) => {
-  'border': {
-    'dash': [8.0, 2.0],
-    'display': false,
-  },
-};
+/// The grid dash of both axes, and no axis line.
+const AxisBorder _border = AxisBorder(dash: [8, 2], display: false);
 
 final ChartConfig _config = fills(
   ChartConfig(
@@ -64,7 +60,7 @@ final ChartConfig _config = fills(
           lineWidth: 0.8,
           extra: {'color': (JsObjectFace c) => _zero(c, Fl.yellow)},
         ),
-        extra: _axis(Fl.yellow),
+        border: _border,
         ticks: const AxisTicks(
           stepSize: 1,
           color: ChartPaint.solid(Fl.blue),
@@ -81,7 +77,7 @@ final ChartConfig _config = fills(
           lineWidth: 0.8,
           extra: {'color': (JsObjectFace c) => _zero(c, Fl.blue)},
         ),
-        extra: _axis(Fl.blue),
+        border: _border,
         ticks: AxisTicks(
           stepSize: 0.5,
           color: const ChartPaint.solid(Fl.yellow),

@@ -111,12 +111,10 @@ ChartConfig _config(bool main) => fills(
         min: 0,
         max: 14,
         grid: const AxisGrid(display: false),
-        extra: {
-          'border': {
-            'color': ChartPaint.solid(Fl.cyan.withValues(alpha: 0.2)),
-            'width': 4,
-          },
-        },
+        border: AxisBorder(
+          color: ChartPaint.solid(Fl.cyan.withValues(alpha: 0.2)),
+          width: 4,
+        ),
         ticks: const AxisTicks(
           stepSize: 1,
           autoSkip: false,
@@ -130,7 +128,7 @@ ChartConfig _config(bool main) => fills(
         min: 0,
         max: main ? 4 : 6,
         grid: const AxisGrid(display: false),
-        extra: Fl.noBorder,
+        border: Fl.noBorder,
         ticks: const AxisTicks(
           stepSize: 1,
           autoSkip: false,

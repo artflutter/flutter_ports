@@ -91,6 +91,7 @@ final ChartConfig _config = ChartConfig(
     'x': CategoryAxis(
       grid: noGrid,
       ticks: graphicTicks(callback: _dateLabel),
+      border: bottomBorder,
       extra: const {...bottomAxis, 'offset': true},
     ),
     'y': LinearAxis(
@@ -98,6 +99,7 @@ final ChartConfig _config = ChartConfig(
       max: 120,
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel, stepSize: 40),
+      border: leftBorder,
       extra: leftAxis,
     ),
   },

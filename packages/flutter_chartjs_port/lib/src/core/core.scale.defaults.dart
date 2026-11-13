@@ -23,7 +23,6 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show OptFunction;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
-        BorderOptionsScope,
         DescriptorsScope,
         GridLineOptionsScope,
         MajorTickOptionsScope,
@@ -31,6 +30,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope,
         ScaleTitleOptionsScope,
         TickOptionsScope;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart'
+    show AxisBorder;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -73,11 +74,16 @@ void applyScaleDefaults(Defaults defaults) {
           ..tickWidthCell = const OptFunction<double>(_tickWidth)
           ..tickColorCell = const OptFunction(_tickColor)
           ..offset = false)
-        ..border = (BorderOptionsScope()
-          ..display = true
-          ..dash = <Object?>[]
-          ..dashOffset = 0.0
-          ..width = 1.0)
+        // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+        // The color has no value here: a cartesian scale reads the default
+        // `borderColor` for an absent color, the value of the upstream route
+        // `scale.border.color`.
+        ..border = const AxisBorder(
+          display: true,
+          dash: <double>[],
+          dashOffset: 0,
+          width: 1,
+        )
         // scale title
         ..title = (ScaleTitleOptionsScope()
           // display property
@@ -116,7 +122,6 @@ void applyScaleDefaults(Defaults defaults) {
     )
     ..route('scale.ticks', 'color', '', 'color')
     ..route('scale.grid', 'color', '', 'borderColor')
-    ..route('scale.border', 'color', '', 'borderColor')
     ..route('scale.title', 'color', '', 'color')
     ..describe(
       'scale',

@@ -99,6 +99,7 @@ const {default: defaults, descriptors} = await import(DEFAULTS.href);
 const {_createResolver, _attachContext} = await import(CONFIG.href);
 const {createContext} = await import(OPTIONS.href);
 const {default: Context} = await import(CONTEXT.href);
+const {default: kurkleColor} = await import(KURKLE.href);
 
 /** The log of the hooks of the current case. */
 let log = [];
@@ -306,11 +307,45 @@ let usesPositions = false;
 /** Whether the data has an axis class of the port, which needs its import. */
 let usesAxes = false;
 
+/** Whether the data has a scale border of the port, which needs its import. */
+let usesBorders = false;
+
+/** Whether the data has a ChartPaint, which needs its import. */
+let usesPaints = false;
+
+/**
+ * The Dart literal of the scale option `border` [x]: an AxisBorder of the
+ * port with the same fields (row adapt-native-scale-border). A color is the
+ * ChartPaint of its rgba.
+ */
+function dartBorder(x) {
+  usesBorders = true;
+  const fields = Object.keys(x).map((k) => {
+    const v = x[k];
+    if (k === 'color') {
+      const c = kurkleColor(v);
+      if (!c.valid) throw new Error(`A border color that is not a color: ${v}`);
+      const {r, g, b, a} = c.rgb;
+      usesPaints = true;
+      return `color: ChartPaint.solid(Color.fromRGBO(${r}, ${g}, ${b}, ${a}))`;
+    }
+    // A whole number is an int literal: the fields are doubles.
+    const number = (d) => (Number.isInteger(d) && !Object.is(d, -0) ? String(d) : num(d));
+    if (k === 'dash') return `dash: <double>[${v.map(number).join(', ')}]`;
+    if (k === 'display') return `display: ${dart(v)}`;
+    if (['width', 'dashOffset', 'z'].includes(k)) return `${k}: ${number(v)}`;
+    throw new Error(`A border key of no field: ${k}`);
+  });
+  return `AxisBorder(${fields.join(', ')})`;
+}
+
 /**
  * The Dart literal of the value [x] of the key [k] in the object of the key
  * [owner]: the enum value of a scale option, else `undefined` here.
  */
 function scaleEnum(k, x, owner) {
+  // The scale option border is an AxisBorder (row adapt-native-scale-border).
+  if (k === 'border' && x && x.constructor === Object) return dartBorder(x);
   if (k === 'backdropPadding' || k === 'padding' && owner === 'title') return dartPadding(x);
   // The axis of a scale is a class (row adapt-axis-objects).
   if ((k === 'axis' || k === 'indexAxis') && ['x', 'y', 'r'].includes(x)) {
@@ -1365,8 +1400,8 @@ const out = `// Original code, not ported from Chart.js: Scale reference data.
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/core/core.scale.js at the pinned Chart.js, with the mock context of
 // chartjs-test-utils. ${cases.length} cases.
-import 'package:flutter/painting.dart' show EdgeInsets;
-${usesScaleEnums || usesUndefined || usesAligns || usesPositions || usesAxes ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesAligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${usesAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${usesPositions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}
+${usesPaints ? "import 'dart:ui' show Color;\n\n" : ''}import 'package:flutter/painting.dart' show EdgeInsets;
+${usesScaleEnums || usesUndefined || usesAligns || usesPositions || usesAxes || usesBorders || usesPaints ? '\n' : ''}${usesScaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${usesAligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${usesBorders ? "import 'package:flutter_chartjs_port/src/types/axis_border.dart';\n" : ''}${usesAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${usesPaints ? "import 'package:flutter_chartjs_port/src/types/chart_paint.dart';\n" : ''}${usesPositions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String scaleReferenceNode = '${process.version}';
 

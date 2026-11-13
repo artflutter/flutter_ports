@@ -1,5 +1,12 @@
 ## 0.1.0
 
+- The scale option `border` holds one object, also in a raw configuration: an
+  `AxisBorder` (`display`, `color`, `width`, `dash`, `dashOffset`, `z`) for a
+  cartesian axis and a `RadialAxisBorder` (`dash`, `dashOffset`) for the radial
+  linear axis. The scopes merge it field by field. The typed axes take it as
+  `border`: `LinearAxis(border: const AxisBorder(display: false))`. A Map
+  `border` stops a debug build.
+
 - The option `fill` holds a `FillTarget`, also in a raw configuration:
   `FillTarget.none` for `false`, `.toOrigin` for `true` and `'origin'`,
   `.toStart`, `.toEnd`, `.toStacked`, `.shape`, `.toDataset(i)` for a number,

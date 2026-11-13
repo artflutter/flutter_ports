@@ -30,13 +30,11 @@ LineDataset _line(List<num> ys, Color from, Color to, Color text) =>
       clip: ChartClip.none,
     );
 
-const Map<String, Map<String, Object>> _visibleBorder = {
-  'border': {
-    'dash': [8.0, 4.0],
-    'display': true,
-    'color': ChartPaint.solid(Fl.white54),
-  },
-};
+const AxisBorder _visibleBorder = AxisBorder(
+  dash: [8, 4],
+  display: true,
+  color: ChartPaint.solid(Fl.white54),
+);
 
 List<String>? _hideBottom(
   Scale scale,
@@ -74,7 +72,7 @@ final ChartConfig _config = fills(
         max: 6,
         position: .top,
         grid: flGrid(),
-        extra: _visibleBorder,
+        border: _visibleBorder,
         ticks: const AxisTicks(
           stepSize: 1,
           color: ChartPaint.solid(Fl.white70),
@@ -87,7 +85,7 @@ final ChartConfig _config = fills(
         max: 6,
         reverse: true,
         grid: flGrid(),
-        extra: _visibleBorder,
+        border: _visibleBorder,
         ticks: const AxisTicks(
           stepSize: 1,
           color: ChartPaint.solid(_orange),
@@ -101,7 +99,7 @@ final ChartConfig _config = fills(
         reverse: true,
         position: .right,
         grid: AxisGrid(display: false),
-        extra: Fl.noBorder,
+        border: Fl.noBorder,
         ticks: AxisTicks(
           stepSize: 1,
           color: ChartPaint.solid(Fl.blue),

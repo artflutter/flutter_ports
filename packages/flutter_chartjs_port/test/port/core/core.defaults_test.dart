@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -35,6 +36,7 @@ import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/scale_border.dart';
 
 // Upstream behavior that test/specs/core.defaults.tests.js does not check
 // (AGENTS.md rule 3). The expected values come from src/core/core.defaults.js
@@ -65,6 +67,8 @@ String _jsonRaw(Object? value) => switch (value) {
   num() => throw ArgumentError.value(value, 'value', 'is an int'),
   final String s => jsonEncode(s),
   final TextStyle font => _jsonRaw(fontObjectRecordOf(font)),
+  // The upstream object of a scale border (row adapt-native-scale-border).
+  ScaleBorder() => _jsonRaw(upstreamBorderOf(value)),
   _ when jsIsFunction(value) => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
@@ -104,6 +108,14 @@ List<String> _keys(Object? object) {
 /// core.defaults.js:136-140).
 Object? _local(Object? scope, String name) =>
     (scope! as OptionScope).ownCell(name)?.raw;
+
+/// The default scale border of core.scale.defaults.js:39-44.
+const AxisBorder _defaultBorder = AxisBorder(
+  display: true,
+  dash: <double>[],
+  dashOffset: 0,
+  width: 1,
+);
 
 /// `new Defaults({}, [])`.
 Defaults _defaults() => Defaults(<String, Object?>{}, const []);
@@ -285,10 +297,10 @@ void main() {
         _get(scale['grid'], 'color'),
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
-      expect(
-        _get(scale['border'], 'color'),
-        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
-      );
+      // The border is one object with no color (row
+      // adapt-native-scale-border): the scale reads the default borderColor
+      // at each draw (test/port/core/scale_border_test.dart).
+      expect(scale['border'], _defaultBorder);
       expect(
         _get(scale['title'], 'color'),
         const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
@@ -308,10 +320,7 @@ void main() {
         _get(scale['grid'], 'color'),
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
       );
-      expect(
-        _get(scale['border'], 'color'),
-        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
-      );
+      expect(scale['border'], _defaultBorder);
       expect(
         _get(scale['title'], 'color'),
         const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),

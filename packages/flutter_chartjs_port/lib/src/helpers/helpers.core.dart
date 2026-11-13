@@ -33,6 +33,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope, ScopeKind;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart'
+    show ScaleBorder;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
@@ -689,7 +691,9 @@ void mergerIf(
 /// The kind of an option value that merges field by field, as the keys of
 /// an option object merge upstream: 1 for the tooltip callbacks (Chart.js
 /// ADR 0125), 2 for a font, a `TextStyle` (Chart.js ADR 0116), 3 for a line
-/// segment style (Chart.js ADR 0142), and 0 for any other value. [merge],
+/// segment style (Chart.js ADR 0142), 4 for a scale border (Chart.js ADR
+/// 0141: a border of another class replaces, `ScaleBorder.merge`), and 0
+/// for any other value. [merge],
 /// [mergeIf], the resolver and `Defaults.route` merge two values of one
 /// kind with [mergeNativeOptionValues].
 // DIVERGES(chartjs): adapt-text-style-fonts, the native option objects merge.
@@ -698,6 +702,7 @@ int nativeMergeKind(Object? value) => switch (value) {
   TooltipCallbacks() => 1,
   TextStyle() => 2,
   LineSegmentStyle() => 3,
+  ScaleBorder() => 4,
   _ => 0,
 };
 
@@ -710,6 +715,7 @@ Object? mergeNativeOptionValues(Object? lower, Object? higher) =>
       (final TooltipCallbacks l, final TooltipCallbacks h) => l.merge(h),
       (final TextStyle l, final TextStyle h) => l.merge(h),
       (final LineSegmentStyle l, final LineSegmentStyle h) => l.merge(h),
+      (final ScaleBorder l, final ScaleBorder h) => l.merge(h),
       _ => null,
     };
 

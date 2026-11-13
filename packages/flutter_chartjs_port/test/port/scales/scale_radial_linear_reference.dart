@@ -12,6 +12,7 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -15514,10 +15515,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'grid': <String, Object?>{'color': 'red', 'lineWidth': 3.0},
-            'border': <String, Object?>{
-              'dash': <Object?>[4.0, 2.0],
-              'dashOffset': 1.0,
-            },
+            'border': RadialAxisBorder(dash: <double>[4, 2], dashOffset: 1),
           },
         },
       },

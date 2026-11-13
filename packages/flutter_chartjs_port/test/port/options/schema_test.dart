@@ -32,6 +32,7 @@ import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart' show ScaleAxis;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:test/test.dart';
@@ -58,6 +59,7 @@ import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/scale_border.dart';
 
 /// The dataset kinds: a census path under `data.datasets[]` maps when one
 /// of them maps it.
@@ -243,6 +245,23 @@ bool _isFontPath(ScopeKind root, String fontPath) {
   return walk.depth == fontPath.split('.').length &&
       shape != null &&
       shape & ShapeBits.typed == ShapeBits.textStyle;
+}
+
+/// A path of a field of the upstream scale `border` object: the border path
+/// and the field (Chart.js ADR 0141). The port holds the border as one
+/// `ScaleBorder` at the border path.
+final RegExp _borderField = RegExp(
+  r'^(.+\.border)\.(display|dash|dashOffset|width|color|z)$',
+);
+
+/// Whether the walk of the border path [borderPath] from [root] gives a
+/// scale border.
+bool _isBorderPath(ScopeKind root, String borderPath) {
+  final walk = _walk(root, borderPath.split('.'));
+  final shape = walk.shape;
+  return walk.depth == borderPath.split('.').length &&
+      shape != null &&
+      shape & ShapeBits.typed == ShapeBits.scaleBorder;
 }
 
 // Upstream padding fields belong to one native atom in the port.
@@ -531,6 +550,9 @@ void main() {
           // A field of a font object: the font path holds a TextStyle.
           final font = _fontField.firstMatch(path);
           if (font != null && _isFontPath(root, font[1]!)) continue;
+          // A field of a border object: the border path holds a ScaleBorder.
+          final border = _borderField.firstMatch(path);
+          if (border != null && _isBorderPath(root, border[1]!)) continue;
           if (_isPaddingField(root, path) || _isCallbackField(root, path)) {
             continue;
           }
@@ -615,6 +637,20 @@ void main() {
             if (mismatch != null) problems.add('$path: $mismatch');
             continue;
           }
+          // A field of a border object: the field of the upstream form of the
+          // ScaleBorder, with the default borderColor of the route `color`.
+          final border = _borderField.firstMatch(path);
+          final borderValue = border == null ? null : _read(root, border[1]!);
+          if (border != null && borderValue is ScaleBorder) {
+            final fields =
+                upstreamBorderOf(borderValue)! as Map<String, Object?>;
+            final mismatch = _mismatch(
+              fields[border[2]] ?? undefined,
+              expected,
+            );
+            if (mismatch != null) problems.add('$path: $mismatch');
+            continue;
+          }
           final padding = _paddingField.firstMatch(path);
           final paddingValue = padding == null
               ? null
@@ -647,10 +683,19 @@ void main() {
         // A font is one leaf: the inventory has its fields.
         bool hasFields(String leaf) =>
             (_read(root, leaf) is TextStyle ||
-                _read(root, leaf) is EdgeInsets) &&
+                _read(root, leaf) is EdgeInsets ||
+                _read(root, leaf) is ScaleBorder) &&
             paths.any((path) => path.startsWith('$leaf.'));
+        // The radial linear scale has its own border, port-only: upstream
+        // gives it the border of `scale` (row adapt-native-scale-border).
+        const portOnly = {'scales.radialLinear.border'};
         expect(
-          leaves.where((leaf) => !paths.contains(leaf) && !hasFields(leaf)),
+          leaves.where(
+            (leaf) =>
+                !paths.contains(leaf) &&
+                !hasFields(leaf) &&
+                !(name == 'defaults' && portOnly.contains(leaf)),
+          ),
           isEmpty,
         );
       });

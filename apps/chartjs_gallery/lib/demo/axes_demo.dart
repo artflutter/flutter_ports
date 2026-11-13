@@ -366,7 +366,7 @@ class AxesDemoState() extends State<AxesDemo> {
       'font': ChartTextStyle(fontSize: _fontSize),
     },
     'grid': <String, Object?>{'display': _gridDisplay, 'offset': _gridOffset},
-    'border': <String, Object?>{'display': _borderDisplay},
+    'border': AxisBorder(display: _borderDisplay),
     'title': <String, Object?>{
       'display': _titleDisplay,
       'text': '$axis: $type',

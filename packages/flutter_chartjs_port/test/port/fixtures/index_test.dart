@@ -63,6 +63,7 @@ const Set<String> _classValueKeys = {
   'axis',
   'padding',
   'backdropPadding',
+  'border',
   'cubicInterpolationMode',
   'cutout',
   'fill',

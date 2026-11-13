@@ -152,11 +152,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                 'color': 'rgba(0,0,0,0.1)',
               },
               'border': <String, Object?>{
-                'display': true,
                 'dash': <Object?>[],
                 'dashOffset': 0.0,
-                'width': 1.0,
-                'color': 'rgba(0,0,0,0.1)',
               },
               'ticks': <String, Object?>{
                 'showLabelBackdrop': true,
@@ -872,11 +869,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -1707,11 +1701,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -2537,11 +2528,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -3367,11 +3355,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -4197,11 +4182,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -5070,11 +5052,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -5983,11 +5962,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -6834,11 +6810,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'border': <String, Object?>{
-                    'display': true,
                     'dash': <Object?>[],
                     'dashOffset': 0.0,
-                    'width': 1.0,
-                    'color': 'rgba(0,0,0,0.1)',
                   },
                   'ticks': <String, Object?>{
                     'showLabelBackdrop': true,
@@ -17200,11 +17173,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                 'color': 'rgba(0,0,0,0.1)',
               },
               'border': <String, Object?>{
-                'display': true,
                 'dash': <Object?>[],
                 'dashOffset': 0.0,
-                'width': 1.0,
-                'color': 'rgba(0,0,0,0.1)',
               },
               'ticks': <String, Object?>{
                 'stepSize': 5.0,

@@ -72,6 +72,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/data_label.dart';
+import '../../support/scale_border.dart';
 import '../../support/segment_style.dart';
 import '../scales/scale_chart_harness.dart';
 import '../scales/scale_time_harness.dart' show atNow;
@@ -245,6 +246,9 @@ bool isJsObject(Object? value) =>
 /// `border`, `ticks` without `callback` and `title`, and for `radialLinear`
 /// also `angleLines` and `pointLabels` (`scaleOptionsOf` of
 /// controller_chart_common.mjs).
+///
+/// The border is the upstream form of the border object of the port
+/// ([upstreamBorderOf], row `adapt-native-scale-border`).
 Map<String, Object?> _scaleOptions(Scale scale) {
   final options = scale.options;
   final keys = [
@@ -257,6 +261,7 @@ Map<String, Object?> _scaleOptions(Scale scale) {
   return <String, Object?>{
     for (final key in keys)
       key: switch (plainValue(jsGet(options, key))) {
+        final value when key == 'border' => upstreamBorderOf(value),
         final Map<String, Object?> ticks when key == 'ticks' =>
           ticks..remove('callback'),
         final value => value,
@@ -1178,6 +1183,11 @@ void expectNoStaleScaleKeys(Chart chart, Map<String, Object?> lightSnapshot) {
     for (final path in lightSnapshot.keys) {
       final prefix = prefixes.where(path.startsWith).firstOrNull;
       if (prefix == null) {
+        continue;
+      }
+      // The radial scale has its own border with no color (row
+      // adapt-native-scale-border): the theme border color is not its key.
+      if (scale.type == 'radialLinear' && path.startsWith('scale.border.')) {
         continue;
       }
       Object? node = options;

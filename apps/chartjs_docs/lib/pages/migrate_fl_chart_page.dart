@@ -62,7 +62,7 @@ DocPageContent flChartMigrationPage() => migrationPage(
     ('minX, maxX, minY, maxY', '`min` and `max` of `LinearAxis`'),
     ('titlesData', 'the `ticks` and `title` of each axis'),
     ('gridData', 'the `grid` of each axis'),
-    ('borderData', 'the `border` of each axis, in `extra`'),
+    ('borderData', 'the `border` of each axis, an `AxisBorder`'),
     ('lineTouchData', '`tooltip`, `interaction`, `onHover` and `onClick`'),
     ('extraLinesData', 'an inline plugin that draws in `afterDatasetsDraw`'),
     ('duration, curve', '`animation`'),

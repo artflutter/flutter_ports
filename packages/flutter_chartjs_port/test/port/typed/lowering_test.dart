@@ -36,6 +36,14 @@ import 'twin.dart';
 
 const Color _red = Color(0xFFFF6384);
 const Color _blue = Color(0xFF36A2EB);
+
+/// A border of a cartesian axis and of the radial axis (Chart.js ADR 0141).
+const AxisBorder _axisBorder = AxisBorder(
+  color: ChartPaint.solid(_red),
+  width: 2,
+  dash: [4, 4],
+);
+const RadialAxisBorder _radialBorder = RadialAxisBorder(dash: [2, 2]);
 const ChartPaint _redValue = ChartPaint.solid(
   native_ui.Color.fromRGBO(255, 99, 132, 1),
 );
@@ -500,6 +508,21 @@ _axisCommon = {
 /// one parameter and the raw twin without its `type`.
 final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
     {
+      // The border object itself (Chart.js ADR 0141).
+      'border of a cartesian axis': (
+        const [
+          (CategoryAxis(border: _axisBorder), 'category'),
+          (LinearAxis(border: _axisBorder), 'linear'),
+          (LogarithmicAxis(border: _axisBorder), 'logarithmic'),
+          (TimeAxis(border: _axisBorder), 'time'),
+          (TimeSeriesAxis(border: _axisBorder), 'timeseries'),
+        ],
+        {'border': _axisBorder},
+      ),
+      'border of a radial axis': (
+        const [(RadialLinearAxis(border: _radialBorder), 'radialLinear')],
+        {'border': _radialBorder},
+      ),
       'min of a category axis': (
         const [(CategoryAxis(min: 'b'), 'category')],
         {'min': 'b'},

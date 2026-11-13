@@ -287,12 +287,6 @@ enum OptionKey(
   /// The key `cutoutPercentage`.
   cutoutPercentage('cutoutPercentage'),
 
-  /// The key `dash`.
-  dash('dash'),
-
-  /// The key `dashOffset`.
-  dashOffset('dashOffset'),
-
   /// The key `data`.
   data('data'),
 
@@ -934,9 +928,6 @@ enum OptionKey(
 
   /// The key `weight`.
   weight('weight'),
-
-  /// The key `width`.
-  width('width'),
 
   /// The key `x`.
   x('x'),

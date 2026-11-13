@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -670,7 +671,8 @@ Map<String, Object?> fixture() {
           },
           'y': <String, Object?>{
             'type': 'linear',
-            'border': <String, Object?>{'display': false},
+            // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+            'border': const AxisBorder(display: false),
           },
         },
       },

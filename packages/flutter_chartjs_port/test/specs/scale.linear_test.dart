@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
+import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -1428,7 +1429,7 @@ void main() {
             'y': <String, Object?>{
               'type': 'linear',
               'grid': <String, Object?>{'drawTicks': false},
-              'border': <String, Object?>{'display': false},
+              'border': const AxisBorder(display: false),
               'title': <String, Object?>{'display': false, 'lineHeight': 1.2},
               'ticks': <String, Object?>{'display': false, 'padding': 0},
             },
