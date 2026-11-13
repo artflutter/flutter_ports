@@ -62,38 +62,6 @@ sources:
       - test/index.js
     file_index: packages/flutter_chartjs_port/doc/parity.md
 
-  - header: "@kurkle/color"
-    version: "v0.3.2"
-    version_source: the Chart.js v4.6.1 pnpm-lock.yaml, which resolves ^0.3.0 to 0.3.2
-    url: https://github.com/kurkle/color
-    language: js
-    spdx: MIT
-    holder: Jukka Kurkela
-    pin:
-      kind: submodule
-      path: third_party/kurkle-color
-      ref: "v0.3.2"
-      commit: eb0d1db26a35704553c93782bad8c3ac2d971597
-    targets:
-      - source: src/
-        dart: packages/flutter_chartjs_port/lib/src/kurkle_color/
-      - source: packed.js
-        dart: packages/flutter_chartjs_port/lib/src/kurkle_color/packed.dart
-      - source: test/index.js
-        dart: packages/flutter_chartjs_port/test/kurkle_color/index_test.dart
-    files:
-      - packed.js
-      - test/index.js
-      - src/byte.js
-      - src/color.js
-      - src/hex.js
-      - src/hue.js
-      - src/index.esm.js
-      - src/index.js
-      - src/names.js
-      - src/rgb.js
-      - src/srgb.js
-
   - header: chartjs-test-utils
     version: "v0.4.0"
     version_source: the Chart.js v4.6.1 package.json:90 (^0.4.0), resolved to 0.4.0 in its pnpm-lock.yaml

@@ -19,10 +19,11 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    as kurkle;
 import 'package:intl/intl.dart' show NumberFormat;
 
 import 'fixtures.dart';

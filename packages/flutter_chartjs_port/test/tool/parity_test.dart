@@ -70,19 +70,6 @@ List<String> _portSourcesOf({String? commitPin}) => [
     commit: commitPin ?? '0000000000000000000000000000000000000000',
   ),
   ..._source(
-    '@kurkle/color',
-    'v0.3.2',
-    'https://github.com/kurkle/color',
-    'Jukka Kurkela',
-    'third_party/kurkle-color',
-    [
-      '      - source: src/',
-      '        dart: $_package/lib/src/kurkle_color/',
-      '      - source: packed.js',
-      '        dart: $_package/lib/src/kurkle_color/packed.dart',
-    ],
-  ),
-  ..._source(
     'chartjs-test-utils',
     'v0.4.0',
     'https://github.com/chartjs/chartjs-test-utils',
@@ -302,8 +289,6 @@ final class _Repo() {
       ..write('third_party/Chart.js/test/specs/helpers.math.tests.js', ['a'])
       ..write('third_party/Chart.js/test/specs/core.scale.tests.js', ['a', 'b'])
       ..write('third_party/Chart.js/test/index.js', ['a'])
-      ..write('third_party/kurkle-color/src/byte.js', ['a'])
-      ..write('third_party/kurkle-color/packed.js', ['a', 'b'])
       ..write('third_party/chartjs-test-utils/src/utils.js', ['a'])
       ..write('third_party/chartjs-test-utils/src/context.js', ['a', 'b'])
       ..write('$_package/lib/src/helpers/helpers.math.dart', [
@@ -419,7 +404,6 @@ The types area has 1 rows.
 | entry points | 1 | 4 | 0 |
 | upstream specs | 2 | 3 | 1 |
 | test set-up | 1 | 1 | 0 |
-| @kurkle/color | 2 | 3 | 0 |
 | chartjs-test-utils | 2 | 3 | 1 |
 
 ## Helpers (`src/helpers`)
@@ -487,13 +471,6 @@ After the specs.
 | Upstream file | Lines | Dart target | Status |
 |---|---:|---|---|
 | [`test/index.js`]($_blob/test/index.js) | 1 | | not started |
-
-## @kurkle/color 0.3.2
-
-| Upstream file | Lines | Dart target | Status |
-|---|---:|---|---|
-| [`src/byte.js`](https://github.com/kurkle/color/blob/v0.3.2/src/byte.js) | 1 | | not started |
-| [`packed.js`](https://github.com/kurkle/color/blob/v0.3.2/packed.js) | 2 | | not started |
 
 ## chartjs-test-utils 0.4.0
 
@@ -606,8 +583,6 @@ void main() {
       expect(rowsOf('elements'), '');
       expect(rowsOf('entry'), 'src/index.ts 4 ');
       expect(rowsOf('setup'), 'test/index.js 1 ');
-      // The order of the selectors: src/, then packed.js.
-      expect(rowsOf('kurkle'), 'src/byte.js 1 ; packed.js 2 ');
       // The harness target is relative to its own package.
       expect(
         rowsOf('test-utils'),
@@ -665,8 +640,8 @@ void main() {
         'blob/$commit/src/helpers/helpers.math.ts)',
       );
       expect(
-        model.rowOf('@kurkle/color', 'packed.js')!.url,
-        'https://github.com/kurkle/color/blob/v0.3.2/packed.js',
+        model.rowOf('chartjs-test-utils', 'src/utils.js')!.url,
+        'https://github.com/chartjs/chartjs-test-utils/blob/v0.4.0/src/utils.js',
       );
       final text = renderParity(model, _status()).text;
       expect(text, isNot(contains('/blob/v4.5.1')));
@@ -678,14 +653,14 @@ void main() {
 
     test('throws on a missing input', () {
       final repo = _Repo();
-      repo.tree.deleteDirectory('third_party/kurkle-color');
+      repo.tree.deleteDirectory('third_party/chartjs-test-utils');
       expect(
         repo.model,
         throwsA(
           isA<ParityInputError>().having(
             (e) => e.message,
             'message',
-            contains('third_party/kurkle-color is not checked out'),
+            contains('third_party/chartjs-test-utils is not checked out'),
           ),
         ),
       );
@@ -841,7 +816,7 @@ void main() {
       );
       expect(describeFindings(result.findings), [
         _parityWarning(
-          38,
+          37,
           'src/core/core.scale.js: the derived status differs from the cell: '
           '"...orted (the spec has 2/3 cases that pass)" becomes "...orted '
           '(the spec has 1/3 cases that pass)".',
@@ -908,23 +883,23 @@ void main() {
       ]);
       expect(describeFindings(result.findings), [
         _parityWarning(
-          32,
+          31,
           'src/helpers/helpers.math.ts: Lines is 9, the file '
           'has 3 lines.',
         ),
         _parityWarning(
-          32,
+          31,
           'src/helpers/helpers.math.ts: the text of doc/status.yaml '
           'differs. The cell replaces it.',
         ),
         _parityWarning(
-          32,
+          31,
           'src/helpers/helpers.math.ts: the Dart files of '
           'the row have DIVERGES hunks, and the cell has no differences. '
           'Tool 6 adds them.',
         ),
         _parityWarning(
-          32,
+          31,
           'src/helpers/helpers.math.ts: the derived status '
           'differs from the cell: "ported (note)" becomes "ported '
           '(differences: 2 `adapt`, 1 `platform`, '
@@ -933,46 +908,46 @@ void main() {
           '[differences.md](differences.md#platform-a); note)".',
         ),
         _parityWarning(
-          70,
+          69,
           'the section "## Other" is not a section of tool '
           '6. Its text is not imported.',
         ),
         _parityWarning(
-          105,
+          97,
           'src/utils.js: the cell names differences.md '
           'rows, but the Dart files of the row have no DIVERGES hunk. The '
           'text stays.',
         ),
         _parityWarning(
-          105,
+          97,
           'src/utils.js: the Dart target is "`a.dart`, '
           '`b.dart`", the headers give "".',
         ),
         _parityWarning(
-          106,
+          98,
           'the row "[`src/none.js`](https://x/none.js)" is '
           'not a file of chartjs-test-utils in ## chartjs-test-utils '
           '0.4.0.',
         ),
-        _parityWarning(112, 'a port-only row has 4 cells, not 3.'),
+        _parityWarning(104, 'a port-only row has 4 cells, not 3.'),
         _parityWarning(
-          113,
+          105,
           'port-only row `tool/*.dart` (4 files): the row of '
           'doc/status.yaml differs. The cells replace it.',
         ),
         _parityWarning(
-          113,
+          105,
           'port-only row `tool/*.dart` (4 files): the '
           'derived file count differs: "`tool/*.dart` (4 files)" becomes '
           '"`tool/*.dart` (1 files)".',
         ),
         _parityWarning(
-          110,
+          102,
           'doc/status.yaml keeps the port-only row '
           '`lib/src/js/js_math.dart`, which parity.md does not have.',
         ),
         _parityWarning(
-          110,
+          102,
           'doc/status.yaml keeps the port-only row '
           '`kept.dart`, which parity.md does not have.',
         ),
@@ -983,7 +958,7 @@ void main() {
         ),
         _parityWarning(13, 'Summary helpers: Lines is 6, tool 6 derives 5.'),
         _parityWarning(
-          25,
+          24,
           'Summary chartjs-test-utils: Ported is 1, tool 6 '
           'derives 2.',
         ),
@@ -1039,12 +1014,12 @@ void main() {
       );
       expect(describeFindings(result.findings), [
         _parityWarning(
-          38,
+          37,
           'src/core/core.scale.js: the text of doc/status.yaml differs. The '
           'cell replaces it.',
         ),
         _parityWarning(
-          109,
+          101,
           'doc/status.yaml keeps the port-only row `tool/x.dart`, which '
           'parity.md does not have.',
         ),
@@ -1161,7 +1136,7 @@ void main() {
       expect(out.toString(), startsWith(statusFileComment));
       expect(
         err.toString(),
-        'parity --import: passed, 11 files, 0 errors, 0 warnings.\n',
+        'parity --import: passed, 9 files, 0 errors, 0 warnings.\n',
       );
       expect(status.existsSync(), isFalse);
       expect(await run(['--import', '--results', results]), 0);
@@ -1174,13 +1149,13 @@ void main() {
       expect(await run(['--check', '--results', results]), 0);
       expect(
         out.toString(),
-        'parity --check: passed, 11 files, 0 errors, 0 warnings.\n',
+        'parity --check: passed, 9 files, 0 errors, 0 warnings.\n',
       );
       expect(await run(['--dry-run', '--results', results]), 0);
       expect(out.toString(), _document);
       expect(
         err.toString(),
-        'parity: passed, 11 files, 0 errors, 0 warnings.\n',
+        'parity: passed, 9 files, 0 errors, 0 warnings.\n',
       );
       expect(await run(['--results', results]), 0);
       expect(out.toString(), contains('doc/parity.md is up to date.'));

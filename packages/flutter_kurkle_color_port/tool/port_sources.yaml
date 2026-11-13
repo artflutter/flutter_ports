@@ -1,0 +1,57 @@
+# The projects that packages/flutter_kurkle_color_port ports code from. Each
+# "// Ported from" header must name a project of this file, with the same
+# license and holder. The only entry is @kurkle/color. The package imports no
+# other port: flutter_chartjs_port depends on it.
+#
+# tool/check_upstream_pin.sh reads this file: it fails on a submodule of
+# .gitmodules that no entry of a packages/*/tool/port_sources.yaml file pins.
+# The pin readers skip the top-level keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its first package).
+#
+# Top-level keys before "sources":
+# - marker: the tag of the DIVERGES markers, "// DIVERGES(kurkle): <row id>,
+#   <reason>". The rows are in doc/differences.md.
+#
+# The keys of an entry are those of packages/flutter_chartjs_port/tool/
+# port_sources.yaml. The pin is a release pin: "version" is
+# "v<kurkleColorVersion>", and "ref" is the tag.
+#
+# All paths are relative to the repository root, except "source" and
+# "files", which are relative to the project root.
+
+marker: kurkle
+
+sources:
+  - header: "@kurkle/color"
+    version: "v0.3.2"
+    version_source: kurkleColorVersion in packages/flutter_kurkle_color_port/lib/src/upstream.dart
+    url: https://github.com/kurkle/color
+    language: js
+    spdx: MIT
+    holder: Jukka Kurkela
+    pin:
+      kind: submodule
+      path: third_party/kurkle-color
+      ref: "v0.3.2"
+      commit: eb0d1db26a35704553c93782bad8c3ac2d971597
+    targets:
+      - source: src/
+        dart: packages/flutter_kurkle_color_port/lib/src/
+      - source: packed.js
+        dart: packages/flutter_kurkle_color_port/lib/src/packed.dart
+      - source: test/index.js
+        dart: packages/flutter_kurkle_color_port/test/index_test.dart
+    files:
+      - packed.js
+      - test/index.js
+      - src/byte.js
+      - src/color.js
+      - src/hex.js
+      - src/hue.js
+      - src/index.esm.js
+      - src/index.js
+      - src/names.js
+      - src/rgb.js
+      - src/srgb.js

@@ -197,17 +197,6 @@ export 'package:flutter_chartjs_port/src/js/js_object.dart';
 export 'package:flutter_chartjs_port/src/js/js_promise.dart';
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 export 'package:flutter_chartjs_port/src/js/js_webidl.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/color.dart' hide Color;
-export 'package:flutter_chartjs_port/src/kurkle_color/hex.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/hue.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
-    hide Color, color;
-export 'package:flutter_chartjs_port/src/kurkle_color/names.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/packed.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/simple_parse.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/srgb.dart';
 export 'package:flutter_chartjs_port/src/options/animated_prop.dart';
 export 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 export 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
@@ -341,3 +330,5 @@ export 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart'
 export 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 export 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart'
     hide chartViewPluginId, createChartViewPlugin;
+export 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    hide Color, color;

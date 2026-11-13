@@ -28,6 +28,10 @@ dependencies:
   collection: ^1.19.1
   flutter:
     sdk: flutter
+  # The @kurkle/color port: the color of helpers.color and of the color
+  # animation. The workspace resolves it to packages/flutter_kurkle_color_port;
+  # a path dependency would keep this package from pub.dev.
+  flutter_kurkle_color_port: ^0.1.0
   # Numbers (helpers.intl.dart, Chart.js ADR 0119) and the date adapter
   # (porting-flow.md 2.10) format through intl. 0.20.2 is the constraint of
   # Chart.js ADR 0045 (the pin of flutter_localizations in Flutter 3.44.9).

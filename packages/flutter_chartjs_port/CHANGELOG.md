@@ -14,6 +14,12 @@
   `onProgress` or `onComplete` callback creates gets its first animation frame
   one frame later, and a chart that a callback destroys gets no further tick.
 
+- The port of @kurkle/color 0.3.2 is the package `flutter_kurkle_color_port`,
+  with no JS runtime. The app library exports its public library with
+  `hide Color, color`; `simpleColor`, `unpack` and the `interpolate` of
+  `srgb.js` are no longer exported. `Color(null)` gives a color that is not
+  valid.
+
 - The scale option `border` holds one object, also in a raw configuration: an
   `AxisBorder` (`display`, `color`, `width`, `dash`, `dashOffset`, `z`) for a
   cartesian axis and a `RadialAxisBorder` (`dash`, `dashOffset`) for the radial

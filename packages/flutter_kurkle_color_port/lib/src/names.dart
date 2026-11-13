@@ -6,8 +6,8 @@
 /// @module utils
 library;
 
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
-import 'package:flutter_chartjs_port/src/kurkle_color/packed.dart';
+import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/src/packed.dart';
 
 /// names.js:7 `names`. Dart `null` stands for JS `undefined`, the start
 /// value.
@@ -32,8 +32,8 @@ RGBA? nameParse(String str) {
   // alone, and dart2js and dart2wasm map it as JS does. U+0130 is the only
   // unconditional one-to-many lowercase mapping, so the port maps it first
   // and gives the JS result on every target.
-  // DIVERGES(chartjs): adapt-kurkle-names-proto, a Map lookup has no prototype.
-  // DIVERGES(chartjs): adapt-kurkle-color-dispatch, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-names-proto, a Map lookup has no prototype.
+  // DIVERGES(kurkle): adapt-kurkle-color-dispatch, performance optimisations.
   final normalized = str.contains('\u0130')
       ? str.replaceAll('\u0130', 'i\u0307')
       : str;

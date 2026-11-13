@@ -1,3 +1,0 @@
-# Not an option read: the table of the named colors of @kurkle/color
-# (names.js:173).
-stringIndex 1

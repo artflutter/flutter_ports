@@ -90,7 +90,12 @@ const PINNED = [
  */
 function checkPin() {
   const sources = fileURLToPath(new URL('../port_sources.yaml', import.meta.url));
-  const entries = readFileSync(sources, 'utf8').split(/^ {2}- header: /m);
+  // The @kurkle/color entry is in the port_sources.yaml of its own package.
+  const colorSources = fileURLToPath(
+    new URL('../../../flutter_kurkle_color_port/tool/port_sources.yaml', import.meta.url),
+  );
+  const entries = (readFileSync(sources, 'utf8') + readFileSync(colorSources, 'utf8'))
+    .split(/^ {2}- header: /m);
   for (const {header, folder, paths} of PINNED) {
     const entry = entries.find(
       (e) => e.startsWith(`${header}\n`) || e.startsWith(`"${header}"\n`),

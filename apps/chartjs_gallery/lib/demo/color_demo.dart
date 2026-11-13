@@ -3,8 +3,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
     show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
 // Numerical color operations; solid paints contain Flutter Color values.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart' as kc;
 import 'package:material_ui/material_ui.dart';
 
 /// Native color samples used by the chart API.

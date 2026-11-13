@@ -10,9 +10,9 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
-    show Color;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    show Color;
 import 'package:flutter_test/flutter_test.dart';
 
 // The spec reads `color` and `getHoverColor` from Chart.helpers. Here they

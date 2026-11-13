@@ -28,6 +28,10 @@ dependencies:
   # release of the port does not change this file (Chart.js ADR 0047).
   flutter_chartjs_port:
     path: ../flutter_chartjs_port
+  # The @kurkle/color port: referenceColor decodes the CSS text of the
+  # upstream tests with its parse functions.
+  flutter_kurkle_color_port:
+    path: ../flutter_kurkle_color_port
   # lib/src/dom.dart, the DOM stand-in, attaches its body with the test
   # binding and pumps frames (Chart.js ADR 0022). pure.dart does not import
   # it.

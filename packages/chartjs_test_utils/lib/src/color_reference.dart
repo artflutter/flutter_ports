@@ -6,10 +6,11 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as legacy;
 // The test harness decodes frozen upstream input through internal primitives.
 // ignore_for_file: implementation_imports
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    as legacy;
 
 legacy.RGBA? _function(String value) =>
     value.isNotEmpty && value.codeUnitAt(0) == 114

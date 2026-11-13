@@ -23,22 +23,20 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart'
-    show b2n, n2b, round;
-import 'package:flutter_chartjs_port/src/kurkle_color/hex.dart'
+import 'package:flutter_kurkle_color_port/src/byte.dart' show b2n, n2b, round;
+import 'package:flutter_kurkle_color_port/src/hex.dart'
     as hex_js
     show hexString;
-import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
+import 'package:flutter_kurkle_color_port/src/hue.dart'
     as hue_js
     show hslString, rotate;
-import 'package:flutter_chartjs_port/src/kurkle_color/hue.dart'
-    show hsl2rgb, rgb2hsl;
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
-import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart'
+import 'package:flutter_kurkle_color_port/src/hue.dart' show hsl2rgb, rgb2hsl;
+import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/src/numbers.dart';
+import 'package:flutter_kurkle_color_port/src/rgb.dart'
     as rgb_js
     show rgbString;
-import 'package:flutter_chartjs_port/src/kurkle_color/srgb.dart' as srgb_js;
+import 'package:flutter_kurkle_color_port/src/srgb.dart' as srgb_js;
 
 /// color.js:24 `modHSL`.
 ///
@@ -51,7 +49,7 @@ void _modHSL(RGBA? v, int i, double ratio) {
       0,
       math.min(tmp[i] + tmp[i] * ratio, i == 0 ? 360.0 : 1.0),
     );
-    // DIVERGES(chartjs): adapt-kurkle-hue-arrays, performance optimisations.
+    // DIVERGES(kurkle): adapt-kurkle-hue-arrays, performance optimisations.
     tmp = hsl2rgb(tmp[0], tmp[1], tmp[2]);
     v
       ..r = tmp[0]
@@ -75,7 +73,7 @@ RGBA? _clone(Object? v, [RGBA? proto]) {
   // The members of `{}` are undefined, which ToNumber makes NaN.
   final target =
       proto ?? RGBA(r: double.nan, g: double.nan, b: double.nan, a: double.nan);
-  // DIVERGES(chartjs): adapt-kurkle-rgba, copy r, g, b and a as numbers.
+  // DIVERGES(kurkle): adapt-kurkle-rgba, copy r, g, b and a as numbers.
   if (v is RGBA) {
     target
       ..r = v.r
@@ -99,7 +97,7 @@ RGBA _fromObject(Object? input) {
   if (input is List) {
     if (input.length >= 3) {
       v = RGBA(
-        // DIVERGES(chartjs): adapt-kurkle-rgba, ToNumber of r, g and b.
+        // DIVERGES(kurkle): adapt-kurkle-rgba, ToNumber of r, g and b.
         r: toNumber(input[0]),
         g: toNumber(input[1]),
         b: toNumber(input[2]),
@@ -162,7 +160,7 @@ class Color._(
     if (input is Color) {
       return input;
     }
-    // DIVERGES(chartjs): adapt-direct-colors, no string color constructor.
+    // DIVERGES(kurkle): adapt-direct-colors, no string color constructor.
     if (input is String) {
       throw ArgumentError.value(
         input,
@@ -220,7 +218,7 @@ class Color._(
   /// A copy of the color with `a` as alpha [0..1]. Dart `null` stands for JS
   /// `undefined`, the color of an input that did not parse.
   RGBA? get rgb {
-    // DIVERGES(chartjs): adapt-kurkle-color-copies, performance optimisations.
+    // DIVERGES(kurkle): adapt-kurkle-color-copies, performance optimisations.
     final v = _rgb;
     return v == null ? null : RGBA(r: v.r, g: v.g, b: v.b, a: b2n(v.a));
   }
@@ -274,7 +272,7 @@ class Color._(
         ..g = _mixByte(w1 * c1.g + w2 * c2.g + 0.5)
         ..b = _mixByte(w1 * c1.b + w2 * c2.b + 0.5)
         ..a = p * c1.a + (1 - p) * c2.a;
-      // DIVERGES(chartjs): adapt-kurkle-color-copies, performance
+      // DIVERGES(kurkle): adapt-kurkle-color-copies, performance
       // optimisations.
       _rgb = c1..a = n2b(c1.a);
     }
@@ -293,7 +291,7 @@ class Color._(
 
   /// color.js:193 `clone`.
   Color clone() {
-    // DIVERGES(chartjs): adapt-kurkle-color-copies, performance optimisations.
+    // DIVERGES(kurkle): adapt-kurkle-color-copies, performance optimisations.
     final v = _rgb;
     return v == null
         ? Color._(null)
@@ -396,7 +394,7 @@ class Color._(
 /// ToInt32 followed by a byte mask, retaining the full fallback for overflow.
 @pragma('vm:prefer-inline')
 double _mixByte(double value) {
-  // DIVERGES(chartjs): adapt-kurkle-byte-bounds, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-byte-bounds, performance optimisations.
   final integer = value > -2147483649.0 && value < 2147483648.0
       ? value.toInt()
       : toInt32(value);

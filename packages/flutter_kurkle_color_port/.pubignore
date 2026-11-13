@@ -1,0 +1,5 @@
+# The published archive: lib/, test/ and the package files. The docs, the
+# tools and the build output stay in the repository.
+doc/
+tool/
+build/

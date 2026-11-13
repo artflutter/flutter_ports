@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: the number forms of the color port.
+// Original code, not ported from @kurkle/color: the number forms of the color port.
 
 /// The number forms that the JavaScript of @kurkle/color 0.3.2 relies on,
 /// in plain Dart: the bitwise `x | 0`, the coercion of an input value to a

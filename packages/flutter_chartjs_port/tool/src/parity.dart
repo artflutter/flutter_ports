@@ -232,13 +232,6 @@ const List<ParityArea> parityAreas = [
     level: 3,
   ),
   ParityArea(
-    id: 'kurkle',
-    heading: '@kurkle/color {version}',
-    label: '@kurkle/color',
-    project: '@kurkle/color',
-    selectors: ['src/', 'packed.js', 'test/index.js'],
-  ),
-  ParityArea(
     id: 'test-utils',
     heading: 'chartjs-test-utils {version}',
     label: 'chartjs-test-utils',

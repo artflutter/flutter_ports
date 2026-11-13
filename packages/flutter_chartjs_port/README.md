@@ -809,7 +809,8 @@ and
 
 The package ports Chart.js **4.6.1** (`chartJsVersion`). The upstream sources are a git
 submodule of the [repository](https://github.com/artflutter/flutter_ports), for reference only.
-Chart.js is MIT-licensed by the Chart.js Contributors. The color parser is a port of
-[@kurkle/color](https://github.com/kurkle/color) 0.3.2 (MIT, Jukka Kurkela). All notices are in
-[LICENSE](LICENSE). This project is not affiliated
+Chart.js is MIT-licensed by the Chart.js Contributors. The colors go through the package
+[flutter_kurkle_color_port](https://pub.dev/packages/flutter_kurkle_color_port), a port of
+[@kurkle/color](https://github.com/kurkle/color) 0.3.2 (MIT, Jukka Kurkela) with its own LICENSE.
+All notices of this package are in [LICENSE](LICENSE). This project is not affiliated
 with the Chart.js project.

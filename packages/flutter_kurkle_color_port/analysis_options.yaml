@@ -1,0 +1,12 @@
+# The rules of the root analysis_options.yaml. pana formats the package with
+# the formatter setting of very_good_analysis only through this file.
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/build/**"
+    - build/**
+
+linter:
+  rules:
+    use_primary_constructors: true

@@ -116,9 +116,6 @@ const Map<String, String> _helperConstants = {
 /// and `chartjs.dart` does not export, each with its reason.
 const Map<String, String> _notExported = {
   // Another declaration under the upstream name.
-  'Color':
-      'the class of @kurkle/color; the upstream type is a union of a '
-      'string, a CanvasGradient and a CanvasPattern',
   'Legend':
       'the element class of plugin.legend; the upstream Legend is the '
       'plugin object, the export legend',

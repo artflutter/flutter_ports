@@ -11,10 +11,10 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
-    as numerical;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
+    as numerical;
 import 'package:flutter_test/flutter_test.dart';
 
 const _blue = ui.Color(0xFF2050C0);

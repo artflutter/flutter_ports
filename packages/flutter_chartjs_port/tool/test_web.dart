@@ -84,7 +84,11 @@ Future<void> main(List<String> args) async {
   }
   final package = scriptPackage();
   final repository = findAncestorWith(package, 'REUSE.toml')!;
-  for (final name in ['flutter_chartjs_port', 'chartjs_test_utils']) {
+  for (final name in [
+    'flutter_chartjs_port',
+    'chartjs_test_utils',
+    'flutter_kurkle_color_port',
+  ]) {
     final directory = '$repository/packages/$name';
     final files = browserTestFiles(directory);
     if (files.isEmpty) throw StateError('No browser tests in $name');

@@ -55,6 +55,7 @@ const Set<String> pureDartLibraries = {
 /// (Chart.js ADR 0143).
 const Set<String> purePackageLibraries = {
   collectionLibrary,
+  colorLibrary,
   'package:clock/clock.dart',
   animationLibrary,
   paintingLibrary,
@@ -63,6 +64,11 @@ const Set<String> purePackageLibraries = {
   'package:intl/number_symbols.dart',
   'package:intl/number_symbols_data.dart',
 };
+
+/// The public library of the @kurkle/color port, a package of its own. It
+/// imports only `dart:` libraries of the pure allowlist.
+const String colorLibrary =
+    'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// The Flutter library of the curve classes. A core layer imports it for
 /// the value of the option `easing`, a Flutter `Curve`, and for no other
@@ -166,7 +172,6 @@ const List<String> pureRoots = [
   'lib/src/js/**',
   'lib/src/options/**',
   'lib/src/types/**',
-  'lib/src/kurkle_color/**',
   'lib/src/helpers/helpers.*.dart',
   'lib/src/core/core.defaults.dart',
   'lib/src/core/core.element.dart',
@@ -204,6 +209,7 @@ const List<String> pureRootExceptions = ['lib/src/helpers/helpers.extras.dart'];
 const Set<String> webTestLibraries = {
   'package:test/',
   'package:chartjs_test_utils/pure.dart',
+  colorLibrary,
   animationLibrary,
   paintingLibrary,
   // The NumberFormat of the tick option `format` (Chart.js ADR 0119).

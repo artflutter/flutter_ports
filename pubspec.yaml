@@ -12,6 +12,7 @@ workspace:
   - packages/flutter_echarts_port
   - packages/flutter_chartjs_plugin_zoom_port
   - packages/flutter_chartjs_chart_sankey_port
+  - packages/flutter_kurkle_color_port
   - apps/chartjs_gallery
   - apps/chart_benchmark_lab
   - apps/chartjs_docs
@@ -60,7 +61,7 @@ melos:
         dirExists: test
     test:web:
       run: dart run packages/flutter_chartjs_port/tool/test_web.dart
-      description: Run the flutter_chartjs_port and chartjs_test_utils tests that are not @TestOn('vm') through Flutter in Chrome, with JavaScript and WebAssembly.
+      description: Run the flutter_chartjs_port, chartjs_test_utils and flutter_kurkle_color_port tests that are not @TestOn('vm') through Flutter in Chrome, with JavaScript and WebAssembly.
     test:goldens:
       run: cd packages/flutter_chartjs_port && flutter test --tags golden test/port/theme/goldens_test.dart
       description: Run the theme goldens of flutter_chartjs_port (Chart.js ADR 0050). They skip unless CHART_GOLDENS=1. Only the CI job fixtures on ubuntu-24.04 sets it. Options go after "--", for example "dart run melos run test:goldens -- --update-goldens" (write the golden files; only the workflow_dispatch run of CI with update_goldens does this).
@@ -71,8 +72,8 @@ melos:
       run: dart run packages/flutter_chartjs_port/tool/check_lib_imports.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port packages/flutter_chartjs_chart_sankey_port
       description: Fail on flutter_chartjs_port imports outside the allowlists (lib/, pure layers, web tests, theme), on chartjs_test_utils pure.dart imports outside the pure layer, and on flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port imports of flutter_chartjs_port/src/ or chartjs_test_utils/src/ (ADR 0009).
     check:headers:
-      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_chart_sankey_port
-      description: Fail on flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. Each add-on package runs as its own home package.
+      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_chart_sankey_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_kurkle_color_port
+      description: Fail on flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port, flutter_chartjs_chart_sankey_port and flutter_kurkle_color_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. Each add-on package and the color package run as their own home package.
     check:js-semantics:
       run: dart run packages/flutter_chartjs_port/tool/check_js_semantics.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port packages/flutter_chartjs_chart_sankey_port
       description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port files.

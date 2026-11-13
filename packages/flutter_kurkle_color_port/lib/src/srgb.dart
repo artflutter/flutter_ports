@@ -7,21 +7,21 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/src/byte.dart';
+import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
 
 /// srgb.js:7 `to`.
-// DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.
+// DIVERGES(kurkle): js-semantics-dart-math, dart:math pow.
 double _to(double v) => v <= 0.0031308
     ? v * 12.92
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+    // dart:math pow of two doubles.
     : math.pow(v, 1.0 / 2.4) * 1.055 - 0.055;
 
 /// srgb.js:8 `from`.
-// DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.
+// DIVERGES(kurkle): js-semantics-dart-math, dart:math pow.
 double _from(double v) => v <= 0.04045
     ? v / 12.92
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+    // dart:math pow of two doubles.
     : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
 
 /// srgb.js:16 `interpolate`.

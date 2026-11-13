@@ -6,7 +6,7 @@
 /// Chart.js imports `{Color} from '@kurkle/color'` (helpers.color.ts:1). The
 /// `exports.import` entry of the 0.3.2 `package.json` resolves that ES module
 /// import to `dist/color.esm.js`, which rollup builds from this file. Thus
-/// ported code imports this library.
+/// the public library `flutter_kurkle_color_port.dart` exports this library.
 ///
 /// `src/index.js` is the entry of the UMD build. It attaches every export to
 /// the default function (`Object.assign(color.default, color)`). A Dart
@@ -16,14 +16,14 @@
 /// @module index
 library;
 
-import 'package:flutter_chartjs_port/src/kurkle_color/color.dart';
+import 'package:flutter_kurkle_color_port/src/color.dart';
 
-export 'package:flutter_chartjs_port/src/kurkle_color/byte.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
-export 'package:flutter_chartjs_port/src/kurkle_color/hex.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/hue.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/names.dart';
-export 'package:flutter_chartjs_port/src/kurkle_color/rgb.dart';
+export 'package:flutter_kurkle_color_port/src/byte.dart';
+export 'package:flutter_kurkle_color_port/src/color.dart' show Color;
+export 'package:flutter_kurkle_color_port/src/hex.dart';
+export 'package:flutter_kurkle_color_port/src/hue.dart';
+export 'package:flutter_kurkle_color_port/src/names.dart';
+export 'package:flutter_kurkle_color_port/src/rgb.dart';
 
 /// index.esm.js:16 `RGBA`, the color of a [Color].
 ///

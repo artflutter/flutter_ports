@@ -13,12 +13,12 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' show RGBA;
-import 'package:flutter_chartjs_port/src/kurkle_color/numbers.dart';
+import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/src/numbers.dart';
 
 /// The upstream digit map as an integer; -1 marks an absent map entry.
 int _digit(String str, int i) {
-  // DIVERGES(chartjs): adapt-kurkle-hex-code-units, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-hex-code-units, performance optimisations.
   final c = str.codeUnitAt(i);
   if (c >= 48 && c <= 57) return c - 48;
   final lower = c | 32;
@@ -40,7 +40,7 @@ double _shortAlpha(String str) {
 /// The ToInt32 value of [x] as an `int`, the operand of a JS bitwise
 /// operator.
 int _int32(double x) {
-  // DIVERGES(chartjs): adapt-kurkle-color-strings, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-color-strings, performance optimisations.
   if (x > -2147483649.0 && x < 2147483648.0) return x.toInt();
   return toInt32(x);
 }
@@ -82,7 +82,7 @@ const String _hexDigits = '0123456789ABCDEF';
 
 /// hex.js:78 `hexString`.
 String hexString(RGBA? v) {
-  // DIVERGES(chartjs): adapt-kurkle-color-strings, performance optimisations.
+  // DIVERGES(kurkle): adapt-kurkle-color-strings, performance optimisations.
   final r = _int32(v!.r) & 255;
   final g = _int32(v.g) & 255;
   final b = _int32(v.b) & 255;
