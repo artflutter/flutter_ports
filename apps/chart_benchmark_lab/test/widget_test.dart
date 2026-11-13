@@ -496,7 +496,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 20));
       await tester.tap(find.byKey(const ValueKey('dataset.100')));
       await tester.pump(const Duration(milliseconds: 20));
+      // With the wide test font, the nine type chips take nine rows, and
+      // the toggle is at the bottom edge of the window.
+      await tester.ensureVisible(find.byKey(const ValueKey('feature.markers')));
+      await tester.pump(const Duration(milliseconds: 20));
       await tester.tap(find.byKey(const ValueKey('feature.markers')));
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.ensureVisible(find.byKey(const ValueKey('library.flChart')));
       await tester.pump(const Duration(milliseconds: 20));
       await tester.tap(find.byKey(const ValueKey('library.flChart')));
       await tester.pump(const Duration(milliseconds: 20));

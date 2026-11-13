@@ -54,6 +54,7 @@ void main() {
         ChartType.doughnut ||
         ChartType.polarArea => (false, false, false, false, true),
         ChartType.radar => (true, false, true, true, false),
+        ChartType.sankey => (false, false, false, false, true),
       };
       expect(
         (
@@ -86,12 +87,21 @@ void main() {
         );
         expect(
           ChartLibrary.graphic.runs(config),
-          blur && !type.drawsLine,
+          blur && !type.drawsLine && type != ChartType.sankey,
           reason: reason,
         );
         expect(ChartLibrary.syncfusion.runs(config), isFalse, reason: reason);
+        // A sankey chart has no shadow: the setting does not apply.
+        expect(config.shadows, type != ChartType.sankey, reason: reason);
       }
     }
+    expect(
+      const BenchmarkConfig(
+        type: ChartType.sankey,
+        shadow: true,
+      ).toJson().containsKey('shadow'),
+      isFalse,
+    );
     expect(const BenchmarkConfig().toJson().containsKey('shadow'), isFalse);
     expect(
       const BenchmarkConfig(shadow: true, shadowBlur: true).toJson()['shadow'],
@@ -209,16 +219,52 @@ void main() {
     );
     expect(engineOptions(ChartLibrary.flChart, on)['zoomPlugin'], isNull);
   });
-  test('only the radar of Syncfusion has no public chart', () {
+  test('only the radar of Syncfusion has no public chart, and only the '
+      'Chart.js port has a sankey chart', () {
     for (final library in ChartLibrary.values) {
       for (final type in ChartType.values) {
         expect(
           library.supports(type),
-          !(library == ChartLibrary.syncfusion && type == ChartType.radar),
+          type == ChartType.sankey
+              ? library == ChartLibrary.chartjs
+              : !(library == ChartLibrary.syncfusion &&
+                    type == ChartType.radar),
           reason: '${library.name} ${type.name}',
         );
       }
     }
+    const sankey = BenchmarkConfig(type: ChartType.sankey);
+    expect(
+      ChartLibrary.flChart.reasonFor(sankey),
+      'fl_chart 1.3.0 has no sankey chart.',
+    );
+    expect(ChartLibrary.graphic.shortReasonFor(sankey), 'No sankey chart');
+  });
+  test('the sankey flows are one flow for each item, between three '
+      'columns', () {
+    final values = DatasetGenerator(100, 7).frame(0).values;
+    final flows = sankeyFlows(values);
+    expect(flows, hasLength(100));
+    for (final (i, flow) in flows.indexed) {
+      expect(flow.flow, values[i].y);
+      expect(flow.from[0], i.isEven ? 'S' : 'M');
+      expect(flow.to[0], i.isEven ? 'M' : 'T');
+    }
+    // The node count grows with the square root of the item count.
+    expect({
+      for (final f in flows) f.from,
+      for (final f in flows) f.to,
+    }, hasLength(24));
+    // The ends of the flows do not change with the step.
+    final next = sankeyFlows(DatasetGenerator(100, 7).frame(9).values);
+    expect(
+      [for (final f in next) (f.from, f.to)],
+      [for (final f in flows) (f.from, f.to)],
+    );
+    expect(
+      sankeyFlows(DatasetGenerator(1, 7).frame(0).values).single.from,
+      'S0',
+    );
   });
   test(
     'capture excludes warmup, stale batches and frames at/after the end',

@@ -14,6 +14,9 @@ dependencies:
   fl_chart: 1.3.0
   flutter:
     sdk: flutter
+  # The sankey chart of the Chart.js port: the port of chartjs-chart-sankey.
+  flutter_chartjs_chart_sankey_port:
+    path: ../../packages/flutter_chartjs_chart_sankey_port
   # The zoom and pan of the Chart.js port: the port of chartjs-plugin-zoom.
   flutter_chartjs_plugin_zoom_port:
     path: ../../packages/flutter_chartjs_plugin_zoom_port

@@ -638,7 +638,6 @@ class _BenchmarkPageState()
                     key: ValueKey('type.${type.name}'),
                     label: Text(type.label),
                     avatar: Icon(type.icon, size: 17),
-                    // Eight types must leave the feature toggles in view.
                     visualDensity: VisualDensity.compact,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     selected: config.type == type,
@@ -754,15 +753,16 @@ class _BenchmarkPageState()
               (v) => controller.configure(config.copyWith(zoom: v)),
               hint: _zoomHint(config),
             ),
-          _toggle(
-            'Shadow',
-            'shadow',
-            config.shadow,
-            !locked,
-            (v) => controller.configure(config.copyWith(shadow: v)),
-            hint: _shadowHint(config),
-          ),
-          if (config.shadow)
+          if (config.type.hasShadow)
+            _toggle(
+              'Shadow',
+              'shadow',
+              config.shadow,
+              !locked,
+              (v) => controller.configure(config.copyWith(shadow: v)),
+              hint: _shadowHint(config),
+            ),
+          if (config.shadows)
             _toggle(
               'Shadow blur',
               'shadowBlur',

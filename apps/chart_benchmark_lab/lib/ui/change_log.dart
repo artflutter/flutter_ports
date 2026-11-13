@@ -19,6 +19,14 @@ class const ChangeLogEntry(
 /// when a change of the library or of the lab moves a figure. The full records
 /// are in `doc/performance.md` of the Chart.js port.
 const List<ChangeLogEntry> changeLog = [
+  ChangeLogEntry('2026-11-13', [
+    'Lab: a ninth chart type, Sankey, with one flow for each item between '
+        'nodes in three columns. Only the Chart.js port has it, through the '
+        'port of chartjs-chart-sankey: fl_chart, Graphic and Syncfusion have '
+        'no sankey chart, and the lab shows that in place of a chart. The '
+        'sankey chart takes the raw config of the port, so each tick of new '
+        'data is a full update. It has no axes, no zoom and no shadow.',
+  ]),
   ChangeLogEntry('2026-11-10', [
     'Lab: a Zoom and pan setting for line, bar, scatter and bubble charts. '
         'Each library zooms and pans only the x axis through its public API, '

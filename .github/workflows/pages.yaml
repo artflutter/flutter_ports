@@ -37,6 +37,8 @@ on:
       - apps/chartjs_docs/lib/**
       - apps/chartjs_docs/pubspec.yaml
       - apps/chartjs_docs/web/**
+      - packages/flutter_chartjs_chart_sankey_port/lib/**
+      - packages/flutter_chartjs_chart_sankey_port/pubspec.yaml
       - packages/flutter_chartjs_plugin_zoom_port/lib/**
       - packages/flutter_chartjs_plugin_zoom_port/pubspec.yaml
       - packages/flutter_chartjs_port/lib/**

@@ -130,6 +130,10 @@ cj.Dataset _dataset(
       borderColor: fill,
       backgroundColor: fill,
     ),
+    // The scenarios use the typed config, which has no sankey dataset.
+    ChartType.sankey => throw UnsupportedError(
+      'The everyday scenarios have no sankey chart.',
+    ),
   };
 }
 
@@ -667,9 +671,11 @@ Future<void> _run() async {
     'EVERYDAY_SCENARIOS',
     'mount,animate,hover,resize,series',
   );
+  // The types with sizes: the sankey chart has no typed config, so the
+  // scenarios do not run it.
   final types = _list(
     'EVERYDAY_TYPES',
-    ChartType.values.map((t) => t.name).join(','),
+    _sizes.keys.map((t) => t.name).join(','),
   ).map(ChartType.values.byName).toList();
   // One capture with no row: the first capture of a process warms the engine.
   await _animate(ChartType.line, 100, 2);
