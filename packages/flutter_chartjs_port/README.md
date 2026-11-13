@@ -245,7 +245,7 @@ LineDataset(
 ```
 
 A shadow is not a Chart.js option. `ChartView` draws it. In a `ChartView.raw` dataset, set the
-keys `shadowColor` (a `Color`), `shadowBlur`, `shadowOffsetX` and `shadowOffsetY`.
+key `shadow` to the same `ChartShadow`.
 
 ### Axes
 

@@ -776,6 +776,9 @@ enum OptionKey(
   /// The key `selfJoin`.
   selfJoin('selfJoin'),
 
+  /// The key `shadow`.
+  shadow('shadow'),
+
   /// The key `show`.
   show('show'),
 

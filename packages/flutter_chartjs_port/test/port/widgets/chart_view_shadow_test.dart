@@ -12,9 +12,9 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 
-// Chart.js ADR 0107: `Dataset.shadow` lowers to four plain keys of the
-// dataset, and the inline plugin of ChartView sets them on the canvas around
-// the draw of the dataset.
+// Chart.js ADRs 0107 and 0139: `Dataset.shadow` lowers to the dataset option
+// `shadow`, which holds the ChartShadow itself, and the inline plugin of
+// ChartView sets it on the canvas around the draw of the dataset.
 
 const Color _black = Color(0xFF000000);
 const Color _red = Color(0xFFFF0000);
@@ -55,12 +55,7 @@ Map<String, Object?> _rawLine({required bool shadow}) => <String, Object?>{
         'data': <Object?>[1.0, 3.0, 2.0],
         'borderColor': const ChartPaint.solid(_black),
         'pointRadius': 0.0,
-        if (shadow) ...<String, Object?>{
-          'shadowColor': _red,
-          'shadowBlur': 8,
-          'shadowOffsetX': 0,
-          'shadowOffsetY': 20,
-        },
+        if (shadow) 'shadow': _shadow,
       },
     ],
   },
@@ -123,32 +118,39 @@ int _reddish(Uint8List bytes) {
 
 void main() {
   group('Dataset.shadow', () {
-    test('lowers to the four keys of the canvas shadow', () {
+    test('lowers to the option shadow with the ChartShadow itself', () {
       final scope = lowerDataset(
         const LineDataset(data: [1], shadow: _shadow),
         ChartKind.line,
       );
-      expect(scope.jsRead('shadowColor'), _red);
-      expect(scope.jsRead('shadowBlur'), 8);
-      expect(scope.jsRead('shadowOffsetX'), 0);
-      expect(scope.jsRead('shadowOffsetY'), 20);
+      expect(scope.jsRead('shadow'), same(_shadow));
+      expect(scope.jsKeys(), isNot(contains('shadowColor')));
     });
 
     test('an extra entry wins over the shadow', () {
+      const other = ChartShadow(color: _black, blur: 2);
       final scope = lowerDataset(
-        const LineDataset(
-          data: [1],
-          shadow: _shadow,
-          extra: {'shadowBlur': 2.0},
-        ),
+        const LineDataset(data: [1], shadow: _shadow, extra: {'shadow': other}),
         ChartKind.line,
       );
-      expect(scope.jsRead('shadowBlur'), 2);
+      expect(scope.jsRead('shadow'), same(other));
     });
 
     test('no shadow writes no key', () {
       final scope = lowerDataset(const BarDataset(data: [1]), ChartKind.bar);
-      expect(scope.jsKeys(), isNot(contains('shadowColor')));
+      expect(scope.jsKeys(), isNot(contains('shadow')));
+    });
+
+    test('ChartShadow is a value', () {
+      expect(
+        _shadow,
+        const ChartShadow(color: _red, blur: 8, offset: Offset(0, 20)),
+      );
+      expect(_shadow.hashCode, _shadow.copyWith().hashCode);
+      expect(_shadow.copyWith(blur: 2).blur, 2);
+      expect(_shadow, isNot(_shadow.copyWith(offset: Offset.zero)));
+      expect(_shadow.toString(), contains('blur: 8.0'));
+      expect(() => ChartShadow(color: _red, blur: -1), throwsAssertionError);
     });
 
     test('takes part in ==', () {
@@ -177,7 +179,7 @@ void main() {
       expect(ctx.shadowOffsetY, 0);
     });
 
-    testWidgets('a raw dataset with the keys draws the same pixels', (
+    testWidgets('a raw dataset with the option draws the same pixels', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -192,7 +194,7 @@ void main() {
       expect(raw, typed);
     });
 
-    testWidgets('the config check rejects a shadowColor that is not a Color', (
+    testWidgets('a shadow that is not a ChartShadow stops a debug build', (
       tester,
     ) async {
       final config = _rawLine(shadow: true);
@@ -201,9 +203,25 @@ void main() {
                       as List<Object?>)
                   .single!
               as Map<String, Object?>;
-      dataset['shadowColor'] = 'red';
+      dataset['shadow'] = <String, Object?>{'color': _red};
       await tester.pumpWidget(_box(ChartView.raw(config: config)));
-      expect(tester.takeException(), isArgumentError);
+      expect(tester.takeException(), isAssertionError);
+    });
+
+    testWidgets('the old canvas keys of a raw dataset draw no shadow', (
+      tester,
+    ) async {
+      final config = _rawLine(shadow: false);
+      final dataset =
+          ((config['data']! as Map<String, Object?>)['datasets']!
+                      as List<Object?>)
+                  .single!
+              as Map<String, Object?>;
+      // A color key holds a ChartPaint, as each color option of the port.
+      dataset['shadowColor'] = const ChartPaint.solid(_red);
+      dataset['shadowBlur'] = 8;
+      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      expect(_reddish(await _pixels(tester)), 0);
     });
 
     testWidgets('a shadow keeps the data-only updates', (tester) async {

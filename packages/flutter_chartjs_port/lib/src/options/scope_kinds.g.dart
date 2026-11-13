@@ -823,6 +823,7 @@ enum ScopeKind(
           OptionKey.normalized,
           OptionKey.indexAxis,
           OptionKey.clip,
+          OptionKey.shadow,
           OptionKey.label,
           OptionKey.order,
           OptionKey.stack,
@@ -869,6 +870,7 @@ enum ScopeKind(
           OptionKey.normalized,
           OptionKey.indexAxis,
           OptionKey.clip,
+          OptionKey.shadow,
           OptionKey.label,
           OptionKey.order,
           OptionKey.stack,
@@ -928,6 +930,7 @@ enum ScopeKind(
           OptionKey.normalized,
           OptionKey.indexAxis,
           OptionKey.clip,
+          OptionKey.shadow,
           OptionKey.label,
           OptionKey.order,
           OptionKey.stack,
@@ -966,6 +969,7 @@ enum ScopeKind(
           OptionKey.normalized,
           OptionKey.indexAxis,
           OptionKey.clip,
+          OptionKey.shadow,
           OptionKey.label,
           OptionKey.order,
           OptionKey.stack,
@@ -1017,6 +1021,7 @@ enum ScopeKind(
           OptionKey.normalized,
           OptionKey.indexAxis,
           OptionKey.clip,
+          OptionKey.shadow,
           OptionKey.label,
           OptionKey.order,
           OptionKey.stack,
@@ -1069,6 +1074,7 @@ enum ScopeKind(
           OptionKey.normalized,
           OptionKey.indexAxis,
           OptionKey.clip,
+          OptionKey.shadow,
           OptionKey.label,
           OptionKey.order,
           OptionKey.stack,
@@ -1132,6 +1138,7 @@ enum ScopeKind(
           OptionKey.normalized,
           OptionKey.indexAxis,
           OptionKey.clip,
+          OptionKey.shadow,
           OptionKey.label,
           OptionKey.order,
           OptionKey.stack,
@@ -2131,6 +2138,8 @@ enum ScopeKind(
             return 3840;
           case OptionKey.clip:
             return 4992;
+          case OptionKey.shadow:
+            return 5120;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2222,6 +2231,8 @@ enum ScopeKind(
             return 3840;
           case OptionKey.clip:
             return 4992;
+          case OptionKey.shadow:
+            return 5120;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2339,6 +2350,8 @@ enum ScopeKind(
             return 3840;
           case OptionKey.clip:
             return 4992;
+          case OptionKey.shadow:
+            return 5120;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2414,6 +2427,8 @@ enum ScopeKind(
             return 3968;
           case OptionKey.clip:
             return 4992;
+          case OptionKey.shadow:
+            return 5120;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2515,6 +2530,8 @@ enum ScopeKind(
             return 3968;
           case OptionKey.clip:
             return 4992;
+          case OptionKey.shadow:
+            return 5120;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2618,6 +2635,8 @@ enum ScopeKind(
             return 3968;
           case OptionKey.clip:
             return 4992;
+          case OptionKey.shadow:
+            return 5120;
           case OptionKey.label:
             return 4;
           case OptionKey.order:
@@ -2743,6 +2762,8 @@ enum ScopeKind(
             return 3712;
           case OptionKey.clip:
             return 4992;
+          case OptionKey.shadow:
+            return 5120;
           case OptionKey.label:
             return 4;
           case OptionKey.order:

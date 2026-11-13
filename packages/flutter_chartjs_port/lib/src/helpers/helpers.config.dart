@@ -99,6 +99,8 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
+    show ChartShadow;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -276,7 +278,8 @@ final _nativeIndexedLists = <Type>{
 // the resolution keeps the object, and only the draw calls its methods. An
 // axis class has no members (row adapt-axis-objects). A `Locale` is a value,
 // and the chart only calls `format` of a `NumberFormat` (row
-// adapt-intl-number-format).
+// adapt-intl-number-format). A `ChartShadow` is an immutable value that only
+// the widget plugin reads (Chart.js ADR 0139).
 bool _indexedScalar(Object? value) =>
     value == null ||
     value is Undefined ||
@@ -292,6 +295,7 @@ bool _indexedScalar(Object? value) =>
     value is Locale ||
     value is NumberFormat ||
     value is ChartClip ||
+    value is ChartShadow ||
     (value is ChartPaint && !isObject(value));
 
 // DIVERGES(chartjs): adapt-arc-native-options, the read of a non-indexable list

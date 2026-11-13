@@ -12,11 +12,14 @@
 /// palette key, and the chart shows no focus ring.
 library;
 
-import 'dart:ui' show Color;
-
 import 'package:flutter/foundation.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_shadow.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show DatasetDrawHookArgs;
@@ -72,29 +75,31 @@ AnyObject createChartViewPlugin(ChartThemeSwitch theme, ChartKeyboard keys) {
 }
 
 /// Sets the shadow of the dataset of [args] on the context of [chart]
-/// (Chart.js ADR 0107), and gives whether it saved the context.
+/// (Chart.js ADRs 0107 and 0139), and gives whether it saved the context.
 ///
-/// The dataset gives the shadow in its keys `shadowColor` (a `Color`),
-/// `shadowBlur`, `shadowOffsetX` and `shadowOffsetY` (numbers). A dataset
-/// with no `Color` has no shadow, and the context does not change. A number
-/// key with another value keeps the value of the context.
+/// The dataset gives the shadow in its option `shadow`, a [ChartShadow]. The
+/// plugin reads the dataset only: the shadow does not cascade from
+/// `options.datasets` or from `options`. A dataset with no shadow keeps the
+/// context as it is. Another value stops a debug build.
 bool _beginShadow(types.Chart chart, Object? args) {
   final ctx = chart.ctx;
   if (ctx == null || args is! DatasetDrawHookArgs) return false;
-  final dataset = args.meta?.controller?.getDataset();
-  final color = jsGet(dataset, 'shadowColor');
-  if (color is! Color) return false;
+  final shadow = readOption(
+    args.meta?.controller?.getDataset(),
+    OptionKey.shadow,
+  );
+  if (shadow is! ChartShadow) {
+    assert(
+      shadow == null || identical(shadow, undefined),
+      'The option shadow takes a ChartShadow, not $shadow.',
+    );
+    return false;
+  }
   ctx
     ..save()
-    ..shadowColor = color;
-  if (jsGet(dataset, 'shadowBlur') case final num blur) {
-    ctx.shadowBlur = blur.toDouble();
-  }
-  if (jsGet(dataset, 'shadowOffsetX') case final num x) {
-    ctx.shadowOffsetX = x.toDouble();
-  }
-  if (jsGet(dataset, 'shadowOffsetY') case final num y) {
-    ctx.shadowOffsetY = y.toDouble();
-  }
+    ..shadowColor = shadow.color
+    ..shadowBlur = shadow.blur
+    ..shadowOffsetX = shadow.offset.dx
+    ..shadowOffsetY = shadow.offset.dy;
   return true;
 }

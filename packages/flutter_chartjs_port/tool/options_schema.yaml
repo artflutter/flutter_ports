@@ -56,7 +56,8 @@
 # `titleFont`, `bodyFont` and `footerFont`; a font object is a foreign value), `locale` (a Flutter
 # `Locale`, the chart `locale`; a language tag is a foreign value), `numberFormat` (a `NumberFormat`
 # of package:intl, the tick `format`; an object of number format options is a foreign value),
-# `chartClip` (a `ChartClip`, the dataset `clip`; a number, a bool or an object is a foreign value), `any` (any
+# `chartClip` (a `ChartClip`, the dataset `clip`; a number, a bool or an object is a foreign value),
+# `chartShadow` (a `ChartShadow`, the port-only dataset `shadow` of Chart.js ADR 0139), `any` (any
 # JS value: a color, an object that
 # is not an option scope) or `scope <Kind>` (a nested option object of
 # that kind). A shape describes the plain value only: a function (a scriptable option), an
@@ -502,6 +503,7 @@ kinds:
       normalized: bool
       indexAxis: cartesianAxis
       clip: chartClip
+      shadow: chartShadow  # port-only, Chart.js ADR 0139, read at chart_view_plugin.dart _beginShadow
       label: string
       order: number
       stack: string
@@ -548,6 +550,7 @@ kinds:
       normalized: bool
       indexAxis: cartesianAxis
       clip: chartClip
+      shadow: chartShadow  # port-only, Chart.js ADR 0139, read at chart_view_plugin.dart _beginShadow
       label: string
       order: number
       stack: string
@@ -607,6 +610,7 @@ kinds:
       normalized: bool
       indexAxis: cartesianAxis
       clip: chartClip
+      shadow: chartShadow  # port-only, Chart.js ADR 0139, read at chart_view_plugin.dart _beginShadow
       label: string
       order: number
       stack: string
@@ -645,6 +649,7 @@ kinds:
       normalized: bool
       indexAxis: radialAxis
       clip: chartClip
+      shadow: chartShadow  # port-only, Chart.js ADR 0139, read at chart_view_plugin.dart _beginShadow
       label: string
       order: number
       stack: string
@@ -696,6 +701,7 @@ kinds:
       normalized: bool
       indexAxis: radialAxis
       clip: chartClip
+      shadow: chartShadow  # port-only, Chart.js ADR 0139, read at chart_view_plugin.dart _beginShadow
       label: string
       order: number
       stack: string
@@ -748,6 +754,7 @@ kinds:
       normalized: bool
       indexAxis: radialAxis
       clip: chartClip
+      shadow: chartShadow  # port-only, Chart.js ADR 0139, read at chart_view_plugin.dart _beginShadow
       label: string
       order: number
       stack: string
@@ -812,6 +819,7 @@ kinds:
       normalized: bool
       indexAxis: scaleAxis
       clip: chartClip
+      shadow: chartShadow  # port-only, Chart.js ADR 0139, read at chart_view_plugin.dart _beginShadow
       label: string
       order: number
       stack: string
