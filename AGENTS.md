@@ -1630,6 +1630,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     work out: the frame rate shows it. Build it with `flutter build apk --profile -t
     lib/main_input_probe.dart --android-skip-build-dependency-validation` and read
     `adb logcat -s flutter:I`. `test/input_probe_test.dart` pins the counts.
+  - `lib/main_sankey_bench.dart` is the sankey benchmark entry (`performance.md` of the sankey
+    port). It times a sankey chart with no host on a bitmap of 800 x 480: the data functions and
+    the layout alone, `chart.update('none')` with new flow sizes (with the parts parse, element
+    update and draw of a timed controller subclass), the draw alone, the hit test and a hover.
+    Its frame cases show a `ChartView.raw` with new data in each frame and read the `FrameTiming`
+    build and raster times. It prints one line `SANKEY {json}` for each case. With
+    `--dart-define=SERVE=true` it runs nothing at its start: the service extension
+    `ext.sankey.run` runs one case for each call, also with the prototype variants of its header,
+    and gives the timed windows for a CPU profile of the VM service. No test pins it.
   - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
@@ -1889,6 +1898,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       key or a `SankeyNodeCallback<T>` (row `adapt-sankey-node-option`).
     - The layout sorts with `jsSort`: the order of two equal nodes decides their positions.
     - `SankeyController.nodes` gives the nodes of the last parse (the upstream `_nodes`).
+    - Four forms are faster than the upstream lines, with the same layout and pixels
+      (`doc/performance.md`). The default layout counts the downstream flows of each node one
+      time, before the sort that reads the count (row `adapt-sankey-node-count-memo`). The parse
+      reads the offset of a flow by its data index (row `adapt-sankey-flow-by-index`). The keys
+      `hoverColorFrom` and `hoverColorTo` are not scriptable by their own names, so the options
+      of the flows with plain values resolve one time: in the default mode, the two keys of the
+      options of a flow hold the function, and the active mode reads the hover colors as
+      `colorFrom` and `colorTo` (row `adapt-sankey-hover-color-keys`). The flows with equal ends,
+      colors and alpha share one gradient object (row `adapt-sankey-shared-gradients`).
   - `test/flutter_test_config.dart` ports `test/setup.js`: DPR 1 and 800 x 600, the built-in
     components and `sankeyRegisterables`, the colors plugin off, the defaults restore, the
     release of the charts and the test font.
@@ -1902,6 +1920,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `test/support/fake_context.dart` is the context of the two element unit tests.
     `test/port/public_library_test.dart` imports the library next to the app library of the host
     and `material_ui.dart`, and draws a chart of `SankeyDataPoint` items in a `ChartView.raw`.
+    `test/port/lib/layout_test.dart`, `test/port/controller_test.dart` and
+    `test/port/flow_test.dart` pin the four faster forms of `doc/performance.md`.
   - `test/upstream_test.dart` (`@TestOn('vm')`) compares the entry of `tool/port_sources.yaml`
     with `chartjsChartSankeyVersion`, and the gitlink with its `commit`.
   - `tool/port_sources.yaml`: the pin, with the top-level keys `marker: sankey` and
@@ -1909,7 +1929,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `doc/`: `README.md` (overview, use, roadmap), `host-seams.md` (each place where a chart type of
     another package needs a part of the host, with the state `connects`, `sankey-side` or `gap`:
     the input for the work on the public API of the host), `parity.md` (a person writes it),
-    `differences.md`, `upstream-ledger.md` and `prior-art/README.md` (2026-11-13: no Dart port of
+    `differences.md`, `performance.md` (the figures of each faster form, and the open items),
+    `upstream-ledger.md` and `prior-art/README.md` (2026-11-13: no Dart port of
     this library exists).
     - `doc/adr/`: Sankey ADRs 0001-0003, all proposed: 0001 (upstream source, name and license),
       0002 (file naming, layout and the Dart forms) and 0003 (the connection to the host port).
