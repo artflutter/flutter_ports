@@ -27,25 +27,6 @@ List<Scale> _values(Map<String, Scale> scales) => [
   for (final id in jsObjectKeys(scales)) scales[id]!,
 ];
 
-/// `onZoom?.(context)`: a typed call of a [ZoomCallback], else [callUser].
-void _callZoom(Object? onZoom, ZoomTriggerContext context) {
-  if (onZoom is ZoomCallback) {
-    onZoom(context);
-  } else {
-    callUser(onZoom, context);
-  }
-}
-
-/// `callback?.(context)`: a typed call of a [GenericEvent], else
-/// [callUser].
-void _callGeneric(Object? callback, ZoomChartContext context) {
-  if (callback is GenericEvent) {
-    callback(context);
-  } else {
-    callUser(callback, context);
-  }
-}
-
 /// core.ts:9 `shouldUpdateScaleLimits(scale, originalScaleLimits,
 /// updatedScaleLimits)`: whether the plugin did not write the range of
 /// [scale], so that its limits are the original limits.
@@ -178,7 +159,7 @@ void zoom(
 
   // zoomOptions?.onZoom?.({ chart, trigger })
   if (!zoomOptions.isNullish) {
-    _callZoom(zoomOptions.onZoom, (chart: chart, trigger: trigger));
+    zoomOptions.onZoom?.call((chart: chart, trigger: trigger));
   }
 }
 
@@ -216,7 +197,7 @@ void zoomRect(
   _updateChart(chart, state, transition);
 
   // zoomOptions.onZoom?.({ chart, trigger })
-  _callZoom(zoomOptions.onZoom, (chart: chart, trigger: trigger));
+  zoomOptions.onZoom?.call((chart: chart, trigger: trigger));
 }
 
 /// core.ts:125 `zoomScale(chart, scaleId, range, transition, trigger)`:
@@ -240,7 +221,7 @@ void zoomScale(
   // state.options.zoom?.onZoom?.({ chart, trigger })
   final zoomOptions = state.options.zoom;
   if (!zoomOptions.isNullish) {
-    _callZoom(zoomOptions.onZoom, (chart: chart, trigger: trigger));
+    zoomOptions.onZoom?.call((chart: chart, trigger: trigger));
   }
 }
 
@@ -268,7 +249,7 @@ void resetZoom(Chart chart, [String transition = 'default']) {
   // state.options.zoom?.onZoomComplete?.({ chart })
   final zoomOptions = state.options.zoom;
   if (!zoomOptions.isNullish) {
-    _callGeneric(zoomOptions.onZoomComplete, (chart: chart));
+    zoomOptions.onZoomComplete?.call((chart: chart));
   }
 }
 
@@ -369,7 +350,7 @@ void pan(
   _updateChart(chart, state, transition);
 
   // onPan?.({ chart })
-  _callGeneric(onPan, (chart: chart));
+  onPan?.call((chart: chart));
 }
 
 /// core.ts:238 `getInitialScaleBounds(chart)`: the original `min` and `max`

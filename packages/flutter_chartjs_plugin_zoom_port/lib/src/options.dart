@@ -10,10 +10,10 @@
 /// - [ZoomTrigger] is a value that only the plugin makes: an enum. Its
 ///   `name` is the upstream string.
 /// - The callback contexts are records: they compare by value in a spec. A
-///   user function gets a typed call when it has the type of its typedef,
-///   else the JavaScript call of `jsCall` (`callUser` of `utils.dart`).
-///   `null` and `undefined` skip the call, as upstream skips a missing
-///   callback.
+///   callback getter gives the function of its typedef type, or Dart `null`
+///   for `null` and `undefined`, and the plugin calls it directly (Zoom ADR
+///   0004). A value of another type is a foreign value: a debug build stops
+///   on it, and a release build makes no call.
 /// - The options of a hook are a resolver of the host, read by name. A
 ///   facade is an extension type over the raw value (the resolver, a nested
 ///   resolver, a Map of a spec, or `undefined`), with no cost. Each getter
@@ -63,12 +63,17 @@ enum Mode {
   };
 
   /// The value of [value], a `mode`, `scaleMode` or `overScaleMode` option
-  /// or the result of a [ModeFn], or Dart `null` for a value that is not a
-  /// [Mode]. An upstream name is not a value: a debug build stops on it.
+  /// that is not a [ModeFn], or Dart `null` for a value that is not a
+  /// [Mode]. An upstream name and a function of another type are not values:
+  /// a debug build stops on them.
   static Mode? of(Object? value) {
     assert(
       value is! String,
       'A zoom mode takes a Mode, not the name "$value".',
+    );
+    assert(
+      value is! Function,
+      'A zoom mode function is a ModeFn, not ${value.runtimeType}.',
     );
     return value is Mode ? value : null;
   }
@@ -178,11 +183,13 @@ typedef ZoomEventContext<E> = ({Chart chart, E event});
 typedef ZoomStartContext<E> = ({Chart chart, E event, Point point});
 
 /// options.ts:12 `RejectableStartEvent<T>`: a start callback. A result
-/// `false` rejects the zoom or the pan.
+/// `true` starts the zoom or the pan, and `false` rejects it. Upstream also
+/// accepts `undefined`; a Dart callback states its result (Zoom ADR 0004).
 ///
 /// `E` is the native event (`NativeEvent`) for the zoom and a
 /// [GestureEvent] for the pan.
-typedef RejectableStartEvent<E> = bool? Function(ZoomStartContext<E> context);
+// DIVERGES(zoom): adapt-native-callbacks, an explicit bool result.
+typedef RejectableStartEvent<E> = bool Function(ZoomStartContext<E> context);
 
 /// options.ts:17 `RejectEvent<T>`: a callback of a rejected zoom or pan.
 ///
@@ -196,6 +203,19 @@ typedef GenericEvent = void Function(ZoomChartContext context);
 /// The type of `onZoom` (options.ts:126): a callback that gets the chart
 /// and the [ZoomTrigger].
 typedef ZoomCallback = void Function(ZoomTriggerContext context);
+
+/// The callback of the option [name] in [value]: [value] when it has the
+/// type [F], else Dart `null`. `null` and `undefined` mean no callback; a
+/// value of another type stops a debug build (Zoom ADR 0004).
+// DIVERGES(zoom): adapt-native-callbacks, the typed callback of an option.
+F? _callbackOf<F extends Function>(Object? value, String name) {
+  if (value is F) return value;
+  assert(
+    isNullOrUndef(value),
+    'The zoom option $name takes a $F, not ${value.runtimeType}.',
+  );
+  return null;
+}
 
 /// `{}`: the empty object of a destructuring default (`{ zoom = {} }`) or of
 /// `options || {}`. Nothing writes into it.
@@ -284,19 +304,29 @@ extension type const ZoomOptions(Object? raw) {
 
   /// options.ts:126 `onZoom`: a [ZoomCallback], called while the user is
   /// zooming.
-  Object? get onZoom => jsGet(raw, 'onZoom');
+  ZoomCallback? get onZoom =>
+      _callbackOf<ZoomCallback>(jsGet(raw, 'onZoom'), 'onZoom');
 
   /// options.ts:131 `onZoomComplete`: a [GenericEvent], called once zooming
   /// is completed.
-  Object? get onZoomComplete => jsGet(raw, 'onZoomComplete');
+  GenericEvent? get onZoomComplete =>
+      _callbackOf<GenericEvent>(jsGet(raw, 'onZoomComplete'), 'onZoomComplete');
 
   /// options.ts:136 `onZoomRejected`: a [RejectEvent] of the native event,
   /// called when wheel input occurs without the modifier key.
-  Object? get onZoomRejected => jsGet(raw, 'onZoomRejected');
+  RejectEvent<NativeEvent>? get onZoomRejected =>
+      _callbackOf<RejectEvent<NativeEvent>>(
+        jsGet(raw, 'onZoomRejected'),
+        'onZoomRejected',
+      );
 
   /// options.ts:138 `onZoomStart`: a [RejectableStartEvent] of the native
   /// event.
-  Object? get onZoomStart => jsGet(raw, 'onZoomStart');
+  RejectableStartEvent<NativeEvent>? get onZoomStart =>
+      _callbackOf<RejectableStartEvent<NativeEvent>>(
+        jsGet(raw, 'onZoomStart'),
+        'onZoomStart',
+      );
 }
 
 /// options.ts:144 `PanOptions`: the container of the pan options.
@@ -325,19 +355,29 @@ extension type const PanOptions(Object? raw) {
 
   /// options.ts:178 `onPan`: a [GenericEvent], called while the user is
   /// panning.
-  Object? get onPan => jsGet(raw, 'onPan');
+  GenericEvent? get onPan =>
+      _callbackOf<GenericEvent>(jsGet(raw, 'onPan'), 'onPan');
 
   /// options.ts:183 `onPanComplete`: a [GenericEvent], called once panning
   /// is completed.
-  Object? get onPanComplete => jsGet(raw, 'onPanComplete');
+  GenericEvent? get onPanComplete =>
+      _callbackOf<GenericEvent>(jsGet(raw, 'onPanComplete'), 'onPanComplete');
 
   /// options.ts:189 `onPanRejected`: a [RejectEvent] of the [GestureEvent],
   /// called when a pan fails because the modifier key was not pressed.
-  Object? get onPanRejected => jsGet(raw, 'onPanRejected');
+  RejectEvent<GestureEvent>? get onPanRejected =>
+      _callbackOf<RejectEvent<GestureEvent>>(
+        jsGet(raw, 'onPanRejected'),
+        'onPanRejected',
+      );
 
   /// options.ts:191 `onPanStart`: a [RejectableStartEvent] of the
   /// [GestureEvent].
-  Object? get onPanStart => jsGet(raw, 'onPanStart');
+  RejectableStartEvent<GestureEvent>? get onPanStart =>
+      _callbackOf<RejectableStartEvent<GestureEvent>>(
+        jsGet(raw, 'onPanStart'),
+        'onPanStart',
+      );
 }
 
 /// options.ts:194 `ScaleLimits`: the limits of one scale.

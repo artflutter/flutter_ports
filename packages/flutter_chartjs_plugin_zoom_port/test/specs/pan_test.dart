@@ -4,7 +4,13 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ModifierKey, ZoomChart, ZoomChartContext;
+    show
+        GestureEvent,
+        Mode,
+        ModifierKey,
+        ZoomChart,
+        ZoomChartContext,
+        ZoomStartContext;
 import 'package:flutter_chartjs_port/chartjs.dart' show CanvasEventTarget;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -231,7 +237,10 @@ void main() {
                   'pan': <String, Object?>{
                     'enabled': true,
                     'mode': Mode.xy,
-                    'onPanStart': startSpy.call,
+                    'onPanStart': (ZoomStartContext<GestureEvent> context) {
+                      startSpy.call(context);
+                      return true;
+                    },
                   },
                 },
               },
@@ -264,7 +273,7 @@ void main() {
                     'pan': <String, Object?>{
                       'enabled': true,
                       'mode': Mode.xy,
-                      'onPanStart': () => false,
+                      'onPanStart': (ZoomStartContext<GestureEvent> _) => false,
                       'onPanRejected': rejectSpy.call,
                     },
                   },

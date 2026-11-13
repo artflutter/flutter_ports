@@ -1712,8 +1712,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `src/index.umd.ts` has no Dart file (Zoom ADR 0002 item 8, Chart.js ADR 0120). `zoomPlugin` (`plugin.dart`) is a typed `Plugin` of the host with the upstream keys
     in order and `supportsDataUpdates: true` (row `adapt-typed-plugin-object`, seam H25); its hooks
     take `Object chart` and narrow it with `chart as Chart`. The options are extension-type facades
-    over the resolver of the host (`ZoomPluginOptions` of `options.dart`), read live; a user
-    function takes a typed call when it has the typedef type, else `jsCall`. The state of a chart
+    over the resolver of the host (`ZoomPluginOptions` of `options.dart`), read live. A callback
+    option (`onZoomStart`, `onZoom`, `onPanComplete`, ...) and a `ModeFn` hold the function of
+    their typedef, and the plugin calls them directly; a start callback returns `bool`, and a
+    function of another type stops a debug build (Zoom ADR 0004). The state of a chart
     is an `Expando<State>` (`state.dart`); the gesture managers are an `Expando` too. The listeners
     use `canvas.eventTarget` and `canvas.ownerDocument` of Chart.js ADR 0108 (row
     `adapt-canvas-event-target`): after a drag, the `keydown` listener stays on the document until
@@ -1766,9 +1768,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `parity.md` (a person writes it), `differences.md` (its table of the reserved IDs has the
     header cell `Reserved ID`, so `check:headers` reads no rows from it) and `upstream-ledger.md`.
     `prior-art/README.md` is the prior-art survey (2026-11-10).
-    - `doc/adr/`: Zoom ADRs 0001-0003, all proposed. Zoom ADR 0001 (upstream source, name and
-      license) has gate 0. Zoom ADR 0002 (file naming and layout) has gate 1. Zoom ADR 0003 (the
-      connection to the host port) has gates 1 and 2. Docs name them "Zoom ADR NNNN".
+    - `doc/adr/`: Zoom ADRs 0001-0004. Zoom ADRs 0001-0003 are proposed. Zoom ADR 0001 (upstream
+      source, name and license) has gate 0. Zoom ADR 0002 (file naming and layout) has gate 1.
+      Zoom ADR 0003 (the connection to the host port) has gates 1 and 2. Zoom ADR 0004 (native
+      zoom and pan callbacks) is accepted (2026-11-13): its code passes the tests. It supersedes
+      the user-function bullet of Zoom ADR 0003 item 9. Docs name them "Zoom ADR NNNN".
   - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
     item 6). `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its

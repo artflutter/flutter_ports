@@ -2,7 +2,8 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart' show Mode;
+import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart'
+    show Mode, ZoomChartContext;
 import 'package:flutter_chartjs_plugin_zoom_port/src/utils.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_test/flutter_test.dart';
@@ -36,7 +37,11 @@ void main() {
             final modeFn = createSpy('mode').and.returnValue(mode);
 
             expect(
-              directionEnabled(modeFn.call, dir, chart),
+              directionEnabled(
+                (ZoomChartContext context) => modeFn.call(context)! as Mode,
+                dir,
+                chart,
+              ),
               jasmineEquals(expected),
             );
             expect(modeFn, toHaveBeenCalledWith([(chart: chart)]));

@@ -11,9 +11,9 @@
 /// keeps the target of each listener (differences.md row
 /// `adapt-canvas-event-target`).
 ///
-/// A user callback gets a typed call when it has the type of its typedef
-/// (`RejectEvent`, `RejectableStartEvent`, `GenericEvent`), else the
-/// JavaScript call of `callUser` (Zoom ADR 0003, item 9).
+/// A user callback has its typedef type (`RejectEvent`,
+/// `RejectableStartEvent`, `GenericEvent`) and gets a direct call (Zoom ADR
+/// 0004).
 library;
 
 import 'dart:math' as math;
@@ -43,38 +43,6 @@ import 'package:flutter_chartjs_port/js_semantics.dart'
 
 /// `value ?? {}`: [emptyObject] for `null` and `undefined`.
 Object? _orEmpty(Object? value) => isNullOrUndef(value) ? emptyObject : value;
-
-/// `onZoomRejected?.(context)`: a typed call of a [RejectEvent] of the
-/// native event, else [callUser].
-void _callRejected(
-  Object? onZoomRejected,
-  ZoomEventContext<NativeEvent> context,
-) {
-  if (onZoomRejected is RejectEvent<NativeEvent>) {
-    onZoomRejected(context);
-  } else {
-    callUser(onZoomRejected, context);
-  }
-}
-
-/// `onZoomStart?.(context)`: a typed call of a [RejectableStartEvent] of
-/// the native event, else [callUser]. Gives the result of the callback.
-Object? _callStart(
-  Object? onZoomStart,
-  ZoomStartContext<NativeEvent> context,
-) => onZoomStart is RejectableStartEvent<NativeEvent>
-    ? onZoomStart(context)
-    : callUser(onZoomStart, context);
-
-/// `callback?.(context)`: a typed call of a [GenericEvent], else
-/// [callUser].
-void _callGeneric(Object? callback, ZoomChartContext context) {
-  if (callback is GenericEvent) {
-    callback(context);
-  } else {
-    callUser(callback, context);
-  }
-}
 
 /// handlers.ts:9 `clamp(x, from, to)`.
 double _clamp(double x, double from, double to) => jsMin(to, jsMax(from, x));
@@ -185,11 +153,10 @@ Point _getPointPosition(NativeEvent event, Chart chart) {
 bool _zoomStart(Chart chart, NativeEvent event, ZoomOptions zoomOptions) {
   final onZoomStart = zoomOptions.onZoomStart;
   final onZoomRejected = zoomOptions.onZoomRejected;
-  if (jsTruthy(onZoomStart)) {
+  if (onZoomStart != null) {
     final point = _getPointPosition(event, chart);
-    if (_callStart(onZoomStart, (chart: chart, event: event, point: point)) ==
-        false) {
-      _callRejected(onZoomRejected, (chart: chart, event: event));
+    if (!onZoomStart((chart: chart, event: event, point: point))) {
+      onZoomRejected?.call((chart: chart, event: event));
       return false;
     }
   }
@@ -217,7 +184,7 @@ void mouseDown(Chart chart, NativeEvent event) {
       keyPressed(getModifierKey(panOptions), event) ||
       keyNotPressed(getModifierKey(zoomOptions.drag), event)) {
     // return zoomOptions.onZoomRejected?.({ chart, event })
-    _callRejected(zoomOptions.onZoomRejected, (chart: chart, event: event));
+    zoomOptions.onZoomRejected?.call((chart: chart, event: event));
     return;
   }
 
@@ -486,7 +453,7 @@ void mouseUp(Chart chart, NativeEvent event) {
   state
     ..dragging = false
     ..filterNextClick = true;
-  _callGeneric(onZoomComplete, (chart: chart));
+  onZoomComplete?.call((chart: chart));
 }
 
 /// handlers.ts:223 `wheelPreconditions(chart, event, zoomOptions)`: whether
@@ -501,7 +468,7 @@ bool _wheelPreconditions(
 ) {
   // Before preventDefault, check if the modifier key required and pressed
   if (keyNotPressed(getModifierKey(zoomOptions.wheel), event)) {
-    _callRejected(zoomOptions.onZoomRejected, (chart: chart, event: event));
+    zoomOptions.onZoomRejected?.call((chart: chart, event: event));
     return false;
   }
 
@@ -586,14 +553,11 @@ void wheel(Chart chart, NativeEvent event) {
 void _addDebouncedHandler(
   Chart chart,
   HandlerName name,
-  Object? handler,
+  GenericEvent? handler,
   double delay,
 ) {
-  if (jsTruthy(handler)) {
-    final debounced = debounce(
-      () => _callGeneric(handler, (chart: chart)),
-      delay,
-    );
+  if (handler != null) {
+    final debounced = debounce(() => handler((chart: chart)), delay);
     getState(chart).handlers[name] = (_) => debounced();
   }
 }

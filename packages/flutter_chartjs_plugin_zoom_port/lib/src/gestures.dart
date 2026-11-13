@@ -20,8 +20,8 @@
 /// - `Math.hypot` is `jsHypot` (Chart.js ADR 0108): the distance decides
 ///   whether a pan starts.
 /// - The `WeakMap` of the managers is an `Expando`.
-/// - A user callback gets a typed call when it has the type of its typedef,
-///   else the JavaScript call of `callUser` (Zoom ADR 0003, item 9).
+/// - A user callback has its typedef type and gets a direct call (Zoom ADR
+///   0004).
 library;
 
 import 'package:flutter_chartjs_plugin_zoom_port/src/core.dart';
@@ -119,29 +119,6 @@ Object? _pinchEnabledOf(ZoomOptions zoom) {
   return pinch.isNullish ? undefined : pinch.enabled;
 }
 
-/// `f?.(context)` of a [RejectEvent] [f]: a typed call, else [callUser].
-void _callReject<E>(Object? f, ZoomEventContext<E> context) {
-  if (f is RejectEvent<E>) {
-    f(context);
-  } else {
-    callUser(f, context);
-  }
-}
-
-/// `f?.(context)` of a [RejectableStartEvent] [f]: its result, `undefined`
-/// when [f] is `null` or `undefined`. A typed call, else [callUser].
-Object? _callStart<E>(Object? f, ZoomStartContext<E> context) =>
-    f is RejectableStartEvent<E> ? f(context) : callUser(f, context);
-
-/// `f?.(context)` of a [GenericEvent] [f]: a typed call, else [callUser].
-void _callGeneric(Object? f, ZoomChartContext context) {
-  if (f is GenericEvent) {
-    f(context);
-  } else {
-    callUser(f, context);
-  }
-}
-
 /// gestures.ts:37 `distance(a, b)`: the distance of two pointers.
 double _distance(ActivePointer a, ActivePointer b) =>
     jsHypot(a.clientX - b.clientX, a.clientY - b.clientY);
@@ -169,7 +146,7 @@ bool Function(GestureEvent) _createEnabler(Chart chart, State state) {
         event.pointerType == 'mouse' &&
         (keyNotPressed(getModifierKey(panOptions.raw), srcEvent) ||
             keyPressed(getModifierKey(zoomOptions.drag.raw), srcEvent))) {
-      _callReject(panOptions.onPanRejected, (chart: chart, event: event));
+      panOptions.onPanRejected?.call((chart: chart, event: event));
       return false;
     }
     return true;
@@ -234,18 +211,16 @@ void _startPinch(Chart chart, State state, GestureEvent e) {
     final point = (x: position.x ?? 0, y: position.y ?? 0);
     // state.options.zoom?.onZoomStart?.({ chart, event: e.srcEvent, point })
     final startOptions = state.options.zoom;
-    final started = _callStart(
-      startOptions.isNullish ? undefined : startOptions.onZoomStart,
-      (chart: chart, event: e.srcEvent, point: point),
-    );
+    final started = (startOptions.isNullish ? null : startOptions.onZoomStart)
+        ?.call((chart: chart, event: e.srcEvent, point: point));
     if (started == false) {
       state.scale = null;
       // state.options.zoom?.onZoomRejected?.({ chart, event: e.srcEvent })
       final rejectOptions = state.options.zoom;
-      _callReject(
-        rejectOptions.isNullish ? undefined : rejectOptions.onZoomRejected,
-        (chart: chart, event: e.srcEvent),
-      );
+      (rejectOptions.isNullish ? null : rejectOptions.onZoomRejected)?.call((
+        chart: chart,
+        event: e.srcEvent,
+      ));
     } else {
       state.scale = 1;
     }
@@ -259,10 +234,9 @@ void _endPinch(Chart chart, State state, GestureEvent e) {
     _handlePinch(chart, state, e);
     state.scale = null; // reset
     final zoomOptions = state.options.zoom;
-    _callGeneric(
-      zoomOptions.isNullish ? undefined : zoomOptions.onZoomComplete,
-      (chart: chart),
-    );
+    (zoomOptions.isNullish ? null : zoomOptions.onZoomComplete)?.call((
+      chart: chart,
+    ));
   }
 }
 
@@ -303,14 +277,10 @@ void _startPan(Chart chart, State state, GestureEvent event) {
     y: event.center.y - rect.top,
   );
 
-  final started = _callStart(onPanStart, (
-    chart: chart,
-    event: event,
-    point: point,
-  ));
+  final started = onPanStart?.call((chart: chart, event: event, point: point));
   if (started == false) {
     // return onPanRejected?.({ chart, event })
-    _callReject(onPanRejected, (chart: chart, event: event));
+    onPanRejected?.call((chart: chart, event: event));
     return;
   }
 
@@ -335,10 +305,9 @@ void _endPan(Chart chart, State state) {
       ..panning = false
       ..filterNextClick = true;
     final panOptions = state.options.pan;
-    _callGeneric(
-      panOptions.isNullish ? undefined : panOptions.onPanComplete,
-      (chart: chart),
-    );
+    (panOptions.isNullish ? null : panOptions.onPanComplete)?.call((
+      chart: chart,
+    ));
   }
 }
 

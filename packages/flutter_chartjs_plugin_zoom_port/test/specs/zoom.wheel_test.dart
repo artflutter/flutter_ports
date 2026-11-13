@@ -4,9 +4,15 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ModifierKey, ZoomChart, ZoomTrigger;
+    show
+        Mode,
+        ModifierKey,
+        ZoomChart,
+        ZoomChartContext,
+        ZoomStartContext,
+        ZoomTrigger;
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, JsObjectFace, Scale;
+    show Chart, JsObjectFace, NativeEvent, Scale;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsRound;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -450,9 +456,12 @@ void main() {
                   'zoom': <String, Object?>{
                     'wheel': <String, Object?>{'enabled': true},
                     'mode': Mode.xy,
-                    'onZoomStart': startSpy.call,
+                    'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                      startSpy.call(context);
+                      return true;
+                    },
                     'onZoom': zoomSpy.call,
-                    'onZoomComplete': () => done(),
+                    'onZoomComplete': (ZoomChartContext _) => done(),
                   },
                 },
               },
@@ -491,7 +500,10 @@ void main() {
                 'zoom': <String, Object?>{
                   'wheel': <String, Object?>{'enabled': false},
                   'mode': Mode.xy,
-                  'onZoomStart': startSpy.call,
+                  'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                    startSpy.call(context);
+                    return true;
+                  },
                 },
               },
             },
@@ -542,7 +554,7 @@ void main() {
                 'zoom': <String, Object?>{
                   'wheel': <String, Object?>{'enabled': true},
                   'mode': Mode.xy,
-                  'onZoomStart': () => false,
+                  'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
                   'onZoomRejected': rejectSpy.call,
                 },
               },
