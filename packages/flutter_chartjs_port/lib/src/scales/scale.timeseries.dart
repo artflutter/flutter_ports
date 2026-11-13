@@ -27,7 +27,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show lookupByKey;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope;
@@ -195,7 +195,7 @@ class TimeSeriesScale(super.cfg) extends TimeScale {
       final curr = items[i];
 
       // only add points that breaks the scale linearity
-      if (jsRound((next + prev) / 2) != curr) {
+      if (((next + prev) / 2).roundToDouble() != curr) {
         table.add({'time': curr, 'pos': i / (ilen - 1)});
       }
     }

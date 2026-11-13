@@ -297,6 +297,8 @@ display-only JS exactness. In short:
 - `Math.pow(x, 2)` is `math.pow(x, 2.0).toDouble()` (Chart.js ADR 0136). On the x64 engine,
   `Math.pow(x, 2)` gave the bits of `x * x` for all of 23 million probe inputs, and
   `dart:math` `pow(x, 2.0)` gives the bits of `x * x` on every target.
+- `Math.round(x)` is `x.roundToDouble()` (Chart.js ADR 0138). It rounds a negative exact half
+  away from zero, where JavaScript rounds it up.
   `ToNumber` of a `double?` value whose `null` is JS `null`, such as `Point.x` and `Point.y`, is
   `(e ?? 0)`, not `jsToNumber(e)`.
 - Where the Dart SDK or a package that Flutter 3.47.7 depends on gives the JS result, the port

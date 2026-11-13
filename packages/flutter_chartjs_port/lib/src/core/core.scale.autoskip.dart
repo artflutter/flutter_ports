@@ -35,7 +35,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show factorize;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -77,7 +76,7 @@ List<Tick> autoSkip(types.Scale scale, List<Tick> ticks) {
   if (numMajorIndices > 0) {
     // `first` and `last` are numbers when the list has an item.
     final avgMajorSpacing = numMajorIndices > 1
-        ? jsRound((last! - first!) / (numMajorIndices - 1))
+        ? ((last! - first!) / (numMajorIndices - 1)).roundToDouble()
         : null;
     _skip(
       ticks,
@@ -230,7 +229,7 @@ void _skip(
 
   while (next < 0) {
     count++;
-    next = jsRound(start + count * spacing);
+    next = (start + count * spacing).roundToDouble();
   }
 
   for (i = math.max(start, 0); i < end; i++) {
@@ -238,7 +237,7 @@ void _skip(
       // `i === next` and `next` is an integer: `i` is an index in range.
       newTicks.add(ticks[i.toInt()]);
       count++;
-      next = jsRound(start + count * spacing);
+      next = (start + count * spacing).roundToDouble();
     }
   }
 }

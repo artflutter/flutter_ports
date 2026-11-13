@@ -49,7 +49,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
         sign,
         toRadians;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -191,9 +190,9 @@ List<Tick> _generateTicks(
     // numSpaces = (max - min) / spacing;
     // Note that we round here to handle the case where almostWhole translated
     // an FP error
-    numSpaces = jsRound(
-      math.min((jsToNumber(max) - jsToNumber(min)) / spacing, maxTicks),
-    );
+    numSpaces = math
+        .min((jsToNumber(max) - jsToNumber(min)) / spacing, maxTicks)
+        .roundToDouble();
     spacing = (jsToNumber(max) - jsToNumber(min)) / numSpaces;
     niceMin = min;
     niceMax = max;
@@ -211,8 +210,8 @@ List<Tick> _generateTicks(
     numSpaces = (jsToNumber(niceMax) - jsToNumber(niceMin)) / spacing;
 
     // If very close to our rounded value, use it.
-    if (almostEquals(numSpaces, jsRound(numSpaces), spacing / 1000)) {
-      numSpaces = jsRound(numSpaces);
+    if (almostEquals(numSpaces, numSpaces.roundToDouble(), spacing / 1000)) {
+      numSpaces = numSpaces.roundToDouble();
     } else {
       numSpaces = numSpaces.ceilToDouble();
     }
@@ -231,8 +230,8 @@ List<Tick> _generateTicks(
       : jsToNumber(precision);
   // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0045).
   factor = math.pow(10.0, exponent).toDouble();
-  niceMin = jsRound(jsToNumber(niceMin) * factor) / factor;
-  niceMax = jsRound(jsToNumber(niceMax) * factor) / factor;
+  niceMin = (jsToNumber(niceMin) * factor).roundToDouble() / factor;
+  niceMax = (jsToNumber(niceMax) * factor).roundToDouble() / factor;
 
   var j = 0.0;
   if (minDefined) {
@@ -245,7 +244,7 @@ List<Tick> _generateTicks(
       }
       // If the next nice tick is close to min, skip it
       if (almostEquals(
-        jsRound((jsToNumber(niceMin) + j * spacing) * factor) / factor,
+        ((jsToNumber(niceMin) + j * spacing) * factor).roundToDouble() / factor,
         jsToNumber(min),
         _relativeLabelSize(min, minSpacing, generationOptions),
       )) {
@@ -258,7 +257,7 @@ List<Tick> _generateTicks(
 
   for (; j < numSpaces; ++j) {
     final tickValue =
-        jsRound((jsToNumber(niceMin) + j * spacing) * factor) / factor;
+        ((jsToNumber(niceMin) + j * spacing) * factor).roundToDouble() / factor;
     if (maxDefined && tickValue > jsToNumber(max)) {
       break;
     }

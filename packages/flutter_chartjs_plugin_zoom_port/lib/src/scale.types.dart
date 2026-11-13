@@ -7,8 +7,8 @@
 /// are the extension point of upstream: an app adds a function for a custom
 /// scale type. They keep the upstream key order.
 ///
-/// The range reaches a scale, so `Math.round` is `jsRound` of the JavaScript
-/// runtime of the host (Chart.js ADR 0034). `Math.min` and `Math.max` are
+/// `Math.round` is `roundToDouble()` (Chart.js ADR 0138). `Math.min` and
+/// `Math.max` are
 /// `dart:math` `min` and `max` with `double` operands (Chart.js ADR 0134).
 /// `Math.log10` is `log10` of the helpers. `Math.pow(10, x)` is
 /// `dart:math` `pow` with double operands, the rule of Chart.js ADR 0045.
@@ -24,7 +24,7 @@ import 'package:flutter_chartjs_port/chartjs.dart'
 import 'package:flutter_chartjs_port/helpers.dart'
     show almostEquals, isNullOrUndef, isNumber, log10, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsRound, jsToNumber, jsTruthy;
+    show jsGet, jsToNumber, jsTruthy;
 
 /// scale.types.ts:7 `ZoomFunction`: zooms [scale] by the factor [zoom]
 /// around [center], within [limits]. The result is true if the range
@@ -335,8 +335,8 @@ bool _zoomRectNumericalScale(
 double _integerChange(double v) => v == 0 || v.isNaN
     ? 0
     : v < 0
-    ? math.min(jsRound(v), -1)
-    : math.max(jsRound(v), 1);
+    ? math.min(v.roundToDouble(), -1)
+    : math.max(v.roundToDouble(), 1);
 
 /// scale.types.ts:190 `existCategoryFromMaxZoom(scale)`.
 void _existCategoryFromMaxZoom(Scale scale) {
@@ -387,7 +387,7 @@ bool _panCategoryScale(Scale scale, double delta, LimitOptions limits) {
   // limited to max 1/10 of the scale length.
   // Intentionally kept fractional.
   final stepDelta = _scaleLength(scale) / math.max<double>(range, 10);
-  final stepSize = jsRound((delta / stepDelta).abs());
+  final stepSize = (delta / stepDelta).abs().roundToDouble();
   // `let applied`: `Boolean(undefined)` is false.
   var applied = false;
   if (delta < -stepDelta) {

@@ -39,7 +39,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show limitValue;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -167,8 +167,9 @@ Object? _findOrAddLabel(
 ///
 /// `Math.round(index)` applies `ToNumber` to [index], which can be the raw
 /// value of `findOrAddLabel`.
-double? _validIndex(Object? index, double max) =>
-    index == null ? null : limitValue(jsRound(jsToNumber(index)), 0, max);
+double? _validIndex(Object? index, double max) => index == null
+    ? null
+    : limitValue(jsToNumber(index).roundToDouble(), 0, max);
 
 /// The JavaScript read `labels[index]`.
 ///
@@ -555,7 +556,9 @@ class CategoryScale(super.cfg)
   /// scale.category.js:151 `getValueForPixel(pixel)`.
   @override
   double getValueForPixel(double pixel) {
-    return jsRound(_startValue + getDecimalForPixel(pixel) * _valueRange);
+    // DIVERGES(chartjs): adapt-dart-round, a raw -0.5 gives -1.
+    return (_startValue + getDecimalForPixel(pixel) * _valueRange)
+        .roundToDouble();
   }
 
   /// scale.category.js:155 `getBasePixel()`.

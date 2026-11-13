@@ -19,6 +19,10 @@
 /// `math.sqrt(a * a + b * b)`: only the last bit can differ (Chart.js ADR
 /// 0135).
 ///
+/// `Math.round(x)` has no port here. Ported code calls `x.roundToDouble()`,
+/// which rounds a negative exact half away from zero, where JavaScript rounds
+/// it up (Chart.js ADR 0138).
+///
 /// `Math.pow` has no port here. Ported code calls `dart:math` `pow` with
 /// double operands (Chart.js ADR 0045), also for `Math.pow(x, 2)` (Chart.js
 /// ADR 0136). `dart:math` `pow` gives 1 for
@@ -29,21 +33,6 @@ library;
 
 /// `Number.EPSILON`: 2^-52, the gap between 1 and the next double.
 const double numberEpsilon = 2.220446049250313e-16;
-
-/// `Math.round(x)`: the integer closest to [x], with halves rounded up
-/// (toward +Infinity).
-///
-/// Unlike `double.roundToDouble`, which rounds halves away from zero:
-/// `jsRound(-2.5)` is -2, `jsRound(0.49999999999999994)` is 0, and results
-/// in [-0.5, 0) are -0. NaN and the infinities return themselves.
-double jsRound(double x) {
-  final floor = x.floorToDouble();
-  // x - floor is exact for every finite x.
-  final rounded = x - floor >= 0.5 ? floor + 1 : floor;
-  // In a double context, -0 is -0.0.
-  if (rounded == 0 && x.isNegative) return -0;
-  return rounded;
-}
 
 /// `x | 0`: ECMAScript ToInt32([x]), as a double.
 ///

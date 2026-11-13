@@ -16,7 +16,6 @@
 /// `hand/`, as `index.dart` is.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -30,8 +29,10 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// One value differs: upstream `tooltip._eventPosition` is `{x: undefined,
 /// y: undefined}` for the raw event, and here it has the numbers. Only the
 /// positioner `nearest` reads it, and the 8 fixtures use `average`.
-types.ChartEvent fixtureMouseMove(Point point) =>
-    _FixtureEvent(jsRound(point.x ?? 0), jsRound(point.y ?? 0));
+types.ChartEvent fixtureMouseMove(Point point) => _FixtureEvent(
+  (point.x ?? 0).roundToDouble(),
+  (point.y ?? 0).roundToDouble(),
+);
 
 /// The chart event of [fixtureMouseMove]: the type `mousemove` and the
 /// relative position. The form of `_PointEvent` of

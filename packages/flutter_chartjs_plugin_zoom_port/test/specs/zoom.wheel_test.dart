@@ -13,7 +13,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
         ZoomTrigger;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show Chart, JsObjectFace, NativeEvent, Scale;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsRound;
+
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
@@ -319,8 +319,8 @@ void main() {
         final scaleY = chart.scales['y']!;
 
         final zoomIn = (
-          x: jsRound(scaleY.left + (scaleY.right - scaleY.left) / 2),
-          y: jsRound(scaleY.top + (scaleY.bottom - scaleY.top) / 2),
+          x: (scaleY.left + (scaleY.right - scaleY.left) / 2).roundToDouble(),
+          y: (scaleY.top + (scaleY.bottom - scaleY.top) / 2).roundToDouble(),
           deltaY: -100,
         );
 

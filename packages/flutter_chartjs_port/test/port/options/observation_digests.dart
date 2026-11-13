@@ -162,37 +162,37 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/bar-thickness-stacked.json (trace)':
       '8fddaadc15f391c3eeefb3d179fbc392b844cc2ef14da717cc36ebc0264279cf',
   'fixture controller.bar/baseLine/bottom.js (plain)':
-      '04cb3e3f11eb5162a1e17d550d06c1b125505f344525fa53e071d631f620957d',
+      '99981178c650de50ce3ee768c73485d5f00b72d915cbfda3061a2d9f25d038b4',
   'fixture controller.bar/baseLine/bottom.js (trace)':
-      '7758da005c158b08b9ccdc9bcb6b1274f67f8f2d73d1dbadc055071595ec2d7a',
+      'a9d9453d72d4897dbaffa32d52446c22be440abb32c959db031fba1473f83bae',
   'fixture controller.bar/baseLine/left.js (plain)':
-      'cf0ddf5201c888d8453e7e080d680b80334848c18c5d0a4926fccf6ee8d651b2',
+      '219532b56461f2853fc4c8039a67ec51b23cb60aca491aef3ea86722d0664202',
   'fixture controller.bar/baseLine/left.js (trace)':
-      '44b728009f9a9a4f471b1854e2c8c2a9463a2dde31072b756919add33619c185',
+      '9f0742736c46fe591550d9ffa3e8ecfe9ae2acc0775bf321a0e5c847ac15d1c2',
   'fixture controller.bar/baseLine/mid-x.js (plain)':
-      '949d870c912b4574ebe47f602384a0b89e1260ad1eff066ac4892509545d0252',
+      '1237eda1bb221808bf56f0a62ad06388f6f1321af692b9df19857ff8c57661b3',
   'fixture controller.bar/baseLine/mid-x.js (trace)':
-      '6243ea1abb8988eeb58fc72eaa3d8c440c15e741e29b7f0fc12e48e74fb18795',
+      '7deb9e53ca22e0550149379e97309bd6a81af0b5c54bffa7a16489fa28a6d8b6',
   'fixture controller.bar/baseLine/mid-y.js (plain)':
-      'a80d53c30c74f03b9bd31a94102380f813901c6cbc6d7757e4f5c77e1cee80c4',
+      '86f923d00149c6387e43fc18c77eca015fcd366aa3d3941608086f213248f8ac',
   'fixture controller.bar/baseLine/mid-y.js (trace)':
-      '474b7667c5bcc52bd5d5966be60d4d0f30bb7970bf1ce4f42c50bb5e37ad90d4',
+      'a453b73de63b2cf5923e02506dfaf4560c9ce60f19cebf04e5d1e55e829eb233',
   'fixture controller.bar/baseLine/right.js (plain)':
-      'd0b63ebeb33ab4514368e80fa4b0ed0412404f78ba206ba48983b29d77dd0243',
+      'f87dd81afede1fb8c81a0997982c22feea91e2c62c5fb68cbc74a012ac33ab38',
   'fixture controller.bar/baseLine/right.js (trace)':
-      'd815075e4136c2eca1fd401f9de1221403e4587aec6943e82cdc40f7c241ca38',
+      'f9a081b71342f5626290c083a537957a2970cdf20cfd868c7bdf9d2829acbdd9',
   'fixture controller.bar/baseLine/top.js (plain)':
-      '48cb6db41545745a5d4cdc2747f5d82d9e45dfba2af6a7ec94facdd3ea94f0a8',
+      'c1e43061ecf3f76b20c14abca3f543df8c69b700b3aa53be3ff674115507c1a6',
   'fixture controller.bar/baseLine/top.js (trace)':
-      '88d4db8886798b33c22d5e230ef1c77aa57dfa7395de4e6e8eeb69542fc2e51a',
+      'cef7ce3c105733c74154f774667d30342c2dfbc4ef545289cc67aca8b4429e90',
   'fixture controller.bar/baseLine/value-x.js (plain)':
-      '65f0609d10f49fb00412d9fe4fa1586b2824401d4fa7c127411f173bbfe067e5',
+      '7e319c02b0407eb70e6e9e6b1047ab7d594768efeefc40f8b38d67ee4d408061',
   'fixture controller.bar/baseLine/value-x.js (trace)':
-      '654237f038c25a54f86156e84e977f4d2138544d981f47c4b66422a4ad581f3e',
+      '9d1ab7fa9d3deaf16cf810062ac181968a47b235a0b368b562c527e3d15b1216',
   'fixture controller.bar/baseLine/value-y.js (plain)':
-      'c25bac4cb332cf860c67730f9a739287d3bd444ae593aefd1b8ed2b348561649',
+      'b395caa0a9a7cf3cd409a40e4863f3c56654fb12ccc1517c2655e6461f49912c',
   'fixture controller.bar/baseLine/value-y.js (trace)':
-      '051e76ade2493093593bdac689e434a574a9e3cd4415637069b1965a0213ce1c',
+      '9dd25118d0cf57b758352fe9d0b26e4b0a3c3e77f90d4021eebdbc208e221d77',
   'fixture controller.bar/borderColor/border+dpr.js (plain)':
       '280fccc3fd3d609b68ab395a51912dc440d3ccb8fcaeda95938c9d05c6af685c',
   'fixture controller.bar/borderColor/border+dpr.js (trace)':
@@ -318,45 +318,45 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/horizontal-borders.js (trace)':
       'aedff18a0016db82ba43a2a3b7cddf9fb9f61c133c9e7bb6634d69fb910844d3',
   'fixture controller.bar/minBarLength/horizontal-neg.js (plain)':
-      'df3b0987bea59ed9e138ff5a85a05be84ad3963126fcf93c0292c96936d12f68',
+      '86b632db10e3d4acfa1006756240cd1f3987b6e485ea10e342ec4337c8f3c019',
   'fixture controller.bar/minBarLength/horizontal-neg.js (trace)':
-      '556fc760a3dbbebffa58b9c62885833502ff43e8cd2be03870011e5b7525ace8',
+      '9367bc2f498b8241b2a12cc78bb18649a8648450355c1b673bcb84c694b70c43',
   'fixture controller.bar/minBarLength/horizontal-pos.js (plain)':
-      'ee5bb399468d7b95018dada82888c8fcb2954776e28e62459dc7b52b37936b89',
+      '62ce7630ed37241e0d7679f377185de13d8658c47e9f028b69d895cd25b8ae34',
   'fixture controller.bar/minBarLength/horizontal-pos.js (trace)':
-      '1901dd1c99769ac8f39051390c9fa492a0bcfb51a4378a09b62c4bd0352c578d',
+      'bead2b8678bea31b41dafba0b85d9e3a5e3532527f629a140a77f875d373d794',
   'fixture controller.bar/minBarLength/horizontal-stacked-no-overlap.js (plain)':
-      'e16acaacf70d48aa6a148ccc9d89418771e76361a6d235955802f456f9c85de9',
+      '23f560d2c9b111861d63961e9a7c16c99858468df81cbaca0811b8f1da756b3d',
   'fixture controller.bar/minBarLength/horizontal-stacked-no-overlap.js (trace)':
-      'edc981203fabd502e9b93b3d07562a83dd4d368261c411ae820ec1d6bd5c4bc9',
+      '16884612b29cd588b75f308988fec8315809ed3d500cdc37ae30925e2c880952',
   'fixture controller.bar/minBarLength/horizontal-stacked.js (plain)':
-      '2e307b79245a3ecf5040a42c8b4b0d02e32ca3ac86265f585d8d0a5d3b786ac9',
+      '42e6afe31385acd439443c8bed529120b85d766f3b5cf6f1e0da7ccd035e5a82',
   'fixture controller.bar/minBarLength/horizontal-stacked.js (trace)':
-      'cf164e9133fbbe85dc6ddadaec9a25beb3aee5fce4438da0fa0465615f126c5e',
+      '13e281a72d4aa547326edbcb9b176fddb007f8dd14220678319f9cd675bff9f0',
   'fixture controller.bar/minBarLength/horizontal.js (plain)':
-      '9a40805ede748fdd2f1859554869c9923cab84d12ae0836efe93c72df5e871dc',
+      '7cf8914e919a3c407fe7e7a1c783fcf5ce85ba57a6ccd4c6a6020df65d42e144',
   'fixture controller.bar/minBarLength/horizontal.js (trace)':
-      '859f0fa982416966ba3c2a3801f751e34b8a006ea8473c02dfe105749ecb1394',
+      '157cdc649c0b79a66b23f9252dfc60f16a9f0de857373d01a4100732e3948aae',
   'fixture controller.bar/minBarLength/vertical-neg.js (plain)':
-      '1779410392ea66bdbf493709e57678c6721017ef38874484391ac1df0d46f069',
+      '3a17c688122a05a172411aa496de8f863e05c4a7eba3dcbf98a24766e44066e2',
   'fixture controller.bar/minBarLength/vertical-neg.js (trace)':
-      '6af3f6a79631a7367e91a8f9255b0fcadcfac150187ff7c997b61c3adf1e0aab',
+      '21d3962b9d3f3f14a0ffce36307c8b21b53e9d63fed5b8711f13721d5d48c8b6',
   'fixture controller.bar/minBarLength/vertical-pos.js (plain)':
-      '7c9babc5a0c5adab20940f59dcd6bce3af82f11f74a2e665b42313fc9bbc3b6f',
+      '449e1848625d7b9cc330f51326827ce4600760b275c24f9c41627aa1852ab434',
   'fixture controller.bar/minBarLength/vertical-pos.js (trace)':
-      '848a18c9150421464829b8df3d243c20c3f65b04d7761c300e867d2ee61e8217',
+      '7e92428a507135bb04c2ade54f7a56c9ac82dcaec5edc9b270860a18d8df3eb8',
   'fixture controller.bar/minBarLength/vertical-stacked-no-overlap.js (plain)':
-      '38b294adccb9429a0fb026f63a912031f8bb2bed9768b66895f16e9d11d19efe',
+      '5a083ac2fc94b704a4ec96e5815aa29aa2d5bdb7f64acd0b282c501533ea5f9a',
   'fixture controller.bar/minBarLength/vertical-stacked-no-overlap.js (trace)':
-      'aba37af00224f40450476ae6ee41947d67895aca0d976bd5e051c03824d47538',
+      'f523fcaf7ea9cdf168dcdb07bff391515820a3f5443cf1bfffb1aec932d009d4',
   'fixture controller.bar/minBarLength/vertical-stacked.js (plain)':
-      'f238c621f501e2ac219ba3337a2f5a66d576441d474201b4115a960aa88d508f',
+      '02d74fd95b11dc82f469c9a9021e71b78484126ddc2e06814a67c81c73372a46',
   'fixture controller.bar/minBarLength/vertical-stacked.js (trace)':
-      'af740636358b460fa740df30fee19e7e145e7848f4c70d5ef692bf22aba8d758',
+      '1c7b5ffa09045a503c2f4fb058fa3a89e2745112a05524d898af58d0da80e942',
   'fixture controller.bar/minBarLength/vertical.js (plain)':
-      '4afa03e3a1d09c42f494b0ae959dd2e8dc0ea3bb327485f214843f76dcde9099',
+      '6b9679543fb1f18663dc699dc3fc2f0baa25f3b659ed53739e982fd2d40434c8',
   'fixture controller.bar/minBarLength/vertical.js (trace)':
-      '6d2271a0ffabe9c234cfe7c2dbd6bbf9f2bcdd5935a9dccd24a5e6929338743b',
+      'a4c9689fc1f92bcee0091ac96614b98ea6241f8e21b0500a2cd629d52f9d6fc7',
   'fixture controller.bar/not-grouped/mixed.js (plain)':
       '253b312a3d59ee00448c25743cd5fadc1d335076c7b74a59778b8e3c49cf079d',
   'fixture controller.bar/not-grouped/mixed.js (trace)':
@@ -1514,17 +1514,17 @@ const Map<String, String> observationDigests = {
   'fixture core.scale/crossAlignment/mirror-cross-align-right-near.js (trace)':
       'ba62ac9e686eebf1da148a186096b9e09ba09d0f23522f66a7caf35df0890fab',
   'fixture core.scale/grid/border-over-grid.js (plain)':
-      'c8739a0906e5b53d400758e2d0b19a3a13a8a37a46f24992b7c61e534f3504e0',
+      '2ffc8f1f1666f7e1d5d5a33501c22822e423d68eabc0387cd501148c61c0230e',
   'fixture core.scale/grid/border-over-grid.js (trace)':
-      'e50aa83f380e5b711a5753e2c897511ac3ecbe7f787dd869531f0f1df94b3dbe',
+      'a7e82f02c447f68a880c478559722c394dfee369d5d7237da0d71af9720f3416',
   'fixture core.scale/grid/colors.js (plain)':
       'b687b1e6350c67e2bc172a3eff2624c4e1522a78553ef27ea6b9b24ca6c2b396',
   'fixture core.scale/grid/colors.js (trace)':
       '3aefa6340af441389a530c07c58a30f47c5e2e6d68e72dee652cf9dcc0a23bac',
   'fixture core.scale/grid/scriptable-borderDash.js (plain)':
-      '0e1b9ba5d36cdffbd8fb4cc14f1ba85901a64943bb796c8434fae0af52752480',
+      '6447b670828fd5de803abd6c1af35281f1ab95c4557ba2e94f02640de9382b1b',
   'fixture core.scale/grid/scriptable-borderDash.js (trace)':
-      'e8a027a98ea72574a68dbf212060620c1910071954b49c66cef7e37c182a7ed7',
+      '131cb5a585ad58eeea45ffb2504d19430488c45efbbe8472d3e50b3238d0c61e',
   'fixture core.scale/label-align-center.js (plain)':
       '8c1625411c977d648703cded9789afa8c7c06f77a0b0ca59cf789bb5359a39f0',
   'fixture core.scale/label-align-center.js (trace)':
@@ -1610,13 +1610,13 @@ const Map<String, String> observationDigests = {
   'fixture core.scale/title/default.js (trace)':
       'e590e28a3862fc20ab15f1613219408626ea8156ceec969df6984a6759f61f6b',
   'fixture core.scale/title/horizontal-center.js (plain)':
-      'bbe6e85c178165095e179306a8a24c83e6cc0ffc71c4a657eb8ff9525d2b85b4',
+      '5727cd2de10152514052ad902ab78d5fa096fadc8762f8ac0614f25a72a0fba0',
   'fixture core.scale/title/horizontal-center.js (trace)':
-      '42efa855bb4c5a6968d04ab90be895f12d36c298042e5334bd1889b7eacdc480',
+      '70671550b0e8a68b5e9eec377443f5ea76fd9a4920be2811569f840e40c02dba',
   'fixture core.scale/title/horizontal-value.js (plain)':
-      '76539952abc23c4d9dc41312d9219fcf546e0cf2c61e4eb762753ae234c23267',
+      '3117da5cbf2770342f7f5cf08e83636d4ce81c671548f14c08a5dabfc5ad9d64',
   'fixture core.scale/title/horizontal-value.js (trace)':
-      '3c6dd4fbfefec9b3b398479d08b743adda03a2547cdaa2360559efe756eaf044',
+      '4eef6f58f9a112af3e3e0617d55e83f4dc9d61dc315f6661fa958cca8803a0fd',
   'fixture core.scale/title/multi-line/align-end.js (plain)':
       'a7ddf6e37d91370bf20da3bfde4ea6304701e6dcc2a7c8195d47654003601f3c',
   'fixture core.scale/title/multi-line/align-end.js (trace)':
@@ -1630,13 +1630,13 @@ const Map<String, String> observationDigests = {
   'fixture core.scale/title/multi-line/default.js (trace)':
       '41b6fd71a32cdd98f5be652bb74d64a68d640ec62a435cb42e5a3e34e29c3b8f',
   'fixture core.scale/title/vertical-center.js (plain)':
-      '7256cf790be1bf8fc474294cd7999c360ccb7817641b9732ad67542afd25909f',
+      '5c0a5cc66d1af26b702a877f6277c6bea435f330792f365305d3acc03b6822e6',
   'fixture core.scale/title/vertical-center.js (trace)':
-      '979ce7806dae38c7d18cd258459a3b1d41ecde1fbab37cf2ab32bed4fde00ddd',
+      '439632a8b3fef7ad77c7c50fba0ce27bcf054ba57888c086c95832704782d2e4',
   'fixture core.scale/title/vertical-value.js (plain)':
-      '860114fc6dba9d86f6b0f8613f32de2dd77dfee558a60785ca7e4febc7ae3310',
+      'cd1f6afc10ca99cbce97de4383116a264d8daf61619015153f4974705b1491e9',
   'fixture core.scale/title/vertical-value.js (trace)':
-      '515f65da16cd4c5963318a6de416914e31308473a2d42dfb33de803285afb860',
+      'e873ed5f2d30b95d48b9233dbc182cd6d862ae5d80b80c17c0845262c6bbf34b',
   'fixture core.scale/x-axis-position-center.json (plain)':
       'e54103d4c70ef6df413ebdb2ed7744a0f8644438d8a586a84814eb621ef424bf',
   'fixture core.scale/x-axis-position-center.json (trace)':
@@ -1782,29 +1782,29 @@ const Map<String, String> observationDigests = {
   'fixture mixed/bar+line.js (trace)':
       'f08224d39d2b5fe6128c420be17c447e2d94aaf1b5f04b0503cbcf24f3e0ddc9',
   'fixture plugin.colors/bar.js (plain)':
-      'fc766d66e3141be338651177ce8e4684491aeef2ef701e3e13538963f8e385d5',
+      '74532554d68d90feb6b77f16ad14133518ecf12885d54c252e0503bab1c91cfd',
   'fixture plugin.colors/bar.js (trace)':
-      'd561a57e1fbf73dd6d2e5a8a281291d51d92e10942fce8786223cccf9448c6ae',
+      '4f5220ffe4053fe37c2059ab2ce9d77c979b6a079a7baf35760cd84040cf06d2',
   'fixture plugin.colors/bubble.js (plain)':
       'ad8723c4737fe261cbb54ecef3e97e47511443783fcce8516c4b3c0b48f07fbd',
   'fixture plugin.colors/bubble.js (trace)':
       '5a3f7d56c47fdb59f3af77e9f4b211a9c53234a3795338db151f0cbcedf2f990',
   'fixture plugin.colors/chart-options-colors.js (plain)':
-      '3200687244c72f192195f74153e226d38d5d3d3e01350d3d969d037084b92b68',
+      '3b80ec16690cbefaed4652aefae62db410f388824af8e56ba49b7a6797a2085a',
   'fixture plugin.colors/chart-options-colors.js (trace)':
-      'c025b60a5f4e86907795004798615f23cc64d565786b69d4bd0c5376822e865a',
+      'fd1dc123541a13ea0c278e0c0438e125c2818a3086bb561ecd5a468e89f7482c',
   'fixture plugin.colors/doughnut.js (plain)':
       'c490fc4e2d7d58057f1496a99eb19d840adfc1ae1dc6048ba3ca22da36465013',
   'fixture plugin.colors/doughnut.js (trace)':
       'a80dafdcfb15ca7277effb55ce385972dee780831441b330155aebce6c715b80',
   'fixture plugin.colors/dynamic-datasets-default.js (plain)':
-      '3014c8bd01ff4401ee628d2de9051a7cd7b4550c032771308939fe5b8d7dd517',
+      'fbea93362ef0e9383304ae640bf2736a8ac9da0ef0a3308deca59edb0d7c92ca',
   'fixture plugin.colors/dynamic-datasets-default.js (trace)':
-      '576fef52920021c4ee49f0086b1a377e2306f11ea648b00abf4bbbad83ab7b8f',
+      'b5d5b78a0dd79979052f6e60b551e18b085eb50bcd3789aee7c901cdb270af4e',
   'fixture plugin.colors/dynamic-datasets-force-override.js (plain)':
-      '3014c8bd01ff4401ee628d2de9051a7cd7b4550c032771308939fe5b8d7dd517',
+      'fbea93362ef0e9383304ae640bf2736a8ac9da0ef0a3308deca59edb0d7c92ca',
   'fixture plugin.colors/dynamic-datasets-force-override.js (trace)':
-      '576fef52920021c4ee49f0086b1a377e2306f11ea648b00abf4bbbad83ab7b8f',
+      'b5d5b78a0dd79979052f6e60b551e18b085eb50bcd3789aee7c901cdb270af4e',
   'fixture plugin.colors/line.js (plain)':
       'e9ccd26707dc82657168450d04c4488613994bacfb7510a92bb091f3e7d69da0',
   'fixture plugin.colors/line.js (trace)':
@@ -2338,13 +2338,13 @@ const Map<String, String> observationDigests = {
   'fixture scale.category/invalid-data.js (trace)':
       '36b7a6cf92c69249cfeaa88173ec1699252500e74a758745a7dd58950e3482ca',
   'fixture scale.category/max-ticks-limit-a.js (plain)':
-      'f37fc5c1201ea7b870993892e82f8cd7409118ceb63dc9e8efd23c85d6b65fb3',
+      '468e0fc430122f059588deb5a9951c112002ba78967d83b46059b90c40fb7495',
   'fixture scale.category/max-ticks-limit-a.js (trace)':
-      '225c8978bf3196d4d03e6818041a7376d05cc1172d75d9d23bbf9b87325369d6',
+      'bfa02b3802febd17bd3d3dca8a397380681e09d813659af648eb80dbf8fe6ad9',
   'fixture scale.category/max-ticks-limit-b.js (plain)':
-      'c3854355ab5a31db15eaa5a1e76679c5e954c1e19cd9bb76eff11b247503bebc',
+      '677b5af698bce1a977f35fcc7b16e4c1f9929fe64d4b4f145832a1f54ea69c10',
   'fixture scale.category/max-ticks-limit-b.js (trace)':
-      '748ba537c4f8ccf89e8e14fe1091153482f4624da1cb0635133c5a9b6b9ca1af',
+      '83361acaea19bd7a3a8a4dcbccf52057d3460f323a74eee8fd373725ed9e2406',
   'fixture scale.category/max-ticks-limit-norotation.js (plain)':
       'a0c3b2578ad38881a32182b98af6a29c38aecb9f3f37e6869439627077b72076',
   'fixture scale.category/max-ticks-limit-norotation.js (trace)':
@@ -2606,17 +2606,17 @@ const Map<String, String> observationDigests = {
   'fixture scale.time/offset-auto-skip-ticks.js (trace)':
       'b01079a3c3fe25141a7f540f04b09e6c348fd8f2f56dd862da55aae237670eaa',
   'fixture scale.time/offset-with-1-tick.js (plain)':
-      '7721b8dd1c3feb2b17df4ae22d79719d11d3dcee411be23e6ee191bd62b9072c',
+      '217afd671348342f9fa8a1a80089cb4769b42d8b67d7bfd98ed97b6e376ee24f',
   'fixture scale.time/offset-with-1-tick.js (trace)':
-      '8db337df2fb0ca3c63b022231f6cc41e9df0011146d3ffc82bd2ca3489ac14dc',
+      '9ce3bc7abd4c2744f36f6c3397dc9d9e8f5feb64f8c11790fddd6bd1118385c6',
   'fixture scale.time/offset-with-2-ticks.js (plain)':
-      '3263d1147479bb35486c0ea1f44da68a98f50984f9bf5c6d3a172b20f350be36',
+      'f37c5c4ac15d7c7efe351ef31ef9a34805d3b3202e68e3a5f60a408a44a91dbd',
   'fixture scale.time/offset-with-2-ticks.js (trace)':
-      'd270cfb99250a2b2fce278ed12c55f726bd8f3d1c45b4727918b5f5f2c6b6d30',
+      '454c16349da22667dc84a18efed546e0a0514744276fe4561b7cadbbf0574a92',
   'fixture scale.time/offset-with-no-ticks.js (plain)':
-      '23241f5cb6af2d6da3dcb3033fb2d27e9601871629f850f732fa73e5099cde76',
+      '6282e4429979180ef5d8ac9ddba93b0732951b6086ae9759e0d9c8def467497e',
   'fixture scale.time/offset-with-no-ticks.js (trace)':
-      '49799f83117ceaba8afe224cf0a2c4788fe5c6db2111c3ae917d621bcdb34859',
+      '0fab6ea7f0b042d4891d771fb6031c0fd289f374db729b06dd68d05f566b8fd5',
   'fixture scale.time/source-auto-linear.js (plain)':
       'd67f70670ddc71031f2ced5c62af5b209c015a3dd30075be4ceef31929223c05',
   'fixture scale.time/source-auto-linear.js (trace)':

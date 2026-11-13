@@ -98,7 +98,6 @@ void main() {
       ]),
       [
         '2 .round()',
-        '3 .roundToDouble()',
         '4 .floor()',
         '4 .ceil()',
         '5 .truncate()',
@@ -119,7 +118,7 @@ void main() {
     expect(
       _check([
         "import 'dart:math' as math;",
-        'final a = jsRound(x) + x.floorToDouble() + x.ceilToDouble();',
+        'final a = x.roundToDouble() + x.floorToDouble() + x.ceilToDouble();',
         'final b = x.remainder(2) + math.sqrt(x) + math.pi + math.log(x);',
         'final c = math.atan2(y, x) + math.sin(x) + isInt + sinh(x);',
         'jsSort(list, compare);',

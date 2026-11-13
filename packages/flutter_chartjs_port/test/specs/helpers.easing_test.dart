@@ -3,7 +3,6 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:test/test.dart';
 
 /// Jasmine `toEqual` for an array of numbers: the same length, and each
@@ -440,7 +439,7 @@ void main() {
         final values = <double>[];
 
         for (var i = 0; i <= count; ++i) {
-          values.add(jsRound(accuracy * fn(i / count)) / accuracy);
+          values.add((accuracy * fn(i / count)).roundToDouble() / accuracy);
         }
 
         return values;

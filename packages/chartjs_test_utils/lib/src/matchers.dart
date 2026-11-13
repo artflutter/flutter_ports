@@ -34,7 +34,6 @@ library;
 
 import 'package:chartjs_test_utils/src/matchers.options.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -79,6 +78,8 @@ final class const _ToBeCloseToPixel(final Object? expected) extends Matcher {
 
 /// matchers.js:76 `toBeCloseToPoint`: whether `x` and `y` of the actual
 /// value equal `x` and `y` of [expected] after `Math.round(v * 100) / 100`.
+/// `Math.round` is `roundToDouble()`, which rounds a negative exact half
+/// away from zero (Chart.js ADR 0138).
 ///
 /// The `x` and `y` reads are the members of a [Point], or [jsGet] of any
 /// other value: a Map `{'x': ..., 'y': ...}` stands for an object literal.
@@ -86,7 +87,7 @@ Matcher toBeCloseToPoint(Object expected) => _ToBeCloseToPoint(expected);
 
 final class const _ToBeCloseToPoint(final Object expected) extends Matcher {
   static double _rnd(Object? v) {
-    return jsRound(jsToNumber(v) * 100) / 100;
+    return (jsToNumber(v) * 100).roundToDouble() / 100;
   }
 
   /// The property read `object.x` or `object.y`.

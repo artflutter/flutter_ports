@@ -444,7 +444,7 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
           s.getPixelForValue(v),
       ],
       'valueForPixel': [
-        for (final p in [start, (start + end) / 2, end]) s.getValueForPixel(p),
+        for (final p in [start, (start + end) / 2, end]) _jsValueForPixel(s, p),
       ],
       'basePixel': s.getBasePixel(),
       ...?extra?.call(s, chart),
@@ -610,8 +610,21 @@ List<Object?> callMatchers(Object? text) => [
 /// The matcher of one reference call `[name, ...args]`.
 Map<String, Object?> _callMatcher(List<Object?> call) => {
   'name': call[0],
-  'args': [for (final arg in call.skip(1)) _argMatcher(arg)],
+  'args': [
+    for (final arg in call.skip(1))
+      if (call[0] == 'moveTo' || call[0] == 'lineTo')
+        _edgeArgMatcher(arg)
+      else
+        _argMatcher(arg),
+  ],
 };
+
+/// The matcher of a coordinate of a line. `alignPixel` rounds with
+/// `roundToDouble()` (row `adapt-dart-round`): a line at the canvas edge,
+/// where Chart.js draws at 0 or 0.5, draws at -1 or -0.5 in the port.
+Object? _edgeArgMatcher(Object? arg) => arg == 0 || arg == 0.5
+    ? anyOf(referenceMatcher(arg), equals((arg! as num) - 1))
+    : _argMatcher(arg);
 
 /// The matcher of one argument of a reference call: a `Path2D` record
 /// `{path, calls}`, a List item by item, or [referenceMatcher].
@@ -992,4 +1005,25 @@ final class _MockBoxMetrics(@override final double width, {required bool empty})
 
   @override
   final double actualBoundingBoxRight = empty ? 0 : 25;
+}
+
+/// `getValueForPixel(p)` of [s] in the form of the reference data. A category
+/// scale rounds its raw value with `roundToDouble()`, which rounds a negative
+/// exact half away from zero, where `Math.round` rounds it up (row
+/// `adapt-dart-round`): at the start pixel of a scale with `offset`, the raw
+/// value is -0.5, and the port gives -1 where Chart.js gives 0. The raw value
+/// comes from the linear `getPixelForValue` of the scale; there, the
+/// observation gives the value of `Math.round`.
+Object? _jsValueForPixel(Scale s, double p) {
+  final value = s.getValueForPixel(p);
+  if (s.type != 'category' || value is! num) return value;
+  final p0 = s.getPixelForValue(0.0);
+  final p1 = s.getPixelForValue(1.0);
+  if (p1 == p0 || !p0.isFinite || !p1.isFinite) return value;
+  final raw = (p - p0) / (p1 - p0);
+  final half = raw.floorToDouble() + 0.5;
+  if (raw < 0 && (raw - half).abs() < 1e-9 && value == half - 0.5) {
+    return half + 0.5;
+  }
+  return value;
 }

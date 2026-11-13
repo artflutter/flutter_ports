@@ -51,7 +51,6 @@ const double twoThirdsPi = pi * 2 / 3;
 // DIVERGES(chartjs): adapt-log10-powers, the exponent of a power of ten.
 double log10(double x) {
   final exponent = math.log(x) * math.log10e;
-  // js-ok: a half is no exponent of a power of ten; the result is the same.
   final powerOf10 = exponent.roundToDouble();
   // js-ok: double operands; a power of ten up to 1e22 is exact.
   return x == math.pow(10.0, powerOf10) ? powerOf10 : exponent;
@@ -70,7 +69,7 @@ bool almostEquals(double x, double y, double epsilon) {
 /// Implementation of the nice number algorithm used in determining where axis
 /// labels will go
 double niceNum(double range) {
-  final roundedRange = jsRound(range);
+  final roundedRange = range.roundToDouble();
   // Upstream reassigns its parameter.
   // ignore: parameter_assignments
   range = almostEquals(range, roundedRange, range / 1000)
@@ -132,7 +131,7 @@ bool isNumber(Object? n) {
 
 /// helpers.math.ts:71 `almostWhole`.
 bool almostWhole(double x, double epsilon) {
-  final rounded = jsRound(x);
+  final rounded = x.roundToDouble();
   return ((rounded - epsilon) <= x) && ((rounded + epsilon) >= x);
 }
 
@@ -192,7 +191,7 @@ double? decimalPlaces(Object? x) {
   final value = (x! as num).toDouble();
   var e = 1.0;
   var p = 0.0;
-  while (jsRound(value * e) / e != value) {
+  while ((value * e).roundToDouble() / e != value) {
     e *= 10;
     p++;
   }

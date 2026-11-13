@@ -11,7 +11,6 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,7 +55,8 @@ Matcher _toBeCloseTo(num expected, [int precision = 2]) {
   return predicate<Object?>(
     (actual) =>
         actual is num &&
-        jsRound(((expected - actual).abs() * pow).toDouble()) <= maxDelta * pow,
+        ((expected - actual).abs() * pow).toDouble().roundToDouble() <=
+            maxDelta * pow,
     'a number close to ${jsToString(expected)} (Jasmine toBeCloseTo, '
     'precision ${jsToString(precision)})',
   );

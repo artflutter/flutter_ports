@@ -61,7 +61,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, log10, setMinAndMaxByKey;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -143,14 +143,15 @@ List<Tick> _generateTicks(
   final stepSize = math.pow(10.0, exp).toDouble();
   // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
   final base = minExp > exp ? math.pow(10.0, minExp).toDouble() : 0.0;
-  final start = jsRound((min - base) * precision) / precision;
+  final start = ((min - base) * precision).roundToDouble() / precision;
   final offset = ((min - base) / stepSize / 10).floorToDouble() * stepSize * 10;
   // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
   var significand = ((start - offset) / math.pow(10.0, exp)).floorToDouble();
   var value = finiteOrDefault(
     generationOptions.min,
     // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
-    jsRound((base + offset + significand * math.pow(10.0, exp)) * precision) /
+    ((base + offset + significand * math.pow(10.0, exp)) * precision)
+            .roundToDouble() /
         precision,
   );
   while (value < max) {
@@ -168,10 +169,10 @@ List<Tick> _generateTicks(
       precision = exp >= 0 ? 1 : precision;
     }
     value =
-        jsRound(
-          // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
-          (base + offset + significand * math.pow(10.0, exp)) * precision,
-        ) /
+        (
+            // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+            (base + offset + significand * math.pow(10.0, exp)) * precision)
+            .roundToDouble() /
         precision;
   }
   final lastTick = finiteOrDefault(generationOptions.max, value);

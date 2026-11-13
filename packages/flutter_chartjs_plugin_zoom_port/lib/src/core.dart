@@ -21,7 +21,7 @@ import 'package:flutter_chartjs_port/chartjs.dart' show Chart, Scale;
 import 'package:flutter_chartjs_port/helpers.dart'
     show isNumber, sign, valueOrDefault;
 import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsObjectKeys, jsRound, jsToNumber, jsTruthy;
+    show jsObjectKeys, jsToNumber, jsTruthy;
 
 /// The values of [scales] in the order of `Object.values`: the order of
 /// `Object.keys`, with the array index keys first.
@@ -277,7 +277,8 @@ double getZoomLevel(Chart chart) {
   for (final scale in _values(chart.scales)) {
     final origRange = _getOriginalRange(state, scale.id);
     if (jsTruthy(origRange)) {
-      final level = jsRound((origRange! / (scale.max - scale.min)) * 100) / 100;
+      final level =
+          ((origRange! / (scale.max - scale.min)) * 100).roundToDouble() / 100;
       min = math.min(min, level);
       max = math.max(max, level);
     }

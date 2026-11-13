@@ -14,7 +14,6 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -72,7 +71,7 @@ import '../support/tick_label.dart';
 //   the scale options. `chart.options.scales.r.ticks.maxTicksLimit = 11`
 //   writes into the resolver of the last read of the chain (`_optionsR`).
 // - `index.toString()` of a callback is `jsToString(index)`.
-//   `Math.round` is `jsRound`.
+//   `Math.round` is `roundToDouble()`.
 // - `expect(...).withContext(text)` is the `reason` of `expect`.
 // - `scale.ctx = window.createMockContext()` is
 //   `scale.ctx = createMockContext()`, a mock context of
@@ -849,7 +848,7 @@ void main() {
       });
 
       double radToNearestDegree(double rad) {
-        return jsRound((360 * rad) / (2 * math.pi));
+        return ((360 * rad) / (2 * math.pi)).roundToDouble();
       }
 
       const slice = 72; // (360 / 5)

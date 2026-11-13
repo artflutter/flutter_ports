@@ -69,7 +69,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScalePointLabelContext, toFont, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
@@ -309,7 +309,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
     final angleRadians = normalizeAngle(
       scale.getIndexAngle(i) + additionalAngle,
     );
-    final angle = jsRound(toDegrees(angleRadians));
+    final angle = toDegrees(angleRadians).roundToDouble();
     final hLimits = _determineLimits(
       angle,
       pointPosition.x,
@@ -414,7 +414,7 @@ int _fitStaticPointLabels(
     final angleRadians = normalizeAngle(
       positions.indexAngleAt(i) + additionalAngle,
     );
-    final angle = jsRound(toDegrees(angleRadians));
+    final angle = toDegrees(angleRadians).roundToDouble();
     final hLimits = _determineLimits(
       angle,
       pointPosition.x,
@@ -487,9 +487,8 @@ PointLabelItem _createPointLabelItem(
   final pointLabelPosition = positions != null
       ? positions.positionAt(index, distance, additionalAngle)
       : scale.getPointPosition(index, distance, additionalAngle);
-  final angle = jsRound(
-    toDegrees(normalizeAngle(pointLabelPosition.angle + halfPi)),
-  );
+  final angle = toDegrees(normalizeAngle(pointLabelPosition.angle + halfPi))
+      .roundToDouble();
   final y = _yForAngle(pointLabelPosition.y, size.h, angle);
   final textAlign = _getTextAlignForAngle(angle);
   final left = _leftForTextAlign(pointLabelPosition.x, size.w, textAlign);
