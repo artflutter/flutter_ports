@@ -130,6 +130,12 @@ Two tools measure this:
   public API, with one exception. Syncfusion 35.1.43 has no radar or polar series.
   Thus its radar shows a message, and Run and Capture are not available for it.
   The harness does not draw a stand-in, because that would measure the stand-in.
+  A ninth type is the sankey chart of chartjs-chart-sankey, with one flow for each
+  item between nodes in three columns. Only the Chart.js port has it, through
+  `flutter_chartjs_chart_sankey_port`. fl_chart 1.3.0, Graphic 2.7.0 and Syncfusion
+  35.1.43 have no sankey chart, so they show a message for it. The sankey chart takes
+  the raw config of the port: each tick of new data is a full update. It has no axes,
+  no zoom and no shadow.
 - **Dataset slider:** 100–20,000 actual input items, with 100/1k/5k/20k presets.
   The slider commits on release. The harness never downsamples or caps one
   library's data differently.

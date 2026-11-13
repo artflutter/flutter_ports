@@ -22,6 +22,31 @@ class const Sample(
   double get r => bubbleRadius(y);
 }
 
+/// One flow of a sankey chart, from the node `from` to the node `to`.
+typedef SankeyFlow = ({String from, String to, double flow});
+
+/// The flows of a sankey chart for [values]: one flow for each item, with
+/// the value of the item as its size.
+///
+/// The nodes are in three columns: sources `S`, middle nodes `M` and targets
+/// `T`. Each column has about the square root of half of the item count as
+/// its node count, at least 2 and at most 24, so the node count grows slowly
+/// with the item count. An item with an even index flows from a source to a
+/// middle node, and an item with an odd index from a middle node to a
+/// target. The same count gives the same nodes and the same flow ends for
+/// each step: only the sizes change with the values.
+List<SankeyFlow> sankeyFlows(List<Sample> values) {
+  final nodes = math.sqrt(values.length / 2).ceil().clamp(2, 24);
+  return List<SankeyFlow>.generate(values.length, (i) {
+    final k = i ~/ 2;
+    final a = k % nodes;
+    final b = (k * 7 + k ~/ nodes) % nodes;
+    return i.isEven
+        ? (from: 'S$a', to: 'M$b', flow: values[i].y)
+        : (from: 'M$a', to: 'T$b', flow: values[i].y);
+  }, growable: false);
+}
+
 /// A frame and its workload step, independent of library throughput.
 class const DatasetFrame(
   /// All generated items.

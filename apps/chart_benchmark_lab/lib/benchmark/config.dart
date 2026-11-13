@@ -25,11 +25,17 @@ enum ChartLibrary(
 
   /// Whether the public API of this library can draw [type].
   ///
-  /// Syncfusion 35.1.43 has no radar or polar series. The harness does not
-  /// stand in another drawing for a missing chart, because that would measure
-  /// the stand-in and not the library.
-  bool supports(ChartType type) =>
-      !(this == syncfusion && type == ChartType.radar);
+  /// Syncfusion 35.1.43 has no radar or polar series. Only the Chart.js port
+  /// has a sankey chart, through `flutter_chartjs_chart_sankey_port`, the port
+  /// of chartjs-chart-sankey: fl_chart 1.3.0, Graphic 2.7.0 and Syncfusion
+  /// 35.1.43 have none. The harness does not stand in another drawing for a
+  /// missing chart, because that would measure the stand-in and not the
+  /// library.
+  bool supports(ChartType type) => switch (type) {
+    ChartType.sankey => this == chartjs,
+    ChartType.radar => this != syncfusion,
+    _ => true,
+  };
 
   /// The reason that a chart of [type] does not run on this library.
   String unsupportedReason(ChartType type) =>
@@ -79,14 +85,14 @@ enum ChartLibrary(
   /// Whether this library can run [config] with its public API.
   bool runs(BenchmarkConfig config) =>
       supports(config.type) &&
-      (!config.shadow || drawsShadow(config.type, blur: config.shadowBlur)) &&
+      (!config.shadows || drawsShadow(config.type, blur: config.shadowBlur)) &&
       (!config.zooms || zoomsWith(config.type));
 
   /// The reason that [config] does not run on this library.
   String reasonFor(BenchmarkConfig config) {
     final type = config.type.label.toLowerCase();
     if (!supports(config.type)) return unsupportedReason(config.type);
-    if (config.shadow && !drawsShadow(config.type, blur: config.shadowBlur)) {
+    if (config.shadows && !drawsShadow(config.type, blur: config.shadowBlur)) {
       return '$label $version has no '
           '${config.shadowBlur ? 'blurred' : 'sharp'} shadow on a $type chart.';
     }
@@ -98,13 +104,14 @@ enum ChartLibrary(
     if (!supports(config.type)) {
       return 'No ${config.type.label.toLowerCase()} chart';
     }
-    return config.shadow && !drawsShadow(config.type, blur: config.shadowBlur)
+    return config.shadows && !drawsShadow(config.type, blur: config.shadowBlur)
         ? 'No shadow here'
         : 'No zoom here';
   }
 }
 
-/// The eight chart types of Chart.js, on every adapter that has them.
+/// The eight chart types of Chart.js, on every adapter that has them, and the
+/// sankey chart of the add-on chartjs-chart-sankey.
 enum ChartType(
   /// Display name.
   final String label,
@@ -134,7 +141,10 @@ enum ChartType(
   polarArea('Polar area', Icons.incomplete_circle),
 
   /// A closed line around a center, with one spoke per value.
-  radar('Radar', Icons.radar);
+  radar('Radar', Icons.radar),
+
+  /// Flows between nodes in columns, one flow per value.
+  sankey('Sankey', Icons.account_tree_outlined);
 
   /// Whether the line settings for point markers and area fill apply.
   bool get drawsLine => this == line || this == radar;
@@ -143,10 +153,18 @@ enum ChartType(
   ///
   /// A polar area has no axes here: fl_chart and Syncfusion draw it with a pie
   /// chart, which has no axis or grid.
-  bool get hasAxes => this != pie && this != doughnut && this != polarArea;
+  ///
+  /// A sankey chart has no axes: its scales are hidden.
+  bool get hasAxes =>
+      this != pie && this != doughnut && this != polarArea && this != sankey;
 
-  /// Whether the alternating item colors apply.
+  /// Whether the alternating item colors apply. On a sankey chart, they are
+  /// the two colors of the gradient of each flow.
   bool get hasItemColors => !drawsLine;
+
+  /// Whether the series shadow applies. The shadow of the Chart.js port is an
+  /// option of its typed datasets, and a sankey chart has no typed dataset.
+  bool get hasShadow => this != sankey;
 
   /// Whether zoom and pan apply: the types with an x axis.
   bool get hasZoom =>
@@ -323,6 +341,9 @@ class const BenchmarkConfig({
   /// Whether the chart zooms and pans: [zoom] on a type with an x axis.
   bool get zooms => zoom && type.hasZoom;
 
+  /// Whether the series has a shadow: [shadow] on a type with a shadow.
+  bool get shadows => shadow && type.hasShadow;
+
   /// Effective settings only; disabled controls cannot change comparability.
   Map<String, Object> toJson() => {
     'chart': type.name,
@@ -338,7 +359,7 @@ class const BenchmarkConfig({
     'tooltips': tooltips,
     // Only a set shadow adds a key, so the saved runs without one keep
     // their comparison keys.
-    if (shadow) 'shadow': shadowBlur ? 'blurred' : 'sharp',
+    if (shadows) 'shadow': shadowBlur ? 'blurred' : 'sharp',
     // The same rule for zoom.
     if (zooms) 'zoom': true,
     'overlayLabels': overlayLabels,

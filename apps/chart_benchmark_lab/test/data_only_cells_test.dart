@@ -26,6 +26,9 @@ BenchmarkConfig _preset(ChartType type, {required bool full}) => full
 /// Each cell qualifies for the data-only path of Chart.js ADR 0098: the
 /// alternating colors of the full preset are a native indexed style (Chart.js
 /// ADR 0100). A change here is a change of the measurement.
+///
+/// A sankey chart takes the raw config of the Chart.js port, which has no
+/// data-only path: each tick is a full update, with one layout.
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
 
@@ -73,8 +76,9 @@ void main() {
         final expectedLayouts = !chartJsDataOnlyUpdates
             ? 1
             // The radius of a bubble comes from the data, so the overflow and
-            // the layout change with the largest item.
-            : type == ChartType.bubble
+            // the layout change with the largest item. The sankey chart has
+            // no data-only path.
+            : type == ChartType.bubble || type == ChartType.sankey
             ? 1
             : 0;
         for (var step = 2; step < 6; step++) {
@@ -82,7 +86,7 @@ void main() {
           await tester.pumpWidget(scene(step));
           expect(layouts, expectedLayouts, reason: 'step $step');
         }
-        expect(chart.updateData(), isTrue);
+        expect(chart.updateData(), type != ChartType.sankey);
       });
     }
   }

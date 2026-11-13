@@ -1631,9 +1631,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     Preserve control keys, benchmark behavior and the 412 x 915 host viewport.
   - Each control has a `ValueKey`. A test finds a segment by its key.
 - `apps/chart_benchmark_lab`: the independent cross-library public-widget test
-  bed (the eight Chart.js types; Chart.js port, fl_chart, Graphic and Syncfusion).
+  bed (the eight Chart.js types and the sankey chart of chartjs-chart-sankey; Chart.js
+  port, fl_chart, Graphic and Syncfusion).
   `ChartLibrary.supports` excludes the Syncfusion radar: that package has no radar
   series, so the lab shows a message and a batch skips it. Do not draw a stand-in.
+  Only the Chart.js port has the sankey chart, through
+  `flutter_chartjs_chart_sankey_port`: `sankeyFlows` of `lib/benchmark/data.dart` gives
+  one flow for each item between nodes in three columns, and `_chartJsSankey` of the
+  adapter registers `sankeyRegisterables` once and draws a `ChartView.raw` (the typed
+  config takes no dataset of another package), so each tick is a full update. The
+  sankey chart has no axes, no zoom and no shadow (`ChartType.hasShadow`,
+  `BenchmarkConfig.shadows`).
   `ChartLibrary.runs` applies the same rule to the series shadow: fl_chart draws it
   only on a line chart, Graphic only as a blurred Material elevation of a filled
   mark, and Syncfusion not at all. The settings hide a feature that the chart type

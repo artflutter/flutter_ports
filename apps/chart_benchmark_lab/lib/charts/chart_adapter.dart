@@ -6,6 +6,8 @@ import 'package:chart_benchmark_lab/benchmark/controller.dart'
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:fl_chart/fl_chart.dart' as fl;
 import 'package:flutter/gestures.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
+    as sk;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     as zp;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
@@ -240,7 +242,75 @@ class const BenchmarkChart({
       ? chartTeal
       : chartBlue;
 
+  /// Registers the controller and the element of the sankey chart of the
+  /// Chart.js port (the port of chartjs-chart-sankey) once, before the first
+  /// sankey chart. They add the chart type `sankey` to the registry and run
+  /// no code in a chart of another type.
+  static void _registerSankey() {
+    if (cj.registry.controllers.get(sk.SankeyController.id) == null) {
+      cj.Chart.register(sk.sankeyRegisterables);
+    }
+  }
+
+  /// The sankey chart of the Chart.js port: one flow for each item
+  /// ([sankeyFlows]). The typed config has no dataset class of another
+  /// package (seam S9 of the sankey port), so the chart takes the raw config,
+  /// and each tick of new data is a full update. The flows have a gradient
+  /// from the first to the second item color, or one color.
+  Widget _chartJsSankey() {
+    _registerSankey();
+    const blue = ChartPaint.solid(chartBlue);
+    return cj.ChartView.raw(
+      config: <String, Object?>{
+        'type': sk.SankeyController.id,
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'label': 'Values',
+              'data': <Object?>[
+                for (final f in sankeyFlows(frame.values))
+                  sk.SankeyDataPoint(from: f.from, to: f.to, flow: f.flow),
+              ],
+              'colorFrom': blue,
+              'colorTo': config.alternateColors
+                  ? const ChartPaint.solid(chartTeal)
+                  : blue,
+              'borderWidth': 0,
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'animation': false,
+          'responsive': true,
+          'maintainAspectRatio': false,
+          'plugins': <String, Object?>{
+            'tooltip': <String, Object?>{'enabled': config.tooltips},
+          },
+          'events': config.tooltips
+              ? <String>[
+                  'mousemove',
+                  'mouseout',
+                  'click',
+                  'touchstart',
+                  'touchmove',
+                ]
+              : <String>[],
+        },
+      },
+      updateMode: 'none',
+      theme: const cj.ChartThemeData(),
+      excludeFromSemantics: true,
+    );
+  }
+
+  /// A sankey chart runs only on the Chart.js port, through
+  /// [_chartJsSankey]: [ChartLibrary.supports] keeps it from each other
+  /// branch.
+  static Never _noSankey() =>
+      throw StateError('A sankey chart runs only on the Chart.js port.');
+
   Widget _chartJs() {
+    if (config.type == ChartType.sankey) return _chartJsSankey();
     final values = frame.values;
     final color = config.alternateColors && config.type.hasItemColors
         ? const cj.ChartValue<ChartPaint>.indexed([
@@ -349,6 +419,7 @@ class const BenchmarkChart({
         pointHoverRadius: 3,
         fill: config.fill ? cj.ChartFill.start : cj.ChartFill.none,
       ),
+      ChartType.sankey => _noSankey(),
     };
     final grid = cj.AxisGrid(
       display: config.grid,
@@ -374,6 +445,7 @@ class const BenchmarkChart({
           ChartType.doughnut => cj.ChartKind.doughnut,
           ChartType.polarArea => cj.ChartKind.polarArea,
           ChartType.radar => cj.ChartKind.radar,
+          ChartType.sankey => _noSankey(),
         },
         datasets: [dataset],
         labels: switch (config.type) {
@@ -661,6 +733,8 @@ class const BenchmarkChart({
           ),
           duration: Duration.zero,
         );
+      case ChartType.sankey:
+        _noSankey();
       case ChartType.radar:
         final side = config.grid
             ? const BorderSide(color: chartGrid)
@@ -806,6 +880,8 @@ class const BenchmarkChart({
             color: color(),
           ),
         );
+      case ChartType.sankey:
+        _noSankey();
       case ChartType.radar:
         gr.Varset position() => gr.Varset('item') * gr.Varset('y');
         if (config.fill) {

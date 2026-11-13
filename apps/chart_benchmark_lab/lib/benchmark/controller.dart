@@ -10,6 +10,8 @@ import 'package:chart_benchmark_lab/benchmark/web_mode.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart' show FlutterVersion;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
+    show chartjsChartSankeyVersion;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show chartjsPluginZoomVersion;
 
@@ -128,6 +130,10 @@ class BenchmarkResult({
           'CHARTJS_PARTITIONED_BASELINE_FILL',
           defaultValue: true,
         ),
+      // The pin of the port of chartjs-chart-sankey, which draws this chart
+      // through the raw config of the Chart.js port.
+      if (library == ChartLibrary.chartjs && config.type == ChartType.sankey)
+        'sankeyChart': chartjsChartSankeyVersion,
       // The pin of the port of chartjs-plugin-zoom, which zooms this chart.
       if (library == ChartLibrary.chartjs && config.zooms)
         'zoomPlugin': chartjsPluginZoomVersion,
