@@ -41,7 +41,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show tau;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSquare;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -514,10 +514,11 @@ class PointElement([AnyObject? cfg])
   /// element.point.ts:62 `inRange(mouseX, mouseY, useFinalPosition?)`.
   ///
   /// The test is strict: a mouse position at the distance `hitRadius +
-  /// radius` is not in range. `Math.pow(v, 2)` is [jsSquare] (Chart.js ADR
-  /// 0045). Throws a [TypeError] when [options] is in the `undefined` state,
-  /// as the upstream property read of `undefined` does. Dart `null` for
-  /// [mouseX] or [mouseY] is JS `null`, which the subtraction reads as 0.
+  /// radius` is not in range. `Math.pow(v, 2)` is `dart:math` `pow`
+  /// (Chart.js ADR 0136). Throws a [TypeError] when [options] is in the
+  /// `undefined` state, as the upstream property read of `undefined` does.
+  /// Dart `null` for [mouseX] or [mouseY] is JS `null`, which the
+  /// subtraction reads as 0.
   @override
   bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) {
     final options = this.options;
@@ -527,8 +528,13 @@ class PointElement([AnyObject? cfg])
     // `options.hitRadius + options.radius` is the JS `+`: a string option
     // joins (`1 + '07'` is `'107'`). `Math.pow` applies `ToNumber` to the
     // sum.
-    return (jsSquare((mouseX ?? 0) - x) + jsSquare((mouseY ?? 0) - y)) <
-        jsSquare(_sum(options, OptionKey.hitRadius, OptionKey.radius));
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    final dx = math.pow((mouseX ?? 0) - x, 2.0).toDouble();
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    final dy = math.pow((mouseY ?? 0) - y, 2.0).toDouble();
+    final reach = _sum(options, OptionKey.hitRadius, OptionKey.radius);
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    return (dx + dy) < math.pow(reach, 2.0).toDouble();
   }
 
   /// element.point.ts:68 `inXRange(mouseX, useFinalPosition?)`.

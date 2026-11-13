@@ -123,7 +123,7 @@ void main() {
         'final b = x.remainder(2) + math.sqrt(x) + math.pi + math.log(x);',
         'final c = math.atan2(y, x) + math.sin(x) + isInt + sinh(x);',
         'jsSort(list, compare);',
-        'final d = math.sqrt(jsSquare((p.x ?? 0) - (q.x ?? 0)));',
+        'final d = math.sqrt((p.x ?? 0) * (q.x ?? 0));',
       ]),
       isEmpty,
     );

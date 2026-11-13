@@ -218,22 +218,27 @@ void main() {
     });
   });
 
-  group('jsSquare', () {
+  // Math.pow(x, 2) is dart:math pow (Chart.js ADR 0136). V8 gives the bits
+  // of x * x for it (Chart.js ADR 0045, section 4).
+  group('dart:math pow(x, 2.0)', () {
+    // js-ok: the form of Math.pow(x, 2) under test.
+    double square(double x) => math.pow(x, 2.0).toDouble();
+
     test('gives the JS results of Math.pow(x, 2) for the special values', () {
-      expect(jsSquare(3), 9);
-      expect(jsSquare(-0.1), _isSameNumber(0.010000000000000002));
-      expect(jsSquare(-0), _isSameNumber(0));
-      expect(jsSquare(double.nan), _isSameNumber(double.nan));
-      expect(jsSquare(double.negativeInfinity), double.infinity);
-      expect(jsSquare(double.minPositive), _isSameNumber(0));
-      expect(jsSquare(-double.minPositive), _isSameNumber(0));
+      expect(square(3), 9);
+      expect(square(-0.1), _isSameNumber(0.010000000000000002));
+      expect(square(-0), _isSameNumber(0));
+      expect(square(double.nan), _isSameNumber(double.nan));
+      expect(square(double.negativeInfinity), double.infinity);
+      expect(square(double.minPositive), _isSameNumber(0));
+      expect(square(-double.minPositive), _isSameNumber(0));
       // Overflow: 1.4e154 squared is above the largest finite double.
-      expect(jsSquare(1.4e154), double.infinity);
-      expect(jsSquare(-1.4e154), double.infinity);
-      expect(jsSquare(1.3e154), 1.6899999999999998e308);
+      expect(square(1.4e154), double.infinity);
+      expect(square(-1.4e154), double.infinity);
+      expect(square(1.3e154), 1.6899999999999998e308);
     });
 
-    test('gives the bits of dart:math pow(x, 2.0)', () {
+    test('gives the bits of x * x', () {
       final random = math.Random(20261019);
       final data = ByteData(8);
       // 2^32. On dart2js, `1 << 32` is 0.
@@ -251,9 +256,7 @@ void main() {
               .getFloat64(0),
       ];
       for (final x in operands) {
-        // js-ok: the old form of Math.pow(x, 2), the reference of the test.
-        final expected = math.pow(x, 2.0).toDouble();
-        expect(_bits(jsSquare(x)), _bits(expected), reason: 'jsSquare($x)');
+        expect(_bits(square(x)), _bits(x * x), reason: 'pow($x, 2.0)');
       }
     });
   });

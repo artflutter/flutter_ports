@@ -227,8 +227,10 @@ double? decimalPlaces(Object? x) {
 /// helpers.math.ts:144 `distanceBetweenPoints`.
 double distanceBetweenPoints(Point pt1, Point pt2) {
   return math.sqrt(
-    jsSquare((pt2.x ?? 0) - (pt1.x ?? 0)) +
-        jsSquare((pt2.y ?? 0) - (pt1.y ?? 0)),
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    math.pow((pt2.x ?? 0) - (pt1.x ?? 0), 2.0).toDouble() +
+        // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+        math.pow((pt2.y ?? 0) - (pt1.y ?? 0), 2.0).toDouble(),
   );
 }
 
