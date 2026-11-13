@@ -47,7 +47,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart'
     show getRelativePosition;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show angleBetween, getAngleFromPoint;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSquare;
+
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -260,7 +260,7 @@ void _evaluateInteractionItems(
 /// axis mode setting
 /// @param {string} axis - the axis mode. x|y|xy|r
 ///
-/// `Math.pow(delta, 2)` is [jsSquare] (Chart.js ADR 0045).
+/// `Math.pow(delta, 2)` is `dart:math` `pow` (Chart.js ADR 0136).
 double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
   InteractionAxis axis,
 ) {
@@ -270,7 +270,10 @@ double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
   return (pt1, pt2) {
     final deltaX = useX ? ((pt1.x ?? 0) - (pt2.x ?? 0)).abs() : 0.0;
     final deltaY = useY ? ((pt1.y ?? 0) - (pt2.y ?? 0)).abs() : 0.0;
-    return math.sqrt(jsSquare(deltaX) + jsSquare(deltaY));
+    return math.sqrt(
+      // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+      math.pow(deltaX, 2.0).toDouble() + math.pow(deltaY, 2.0).toDouble(),
+    );
   };
 }
 

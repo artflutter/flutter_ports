@@ -1444,6 +1444,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0135 (`Math.hypot` is `math.sqrt(a * a + b * b)`) is accepted (2026-11-13): its
       code passes the tests. It supersedes §2 of Chart.js ADR 0108 (`jsHypot`) and its rejected
       alternative.
+      Chart.js ADR 0136 (`Math.pow(x, 2)` is `dart:math` `pow`) is accepted (2026-11-13): its code
+      passes the tests. It supersedes the `jsSquare` parts of Chart.js ADR 0045.
       Chart.js ADR 0137 (trackpad gestures as `wheel` events) is accepted (2026-11-13): its code
       passes the tests. It closes Open 5 of Chart.js ADR 0108.
       The other ADRs are accepted. Docs
@@ -2098,7 +2100,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   index throws a `RangeError`), `jsLessThan` (the operator `a < b` on raw values: two strings
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036) and the
   `undefined` sentinel (Chart.js ADR 0043). `Math.hypot(a, b)` has no runtime function: it is
-  `math.sqrt(a * a + b * b)` (Chart.js ADR 0135). `Math.max` and `Math.min` have no
+  `math.sqrt(a * a + b * b)` (Chart.js ADR 0135). `Math.pow(x, 2)` is `math.pow(x, 2.0)` (Chart.js
+  ADR 0136). `Math.max` and `Math.min` have no
   runtime function: they are `dart:math` `max` and `min` with the type argument `double`, explicit
   or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), and
   `check:js-semantics` flags a `num` type argument (Chart.js ADR 0134). `lib/js_semantics.dart` exports each

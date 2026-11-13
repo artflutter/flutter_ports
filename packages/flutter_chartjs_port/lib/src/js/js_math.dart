@@ -20,7 +20,8 @@
 /// 0135).
 ///
 /// `Math.pow` has no port here. Ported code calls `dart:math` `pow` with
-/// double operands (Chart.js ADR 0045). `dart:math` `pow` gives 1 for
+/// double operands (Chart.js ADR 0045), also for `Math.pow(x, 2)` (Chart.js
+/// ADR 0136). `dart:math` `pow` gives 1 for
 /// `pow(1, NaN)` and `pow(+-1, +-Infinity)`, where JavaScript gives NaN. A
 /// `Math.sin` or `Math.cos` call whose result reaches only the canvas or an
 /// easing value calls `dart:math` with a `js-ok` comment (Chart.js ADR 0045).
@@ -61,15 +62,3 @@ double jsToInt32(double x) {
   // ToInt32 never returns -0.
   return int32 + 0;
 }
-
-/// `Math.pow(x, 2)`: [x] times [x] (Chart.js ADR 0045).
-///
-/// The product is correctly rounded on every target. On the x64 engine,
-/// `Math.pow(x, 2)` gave the bits of `x * x` for all of 23 million probe
-/// inputs (Chart.js ADR 0045, section 4). Thus the result is the JS
-/// result: NaN for NaN, +0 for -0, +Infinity for -Infinity and for overflow.
-/// On dart2wasm, `dart:math` `pow` costs about 8 times as much.
-@pragma('vm:prefer-inline')
-@pragma('dart2js:prefer-inline')
-@pragma('wasm:prefer-inline')
-double jsSquare(double x) => x * x;

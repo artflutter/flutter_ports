@@ -626,7 +626,6 @@ jsSet
 jsSetIndex
 jsSort
 jsSplice
-jsSquare
 jsToInt32
 jsToNumber
 jsToString

@@ -139,10 +139,16 @@ void _writeSplineControlPoints(
   final current = middlePoint;
   final next = (afterPoint.skip ?? false) ? middlePoint : afterPoint;
   final d01 = math.sqrt(
-    jsSquare(previous.x - current.x) + jsSquare(previous.y - current.y),
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    math.pow(previous.x - current.x, 2.0).toDouble() +
+        // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+        math.pow(previous.y - current.y, 2.0).toDouble(),
   );
   final d12 = math.sqrt(
-    jsSquare(current.x - next.x) + jsSquare(current.y - next.y),
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    math.pow(current.x - next.x, 2.0).toDouble() +
+        // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+        math.pow(current.y - next.y, 2.0).toDouble(),
   );
 
   var s01 = d01 / (d01 + d12);
@@ -191,7 +197,9 @@ void _monotoneAdjust(
 
     final alphaK = mK[i] / deltaK[i];
     final betaK = mK[i + 1] / deltaK[i];
-    final squaredMagnitude = jsSquare(alphaK) + jsSquare(betaK);
+    final squaredMagnitude =
+        // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+        math.pow(alphaK, 2.0).toDouble() + math.pow(betaK, 2.0).toDouble();
     if (squaredMagnitude <= 9) {
       continue;
     }

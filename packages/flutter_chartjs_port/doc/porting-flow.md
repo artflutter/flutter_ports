@@ -294,9 +294,9 @@ display-only JS exactness. In short:
   context `num` makes the type argument `num`). With two `double` operands, dart2wasm inlines one
   `f64.max` or `f64.min`; a `num` type argument boxes the operands. With `int` operands, ported
   code calls `dart:math` `max` and `min` too.
-- `Math.pow(x, 2)` is `jsSquare(x)` of `lib/src/js/js_math.dart`, which returns `x * x`. The
-  product is correctly rounded. On the x64 engine, `Math.pow(x, 2)` gave the bits of `x * x`
-  for all of 23 million probe inputs. Thus the result is the JS result on every target.
+- `Math.pow(x, 2)` is `math.pow(x, 2.0).toDouble()` (Chart.js ADR 0136). On the x64 engine,
+  `Math.pow(x, 2)` gave the bits of `x * x` for all of 23 million probe inputs, and
+  `dart:math` `pow(x, 2.0)` gives the bits of `x * x` on every target.
   `ToNumber` of a `double?` value whose `null` is JS `null`, such as `Point.x` and `Point.y`, is
   `(e ?? 0)`, not `jsToNumber(e)`.
 - Where the Dart SDK or a package that Flutter 3.47.7 depends on gives the JS result, the port
