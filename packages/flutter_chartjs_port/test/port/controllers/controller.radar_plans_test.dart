@@ -30,9 +30,8 @@ import 'package:flutter_test/flutter_test.dart';
 // ordinary call. Their points must have each bit in common.
 
 /// A trivial user subclass, which keeps each ordinary call.
-final class _OrdinaryRadar extends RadarController {
-  _OrdinaryRadar(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _OrdinaryRadar(super.chart, super.datasetIndex, [super.newTarget])
+    extends RadarController {
   static final value = JsClass(
     'OrdinaryRadar',
     superclass: RadarController.jsClass,
@@ -45,9 +44,8 @@ final class _OrdinaryRadar extends RadarController {
 }
 
 /// A subclass that observes `updateElement` of a direct mode.
-final class _ObservedRadar extends RadarController {
-  _ObservedRadar(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _ObservedRadar(super.chart, super.datasetIndex, [super.newTarget])
+    extends RadarController {
   static final List<String> updates = [];
 
   static final value = JsClass(
@@ -73,9 +71,7 @@ final class _ObservedRadar extends RadarController {
 }
 
 /// A user point class that observes each write by name.
-final class _ObservedPoint extends PointElement {
-  _ObservedPoint();
-
+final class _ObservedPoint() extends PointElement {
   static final List<String> writes = [];
 
   @override
@@ -86,9 +82,7 @@ final class _ObservedPoint extends PointElement {
 }
 
 /// A user point class that counts the reads of its `active` getter.
-final class _CountedActivePoint extends PointElement {
-  _CountedActivePoint();
-
+final class _CountedActivePoint() extends PointElement {
   int activeReads = 0;
 
   @override

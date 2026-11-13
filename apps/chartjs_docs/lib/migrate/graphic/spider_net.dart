@@ -120,9 +120,9 @@ final ChartConfig _config = ChartConfig(
 );
 
 /// The replica of the Graphic demo "Spider Net Chart".
-class GraphicSpiderNet extends StatelessWidget {
+class const GraphicSpiderNet({super.key}) extends StatelessWidget {
   /// Creates the replica.
-  const GraphicSpiderNet({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) => graphicBox(

@@ -3,23 +3,19 @@ import 'package:material_ui/material_ui.dart';
 
 /// Lays out [children] in columns of equal width: one column on a phone,
 /// up to [maxColumns] on a wide screen.
-class DemoControlGrid extends StatelessWidget {
-  /// Creates the grid.
-  const DemoControlGrid({
-    required this.children,
-    this.minColumnWidth = 300,
-    this.maxColumns = 3,
-    super.key,
-  });
-
+class const DemoControlGrid({
   /// The controls.
-  final List<Widget> children;
+  required final List<Widget> children,
 
   /// The smallest width of a column.
-  final double minColumnWidth;
+  final double minColumnWidth = 300,
 
   /// The largest count of columns.
-  final int maxColumns;
+  final int maxColumns = 3,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the grid.
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -45,43 +41,34 @@ class DemoControlGrid extends StatelessWidget {
 }
 
 /// A labelled slider with its value in monospace.
-class SliderControl extends StatelessWidget {
-  /// Creates the control. [sliderKey] keys the [Slider] itself.
-  const SliderControl({
-    required this.label,
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.onChanged,
-    this.divisions,
-    this.format,
-    this.sliderKey,
-    super.key,
-  });
-
+class const SliderControl({
   /// The name of the value.
-  final String label;
+  required final String label,
 
   /// The value.
-  final double value;
+  required final double value,
 
   /// The smallest value.
-  final double min;
+  required final double min,
 
   /// The largest value.
-  final double max;
-
-  /// The count of steps, or `null` for a continuous slider.
-  final int? divisions;
+  required final double max,
 
   /// Called with each new value; `null` disables the slider.
-  final ValueChanged<double>? onChanged;
+  required final ValueChanged<double>? onChanged,
+
+  /// The count of steps, or `null` for a continuous slider.
+  final int? divisions,
 
   /// Formats the value; the default shows it without decimals.
-  final String Function(double value)? format;
+  final String Function(double value)? format,
 
   /// The key of the [Slider], for tests and automation.
-  final Key? sliderKey;
+  final Key? sliderKey,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the control. [sliderKey] keys the [Slider] itself.
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -113,16 +100,17 @@ class SliderControl extends StatelessWidget {
 }
 
 /// A row of filter chips that switch options on and off.
-class ToggleChips extends StatelessWidget {
-  /// Creates the chips: each entry has a key, a label, its value and the
-  /// callback that toggles it.
-  const ToggleChips({required this.toggles, super.key});
-
+class const ToggleChips({
   /// The toggles.
-  final List<
+  required final List<
     ({String key, String label, bool value, ValueChanged<bool> onChanged})
   >
-  toggles;
+  toggles,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the chips: each entry has a key, a label, its value and the
+  /// callback that toggles it.
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -166,40 +154,32 @@ final ButtonStyle _segmentStyle = SegmentedButton.styleFrom(
 /// The label of each segment, or its icon when the item has one, has the
 /// [ValueKey] of the `key` of its item. A tap on a segment selects its
 /// value.
-class SegmentChoice<T> extends StatelessWidget {
-  /// Creates the control.
-  const SegmentChoice({
-    required this.items,
-    required this.value,
-    required this.onChanged,
-    this.label,
-    this.showLabels = false,
-    this.labelAbove = false,
-    this.minItemWidth,
-    super.key,
-  });
+class const SegmentChoice<T>({
+  /// The segments.
+  required final List<SegmentChoiceItem<T>> items,
+
+  /// The selected value.
+  required final T value,
+
+  /// Called with the value of the tapped segment.
+  required final ValueChanged<T> onChanged,
 
   /// The short name of the value, or `null` for none.
-  final String? label;
+  final String? label,
 
   /// Show names alongside icons, hiding icons when space is tight.
-  final bool showLabels;
+  final bool showLabels = false,
 
   /// Put the field label above the choices instead of in the left gutter.
-  final bool labelAbove;
+  final bool labelAbove = false,
 
   /// Wrap choices into aligned rows at this minimum logical width.
   /// Null retains the original single-row presentation.
-  final double? minItemWidth;
-
-  /// The segments.
-  final List<SegmentChoiceItem<T>> items;
-
-  /// The selected value.
-  final T value;
-
-  /// Called with the value of the tapped segment.
-  final ValueChanged<T> onChanged;
+  final double? minItemWidth,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the control.
+  this;
 
   /// Whether the segment of [key] is the selected one.
   bool isSelected(String key) =>
@@ -289,23 +269,19 @@ typedef SegmentToggleItem = ({
 ///
 /// The icon of each segment has the [ValueKey] of the `key` of its item. A
 /// tap on a segment switches its option.
-class SegmentToggles extends StatelessWidget {
-  /// Creates the control.
-  const SegmentToggles({
-    required this.items,
-    this.labels,
-    this.minItemWidth,
-    super.key,
-  });
+class const SegmentToggles({
+  /// The segments.
+  required final List<SegmentToggleItem> items,
 
   /// Optional readable names for controls that otherwise show only icons.
-  final Map<String, String>? labels;
+  final Map<String, String>? labels,
 
   /// Optional minimum width before choices wrap to another aligned row.
-  final double? minItemWidth;
-
-  /// The segments.
-  final List<SegmentToggleItem> items;
+  final double? minItemWidth,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the control.
+  this;
 
   /// Whether the option of [key] is on.
   bool isSelected(String key) =>
@@ -397,12 +373,13 @@ Widget _segmentRows<T>({
 );
 
 /// A list of `name: value` lines in monospace.
-class ReadoutTable extends StatelessWidget {
-  /// Creates the readout.
-  const ReadoutTable({required this.rows, super.key});
-
+class const ReadoutTable({
   /// The names and the values.
-  final List<(String, String)> rows;
+  required final List<(String, String)> rows,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the readout.
+  this;
 
   @override
   Widget build(BuildContext context) {

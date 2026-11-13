@@ -136,11 +136,8 @@ Point getRelativePosition(Object event, Chart chart) {
 }
 
 /// The chart event of helpers.dom.ts:110, as a [Point].
-final class _ChartEventPosition implements Point {
-  const _ChartEventPosition(this._event);
-
-  final ChartEvent _event;
-
+final class const _ChartEventPosition(final ChartEvent _event)
+    implements Point {
   @override
   double? get x => _event.x;
 
@@ -149,15 +146,10 @@ final class _ChartEventPosition implements Point {
 }
 
 /// The object literal `{x, y}` of helpers.dom.ts:127-130.
-final class _RelativePosition implements Point {
-  const _RelativePosition(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-}
+final class const _RelativePosition(
+  @override final double x,
+  @override final double y,
+) implements Point;
 
 /// helpers.dom.ts:133 `getContainerSize`.
 ///

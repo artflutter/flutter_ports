@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:io';
 
 /// How much a finding counts.
-enum Severity {
+enum Severity() {
   /// The check fails.
   error,
 
@@ -18,7 +18,7 @@ enum Severity {
 /// One result of a check, at a file and an optional line.
 final class Finding {
   /// A finding in [path] (relative to the repository root) at [line].
-  const Finding(
+  const new(
     this.path,
     this.line,
     this.message, {
@@ -26,7 +26,7 @@ final class Finding {
   });
 
   /// A warning in [path] at [line].
-  const Finding.warning(this.path, this.line, this.message)
+  const new warning(this.path, this.line, this.message)
     : severity = Severity.warning;
 
   /// The file, relative to the repository root, with `/` separators.
@@ -146,15 +146,15 @@ String scriptPackage() =>
     posixPath(File.fromUri(Platform.script).absolute.parent.parent.path);
 
 /// The command line of a check.
-final class CheckOptions {
-  /// Options with the [packages] to examine, and [help] when `--help` is set.
-  const CheckOptions(this.packages, {required this.help});
-
+final class const CheckOptions(
   /// The package directories to examine, absolute, with `/` separators.
-  final List<String> packages;
+  final List<String> packages, {
 
   /// Whether the user asked for the usage text.
-  final bool help;
+  required final bool help,
+}) {
+  /// Options with the [packages] to examine, and [help] when `--help` is set.
+  this;
 }
 
 /// Parses `[--help] [<package directory>...]`. The default package is the

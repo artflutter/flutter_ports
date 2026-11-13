@@ -38,10 +38,10 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 /// options of a point element.
 final class PointOptions extends ElementOptions implements DrawPointOptions {
   /// Options with the entries of [source], in its key order.
-  PointOptions([super.source]);
+  new([super.source]);
 
   /// The copy of [source] for [clone].
-  PointOptions._copy(PointOptions super.source)
+  new _copy(PointOptions super.source)
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,
@@ -639,10 +639,10 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 /// options of a line element.
 final class LineOptions extends ElementOptions {
   /// Options with the entries of [source], in its key order.
-  LineOptions([super.source]);
+  new([super.source]);
 
   /// The copy of [source] for [clone].
-  LineOptions._copy(LineOptions super.source)
+  new _copy(LineOptions super.source)
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,
@@ -1430,10 +1430,10 @@ final class LineOptions extends ElementOptions {
 /// of a bar element.
 final class BarOptions extends ElementOptions {
   /// Options with the entries of [source], in its key order.
-  BarOptions([super.source]);
+  new([super.source]);
 
   /// The copy of [source] for [clone].
-  BarOptions._copy(BarOptions super.source)
+  new _copy(BarOptions super.source)
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,
@@ -1859,10 +1859,10 @@ final class BarOptions extends ElementOptions {
 /// of an arc element.
 final class ArcOptions extends ElementOptions {
   /// Options with the entries of [source], in its key order.
-  ArcOptions([super.source]);
+  new([super.source]);
 
   /// The copy of [source] for [clone].
-  ArcOptions._copy(ArcOptions super.source)
+  new _copy(ArcOptions super.source)
     : _present = source._present,
       _foreign = source._foreign,
       _int = source._int,

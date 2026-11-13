@@ -11,13 +11,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
-class Sample12 extends StatefulWidget {
-  const Sample12({super.key});
+class const Sample12({super.key}) extends StatefulWidget {
   @override
   State<Sample12> createState() => _Sample12State();
 }
 
-class _Sample12State extends State<Sample12> {
+class _Sample12State() extends State<Sample12> {
   List<(DateTime, double)>? _history;
   List<DataPoint> _points = const [];
   bool _pan = true;

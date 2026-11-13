@@ -11,28 +11,22 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// `unbindEvents` (:1054) and `destroy` (:937). `update` and `render` clear
 /// the canvas and fill it, and count the calls. The fake has no scales,
 /// datasets, plugins or animations.
-final class FakeChart implements types.Chart {
+final class FakeChart(
+  Object? item, {
+  bool responsive = true,
+  bool maintainAspectRatio = true,
+  double? aspectRatio,
+  double? devicePixelRatio,
+  List<String> events = const [
+    'mousemove',
+    'mouseout',
+    'click',
+    'touchstart',
+    'touchmove',
+  ],
+}) implements types.Chart {
   /// `new Chart(item, {options})`.
-  FakeChart(
-    Object? item, {
-    bool responsive = true,
-    bool maintainAspectRatio = true,
-    double? aspectRatio,
-    double? devicePixelRatio,
-    List<String> events = const [
-      'mousemove',
-      'mouseout',
-      'click',
-      'touchstart',
-      'touchmove',
-    ],
-  }) : options = {
-         'responsive': responsive,
-         'maintainAspectRatio': maintainAspectRatio,
-         'aspectRatio': aspectRatio,
-         'devicePixelRatio': devicePixelRatio,
-         'events': events,
-       } {
+  this {
     platform = detectPlatform(item)();
     final context = platform.acquireContext(item, aspectRatio);
     ctx = context;
@@ -76,7 +70,13 @@ final class FakeChart implements types.Chart {
   double currentDevicePixelRatio = double.nan;
 
   @override
-  final Map<String, Object?> options;
+  final Map<String, Object?> options = {
+    'responsive': responsive,
+    'maintainAspectRatio': maintainAspectRatio,
+    'aspectRatio': aspectRatio,
+    'devicePixelRatio': devicePixelRatio,
+    'events': events,
+  };
 
   double? _aspectRatio;
 

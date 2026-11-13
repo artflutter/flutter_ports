@@ -27,19 +27,19 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// simpleArc.js:4 `class simpleArc`.
 ///
 /// simpleArc.js:3: "TODO: use elements.ArcElement instead".
-final class SimpleArc implements types.SimpleArc {
-  /// simpleArc.js:5 `constructor(opts)`. The keys `x`, `y` and `radius` of
-  /// `opts` are named parameters.
-  SimpleArc({required this.x, required this.y, required this.radius});
-
+final class SimpleArc({
   /// simpleArc.js:6 `this.x = opts.x`.
-  final double x;
+  required final double x,
 
   /// simpleArc.js:7 `this.y = opts.y`.
-  final double y;
+  required final double y,
 
   /// simpleArc.js:8 `this.radius = opts.radius`.
-  final double radius;
+  required final double radius,
+}) implements types.SimpleArc {
+  /// simpleArc.js:5 `constructor(opts)`. The keys `x`, `y` and `radius` of
+  /// `opts` are named parameters.
+  this;
 
   /// simpleArc.js:11 `pathSegment(ctx, bounds, opts)`.
   ///

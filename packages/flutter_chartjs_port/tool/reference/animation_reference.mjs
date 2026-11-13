@@ -682,9 +682,7 @@ const String animationReferenceV8 = '${process.versions.v8}';
 const String animationReferenceArch = '${process.arch}';
 
 /// The type of [animationAbsent].
-final class AnimationAbsent {
-  const AnimationAbsent._();
-}
+final class const AnimationAbsent._();
 
 /// An absent value: a target without the property, an omitted \`to\`
 /// argument, or a step without a value.

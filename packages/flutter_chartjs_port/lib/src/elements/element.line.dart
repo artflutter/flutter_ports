@@ -829,7 +829,8 @@ void _draw(
 /// `_chart`, `_loop`, `_fullLoop`, `_path`, `_points`, `points`,
 /// `_segments`, `segments`, `_decimated`, `_pointsUpdated` and
 /// `_datasetIndex`, and pass the other names to [Element].
-class LineElement extends Element
+class LineElement([AnyObject? cfg])
+    extends Element
     implements types.LineElement, types.VisualElement, types.LineElementWrites {
   /// element.line.js:279 `constructor(cfg)`.
   ///
@@ -837,7 +838,7 @@ class LineElement extends Element
   /// each key of [cfg] is written through [operator []=], as
   /// `Object.assign(this, cfg)` does. A `points` key goes through the
   /// setter [points]. Dart `null` for [cfg] stands for a falsy JS value.
-  LineElement([AnyObject? cfg]) {
+  this {
     if (cfg != null) assign(cfg);
   }
 

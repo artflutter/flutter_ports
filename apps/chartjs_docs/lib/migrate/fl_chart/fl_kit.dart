@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
-abstract final class Fl {
+abstract final class Fl() {
   static const page = Color(0xFF282E45);
   static const item = Color(0xFF1B2339);
   static const cyan = Color(0xFF50E4FF);
@@ -142,41 +142,29 @@ Map<String, Object?> touchIndicator({
   },
 };
 
-sealed class Annotation {
-  const Annotation();
-}
+sealed class const Annotation();
 
-final class HLine extends Annotation {
-  const HLine(this.y, this.color, this.width, this.dash, {this.label});
-  final double y;
-  final Color color;
-  final double width;
-  final List<double> dash;
-  final String? label;
-}
+final class const HLine(
+  final double y,
+  final Color color,
+  final double width,
+  final List<double> dash, {
+  final String? label,
+}) extends Annotation;
 
-final class VLine extends Annotation {
-  const VLine(this.x, this.color, this.width, this.dash, {this.label});
-  final double x;
-  final Color color;
-  final double width;
-  final List<double> dash;
-  final String? label;
-}
+final class const VLine(
+  final double x,
+  final Color color,
+  final double width,
+  final List<double> dash, {
+  final String? label,
+}) extends Annotation;
 
-final class VRange extends Annotation {
-  const VRange(this.x1, this.x2, this.color);
-  final double x1;
-  final double x2;
-  final Color color;
-}
+final class const VRange(final double x1, final double x2, final Color color)
+    extends Annotation;
 
-final class HRange extends Annotation {
-  const HRange(this.y1, this.y2, this.color);
-  final double y1;
-  final double y2;
-  final Color color;
-}
+final class const HRange(final double y1, final double y2, final Color color)
+    extends Annotation;
 
 /// A small form of the Chart.js annotation plugin, which is not ported.
 Map<String, Object?> annotations(List<Annotation> items) => {

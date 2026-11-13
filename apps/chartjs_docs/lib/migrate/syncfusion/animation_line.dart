@@ -12,14 +12,12 @@ const _text = Color(0xFF49454F);
 const _axisLine = Color(0xFFCAC4D0);
 const _grid = Color(0xFFE6E0E9);
 
-class SfAnimationLine extends StatefulWidget {
-  const SfAnimationLine({super.key});
-
+class const SfAnimationLine({super.key}) extends StatefulWidget {
   @override
   State<SfAnimationLine> createState() => _SfAnimationLineState();
 }
 
-class _SfAnimationLineState extends State<SfAnimationLine> {
+class _SfAnimationLineState() extends State<SfAnimationLine> {
   final math.Random _random = math.Random();
   late List<num> _values = _next();
   Timer? _timer;

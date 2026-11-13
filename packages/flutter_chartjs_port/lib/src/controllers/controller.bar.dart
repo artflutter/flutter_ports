@@ -623,11 +623,13 @@ void _setInflateAmount(
 }
 
 /// controller.bar.js:258 `BarController extends DatasetController`.
-class BarController extends DatasetController implements NativeBarIndexReads {
+class BarController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController
+    implements NativeBarIndexReads {
   /// `new BarController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. [newTarget] is `new.target` (Chart.js ADR
+  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
   /// 0020, section 4).
-  BarController(super.chart, super.datasetIndex, [super.newTarget]);
+  this;
 
   /// Native support for the explicit data-only lifecycle.
   @override

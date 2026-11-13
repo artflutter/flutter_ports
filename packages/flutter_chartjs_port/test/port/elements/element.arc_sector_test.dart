@@ -23,15 +23,11 @@ import 'package:flutter_test/flutter_test.dart';
 import '../canvas/pixel_compare.dart';
 
 /// A user subclass: it always takes the ordinary Canvas 2D sequence.
-class _ReferenceArc extends ArcElement {
-  _ReferenceArc(super.cfg);
-}
+class _ReferenceArc(super.cfg) extends ArcElement;
 
 /// A user subclass with a start angle that moves at each read: a read that the
 /// ordinary path has must stay.
-class _DriftingArc extends ArcElement {
-  _DriftingArc(super.cfg);
-
+class _DriftingArc(super.cfg) extends ArcElement {
   int reads = 0;
 
   @override
@@ -42,13 +38,10 @@ class _DriftingArc extends ArcElement {
 }
 
 /// A recording context that offers the capability and declines it.
-class _Probe extends MockContext implements ArcSectorCanvas {
-  _Probe({this.zeroTranslateIsNoOp = false});
-
+class _Probe({@override final bool zeroTranslateIsNoOp = false})
+    extends MockContext
+    implements ArcSectorCanvas {
   int probes = 0;
-
-  @override
-  final bool zeroTranslateIsNoOp;
 
   @override
   bool tryDrawArcSector({
@@ -803,6 +796,4 @@ void main() {
   });
 }
 
-class _OtherColor extends ui.Color {
-  const _OtherColor(super.value);
-}
+class const _OtherColor(super.value) extends ui.Color;

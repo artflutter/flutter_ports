@@ -294,12 +294,18 @@ TypedAtom? typedAtomOf(int mask) {
 
 /// The shape of a key: the bits of its atoms and the kind of its `scope`
 /// atom.
-final class Shape {
+final class const Shape(
+  /// The bits of the atoms.
+  final int mask, [
+
+  /// The kind of the `scope` atom, or null.
+  final String? scope,
+]) {
   /// A shape with the atoms of [mask] and the nested kind [scope].
-  const Shape(this.mask, [this.scope]);
+  this;
 
   /// Parses a shape text such as `number | scope Padding`.
-  factory Shape.parse(String text, String where) {
+  factory parse(String text, String where) {
     var mask = 0;
     String? scope;
     for (final part in text.split('|')) {
@@ -327,12 +333,6 @@ final class Shape {
     }
     return Shape(mask, scope);
   }
-
-  /// The bits of the atoms.
-  final int mask;
-
-  /// The kind of the `scope` atom, or null.
-  final String? scope;
 
   /// The Dart type `T` of the cell `Opt<T>` of the key.
   String get dartType {
@@ -370,39 +370,31 @@ final class Shape {
 }
 
 /// One kind of the schema.
-final class Kind {
-  /// A kind.
-  Kind(
-    this.name,
-    this.doc,
-    this.element,
-    this.others,
-    this.keys, {
-    this.resolved,
-    this.implementsName,
-  });
-
+final class Kind(
   /// The kind name: the index.d.ts interface name or a port-only name.
-  final String name;
+  final String name,
 
   /// The doc line.
-  final String doc;
+  final String doc,
 
   /// The element type id of an element kind, or null.
-  final String? element;
+  final String? element,
 
   /// The shape of an undeclared key, or null (any value).
-  final Shape? others;
+  final Shape? others,
 
   /// The declared keys and their shapes, in schema order.
-  final Map<String, Shape> keys;
+  final Map<String, Shape> keys, {
 
   /// The known keys of the resolved options class of an element kind, in
   /// the key order of Chart.js ADR 0018 §3, or null.
-  final List<String>? resolved;
+  final List<String>? resolved,
 
   /// The interface of the resolved options class, or null.
-  final String? implementsName;
+  final String? implementsName,
+}) {
+  /// A kind.
+  this;
 
   /// The Dart name of the scope class.
   String get className => '${name}Scope';
@@ -412,12 +404,12 @@ final class Kind {
 }
 
 /// The parsed schema.
-final class Schema {
-  /// A schema of [kinds].
-  Schema(this.kinds);
-
+final class Schema(
   /// The kinds, in schema order.
-  final List<Kind> kinds;
+  final List<Kind> kinds,
+) {
+  /// A schema of [kinds].
+  this;
 
   /// The distinct key names, sorted by their code units.
   List<String> get keyNames {
@@ -732,9 +724,9 @@ String _resolved(Schema schema) {
       ..write('final class $name extends ElementOptions$impl {\n')
       ..write(
         '  /// Options with the entries of [source], in its key order.\n'
-        '  $name([super.source]);\n\n'
+        '  new([super.source]);\n\n'
         '  /// The copy of [source] for [clone].\n'
-        '  $name._copy($name super.source)\n'
+        '  new _copy($name super.source)\n'
         '    : _present = source._present,\n'
         '      _foreign = source._foreign,\n'
         '      _int = source._int,\n'
@@ -964,19 +956,19 @@ String _optionKeys(Schema schema) {
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
       '/// An option key by its JS name.\n'
-      'enum OptionKey {\n',
+      'enum OptionKey(\n'
+      '  /// The JS property name.\n'
+      '  final String jsName,\n'
+      ') {\n',
     );
   final names = schema.keyNames;
-  for (final (i, name) in names.indexed) {
+  for (final name in names) {
     out
       ..write('  /// The key `$name`.\n')
       ..write('  ${keyIdentifier(name)}(${dartString(name)})')
-      ..write(i == names.length - 1 ? ';\n\n' : ',\n');
+      ..write(',\n');
   }
   out
-    ..write('  const OptionKey(this.jsName);\n\n')
-    ..write('  /// The JS property name.\n')
-    ..write('  final String jsName;\n')
     ..write('}\n\n')
     ..write(
       '/// The [OptionKey] of the JS name [name], or Dart `null` for a name\n'
@@ -1010,7 +1002,14 @@ String _scopeKinds(Schema schema) {
       "import 'package:flutter_chartjs_port/src/options/option_scope.dart';\n"
       "import 'package:flutter_chartjs_port/src/options/scopes.g.dart';\n\n"
       '/// A kind of option scope.\n'
-      'enum ScopeKind {\n',
+      'enum ScopeKind(\n'
+      '  /// The kind name of the schema.\n'
+      '  final String typeName, {\n'
+      '\n'
+      '  /// The element type id of an element kind (`point`, `line`, `bar`,\n'
+      '  /// `arc` or `generic`), else Dart `null`.\n'
+      '  final String? element,\n'
+      '}) {\n',
     );
   for (final (i, kind) in schema.kinds.indexed) {
     final element = kind.element;
@@ -1022,14 +1021,6 @@ String _scopeKinds(Schema schema) {
       ..write(i == schema.kinds.length - 1 ? ';\n\n' : ',\n');
   }
   out
-    ..write('  const ScopeKind(this.typeName, {this.element});\n\n')
-    ..write('  /// The kind name of the schema.\n')
-    ..write('  final String typeName;\n\n')
-    ..write(
-      '  /// The element type id of an element kind (`point`, `line`, `bar`,\n'
-      '  /// `arc` or `generic`), else Dart `null`.\n',
-    )
-    ..write('  final String? element;\n\n')
     ..write('  /// A new empty scope of this kind.\n')
     ..write(
       _switchMember('OptionScope create()', 'this', [
@@ -1171,9 +1162,9 @@ String _scopes(Schema schema) {
     out
       ..write('\n')
       ..write(docLines(kind.doc, ''))
-      ..write('base class ${kind.className} extends OptionScope {\n')
+      ..write('base class ${kind.className}() extends OptionScope {\n')
       ..write('  /// An empty scope.\n')
-      ..write('  ${kind.className}();\n\n')
+      ..write('  this;\n\n')
       ..write('  @override\n')
       ..write('  ScopeKind get kind => ScopeKind.${kind.enumName};\n');
     for (final MapEntry(key: name, value: shape) in kind.keys.entries) {

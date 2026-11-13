@@ -18,17 +18,17 @@ export 'package:flutter_chartjs_plugin_zoom_port/src/types.dart'
 
 /// One side of state.ts:6 `OriginalLimits`: `{ scale?: number; options?:
 /// unknown }`, the `min` or the `max` of a scale before the first zoom.
-final class OriginalLimit {
-  /// An original limit. A missing [scale] is `null`, and a missing [options]
-  /// is `undefined`, as the empty object `{}` of upstream gives.
-  const OriginalLimit({this.scale, this.options = undefined});
-
+final class const OriginalLimit({
   /// The `min` or `max` of the scale, or `null` for the absent property.
-  final double? scale;
+  final double? scale,
 
   /// The raw `min` or `max` option of the scale: a number, a date string,
   /// `null` or `undefined`.
-  final Object? options;
+  final Object? options = undefined,
+}) {
+  /// An original limit. A missing [scale] is `null`, and a missing [options]
+  /// is `undefined`, as the empty object `{}` of upstream gives.
+  this;
 }
 
 /// state.ts:6 `OriginalLimits`: the original `min` and `max` of a scale.
@@ -51,7 +51,7 @@ typedef UpdatedScaleLimits = Map<String, ScaleRange>;
 /// The function types of `HandlerFunctions` and state.ts:20
 /// `HandlerFunction` have no Dart form: the handler of each name is a
 /// function of `handlers.dart`.
-enum HandlerName {
+enum HandlerName() {
   /// `click`.
   click,
 
@@ -88,7 +88,10 @@ typedef Handlers = Map<HandlerName, Handler>;
 typedef HandlerTarget = Map<HandlerName, NativeEventTarget>;
 
 /// state.ts:26 `State`: the zoom state of one chart.
-final class State {
+final class State() {
+  /// A new [State].
+  this;
+
   /// state.ts:27 `originalScaleLimits`.
   final OriginalScaleLimits originalScaleLimits = {};
 

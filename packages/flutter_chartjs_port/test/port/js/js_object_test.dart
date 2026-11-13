@@ -17,7 +17,7 @@ import 'package:test/test.dart';
 
 /// A Map that answers `operator []` for a key that it does not contain, as
 /// an object with an inherited property.
-final class _Inheriting extends MapBase<String, Object?> {
+final class _Inheriting() extends MapBase<String, Object?> {
   @override
   Object? operator [](Object? key) => key == 'inherited' ? 'p' : null;
 
@@ -36,7 +36,7 @@ final class _Inheriting extends MapBase<String, Object?> {
 
 /// A proxy whose `get` trap gives Dart `null` for every key and whose `has`
 /// trap knows no key.
-final class _NullProxy implements JsProxyObject {
+final class _NullProxy() implements JsProxyObject {
   @override
   Object? operator [](String name) => null;
 
@@ -69,7 +69,7 @@ final class _NullProxy implements JsProxyObject {
 }
 
 /// An object with the frozen state of Chart.js ADR 0021.
-final class _Freezable implements JsFreezable {
+final class _Freezable() implements JsFreezable {
   @override
   bool isFrozen = false;
 

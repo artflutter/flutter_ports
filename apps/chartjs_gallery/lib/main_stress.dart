@@ -566,7 +566,52 @@ void main() {
 }
 
 /// The app of the profiling entry.
-class StressProfileApp extends StatefulWidget {
+class const StressProfileApp({
+  super.key,
+
+  /// The mode of the scenarios, or Dart `null` for [stressMode].
+  final StressMode? mode,
+
+  /// The scenarios (N, M), or Dart `null` for [stressScenarios].
+  final List<(int, int)>? scenarios,
+
+  /// The x scale type of the mode `axes`, or Dart `null` for [stressScale].
+  final StressAxisType? scale,
+
+  /// The y scale type of the mode `axes`, or Dart `null` for
+  /// [stressYScale].
+  final StressAxisType? yScale,
+
+  /// `ticks.autoSkip` of the mode `axes`, or Dart `null` for
+  /// [stressAutoSkip].
+  final bool? autoSkip,
+
+  /// The chart type of the mode `chart`, or Dart `null` for [stressType].
+  final StressChartType? type,
+
+  /// `showLine` of the mode `chart`, or Dart `null` for [stressShowLine].
+  final bool? showLine,
+
+  /// The call, or Dart `null` for [stressCall]. The mode takes the first of
+  /// its calls for a call that it does not have ([stressCallOf]).
+  final StressChartCall? call,
+
+  /// The case of the mode `plugins`, or Dart `null` for
+  /// [stressPluginCase].
+  final StressPluginCase? pluginCase,
+
+  /// The host of the chart, or Dart `null` for [stressHost].
+  final StressHost? host,
+
+  /// The value of the define `SEMANTICS`, or Dart `null` for
+  /// [stressSemantics]. A value gives the `STRESS` lines the key
+  /// `semantics`. Only `main` turns the semantics on.
+  final bool? semantics,
+
+  /// Whether each scenario prints its windows, or Dart `null` for
+  /// [stressWindowsOn].
+  final bool? windows,
+}) extends StatefulWidget {
   /// Creates the app. [mode], [scenarios], [scale], [yScale], [autoSkip],
   /// [type], [showLine], [call], [pluginCase] and [host] default to
   /// [stressMode], [stressScenarios], [stressScale], [stressYScale],
@@ -574,70 +619,13 @@ class StressProfileApp extends StatefulWidget {
   /// [stressPluginCase] and [stressHost], the values of the defines. A test
   /// gives them. [semantics] and [windows] default to [stressSemantics] and
   /// [stressWindowsOn].
-  const StressProfileApp({
-    super.key,
-    this.mode,
-    this.scenarios,
-    this.scale,
-    this.yScale,
-    this.autoSkip,
-    this.type,
-    this.showLine,
-    this.call,
-    this.pluginCase,
-    this.host,
-    this.semantics,
-    this.windows,
-  });
-
-  /// The mode of the scenarios, or Dart `null` for [stressMode].
-  final StressMode? mode;
-
-  /// The scenarios (N, M), or Dart `null` for [stressScenarios].
-  final List<(int, int)>? scenarios;
-
-  /// The x scale type of the mode `axes`, or Dart `null` for [stressScale].
-  final StressAxisType? scale;
-
-  /// The y scale type of the mode `axes`, or Dart `null` for
-  /// [stressYScale].
-  final StressAxisType? yScale;
-
-  /// `ticks.autoSkip` of the mode `axes`, or Dart `null` for
-  /// [stressAutoSkip].
-  final bool? autoSkip;
-
-  /// The chart type of the mode `chart`, or Dart `null` for [stressType].
-  final StressChartType? type;
-
-  /// `showLine` of the mode `chart`, or Dart `null` for [stressShowLine].
-  final bool? showLine;
-
-  /// The call, or Dart `null` for [stressCall]. The mode takes the first of
-  /// its calls for a call that it does not have ([stressCallOf]).
-  final StressChartCall? call;
-
-  /// The case of the mode `plugins`, or Dart `null` for
-  /// [stressPluginCase].
-  final StressPluginCase? pluginCase;
-
-  /// The host of the chart, or Dart `null` for [stressHost].
-  final StressHost? host;
-
-  /// The value of the define `SEMANTICS`, or Dart `null` for
-  /// [stressSemantics]. A value gives the `STRESS` lines the key
-  /// `semantics`. Only `main` turns the semantics on.
-  final bool? semantics;
-
-  /// Whether each scenario prints its windows, or Dart `null` for
-  /// [stressWindowsOn].
-  final bool? windows;
+  this;
 
   @override
   State<StressProfileApp> createState() => _StressProfileAppState();
 }
 
-class _StressProfileAppState extends State<StressProfileApp> {
+class _StressProfileAppState() extends State<StressProfileApp> {
   int _index = 0;
   final List<StressStats> _window = [];
   Timer? _timer;

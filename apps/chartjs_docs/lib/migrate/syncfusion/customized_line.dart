@@ -174,9 +174,7 @@ final ChartConfig _config = ChartConfig(
   },
 );
 
-class SfCustomizedLine extends StatelessWidget {
-  const SfCustomizedLine({super.key});
-
+class const SfCustomizedLine({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       SizedBox(height: 320, child: ChartView(config: _config));

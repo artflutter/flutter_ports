@@ -56,7 +56,7 @@ Object? _tenTimesIndex(Object? ctx) => jsToNumber(_read(ctx, 'index')) * 10;
 typedef _Parsed = (Object?, double?);
 
 /// A scale whose `parse` returns its arguments.
-final class _Scale implements Scale {
+final class _Scale() implements Scale {
   @override
   Object? parse(Object? raw, [double? index]) => (raw, index);
 
@@ -65,23 +65,14 @@ final class _Scale implements Scale {
 }
 
 /// A chart meta with an index scale.
-final class _Meta implements ChartMeta {
-  _Meta(this.iScale);
-
-  @override
-  final Scale? iScale;
-
+final class _Meta(@override final Scale? iScale) implements ChartMeta {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A dataset controller with the `_parsing` option.
-final class _Controller implements DatasetController {
-  _Controller(this.parsing);
-
-  @override
-  final Object? parsing;
-
+final class _Controller(@override final Object? parsing)
+    implements DatasetController {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -1224,11 +1215,8 @@ void main() {
 }
 
 /// A Map of a user class that counts its reads.
-final class _CountingMap extends MapBase<String, Object?> {
-  _CountingMap(this._values);
-
-  final Map<String, Object?> _values;
-
+final class _CountingMap(final Map<String, Object?> _values)
+    extends MapBase<String, Object?> {
   int reads = 0;
 
   @override
@@ -1251,7 +1239,7 @@ final class _CountingMap extends MapBase<String, Object?> {
 }
 
 /// A subclass of a scope class that counts its reads by name.
-final class _CountingScope extends ChartOptionsScope {
+final class _CountingScope() extends ChartOptionsScope {
   int reads = 0;
 
   @override

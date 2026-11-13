@@ -46,7 +46,7 @@ typedef ResolverObjectKey = Object?;
 
 /// helpers.config.types.ts:6 `ResolverCache`: the cache object of a
 /// `_createResolver` proxy.
-abstract interface class ResolverCache {
+abstract interface class ResolverCache() {
   /// helpers.config.types.ts:11 `_cacheable: boolean`.
   @internal
   bool get cacheable;
@@ -74,7 +74,8 @@ abstract interface class ResolverCache {
 
 /// helpers.config.types.ts:24 `ResolverProxy`: `Merge<T[number]>` and
 /// [ResolverCache]. The face ([JsProxyObject]) gives the merged options.
-abstract interface class ResolverProxy implements ResolverCache, JsProxyObject;
+abstract interface class ResolverProxy()
+    implements ResolverCache, JsProxyObject;
 
 /// helpers.config.types.ts:29 `DescriptorDefaults`.
 ///
@@ -85,7 +86,7 @@ abstract interface class ResolverProxy implements ResolverCache, JsProxyObject;
 abstract interface class DescriptorDefaults {
   /// The object literal `{scriptable, indexable, allKeys}`. An [allKeys]
   /// that the literal leaves out is the `undefined` sentinel.
-  const factory DescriptorDefaults({
+  const factory({
     required Object? scriptable,
     required Object? indexable,
     Object? allKeys,
@@ -103,7 +104,7 @@ abstract interface class DescriptorDefaults {
 }
 
 /// helpers.config.types.ts:35 `Descriptor`.
-abstract interface class Descriptor implements DescriptorDefaults {
+abstract interface class Descriptor() implements DescriptorDefaults {
   /// helpers.config.types.ts:39 `isScriptable(key: string): boolean`.
   bool isScriptable(String key);
 
@@ -113,7 +114,7 @@ abstract interface class Descriptor implements DescriptorDefaults {
 
 /// helpers.config.types.ts:43 `ContextCache`: the cache object of an
 /// `_attachContext` proxy.
-abstract interface class ContextCache {
+abstract interface class ContextCache() {
   /// helpers.config.types.ts:47 `_cacheable: boolean`.
   @internal
   bool get cacheable;
@@ -152,22 +153,11 @@ abstract interface class ContextCache {
 
 /// helpers.config.types.ts:57 `ContextProxy`: `Merge<T[number]>` and
 /// [ContextCache]. The face ([JsProxyObject]) gives the merged options.
-abstract interface class ContextProxy implements ContextCache, JsProxyObject;
+abstract interface class ContextProxy() implements ContextCache, JsProxyObject;
 
 /// The object literal of [DescriptorDefaults].
-final class _DescriptorDefaults implements DescriptorDefaults {
-  const _DescriptorDefaults({
-    required this.scriptable,
-    required this.indexable,
-    this.allKeys = undefined,
-  });
-
-  @override
-  final Object? scriptable;
-
-  @override
-  final Object? indexable;
-
-  @override
-  final Object? allKeys;
-}
+final class const _DescriptorDefaults({
+  @override required final Object? scriptable,
+  @override required final Object? indexable,
+  @override final Object? allKeys = undefined,
+}) implements DescriptorDefaults;

@@ -59,17 +59,16 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 ///
 /// The layout box of the chart title. `layouts.addBox` gives it the default
 /// layer, which calls [draw] (core.layouts.js:301-308).
-class Title extends Element implements LayoutItem {
+class Title(
+  ({Object? chart, Object? options, CanvasRenderingContext2D? ctx}) config,
+) extends Element implements LayoutItem {
   /// plugin.title.js:11 `constructor(config)`.
   ///
   /// @param {{ ctx: any; options: any; chart: any; }} config
   ///
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
-  Title(
-    ({Object? chart, Object? options, CanvasRenderingContext2D? ctx}) config,
-  ) : chart = config.chart,
-      ctx = config.ctx {
+  this {
     options = config.options;
   }
 
@@ -86,10 +85,10 @@ class Title extends Element implements LayoutItem {
 
   /// plugin.title.js:14 `chart`. Upstream stores it and never reads it.
   /// Thus it keeps any value.
-  final Object? chart;
+  final Object? chart = config.chart;
 
   /// plugin.title.js:16 `ctx`. Dart `null` stands for JS `undefined`.
-  CanvasRenderingContext2D? ctx;
+  CanvasRenderingContext2D? ctx = config.ctx;
 
   /// plugin.title.js:17 `_padding`, the native padding of the last
   /// [update] that displays the title. Dart `null` stands for JS

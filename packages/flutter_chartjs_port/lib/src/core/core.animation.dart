@@ -162,7 +162,7 @@ Interpolator? _interpolatorOf(Object? from) => switch (from) {
 /// its argument. A `from` or a `to` that is not a String takes [_color]. The
 /// results are the results of [_color].
 // DIVERGES(chartjs): adapt-animation-color-cache, one parse of each color.
-final class _ColorInterpolator {
+final class _ColorInterpolator() {
   /// The `from || transparent` of the last parse of [_c0].
   Object? _fromKey;
 
@@ -199,14 +199,24 @@ final class _ColorInterpolator {
 
 /// core.animation.js:27 `Animation`, the animation of the property [_key]
 /// of the target [_target].
-class Animation implements types.Animation {
+class Animation.typed(
+  Object cfg,
+
+  /// core.animation.js:40 `_target`.
+  final Object _target,
+  AnimatedProp prop, [
+  // The setter `to` stores a resolved value: no field to declare.
+  // ignore: use_declaring_parameters
+  Object? to = undefined,
+  PropertyAnimation? item,
+]) implements types.Animation {
   /// core.animation.js:28 `constructor(cfg, target, prop, to)`.
   ///
   /// [cfg] is the animation configuration: an [AnimationSpec] or another
   /// Map. [to] is the [undefined] sentinel when the caller passes no target
   /// value. [prop] is the property name: [Animation.typed] with its
   /// [AnimatedProp].
-  Animation(Object cfg, Object target, String prop, [Object? to = undefined])
+  new(Object cfg, Object target, String prop, [Object? to = undefined])
     : this.typed(cfg, target, AnimatedProp.of(prop), to);
 
   /// core.animation.js:28 `constructor(cfg, target, prop, to)` for the key
@@ -226,16 +236,8 @@ class Animation implements types.Animation {
   /// value of [cfg]. The animation reads the item itself: no object holds a
   /// copy of its parameters.
   @internal
-  Animation.typed(
-    Object cfg,
-    Object target,
-    AnimatedProp prop, [
-    Object? to = undefined,
-    PropertyAnimation? item,
-  ]) : _target = target,
-       _key = prop,
-       _element = target is Element ? target : null {
-    final currentValue = prop.valueOf(target);
+  this {
+    final currentValue = prop.valueOf(_target);
 
     // `resolve([cfg.to, to, currentValue, cfg.from])`.
     final cfgTo = _cfgTo(cfg);
@@ -317,13 +319,10 @@ class Animation implements types.Animation {
   /// core.animation.js:39 `_loop`.
   bool _loop = false;
 
-  /// core.animation.js:40 `_target`.
-  final Object _target;
-
   /// core.animation.js:41 `_prop`, as its key (Chart.js ADR 0054 §10): the
   /// property reads and writes the target (`AnimatedProp.valueOf`,
   /// `AnimatedProp.store`). The animation has no name of the property.
-  final AnimatedProp _key;
+  final AnimatedProp _key = prop;
 
   /// core.animation.js:42 `_from`.
   Object? _from;
@@ -350,7 +349,7 @@ class Animation implements types.Animation {
   /// (Chart.js ADR 0054 §10). The typed field spares the number path a cast
   /// in each write: 20000 points x 2 tick 0.03 to 0.07 ms faster on AOT and
   /// 0.02 to 0.04 ms on wasm.
-  final Element? _element;
+  final Element? _element = _target is Element ? _target : null;
 
   /// core.animation.js:37 `_start`, the start time in milliseconds. The
   /// specs and the animator read it.

@@ -62,18 +62,18 @@ const _Point _outside = (x: -1.0, y: -1.0);
 /// sections 2 to 6): the target, the virtual mouse, the key events of
 /// `options.events` and the focus ring.
 @internal
-final class ChartKeyboard {
-  /// The keyboard of the canvas `canvas`. `chart` gives the current chart
-  /// of the widget, or Dart `null` before the start and after the dispose.
-  ChartKeyboard({required this._canvas, required this._chart}) {
-    FocusManager.instance.addHighlightModeListener(_onHighlightModeChanged);
-  }
-
+final class ChartKeyboard({
   /// The canvas of the chart: the target of the events.
-  final HTMLCanvasElement _canvas;
+  required final HTMLCanvasElement _canvas,
 
   /// The current chart of the widget.
-  final Chart? Function() _chart;
+  required final Chart? Function() _chart,
+}) {
+  /// The keyboard of the canvas `canvas`. `chart` gives the current chart
+  /// of the widget, or Dart `null` before the start and after the dispose.
+  this {
+    FocusManager.instance.addHighlightModeListener(_onHighlightModeChanged);
+  }
 
   /// The group of the target: [_legendGroup] or a dataset index. Dart
   /// `null`: no target.

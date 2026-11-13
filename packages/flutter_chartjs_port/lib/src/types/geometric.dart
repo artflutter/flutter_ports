@@ -61,7 +61,7 @@ library;
 /// `_isPointInArea` (helpers.canvas.ts:319) takes the area of
 /// `capBezierPoints` (helpers.curve.ts:163), and `getDatasetArea` returns
 /// it (helpers.dataset.ts:17). TypeScript accepts both by structure.
-abstract interface class ChartArea implements TRBL {
+abstract interface class ChartArea() implements TRBL {
   /// geometric.d.ts:6 `width: number`.
   double get width;
 
@@ -70,7 +70,7 @@ abstract interface class ChartArea implements TRBL {
 }
 
 /// geometric.d.ts:10 `Point`.
-abstract interface class Point {
+abstract interface class Point() {
   /// geometric.d.ts:11 `x: number | null`. Dart `null` is JS `null`, which
   /// `ToNumber` makes 0 (`distanceBetweenPoints`, helpers.math.ts:144).
   /// Ported code writes this `ToNumber` as `x ?? 0`, not `jsToNumber(x)`
@@ -88,7 +88,7 @@ abstract interface class Point {
 }
 
 /// geometric.d.ts:15 `TRBL`.
-abstract interface class TRBL {
+abstract interface class TRBL() {
   /// geometric.d.ts:16 `top: number`.
   double get top;
 
@@ -103,7 +103,7 @@ abstract interface class TRBL {
 }
 
 /// geometric.d.ts:22 `TRBLCorners`.
-abstract interface class TRBLCorners {
+abstract interface class TRBLCorners() {
   /// geometric.d.ts:23 `topLeft: number`.
   double get topLeft;
 
@@ -124,7 +124,7 @@ abstract interface class TRBLCorners {
 /// whose [radius] is a [TRBLCorners] (`element.bar.js:182`,
 /// `plugin.legend.js:347`, `plugin.tooltip.js:835`,
 /// `scale.radialLinear.js:247`).
-abstract interface class RoundedRect {
+abstract interface class RoundedRect() {
   /// geometric.d.ts:32 `x: number`.
   double get x;
 
@@ -150,7 +150,7 @@ abstract interface class RoundedRect {
 /// `Point` goes: `distanceBetweenPoints` (helpers.curve.ts:29),
 /// `_isPointInArea` (:163) and `_pointInLine` (helpers.interpolation.ts:35).
 /// TypeScript accepts it by structure.
-abstract interface class SplinePoint implements Point {
+abstract interface class SplinePoint() implements Point {
   /// geometric.d.ts:42 `x: number`.
   @override
   double get x;

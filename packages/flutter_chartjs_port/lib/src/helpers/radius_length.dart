@@ -34,9 +34,9 @@ import 'package:meta/meta.dart' show immutable;
 /// }
 /// ```
 @immutable
-abstract class RadiusLength {
+abstract class const RadiusLength() {
   /// A length.
-  const RadiusLength();
+  this;
 
   /// The length in pixels for the whole [whole] in pixels: upstream
   /// `toDimension(value, whole)` (the `radius` of controller.doughnut.js:229).
@@ -60,12 +60,12 @@ abstract class RadiusLength {
 }
 
 /// A percent of the whole: `PercentRadius(50)` is `'50%'` upstream.
-final class PercentRadius extends RadiusLength {
-  /// The length of [percent] percent of the whole.
-  const PercentRadius(this.percent);
-
+final class const PercentRadius(
   /// The percent.
-  final double percent;
+  final double percent,
+) extends RadiusLength {
+  /// The length of [percent] percent of the whole.
+  this;
 
   @override
   double pixelsOf(double whole) => percent / 100 * whole;
@@ -85,12 +85,12 @@ final class PercentRadius extends RadiusLength {
 }
 
 /// A number of pixels: `PixelRadius(150)` is `150` upstream.
-final class PixelRadius extends RadiusLength {
-  /// The length of [pixels] pixels.
-  const PixelRadius(this.pixels);
-
+final class const PixelRadius(
   /// The pixels.
-  final double pixels;
+  final double pixels,
+) extends RadiusLength {
+  /// The length of [pixels] pixels.
+  this;
 
   @override
   double pixelsOf(double whole) => pixels;

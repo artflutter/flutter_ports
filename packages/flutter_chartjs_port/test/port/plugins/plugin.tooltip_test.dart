@@ -177,9 +177,7 @@ final Map<String, Object?> _functions = {
 ///     yAlign: 'top'};
 /// }
 /// ```
-final class _CustomPositioner extends TooltipPositioner {
-  const _CustomPositioner();
-
+final class const _CustomPositioner() extends TooltipPositioner {
   @override
   TooltipPosition? positionOf(
     types.TooltipModel tooltip,
@@ -199,16 +197,14 @@ final class _CustomPositioner extends TooltipPositioner {
 }
 
 /// A positioner of a test: it gives the result of its function.
-final class _TestPositioner extends TooltipPositioner {
-  const _TestPositioner(this._position);
-
+final class const _TestPositioner(
   final TooltipPosition? Function(
     types.TooltipModel tooltip,
     List<types.ActiveElement> items,
     Object? eventPosition,
   )
-  _position;
-
+  _position,
+) extends TooltipPositioner {
   @override
   TooltipPosition? positionOf(
     types.TooltipModel tooltip,
@@ -447,14 +443,14 @@ Object? _construct(List<Object?> args) => jsConstruct(Tooltip.jsClass, args);
 
 /// A chart that is a `types.Chart` and nothing else. A member that a test
 /// does not stub throws a `NoSuchMethodError`.
-final class _FakeChart implements types.Chart {
+final class _FakeChart() implements types.Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The chart of the cache test: `getContext()` and `options` with an
 /// animation object, as a chart whose `chart.options.animation` is truthy.
-final class _CacheChart implements types.Chart {
+final class _CacheChart() implements types.Chart {
   @override
   AnyObject getContext() => <String, Object?>{};
 
@@ -470,11 +466,7 @@ final class _CacheChart implements types.Chart {
 /// An element whose `tooltipPosition` gives ([px], 1) and whose `hasValue`
 /// is true: the fake element `{hasValue: () => true, tooltipPosition: () =>
 /// ({x, y: 1})}` of the probe.
-final class _FakeElement extends Element {
-  _FakeElement(this.px);
-
-  final double px;
-
+final class _FakeElement(final double px) extends Element {
   @override
   bool hasValue() => true;
 
@@ -2044,24 +2036,17 @@ void main() {
 }
 
 /// An active item `{datasetIndex, index, element}` of a test.
-final class _Item implements types.ActiveElement {
-  _Item({required this.datasetIndex, required this.index, this.element});
-
-  @override
-  final double datasetIndex;
-
-  @override
-  final double index;
-
-  @override
-  final types.Element? element;
-}
+final class _Item({
+  @override required final double datasetIndex,
+  @override required final double index,
+  @override final types.Element? element,
+}) implements types.ActiveElement;
 
 /// A canvas style with the DOM rules of `setProperty` (as `_Style` of
 /// test/port/helpers/helpers.rtl_test.dart). It logs each call with its
 /// result, as the `domStyle` of the probe fix-node.mjs: `[get, name,
 /// value]`, `[prio, name, priority]` and `[set, name, value, priority]`.
-final class _LogStyle implements CSSStyleDeclaration {
+final class _LogStyle() implements CSSStyleDeclaration {
   final Map<String, (String, String)> _properties = {};
 
   /// The calls.
@@ -2106,7 +2091,7 @@ final class _LogStyle implements CSSStyleDeclaration {
 }
 
 /// A canvas element that has only a [_LogStyle].
-final class _StyleCanvas implements HTMLCanvasElement {
+final class _StyleCanvas() implements HTMLCanvasElement {
   @override
   final _LogStyle style = _LogStyle();
 
@@ -2119,7 +2104,7 @@ final class _StyleCanvas implements HTMLCanvasElement {
 }
 
 /// A mock context whose canvas has a [_LogStyle].
-final class _StyleContext extends MockContext {
+final class _StyleContext() extends MockContext {
   final List<native_ui.TextDirection?> drawDirections = [];
   bool throwOnText = false;
 

@@ -43,7 +43,7 @@ Object _decode(
 );
 
 /// A chart that the sources of [resolveTarget] name and never read.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

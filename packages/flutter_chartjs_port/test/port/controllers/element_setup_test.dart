@@ -14,8 +14,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _ObservedConfig extends Config {
-  _ObservedConfig(super.config);
+class _ObservedConfig(super.config) extends Config {
   final prefixesSeen = <List<String>>[];
   int ownedCalls = 0;
   @override
@@ -61,16 +60,14 @@ class _ObservedConfig extends Config {
   }
 }
 
-class _ConfigChart extends Chart {
-  _ConfigChart(Object item, this.supplied) : super(item, <String, Object?>{});
-  final Config supplied;
+class _ConfigChart(Object item, final Config supplied) extends Chart {
+  this : super(item, <String, Object?>{});
   @override
   Config get config => supplied;
 }
 
-final class _ObservedPointScope extends OptionScope {
-  _ObservedPointScope(this.source);
-  final PointOptionsScope source;
+final class _ObservedPointScope(final PointOptionsScope source)
+    extends OptionScope {
   int reads = 0;
   @override
   ScopeKind get kind => source.kind;

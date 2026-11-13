@@ -23,20 +23,18 @@ import 'package:meta/meta.dart' show immutable, internal;
 /// equality uses Dart function equality, so stable method tear-offs avoid
 /// unnecessary configuration updates.
 @immutable
-sealed class ChartValue<T> {
-  const ChartValue._();
-
+sealed class const ChartValue<T>._() {
   /// One value for the dataset.
-  const factory ChartValue.constant(T value) = ChartConstant<T>;
+  const factory constant(T value) = ChartConstant<T>;
 
   /// Values selected by item index, repeating when the list is shorter.
   ///
   /// Empty lists retain the existing raw option behavior. The input list is
   /// copied into a mutable engine list each time the dataset is lowered.
-  const factory ChartValue.indexed(List<T> values) = ChartIndexed<T>;
+  const factory indexed(List<T> values) = ChartIndexed<T>;
 
   /// A callback evaluated with the chart's typed context during resolution.
-  const factory ChartValue.resolver(ChartScript<T> callback) = ChartResolver<T>;
+  const factory resolver(ChartScript<T> callback) = ChartResolver<T>;
 
   /// Preserves this variant directly in an internal option cell.
   /// No callback is executed during lowering.
@@ -45,12 +43,12 @@ sealed class ChartValue<T> {
 }
 
 /// A constant [ChartValue].
-final class ChartConstant<T> extends ChartValue<T> {
-  /// A value shared by the dataset.
-  const ChartConstant(this.value) : super._();
-
+final class const ChartConstant<T>(
   /// The constant value.
-  final T value;
+  final T value,
+) extends ChartValue<T> {
+  /// A value shared by the dataset.
+  this : super._();
 
   @internal
   @override
@@ -68,12 +66,12 @@ final class ChartConstant<T> extends ChartValue<T> {
 }
 
 /// An indexed [ChartValue].
-final class ChartIndexed<T> extends ChartValue<T> {
-  /// A repeating list of option values.
-  const ChartIndexed(this.values) : super._();
-
+final class const ChartIndexed<T>(
   /// The style values. Treat the source list as immutable configuration.
-  final List<T> values;
+  final List<T> values,
+) extends ChartValue<T> {
+  /// A repeating list of option values.
+  this : super._();
 
   @internal
   @override
@@ -92,12 +90,12 @@ final class ChartIndexed<T> extends ChartValue<T> {
 }
 
 /// A callback-backed [ChartValue].
-final class ChartResolver<T> extends ChartValue<T> {
-  /// A function of each option resolution's typed context.
-  const ChartResolver(this.callback) : super._();
-
+final class const ChartResolver<T>(
   /// The callback. Reuse a function or method tear-off across rebuilds.
-  final ChartScript<T> callback;
+  final ChartScript<T> callback,
+) extends ChartValue<T> {
+  /// A function of each option resolution's typed context.
+  this : super._();
 
   @internal
   @override

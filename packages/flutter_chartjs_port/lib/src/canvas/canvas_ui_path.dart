@@ -54,9 +54,9 @@ const double _tau = 2 * math.pi;
 /// `[a c e; b d f; 0 0 1]`.
 ///
 /// The derived flags tell the fast paths of the context when they apply.
-final class UiTransform {
+final class UiTransform() {
   /// The identity transform.
-  UiTransform();
+  this;
 
   /// The matrix component `a` (x scale).
   double a = 1;
@@ -353,7 +353,7 @@ bool _sameAngle(double a, double b) {
 /// coordinates at the first read of [x] or [y], with the expressions of an
 /// eager build: most arcs never need them, and each takes a cosine and a
 /// sine.
-final class _PathPoint {
+final class _PathPoint() {
   double _x = 0;
   double _y = 0;
   bool _onArc = false;
@@ -414,13 +414,13 @@ final class _PathPoint {
 /// The context keeps one builder for its current path. A [Path2D] replays
 /// into a builder with the identity transform, which gives a path in user
 /// space.
-final class UiPathBuilder implements CanvasPath {
-  /// A builder that maps its points through [transform].
-  UiPathBuilder(this.transform);
-
+final class UiPathBuilder(
   /// The transform that maps the added points. The context points it at
   /// the transform of its current state.
-  UiTransform transform;
+  var UiTransform transform,
+) implements CanvasPath {
+  /// A builder that maps its points through [transform].
+  this;
 
   final ui.Path _path = ui.Path();
 
@@ -1894,10 +1894,7 @@ bool _cornerContains(
 
 /// The `ui.Path` of a [Path2D], in user space, and its pieces, kept in
 /// [Path2D.cache].
-final class _CachedPath {
-  _CachedPath(this.version);
-
-  final int version;
+final class _CachedPath(final int version) {
   ui.Path? path;
   UiPathPieces? pieces;
 }
@@ -1917,16 +1914,16 @@ final class _CachedPath {
 /// The close of a path that a cut divided takes the first commands of the
 /// subpath with the same rule. A command that a line chart does not use
 /// fails the whole form.
-final class UiPathPieces implements CanvasPath {
+final class UiPathPieces(
+  /// The uniform scale that the limits of a piece use.
+  final double scale,
+
+  /// The line width, in user space, that the bounds of a piece include.
+  final double lineWidth,
+) implements CanvasPath {
   /// Pieces for a transform of the uniform scale [scale] and the line width
   /// [lineWidth].
-  UiPathPieces(this.scale, this.lineWidth)
-    : _area = maxPieceArea / (scale * scale),
-      _reach = _strokePieceOverlap / scale,
-      _curveReach = math.max(
-        _strokePieceOverlap / scale,
-        _curveOverlapWidths * lineWidth,
-      );
+  this;
 
   /// The overlap of a piece over a curve, in line widths. On a curve that
   /// turns within a line width of the cut, the start of the next piece has no
@@ -1934,14 +1931,12 @@ final class UiPathPieces implements CanvasPath {
   /// piece before the cut covers it with the turn and the join.
   static const double _curveOverlapWidths = 2;
 
-  /// The uniform scale that the limits of a piece use.
-  final double scale;
-
-  /// The line width, in user space, that the bounds of a piece include.
-  final double lineWidth;
-  final double _area;
-  final double _reach;
-  final double _curveReach;
+  final double _area = maxPieceArea / (scale * scale);
+  final double _reach = _strokePieceOverlap / scale;
+  final double _curveReach = math.max(
+    _strokePieceOverlap / scale,
+    _curveOverlapWidths * lineWidth,
+  );
 
   /// The pieces.
   final List<ui.Path> pieces = [];

@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 // arguments, and a parameter without an argument is undefined.
 
 /// A class with a `call` method. Its instances are not Dart functions.
-final class _Callable {
+final class _Callable() {
   Object? call(Object? value) => value;
 }
 

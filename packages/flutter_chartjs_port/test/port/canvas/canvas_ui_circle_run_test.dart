@@ -45,12 +45,11 @@ String _describe(Object? value) => switch (value) {
 
 /// A canvas that logs each native call with its arguments and draws nothing.
 /// It starts the recording of its recorder, which the context ends.
-final class _LogCanvas implements ui.Canvas {
-  _LogCanvas(this._log, ui.PictureRecorder recorder) {
+final class _LogCanvas(final List<String> _log, ui.PictureRecorder recorder)
+    implements ui.Canvas {
+  this {
     ui.Canvas(recorder);
   }
-
-  final List<String> _log;
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
@@ -69,18 +68,16 @@ final class _LogCanvas implements ui.Canvas {
 typedef _Scenario = void Function(UiCanvasContext ctx, void Function() mark);
 
 /// What a context did in a scenario.
-final class _Observed {
-  _Observed(this.calls, this.steps, this.held);
-
+final class _Observed(
   /// The native draw calls of the recordings, with their arguments.
-  final List<String> calls;
+  final List<String> calls,
 
   /// The pending circles and the pictures at each mark.
-  final List<(int, int)> steps;
+  final List<(int, int)> steps,
 
   /// Whether the batch held a run at each mark.
-  final List<bool> held;
-}
+  final List<bool> held,
+);
 
 _Observed _observe(_Scenario scenario, {required bool hold}) {
   final calls = <String>[];

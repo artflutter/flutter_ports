@@ -170,13 +170,14 @@ void _onClick(Object? e, LegendItem legendItem, types.LegendElement legend) {
 
 /// controller.polarArea.js:4 `PolarAreaController extends
 /// DatasetController`.
-class PolarAreaController extends DatasetController {
+class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   /// controller.polarArea.js:90 `constructor(chart, datasetIndex)`.
   ///
-  /// [newTarget] is `new.target` (Chart.js ADR 0020, section 4). The fields
+  /// `newTarget` is `new.target` (Chart.js ADR 0020, section 4). The fields
   /// [innerRadius] and [outerRadius] start as Dart `null`, the `undefined`
   /// of :93-94.
-  PolarAreaController(super.chart, super.datasetIndex, [super.newTarget]);
+  this;
 
   /// Native support for the explicit data-only lifecycle.
   @override

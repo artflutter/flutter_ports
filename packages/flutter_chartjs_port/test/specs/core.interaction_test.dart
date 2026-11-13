@@ -57,23 +57,16 @@ import '../support/jasmine.dart';
 
 /// The event object `{type: 'click', chart, native: true, x, y}` of the
 /// spec.
-final class _Event implements types.ChartEvent {
-  _Event(this.chart, this.x, this.y);
-
+final class _Event(
+  @override final types.Chart? chart,
+  @override final double? x,
+  @override final double? y,
+) implements types.ChartEvent {
   @override
   String get type => 'click';
 
   @override
   NativeEvent? get native => null;
-
-  @override
-  final types.Chart? chart;
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
 }
 
 /// `items.map(item => item.element)`.

@@ -5,15 +5,15 @@
 // #docregion graphic-data
 
 /// A sale of a week: the input of the time series chart is a custom class.
-class TimeSeriesSales {
-  /// Creates a sale.
-  TimeSeriesSales(this.time, this.sales);
-
+class TimeSeriesSales(
   /// The start of the week.
-  final DateTime time;
+  final DateTime time,
 
   /// The number of sales.
-  final int sales;
+  final int sales,
+) {
+  /// Creates a sale.
+  this;
 }
 
 /// The sales of four weeks, `timeSeriesSales` of Graphic.

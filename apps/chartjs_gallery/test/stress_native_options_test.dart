@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 // Native behavior plus an eligibility counter, with no state-changing hooks.
-class _ProbePoint extends PointElement {
+class _ProbePoint() extends PointElement {
   int nativeReads = 0;
 
   @override

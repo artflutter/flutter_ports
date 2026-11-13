@@ -198,18 +198,16 @@ bool _strictEquals(Object? a, Object? b) {
 ///
 /// The layout box of the chart legend. `layouts.addBox` gives it the default
 /// layer, which calls [draw] (core.layouts.js:301-308).
-class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
+class Legend(
+  ({types.Chart chart, Object? options, CanvasRenderingContext2D? ctx}) config,
+) extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:46 `constructor(config)`.
   ///
   /// @param {{ ctx: any; options: any; chart: any; }} config
   ///
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
-  Legend(
-    ({types.Chart chart, Object? options, CanvasRenderingContext2D? ctx})
-    config,
-  ) : chart = config.chart,
-      ctx = config.ctx {
+  this {
     super.options = config.options;
   }
 
@@ -251,10 +249,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// `types.Chart`, so the constructor takes one (Chart.js ADR 0038,
   /// section 4).
   @override
-  final types.Chart chart;
+  final types.Chart chart = config.chart;
 
   /// plugin.legend.js:64 `ctx`. Dart `null` stands for JS `undefined`.
-  CanvasRenderingContext2D? ctx;
+  CanvasRenderingContext2D? ctx = config.ctx;
 
   /// plugin.legend.js:65 `legendItems`. Dart `null` stands for JS
   /// `undefined`, the value before the first [buildLabels].
@@ -1449,23 +1447,20 @@ _IndexedItemStyles? _indexedItemStyles(
 /// the items of [count] labels runs no user code, and the source of the styles
 /// of a build at a later read (Chart.js ADR 0099).
 // DIVERGES(chartjs): adapt-hidden-legend-items, the state of one mark.
-final class _IndexedItemStyles {
-  _IndexedItemStyles(this.controller, this.styles, this.count)
-    : arcCount = controller.cachedMeta.data.length;
-
+final class _IndexedItemStyles(
   /// The controller of dataset 0 at the mark.
-  final DatasetController controller;
+  final DatasetController controller,
 
   /// The resolver plan at the mark.
-  final IndexedElementStyles styles;
+  final IndexedElementStyles styles,
 
   /// The count of the labels at the mark.
-  final int count;
-
+  final int count,
+) {
   /// The count of the arcs at the mark. A build at a read gives the item of a
   /// label at this index or above the style of the dataset context, as the
   /// build of the mark does, also when a next update has rebuilt the arcs.
-  final int arcCount;
+  final int arcCount = controller.cachedMeta.data.length;
 
   /// Whether a build at a read with [count] labels can run: [controller] is
   /// still the controller of dataset 0, and the styles cover these items.
@@ -1600,53 +1595,22 @@ bool _isListened(String type, LegendOptions opts) {
 
 /// The draw options of a legend point style (:326-331), the object literal
 /// of the `drawPointLegend` call.
-final class _LegendPointOptions implements DrawPointOptions {
-  _LegendPointOptions({
-    required this.radius,
-    required this.pointStyle,
-    required this.rotation,
-    required this.borderWidth,
-  });
-
-  @override
-  final double radius;
-
-  @override
-  final Object? pointStyle;
-
-  @override
-  final double? rotation;
-
-  @override
-  final double borderWidth;
-}
+final class _LegendPointOptions({
+  @override required final double radius,
+  @override required final Object? pointStyle,
+  @override required final double? rotation,
+  @override required final double borderWidth,
+}) implements DrawPointOptions;
 
 /// The rounded box of a legend item (:347-353), the object literal
 /// `{x, y, w, h, radius}` of the `addRoundedRectPath` call.
-final class _RoundedRect implements RoundedRect {
-  _RoundedRect({
-    required this.x,
-    required this.y,
-    required this.w,
-    required this.h,
-    required this.radius,
-  });
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final double w;
-
-  @override
-  final double h;
-
-  @override
-  final TRBLCorners radius;
-}
+final class _RoundedRect({
+  @override required final double x,
+  @override required final double y,
+  @override required final double w,
+  @override required final double h,
+  @override required final TRBLCorners radius,
+}) implements RoundedRect;
 
 /// The `config` of `new Legend(config)` from the arguments [args] of the
 /// `construct` closure of [Legend.jsClass]: the reads `config.chart`,

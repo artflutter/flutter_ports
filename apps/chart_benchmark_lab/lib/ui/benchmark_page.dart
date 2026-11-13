@@ -31,17 +31,20 @@ const String _labVersion = String.fromEnvironment(
 const String _labBuild = String.fromEnvironment('FLUTTER_BUILD_NUMBER');
 
 /// Interactive, single-engine benchmark dashboard.
-class BenchmarkPage extends StatefulWidget {
-  /// Creates the test bed.
-  const BenchmarkPage({this.onControllerReady, super.key});
-
+class const BenchmarkPage({
   /// Allows an integration driver to use the same session controls as the UI.
-  final ValueChanged<BenchmarkController>? onControllerReady;
+  final ValueChanged<BenchmarkController>? onControllerReady,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the test bed.
+  this;
+
   @override
   State<BenchmarkPage> createState() => _BenchmarkPageState();
 }
 
-class _BenchmarkPageState extends State<BenchmarkPage>
+class _BenchmarkPageState()
+    extends State<BenchmarkPage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final BenchmarkController controller;
   static const _window = MethodChannel(
@@ -1323,11 +1326,8 @@ bool _isNarrow(BuildContext context) => _PageValue.of<bool>(context);
 
 /// One value of the page shape. A reader rebuilds when the value changes, and
 /// not on each step of a resize.
-class _PageValue<T> extends InheritedWidget {
-  const _PageValue({required this.value, required super.child});
-
-  final T value;
-
+class const _PageValue<T>({required final T value, required super.child})
+    extends InheritedWidget {
   static T of<T>(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_PageValue<T>>()!.value;
 
@@ -1337,23 +1337,17 @@ class _PageValue<T> extends InheritedWidget {
 
 /// Builds a section of the page, and rebuilds it only when [select] gives
 /// another value. [select] must cover each value that [builder] reads.
-class _Selected<T> extends StatefulWidget {
-  const _Selected({
-    required this.listenable,
-    required this.select,
-    required this.builder,
-    super.key,
-  });
-
-  final Listenable listenable;
-  final T Function() select;
-  final WidgetBuilder builder;
-
+class const _Selected<T>({
+  required final Listenable listenable,
+  required final T Function() select,
+  required final WidgetBuilder builder,
+  super.key,
+}) extends StatefulWidget {
   @override
   State<_Selected<T>> createState() => _SelectedState<T>();
 }
 
-class _SelectedState<T> extends State<_Selected<T>> {
+class _SelectedState<T>() extends State<_Selected<T>> {
   late T _value;
 
   @override
@@ -1459,20 +1453,16 @@ Widget _toggle(
   onChanged: enabled ? onChanged : null,
 );
 
-class _DatasetSlider extends StatefulWidget {
-  const _DatasetSlider({
-    required this.value,
-    required this.enabled,
-    required this.onChanged,
-  });
-  final int value;
-  final bool enabled;
-  final ValueChanged<int> onChanged;
+class const _DatasetSlider({
+  required final int value,
+  required final bool enabled,
+  required final ValueChanged<int> onChanged,
+}) extends StatefulWidget {
   @override
   State<_DatasetSlider> createState() => _DatasetSliderState();
 }
 
-class _DatasetSliderState extends State<_DatasetSlider> {
+class _DatasetSliderState() extends State<_DatasetSlider> {
   late int value = widget.value;
   @override
   void didUpdateWidget(covariant _DatasetSlider oldWidget) {
@@ -1537,11 +1527,11 @@ class _DatasetSliderState extends State<_DatasetSlider> {
   );
 }
 
-class _LabelsPainter extends CustomPainter {
-  _LabelsPainter(this.count, this.step, {required this.rotate});
-  final bool rotate;
-  final int count;
-  final int step;
+class _LabelsPainter(
+  final int count,
+  final int step, {
+  required final bool rotate,
+}) extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final columns = math.max(

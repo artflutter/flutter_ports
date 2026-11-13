@@ -10,26 +10,23 @@ const _winnerRow = Color(0xfff0fdf4);
 ///
 /// A click on a column header sorts by that column. The first click puts the
 /// best value first.
-class ResultsTable extends StatefulWidget {
-  /// Creates the table for [results].
-  const ResultsTable({
-    required this.results,
-    required this.currentKey,
-    super.key,
-  });
-
+class const ResultsTable({
   /// The captures to compare.
-  final List<BenchmarkResult> results;
+  required final List<BenchmarkResult> results,
 
   /// The comparison key of the current window. A row with another key comes
   /// from another size, pixel ratio or display rate.
-  final String currentKey;
+  required final String currentKey,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the table for [results].
+  this;
 
   @override
   State<ResultsTable> createState() => _ResultsTableState();
 }
 
-class _ResultsTableState extends State<ResultsTable> {
+class _ResultsTableState() extends State<ResultsTable> {
   int _column = 0;
   bool _ascending = true;
   late List<RankedResult> _ranked = rankResults(widget.results);
@@ -291,12 +288,8 @@ class _ResultsTableState extends State<ResultsTable> {
 
 /// The share of the best FPS, as a bar on a track. It draws two shapes, with no
 /// clip: the table stays on screen in each frame of a run.
-class _FpsBarPainter extends CustomPainter {
-  const _FpsBarPainter(this.share, this.color);
-
-  final double share;
-  final Color color;
-
+class const _FpsBarPainter(final double share, final Color color)
+    extends CustomPainter {
   static const _radius = Radius.circular(2);
 
   @override

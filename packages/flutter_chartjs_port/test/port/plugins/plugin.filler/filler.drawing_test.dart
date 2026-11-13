@@ -20,17 +20,12 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 /// A chart area.
-final class _Area implements types.ChartArea {
-  const _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-  @override
-  final double top;
-  @override
-  final double right;
-  @override
-  final double bottom;
+final class const _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements types.ChartArea {
   @override
   double get width => right - left;
   @override
@@ -38,14 +33,11 @@ final class _Area implements types.ChartArea {
 }
 
 /// A cartesian index scale: `getPixelForValue(v)` is `10 * v`.
-final class _IndexScale implements types.Scale {
-  _IndexScale({required this.horizontal, required this.min, required this.max});
-
-  final bool horizontal;
-  @override
-  final double min;
-  @override
-  final double max;
+final class _IndexScale({
+  required final bool horizontal,
+  @override required final double min,
+  @override required final double max,
+}) implements types.Scale {
   @override
   bool isHorizontal() => horizontal;
   @override
@@ -57,7 +49,7 @@ final class _IndexScale implements types.Scale {
 }
 
 /// A radial scale that the code tests by its type only.
-final class _RadialScale implements types.RadialLinearScale {
+final class _RadialScale() implements types.RadialLinearScale {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

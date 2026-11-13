@@ -81,7 +81,7 @@ extension type ChartTooltipItem(Object _item) {
 }
 
 /// The keys of a tooltip item that [ChartTooltipItem] reads.
-enum _TooltipKey {
+enum _TooltipKey() {
   chart,
   element,
   label,

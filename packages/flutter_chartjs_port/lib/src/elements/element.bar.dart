@@ -374,7 +374,8 @@ _Rect _inflateRect(_Rect rect, double amount, [_Rect? refRect]) {
 ///
 /// The class implements `types.VisualElementRange`, because upstream has a
 /// [getRange] (element.bar.js:223, Chart.js ADR 0020, section 9).
-class BarElement extends Element
+class BarElement([AnyObject? cfg])
+    extends Element
     implements types.VisualElementRange, BulkBarElement {
   /// element.bar.js:164 `constructor(cfg)`.
   ///
@@ -383,7 +384,7 @@ class BarElement extends Element
   /// each key of [cfg] through `operator []=`, as `Object.assign(this,
   /// cfg)` does (:174-176). A Map is always truthy, so `if (cfg)` is a test
   /// for `null`.
-  BarElement([AnyObject? cfg]) {
+  this {
     if (cfg != null) assign(cfg);
   }
 
@@ -934,60 +935,30 @@ class BarElement extends Element
 
 /// element.bar.js:65-70 and :93-98 the corner literal
 /// `{topLeft, topRight, bottomLeft, bottomRight}`.
-final class _Corners implements TRBLCorners {
-  const _Corners({
-    required this.topLeft,
-    required this.topRight,
-    required this.bottomLeft,
-    required this.bottomRight,
-  });
-
-  @override
-  final double topLeft;
-
-  @override
-  final double topRight;
-
-  @override
-  final double bottomLeft;
-
-  @override
-  final double bottomRight;
-}
+final class const _Corners({
+  @override required final double topLeft,
+  @override required final double topRight,
+  @override required final double bottomLeft,
+  @override required final double bottomRight,
+}) implements TRBLCorners;
 
 /// element.bar.js:81-99 and :132-138 the rectangle literal
 /// `{x, y, w, h, radius}` of `boundingRects` and `inflateRect`.
-final class _Rect implements RoundedRect {
-  const _Rect({
-    required this.x,
-    required this.y,
-    required this.w,
-    required this.h,
-    required this.radius,
-  });
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final double w;
-
-  @override
-  final double h;
+final class const _Rect({
+  @override required final double x,
+  @override required final double y,
+  @override required final double w,
+  @override required final double h,
 
   /// The corner radii. `addRoundedRectPath` reads them as a [TRBLCorners].
-  @override
-  final TRBLCorners radius;
-}
+  @override required final TRBLCorners radius,
+}) implements RoundedRect;
 
 /// The property `base` of a bar: the typed field of [BarElement]. An
 /// element of another class takes the access by name.
-final class BarBaseProp extends AnimatedBy<BaseAnimation> {
+final class const BarBaseProp() extends AnimatedBy<BaseAnimation> {
   /// The property `base`.
-  const BarBaseProp() : super('base');
+  this : super('base');
 
   @override
   void write(Element element, double value) {
@@ -1014,9 +985,9 @@ final class BarBaseProp extends AnimatedBy<BaseAnimation> {
 
 /// The property `width` of a bar: the typed field of [BarElement]. An
 /// element of another class takes the access by name.
-final class BarWidthProp extends AnimatedBy<WidthAnimation> {
+final class const BarWidthProp() extends AnimatedBy<WidthAnimation> {
   /// The property `width`.
-  const BarWidthProp() : super('width');
+  this : super('width');
 
   @override
   void write(Element element, double value) {
@@ -1043,9 +1014,9 @@ final class BarWidthProp extends AnimatedBy<WidthAnimation> {
 
 /// The property `height` of a bar: the typed field of [BarElement]. An
 /// element of another class takes the access by name.
-final class BarHeightProp extends AnimatedBy<HeightAnimation> {
+final class const BarHeightProp() extends AnimatedBy<HeightAnimation> {
   /// The property `height`.
-  const BarHeightProp() : super('height');
+  this : super('height');
 
   @override
   void write(Element element, double value) {

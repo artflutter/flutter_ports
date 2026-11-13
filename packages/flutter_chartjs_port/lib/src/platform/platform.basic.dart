@@ -24,9 +24,9 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// In the port, `detectPlatform` gives it for a canvas that no chart host
 /// shows (`lib/src/platform/index.dart`): a canvas that draws without a
 /// widget, the counterpart of an `OffscreenCanvas`.
-class BasicPlatform extends BasePlatform {
+class BasicPlatform() extends BasePlatform {
   /// platform.basic.js:13 the implicit constructor.
-  BasicPlatform();
+  this;
 
   /// platform.basic.js:13 `class BasicPlatform` as a value (Chart.js ADR
   /// 0020, section 3).

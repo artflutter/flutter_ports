@@ -92,7 +92,7 @@ void replayRoundRectAsUpstream(
 /// of `addRoundedRectPath` ([replayRoundRectAsUpstream]), so that its
 /// records compare with an upstream run (differences.md
 /// `adapt-rounded-rect-path`).
-final class UpstreamRoundedRectContext extends MockContext {
+final class UpstreamRoundedRectContext() extends MockContext {
   @override
   void roundRect(double x, double y, double w, double h, [Object? radii]) =>
       replayRoundRectAsUpstream(this, x, y, w, h, radii);

@@ -189,13 +189,13 @@ List<Tick> _generateTicks(
 double? _nullForNaN(double value) => value.isNaN ? null : value;
 
 /// scale.logarithmic.js:74 `LogarithmicScale`.
-class LogarithmicScale extends Scale {
+class LogarithmicScale(super.cfg) extends Scale {
   /// scale.logarithmic.js:91 `constructor(cfg)`.
   ///
-  /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new]. The
+  /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new]. The
   /// fields `start`, `end`, `_startValue` and `_valueRange` get their start
   /// values in their declarations (scale.logarithmic.js:94-100).
-  LogarithmicScale(super.cfg);
+  this;
 
   // scale.logarithmic.js:76 `static id = 'logarithmic'`. Scale has the
   // instance field `id`. Thus the value is only in the statics of jsClass.

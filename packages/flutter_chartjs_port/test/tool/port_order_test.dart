@@ -57,8 +57,8 @@ String _dartPath(String path) =>
 /// A repository with a Chart.js pin, a package and its `parity.md`. The
 /// modules `helpers.core`, `helpers/index`, `types/index.d.ts` and
 /// `core.element` are done.
-final class _Repo {
-  _Repo() : tree = FileTree() {
+final class _Repo() {
+  this : tree = FileTree() {
     tree
       ..write('REUSE.toml', ['version = 1'])
       ..write('$_package/pubspec.yaml', ['name: flutter_chartjs_port'])

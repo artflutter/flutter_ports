@@ -21,9 +21,9 @@ void main() {
 }
 
 /// The example app: one bar chart that follows the platform brightness.
-class ExampleApp extends StatelessWidget {
+class const ExampleApp({super.key}) extends StatelessWidget {
   /// Creates the example app.
-  const ExampleApp({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +37,15 @@ class ExampleApp extends StatelessWidget {
 }
 
 /// A page with a bar chart and a button that changes its data.
-class VotesPage extends StatefulWidget {
+class const VotesPage({super.key}) extends StatefulWidget {
   /// Creates the page.
-  const VotesPage({super.key});
+  this;
 
   @override
   State<VotesPage> createState() => _VotesPageState();
 }
 
-class _VotesPageState extends State<VotesPage> {
+class _VotesPageState() extends State<VotesPage> {
   final Random _random = Random();
 
   /// The data of the chart. The chart reads this List with no copy.

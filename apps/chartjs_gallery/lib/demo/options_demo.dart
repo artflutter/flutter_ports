@@ -75,9 +75,9 @@ final List<({String label, Object? value})> _paddings = [
 /// The first card shows the three states of an option key (Chart.js ADR
 /// 0043): an absent key and the `undefined` sentinel go on to the next
 /// scope, and JS `null` is a value.
-class OptionsDemo extends StatelessWidget {
+class const OptionsDemo({super.key}) extends StatelessWidget {
   /// Creates the options tab.
-  const OptionsDemo({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) {
@@ -238,12 +238,10 @@ class OptionsDemo extends StatelessWidget {
 }
 
 /// One `toFont` result: the merged font, its line height and a sample text.
-class _FontRow extends StatelessWidget {
-  const _FontRow({required this.label, required this.font});
-
-  final String label;
-  final ChartTextStyle font;
-
+class const _FontRow({
+  required final String label,
+  required final ChartTextStyle font,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

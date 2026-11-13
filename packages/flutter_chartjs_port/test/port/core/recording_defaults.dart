@@ -32,7 +32,7 @@ import '../../support/mode_json.dart';
 /// the calls of one `apply*Defaults` function. The tests compare
 /// the recorded calls with the calls that the upstream functions make on a
 /// recording object in Node.js v24.12.0 on x64.
-final class RecordingDefaults implements Defaults {
+final class RecordingDefaults() implements Defaults {
   /// The recorded calls, in call order.
   final List<List<Object?>> calls = [];
 

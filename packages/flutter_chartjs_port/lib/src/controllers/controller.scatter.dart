@@ -97,12 +97,10 @@ void _setProperty(types.PropertyAccess element, String key, Object? value) {
 /// [_setProperty], in the same order. The writes reach the point at once,
 /// as upstream: the scriptable options of the user that run between two
 /// writes see the earlier writes.
-final class _PointWrites {
-  _PointWrites({required this.direct});
-
+final class _PointWrites({
   /// `directUpdate` (:121).
-  final bool direct;
-
+  required final bool direct,
+}) {
   /// The new object of a mode that is not direct, else Dart `null`.
   PointProperties? object;
 
@@ -227,11 +225,12 @@ final class _PointWrites {
 typedef _OverflowPass = ({Object? overflow, NativePointContextReader contexts});
 
 /// controller.scatter.js:6 `ScatterController extends DatasetController`.
-class ScatterController extends DatasetController {
+class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   /// `new ScatterController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. [newTarget] is `new.target` (Chart.js ADR
+  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
   /// 0020, section 4).
-  ScatterController(super.chart, super.datasetIndex, [super.newTarget]);
+  this;
 
   /// Native support for the explicit data-only lifecycle.
   @override

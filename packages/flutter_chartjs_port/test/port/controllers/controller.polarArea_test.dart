@@ -154,9 +154,11 @@ Object? _noLegend(Chart chart) {
 /// The test subclass of Chart.js ADR 0028, section 5: the polar area
 /// controller with `enableOptionSharing = true` (`PolarAreaSharing` of the
 /// generator).
-final class _SharingController extends PolarAreaController {
-  _SharingController(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _SharingController(
+  super.chart,
+  super.datasetIndex, [
+  super.newTarget,
+]) extends PolarAreaController {
   @override
   void initialize() {
     enableOptionSharing = true;

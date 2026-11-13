@@ -251,7 +251,7 @@ ChartOptionsScope? compileChartTheme({
 
 /// The scopes of one compiled theme. Each scope comes into its parent at its
 /// first use, so each scope gets its keys in the order of their first write.
-final class _ThemeTree {
+final class _ThemeTree() {
   /// The root scope.
   late final ChartOptionsScope root = add(ChartOptionsScope());
 
@@ -439,12 +439,14 @@ ChartTextStyle _fontWithout(
 ///
 /// A write and a change of the length throw a [TypeError], as they do on a
 /// frozen array in strict mode.
-final class _FrozenList extends ListBase<Object?> implements JsFreezable {
+final class _FrozenList.of(List<ui.Color> colors)
+    extends ListBase<Object?>
+    implements JsFreezable {
   /// A frozen copy of [colors].
-  _FrozenList.of(List<ui.Color> colors) : _list = [...colors];
+  this;
 
   /// The items.
-  final List<Object?> _list;
+  final List<Object?> _list = [...colors];
 
   @override
   bool get isFrozen => true;

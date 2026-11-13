@@ -11,15 +11,8 @@ import 'package:material_ui/material_ui.dart';
 
 /// A point `{x, y}` whose control points the curve helpers write, as the
 /// port tests of `helpers.curve` pass it.
-final class _DemoPoint implements SplinePoint {
-  _DemoPoint(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _DemoPoint(@override final double x, @override final double y)
+    implements SplinePoint {
   @override
   bool? get skip => null;
 
@@ -37,21 +30,12 @@ final class _DemoPoint implements SplinePoint {
 }
 
 /// The chart area `{left, top, right, bottom}` that `capBezierPoints` uses.
-final class _Area implements ChartArea {
-  const _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class const _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -79,15 +63,15 @@ const List<Offset> _initialPoints = [
 /// `splineCurveMonotone`, the `cubicInterpolationMode: 'monotone'` of line
 /// charts. The canvas draws the curve with `cubicTo` from `cp2` of each
 /// point to `cp1` of the next, as `helpers.canvas` `_bezierCurveTo` does.
-class SplineDemo extends StatefulWidget {
+class const SplineDemo({super.key}) extends StatefulWidget {
   /// Creates the splines tab.
-  const SplineDemo({super.key});
+  this;
 
   @override
   State<SplineDemo> createState() => _SplineDemoState();
 }
 
-class _SplineDemoState extends State<SplineDemo> {
+class _SplineDemoState() extends State<SplineDemo> {
   final List<Offset> _points = [..._initialPoints];
   bool _monotone = false;
   bool _cap = true;
@@ -334,23 +318,14 @@ class _SplineDemoState extends State<SplineDemo> {
   }
 }
 
-class _SplinePainter extends CustomPainter {
-  _SplinePainter({
-    required this.points,
-    required this.active,
-    required this.showControls,
-    required this.curve,
-    required this.polyline,
-    required this.control,
-  });
-
-  final List<_DemoPoint> points;
-  final int? active;
-  final bool showControls;
-  final Color curve;
-  final Color polyline;
-  final Color control;
-
+class _SplinePainter({
+  required final List<_DemoPoint> points,
+  required final int? active,
+  required final bool showControls,
+  required final Color curve,
+  required final Color polyline,
+  required final Color control,
+}) extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (points.isEmpty) return;
@@ -437,9 +412,8 @@ class _SplinePainter extends CustomPainter {
 /// hit it takes the pointer at once, before the page scroll or the pan slop
 /// can claim it, and reports each move to [onUpdate]. On a miss it leaves
 /// the pointer to the other recognizers, so that the page still scrolls.
-class _PointDragRecognizer extends OneSequenceGestureRecognizer {
-  _PointDragRecognizer({super.debugOwner});
-
+class _PointDragRecognizer({super.debugOwner})
+    extends OneSequenceGestureRecognizer {
   /// Whether the local position hits a point; `true` starts the drag.
   bool Function(Offset localPosition)? onDown;
 

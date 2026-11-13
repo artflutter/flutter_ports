@@ -5,7 +5,7 @@
 ///
 /// A context that does not implement it gets the Canvas 2D calls of
 /// `PointElement.draw` for each marker.
-abstract interface class CircleRunCanvas {
+abstract interface class CircleRunCanvas() {
   /// Starts a run of circles with the radius [radius] in user space, in the
   /// current fill style and, for [stroke], the current stroke style and line
   /// width. It gives the same draws as `beginPath`, `arc`, `closePath`, `fill`

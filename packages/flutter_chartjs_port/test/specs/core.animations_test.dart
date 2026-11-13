@@ -27,7 +27,7 @@ import '../support/jasmine.dart';
 
 /// The chart objects of the spec: `{}` and `{draw: function() {}, options:
 /// {}}`. `draw()` does nothing. The other members of `types.Chart` throw.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   final Map<String, Object?> options = {};
 

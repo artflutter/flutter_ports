@@ -51,9 +51,9 @@ canvasHostDemoTabs = [
 /// controllers of phase 7 (Chart.js ADR 0031). The Core tab, the Axes tab
 /// and the `axes` mode of the Stress tab run a `LineController` chart, the
 /// last two on the scales of phase 6.
-class CanvasHostDemoPage extends StatelessWidget {
+class const CanvasHostDemoPage({super.key}) extends StatelessWidget {
   /// Creates the demo page.
-  const CanvasHostDemoPage({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) {

@@ -62,21 +62,12 @@ import 'scale_reference.dart';
 List<String> _log = [];
 
 /// A rectangle `{left, top, right, bottom, width, height}`.
-final class _Area implements types.ChartArea {
-  _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements types.ChartArea {
   @override
   double get width => right - left;
 
@@ -85,12 +76,8 @@ final class _Area implements types.ChartArea {
 }
 
 /// The controller of a fake meta: `getMinMax` gives a fixed range.
-final class _Controller implements types.DatasetController {
-  _Controller(this.min, this.max);
-
-  final double min;
-  final double max;
-
+final class _Controller(final double min, final double max)
+    implements types.DatasetController {
   @override
   ({double min, double max}) getMinMax(types.Scale scale, [bool? canStack]) {
     _log.add('getMinMax:${(scale as Scale).id}:$canStack');
@@ -102,30 +89,24 @@ final class _Controller implements types.DatasetController {
 }
 
 /// A fake meta `{type, xAxisID, yAxisID, controller}`.
-final class _Meta implements types.ChartMeta {
-  _Meta(Map<String, Object?> spec)
-    : type = spec['type']! as String,
-      xAxisID = spec['xAxisID'] as String?,
-      yAxisID = spec['yAxisID'] as String?,
-      controller = _Controller(
-        (spec['min']! as num).toDouble(),
-        (spec['max']! as num).toDouble(),
-      );
+final class _Meta(Map<String, Object?> spec) implements types.ChartMeta {
+  @override
+  final String type = spec['type']! as String;
 
   @override
-  final String type;
+  final String? xAxisID = spec['xAxisID'] as String?;
 
   @override
-  final String? xAxisID;
-
-  @override
-  final String? yAxisID;
+  final String? yAxisID = spec['yAxisID'] as String?;
 
   @override
   String? get rAxisID => null;
 
   @override
-  final types.DatasetController controller;
+  final types.DatasetController controller = _Controller(
+    (spec['min']! as num).toDouble(),
+    (spec['max']! as num).toDouble(),
+  );
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -133,11 +114,7 @@ final class _Meta implements types.ChartMeta {
 
 /// A scale of `chart.scales` for an object position:
 /// `getPixelForValue(v) = offset + ToNumber(v)`.
-final class _OtherScale implements types.Scale {
-  _OtherScale(this.offset);
-
-  final double offset;
-
+final class _OtherScale(final double offset) implements types.Scale {
   @override
   double getPixelForValue(Object? value, [double? index]) =>
       offset + jsToNumber(value);
@@ -147,49 +124,41 @@ final class _OtherScale implements types.Scale {
 }
 
 /// The fake chart of a case.
-final class _Chart implements types.Chart {
-  _Chart(Map<String, Object?> spec)
-    : width = _number(spec['width']),
-      height = _number(spec['height']),
-      chartArea = _areaOf(spec['chartArea']! as List<Object?>),
-      currentDevicePixelRatio = spec.containsKey('dpr')
-          ? _number(spec['dpr'])
-          : 1,
-      data = _copy(spec['data'] ?? <String, Object?>{})! as AnyObject,
-      options = <String, Object?>{'font': defaults['font']},
-      scales = {
-        for (final MapEntry(:key, :value)
-            in ((spec['otherScales'] ?? <String, Object?>{}) as AnyObject)
-                .entries)
-          key: _OtherScale(_number(value)),
-      },
-      _metas = [
-        for (final meta in (spec['metas'] ?? <Object?>[]) as List<Object?>)
-          _Meta(meta! as AnyObject),
-      ];
+final class _Chart(Map<String, Object?> spec) implements types.Chart {
+  this : options = <String, Object?>{'font': defaults['font']};
 
   @override
-  double width;
+  double width = _number(spec['width']);
 
   @override
-  double height;
+  double height = _number(spec['height']);
 
   @override
-  types.ChartArea chartArea;
+  types.ChartArea chartArea = _areaOf(spec['chartArea']! as List<Object?>);
 
   @override
-  double currentDevicePixelRatio;
+  double currentDevicePixelRatio = spec.containsKey('dpr')
+      ? _number(spec['dpr'])
+      : 1;
 
   @override
-  final AnyObject data;
+  final AnyObject data =
+      _copy(spec['data'] ?? <String, Object?>{})! as AnyObject;
 
   @override
   final AnyObject options;
 
   @override
-  final Map<String, types.Scale> scales;
+  final Map<String, types.Scale> scales = {
+    for (final MapEntry(:key, :value)
+        in ((spec['otherScales'] ?? <String, Object?>{}) as AnyObject).entries)
+      key: _OtherScale(_number(value)),
+  };
 
-  final List<types.ChartMeta> _metas;
+  final List<types.ChartMeta> _metas = [
+    for (final meta in (spec['metas'] ?? <Object?>[]) as List<Object?>)
+      _Meta(meta! as AnyObject),
+  ];
 
   ContextObject? _context;
 
@@ -212,11 +181,7 @@ final class _Chart implements types.Chart {
 
 /// The test subclass of Scale: ticks from the spec, data limits and a
 /// linear mapping.
-final class _TestScale extends Scale {
-  _TestScale(super.cfg, this.spec);
-
-  final AnyObject spec;
-
+final class _TestScale(super.cfg, final AnyObject spec) extends Scale {
   @override
   void determineDataLimits() {
     _log.add('determineDataLimits');
@@ -560,11 +525,7 @@ AnyObject _cfg(_Chart chart, [CanvasContextHolder? holder]) => {
 };
 
 /// Holds a context for [_cfg].
-final class CanvasContextHolder {
-  CanvasContextHolder(this.ctx);
-
-  final MockContext ctx;
-}
+final class CanvasContextHolder(final MockContext ctx);
 
 /// A chart of 500 x 400 without metas.
 _Chart _plainChart() => _Chart(<String, Object?>{
@@ -575,7 +536,7 @@ _Chart _plainChart() => _Chart(<String, Object?>{
 
 /// A scale of `chart.scales` that records the values of
 /// `getPixelForValue`.
-final class _RecordingScale implements types.Scale {
+final class _RecordingScale() implements types.Scale {
   /// The values of the calls, in order, unchanged.
   final List<Object?> values = [];
 
@@ -590,9 +551,7 @@ final class _RecordingScale implements types.Scale {
 }
 
 /// A scale subclass that overrides `draw` and calls `super.draw`.
-final class _DrawingScale extends Scale {
-  _DrawingScale(super.cfg);
-
+final class _DrawingScale(super.cfg) extends Scale {
   int draws = 0;
 
   @override
@@ -603,9 +562,7 @@ final class _DrawingScale extends Scale {
 }
 
 /// A scale subclass that inherits `draw` through another subclass.
-final class _SubScale extends _TestScale {
-  _SubScale(super.cfg, super.spec);
-}
+final class _SubScale(super.cfg, super.spec) extends _TestScale;
 
 void main() {
   setUpDefaultsRestore();

@@ -35,21 +35,15 @@ import 'filler_target_reference.dart';
 // The fakes of the generator.
 
 /// The chart area of the description `d`.
-final class _Area implements types.ChartArea {
-  _Area(Map<String, Object?> d)
-    : left = _n(d['left']),
-      top = _n(d['top']),
-      right = _n(d['right']),
-      bottom = _n(d['bottom']);
-
+final class _Area(Map<String, Object?> d) implements types.ChartArea {
   @override
-  final double left;
+  final double left = _n(d['left']);
   @override
-  final double top;
+  final double top = _n(d['top']);
   @override
-  final double right;
+  final double right = _n(d['right']);
   @override
-  final double bottom;
+  final double bottom = _n(d['bottom']);
   @override
   double get width => right - left;
   @override
@@ -60,14 +54,11 @@ final class _Area implements types.ChartArea {
 double _n(Object? value) => (value! as num).toDouble();
 
 /// The fake chart: `getDatasetMeta`, `isDatasetVisible` and `chartArea`.
-final class _FakeChart implements types.Chart {
-  _FakeChart(this._visible, this.chartArea);
-
-  final List<bool> _visible;
+final class _FakeChart(
+  final List<bool> _visible,
+  @override final types.ChartArea? chartArea,
+) implements types.Chart {
   List<_FakeMeta> metas = const [];
-
-  @override
-  final types.ChartArea? chartArea;
 
   @override
   types.ChartMeta getDatasetMeta(num datasetIndex) =>
@@ -81,7 +72,7 @@ final class _FakeChart implements types.Chart {
 }
 
 /// The clip of a fake meta: `{disabled: true}`.
-final class _DisabledClip implements types.ChartMetaClip {
+final class _DisabledClip() implements types.ChartMetaClip {
   @override
   bool get disabled => true;
 
@@ -90,25 +81,13 @@ final class _DisabledClip implements types.ChartMetaClip {
 }
 
 /// The fake meta `{index, type, hidden, dataset, iScale, _clip}`.
-final class _FakeMeta implements types.ChartMeta {
-  _FakeMeta({
-    required this.index,
-    required this.type,
-    required this.hidden,
-    required this.dataset,
-    required this.iScale,
-  });
-
-  @override
-  final double index;
-  @override
-  final String type;
-  @override
-  final bool? hidden;
-  @override
-  types.Element? dataset;
-  @override
-  types.Scale? iScale;
+final class _FakeMeta({
+  @override required final double index,
+  @override required final String type,
+  @override required final bool? hidden,
+  @override required var types.Element? dataset,
+  @override required var types.Scale? iScale,
+}) implements types.ChartMeta {
   @override
   types.ChartMetaClip clip = _DisabledClip();
 
@@ -117,38 +96,29 @@ final class _FakeMeta implements types.ChartMeta {
 }
 
 /// The fake linear scale of the generator.
-final class _FakeLinearScale implements types.Scale {
-  _FakeLinearScale(Map<String, Object?> d, this._chart)
-    : _horizontal = d['horizontal']! as bool,
-      top = _n(d['top']),
-      bottom = _n(d['bottom']),
-      left = _n(d['left']),
-      right = _n(d['right']),
-      min = _n(d['min']),
-      max = _n(d['max']),
-      _baseValue = _n(d['baseValue']),
-      options = <String, Object?>{'reverse': d['reverse']};
-
-  final _FakeChart _chart;
-  final bool _horizontal;
-  final double _baseValue;
+final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
+    implements types.Scale {
+  final bool _horizontal = d['horizontal']! as bool;
+  final double _baseValue = _n(d['baseValue']);
 
   @override
   String get id => _horizontal ? 'x' : 'y';
   @override
-  final double top;
+  final double top = _n(d['top']);
   @override
-  final double bottom;
+  final double bottom = _n(d['bottom']);
   @override
-  final double left;
+  final double left = _n(d['left']);
   @override
-  final double right;
+  final double right = _n(d['right']);
   @override
-  final double min;
+  final double min = _n(d['min']);
   @override
-  final double max;
+  final double max = _n(d['max']);
   @override
-  final Map<String, Object?> options;
+  final Map<String, Object?> options = <String, Object?>{
+    'reverse': d['reverse'],
+  };
   @override
   types.Chart get chart => _chart;
   @override
@@ -171,31 +141,23 @@ final class _FakeLinearScale implements types.Scale {
 }
 
 /// The fake radial linear scale of the generator.
-final class _FakeRadialScale implements types.RadialLinearScale {
-  _FakeRadialScale(Map<String, Object?> d, this._chart)
-    : _n5 = _n(d['n']).toInt(),
-      min = _n(d['min']),
-      max = _n(d['max']),
-      _reverse = d['reverse']! as bool,
-      _baseValue = _n(d['baseValue']),
-      options = <String, Object?>{
-        'reverse': d['reverse'],
-        'grid': <String, Object?>{'circular': d['circular']},
-      };
-
-  final _FakeChart _chart;
-  final int _n5;
-  final bool _reverse;
-  final double _baseValue;
+final class _FakeRadialScale(Map<String, Object?> d, final _FakeChart _chart)
+    implements types.RadialLinearScale {
+  final int _n5 = _n(d['n']).toInt();
+  final bool _reverse = d['reverse']! as bool;
+  final double _baseValue = _n(d['baseValue']);
 
   @override
   String get id => 'r';
   @override
-  final double min;
+  final double min = _n(d['min']);
   @override
-  final double max;
+  final double max = _n(d['max']);
   @override
-  final Map<String, Object?> options;
+  final Map<String, Object?> options = <String, Object?>{
+    'reverse': d['reverse'],
+    'grid': <String, Object?>{'circular': d['circular']},
+  };
   @override
   types.Chart get chart => _chart;
   @override

@@ -31,9 +31,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/legend_item.dart';
 
-final class _ObservedList extends ListBase<Object?> {
-  _ObservedList(this.values);
-  final List<Object?> values;
+final class _ObservedList(final List<Object?> values)
+    extends ListBase<Object?> {
   int reads = 0;
   @override
   int get length {
@@ -53,8 +52,7 @@ final class _ObservedList extends ListBase<Object?> {
   void operator []=(int i, Object? value) => values[i] = value;
 }
 
-class _CustomLinear extends LinearScale {
-  _CustomLinear(super.cfg);
+class _CustomLinear(super.cfg) extends LinearScale {
   static final value = JsClass(
     'DataCustomLinear',
     superclass: LinearScale.jsClass,
@@ -64,7 +62,7 @@ class _CustomLinear extends LinearScale {
 }
 
 /// A point class that the typed lowering does not register.
-final class _OtherPoint implements TypedDataItem {
+final class _OtherPoint() implements TypedDataItem {
   @override
   Object get x => 1.0;
   @override
@@ -75,24 +73,23 @@ final class _OtherPoint implements TypedDataItem {
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _Event implements types.ChartEvent {
-  _Event(this.x, this.y)
-    : native = NativeEvent(type: 'mousemove', offsetX: x!, offsetY: y!);
+final class _Event(@override final double? x, @override final double? y)
+    implements types.ChartEvent {
   @override
   String get type => 'mousemove';
   @override
-  final double? x;
-  @override
-  final double? y;
-  @override
-  final NativeEvent native;
+  final NativeEvent native = NativeEvent(
+    type: 'mousemove',
+    offsetX: x!,
+    offsetY: y!,
+  );
   @override
   types.Chart? get chart => null;
 }
 
 // The user subclasses of Chart.js ADR 0100: the same results, the full path.
-final class _UserPie extends PieController {
-  _UserPie(super.chart, super.datasetIndex, [super.newTarget]);
+final class _UserPie(super.chart, super.datasetIndex, [super.newTarget])
+    extends PieController {
   static final value = JsClass(
     'UserPie',
     superclass: PieController.jsClass,
@@ -104,27 +101,21 @@ final class _UserPie extends PieController {
   );
 }
 
-final class _UserArc extends ArcElement;
+final class _UserArc() extends ArcElement;
 
-final class _UserChart extends Chart {
-  _UserChart(super.item, super.userConfig);
-}
+final class _UserChart(super.item, super.userConfig) extends Chart;
 
-final class _UserConfig extends Config {
-  _UserConfig(super.config);
-}
+final class _UserConfig(super.config) extends Config;
 
-final class _ConfigChart extends Chart {
-  _ConfigChart(Object item, this.supplied) : super(item, <String, Object?>{});
-  final Config supplied;
+final class _ConfigChart(Object item, final Config supplied) extends Chart {
+  this : super(item, <String, Object?>{});
   @override
   Config get config => supplied;
 }
 
 /// A user Map: each read is user code.
-final class _UserMap extends MapBase<String, Object?> {
-  _UserMap(this.store);
-  final Map<String, Object?> store;
+final class _UserMap(final Map<String, Object?> store)
+    extends MapBase<String, Object?> {
   @override
   Object? operator [](Object? key) => store[key];
   @override
@@ -138,9 +129,7 @@ final class _UserMap extends MapBase<String, Object?> {
 }
 
 /// A user subclass of a color.
-final class _UserColor extends ui.Color {
-  const _UserColor(super.value);
-}
+final class const _UserColor(super.value) extends ui.Color;
 
 Map<String, Object?> config(
   String type, {

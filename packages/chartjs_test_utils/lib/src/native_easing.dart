@@ -15,12 +15,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
 /// A curve with the formula of the upstream effect [effect], or of the
 /// linear effect when `effects` has no such key, as
 /// `effects[cfg.easing] || effects.linear` gives (core.animation.js:36).
-final class EffectCurve extends Curve {
-  /// The curve of the effect [effect].
-  const EffectCurve(this.effect);
-
+final class const EffectCurve(
   /// The key of the upstream `effects`.
-  final String effect;
+  final String effect,
+) extends Curve {
+  /// The curve of the effect [effect].
+  this;
 
   /// The effect at [t], also at 0 and 1: `Curve.transform` gives [t] there,
   /// and an effect can give -0.

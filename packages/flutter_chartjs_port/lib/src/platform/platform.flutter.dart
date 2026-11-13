@@ -58,29 +58,25 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 final Expando<_ChartjsExpando> _expando = Expando(r'$chartjs');
 
 /// platform.dom.js:50 the value of `canvas[EXPANDO_KEY]`.
-final class _ChartjsExpando {
-  _ChartjsExpando(this.initial);
-
+final class _ChartjsExpando(
   /// platform.dom.js:51 `initial`.
-  final _Initial initial;
-}
+  final _Initial initial,
+);
 
 /// platform.dom.js:51-59 `initial`: the attributes and the inline style of
 /// the canvas before the chart changed them.
-final class _Initial {
-  _Initial({required this.height, required this.width, required this.style});
-
+final class _Initial({
   /// platform.dom.js:52 `height`: the `height` attribute. Dart `null` is
   /// the JS `null` of an absent attribute.
-  final String? height;
+  required final String? height,
 
   /// platform.dom.js:53 `width`: the `width` attribute, as [height].
-  final String? width;
+  required final String? width,
 
   /// platform.dom.js:54-58 `style`: `display`, `height` and `width`, in this
   /// key order.
-  final Map<String, String> style;
-
+  required final Map<String, String> style,
+}) {
   /// platform.dom.js:301 `initial[prop]`, for `'height'` and `'width'`.
   String? operator [](String prop) => prop == 'height' ? height : width;
 }
@@ -232,30 +228,13 @@ types.ChartEvent fromNativeEvent(NativeEvent event, types.Chart chart) {
 
 /// platform.dom.js:112-118 the object literal `{type, chart, native, x, y}`
 /// of `fromNativeEvent`.
-final class _ChartEvent implements types.ChartEvent {
-  _ChartEvent({
-    required this.type,
-    required this.chart,
-    required this.native,
-    required this.x,
-    required this.y,
-  });
-
-  @override
-  final String type;
-
-  @override
-  final types.Chart chart;
-
-  @override
-  final NativeEvent native;
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-
+final class _ChartEvent({
+  @override required final String type,
+  @override required final types.Chart chart,
+  @override required final NativeEvent native,
+  @override required final double? x,
+  @override required final double? y,
+}) implements types.ChartEvent {
   @override
   String toString() => 'ChartEvent($type, $x, $y)';
 }
@@ -412,9 +391,9 @@ void Function(NativeEvent) createProxyAndListen(
 ///
 /// Platform class for charts that a chart host shows (Chart.js ADR 0037).
 /// `detectPlatform` gives it for a canvas whose parent node is a host.
-class FlutterPlatform extends BasePlatform {
+class FlutterPlatform() extends BasePlatform {
   /// platform.dom.js:260 the implicit constructor.
-  FlutterPlatform();
+  this;
 
   /// platform.dom.js:260 `class DomPlatform` as a value, as the Flutter
   /// platform (Chart.js ADR 0037, section 1, and Chart.js ADR 0048, section

@@ -48,53 +48,43 @@ import 'package:flutter_chartjs_port/js_semantics.dart'
 ///
 /// It replaces the former Hammer.js event object. It carries only the fields
 /// that the plugin reads, all from the native pointer events.
-final class GestureEvent {
-  /// A gesture event with its fields.
-  const GestureEvent({
-    required this.center,
-    required this.deltaX,
-    required this.deltaY,
-    required this.distance,
-    required this.scale,
-    required this.pointers,
-    required this.target,
-    required this.srcEvent,
-    required this.pointerType,
-  });
-
+final class const GestureEvent({
   /// gestures.ts:15 `center`: the gesture centroid in client coordinates,
   /// the midpoint of the active pointers.
-  final Point center;
+  required final Point center,
 
   /// gestures.ts:17 `deltaX`: the cumulative horizontal pan offset in pixels
   /// since the gesture started.
-  final double deltaX;
+  required final double deltaX,
 
   /// gestures.ts:18 `deltaY`: the cumulative vertical pan offset in pixels
   /// since the gesture started.
-  final double deltaY;
+  required final double deltaY,
 
   /// gestures.ts:20 `distance`: the straight-line distance in pixels that
   /// the gesture has travelled since it started.
-  final double distance;
+  required final double distance,
 
   /// gestures.ts:22 `scale`: the cumulative pinch scale relative to the
   /// gesture start (1 = unchanged).
-  final double scale;
+  required final double scale,
 
   /// gestures.ts:24 `pointers`: the active pointers, in client coordinates.
-  final List<ActivePointer> pointers;
+  required final List<ActivePointer> pointers,
 
   /// gestures.ts:26 `target`: the canvas that the gesture is bound to.
-  final HTMLCanvasElement target;
+  required final HTMLCanvasElement target,
 
   /// gestures.ts:28 `srcEvent`: the native pointer event that produced this
   /// gesture event.
-  final NativeEvent srcEvent;
+  required final NativeEvent srcEvent,
 
   /// gestures.ts:30 `pointerType`: the pointer device type, `mouse`, `touch`
   /// or `pen`.
-  final String pointerType;
+  required final String pointerType,
+}) {
+  /// A gesture event with its fields.
+  this;
 }
 
 /// gestures.ts:35 `DEFAULT_PAN_THRESHOLD`.
@@ -320,15 +310,15 @@ ActivePointer _pointerFrom(NativeEvent event) =>
 ///
 /// Tracks the native pointers on a single canvas and translates them into
 /// the pan/pinch gestures the plugin previously received from Hammer.js.
-final class _GestureManager {
+final class _GestureManager(
+  /// gestures.ts:176 `chart`.
+  final Chart _chart,
+) {
   /// gestures.ts:191 `constructor(chart)`: sets the style of the canvas
   /// and adds the listeners.
-  _GestureManager(Chart chart)
-    : _chart = chart,
-      _state = getState(chart),
-      _canvas = chart.canvas! {
+  this {
     _doc = _canvas.ownerDocument;
-    _enabler = _createEnabler(chart, _state);
+    _enabler = _createEnabler(_chart, _state);
 
     // Suppress the browser's own scroll/zoom so gestures reach the canvas,
     // mirroring what Hammer configured on its manager.
@@ -347,14 +337,11 @@ final class _GestureManager {
     _doc.addEventListener('pointercancel', _onPointerCancel);
   }
 
-  /// gestures.ts:176 `chart`.
-  final Chart _chart;
-
   /// gestures.ts:177 `state`.
-  final State _state;
+  final State _state = getState(_chart);
 
   /// gestures.ts:178 `canvas`.
-  final HTMLCanvasElement _canvas;
+  final HTMLCanvasElement _canvas = _chart.canvas!;
 
   /// gestures.ts:179 `doc`: the document of the canvas.
   late final NativeEventTarget _doc;

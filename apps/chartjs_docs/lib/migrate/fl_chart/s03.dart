@@ -41,13 +41,12 @@ final List<Map<String, Object?>> _plugins = [
   areaBorder(Fl.white54),
 ];
 
-class Sample3 extends StatefulWidget {
-  const Sample3({super.key});
+class const Sample3({super.key}) extends StatefulWidget {
   @override
   State<Sample3> createState() => _Sample3State();
 }
 
-class _Sample3State extends State<Sample3> {
+class _Sample3State() extends State<Sample3> {
   int _touched = -1;
   bool _fitLeft = false;
   bool _fitBottom = true;

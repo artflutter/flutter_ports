@@ -146,11 +146,9 @@ void setUpDefaultsRestore() {
 }
 
 /// The saved state of the objects and arrays that the global scopes reach.
-final class _Snapshot {
-  _Snapshot._(this._saved);
-
+final class _Snapshot._(final List<_Saved> _saved) {
   /// Saves each object and array that [roots] reach, once.
-  factory _Snapshot.take(List<Object> roots) {
+  factory take(List<Object> roots) {
     final saved = <_Saved>[];
     final seen = HashSet<Object>.identity();
     final queue = Queue<Object?>.of(roots);
@@ -177,8 +175,6 @@ final class _Snapshot {
     return _Snapshot._(saved);
   }
 
-  final List<_Saved> _saved;
-
   /// Puts back the saved state of each object and array.
   void restore() {
     for (final saved in _saved) {
@@ -188,19 +184,15 @@ final class _Snapshot {
 }
 
 /// The saved state of one object or array.
-sealed class _Saved {
+sealed class _Saved() {
   /// Puts back the saved state, if it changed.
   void restore();
 }
 
 /// The key order, the cells and the routes of a typed scope (Chart.js ADR
 /// 0054).
-final class _SavedScope implements _Saved {
-  _SavedScope(this.scope, this.state);
-
-  final OptionScope scope;
-  final ScopeState state;
-
+final class _SavedScope(final OptionScope scope, final ScopeState state)
+    implements _Saved {
   @override
   void restore() {
     if (!scope.hasState(state)) scope.restoreState(state);
@@ -209,12 +201,10 @@ final class _SavedScope implements _Saved {
 
 /// The entries of a plain object (a [LinkedHashMap] with `String` keys). A
 /// Map with other key types is not an object (Chart.js ADR 0043).
-final class _SavedMap implements _Saved {
-  _SavedMap(this.map, this.entries);
-
-  final LinkedHashMap<String, Object?> map;
-  final List<MapEntry<String, Object?>> entries;
-
+final class _SavedMap(
+  final LinkedHashMap<String, Object?> map,
+  final List<MapEntry<String, Object?>> entries,
+) implements _Saved {
   @override
   void restore() {
     if (_sameEntries(map, entries)) return;
@@ -225,12 +215,8 @@ final class _SavedMap implements _Saved {
 }
 
 /// The items of an array.
-final class _SavedList implements _Saved {
-  _SavedList(this.list, this.items);
-
-  final List<Object?> list;
-  final List<Object?> items;
-
+final class _SavedList(final List<Object?> list, final List<Object?> items)
+    implements _Saved {
   @override
   void restore() {
     if (list.length == items.length) {

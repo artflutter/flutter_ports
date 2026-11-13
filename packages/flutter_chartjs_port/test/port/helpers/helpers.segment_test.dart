@@ -22,21 +22,12 @@ import 'package:test/test.dart';
 
 /// A point element `{x, y, skip, stop}`. `null` stands for JS `undefined`,
 /// and NaN for the `undefined` of a control point (`SplinePoint`).
-final class _Point implements PointElement {
-  _Point(this.x, this.y, {this.skip, this.stop});
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final bool? skip;
-
-  @override
-  final bool? stop;
-
+final class _Point(
+  @override final double x,
+  @override final double y, {
+  @override final bool? skip,
+  @override final bool? stop,
+}) implements PointElement {
   @override
   Map<String, Object?>? get options => null;
 
@@ -65,12 +56,8 @@ final class _Point implements PointElement {
 
 /// A radar point element `{x: 0, y: 0, angle}`. The control points are NaN,
 /// which stands for JS `undefined` (`SplinePoint`).
-final class _RadialPoint implements RadialPointElement {
-  _RadialPoint(this.angle);
-
-  @override
-  final double? angle;
-
+final class _RadialPoint(@override final double? angle)
+    implements RadialPointElement {
   @override
   double get x => 0;
 
@@ -122,7 +109,7 @@ List<PointElement> _points(String pattern) => [
 ];
 
 /// A JavaScript object `{getContext}`, passed as a [Chart].
-final class _Chart implements Chart {
+final class _Chart() implements Chart {
   @override
   Map<String, Object?> getContext() => {'chart': 'c', 'type': 'chart'};
 
@@ -133,33 +120,16 @@ final class _Chart implements Chart {
 /// A JavaScript object `{points, options, _chart, _loop, _fullLoop,
 /// _datasetIndex, segments}`, passed as a [LineElement]. The options get
 /// `spanGaps: false` first, as in the probe.
-final class _Line implements LineElement {
-  _Line(
-    this.points, {
-    Map<String, Object?> options = const {},
-    this.chart,
-    this.loop,
-    this.fullLoop,
-    this.datasetIndex,
-  }) : options = {'spanGaps': false, ...options};
-
+final class _Line(
+  @override final List<PointElement> points, {
+  Map<String, Object?> options = const {},
+  @override final Chart? chart,
+  @override final bool? loop,
+  @override final bool? fullLoop,
+  @override final double? datasetIndex,
+}) implements LineElement {
   @override
-  final List<PointElement> points;
-
-  @override
-  final Map<String, Object?> options;
-
-  @override
-  final Chart? chart;
-
-  @override
-  final bool? loop;
-
-  @override
-  final bool? fullLoop;
-
-  @override
-  final double? datasetIndex;
+  final Map<String, Object?> options = {'spanGaps': false, ...options};
 
   @override
   List<Segment> segments = const [];
@@ -170,21 +140,12 @@ final class _Line implements LineElement {
 
 /// A JavaScript object literal `{start, end, loop, style}`, passed as a
 /// [Segment].
-final class _Segment implements Segment {
-  const _Segment(this.start, this.end, {required this.loop, this.style});
-
-  @override
-  final double start;
-
-  @override
-  final double end;
-
-  @override
-  final bool loop;
-
-  @override
-  final Object? style;
-}
+final class const _Segment(
+  @override final double start,
+  @override final double end, {
+  @override required final bool loop,
+  @override final Object? style,
+}) implements Segment;
 
 /// A gradient object. Its JS `toString()` tag is `[object CanvasGradient]`.
 ChartGradient _gradient() => ChartGradient.linear(
@@ -195,11 +156,7 @@ ChartGradient _gradient() => ChartGradient.linear(
 
 /// An object of a class, which `JSON.stringify` writes with its own
 /// enumerable properties.
-final class _Leaf {
-  const _Leaf(this.v);
-
-  final double v;
-}
+final class const _Leaf(final double v);
 
 /// SameValue on a number: `-0` does not equal `0`.
 Matcher _sameValue(double expected) => predicate<double>(

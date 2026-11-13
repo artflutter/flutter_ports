@@ -48,10 +48,10 @@ export 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 /// It implements [JsObjectFace], the face by name, with the JS rules:
 /// `operator []` gives [undefined] for a key that the scope does not own
 /// (Chart.js ADR 0054 §5). It is not a `Map`.
-abstract base class OptionScope
+abstract base class OptionScope()
     implements OptionObject, JsObjectFace, JsFreezable {
   /// An empty scope.
-  OptionScope();
+  this;
 
   /// Whether the scope is frozen ([freeze]).
   bool _frozen = false;
@@ -552,48 +552,35 @@ abstract base class OptionScope
 }
 
 /// A route of a key of a typed scope (core.defaults.js:130-157).
-final class ScopeRoute {
-  /// A route that gives the routed value of a local value with [read].
-  const ScopeRoute(
-    this.read, {
-    required this.targetScope,
-    required this.targetName,
-    this.configurable = false,
-  });
-
+final class const ScopeRoute(
   /// The getter of the routed property: the routed value of the local
   /// value (the local value, the target value, or a merge of both objects).
-  final Object? Function(Object? local) read;
+  final Object? Function(Object? local) read, {
 
   /// The target scope object of the route.
-  final Object? targetScope;
+  required final Object? targetScope,
 
   /// The key of the target scope that the route reads.
-  final String targetName;
+  required final String targetName,
 
   /// Whether the scope owned the key before its first route: then a delete
   /// of the key removes the route. Else the delete throws.
-  final bool configurable;
+  final bool configurable = false,
+}) {
+  /// A route that gives the routed value of a local value with [read].
+  this;
 }
 
 /// The saved state of a typed scope ([OptionScope.saveState]).
-final class ScopeState {
-  ScopeState._(
-    this._order,
-    this._cells,
-    this._routeNames,
-    this._routes,
-    this._frozen,
-  );
+final class ScopeState._(
+  final List<Object> _order,
+  final List<Opt<Object?>> _cells,
+  final List<String> _routeNames,
+  final List<ScopeRoute> _routes,
 
   /// Whether the scope was frozen.
-  final bool _frozen;
-
-  final List<Object> _order;
-  final List<Opt<Object?>> _cells;
-  final List<String> _routeNames;
-  final List<ScopeRoute> _routes;
-
+  final bool _frozen,
+) {
   /// The raw values of the own cells, for the walk of the snapshot.
   Iterable<Object?> get values => _cells.map((cell) => cell.raw);
 

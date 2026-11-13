@@ -44,7 +44,7 @@ import 'animation_reference.dart';
 // of 16 ms: the fake clock of jsDateNow moves by 16 ms in each one.
 
 /// A chart for the animator: it counts its draws. Its other members throw.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   int draws = 0;
 
   // The chart object of the test has no canvas: JS `undefined`. The
@@ -66,18 +66,14 @@ final class _Chart implements types.Chart {
 }
 
 /// A canvas for the reduced-motion flag. Its members throw.
-final class _Canvas implements HTMLCanvasElement {
+final class _Canvas() implements HTMLCanvasElement {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A chart for the animator on the canvas [canvas].
-final class _CanvasChart extends _Chart {
-  _CanvasChart(this.canvas);
-
-  @override
-  final HTMLCanvasElement canvas;
-}
+final class _CanvasChart(@override final HTMLCanvasElement canvas)
+    extends _Chart;
 
 /// The animation options of the properties `x` and `y`: 1000 ms, numbers.
 Map<String, Object?> _xConfig() => <String, Object?>{

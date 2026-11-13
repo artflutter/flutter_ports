@@ -32,7 +32,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' show Chart;
 /// An element keeps its animations in `$animations`, a Map from the
 /// property name to the [Animation] (core.element.ts:15). `getProps` reads
 /// [active] and [to] (core.element.ts:41).
-abstract interface class Animation {
+abstract interface class Animation() {
   /// animation.d.ts:6 `active(): boolean`. True while the animation runs.
   bool active();
 
@@ -52,7 +52,7 @@ abstract interface class Animation {
 /// Dart `null` stands for JS `undefined` in [initial], [numSteps] and
 /// [currentStep]. `core.controller.js:694` passes `{chart: this}` only. JS
 /// `null` never reaches these members.
-abstract interface class AnimationEvent {
+abstract interface class AnimationEvent() {
   /// animation.d.ts:14 `chart: Chart`.
   Chart get chart;
 

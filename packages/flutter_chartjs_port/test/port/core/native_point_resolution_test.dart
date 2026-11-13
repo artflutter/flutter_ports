@@ -15,8 +15,8 @@ import 'package:test/test.dart';
 const red = ChartPaint.solid(Color(0xffff0000));
 const blue = ChartPaint.solid(Color(0xff0000ff));
 
-class _Fixture {
-  _Fixture() {
+class _Fixture() {
+  this {
     final saved = defaults.saveState();
     addTearDown(() => defaults.restoreState(saved));
     defaults.elements = elements;

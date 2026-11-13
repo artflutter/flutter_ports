@@ -43,21 +43,12 @@ import 'line_reference.dart';
 // entries. Both compare with the same reference data.
 
 /// A chart area `{left, top, right, bottom, width, height}`.
-final class _Area implements ChartArea {
-  const _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class const _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -67,7 +58,7 @@ final class _Area implements ChartArea {
 
 /// The chart `{getContext}` of a line with segment styles: the `_chart` of
 /// helpers.segment.js:280.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   Map<String, Object?> getContext() => {'chart': 'chart', 'type': 'chart'};
 

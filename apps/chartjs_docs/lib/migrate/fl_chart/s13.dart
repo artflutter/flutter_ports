@@ -25,13 +25,12 @@ const _names = [
   'December',
 ];
 
-class Sample13 extends StatefulWidget {
-  const Sample13({super.key});
+class const Sample13({super.key}) extends StatefulWidget {
   @override
   State<Sample13> createState() => _Sample13State();
 }
 
-class _Sample13State extends State<Sample13> {
+class _Sample13State() extends State<Sample13> {
   List<List<_Day>>? _months;
   int _month = 0;
   int _hovered = -1;

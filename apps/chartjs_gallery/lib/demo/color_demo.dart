@@ -23,15 +23,15 @@ String _argb(Color color) =>
 kc.Color _numeric(Color color) => helpers.color(color) as kc.Color;
 
 /// Native colors, hover colors and numerical color mixing.
-class ColorDemo extends StatefulWidget {
+class const ColorDemo({super.key}) extends StatefulWidget {
   /// Creates the colors tab.
-  const ColorDemo({super.key});
+  this;
 
   @override
   State<ColorDemo> createState() => _ColorDemoState();
 }
 
-class _ColorDemoState extends State<ColorDemo> {
+class _ColorDemoState() extends State<ColorDemo> {
   Color _mixA = sampleColors[0];
   Color _mixB = sampleColors[1];
   double _weight = 0.5;

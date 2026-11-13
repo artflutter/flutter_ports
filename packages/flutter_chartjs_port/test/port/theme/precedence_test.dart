@@ -132,9 +132,8 @@ import 'precedence_reference.dart'
 
 /// The dataset controller of the generator: it places each point at its
 /// parsed x and y.
-final class _ThemeController extends DatasetController {
-  _ThemeController(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _ThemeController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   @override
   void update(String mode) {
     final meta = cachedMeta;
@@ -201,9 +200,11 @@ JsClass _themeController(
 /// The radial test controller of the generator: a point for each value, at
 /// the position of `getPointPositionForValue` of the scale r
 /// (controller.radar.js:81-103 without the line).
-final class _RadialThemeController extends DatasetController {
-  _RadialThemeController(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _RadialThemeController(
+  super.chart,
+  super.datasetIndex, [
+  super.newTarget,
+]) extends DatasetController {
   @override
   void update(String mode) {
     final meta = cachedMeta;
@@ -260,9 +261,7 @@ final JsClass _radialThemeController = JsClass(
 
 /// The scale `themeLinear` of the generator: the range 0 to 10, with the
 /// ticks 0, 5 and 10.
-final class _ThemeScale extends Scale {
-  _ThemeScale(super.cfg);
-
+final class _ThemeScale(super.cfg) extends Scale {
   @override
   void determineDataLimits() {
     min = 0;
@@ -2563,9 +2562,8 @@ void main() {
 
 // Native colors keep the original symbolic identities of the precedence probes.
 // Their numeric paint value is irrelevant to the ordering assertion.
-final class _ColorMarker extends native_ui.Color {
-  _ColorMarker(this.label) : super(0xFF000000 | _markerRgb(label));
-  final String label;
+final class _ColorMarker(final String label) extends native_ui.Color {
+  this : super(0xFF000000 | _markerRgb(label));
 }
 
 int _markerRgb(String label) {

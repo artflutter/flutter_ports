@@ -39,11 +39,9 @@ import 'registry_reference.dart' hide registryReference;
 /// A fake chart: the `Config` of [config], and `getContext()` as
 /// `core.controller.js:1083-1085` gives it. The other members of
 /// `types.Chart` throw.
-final class _Chart implements types.Chart {
-  _Chart(Object? config) : config = Config(config);
-
+final class _Chart(Object? config) implements types.Chart {
   @override
-  final Config config;
+  final Config config = Config(config);
 
   /// core.controller.js:1084 `$context`.
   ContextObject? _context;

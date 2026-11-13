@@ -46,7 +46,7 @@ import 'package:meta/meta.dart' show immutable;
 ///
 /// [ChartPosition] gives the names of the union, and [ScaleValuePosition]
 /// its object form. A box of a plugin takes a [ChartPosition].
-abstract interface class LayoutPosition;
+abstract interface class LayoutPosition();
 
 /// The names of layout.d.ts:3 `LayoutPosition`: the side of a box, or the
 /// center of the chart area for an axis, or the chart area for a legend.
@@ -55,7 +55,7 @@ abstract interface class LayoutPosition;
 /// the other positions are its dynamic boxes. The name of each value is
 /// the keyword of Chart.js.
 // DIVERGES(chartjs): adapt-chart-position-enum, an enum of the positions.
-enum ChartPosition implements LayoutPosition {
+enum ChartPosition() implements LayoutPosition {
   /// `'top'`: above the chart area.
   top,
 
@@ -91,16 +91,16 @@ enum ChartPosition implements LayoutPosition {
 /// the value 0 of the scale `x` (`{x: 0}`).
 // DIVERGES(chartjs): adapt-chart-position-enum, a class of the object form.
 @immutable
-final class ScaleValuePosition implements LayoutPosition {
-  /// The position at [value] of the scale [scaleId].
-  const ScaleValuePosition(this.scaleId, this.value);
-
+final class const ScaleValuePosition(
   /// The id of the scale that gives the place, the key of the object form.
-  final String scaleId;
+  final String scaleId,
 
   /// The value on the scale [scaleId]: a number, or a value that the scale
   /// parses, for example a label of a category scale.
-  final Object? value;
+  final Object? value,
+) implements LayoutPosition {
+  /// The position at [value] of the scale [scaleId].
+  this;
 
   @override
   bool operator ==(Object other) =>
@@ -119,7 +119,7 @@ final class ScaleValuePosition implements LayoutPosition {
 ///
 /// `core.layouts.js` also reads three members that layout.d.ts does not
 /// declare: [options], [axis] and [layers].
-abstract interface class LayoutItem {
+abstract interface class LayoutItem() {
   /// layout.d.ts:9 `position: LayoutPosition`: a `String` or a
   /// `Map<String, Object?>` (see the library documentation).
   ///
@@ -222,7 +222,7 @@ abstract interface class LayoutItem {
 ///
 /// `core.layouts.js:360` tests `typeof box.beforeLayout === 'function'`. A
 /// box without the interface gets no call, as upstream.
-abstract interface class LayoutItemBeforeLayout implements LayoutItem {
+abstract interface class LayoutItemBeforeLayout() implements LayoutItem {
   /// layout.d.ts:46 `beforeLayout()`.
   void beforeLayout();
 }
@@ -234,7 +234,7 @@ abstract interface class LayoutItemBeforeLayout implements LayoutItem {
 /// `_updateLayout` tests `box.configure` and calls it
 /// (core.controller.js:630-632). A box without the interface gets no call,
 /// as upstream. `Scale.configure` (core.scale.js:480) implements it.
-abstract interface class LayoutItemConfigure implements LayoutItem {
+abstract interface class LayoutItemConfigure() implements LayoutItem {
   /// core.controller.js:631 `configure()`.
   void configure();
 }
@@ -248,7 +248,7 @@ abstract interface class LayoutItemConfigure implements LayoutItem {
 /// `ChartArea`. `updateMaxPadding` reads only its four edges
 /// (core.layouts.js:110-113), and `Scale.getPadding` returns only these
 /// (core.scale.js:337-344). Thus the Dart type is [TRBL].
-abstract interface class LayoutItemPadding implements LayoutItem {
+abstract interface class LayoutItemPadding() implements LayoutItem {
   /// layout.d.ts:54 `getPadding()`.
   TRBL getPadding();
 }
@@ -258,7 +258,7 @@ abstract interface class LayoutItemPadding implements LayoutItem {
 ///
 /// `core.controller.js` collects the layers of all boxes, sorts them by [z]
 /// and [idx] (:526), and draws each layer (:719-729).
-abstract interface class LayoutLayer {
+abstract interface class LayoutLayer() {
   /// `z`: the drawing order. `core.controller.js:720` draws the layers with
   /// `z <= 0` before the datasets.
   double get z;

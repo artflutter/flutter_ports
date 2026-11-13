@@ -15,18 +15,11 @@ import 'package:test/test.dart';
 // Node.js v24.12.0 on x64.
 
 /// A JavaScript object literal `{x, y, skip}`, passed as a [SplinePoint].
-final class _P implements SplinePoint {
-  _P(this.x, this.y, {this.skip});
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final bool? skip;
-
+final class _P(
+  @override final double x,
+  @override final double y, {
+  @override final bool? skip,
+}) implements SplinePoint {
   @override
   double cp1x = double.nan;
 
@@ -41,21 +34,12 @@ final class _P implements SplinePoint {
 }
 
 /// A JavaScript object literal `{left, top, right, bottom, width, height}`.
-final class _Area implements ChartArea {
-  const _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class const _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements ChartArea {
   @override
   double get width => right - left;
 

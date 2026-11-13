@@ -37,26 +37,32 @@ library;
 
 /// The axis of a scale: [XAxis], [YAxis] or [RAxis]. The core keeps an axis
 /// of either kind in this type; no option has it.
-abstract class ScaleAxis;
+abstract class ScaleAxis() {
+  /// The constructor of the subclasses.
+  this;
+}
 
 /// The axis of a cartesian chart or scale: [XAxis] or [YAxis] only.
-abstract class CartesianAxis implements ScaleAxis;
+abstract class CartesianAxis() implements ScaleAxis {
+  /// The constructor of the subclasses.
+  this;
+}
 
 /// The horizontal axis: `'x'` upstream.
-final class XAxis implements CartesianAxis {
+final class const XAxis() implements CartesianAxis {
   /// The horizontal axis.
-  const XAxis();
+  this;
 }
 
 /// The vertical axis: `'y'` upstream.
-final class YAxis implements CartesianAxis {
+final class const YAxis() implements CartesianAxis {
   /// The vertical axis.
-  const YAxis();
+  this;
 }
 
 /// The radial axis: `'r'` upstream. Only the radial controllers and the
 /// radial scale take it.
-final class RAxis implements ScaleAxis {
+final class const RAxis() implements ScaleAxis {
   /// The radial axis.
-  const RAxis();
+  this;
 }

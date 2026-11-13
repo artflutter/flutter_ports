@@ -130,19 +130,17 @@ bool _primitiveRadius(ElementOptions options) {
 /// `+=` of that resolve converts the radius of the entry or the `_custom` of
 /// the old parsed item, so both are part of the permission.
 // DIVERGES(chartjs): adapt-bubble-point-options, one synchronous parse loop.
-final class _ParseRadii {
-  _ParseRadii(this._owner, List<Object?> data)
-    : _open =
-          _owner._exact &&
-          nativePointClass(_owner.dataElementType) &&
-          nativeDataUpdateList(data) &&
-          nativeDataUpdateList(_owner.cachedMeta.parsed) {
+final class _ParseRadii(final BubbleController _owner, List<Object?> data) {
+  this {
     if (_open) _takeEntry();
   }
 
-  final BubbleController _owner;
   final NativeTypedItems _typedItems = NativeTypedItems();
-  bool _open;
+  bool _open =
+      _owner._exact &&
+      nativePointClass(_owner.dataElementType) &&
+      nativeDataUpdateList(data) &&
+      nativeDataUpdateList(_owner.cachedMeta.parsed);
   bool _skips = false;
   bool _indexed = false;
   int _resolves = 0;
@@ -237,11 +235,12 @@ final class _ParseRadii {
 }
 
 /// controller.bubble.js:4 `BubbleController extends DatasetController`.
-class BubbleController extends DatasetController {
+class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   /// `new BubbleController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. [newTarget] is `new.target` (Chart.js ADR
+  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
   /// 0020, section 4).
-  BubbleController(super.chart, super.datasetIndex, [super.newTarget]);
+  this;
 
   /// Native support for the explicit data-only lifecycle.
   @override

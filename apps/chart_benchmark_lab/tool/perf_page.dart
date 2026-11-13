@@ -40,7 +40,7 @@ Future<void> _delay(int ms) => Future<void>.delayed(Duration(milliseconds: ms));
 double _round(double value) => double.parse(value.toStringAsFixed(2));
 
 /// A window of frames, with their engine timings.
-class _Capture {
+class _Capture() {
   final List<FrameSample> _timings = [];
   final List<int> _stamps = [];
   bool _on = false;
@@ -141,14 +141,13 @@ double _display() {
 
 /// Gives the page a smaller window, as a person who drags the edge of the
 /// window does.
-class _WindowHost extends StatefulWidget {
-  const _WindowHost({required this.child, super.key});
-  final Widget child;
+class const _WindowHost({required final Widget child, super.key})
+    extends StatefulWidget {
   @override
   State<_WindowHost> createState() => _WindowHostState();
 }
 
-class _WindowHostState extends State<_WindowHost> {
+class _WindowHostState() extends State<_WindowHost> {
   double _shrink = 0;
 
   // The driver sets the width on each frame.

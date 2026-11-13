@@ -18,40 +18,26 @@ import 'package:test/test.dart';
 // of package:intl (Chart.js ADR 0119).
 
 /// The `chart` of a `this` object `{chart: {options}, options}`.
-final class _Chart implements Chart {
-  _Chart(this.options);
-
-  @override
-  final Map<String, Object?> options;
-
+final class _Chart(@override final Map<String, Object?> options)
+    implements Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A `this` object `{chart, options}`, passed as a [Scale].
-final class _Scale implements Scale {
-  _Scale(this.chart, this.options);
-
-  @override
-  final Chart chart;
-
-  @override
-  final Map<String, Object?> options;
-
+final class _Scale(
+  @override final Chart chart,
+  @override final Map<String, Object?> options,
+) implements Scale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A tick object `{value}` or `{value, significand}`.
-final class _Tick implements Tick {
-  const _Tick(this.value, [this.significand]);
-
-  @override
-  final double value;
-
-  @override
-  final double? significand;
-}
+final class const _Tick(
+  @override final double value, [
+  @override final double? significand,
+]) implements Tick;
 
 /// `{chart: {options: {locale}}, options: {ticks: {format}}}`.
 _Scale _scale(Locale? locale, [NumberFormat? format]) =>

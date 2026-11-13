@@ -382,13 +382,13 @@ types.ScaleCache _newCache() => types.ScaleCache()
   ..all = <double?>[];
 
 /// scale.time.js:199 `TimeScale extends Scale`.
-class TimeScale extends Scale {
+class TimeScale(super.cfg) extends Scale {
   /// scale.time.js:247 `constructor(props)`.
   ///
-  /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new]. The
+  /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new]. The
   /// fields get their start values in their declarations
   /// (scale.time.js:251-263), and the constructor sets `_cache`.
-  TimeScale(super.cfg) {
+  this {
     cache = _newCache();
   }
 

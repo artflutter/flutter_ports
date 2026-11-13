@@ -3,7 +3,7 @@
 import 'package:material_ui/material_ui.dart';
 
 /// The colors of the chart benchmark lab.
-abstract final class DocColors {
+abstract final class DocColors() {
   /// The text color.
   static const ink = Color(0xff17243b);
 

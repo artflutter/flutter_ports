@@ -8,87 +8,90 @@
 library;
 
 /// A comment in a Dart file.
-final class Comment {
-  /// A comment from [start] to [end] (exclusive) that starts on [line].
-  const Comment(this.start, this.end, this.line, this.text);
-
+final class const Comment(
   /// The offset of the first `/`.
-  final int start;
+  final int start,
 
   /// The offset after the comment.
-  final int end;
+  final int end,
 
   /// The 1-based line of [start].
-  final int line;
+  final int line,
 
   /// The comment text, with the `//` or `/*`, without a line terminator.
-  final String text;
+  final String text,
+) {
+  /// A comment from [start] to [end] (exclusive) that starts on [line].
+  this;
 
   /// Whether this is a `//` comment (also a `///` comment).
   bool get isLineComment => text.startsWith('//');
 }
 
 /// A string literal in a Dart file.
-final class StringLiteral {
-  /// A literal from [start] to [end] with the content from [contentStart]
-  /// to [contentEnd].
-  const StringLiteral({
-    required this.start,
-    required this.end,
-    required this.contentStart,
-    required this.contentEnd,
-    required this.nested,
-  });
-
+final class const StringLiteral({
   /// The offset of the opening quote, or of the `r` of a raw string.
-  final int start;
+  required final int start,
 
   /// The offset after the closing quote.
-  final int end;
+  required final int end,
 
   /// The offset after the opening quote.
-  final int contentStart;
+  required final int contentStart,
 
   /// The offset of the closing quote.
-  final int contentEnd;
+  required final int contentEnd,
 
   /// Whether the literal is inside a string interpolation.
-  final bool nested;
+  required final bool nested,
+}) {
+  /// A literal from [start] to [end] with the content from [contentStart]
+  /// to [contentEnd].
+  this;
 }
 
 /// An `import` or `export` directive.
-final class Directive {
-  /// A directive on [line] with the URIs [uris], the import [prefix] and
-  /// the [shown] names.
-  const Directive(
-    this.keyword,
-    this.uris,
-    this.line, {
-    this.prefix,
-    this.shown,
-  });
-
+final class const Directive(
   /// `import` or `export`.
-  final String keyword;
+  final String keyword,
 
   /// The URI, then the URIs of the `if (...)` configurations.
-  final List<String> uris;
+  final List<String> uris,
 
   /// The 1-based line of the keyword.
-  final int line;
+  final int line, {
 
   /// The prefix of an `import ... as <prefix>` directive, or null.
-  final String? prefix;
+  final String? prefix,
 
   /// The names of the `show` combinators, or null when the directive has no
   /// `show` combinator.
-  final List<String>? shown;
+  final List<String>? shown,
+}) {
+  /// A directive on [line] with the URIs [uris], the import [prefix] and
+  /// the [shown] names.
+  this;
 }
 
 /// A Dart file, split into code, comments and string literals.
-final class DartSource {
+final class DartSource._(
+  /// The file text.
+  final String text,
+
+  /// [text] with the characters of comments and of string contents replaced
+  /// by spaces. Line terminators stay, so offsets and lines do not change.
+  /// The code of `${...}` interpolations stays too.
+  final String code,
+
+  /// The comments, in source order.
+  final List<Comment> comments,
+
+  /// The string literals, in the order in which they end.
+  final List<StringLiteral> strings,
+  final List<int> _lineStarts,
+) {
   /// Scans [text].
-  factory DartSource(String text) {
+  factory(String text) {
     final scanner = _Scanner(text)..scan();
     return DartSource._(
       text,
@@ -98,30 +101,6 @@ final class DartSource {
       scanner.lineStarts,
     );
   }
-
-  DartSource._(
-    this.text,
-    this.code,
-    this.comments,
-    this.strings,
-    this._lineStarts,
-  );
-
-  /// The file text.
-  final String text;
-
-  /// [text] with the characters of comments and of string contents replaced
-  /// by spaces. Line terminators stay, so offsets and lines do not change.
-  /// The code of `${...}` interpolations stays too.
-  final String code;
-
-  /// The comments, in source order.
-  final List<Comment> comments;
-
-  /// The string literals, in the order in which they end.
-  final List<StringLiteral> strings;
-
-  final List<int> _lineStarts;
 
   /// The lines of [text], without line terminators.
   late final List<String> lines = [
@@ -251,14 +230,14 @@ bool _isIdentifierPart(int c) =>
 
 /// One level of the scanner: code (top level or in `${...}`) or a string.
 final class _Frame {
-  _Frame.code({required this.interpolation})
+  new code({required this.interpolation})
     : quote = 0,
       triple = false,
       raw = false,
       start = 0,
       contentStart = 0;
 
-  _Frame.string({
+  new string({
     required this.quote,
     required this.triple,
     required this.raw,
@@ -277,11 +256,8 @@ final class _Frame {
   bool get isCode => quote == 0;
 }
 
-final class _Scanner {
-  _Scanner(this.s) : out = List<int>.of(s.codeUnits);
-
-  final String s;
-  final List<int> out;
+final class _Scanner(final String s) {
+  final List<int> out = List<int>.of(s.codeUnits);
   final List<Comment> comments = [];
   final List<StringLiteral> strings = [];
   final List<int> lineStarts = [0];

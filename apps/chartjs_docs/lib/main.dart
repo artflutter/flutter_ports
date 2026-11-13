@@ -51,15 +51,16 @@ final List<DocPageLink> docPages = [
 ];
 
 /// The documentation site.
-class DocsApp extends StatelessWidget {
-  /// Creates the site with the code regions [snippets].
-  const DocsApp({required this.snippets, this.initialRoute, super.key});
-
+class const DocsApp({
   /// The code regions of the examples.
-  final Snippets snippets;
+  required final Snippets snippets,
 
   /// The first route, or the route of the browser address.
-  final String? initialRoute;
+  final String? initialRoute,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the site with the code regions [snippets].
+  this;
 
   Route<void> _route(RouteSettings settings) {
     final page = docPages.firstWhere(

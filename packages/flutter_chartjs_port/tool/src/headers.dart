@@ -43,58 +43,51 @@ const String backportPrefix = '// Upstream backport';
 const String chartJsProject = 'Chart.js';
 
 /// One `// Ported from` line.
-final class PortedFrom {
-  /// The parts of a `// Ported from` line on [line].
-  const PortedFrom({
-    required this.line,
-    required this.project,
-    required this.version,
-    required this.path,
-    required this.license,
-    required this.holder,
-  });
-
+final class const PortedFrom({
   /// The 1-based line.
-  final int line;
+  required final int line,
 
   /// The project, for example `Chart.js`.
-  final String project;
+  required final String project,
 
   /// The version as written, for example `v4.5.1` or `v4.5.1+7169e651`.
-  final String version;
+  required final String version,
 
   /// The source path in the project, for example `src/helpers/helpers.math.ts`.
-  final String path;
+  required final String path,
 
   /// The SPDX license identifier.
-  final String license;
+  required final String license,
 
   /// The copyright holder.
-  final String holder;
+  required final String holder,
+}) {
+  /// The parts of a `// Ported from` line on [line].
+  this;
 }
 
 /// One backport line.
-final class Backport {
-  /// The backport of commit [sha] (8 hex digits) of the upstream
-  /// [repository] from pull request [pr].
-  const Backport(this.line, this.repository, this.sha, this.pr);
-
+final class const Backport(
   /// The 1-based line.
-  final int line;
+  final int line,
 
   /// The `<owner>/<repo>` of the upstream repository, for example
   /// `chartjs/Chart.js`.
-  final String repository;
+  final String repository,
 
   /// The abbreviated upstream commit.
-  final String sha;
+  final String sha,
 
   /// The upstream pull request number.
-  final int pr;
+  final int pr,
+) {
+  /// The backport of commit [sha] (8 hex digits) of the upstream
+  /// [repository] from pull request [pr].
+  this;
 }
 
 /// What line 1 of a file is.
-enum HeaderKind {
+enum HeaderKind() {
   /// A `// Ported from` line.
   ported,
 
@@ -106,19 +99,31 @@ enum HeaderKind {
 }
 
 /// The header block of a Dart file.
-final class Header {
-  const Header._({
-    required this.kind,
-    required this.portedFrom,
-    required this.backports,
-    required this.malformed,
-    required this.lastLine,
-    this.portOnlyProject,
-    this.portOnlyReason,
-  });
+final class const Header._({
+  /// What line 1 is.
+  required final HeaderKind kind,
 
+  /// The `// Ported from` lines, in order.
+  required final List<PortedFrom> portedFrom,
+
+  /// The backport lines, in order.
+  required final List<Backport> backports,
+
+  /// The lines of the block that start like a header line but do not match
+  /// its grammar.
+  required final List<int> malformed,
+
+  /// The last line of the block, or 0 when line 1 is not a header.
+  required final int lastLine,
+
+  /// The project of the port-only marker, for example `Chart.js`.
+  final String? portOnlyProject,
+
+  /// The reason of the port-only marker.
+  final String? portOnlyReason,
+}) {
   /// Parses the header block at the start of [lines].
-  factory Header.parse(List<String> lines) {
+  factory parse(List<String> lines) {
     final first = lines.isEmpty ? '' : lines.first;
     final marker = portOnlyPattern.firstMatch(first);
     if (marker != null) {
@@ -191,28 +196,6 @@ final class Header {
       lastLine: index,
     );
   }
-
-  /// What line 1 is.
-  final HeaderKind kind;
-
-  /// The `// Ported from` lines, in order.
-  final List<PortedFrom> portedFrom;
-
-  /// The backport lines, in order.
-  final List<Backport> backports;
-
-  /// The lines of the block that start like a header line but do not match
-  /// its grammar.
-  final List<int> malformed;
-
-  /// The last line of the block, or 0 when line 1 is not a header.
-  final int lastLine;
-
-  /// The project of the port-only marker, for example `Chart.js`.
-  final String? portOnlyProject;
-
-  /// The reason of the port-only marker.
-  final String? portOnlyReason;
 
   /// Whether line 1 is a `// Ported from Chart.js` line.
   bool get isChartJsPort =>

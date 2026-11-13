@@ -26,7 +26,10 @@
 /// the construction of the chart and the update of a resize. To time one
 /// call only, call [StressChartTiming.reset] before the call and read the
 /// parts after it, as the stress tab does.
-final class StressChartTiming {
+final class StressChartTiming() {
+  /// A new [StressChartTiming].
+  this;
+
   /// The clock of the hooks.
   static final Stopwatch _watch = Stopwatch()..start();
 

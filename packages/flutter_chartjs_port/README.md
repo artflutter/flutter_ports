@@ -85,9 +85,7 @@ void main() {
   runApp(const MaterialApp(home: Scaffold(body: VotesChart())));
 }
 
-class VotesChart extends StatelessWidget {
-  const VotesChart({super.key});
-
+class const VotesChart({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ChartView(
@@ -317,14 +315,12 @@ horizontal bar chart: the index axis takes `XAxis` or `YAxis` only. `responsive`
 The callbacks get a details object with `int` indexes:
 
 ```dart
-class VotesPage extends StatefulWidget {
-  const VotesPage({super.key});
-
+class const VotesPage({super.key}) extends StatefulWidget {
   @override
   State<VotesPage> createState() => _VotesPageState();
 }
 
-class _VotesPageState extends State<VotesPage> {
+class _VotesPageState() extends State<VotesPage> {
   final List<num> _votes = [12, 19, 3, 5, 2, 3];
 
   void _onClick(ChartEventDetails details) {
@@ -406,7 +402,7 @@ parent can rebuild as often as it likes. Another config updates the chart after 
 the animations of Chart.js:
 
 ```dart
-class _ScoresState extends State<Scores> {
+class _ScoresState() extends State<Scores> {
   List<num> _scores = [3, 7, 4];
 
   void _next() => setState(() {
@@ -631,14 +627,12 @@ shadow colors and theme tokens remain Flutter `Color` values.
 [Chart.js docs](https://www.chartjs.org/docs/4.6.1/) or for the output of `jsonDecode`:
 
 ```dart
-class VotesChart extends StatefulWidget {
-  const VotesChart({super.key});
-
+class const VotesChart({super.key}) extends StatefulWidget {
   @override
   State<VotesChart> createState() => _VotesChartState();
 }
 
-class _VotesChartState extends State<VotesChart> {
+class _VotesChartState() extends State<VotesChart> {
   // The configuration of `new Chart(canvas, config)`. Keep it in the State:
   // the same Map in the next build gives no update.
   final Map<String, Object?> _config = {

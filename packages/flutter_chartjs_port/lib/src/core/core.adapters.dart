@@ -56,7 +56,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// name of each value is the keyword of Chart.js. Dart has no type for these
 /// units: a `Duration` has no month, quarter or year.
 // DIVERGES(chartjs): adapt-time-unit-enum, an enum of the units.
-enum TimeUnit {
+enum TimeUnit() {
   /// `'millisecond'`.
   millisecond,
 
@@ -101,7 +101,7 @@ enum TimeUnit {
 ///
 /// The members take and give JavaScript values (see the library
 /// documentation).
-abstract interface class DateAdapter {
+abstract interface class DateAdapter() {
   /// core.adapters.ts:13 `readonly options: T`.
   ///
   /// The constructor of [DateAdapterBase] keeps any truthy value. Thus it is
@@ -213,12 +213,11 @@ typedef _Member3 = Object? Function(Object?, Object?, Object?);
 /// @namespace Chart._adapters._date
 /// @memberof Chart._adapters
 /// @private
-class DateAdapterBase implements DateAdapter {
+class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   /// core.adapters.ts:95 `constructor(options?: AnyObject)`.
   ///
   /// A falsy [options] gives a new Map. Another value stays as it is.
-  DateAdapterBase([Object? options = undefined])
-    : options = jsTruthy(options) ? options : <String, Object?>{};
+  this;
 
   /// core.adapters.ts:87 `static override(members)`.
   ///
@@ -271,7 +270,7 @@ class DateAdapterBase implements DateAdapter {
 
   /// core.adapters.ts:93 `readonly options: AnyObject`.
   @core.override
-  final Object? options;
+  final Object? options = jsTruthy(options) ? options : <String, Object?>{};
 
   /// The call of [member], a member of [prototype], with [args], with this
   /// adapter as `this`: `adapter[name](...args)`.

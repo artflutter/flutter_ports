@@ -11,15 +11,12 @@ import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _ReferenceChart extends Chart {
-  _ReferenceChart(super.item, super.userConfig);
+class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativeCategoryLabels => false;
 }
 
-class _ObservedNumber {
-  _ObservedNumber(this.onConvert);
-  final void Function() onConvert;
+class _ObservedNumber(final void Function() onConvert) {
   @override
   String toString() {
     onConvert();
@@ -27,9 +24,7 @@ class _ObservedNumber {
   }
 }
 
-class _ObservedList extends ListBase<Object?> {
-  _ObservedList(this.values);
-  final List<Object?> values;
+class _ObservedList(final List<Object?> values) extends ListBase<Object?> {
   int reads = 0;
   @override
   int get length {
@@ -49,8 +44,7 @@ class _ObservedList extends ListBase<Object?> {
   void operator []=(int index, Object? value) => values[index] = value;
 }
 
-class _CustomLinear extends LinearScale {
-  _CustomLinear(super.cfg);
+class _CustomLinear(super.cfg) extends LinearScale {
   int calls = 0;
   static final value = JsClass(
     'ParseObservedLinear',
@@ -65,8 +59,7 @@ class _CustomLinear extends LinearScale {
   }
 }
 
-class _CustomCategory extends CategoryScale {
-  _CustomCategory(super.cfg);
+class _CustomCategory(super.cfg) extends CategoryScale {
   int calls = 0;
   static final value = JsClass(
     'ParseObservedCategory',

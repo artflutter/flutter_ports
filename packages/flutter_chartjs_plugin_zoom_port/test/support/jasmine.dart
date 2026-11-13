@@ -21,9 +21,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// The default of an argument that the caller did not pass.
 const Object _absent = _Absent();
 
-final class _Absent {
-  const _Absent();
-}
+final class const _Absent();
 
 /// `jasmine.createSpy(name)`: a function value that records its calls.
 ///
@@ -33,12 +31,12 @@ final class _Absent {
 /// callback type of the zoom options that returns `void`, so the plugin
 /// calls it with a typed call; a callback type with another result type
 /// takes the JavaScript call of the plugin.
-final class Spy {
-  /// A spy with the [name] of `createSpy(name)`.
-  Spy(this.name);
-
+final class Spy(
   /// The name of the spy, for the messages.
-  final String name;
+  final String name,
+) {
+  /// A spy with the [name] of `createSpy(name)`.
+  this;
 
   /// The arguments of each call, in the order of the calls.
   final List<List<Object?>> calls = [];
@@ -70,11 +68,7 @@ final class Spy {
 }
 
 /// The `and` of a Jasmine spy.
-final class SpyStrategy {
-  SpyStrategy._(this._spy);
-
-  final Spy _spy;
-
+final class SpyStrategy._(final Spy _spy) {
   /// `spy.and.returnValue(value)`: each call returns [value]. Returns the
   /// spy, as upstream chains `createSpy(name).and.returnValue(value)`.
   Spy returnValue(Object? value) {
@@ -111,15 +105,17 @@ Matcher toHaveBeenCalledTimes(int times) =>
 Matcher toHaveBeenCalledWith(List<Object?> args) =>
     _SpyMatcher(_SpyCheck.calledWith, args: args);
 
-enum _SpyCheck { called, times, calledWith }
+enum _SpyCheck() {
+  called,
+  times,
+  calledWith,
+}
 
-final class _SpyMatcher extends Matcher {
-  const _SpyMatcher(this.check, {this.times = 0, this.args = const []});
-
-  final _SpyCheck check;
-  final int times;
-  final List<Object?> args;
-
+final class const _SpyMatcher(
+  final _SpyCheck check, {
+  final int times = 0,
+  final List<Object?> args = const [],
+}) extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     if (item is! Spy) return false;
@@ -161,11 +157,7 @@ final class _SpyMatcher extends Matcher {
 /// - Another value compares with `==`.
 Matcher jasmineEquals(Object? expected) => _JasmineEquals(expected);
 
-final class _JasmineEquals extends Matcher {
-  const _JasmineEquals(this.expected);
-
-  final Object? expected;
-
+final class const _JasmineEquals(final Object? expected) extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) =>
       _eq(item, expected);
@@ -231,11 +223,7 @@ bool _eq(Object? a, Object? b) {
 /// strings and booleans. Another value compares by identity.
 Matcher toBe(Object? expected) => _ToBe(expected);
 
-final class _ToBe extends Matcher {
-  const _ToBe(this.expected);
-
-  final Object? expected;
-
+final class const _ToBe(final Object? expected) extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     final a = item;
@@ -268,12 +256,8 @@ final class _ToBe extends Matcher {
 Matcher toBeCloseTo(num expected, [int precision = 2]) =>
     _ToBeCloseTo(expected.toDouble(), precision);
 
-final class _ToBeCloseTo extends Matcher {
-  const _ToBeCloseTo(this.expected, this.precision);
-
-  final double expected;
-  final int precision;
-
+final class const _ToBeCloseTo(final double expected, final int precision)
+    extends Matcher {
   @override
   bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     if (item is! num) return false;

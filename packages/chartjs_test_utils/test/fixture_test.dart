@@ -17,15 +17,13 @@ import 'package:flutter_test/flutter_test.dart';
 // that has CRLF line ends.
 
 /// One test of the probe run.
-final class _Test {
-  _Test(this.name, this.group);
-
+final class _Test(
   /// The full name.
-  final String name;
+  final String name,
 
   /// The full name of the innermost group.
-  final String group;
-
+  final String group,
+) {
   String result = '';
   bool skipped = false;
   String? skipReason;

@@ -128,9 +128,9 @@ const double _textAngleStep = math.pi / 90;
 /// The declarations keep their order. A write of an existing property keeps
 /// its place, as in the CSSOM. The style does not expand shorthand
 /// properties and does not parse values.
-final class UiCssStyleDeclaration implements CSSStyleDeclaration {
+final class UiCssStyleDeclaration() implements CSSStyleDeclaration {
   /// An empty style.
-  UiCssStyleDeclaration();
+  this;
 
   final Map<String, (String, String)> _properties = {};
 
@@ -258,11 +258,12 @@ final class UiCssStyleDeclaration implements CSSStyleDeclaration {
 /// case-insensitive, as in an HTML document.
 ///
 /// It is a [CanvasNode]: the chart host that shows it sets [parentNode].
-final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
+final class UiCanvasElement({int? width, int? height})
+    implements HTMLCanvasElement, CanvasNode {
   /// A canvas with the `width` attribute [width] and the `height` attribute
   /// [height], in device pixels. A `null` size has no attribute and the DOM
   /// default: 300 wide, 150 high.
-  UiCanvasElement({int? width, int? height}) {
+  this {
     if (width != null) this.width = width;
     if (height != null) this.height = height;
   }
@@ -412,41 +413,27 @@ final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
 }
 
 /// A clip of a state, in bitmap space.
-sealed class _Clip {
-  const _Clip();
-
+sealed class const _Clip() {
   void applyTo(ui.Canvas canvas);
 }
 
-final class _RectClip extends _Clip {
-  const _RectClip(this.rect);
-
-  final ui.Rect rect;
-
+final class const _RectClip(final ui.Rect rect) extends _Clip {
   @override
   void applyTo(ui.Canvas canvas) => canvas.clipRect(rect);
 }
 
-final class _RRectClip extends _Clip {
-  const _RRectClip(this.rrect);
-
-  final ui.RRect rrect;
-
+final class const _RRectClip(final ui.RRect rrect) extends _Clip {
   @override
   void applyTo(ui.Canvas canvas) => canvas.clipRRect(rrect);
 }
 
-final class _PathClip extends _Clip {
-  const _PathClip(this.path);
-
-  final ui.Path path;
-
+final class const _PathClip(final ui.Path path) extends _Clip {
   @override
   void applyTo(ui.Canvas canvas) => canvas.clipPath(path);
 }
 
 /// One drawing state of the context: what `save()` saves.
-final class _State {
+final class _State() {
   final UiTransform transform = UiTransform();
   ui.Color? fillColor = _black;
   ChartShaderPaint? fillShader;
@@ -510,36 +497,19 @@ final class _State {
 }
 
 /// The result of [UiCanvasContext.measureText].
-final class _UiTextMetrics implements TextMetrics {
-  const _UiTextMetrics({
-    required this.width,
-    required this.actualBoundingBoxLeft,
-    required this.actualBoundingBoxRight,
-    required this.actualBoundingBoxAscent,
-    required this.actualBoundingBoxDescent,
-  });
-
-  @override
-  final double width;
-
-  @override
-  final double actualBoundingBoxLeft;
-
-  @override
-  final double actualBoundingBoxRight;
-
-  @override
-  final double actualBoundingBoxAscent;
-
-  @override
-  final double actualBoundingBoxDescent;
-}
+final class const _UiTextMetrics({
+  @override required final double width,
+  @override required final double actualBoundingBoxLeft,
+  @override required final double actualBoundingBoxRight,
+  @override required final double actualBoundingBoxAscent,
+  @override required final double actualBoundingBoxDescent,
+}) implements TextMetrics;
 
 /// The `dart:ui` [CanvasRenderingContext2D] of a [UiCanvasElement].
 ///
 /// See the library comment for the picture model. The host calls [paint]
 /// in its paint phase and repaints when [onChanged] fires.
-final class UiCanvasContext
+final class UiCanvasContext._(final UiCanvasElement _element)
     implements
         CanvasRenderingContext2D,
         CanvasTextMetricsSource,
@@ -549,7 +519,8 @@ final class UiCanvasContext
         PartitionedFillCanvas,
         CircleRunCanvas,
         DenseCurveCanvas {
-  UiCanvasContext._(this._element) {
+  /// The context of [_element].
+  this {
     _s = _states[0];
     _path = UiPathBuilder(_s.transform);
   }
@@ -567,8 +538,6 @@ final class UiCanvasContext
     final scale = t.a.abs();
     return scale.isFinite && scale > 0 ? scale : null;
   }
-
-  final UiCanvasElement _element;
 
   @override
   Object? get textMetricsGeneration => trackedTextMetricsGeneration();

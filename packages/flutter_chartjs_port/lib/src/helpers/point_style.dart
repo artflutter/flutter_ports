@@ -49,9 +49,9 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
 ///   }
 /// }
 /// ```
-abstract class PointStyle {
+abstract class const PointStyle() {
   /// A style.
-  const PointStyle();
+  this;
 
   /// Draws one point of this style on [ctx].
   void draw(
@@ -79,9 +79,9 @@ abstract class PointStyle {
 
 /// A style that adds a path, which the context then fills and strokes: the
 /// path branch of `drawPointLegend` (helpers.canvas.ts:188-292).
-abstract class PathPointStyle extends PointStyle {
+abstract class const PathPointStyle() extends PointStyle {
   /// A path style.
-  const PathPointStyle();
+  this;
 
   /// Draws nothing for a radius that is NaN or not above 0
   /// (helpers.canvas.ts:188). Else begins a path, adds the path of the

@@ -19,23 +19,23 @@ import 'date_adapter_reference.dart';
 const int _day = 86400000;
 
 /// A zone with the offsets of a table.
-final class TableZone implements DateZone {
-  /// A zone with the offset [initialOffset] before the first change, and
-  /// the offset `offsets[i]` from the instant `changes[i]` on.
-  TableZone(this.initialOffset, this.changes, this.offsets);
-
-  /// The zone of the reference data [zone].
-  TableZone.of(DateReferenceZone zone)
-    : this(zone.initialOffset, zone.changes, zone.offsets);
-
+final class TableZone(
   /// The offset before the first change, in ms.
-  final int initialOffset;
+  final int initialOffset,
 
   /// The instants of the offset changes, in increasing order.
-  final List<int> changes;
+  final List<int> changes,
 
   /// The offset from each change on, in ms.
-  final List<int> offsets;
+  final List<int> offsets,
+) implements DateZone {
+  /// A zone with the offset [initialOffset] before the first change, and
+  /// the offset `offsets[i]` from the instant `changes[i]` on.
+  this;
+
+  /// The zone of the reference data [zone].
+  new of(DateReferenceZone zone)
+    : this(zone.initialOffset, zone.changes, zone.offsets);
 
   /// The number of changes at or before [t].
   int _changesUpTo(int t) {

@@ -65,9 +65,9 @@ import 'package:meta/meta.dart';
 /// plugin.decimation.js:270 `case 'lttb'`: the Largest Triangle Three
 /// Buckets algorithm ([lttbDecimation]). It reads the option `samples`.
 // DIVERGES(chartjs): adapt-decimation-algorithm-objects, an algorithm class.
-final class LttbDecimationAlgorithm extends DecimationAlgorithm {
+final class const LttbDecimationAlgorithm() extends DecimationAlgorithm {
   /// The algorithm.
-  const LttbDecimationAlgorithm();
+  this;
 
   @override
   List<Object?> decimate(
@@ -83,9 +83,9 @@ final class LttbDecimationAlgorithm extends DecimationAlgorithm {
 /// pixel column ([minMaxDecimation]). The default of the option
 /// `algorithm`.
 // DIVERGES(chartjs): adapt-decimation-algorithm-objects, an algorithm class.
-final class MinMaxDecimationAlgorithm extends DecimationAlgorithm {
+final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
   /// The algorithm.
-  const MinMaxDecimationAlgorithm();
+  this;
 
   @override
   List<Object?> decimate(
@@ -404,12 +404,10 @@ extension type const _Dataset(Object? object) {
 
 /// The accessor of plugin.decimation.js:255-264 on one dataset: [written] is
 /// the last value that the plugin wrote into the plain entry `data`.
-final class _DataAccessor {
-  _DataAccessor(this.written);
-
+final class _DataAccessor(
   /// The last getter value that the plugin wrote into `data`.
-  Object? written;
-}
+  var Object? written,
+);
 
 /// The accessor state of plugin.decimation.js:255-264: present while `data`
 /// of the dataset is the accessor property.

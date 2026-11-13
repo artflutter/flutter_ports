@@ -51,17 +51,13 @@ import 'bar_reference.dart';
 // entries. Both compare with the same reference data.
 
 /// The JS animation object `{active: () => active, _to: to}`.
-final class _Animation implements Animation {
-  _Animation({required this.isActive, required this.to});
-
+final class _Animation({
   /// The result of [active].
-  final bool isActive;
-
+  required final bool isActive,
+  @override required final Object? to,
+}) implements Animation {
   @override
   bool active() => isActive;
-
-  @override
-  final Object? to;
 }
 
 /// [options] as they are: the plain Map form of the options.
@@ -722,7 +718,7 @@ void main() {
 }
 
 /// A chart area, which [BarElement.draw] ignores.
-final class _Area implements types.ChartArea {
+final class _Area() implements types.ChartArea {
   @override
   double get top => 0;
 

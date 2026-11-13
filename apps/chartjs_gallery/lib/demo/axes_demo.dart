@@ -143,16 +143,19 @@ _datasetStyles = [
 /// parameters come after the readout (section 10.7). Each segment has a
 /// `ValueKey` (`axes.x.type.time`, `axes.ticks.autoSkip`,
 /// `axes.ticks.maxRotation.50`, `axes.data.add`, ...).
-class AxesDemo extends StatefulWidget {
+class const AxesDemo({super.key}) extends StatefulWidget {
   /// Creates the axes tab.
-  const AxesDemo({super.key});
+  this;
 
   @override
   State<AxesDemo> createState() => AxesDemoState();
 }
 
 /// The state of [AxesDemo]: the configuration, the data and the chart.
-class AxesDemoState extends State<AxesDemo> {
+class AxesDemoState() extends State<AxesDemo> {
+  /// A new state of [AxesDemo].
+  this;
+
   final math.Random _random = math.Random(6);
   Chart? _chart;
 

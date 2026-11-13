@@ -27,10 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 const _n = 1000;
 
-final class _Metrics implements TextMetrics {
-  _Metrics(this.width);
-  @override
-  final double width;
+final class _Metrics(@override final double width) implements TextMetrics {
   @override
   double get actualBoundingBoxAscent => 4;
   @override
@@ -41,7 +38,7 @@ final class _Metrics implements TextMetrics {
   double get actualBoundingBoxRight => width;
 }
 
-class _Context extends MockContext {
+class _Context() extends MockContext {
   int measures = 0;
   int fontWrites = 0;
   double factor = 1;
@@ -60,20 +57,22 @@ class _Context extends MockContext {
   }
 }
 
-final class _StableContext extends _Context implements CanvasTextMetricsSource {
+final class _StableContext()
+    extends _Context
+    implements CanvasTextMetricsSource {
   @override
   Object textMetricsGeneration = Object();
 }
 
-final class _FreshContext extends _Context implements CanvasTextMetricsSource {
+final class _FreshContext()
+    extends _Context
+    implements CanvasTextMetricsSource {
   // An uncached oracle: every measurement pass observes a new environment.
   @override
   Object get textMetricsGeneration => Object();
 }
 
-final class _Ticks extends ListBase<Tick> {
-  _Ticks(this.values);
-  final List<Tick> values;
+final class _Ticks(final List<Tick> values) extends ListBase<Tick> {
   void Function(int)? onRead;
   @override
   int get length => values.length;
@@ -89,12 +88,9 @@ final class _Ticks extends ListBase<Tick> {
   void operator []=(int index, Tick value) => values[index] = value;
 }
 
-final class _CustomCategory extends CategoryScale {
-  _CustomCategory(super.cfg);
-}
+final class _CustomCategory(super.cfg) extends CategoryScale;
 
-final class _ObservedChart extends Chart {
-  _ObservedChart(super.item, super.userConfig);
+final class _ObservedChart(super.item, super.userConfig) extends Chart {
   int dataReads = 0;
   void Function()? onDataRead;
 
@@ -159,8 +155,8 @@ Map<String, Object?> _snapshot(Chart chart) => {
   ],
 };
 
-final class _Pair {
-  _Pair() {
+final class _Pair() {
+  this {
     for (final chart in [fast, reference]) {
       addTearDown(chart.destroy);
     }

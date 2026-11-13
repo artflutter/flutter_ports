@@ -15,27 +15,22 @@ import 'package:material_ui/material_ui.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as sf;
 
 /// One active public-widget adapter; inactive engines are never mounted.
-class BenchmarkChart extends StatelessWidget {
-  /// All engines receive the same immutable source values and feature settings.
-  const BenchmarkChart({
-    required this.library,
-    required this.config,
-    required this.frame,
-    required this.size,
-    super.key,
-  });
-
+class const BenchmarkChart({
   /// Selected engine.
-  final ChartLibrary library;
+  required final ChartLibrary library,
 
   /// Common effective features.
-  final BenchmarkConfig config;
+  required final BenchmarkConfig config,
 
   /// Shared input snapshot.
-  final DatasetFrame frame;
+  required final DatasetFrame frame,
 
   /// Identical outer viewport for every engine.
-  final Size size;
+  required final Size size,
+  super.key,
+}) extends StatelessWidget {
+  /// All engines receive the same immutable source values and feature settings.
+  this;
 
   /// The outer radius of a pie, doughnut or polar area, as a share of half of
   /// the short side.
@@ -1126,17 +1121,15 @@ class BenchmarkChart extends StatelessWidget {
 /// without zoom finds no plugin, and a chart with zoom finds it. When an old
 /// chart leaves the tree after a new one registered, the old one keeps the
 /// plugin of the new one: only the last widget that registered removes it.
-class _ChartJsZoomPlugin extends StatefulWidget {
-  const _ChartJsZoomPlugin({required this.child});
-
+class const _ChartJsZoomPlugin({
   /// The chart, with zoom.
-  final Widget child;
-
+  required final Widget child,
+}) extends StatefulWidget {
   @override
   State<_ChartJsZoomPlugin> createState() => _ChartJsZoomPluginState();
 }
 
-class _ChartJsZoomPluginState extends State<_ChartJsZoomPlugin> {
+class _ChartJsZoomPluginState() extends State<_ChartJsZoomPlugin> {
   /// The state that registered the plugin last, or `null`.
   static _ChartJsZoomPluginState? _owner;
 

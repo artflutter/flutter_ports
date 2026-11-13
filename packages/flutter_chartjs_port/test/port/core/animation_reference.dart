@@ -21,9 +21,7 @@ const String animationReferenceV8 = '13.6.233.17-node.58';
 const String animationReferenceArch = 'arm64';
 
 /// The type of [animationAbsent].
-final class AnimationAbsent {
-  const AnimationAbsent._();
-}
+final class const AnimationAbsent._();
 
 /// An absent value: a target without the property, an omitted `to`
 /// argument, or a step without a value.

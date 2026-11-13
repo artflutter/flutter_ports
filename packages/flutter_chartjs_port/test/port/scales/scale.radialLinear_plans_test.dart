@@ -56,9 +56,7 @@ import 'package:flutter_test/flutter_test.dart';
 //   takes the ordinary loops: their pixels must be equal.
 
 /// A trivial user subclass of the scale, which keeps each ordinary call.
-final class _OrdinaryRadial extends RadialLinearScale {
-  _OrdinaryRadial(super.cfg);
-
+final class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
   static final value = JsClass(
     'OrdinaryRadial',
     superclass: RadialLinearScale.jsClass,
@@ -68,9 +66,7 @@ final class _OrdinaryRadial extends RadialLinearScale {
 }
 
 /// A user subclass that counts the contexts of its point labels.
-class _CountedRadial extends RadialLinearScale {
-  _CountedRadial(super.cfg);
-
+class _CountedRadial(super.cfg) extends RadialLinearScale {
   static final value = JsClass(
     'CountedRadial',
     superclass: RadialLinearScale.jsClass,
@@ -89,9 +85,7 @@ class _CountedRadial extends RadialLinearScale {
 
 /// [_CountedRadial] that reports the class of the built-in scale. It stays a
 /// user subclass: it keeps each ordinary call.
-final class _DisguisedRadial extends _CountedRadial {
-  _DisguisedRadial(super.cfg);
-
+final class _DisguisedRadial(super.cfg) extends _CountedRadial {
   static final value = JsClass(
     'DisguisedRadial',
     superclass: RadialLinearScale.jsClass,
@@ -104,9 +98,7 @@ final class _DisguisedRadial extends _CountedRadial {
 }
 
 /// A chart that counts `getDataVisibility` and records its arguments.
-final class _VisibilityChart extends Chart {
-  _VisibilityChart(super.item, super.userConfig);
-
+final class _VisibilityChart(super.item, super.userConfig) extends Chart {
   final List<num> visibilityReads = [];
 
   @override
@@ -117,16 +109,10 @@ final class _VisibilityChart extends Chart {
 }
 
 /// A color of user code: the plan declines it.
-final class _UserColor extends ui.Color {
-  const _UserColor(super.value);
-}
+final class const _UserColor(super.value) extends ui.Color;
 
-final class _Metrics implements TextMetrics {
-  const _Metrics(this.width);
-
-  @override
-  final double width;
-
+final class const _Metrics(@override final double width)
+    implements TextMetrics {
   @override
   double get actualBoundingBoxAscent => 4;
 
@@ -142,11 +128,7 @@ final class _Metrics implements TextMetrics {
 
 /// A recording context over the native context of a chart: the font state and
 /// the text measures of [target], with no pixels. The plan declines it.
-class _Recorder extends MockContext {
-  _Recorder(this.target);
-
-  final CanvasRenderingContext2D target;
-
+class _Recorder(final CanvasRenderingContext2D target) extends MockContext {
   @override
   HTMLCanvasElement get canvas => target.canvas;
 
@@ -179,9 +161,9 @@ class _Recorder extends MockContext {
 }
 
 /// [_Recorder] with the capability of the native canvas: the plan accepts it.
-final class _PlanRecorder extends _Recorder implements CanvasTextMetricsSource {
-  _PlanRecorder(super.target);
-
+final class _PlanRecorder(super.target)
+    extends _Recorder
+    implements CanvasTextMetricsSource {
   static final Object _generation = Object();
 
   @override
@@ -388,37 +370,24 @@ AnyObject _config({
 
 /// What the plan must do in a case: `true` for a plan, on the recording
 /// context with the capability.
-final class _Expect {
-  const _Expect({this.fit = true, this.labels = true, this.lines = true});
-
-  final bool fit;
-  final bool labels;
+final class const _Expect({
+  final bool fit = true,
+  final bool labels = true,
 
   /// Null when the ordinary loop strokes no angle line.
-  final bool? lines;
-}
+  final bool? lines = true,
+});
 
-final class _Case {
-  const _Case(
-    this.name, {
-    this.expected = const _Expect(),
-    this.labels,
-    this.r,
-    this.pointLabels,
-    this.callback = _everyFourth,
-    this.hidden = const [],
-    this.n = 40,
-  });
-
-  final String name;
-  final _Expect expected;
-  final List<Object?>? labels;
-  final AnyObject Function()? r;
-  final AnyObject Function()? pointLabels;
-  final Object? callback;
-  final List<int> hidden;
-  final int n;
-
+final class const _Case(
+  final String name, {
+  final _Expect expected = const _Expect(),
+  final List<Object?>? labels,
+  final AnyObject Function()? r,
+  final AnyObject Function()? pointLabels,
+  final Object? callback = _everyFourth,
+  final List<int> hidden = const [],
+  final int n = 40,
+}) {
   AnyObject config(String type, {String? scaleType}) => _config(
     type: type,
     scaleType: scaleType,

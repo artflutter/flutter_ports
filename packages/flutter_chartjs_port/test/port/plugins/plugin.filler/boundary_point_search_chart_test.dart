@@ -21,8 +21,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../scales/scale_chart_harness.dart' show drawCalls;
 
-class _ObservedLine extends LineElement {
-  _ObservedLine(LineElement original) {
+class _ObservedLine(LineElement original) extends LineElement {
+  this {
     points = original.points;
     options = original.options;
     loop = original.loop ?? false;

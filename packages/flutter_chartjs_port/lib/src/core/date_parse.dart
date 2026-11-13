@@ -585,12 +585,10 @@ double? _parseIso(String s, DateZone? zone) {
 /// [_parseIso] calls [_read] only for a signed year in a form of four
 /// digits. Step 1 of [_parseIso] found each field of the form. Thus each
 /// token finds its match.
-final class _IsoParse {
-  _IsoParse(this.s);
-
+final class _IsoParse(
   /// The string.
-  final String s;
-
+  final String s,
+) {
   /// The position of the token parse.
   int _position = 0;
 

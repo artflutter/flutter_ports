@@ -6,23 +6,19 @@ import 'package:material_ui/material_ui.dart';
 ///
 /// The page puts it in the floating slot of its `Scaffold`, outside each scroll
 /// view, so that it stays in place when the page scrolls.
-class PageNote extends StatelessWidget {
-  /// Creates the note.
-  const PageNote({
-    required this.title,
-    required this.text,
-    required this.onClose,
-    super.key,
-  });
-
+class const PageNote({
   /// The short name of the subject.
-  final String title;
+  required final String title,
 
   /// The explanation, in plain words.
-  final String text;
+  required final String text,
 
   /// Called when the person closes the note.
-  final VoidCallback onClose;
+  required final VoidCallback onClose,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates the note.
+  this;
 
   @override
   Widget build(BuildContext context) => ConstrainedBox(

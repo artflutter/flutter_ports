@@ -98,12 +98,12 @@ import 'package:meta/meta.dart' show internal;
 /// new config with these scopes (the keyed reconcile of Chart.js ADR 0052,
 /// section 3).
 @internal
-final class ChartConfigLowering {
-  /// The lowering of [config].
-  ChartConfigLowering(this.config);
-
+final class ChartConfigLowering(
   /// The newest config. The trampolines read its callbacks.
-  ChartConfig config;
+  var ChartConfig config,
+) {
+  /// The lowering of [config].
+  this;
 
   /// The config of the live scopes: the config of the last [lower] or
   /// [apply], or Dart `null` before the first.
@@ -366,18 +366,25 @@ final class _DatasetCallbacks(var Dataset dataset);
 
 /// One live dataset scope of a [ChartConfigLowering]: the typed dataset,
 /// the scope of the chart and the cells that the lowering wrote into it.
-final class _LiveDataset {
-  _LiveDataset(
-    this.dataset,
-    this.scope,
-    this.lowered, {
-    required this.callbacks,
-    this.dataOnly = false,
-  });
+final class _LiveDataset(
+  /// The typed dataset of [scope].
+  final Dataset dataset,
 
+  /// The dataset scope of the chart.
+  final OptionScope scope,
+
+  /// A scope of the kind of [scope] with the keys and the cells that the
+  /// lowering wrote into [scope].
+  final OptionScope lowered, {
+  required final _DatasetCallbacks callbacks,
+
+  /// Whether this is the result of a [patch] that changed no value but
+  /// `data` (Chart.js ADR 0098).
+  final bool dataOnly = false,
+}) {
   /// The live dataset of a new scope: the lowering of [dataset] in a chart
   /// of the type [type].
-  factory _LiveDataset.lower(Dataset dataset, ChartKind type) {
+  factory lower(Dataset dataset, ChartKind type) {
     final callbacks = _DatasetCallbacks(dataset);
     final scope = lowerDataset(
       dataset,
@@ -391,21 +398,6 @@ final class _LiveDataset {
       callbacks: callbacks,
     );
   }
-
-  /// The typed dataset of [scope].
-  final Dataset dataset;
-  final _DatasetCallbacks callbacks;
-
-  /// The dataset scope of the chart.
-  final OptionScope scope;
-
-  /// A scope of the kind of [scope] with the keys and the cells that the
-  /// lowering wrote into [scope].
-  final OptionScope lowered;
-
-  /// Whether this is the result of a [patch] that changed no value but
-  /// `data` (Chart.js ADR 0098).
-  final bool dataOnly;
 
   /// This scope with the values of [next] in a chart of the type [type]
   /// (rule 3 of [ChartConfigLowering.apply]). Two cells are equal when

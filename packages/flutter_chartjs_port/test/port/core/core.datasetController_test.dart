@@ -98,7 +98,7 @@ String _idOf(String prefix, Object object) =>
     _ids.putIfAbsent(object, () => '$prefix#${_ids.length}');
 
 /// An element with the tag of the observations.
-abstract interface class _Tagged {
+abstract interface class _Tagged() {
   String get tag;
 }
 
@@ -108,8 +108,8 @@ String _newTag(String kind) {
   return '$kind#$n';
 }
 
-final class _SpyPoint extends PointElement implements _Tagged {
-  _SpyPoint() : tag = _newTag('point');
+final class _SpyPoint() extends PointElement implements _Tagged {
+  this : tag = _newTag('point');
 
   @override
   final String tag;
@@ -120,8 +120,8 @@ final class _SpyPoint extends PointElement implements _Tagged {
   }
 }
 
-final class _SpyLine extends LineElement implements _Tagged {
-  _SpyLine() : tag = _newTag('line');
+final class _SpyLine() extends LineElement implements _Tagged {
+  this : tag = _newTag('line');
 
   @override
   final String tag;
@@ -139,8 +139,8 @@ final class _SpyLine extends LineElement implements _Tagged {
   }
 }
 
-final class _SpyBar extends BarElement implements _Tagged {
-  _SpyBar() : tag = _newTag('bar');
+final class _SpyBar() extends BarElement implements _Tagged {
+  this : tag = _newTag('bar');
 
   @override
   final String tag;
@@ -151,8 +151,8 @@ final class _SpyBar extends BarElement implements _Tagged {
   }
 }
 
-final class _SpyArc extends ArcElement implements _Tagged {
-  _SpyArc() : tag = _newTag('arc');
+final class _SpyArc() extends ArcElement implements _Tagged {
+  this : tag = _newTag('arc');
 
   @override
   final String tag;
@@ -163,8 +163,10 @@ final class _SpyArc extends ArcElement implements _Tagged {
   }
 }
 
-final class _SpyCustom extends Element implements types.VisualElement, _Tagged {
-  _SpyCustom() : tag = _newTag('custom');
+final class _SpyCustom()
+    extends Element
+    implements types.VisualElement, _Tagged {
+  this : tag = _newTag('custom');
 
   @override
   final String tag;
@@ -237,9 +239,8 @@ Object? _maxOverflow;
 
 /// The test controller: the option calls of controller.line.js:41-120. The
 /// pixels are 10 times the parsed values.
-final class _TestController extends DatasetController {
-  _TestController(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
+    extends DatasetController {
   @override
   void initialize() {
     enableOptionSharing = _sharing;
@@ -311,21 +312,12 @@ final JsClass _testControllerClass = JsClass(
 );
 
 /// A rectangle `{left, top, right, bottom, width, height}`.
-final class _Area implements types.ChartArea {
-  _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements types.ChartArea {
   @override
   double get width => right - left;
 
@@ -336,35 +328,25 @@ final class _Area implements types.ChartArea {
 /// A fake scale: a linear, category or raw parse, labels and user bounds.
 /// The raw parse returns the value as it is, for the `<` of the sorted
 /// test.
-final class _FakeScale implements types.Scale {
-  _FakeScale(this.chart, AnyObject spec)
-    : id = spec['id']! as String,
-      axis = spec['axis']! as ScaleAxis,
-      kind = spec['kind']! as String,
-      options =
-          _materialize(spec['options'] ?? <String, Object?>{})! as AnyObject,
-      labels = spec.containsKey('labels')
-          ? _materialize(spec['labels'])! as List<Object?>
-          : null,
-      bounds = spec['bounds'] as AnyObject?;
+final class _FakeScale(@override final types.Chart chart, AnyObject spec)
+    implements types.Scale {
+  @override
+  final String id = spec['id']! as String;
 
   @override
-  final types.Chart chart;
+  final ScaleAxis axis = spec['axis']! as ScaleAxis;
+
+  final String kind = spec['kind']! as String;
 
   @override
-  final String id;
+  final AnyObject options =
+      _materialize(spec['options'] ?? <String, Object?>{})! as AnyObject;
 
-  @override
-  final ScaleAxis axis;
+  final List<Object?>? labels = spec.containsKey('labels')
+      ? _materialize(spec['labels'])! as List<Object?>
+      : null;
 
-  final String kind;
-
-  @override
-  final AnyObject options;
-
-  final List<Object?>? labels;
-
-  final AnyObject? bounds;
+  final AnyObject? bounds = spec['bounds'] as AnyObject?;
 
   @override
   Object? parse(Object? raw, [double? index]) {
@@ -448,15 +430,11 @@ final class _FakeScale implements types.Scale {
 
 /// The meta of core.controller.js:835-848, and the members that the fake
 /// chart writes.
-final class _Meta implements types.ChartMeta {
-  _Meta(this.datasetObject, this.index)
-    : order = jsTruthy(datasetObject) && jsTruthy(jsGet(datasetObject, 'order'))
-          ? jsToNumber(jsGet(datasetObject, 'order'))
-          : 0;
-
+final class _Meta(
   /// `_dataset`.
-  final Object? datasetObject;
-
+  final Object? datasetObject,
+  @override var double index,
+) implements types.ChartMeta {
   // The members of Chart.js ADR 0028 that this test does not read.
   @override
   Object? get dataset_ => datasetObject;
@@ -497,10 +475,10 @@ final class _Meta implements types.ChartMeta {
   @override
   Object? vAxisID;
 
-  double order;
-
-  @override
-  double index;
+  double order =
+      jsTruthy(datasetObject) && jsTruthy(jsGet(datasetObject, 'order'))
+      ? jsToNumber(jsGet(datasetObject, 'order'))
+      : 0;
 
   @override
   List<Object?> parsed = [];
@@ -545,18 +523,14 @@ final class _Meta implements types.ChartMeta {
 }
 
 /// A fake chart: the members that core.datasetController.js reads.
-final class _FakeChart implements types.Chart {
-  _FakeChart(this.config, AnyObject spec)
-    : animationsDisabled = spec['animationsDisabled'] as bool?,
-      _plugins = (spec['plugins'] ?? <Object?>[]) as List<Object?> {
+final class _FakeChart(@override final Config config, AnyObject spec)
+    implements types.Chart {
+  this {
     for (final scale in spec['scales']! as List<Object?>) {
       final scaleSpec = scale! as AnyObject;
       scales[scaleSpec['id']! as String] = _FakeScale(this, scaleSpec);
     }
   }
-
-  @override
-  final Config config;
 
   @override
   final CanvasRenderingContext2D? ctx = createMockContext();
@@ -583,11 +557,12 @@ final class _FakeChart implements types.Chart {
   final List<List<Object?>> dataChanges = [];
 
   @override
-  final bool? animationsDisabled;
+  final bool? animationsDisabled = spec['animationsDisabled'] as bool?;
 
   final List<_Meta> _metasets = [];
 
-  final List<Object?> _plugins;
+  final List<Object?> _plugins =
+      (spec['plugins'] ?? <Object?>[]) as List<Object?>;
 
   @override
   late final JsProxyObject options = config.createResolver(
@@ -734,16 +709,8 @@ String _errorName(Object error) => switch (error) {
 };
 
 /// A scenario in progress: the fake chart, the steps and the observations.
-final class _Run {
-  _Run(this.spec)
-    : config = Config(<String, Object?>{
-        'type': spec['chartType'] ?? 'test',
-        'data': <String, Object?>{
-          'labels': _materialize(spec['labels'] ?? <Object?>[]),
-          'datasets': _materialize(spec['datasets']),
-        },
-        'options': _materialize(spec['options'] ?? <String, Object?>{}),
-      }) {
+final class _Run(final AnyObject spec) {
+  this {
     _counter = 0;
     _trace = [];
     _ids = Map.identity();
@@ -752,9 +719,14 @@ final class _Run {
     chart = _FakeChart(config, spec);
   }
 
-  final AnyObject spec;
-
-  final Config config;
+  final Config config = Config(<String, Object?>{
+    'type': spec['chartType'] ?? 'test',
+    'data': <String, Object?>{
+      'labels': _materialize(spec['labels'] ?? <Object?>[]),
+      'datasets': _materialize(spec['datasets']),
+    },
+    'options': _materialize(spec['options'] ?? <String, Object?>{}),
+  });
 
   late final _FakeChart chart;
 
@@ -1099,7 +1071,7 @@ _Run _runTo(String name, int count) {
 }
 
 /// An element id whose string conversion must run even on an option cache hit.
-final class _CountingElementId {
+final class _CountingElementId() {
   int calls = 0;
 
   @override
@@ -1887,11 +1859,11 @@ void main() {
 }
 
 /// A controller that records the modes of [update].
-final class _ModeController extends DatasetController {
-  _ModeController(super.chart, super.datasetIndex, this.modes);
-
-  final List<String> modes;
-
+final class _ModeController(
+  super.chart,
+  super.datasetIndex,
+  final List<String> modes,
+) extends DatasetController {
   @override
   void update(String mode) {
     modes.add(mode);
@@ -1899,12 +1871,5 @@ final class _ModeController extends DatasetController {
 }
 
 /// A plain `{min, max}` object for `updateRangeFromParsed`.
-final class _MinMax implements MinMax {
-  _MinMax(this.min, this.max);
-
-  @override
-  double min;
-
-  @override
-  double max;
-}
+final class _MinMax(@override var double min, @override var double max)
+    implements MinMax;

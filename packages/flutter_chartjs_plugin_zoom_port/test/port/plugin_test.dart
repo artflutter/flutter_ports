@@ -36,7 +36,7 @@ import '../support/jasmine.dart';
 // plugin for each chart (harness-register-builtins).
 
 /// The updates and the layouts of the charts since the last [clear].
-final class _Spy {
+final class _Spy() {
   int updates = 0;
   int layouts = 0;
 

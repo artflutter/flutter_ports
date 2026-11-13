@@ -13,7 +13,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:test/test.dart';
 
-class _Ordinary extends Config;
+class _Ordinary() extends Config;
 
 const red = Color(0xffff0000);
 const blue = Color(0xff0000ff);

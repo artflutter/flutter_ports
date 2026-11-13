@@ -11,13 +11,12 @@ import 'package:material_ui/material_ui.dart';
 const _bold = ChartTextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 const _plain = ChartTextStyle(fontSize: 14);
 
-class Sample11 extends StatefulWidget {
-  const Sample11({super.key});
+class const Sample11({super.key}) extends StatefulWidget {
   @override
   State<Sample11> createState() => _Sample11State();
 }
 
-class _Sample11State extends State<Sample11> {
+class _Sample11State() extends State<Sample11> {
   double _baseX = 0;
   double _baseY = 0;
 

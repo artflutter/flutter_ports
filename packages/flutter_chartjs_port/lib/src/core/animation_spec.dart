@@ -22,9 +22,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The type of [_absent].
-final class _Absent {
-  const _Absent();
-}
+final class const _Absent();
 
 /// The value of the field of a known key that the spec does not contain.
 ///
@@ -72,9 +70,9 @@ Object? _read(Object? raw) => identical(raw, _absent) ? undefined : raw;
 /// It gives the raw value, or [undefined] for an absent key, as
 /// `jsGet(spec, key)` gives. It does no Map lookup.
 // DIVERGES(chartjs): adapt-animation-spec, a typed copy of the options.
-final class AnimationSpec implements JsObjectFace {
+final class AnimationSpec() implements JsObjectFace {
   /// A spec with no key.
-  AnimationSpec();
+  this;
 
   /// The known keys, in their order: the keys of `defaults.animation`
   /// (core.animations.defaults.js:5-14).

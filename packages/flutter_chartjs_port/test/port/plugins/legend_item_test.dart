@@ -179,10 +179,8 @@ void main() {
   });
 }
 
-class _PluginItem extends LegendItem {
-  _PluginItem(this.owner, {required super.text});
-
-  final String owner;
+class _PluginItem(final String owner, {required super.text})
+    extends LegendItem {
   int copyCalls = 0;
 
   @override

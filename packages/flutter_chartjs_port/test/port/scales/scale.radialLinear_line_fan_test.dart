@@ -45,9 +45,7 @@ import '../canvas/line_fan_engine.dart';
 //   bitmap must be equal.
 
 /// A trivial user subclass of the scale, which keeps each ordinary call.
-final class _OrdinaryRadial extends RadialLinearScale {
-  _OrdinaryRadial(super.cfg);
-
+final class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
   static final value = JsClass(
     'FanOrdinaryRadial',
     superclass: RadialLinearScale.jsClass,
@@ -56,12 +54,8 @@ final class _OrdinaryRadial extends RadialLinearScale {
   );
 }
 
-final class _Metrics implements TextMetrics {
-  const _Metrics(this.width);
-
-  @override
-  final double width;
-
+final class const _Metrics(@override final double width)
+    implements TextMetrics {
   @override
   double get actualBoundingBoxAscent => 4;
 
@@ -77,11 +71,9 @@ final class _Metrics implements TextMetrics {
 
 /// A recording context with the capability of the static plans of the scale:
 /// the font state and the text measures of [target], with no pixels.
-class _Recorder extends MockContext implements CanvasTextMetricsSource {
-  _Recorder(this.target);
-
-  final CanvasRenderingContext2D target;
-
+class _Recorder(final CanvasRenderingContext2D target)
+    extends MockContext
+    implements CanvasTextMetricsSource {
   static final Object _generation = Object();
 
   @override
@@ -120,11 +112,9 @@ class _Recorder extends MockContext implements CanvasTextMetricsSource {
 
 /// [_Recorder] with the capability of the fan. It takes a fan when [takes] is
 /// true: then it records the ordinary sequence of its lines.
-final class _FanRecorder extends _Recorder implements LineFanCanvas {
-  _FanRecorder(super.target, {required this.takes});
-
-  final bool takes;
-
+final class _FanRecorder(super.target, {required final bool takes})
+    extends _Recorder
+    implements LineFanCanvas {
   /// The count of the lines of each offer.
   final List<int> fans = [];
 

@@ -4,7 +4,7 @@
 /// A false result changes no observable canvas state and requests the normal
 /// Canvas 2D sequence. A true result preserves its pixels, final current path,
 /// saved drawing state, notifications and paint ordering.
-abstract interface class RectBarCanvas {
+abstract interface class RectBarCanvas() {
   /// Draw the border ring and inner fill as one guarded native operation.
   bool tryDrawRectBar({
     required double outerX,

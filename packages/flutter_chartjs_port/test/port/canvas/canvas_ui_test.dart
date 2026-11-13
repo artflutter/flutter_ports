@@ -18,13 +18,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The rendered RGBA pixels of a canvas.
-final class _Pixels {
-  _Pixels(this.data, this.width, this.height);
-
-  final ByteData data;
-  final int width;
-  final int height;
-
+final class _Pixels(final ByteData data, final int width, final int height) {
   int _offset(int x, int y) => (y * width + x) * 4;
 
   int r(int x, int y) => data.getUint8(_offset(x, y));

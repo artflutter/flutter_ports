@@ -29,51 +29,30 @@ import 'fixtures.dart';
 import 'harness.dart';
 
 /// The `chart` of a `this` object `{chart: {options}, options}`.
-final class _Chart implements Chart {
-  _Chart(this.options);
-
-  @override
-  final Map<String, Object?> options;
-
+final class _Chart(@override final Map<String, Object?> options)
+    implements Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A `this` object `{chart, options}`, passed as a [Scale].
-final class _Scale implements Scale {
-  _Scale(this.chart, this.options);
-
-  @override
-  final Chart chart;
-
-  @override
-  final Map<String, Object?> options;
-
+final class _Scale(
+  @override final Chart chart,
+  @override final Map<String, Object?> options,
+) implements Scale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A tick `{value}`.
-final class _Tick implements Tick {
-  const _Tick(this.value);
-
-  @override
-  final double value;
-
+final class const _Tick(@override final double value) implements Tick {
   @override
   double? get significand => null;
 }
 
 /// A point `{x, y}`.
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-}
+final class const _Point(@override final double x, @override final double y)
+    implements Point;
 
 /// The helper cases.
 List<BenchCase> helperCases() => [

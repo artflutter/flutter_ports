@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 
 /// Internal host contract: its data/config getters have ordinary read behavior.
 /// Unknown Chart subclasses do not opt in, preserving effectful getter reads.
-abstract interface class CategoryLabelSource {
+abstract interface class CategoryLabelSource() {
   /// The native label list, or null when bulk reads cannot be proven safe.
   List<Object?>? categoryLabels(
     Object? explicitLabels, {

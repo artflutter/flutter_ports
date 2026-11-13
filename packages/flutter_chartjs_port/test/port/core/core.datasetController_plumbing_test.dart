@@ -29,10 +29,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 /// A value of a parsed item whose `toString` is user code.
-final class _Logged {
-  _Logged(this.text, this.onRead);
-  final String text;
-  final void Function() onRead;
+final class _Logged(final String text, final void Function() onRead) {
   @override
   String toString() {
     onRead();
@@ -41,8 +38,7 @@ final class _Logged {
 }
 
 /// A scale whose `parse` gives a value that runs user code in a comparison.
-final class _ObjectLinear extends LinearScale {
-  _ObjectLinear(super.cfg);
+final class _ObjectLinear(super.cfg) extends LinearScale {
   static void Function()? onRead;
   static final value = JsClass(
     'PlumbingObjectLinear',
@@ -59,8 +55,7 @@ final class _ObjectLinear extends LinearScale {
 }
 
 /// A scale that logs the order of its `parse` calls.
-final class _OrderLinear extends LinearScale {
-  _OrderLinear(super.cfg);
+final class _OrderLinear(super.cfg) extends LinearScale {
   static final List<String> log = [];
   static final value = JsClass(
     'PlumbingOrderLinear',
@@ -77,10 +72,10 @@ final class _OrderLinear extends LinearScale {
 }
 
 /// A custom List of parsed items: its reads are user code.
-final class _ObservedItems extends ListBase<ParsedItem> {
-  _ObservedItems(this.items, this.onRead);
-  final List<ParsedItem> items;
-  final void Function() onRead;
+final class _ObservedItems(
+  final List<ParsedItem> items,
+  final void Function() onRead,
+) extends ListBase<ParsedItem> {
   @override
   int get length => items.length;
   @override
@@ -97,8 +92,8 @@ final class _ObservedItems extends ListBase<ParsedItem> {
 
 /// A line controller whose `parsePrimitiveData` gives fewer items than the
 /// count, with [short], or a custom List, with [onItemRead].
-final class _ShortController extends LineController {
-  _ShortController(super.chart, super.datasetIndex, [super.newTarget]);
+final class _ShortController(super.chart, super.datasetIndex, [super.newTarget])
+    extends LineController {
   static bool short = false;
   static void Function()? onItemRead;
   static final value = JsClass(
@@ -126,8 +121,11 @@ final class _ShortController extends LineController {
 }
 
 /// A controller with its own `getDataset`, a subclass of the user.
-final class _DatasetCountController extends LineController {
-  _DatasetCountController(super.chart, super.datasetIndex, [super.newTarget]);
+final class _DatasetCountController(
+  super.chart,
+  super.datasetIndex, [
+  super.newTarget,
+]) extends LineController {
   int reads = 0;
   static final value = JsClass(
     'PlumbingDatasetController',
@@ -147,8 +145,7 @@ final class _DatasetCountController extends LineController {
 }
 
 /// A chart whose `data` is a value of the user.
-final class _DataChart extends Chart {
-  _DataChart(super.item, super.userConfig);
+final class _DataChart(super.item, super.userConfig) extends Chart {
   Object? replacement;
   int reads = 0;
   @override
@@ -159,9 +156,8 @@ final class _DataChart extends Chart {
 }
 
 /// A custom List of numbers whose reads are user code.
-final class _ObservedNumbers extends ListBase<double> {
-  _ObservedNumbers(this.values);
-  final List<double> values;
+final class _ObservedNumbers(final List<double> values)
+    extends ListBase<double> {
   void Function()? onRead;
   @override
   int get length => values.length;
@@ -936,7 +932,7 @@ void main() {
 }
 
 /// A custom List of the parsed items: not the plain List of `_dataCheck`.
-final class _CustomObjects extends ListBase<Object?> {
+final class _CustomObjects() extends ListBase<Object?> {
   final List<Object?> items = [];
   @override
   int get length => items.length;
@@ -975,4 +971,4 @@ extension type JsObjectLike(Object object) {
 }
 
 /// An axis of a class that the core does not know.
-final class _OtherAxis implements ScaleAxis;
+final class _OtherAxis() implements ScaleAxis;

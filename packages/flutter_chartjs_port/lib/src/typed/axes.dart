@@ -53,21 +53,9 @@ import 'package:meta/meta.dart' show internal;
 /// An axis is immutable. `==` compares the parameters: [CategoryAxis.labels]
 /// by identity, and [AxisTicks.format] with `==`.
 @immutable
-abstract final class ChartAxis with Diagnosticable {
-  /// The parameters of each axis class.
-  const ChartAxis({
-    this.display,
-    this.position,
-    this.reverse,
-    this.stacked,
-    this.ticks,
-    this.grid,
-    this.title,
-    this.extra,
-  });
-
+abstract final class const ChartAxis({
   /// Whether the chart shows the axis: `display`. The default is `true`.
-  final bool? display;
+  final bool? display,
 
   /// The side of the chart area of the axis: `position`.
   ///
@@ -76,24 +64,24 @@ abstract final class ChartAxis with Diagnosticable {
   /// [ChartPosition.center]. The default is the bottom for an x axis and
   /// the left for a y axis. The position at a value of another axis goes
   /// through [extra]: `{'position': ScaleValuePosition('x', 0)}`.
-  final ChartPosition? position;
+  final ChartPosition? position,
 
   /// Whether the axis runs in the other direction: `reverse`.
-  final bool? reverse;
+  final bool? reverse,
 
   /// Whether the datasets of the axis stack: `stacked` as a boolean
   /// (`docs/charts/bar.md`, "Stacked Bar Chart"). The value `'single'` goes
   /// through [extra].
-  final bool? stacked;
+  final bool? stacked,
 
   /// The tick marks and the tick labels: `ticks`.
-  final AxisTicks? ticks;
+  final AxisTicks? ticks,
 
   /// The grid lines: `grid`.
-  final AxisGrid? grid;
+  final AxisGrid? grid,
 
   /// The title of the axis: `title`.
-  final AxisTitle? title;
+  final AxisTitle? title,
 
   /// The Chart.js options of the axis that have no parameter, for example
   /// `{'grace': '5%'}`.
@@ -102,7 +90,10 @@ abstract final class ChartAxis with Diagnosticable {
   /// with the same key. A Map value merges into the Map of the key, a List
   /// or another value replaces it. The chart gets a copy of each Map and the
   /// Lists of the app.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The parameters of each axis class.
+  this;
 
   /// A copy of this axis with the given parameters. A parameter that is
   /// `null` keeps its value.
@@ -180,38 +171,34 @@ ScaleOptionsScope lowerAxis(ChartAxis axis) {
 /// A category axis: the scale type `category` (`docs/axes/cartesian/
 /// category.md`). It shows the labels of the chart in order. It is the
 /// default index axis of a bar and a line chart.
-final class CategoryAxis extends ChartAxis {
-  /// A category axis.
-  const CategoryAxis({
-    super.display,
-    super.position,
-    super.reverse,
-    super.stacked,
-    this.labels,
-    this.min,
-    this.max,
-    this.bounds,
-    super.ticks,
-    super.grid,
-    super.title,
-    super.extra,
-  });
+final class const CategoryAxis({
+  super.display,
+  super.position,
+  super.reverse,
+  super.stacked,
 
   /// The labels of this axis, in place of the labels of the chart:
   /// `labels`. The List goes to the chart by reference.
-  final List<Object>? labels;
+  final List<Object>? labels,
 
   /// The first label that the axis shows: `min`.
-  final String? min;
+  final String? min,
 
   /// The last label that the axis shows: `max`.
-  final String? max;
+  final String? max,
 
   /// {@template flutter_chartjs_port.typed.bounds}
   /// What the range of the axis keeps: `bounds`. [ScaleBounds.ticks] grows
   /// the range to the outer ticks, and [ScaleBounds.data] keeps the data.
   /// {@endtemplate}
-  final ScaleBounds? bounds;
+  final ScaleBounds? bounds,
+  super.ticks,
+  super.grid,
+  super.title,
+  super.extra,
+}) extends ChartAxis {
+  /// A category axis.
+  this;
 
   @override
   CategoryAxis copyWith({
@@ -266,53 +253,47 @@ final class CategoryAxis extends ChartAxis {
 
 /// A linear axis: the scale type `linear` (`docs/axes/cartesian/
 /// linear.md`). It is the default value axis of a bar and a line chart.
-final class LinearAxis extends ChartAxis {
-  /// A linear axis.
-  const LinearAxis({
-    super.display,
-    super.position,
-    super.reverse,
-    super.stacked,
-    this.min,
-    this.max,
-    this.suggestedMin,
-    this.suggestedMax,
-    this.beginAtZero,
-    this.bounds,
-    super.ticks,
-    super.grid,
-    super.title,
-    super.extra,
-  });
+final class const LinearAxis({
+  super.display,
+  super.position,
+  super.reverse,
+  super.stacked,
 
   /// {@template flutter_chartjs_port.typed.axisMin}
   /// The minimum of the axis: `min`. The data does not change it.
   /// {@endtemplate}
-  final double? min;
+  final double? min,
 
   /// {@template flutter_chartjs_port.typed.axisMax}
   /// The maximum of the axis: `max`. The data does not change it.
   /// {@endtemplate}
-  final double? max;
+  final double? max,
 
   /// {@template flutter_chartjs_port.typed.suggestedMin}
   /// A minimum that the data can make smaller: `suggestedMin`.
   /// {@endtemplate}
-  final double? suggestedMin;
+  final double? suggestedMin,
 
   /// {@template flutter_chartjs_port.typed.suggestedMax}
   /// A maximum that the data can make larger: `suggestedMax`.
   /// {@endtemplate}
-  final double? suggestedMax;
+  final double? suggestedMax,
 
   /// {@template flutter_chartjs_port.typed.beginAtZero}
   /// Whether the axis includes 0: `beginAtZero`. The default of the value
   /// axis of a bar chart is `true`.
   /// {@endtemplate}
-  final bool? beginAtZero;
+  final bool? beginAtZero,
 
   /// {@macro flutter_chartjs_port.typed.bounds}
-  final ScaleBounds? bounds;
+  final ScaleBounds? bounds,
+  super.ticks,
+  super.grid,
+  super.title,
+  super.extra,
+}) extends ChartAxis {
+  /// A linear axis.
+  this;
 
   @override
   LinearAxis copyWith({
@@ -375,38 +356,33 @@ final class LinearAxis extends ChartAxis {
 
 /// A logarithmic axis: the scale type `logarithmic` (`docs/axes/cartesian/
 /// logarithmic.md`). Its values are positive.
-final class LogarithmicAxis extends ChartAxis {
-  /// A logarithmic axis.
-  const LogarithmicAxis({
-    super.display,
-    super.position,
-    super.reverse,
-    super.stacked,
-    this.min,
-    this.max,
-    this.suggestedMin,
-    this.suggestedMax,
-    this.bounds,
-    super.ticks,
-    super.grid,
-    super.title,
-    super.extra,
-  });
+final class const LogarithmicAxis({
+  super.display,
+  super.position,
+  super.reverse,
+  super.stacked,
 
   /// {@macro flutter_chartjs_port.typed.axisMin}
-  final double? min;
+  final double? min,
 
   /// {@macro flutter_chartjs_port.typed.axisMax}
-  final double? max;
+  final double? max,
 
   /// {@macro flutter_chartjs_port.typed.suggestedMin}
-  final double? suggestedMin;
+  final double? suggestedMin,
 
   /// {@macro flutter_chartjs_port.typed.suggestedMax}
-  final double? suggestedMax;
+  final double? suggestedMax,
 
   /// {@macro flutter_chartjs_port.typed.bounds}
-  final ScaleBounds? bounds;
+  final ScaleBounds? bounds,
+  super.ticks,
+  super.grid,
+  super.title,
+  super.extra,
+}) extends ChartAxis {
+  /// A logarithmic axis.
+  this;
 
   @override
   LogarithmicAxis copyWith({
@@ -494,52 +470,43 @@ base mixin _TimeOptions on ChartAxis {
 /// The axis places each data item at its time. The data has `DateTime`
 /// values, for example `DataPoint.time` items, or numbers in milliseconds
 /// since the epoch. The default date adapter formats the ticks.
-final class TimeAxis extends ChartAxis with _TimeOptions {
-  /// A time axis.
-  const TimeAxis({
-    super.display,
-    super.position,
-    super.reverse,
-    super.stacked,
-    this.min,
-    this.max,
-    this.unit,
-    this.tooltipFormat,
-    this.bounds,
-    super.ticks,
-    super.grid,
-    super.title,
-    super.extra,
-  });
+final class const TimeAxis({
+  super.display,
+  super.position,
+  super.reverse,
+  super.stacked,
 
   /// {@template flutter_chartjs_port.typed.timeMin}
   /// The first time of the axis: `min`.
   /// {@endtemplate}
-  @override
-  final DateTime? min;
+  @override final DateTime? min,
 
   /// {@template flutter_chartjs_port.typed.timeMax}
   /// The last time of the axis: `max`.
   /// {@endtemplate}
-  @override
-  final DateTime? max;
+  @override final DateTime? max,
 
   /// {@template flutter_chartjs_port.typed.unit}
   /// The time unit of the ticks: `time.unit`, for example `'day'` or
   /// `'month'`. The default unit fits the range of the data.
   /// {@endtemplate}
-  @override
-  final TimeUnit? unit;
+  @override final TimeUnit? unit,
 
   /// {@template flutter_chartjs_port.typed.tooltipFormat}
   /// The date format of the times in the tooltip: `time.tooltipFormat`, an
   /// ICU pattern of the default date adapter, for example `'yyyy-MM-dd'`.
   /// {@endtemplate}
-  @override
-  final String? tooltipFormat;
+  @override final String? tooltipFormat,
 
   /// {@macro flutter_chartjs_port.typed.bounds}
-  final ScaleBounds? bounds;
+  final ScaleBounds? bounds,
+  super.ticks,
+  super.grid,
+  super.title,
+  super.extra,
+}) extends ChartAxis with _TimeOptions {
+  /// A time axis.
+  this;
 
   @override
   TimeAxis copyWith({
@@ -595,42 +562,33 @@ final class TimeAxis extends ChartAxis with _TimeOptions {
 ///
 /// The axis places the data items at equal distances, in time order. The
 /// data has `DateTime` values or numbers in milliseconds since the epoch.
-final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
-  /// A time series axis.
-  const TimeSeriesAxis({
-    super.display,
-    super.position,
-    super.reverse,
-    super.stacked,
-    this.min,
-    this.max,
-    this.unit,
-    this.tooltipFormat,
-    this.bounds,
-    super.ticks,
-    super.grid,
-    super.title,
-    super.extra,
-  });
+final class const TimeSeriesAxis({
+  super.display,
+  super.position,
+  super.reverse,
+  super.stacked,
 
   /// {@macro flutter_chartjs_port.typed.timeMin}
-  @override
-  final DateTime? min;
+  @override final DateTime? min,
 
   /// {@macro flutter_chartjs_port.typed.timeMax}
-  @override
-  final DateTime? max;
+  @override final DateTime? max,
 
   /// {@macro flutter_chartjs_port.typed.unit}
-  @override
-  final TimeUnit? unit;
+  @override final TimeUnit? unit,
 
   /// {@macro flutter_chartjs_port.typed.tooltipFormat}
-  @override
-  final String? tooltipFormat;
+  @override final String? tooltipFormat,
 
   /// {@macro flutter_chartjs_port.typed.bounds}
-  final ScaleBounds? bounds;
+  final ScaleBounds? bounds,
+  super.ticks,
+  super.grid,
+  super.title,
+  super.extra,
+}) extends ChartAxis with _TimeOptions {
+  /// A time series axis.
+  this;
 
   @override
   TimeSeriesAxis copyWith({
@@ -686,76 +644,63 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
 ///
 /// The labels of the chart are the point labels around the axis. The angle
 /// lines go from the center to the point labels.
-final class RadialLinearAxis extends ChartAxis {
-  /// A radial linear axis.
-  const RadialLinearAxis({
-    super.display,
-    super.position,
-    super.reverse,
-    super.stacked,
-    this.min,
-    this.max,
-    this.suggestedMin,
-    this.suggestedMax,
-    this.beginAtZero,
-    this.startAngle,
-    this.pointLabelsDisplay,
-    this.pointLabelsColor,
-    this.pointLabelsFont,
-    this.pointLabelsPadding,
-    this.angleLinesDisplay,
-    this.angleLinesColor,
-    this.angleLinesLineWidth,
-    super.ticks,
-    super.grid,
-    super.title,
-    super.extra,
-  });
+final class const RadialLinearAxis({
+  super.display,
+  super.position,
+  super.reverse,
+  super.stacked,
 
   /// {@macro flutter_chartjs_port.typed.axisMin}
-  final double? min;
+  final double? min,
 
   /// {@macro flutter_chartjs_port.typed.axisMax}
-  final double? max;
+  final double? max,
 
   /// {@macro flutter_chartjs_port.typed.suggestedMin}
-  final double? suggestedMin;
+  final double? suggestedMin,
 
   /// {@macro flutter_chartjs_port.typed.suggestedMax}
-  final double? suggestedMax;
+  final double? suggestedMax,
 
   /// {@macro flutter_chartjs_port.typed.beginAtZero}
-  final bool? beginAtZero;
+  final bool? beginAtZero,
 
   /// The angle of the first point label in degrees, from the top,
   /// clockwise: `startAngle`. The default is 0.
-  final double? startAngle;
+  final double? startAngle,
 
   /// Whether the chart shows the point labels: `pointLabels.display`.
-  final bool? pointLabelsDisplay;
+  final bool? pointLabelsDisplay,
 
   /// The color of the point labels: `pointLabels.color`.
-  final ChartPaint? pointLabelsColor;
+  final ChartPaint? pointLabelsColor,
 
   /// The font of the point labels: `pointLabels.font`. The color of the
   /// font is not read: set [pointLabelsColor].
-  final TextStyle? pointLabelsFont;
+  final TextStyle? pointLabelsFont,
 
   /// The space between the chart area and the point labels, in pixels:
   /// `pointLabels.padding`. The default is 5.
-  final double? pointLabelsPadding;
+  final double? pointLabelsPadding,
 
   /// Whether the chart shows the lines from the center to the point labels:
   /// `angleLines.display`.
-  final bool? angleLinesDisplay;
+  final bool? angleLinesDisplay,
 
   /// The color of the lines from the center to the point labels:
   /// `angleLines.color`.
-  final ChartPaint? angleLinesColor;
+  final ChartPaint? angleLinesColor,
 
   /// The width of the lines from the center to the point labels, in pixels:
   /// `angleLines.lineWidth`. The default is 1.
-  final double? angleLinesLineWidth;
+  final double? angleLinesLineWidth,
+  super.ticks,
+  super.grid,
+  super.title,
+  super.extra,
+}) extends ChartAxis {
+  /// A radial linear axis.
+  this;
 
   @override
   RadialLinearAxis copyWith({
@@ -851,58 +796,42 @@ final class RadialLinearAxis extends ChartAxis {
 /// The tick marks and the tick labels of an axis: `ticks`
 /// (`docs/axes/_common_ticks.md`, `docs/axes/styling.md`).
 @immutable
-final class AxisTicks with Diagnosticable {
-  /// The tick options of an axis.
-  const AxisTicks({
-    this.display,
-    this.color,
-    this.font,
-    this.padding,
-    this.stepSize,
-    this.maxRotation,
-    this.autoSkip,
-    this.align,
-    this.crossAlign,
-    this.source,
-    this.format,
-    this.extra,
-  });
-
+final class const AxisTicks({
   /// Whether the chart shows the tick labels: `display`.
-  final bool? display;
+  final bool? display,
 
   /// The color of the tick labels: `color`.
-  final ChartPaint? color;
+  final ChartPaint? color,
 
   /// The font of the tick labels: `font`. The color of the font is not
   /// read: set [color].
-  final TextStyle? font;
+  final TextStyle? font,
 
   /// The space between the tick labels and the axis, in pixels: `padding`.
-  final double? padding;
+  final double? padding,
 
   /// The step between two ticks of a linear axis: `stepSize`.
-  final double? stepSize;
+  final double? stepSize,
 
   /// The maximum rotation of the tick labels in degrees, to make them fit:
   /// `maxRotation`. The default is 50.
-  final double? maxRotation;
+  final double? maxRotation,
 
   /// Whether the axis skips labels that do not fit: `autoSkip`. The
   /// default is `true`.
-  final bool? autoSkip;
+  final bool? autoSkip,
 
   /// The place of a tick label along the axis: `align`. The default is
   /// [TickAlign.center].
-  final TickAlign? align;
+  final TickAlign? align,
 
   /// The place of a tick label across the axis: `crossAlign`. The default
   /// is [TickCrossAlign.near].
-  final TickCrossAlign? crossAlign;
+  final TickCrossAlign? crossAlign,
 
   /// Where the ticks of a time axis come from: `source`. The default is
   /// [TickSource.auto].
-  final TickSource? source;
+  final TickSource? source,
 
   /// The label of each tick: `callback` (`docs/axes/labelling.md`,
   /// "Creating Custom Tick Formats").
@@ -912,11 +841,14 @@ final class AxisTicks with Diagnosticable {
   /// index of the label: `tick.scale.getLabelForValue(tick.value)` gives
   /// the label. Use a method tear-off or a function in a field: a new
   /// closure in each build is a new value, and the chart then updates.
-  final String? Function(AxisTickInfo tick)? format;
+  final String? Function(AxisTickInfo tick)? format,
 
   /// The Chart.js tick options that have no parameter, for example
   /// `{'precision': 0}`. The rules of [ChartAxis.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The tick options of an axis.
+  this;
 
   /// A copy of these tick options with the given parameters. A parameter
   /// that is `null` keeps its value.
@@ -1015,42 +947,34 @@ JsFunction _tickCallback(String? Function(AxisTickInfo tick) format) =>
 /// The grid lines of an axis: `grid` (`docs/axes/styling.md`, "Grid Line
 /// Configuration").
 @immutable
-final class AxisGrid with Diagnosticable {
-  /// The grid options of an axis.
-  const AxisGrid({
-    this.display,
-    this.color,
-    this.lineWidth,
-    this.drawOnChartArea,
-    this.drawTicks,
-    this.offset,
-    this.extra,
-  });
-
+final class const AxisGrid({
   /// Whether the chart draws the grid lines: `display`.
-  final bool? display;
+  final bool? display,
 
   /// The color of the grid lines: `color`.
-  final ChartPaint? color;
+  final ChartPaint? color,
 
   /// The width of the grid lines in pixels: `lineWidth`.
-  final double? lineWidth;
+  final double? lineWidth,
 
   /// Whether the grid lines go across the chart area: `drawOnChartArea`.
   /// With `false`, the chart draws only the tick marks.
-  final bool? drawOnChartArea;
+  final bool? drawOnChartArea,
 
   /// Whether the chart draws the tick marks next to the tick labels:
   /// `drawTicks`.
-  final bool? drawTicks;
+  final bool? drawTicks,
 
   /// Whether the grid lines are between the labels, not at them: `offset`.
   /// The default of the index axis of a bar chart is `true`.
-  final bool? offset;
+  final bool? offset,
 
   /// The Chart.js grid options that have no parameter, for example
   /// `{'tickLength': 4}`. The rules of [ChartAxis.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The grid options of an axis.
+  this;
 
   /// A copy of these grid options with the given parameters. A parameter
   /// that is `null` keeps its value.
@@ -1113,41 +1037,33 @@ GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
 /// The title of an axis: `title` (`docs/axes/labelling.md`, "Scale
 /// Title Configuration").
 @immutable
-final class AxisTitle with Diagnosticable {
-  /// The title options of an axis.
-  const AxisTitle({
-    this.display,
-    this.text,
-    this.color,
-    this.font,
-    this.align,
-    this.padding,
-    this.extra,
-  });
-
+final class const AxisTitle({
   /// Whether the chart shows the title: `display`. The default is `false`.
-  final bool? display;
+  final bool? display,
 
   /// The text of the title: `text`.
-  final String? text;
+  final String? text,
 
   /// The color of the title: `color`.
-  final ChartPaint? color;
+  final ChartPaint? color,
 
   /// The font of the title: `font`. The color of the font is not read: set
   /// [color].
-  final TextStyle? font;
+  final TextStyle? font,
 
   /// The alignment of the title along the axis: `align`.
-  final ChartAlign? align;
+  final ChartAlign? align,
 
   /// The space around the title: `padding`. Chart.js reads the top and the
   /// bottom.
-  final EdgeInsets? padding;
+  final EdgeInsets? padding,
 
   /// The Chart.js title options that have no parameter. The rules of
   /// [ChartAxis.extra] apply.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The title options of an axis.
+  this;
 
   /// A copy of these title options with the given parameters. A parameter
   /// that is `null` keeps its value.

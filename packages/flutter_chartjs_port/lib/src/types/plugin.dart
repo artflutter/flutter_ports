@@ -29,9 +29,16 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
+// A hook argument class writes each key through the setter of its slot,
+// which keeps the key order and the present bit: no key is a field.
+// ignore_for_file: use_declaring_parameters
+
 /// A hook of the `Plugin` interface (U `index.d.ts:856-1240` and the hooks
 /// of the tooltip plugin, `index.d.ts:2777-2786`), with its JS name.
-enum PluginHook {
+enum PluginHook(
+  /// The JS name of the hook.
+  final String jsName,
+) {
   /// `install`.
   install('install'),
 
@@ -137,11 +144,6 @@ enum PluginHook {
   /// `afterTooltipDraw`.
   afterTooltipDraw('afterTooltipDraw');
 
-  PluginHook(this.jsName);
-
-  /// The JS name of the hook.
-  final String jsName;
-
   /// The hook of the JS name [name], or Dart `null` for another name.
   static PluginHook? of(String name) => switch (name) {
     'install' => install,
@@ -200,9 +202,9 @@ typedef PluginHookFunction<A extends Object> = Object? Function(
 
 /// The arguments `{}` of a hook without arguments (`EmptyObject` of
 /// `index.d.ts`), and the base of the argument classes.
-base class PluginHookArgs extends TypedRecord {
+base class PluginHookArgs() extends TypedRecord {
   /// An object without own keys.
-  PluginHookArgs();
+  this;
 
   @override
   List<String> get fieldNames => const [];
@@ -223,23 +225,21 @@ base class PluginHookArgs extends TypedRecord {
 /// `{mode, cancelable: true}` of `beforeUpdate` and `beforeDatasetsUpdate`,
 /// and `{mode}` of `afterUpdate` and `afterDatasetsUpdate` (U
 /// `core.controller.js:490`, `:524`, `:649`, `:661`).
-final class UpdateHookArgs extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  UpdateHookArgs({
-    required Object? mode,
-    bool? cancelable,
-    this.layoutKept = false,
-  }) {
-    this.mode = mode;
-    if (cancelable != null) this.cancelable = cancelable;
-  }
+final class UpdateHookArgs({
+  required Object? mode,
+  bool? cancelable,
 
   /// Whether this update kept the layout of the last update, so no box ran its
   /// `update`: the data-only lifecycle of Chart.js ADR 0074. It is not a key of
   /// the object, because upstream always runs the layout.
-  @internal
-  final bool layoutKept;
+  @internal final bool layoutKept = false,
+}) extends PluginHookArgs {
+  /// The object with the given keys, in the key order of the upstream
+  /// literal. A required key is always present.
+  this {
+    this.mode = mode;
+    if (cancelable != null) this.cancelable = cancelable;
+  }
 
   static const List<String> _fieldNames = ['mode', 'cancelable'];
 
@@ -304,10 +304,10 @@ final class UpdateHookArgs extends PluginHookArgs {
 
 /// `{cancelable: true}` of `beforeLayout`, `beforeRender`, `beforeDraw` and
 /// `beforeDatasetsDraw` (U `core.controller.js:612`, `:684`, `:712`, `:766`).
-final class CancelableHookArgs extends PluginHookArgs {
+final class CancelableHookArgs({bool? cancelable}) extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  CancelableHookArgs({bool? cancelable}) {
+  this {
     if (cancelable != null) this.cancelable = cancelable;
   }
 
@@ -356,10 +356,10 @@ final class CancelableHookArgs extends PluginHookArgs {
 }
 
 /// `{size}` of `resize` (U `core.controller.js:292`).
-final class ResizeHookArgs extends PluginHookArgs {
+final class ResizeHookArgs({required Object? size}) extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  ResizeHookArgs({required Object? size}) {
+  this {
     this.size = size;
   }
 
@@ -409,15 +409,15 @@ final class ResizeHookArgs extends PluginHookArgs {
 
 /// `{meta, index, mode, cancelable}` of `beforeDatasetUpdate` and
 /// `afterDatasetUpdate` (U `core.controller.js:670-680`).
-final class DatasetUpdateHookArgs extends PluginHookArgs {
+final class DatasetUpdateHookArgs({
+  required types.ChartMeta? meta,
+  required double index,
+  required Object? mode,
+  bool? cancelable,
+}) extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  DatasetUpdateHookArgs({
-    required types.ChartMeta? meta,
-    required double index,
-    required Object? mode,
-    bool? cancelable,
-  }) {
+  this {
     this.meta = meta;
     this.index = index;
     this.mode = mode;
@@ -526,14 +526,14 @@ final class DatasetUpdateHookArgs extends PluginHookArgs {
 
 /// `{meta, index, cancelable}` of `beforeDatasetDraw` and
 /// `afterDatasetDraw` (U `core.controller.js:786-808`).
-final class DatasetDrawHookArgs extends PluginHookArgs {
+final class DatasetDrawHookArgs({
+  required types.ChartMeta? meta,
+  required double index,
+  bool? cancelable,
+}) extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  DatasetDrawHookArgs({
-    required types.ChartMeta? meta,
-    required double index,
-    bool? cancelable,
-  }) {
+  this {
     this.meta = meta;
     this.index = index;
     if (cancelable != null) this.cancelable = cancelable;
@@ -620,16 +620,16 @@ final class DatasetDrawHookArgs extends PluginHookArgs {
 /// `{event, replay, cancelable, inChartArea}` of `beforeEvent` and
 /// `afterEvent`, and the key `changed` that a plugin writes (U
 /// `core.controller.js:1162-1179`).
-final class EventHookArgs extends PluginHookArgs {
+final class EventHookArgs({
+  required types.ChartEvent? event,
+  required Object? replay,
+  bool? cancelable,
+  bool? inChartArea,
+  bool? changed,
+}) extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  EventHookArgs({
-    required types.ChartEvent? event,
-    required Object? replay,
-    bool? cancelable,
-    bool? inChartArea,
-    bool? changed,
-  }) {
+  this {
     this.event = event;
     this.replay = replay;
     if (cancelable != null) this.cancelable = cancelable;
@@ -758,10 +758,11 @@ final class EventHookArgs extends PluginHookArgs {
 
 /// `{tooltip}` of `afterTooltipDraw` and `{...args, cancelable: true}` of
 /// `beforeTooltipDraw` (U `plugin.tooltip.js:1250-1260`).
-final class TooltipDrawHookArgs extends PluginHookArgs {
+final class TooltipDrawHookArgs({required Object? tooltip, bool? cancelable})
+    extends PluginHookArgs {
   /// The object with the given keys, in the key order of the upstream
   /// literal. A required key is always present.
-  TooltipDrawHookArgs({required Object? tooltip, bool? cancelable}) {
+  this {
     this.tooltip = tooltip;
     if (cancelable != null) this.cancelable = cancelable;
   }
@@ -839,19 +840,19 @@ final class TooltipDrawHookArgs extends PluginHookArgs {
 /// and calls a function of another type with JS arity, `this` the plugin.
 /// The own-key order is the insertion order; another key is an extra. The
 /// face reads and writes the fields by name. A plugin is not a `Map`.
-final class Plugin implements JsObjectFace {
-  /// A plugin without own keys.
-  Plugin({this.supportsDataUpdates = false, this.dataUpdateGuard});
-
+final class Plugin({
   /// Opt into Chart.updateData's data/update/draw hooks without layout hooks.
   /// Such hooks must not mutate configuration, source/parsed data or structure.
   /// They may refresh their own derived state from the committed chart data.
   /// This Dart capability is deliberately outside the JavaScript own keys.
-  final bool supportsDataUpdates;
+  final bool supportsDataUpdates = false,
 
   /// Optional additional eligibility check of the resolved plugin options.
   /// It must be observational only and must not modify the chart or options.
-  final bool Function(Object options)? dataUpdateGuard;
+  final bool Function(Object options)? dataUpdateGuard,
+}) implements JsObjectFace {
+  /// A plugin without own keys.
+  this;
 
   /// The check of the resolved plugin options for `Chart.updateRanges`
   /// (Chart.js ADR 0111), or Dart `null` for none. A false result sends the
@@ -1456,9 +1457,7 @@ final class Plugin implements JsObjectFace {
 const Object _absent = _Absent();
 
 /// The type of [_absent].
-final class _Absent {
-  const _Absent();
-}
+final class const _Absent();
 
 /// A plugin object that is a Map (an inline plugin of `config.plugins`, a
 /// registered Map plugin, or a built-in plugin until lane L4): the hook is

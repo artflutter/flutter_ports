@@ -11,28 +11,23 @@ library;
 import 'check_support.dart';
 
 /// One `[[annotations]]` table.
-final class ReuseAnnotation {
-  /// An annotation of [paths] on [line].
-  ReuseAnnotation({
-    required this.line,
-    required this.paths,
-    required this.copyrights,
-    required this.license,
-  }) : _patterns = [for (final path in paths) globToRegExp(path)];
-
+final class ReuseAnnotation({
   /// The 1-based line of the `[[annotations]]` header.
-  final int line;
+  required final int line,
 
   /// The `path` globs.
-  final List<String> paths;
+  required final List<String> paths,
 
   /// The `SPDX-FileCopyrightText` entries.
-  final List<String> copyrights;
+  required final List<String> copyrights,
 
   /// The `SPDX-License-Identifier` expression.
-  final String license;
+  required final String license,
+}) {
+  /// An annotation of [paths] on [line].
+  this;
 
-  final List<RegExp> _patterns;
+  final List<RegExp> _patterns = [for (final path in paths) globToRegExp(path)];
 
   /// The license identifiers of [license], without `AND`, `OR`, `WITH` and
   /// parentheses.
@@ -77,19 +72,15 @@ List<String> _strings(Object? value) => switch (value) {
   _ => ['$value'],
 };
 
-final class _Table {
-  _Table(this.name, this.line, {required this.isArray});
-
-  final String name;
-  final int line;
-  final bool isArray;
+final class _Table(
+  final String name,
+  final int line, {
+  required final bool isArray,
+}) {
   final Map<String, Object?> values = {};
 }
 
-final class _TomlReader {
-  _TomlReader(this.s);
-
-  final String s;
+final class _TomlReader(final String s) {
   int i = 0;
 
   int get _line => '\n'.allMatches(s.substring(0, i)).length + 1;

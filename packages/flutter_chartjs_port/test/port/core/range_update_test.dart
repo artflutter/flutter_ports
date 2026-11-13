@@ -55,7 +55,7 @@ import '../scales/scale_chart_harness.dart' show drawCalls;
 // end of the animations.
 
 /// The hooks and the calls of the scriptable options of one chart.
-final class _Log {
+final class _Log() {
   final List<String> entries = <String>[];
 
   void add(String entry) => entries.add(entry);
@@ -251,17 +251,15 @@ _Write _newData(int index, List<Object?> Function() values, {int? labels}) =>
     };
 
 /// Each step writes, then updates in the next mode of the run.
-final class _Case {
-  const _Case(this.name, this.build, this.steps, {this.zone});
-
-  final String name;
-  final Map<String, Object?> Function(_Log log, {required bool animated}) build;
-  final List<_Write> steps;
+final class const _Case(
+  final String name,
+  final Map<String, Object?> Function(_Log log, {required bool animated}) build,
+  final List<_Write> steps, {
 
   /// The default date zone of the case: Dart `null` keeps the zone of the
   /// test configuration, `'local'` is the local zone.
-  final String? zone;
-}
+  final String? zone,
+});
 
 /// The modes of the steps: `'none'`, `'zoom'`, `'default'` and a function
 /// of `{datasetIndex}`.
@@ -732,9 +730,8 @@ void _expectFallbackTwins(
 }
 
 /// A user subclass of the line controller.
-final class _UserLine extends LineController {
-  _UserLine(super.chart, super.datasetIndex, [super.newTarget]);
-
+final class _UserLine(super.chart, super.datasetIndex, [super.newTarget])
+    extends LineController {
   static final value = JsClass(
     'RangeUserLine',
     superclass: LineController.jsClass,
@@ -747,20 +744,15 @@ final class _UserLine extends LineController {
 }
 
 /// A user subclass of the chart.
-final class _UserChart extends Chart {
-  _UserChart(super.item, super.userConfig);
-}
+final class _UserChart(super.item, super.userConfig) extends Chart;
 
 /// A user subclass of the config.
-final class _UserConfig extends Config {
-  _UserConfig(super.config);
-}
+final class _UserConfig(super.config) extends Config;
 
 /// A chart that gives a config of its own: an exact Chart always makes an
 /// exact Config.
-final class _ConfigChart extends Chart {
-  _ConfigChart(Object item, this.supplied) : super(item, <String, Object?>{});
-  final Config supplied;
+final class _ConfigChart(Object item, final Config supplied) extends Chart {
+  this : super(item, <String, Object?>{});
   @override
   Config get config => supplied;
 }

@@ -8,7 +8,28 @@ import 'package:chart_benchmark_lab/benchmark/metrics.dart';
 /// defer work outside the UI and raster timings. A difference inside a margin
 /// is noise between two runs, not a win. Among charts that all reach the
 /// display rate, the UI and raster work shows which chart has more time left.
-enum RankMetric {
+enum RankMetric(
+  /// The name of the metric, in lower case except for an acronym.
+  final String label,
+
+  /// The decimals that the table shows.
+  final int decimals,
+
+  /// The unit after the value.
+  final String unit, {
+
+  /// Whether a higher value is better.
+  final bool higherIsBetter = false,
+
+  /// The margin of a tie, as a share of the best value.
+  final double? relativeMargin,
+
+  /// The margin of a tie, in the unit of the metric.
+  final double? absoluteMargin,
+
+  /// Whether the margin of a tie is one frame of the display.
+  final bool displayFrameMargin = false,
+}) {
   /// Frames for each second. A higher value is better.
   fps('FPS', 1, '', higherIsBetter: true, relativeMargin: 0.01),
 
@@ -27,37 +48,6 @@ enum RankMetric {
 
   /// The 90th percentile of the UI time.
   ui('UI p90', 2, ' ms');
-
-  RankMetric(
-    this.label,
-    this.decimals,
-    this.unit, {
-    this.higherIsBetter = false,
-    this.relativeMargin,
-    this.absoluteMargin,
-    this.displayFrameMargin = false,
-  });
-
-  /// The name of the metric, in lower case except for an acronym.
-  final String label;
-
-  /// The decimals that the table shows.
-  final int decimals;
-
-  /// The unit after the value.
-  final String unit;
-
-  /// Whether a higher value is better.
-  final bool higherIsBetter;
-
-  /// The margin of a tie, as a share of the best value.
-  final double? relativeMargin;
-
-  /// The margin of a tie, in the unit of the metric.
-  final double? absoluteMargin;
-
-  /// Whether the margin of a tie is one frame of the display.
-  final bool displayFrameMargin;
 
   /// Whether this metric decides the rank.
   bool get decides =>
@@ -106,41 +96,33 @@ final List<RankMetric> _deciding = [
 ];
 
 /// One saved result with its place among the results of its setup.
-class RankedResult {
-  /// Creates a row.
-  const RankedResult({
-    required this.result,
-    required this.rank,
-    required this.winner,
-    required this.fpsShare,
-    required this.slowerBy,
-    required this.best,
-    required this.steps,
-  });
-
+class const RankedResult({
   /// The saved capture.
-  final BenchmarkResult result;
+  required final BenchmarkResult result,
 
   /// The place in its setup, from 1. A tie shares one place.
-  final int rank;
+  required final int rank,
 
   /// Whether this row leads a real comparison: at least two libraries of one
   /// setup, and at least one row with a worse rank.
-  final bool winner;
+  required final bool winner,
 
   /// The FPS as a share of the best FPS of the setup, from 0 to 1.
-  final double fpsShare;
+  required final double fpsShare,
 
   /// How many times the best FPS of the setup is higher, or null when this row
   /// is inside the FPS margin.
-  final double? slowerBy;
+  required final double? slowerBy,
 
   /// The metrics where this row has the best value of its setup. A metric where
   /// each row shows the same value has no best value.
-  final Set<RankMetric> best;
+  required final Set<RankMetric> best,
 
   /// The margins behind the best value, for each metric that decides the rank.
-  final List<int> steps;
+  required final List<int> steps,
+}) {
+  /// Creates a row.
+  this;
 }
 
 /// Ranks [results] for each setup, because the results of different setups do

@@ -142,13 +142,12 @@ final Map<String, Object?> _indicator = touchIndicator();
 final ChartConfig _mainConfig = _config(true);
 final ChartConfig _otherConfig = _config(false);
 
-class Sample1 extends StatefulWidget {
-  const Sample1({super.key});
+class const Sample1({super.key}) extends StatefulWidget {
   @override
   State<Sample1> createState() => _Sample1State();
 }
 
-class _Sample1State extends State<Sample1> {
+class _Sample1State() extends State<Sample1> {
   bool _main = true;
 
   @override

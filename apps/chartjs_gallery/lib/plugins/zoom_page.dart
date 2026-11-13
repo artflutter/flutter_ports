@@ -125,9 +125,9 @@ const Map<String, ({String key, IconData icon, String text})> _actionSegments =
 /// the corner of each chart (the plugin `version` of
 /// `docs/scripts/register.js:7-23`). The page has no such plugin: its help
 /// text names the version.
-class ZoomPage extends StatefulWidget {
+class const ZoomPage({super.key}) extends StatefulWidget {
   /// Creates the page.
-  const ZoomPage({super.key});
+  this;
 
   @override
   State<ZoomPage> createState() => ZoomPageState();
@@ -135,7 +135,10 @@ class ZoomPage extends StatefulWidget {
 
 /// The state of a [ZoomPage]: the selected variant, its sample and its
 /// chart.
-class ZoomPageState extends State<ZoomPage> {
+class ZoomPageState() extends State<ZoomPage> {
+  /// A new state of [ZoomPage].
+  this;
+
   int _variant = 0;
   Chart? _chart;
   String? _output;

@@ -74,21 +74,18 @@ import '../scales/scale_time_harness.dart' show atNow;
 
 /// The chart event of the hit queries: `{type: 'mousemove', native: null,
 /// x, y}`. getRelativePosition returns it as it is (helpers.dom.ts:109-111).
-final class ReferenceEvent implements types.ChartEvent {
+final class const ReferenceEvent(
+  @override final double x,
+  @override final double y,
+) implements types.ChartEvent {
   /// The event at the point ([x], [y]).
-  const ReferenceEvent(this.x, this.y);
+  this;
 
   @override
   String get type => 'mousemove';
 
   @override
   NativeEvent? get native => null;
-
-  @override
-  final double x;
-
-  @override
-  final double y;
 
   /// The event of the generator has no `chart` key.
   @override

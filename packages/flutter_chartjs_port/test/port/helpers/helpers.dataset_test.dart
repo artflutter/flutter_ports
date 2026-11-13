@@ -10,21 +10,12 @@ import 'package:test/test.dart';
 
 /// A JavaScript object literal `{left, top, right, bottom, width, height}`,
 /// passed as a [ChartArea].
-final class _ChartArea implements ChartArea {
-  const _ChartArea(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class const _ChartArea(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -33,18 +24,11 @@ final class _ChartArea implements ChartArea {
 }
 
 /// A JavaScript object `{width, height, chartArea}`, passed as a [Chart].
-final class _Chart implements Chart {
-  const _Chart(this.width, this.height, this.chartArea);
-
-  @override
-  final double width;
-
-  @override
-  final double height;
-
-  @override
-  final ChartArea chartArea;
-
+final class const _Chart(
+  @override final double width,
+  @override final double height,
+  @override final ChartArea chartArea,
+) implements Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -52,68 +36,37 @@ final class _Chart implements Chart {
 /// A JavaScript object `{left, top, right, bottom, options: {clip}}`,
 /// passed as a [Scale]. The `clip` argument is the option value, and
 /// [undefined] leaves the key out.
-final class _Scale implements Scale {
-  _Scale(this.left, this.top, this.right, this.bottom, Object? clip)
-    : options = {if (!identical(clip, undefined)) 'clip': clip};
-
+final class _Scale(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+  Object? clip,
+) implements Scale {
   @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
-  @override
-  final Map<String, Object?> options;
+  final Map<String, Object?> options = {
+    if (!identical(clip, undefined)) 'clip': clip,
+  };
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The `_clip` object of `toClip` (core.datasetController.js:38).
-final class _Clip implements ChartMetaClip {
-  const _Clip(
-    this.left,
-    this.top,
-    this.right,
-    this.bottom, {
-    this.disabled = false,
-  });
-
-  @override
-  final Object? left;
-
-  @override
-  final Object? top;
-
-  @override
-  final Object? right;
-
-  @override
-  final Object? bottom;
-
-  @override
-  final bool disabled;
-}
+final class const _Clip(
+  @override final Object? left,
+  @override final Object? top,
+  @override final Object? right,
+  @override final Object? bottom, {
+  @override final bool disabled = false,
+}) implements ChartMetaClip;
 
 /// A JavaScript object `{_clip, xScale, yScale}`, passed as a [ChartMeta].
-final class _Meta implements ChartMeta {
-  _Meta(this.clip, [this.xScale, this.yScale]);
-
-  @override
-  final ChartMetaClip clip;
-
-  @override
-  final Scale? xScale;
-
-  @override
-  final Scale? yScale;
-
+final class _Meta(
+  @override final ChartMetaClip clip, [
+  @override final Scale? xScale,
+  @override final Scale? yScale,
+]) implements ChartMeta {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

@@ -73,27 +73,20 @@ import 'package:meta/meta.dart';
 /// spec compares two object literals. The elements compare by identity: the
 /// specs compare an item with the elements of a meta.
 @immutable
-final class InteractionItem implements types.ActiveElement {
-  /// The object literal `{element, datasetIndex, index}`
-  /// (core.interaction.js:126).
-  const InteractionItem({
-    required this.element,
-    required this.datasetIndex,
-    required this.index,
-  });
-
+final class const InteractionItem({
   /// core.interaction.js:10 `element`, the element of the item.
-  @override
-  final Element element;
+  @override required final Element element,
 
   /// core.interaction.js:10 `datasetIndex`, the index of the dataset.
-  @override
-  final double datasetIndex;
+  @override required final double datasetIndex,
 
   /// core.interaction.js:10 `index`, the index of the element in the data
   /// of the dataset.
-  @override
-  final double index;
+  @override required final double index,
+}) implements types.ActiveElement {
+  /// The object literal `{element, datasetIndex, index}`
+  /// (core.interaction.js:126).
+  this;
 
   @override
   bool operator ==(Object other) =>
@@ -881,7 +874,13 @@ List<InteractionItem> _y(
 /// file reads it, and a mode of a program that needs another rule has its
 /// own fields.
 // DIVERGES(chartjs): adapt-interaction-axis-enum, an enum, not a keyword.
-enum InteractionAxis {
+enum InteractionAxis({
+  /// `axis.indexOf('x') !== -1` (core.interaction.js:95).
+  required final bool usesX,
+
+  /// `axis.indexOf('y') !== -1` (core.interaction.js:96).
+  required final bool usesY,
+}) {
   /// `'x'`: the distance along x only.
   x(usesX: true, usesY: false),
 
@@ -894,14 +893,6 @@ enum InteractionAxis {
   /// `'r'`: the angle around the center of a radial chart. The distance in
   /// the plane uses no coordinate, as `'r'.indexOf('x')` gives -1.
   r(usesX: false, usesY: false);
-
-  InteractionAxis({required this.usesX, required this.usesY});
-
-  /// `axis.indexOf('x') !== -1` (core.interaction.js:95).
-  final bool usesX;
-
-  /// `axis.indexOf('y') !== -1` (core.interaction.js:96).
-  final bool usesY;
 
   /// The axis of [value], the value of an option `axis`, or Dart `null` for
   /// a value that is not an axis: the fallback of `options.axis || 'x'`
@@ -945,9 +936,9 @@ enum InteractionAxis {
 /// ```
 // DIVERGES(chartjs): adapt-interaction-mode-objects, a mode object.
 @immutable
-abstract class InteractionMode {
+abstract class const InteractionMode() {
   /// A mode.
-  const InteractionMode();
+  this;
 
   /// The items of [chart] at the position of the event [e]: the function of
   /// a mode (index.d.ts:763 `InteractionModeFunction`). [e] is a
@@ -976,9 +967,9 @@ abstract class InteractionMode {
 
 /// core.interaction.js:269 `modes.index`: the items at the same index as
 /// the item nearest to the event position.
-final class IndexInteractionMode extends InteractionMode {
+final class const IndexInteractionMode() extends InteractionMode {
   /// The mode.
-  const IndexInteractionMode();
+  this;
 
   @override
   List<InteractionItem> itemsAt(
@@ -993,9 +984,9 @@ final class IndexInteractionMode extends InteractionMode {
 /// item nearest to the event position. The chart gives the hover style to
 /// the dataset, and the tooltip takes the title of the dataset
 /// (core.controller.js:1070, plugin.tooltip.js:370, :389).
-final class DatasetInteractionMode extends InteractionMode {
+final class const DatasetInteractionMode() extends InteractionMode {
   /// The mode.
-  const DatasetInteractionMode();
+  this;
 
   @override
   List<InteractionItem> itemsAt(
@@ -1008,9 +999,9 @@ final class DatasetInteractionMode extends InteractionMode {
 
 /// core.interaction.js:336 `modes.point`: the items that intersect the
 /// event position.
-final class PointInteractionMode extends InteractionMode {
+final class const PointInteractionMode() extends InteractionMode {
   /// The mode.
-  const PointInteractionMode();
+  this;
 
   @override
   List<InteractionItem> itemsAt(
@@ -1023,9 +1014,9 @@ final class PointInteractionMode extends InteractionMode {
 
 /// core.interaction.js:352 `modes.nearest`: the items nearest to the event
 /// position.
-final class NearestInteractionMode extends InteractionMode {
+final class const NearestInteractionMode() extends InteractionMode {
   /// The mode.
-  const NearestInteractionMode();
+  this;
 
   @override
   List<InteractionItem> itemsAt(
@@ -1038,9 +1029,9 @@ final class NearestInteractionMode extends InteractionMode {
 
 /// core.interaction.js:368 `modes.x`: the items at the x position of the
 /// event.
-final class XInteractionMode extends InteractionMode {
+final class const XInteractionMode() extends InteractionMode {
   /// The mode.
-  const XInteractionMode();
+  this;
 
   @override
   List<InteractionItem> itemsAt(
@@ -1053,9 +1044,9 @@ final class XInteractionMode extends InteractionMode {
 
 /// core.interaction.js:382 `modes.y`: the items at the y position of the
 /// event.
-final class YInteractionMode extends InteractionMode {
+final class const YInteractionMode() extends InteractionMode {
   /// The mode.
-  const YInteractionMode();
+  this;
 
   @override
   List<InteractionItem> itemsAt(
@@ -1077,7 +1068,7 @@ final class YInteractionMode extends InteractionMode {
 /// member. It has no `modes` (core.interaction.js:257): a mode is a class
 /// ([InteractionMode]), and no table maps a name to a mode.
 // DIVERGES(chartjs): adapt-interaction-mode-objects, no table of modes.
-abstract final class Interaction {
+abstract final class Interaction() {
   /// core.interaction.js:254 `evaluateInteractionItems`.
   ///
   /// Part of the public API to facilitate developers creating their own

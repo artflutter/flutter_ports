@@ -22,20 +22,12 @@ import 'scale_autoskip_reference.dart';
 
 /// The scale object `{options, _tickSize(), _length, _maxLength}` of a
 /// case, passed as a [types.Scale]. autoSkip reads no other member.
-final class _Scale implements types.Scale {
-  _Scale(this.options, this._tickSize, this.length, this.maxLength);
-
-  @override
-  final Map<String, Object?> options;
-
-  final double _tickSize;
-
-  @override
-  final double length;
-
-  @override
-  final double maxLength;
-
+final class _Scale(
+  @override final Map<String, Object?> options,
+  final double _tickSize,
+  @override final double length,
+  @override final double maxLength,
+) implements types.Scale {
   @override
   double tickSize() => _tickSize;
 

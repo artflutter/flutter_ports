@@ -26,9 +26,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
 /// The type of [_absent].
-final class _Absent {
-  const _Absent();
-}
+final class const _Absent();
 
 /// The value of the field of a known key that the options do not contain.
 ///
@@ -110,7 +108,7 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
   ///
   /// Each entry goes through [jsWrite]. Dart `null` for [source] gives
   /// options with no key.
-  ElementOptions([AnyObject? source]) {
+  new([AnyObject? source]) {
     if (source != null) {
       for (final MapEntry(:key, :value) in source.entries) {
         jsWrite(key, value);
@@ -121,7 +119,7 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
   /// The copy of the base fields of [source] for [clone]: `$shared`,
   /// `$animations` and a new Map of extra keys with the same entries in the
   /// same order. The copy is not frozen.
-  ElementOptions.copyFrom(ElementOptions source)
+  new copyFrom(ElementOptions source)
     : _shared = source._shared,
       _animations = source._animations,
       _extra = switch (source._extra) {
@@ -353,11 +351,11 @@ List<String> _orderKeys(List<String> keys) {
 final class GenericElementOptions extends ElementOptions {
   /// Options with the entries of [source], in its key order (see
   /// [ElementOptions.new]).
-  GenericElementOptions([super.source]) : _map = <String, Object?>{};
+  new([super.source]) : _map = <String, Object?>{};
 
   /// The copy of [source] for [clone]: a new Map with the same entries in the
   /// same order.
-  GenericElementOptions._copy(GenericElementOptions super.source)
+  new _copy(GenericElementOptions super.source)
     : _map = Map<String, Object?>.of(source._map),
       super.copyFrom();
 

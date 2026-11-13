@@ -123,7 +123,7 @@ List<String> _targets(List<NativeEvent> log, Object canvas) => [
 
 /// A canvas element that implements only `getContext` and `toDataURL`: a
 /// fake of a test, which is not a [UiCanvasElement].
-final class _FakeCanvas implements HTMLCanvasElement {
+final class _FakeCanvas() implements HTMLCanvasElement {
   @override
   CanvasRenderingContext2D? getContext(String contextId) => null;
 
@@ -138,7 +138,7 @@ final class _FakeCanvas implements HTMLCanvasElement {
 /// A member of the gesture arena that an ancestor `Listener` adds at each
 /// down ([add]): it records the result of the arena of each pointer, true
 /// for a win and false for a loss.
-final class _ArenaProbe implements GestureArenaMember {
+final class _ArenaProbe() implements GestureArenaMember {
   final Map<int, bool> won = {};
 
   void add(PointerDownEvent event) {

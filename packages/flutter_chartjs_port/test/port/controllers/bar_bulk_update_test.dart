@@ -16,8 +16,7 @@ import 'package:flutter_chartjs_port/src/options/props.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
-class _ReferenceChart extends Chart {
-  _ReferenceChart(super.item, super.userConfig);
+class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativeBarIndexReads => true;
   @override
@@ -26,7 +25,7 @@ class _ReferenceChart extends Chart {
 
 // Test-only opt-in: the counter invokes no callbacks and changes no chart
 // state. The writes still use the ordinary native implementation.
-class _ProbeBar extends BarElement {
+class _ProbeBar() extends BarElement {
   int bulkWrites = 0;
   @override
   bool get supportsBulkBarWrites => true;
@@ -57,7 +56,7 @@ class _ProbeBar extends BarElement {
   }
 }
 
-class _CustomBar extends BarElement {
+class _CustomBar() extends BarElement {
   final List<String> writes = [];
   @override
   void operator []=(String key, Object? value) {
@@ -66,8 +65,7 @@ class _CustomBar extends BarElement {
   }
 }
 
-class _CustomLinear extends LinearScale {
-  _CustomLinear(super.cfg);
+class _CustomLinear(super.cfg) extends LinearScale {
   int projections = 0;
   static final value = JsClass(
     'BulkCustomLinear',
@@ -82,8 +80,8 @@ class _CustomLinear extends LinearScale {
   }
 }
 
-class _CustomController extends BarController {
-  _CustomController(super.chart, super.datasetIndex, super.newTarget);
+class _CustomController(super.chart, super.datasetIndex, super.newTarget)
+    extends BarController {
   int writes = 0;
   static final value = JsClass(
     'BulkCustomController',
@@ -106,7 +104,7 @@ class _CustomController extends BarController {
   }
 }
 
-class _MutationBar extends BarElement {
+class _MutationBar() extends BarElement {
   void Function()? afterWrite;
   @override
   void operator []=(String key, Object? value) {
@@ -115,9 +113,7 @@ class _MutationBar extends BarElement {
   }
 }
 
-class _ObservedData extends ListBase<Object?> {
-  _ObservedData(this.values);
-  final List<Object?> values;
+class _ObservedData(final List<Object?> values) extends ListBase<Object?> {
   final List<String> reads = [];
   @override
   int get length {
@@ -137,7 +133,7 @@ class _ObservedData extends ListBase<Object?> {
   void operator []=(int index, Object? value) => values[index] = value;
 }
 
-class _ObservedElementClass extends MapBase<String, Object?> {
+class _ObservedElementClass() extends MapBase<String, Object?> {
   final fields = <String, Object?>{'id': 'bar'};
   int reads = 0;
   @override

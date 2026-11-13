@@ -13,23 +13,19 @@ import 'package:test/test.dart';
 /// [SplinePoint.x] and [SplinePoint.y] are `number` upstream. Thus the
 /// getters throw on a JS `null`. `helpers.curve.ts` never reads the members
 /// of a skipped point.
-final class _SplinePoint implements SplinePoint {
-  _SplinePoint(this.rawX, this.rawY, {this.skip});
-
+final class _SplinePoint(
   /// The literal member `x`. Dart `null` is JS `null`.
-  final double? rawX;
+  final double? rawX,
 
   /// The literal member `y`. Dart `null` is JS `null`.
-  final double? rawY;
-
+  final double? rawY, {
+  @override final bool? skip,
+}) implements SplinePoint {
   @override
   double get x => rawX!;
 
   @override
   double get y => rawY!;
-
-  @override
-  final bool? skip;
 
   @override
   double cp1x = double.nan;

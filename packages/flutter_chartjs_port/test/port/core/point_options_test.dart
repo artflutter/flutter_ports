@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
 import 'package:test/test.dart';
 
-class _ObservedMap extends MapBase<String, Object?> {
+class _ObservedMap() extends MapBase<String, Object?> {
   int reads = 0;
   @override
   Object? operator [](Object? key) {
@@ -37,7 +37,7 @@ class _ObservedMap extends MapBase<String, Object?> {
   Object? remove(Object? key) => null;
 }
 
-class _RegisteredItem implements TypedDataItem {
+class _RegisteredItem() implements TypedDataItem {
   @override
   Object get x => 1.0;
   @override
@@ -48,7 +48,7 @@ class _RegisteredItem implements TypedDataItem {
   Never noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }
 
-class _OtherItem extends _RegisteredItem;
+class _OtherItem() extends _RegisteredItem;
 
 void main() {
   test('typed items classify by their class, one class after another', () {

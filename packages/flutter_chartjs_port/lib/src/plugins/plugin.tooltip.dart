@@ -112,9 +112,9 @@ export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
 /// plugin.tooltip.js:17 `positioners.average`: the average position of the
 /// elements of the active items. The default of the option `position`.
 // DIVERGES(chartjs): adapt-tooltip-positioner-objects, a positioner class.
-final class AverageTooltipPositioner extends TooltipPositioner {
+final class const AverageTooltipPositioner() extends TooltipPositioner {
   /// The positioner.
-  const AverageTooltipPositioner();
+  this;
 
   @override
   TooltipPosition? positionOf(
@@ -127,9 +127,9 @@ final class AverageTooltipPositioner extends TooltipPositioner {
 /// plugin.tooltip.js:17 `positioners.nearest`: the tooltip position of the
 /// element nearest to the event position.
 // DIVERGES(chartjs): adapt-tooltip-positioner-objects, a positioner class.
-final class NearestTooltipPositioner extends TooltipPositioner {
+final class const NearestTooltipPositioner() extends TooltipPositioner {
   /// The positioner.
-  const NearestTooltipPositioner();
+  this;
 
   @override
   TooltipPosition? positionOf(
@@ -270,15 +270,10 @@ Object? _nearest(Object? items, Object? eventPosition) {
 
 /// The point that `distanceBetweenPoints` reads in [_nearest]: the
 /// `ToNumber` of each coordinate of the event position.
-final class _NumberPoint implements Point {
-  const _NumberPoint(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-}
+final class const _NumberPoint(
+  @override final double x,
+  @override final double y,
+) implements Point;
 
 /// plugin.tooltip.js:127 `createTooltipItem(chart, item)`.
 ///
@@ -847,23 +842,13 @@ bool _strictEquals(Object? a, Object? b) {
 
 /// The object `{datasetIndex, element, index}` of `setActiveElements`
 /// (plugin.tooltip.js:1115-1119).
-final class _ActiveElement implements types.ActiveElement {
-  _ActiveElement({
-    required this.datasetIndex,
-    required this.element,
-    required this.index,
-  });
-
-  @override
-  final double datasetIndex;
+final class _ActiveElement({
+  @override required final double datasetIndex,
 
   /// Dart `null` stands for the `undefined` of an index without an element.
-  @override
-  final types.Element? element;
-
-  @override
-  final double index;
-}
+  @override required final types.Element? element,
+  @override required final double index,
+}) implements types.ActiveElement;
 
 /// The element `meta.data[index]`, or Dart `null` for JS `undefined`.
 types.Element? _elementAt(List<types.Element> data, double index) =>
@@ -890,43 +875,26 @@ void _reverseInPlace(List<types.ActiveElement> list) {
 /// The class is public because the upstream methods `drawTitle` (:756),
 /// `drawBody` (:871), `drawFooter` (:935) and `drawBackground` (:961) are
 /// public and take it (rule 2, Chart.js ADR 0012).
-final class TooltipPoint {
-  /// The literal `{x: this.x, y: this.y}` of :1054-1057.
-  TooltipPoint(this.x, this.y);
-
+final class TooltipPoint(
   /// `pt.x`.
-  double x;
+  var double x,
 
   /// `pt.y`.
-  double y;
+  var double y,
+) {
+  /// The literal `{x: this.x, y: this.y}` of :1054-1057.
+  this;
 }
 
 /// The rounded box of a color box (:835-841, :848-854), the object literal
 /// `{x, y, w, h, radius}` of the `addRoundedRectPath` call.
-final class _RoundedRect implements RoundedRect {
-  _RoundedRect({
-    required this.x,
-    required this.y,
-    required this.w,
-    required this.h,
-    required this.radius,
-  });
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final double w;
-
-  @override
-  final double h;
-
-  @override
-  final TRBLCorners radius;
-}
+final class _RoundedRect({
+  @override required final double x,
+  @override required final double y,
+  @override required final double w,
+  @override required final double h,
+  @override required final TRBLCorners radius,
+}) implements RoundedRect;
 
 /// plugin.tooltip.js:457 `class Tooltip extends Element`.
 ///
@@ -967,15 +935,16 @@ final class _RoundedRect implements RoundedRect {
 /// `harness-method-fields`): a spec replaces it on one tooltip
 /// (`plugin.tooltip.tests.js:964`, `:1027`). Each internal call goes
 /// through the field.
-class Tooltip extends Element implements types.TooltipModel {
+class Tooltip(({types.Chart chart, Object? options}) config)
+    extends Element
+    implements types.TooltipModel {
   /// plugin.tooltip.js:464 `constructor(config)`.
   ///
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value. The
   /// start values follow the upstream order (:467-495). The other
   /// properties start in the `undefined` state.
-  Tooltip(({types.Chart chart, Object? options}) config)
-    : chart = config.chart {
+  this {
     _opacity = 0;
     _active = [];
     _tooltipItems = [];
@@ -998,7 +967,7 @@ class Tooltip extends Element implements types.TooltipModel {
   /// plugin.tooltip.js:475 `chart`. Not final: the access by name writes it
   /// (Chart.js ADR 0039, section 2).
   @override
-  types.Chart chart;
+  types.Chart chart = config.chart;
 
   double? _opacity;
   double? _width;
@@ -2599,9 +2568,11 @@ Object? _readByName(Object? object, String name) => jsGet(object, name);
 /// in the upstream key order. Each field holds any JS value: a user callback
 /// reads and writes the item by name through the face, and a key that user
 /// code adds is an extra (Chart.js ADR 0054 §12).
-final class TooltipItem extends TypedRecord implements types.TypedTooltipItem {
+final class TooltipItem()
+    extends TypedRecord
+    implements types.TypedTooltipItem {
   /// An object without own keys.
-  TooltipItem();
+  this;
 
   static const List<String> _fieldNames = [
     'chart',
@@ -2797,9 +2768,9 @@ final class TooltipItem extends TypedRecord implements types.TypedTooltipItem {
 /// A body item `{before, lines, after}` of the tooltip (plugin.tooltip.js:
 /// 557-560): the lines of one tooltip item. `index.d.ts` types it inline
 /// (`TooltipModel.body`).
-final class TooltipBodyItem extends TypedRecord {
+final class TooltipBodyItem() extends TypedRecord {
   /// An object without own keys.
-  TooltipBodyItem();
+  this;
 
   static const List<String> _fieldNames = ['before', 'lines', 'after'];
 

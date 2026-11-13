@@ -83,8 +83,7 @@ final ChartConfig _config = fills(
   ),
 );
 
-class Sample4 extends StatelessWidget {
-  const Sample4({super.key});
+class const Sample4({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AspectRatio(
     aspectRatio: 2,

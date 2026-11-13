@@ -19,14 +19,10 @@ import 'package:meta/meta.dart';
 import '../canvas/pixel_compare.dart';
 
 // The exact-class guard keeps this subclass on the unchanged draw path.
-class _ReferenceBar extends BarElement {
-  _ReferenceBar(super.cfg);
-}
+class _ReferenceBar(super.cfg) extends BarElement;
 
-class _ReadMap extends MapBase<String, Object?> {
-  _ReadMap(this.values_, this.reads);
-  final Map<String, Object?> values_;
-  final List<String> reads;
+class _ReadMap(final Map<String, Object?> values_, final List<String> reads)
+    extends MapBase<String, Object?> {
   @override
   Object? operator [](Object? key) {
     reads.add('$key');
@@ -44,9 +40,7 @@ class _ReadMap extends MapBase<String, Object?> {
 }
 
 @immutable
-class _EffectfulEquality {
-  const _EffectfulEquality(this.onEquals);
-  final void Function() onEquals;
+class const _EffectfulEquality(final void Function() onEquals) {
   @override
   bool operator ==(Object other) {
     onEquals();

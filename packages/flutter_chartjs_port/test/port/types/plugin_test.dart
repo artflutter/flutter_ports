@@ -9,7 +9,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:test/test.dart';
 
 /// A chart for the calls: each member throws.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

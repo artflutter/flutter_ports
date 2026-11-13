@@ -7,17 +7,15 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
-class _Meta implements types.ChartMeta {
-  _Meta(this.data, this.parsed);
-  @override
-  List<types.Element> data;
-  @override
-  List<Object?> parsed;
+class _Meta(
+  @override var List<types.Element> data,
+  @override var List<Object?> parsed,
+) implements types.ChartMeta {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class _ObservedList extends ListBase<Object?> {
+class _ObservedList() extends ListBase<Object?> {
   int reads = 0;
   @override
   int get length {
@@ -37,7 +35,7 @@ class _ObservedList extends ListBase<Object?> {
   void operator []=(int index, Object? value) {}
 }
 
-class _CustomPoint extends PointElement {
+class _CustomPoint() extends PointElement {
   int reads = 0;
   @override
   ScriptableContext? get $context {

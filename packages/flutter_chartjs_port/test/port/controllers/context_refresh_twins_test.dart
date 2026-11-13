@@ -20,8 +20,8 @@ const blue = ui.Color(0xff0000ff);
 const green = ui.Color(0xff00ff00);
 
 // Trivial user subclasses: the exact-class guards fail, with the same results.
-class _RefScatter extends ScatterController {
-  _RefScatter(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefScatter(super.chart, super.datasetIndex, [super.newTarget])
+    extends ScatterController {
   static final value = JsClass(
     'RefContextScatter',
     superclass: ScatterController.jsClass,
@@ -33,8 +33,8 @@ class _RefScatter extends ScatterController {
   );
 }
 
-class _RefBubble extends BubbleController {
-  _RefBubble(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefBubble(super.chart, super.datasetIndex, [super.newTarget])
+    extends BubbleController {
   static final value = JsClass(
     'RefContextBubble',
     superclass: BubbleController.jsClass,
@@ -46,8 +46,8 @@ class _RefBubble extends BubbleController {
   );
 }
 
-class _RefLine extends LineController {
-  _RefLine(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefLine(super.chart, super.datasetIndex, [super.newTarget])
+    extends LineController {
   static final value = JsClass(
     'RefContextLine',
     superclass: LineController.jsClass,
@@ -59,8 +59,8 @@ class _RefLine extends LineController {
   );
 }
 
-class _RefBar extends BarController {
-  _RefBar(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefBar(super.chart, super.datasetIndex, [super.newTarget])
+    extends BarController {
   static final value = JsClass(
     'RefContextBar',
     superclass: BarController.jsClass,
@@ -72,8 +72,8 @@ class _RefBar extends BarController {
   );
 }
 
-class _RefDoughnut extends DoughnutController {
-  _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget])
+    extends DoughnutController {
   static final value = JsClass(
     'RefContextDoughnut',
     superclass: DoughnutController.jsClass,
@@ -85,8 +85,8 @@ class _RefDoughnut extends DoughnutController {
   );
 }
 
-class _RefPie extends PieController {
-  _RefPie(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefPie(super.chart, super.datasetIndex, [super.newTarget])
+    extends PieController {
   static final value = JsClass(
     'RefContextPie',
     superclass: PieController.jsClass,
@@ -98,8 +98,8 @@ class _RefPie extends PieController {
   );
 }
 
-class _RefPolar extends PolarAreaController {
-  _RefPolar(super.chart, super.datasetIndex, [super.newTarget]);
+class _RefPolar(super.chart, super.datasetIndex, [super.newTarget])
+    extends PolarAreaController {
   static final value = JsClass(
     'RefContextPolar',
     superclass: PolarAreaController.jsClass,
@@ -112,8 +112,8 @@ class _RefPolar extends PolarAreaController {
 }
 
 /// A subclass with its own context reader: each ordinary refresh reaches it.
-class _ReadingScatter extends ScatterController {
-  _ReadingScatter(super.chart, super.datasetIndex, [super.newTarget]);
+class _ReadingScatter(super.chart, super.datasetIndex, [super.newTarget])
+    extends ScatterController {
   static int reads = 0;
   static final value = JsClass(
     'ReadingContextScatter',
@@ -133,7 +133,7 @@ class _ReadingScatter extends ScatterController {
 }
 
 // Explicit test opt-in: a counter of the context reads, with native behavior.
-class _ProbePoint extends PointElement {
+class _ProbePoint() extends PointElement {
   int contextReads = 0;
   @override
   bool get supportsNativePointOptions => true;
@@ -147,7 +147,7 @@ class _ProbePoint extends PointElement {
 }
 
 // Test-only opt-in, as in bar_bulk_update_test.dart.
-class _ProbeBar extends BarElement {
+class _ProbeBar() extends BarElement {
   int contextReads = 0;
   int bulkWrites = 0;
   @override
@@ -186,7 +186,7 @@ class _ProbeBar extends BarElement {
 }
 
 /// A user point: its size and its coordinate writes are user code.
-class _UserPoint extends PointElement {
+class _UserPoint() extends PointElement {
   void Function()? onUser;
   @override
   double size([Object? options]) {
@@ -201,9 +201,8 @@ class _UserPoint extends PointElement {
   }
 }
 
-class _ObservedMap extends MapBase<String, Object?> {
-  _ObservedMap(this.fields);
-  final Map<String, Object?> fields;
+class _ObservedMap(final Map<String, Object?> fields)
+    extends MapBase<String, Object?> {
   void Function()? onRead;
   @override
   Object? operator [](Object? key) {

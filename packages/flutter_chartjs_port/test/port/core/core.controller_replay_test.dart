@@ -15,7 +15,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The calls of each hook of the counting plugin, and of the callbacks.
-final class _Counts {
+final class _Counts() {
   final Map<String, int> _calls = <String, int>{};
 
   /// One entry for each `afterEvent`: the event type, and how it arrived.

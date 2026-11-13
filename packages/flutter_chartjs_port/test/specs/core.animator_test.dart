@@ -14,7 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 // listener of `progress` always gets a number.
 
 /// The chart object `{}` of the spec. Its members throw.
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

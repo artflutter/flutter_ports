@@ -23,9 +23,8 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
 import 'package:flutter_test/flutter_test.dart';
 
 /// A custom List of data points: its iterator is user code.
-final class _CountingPoints extends ListBase<typed.DataPoint> {
-  _CountingPoints(this.points);
-  final List<typed.DataPoint> points;
+final class _CountingPoints(final List<typed.DataPoint> points)
+    extends ListBase<typed.DataPoint> {
   int walks = 0;
   @override
   int get length => points.length;

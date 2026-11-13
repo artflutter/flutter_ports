@@ -32,12 +32,10 @@ typedef Point = ({double x, double y});
 // DIVERGES(zoom): adapt-amount-classes, a class for number | object.
 final class ZoomAmount {
   /// The object form `{x, y, focalPoint}`.
-  const ZoomAmount({this.x = 1, this.y = 1, this.focalPoint});
+  const new({this.x = 1, this.y = 1, this.focalPoint});
 
   /// The number form: the same [amount] for both axes.
-  const ZoomAmount.all(double amount, {this.focalPoint})
-    : x = amount,
-      y = amount;
+  const new all(double amount, {this.focalPoint}) : x = amount, y = amount;
 
   /// The zoom factor of the x axis. 1 leaves the axis unchanged.
   final double x;
@@ -57,10 +55,10 @@ final class ZoomAmount {
 /// does not pan (0). The number form of upstream is [PanAmount.all].
 final class PanAmount {
   /// The object form `{x, y}`.
-  const PanAmount({this.x = 0, this.y = 0});
+  const new({this.x = 0, this.y = 0});
 
   /// The number form: the same [delta] for both axes.
-  const PanAmount.all(double delta) : x = delta, y = delta;
+  const new all(double delta) : x = delta, y = delta;
 
   /// The pan distance of the x axis in pixels. 0 does not pan the axis.
   final double x;

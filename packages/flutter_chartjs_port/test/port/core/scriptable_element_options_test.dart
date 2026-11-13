@@ -16,11 +16,10 @@ import 'package:test/test.dart';
 const red = ChartPaint.solid(Color(0xffff0000));
 const blue = ChartPaint.solid(Color(0xff0000ff));
 
-class _OrdinaryConfig extends Config;
+class _OrdinaryConfig() extends Config;
 
-class _Fixture {
-  _Fixture({bool ordinary = false})
-    : config = ordinary ? _OrdinaryConfig() : Config() {
+class _Fixture({bool ordinary = false}) {
+  this {
     scopes = [scope];
     Object? background(Object? ctx, Object? options) {
       final view = options! as helpers.OptionView;
@@ -32,7 +31,7 @@ class _Fixture {
 
     scope['backgroundColor'] = background;
   }
-  final Config config;
+  final Config config = ordinary ? _OrdinaryConfig() : Config();
   final scope = <String, Object?>{
     '_scriptable': true,
     '_indexable': true,

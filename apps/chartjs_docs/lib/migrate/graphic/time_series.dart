@@ -97,9 +97,9 @@ void _preselect(Chart chart) {
 }
 
 /// The replica of the Graphic demo "Time series line chart".
-class GraphicTimeSeries extends StatelessWidget {
+class const GraphicTimeSeries({super.key}) extends StatelessWidget {
   /// Creates the replica.
-  const GraphicTimeSeries({super.key});
+  this;
 
   @override
   Widget build(BuildContext context) => graphicBox(

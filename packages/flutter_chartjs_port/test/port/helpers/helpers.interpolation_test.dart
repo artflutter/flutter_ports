@@ -11,28 +11,14 @@ import 'package:test/test.dart';
 // src/helpers/helpers.interpolation.ts at v4.5.1 in Node.js v24.12.0 on x64.
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements Point;
 
 /// A JavaScript object literal `{x, y}` with no control points, passed as a
 /// [SplinePoint]. `double.nan` stands for JS `undefined` (row
 /// `adapt-spline-control-point-nan`).
-final class _SplinePoint implements SplinePoint {
-  _SplinePoint(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _SplinePoint(@override final double x, @override final double y)
+    implements SplinePoint {
   @override
   bool? get skip => null;
 

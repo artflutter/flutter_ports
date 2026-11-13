@@ -35,14 +35,14 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 /// extra.
 final class ParsedItem extends TypedRecord {
   /// An item without own keys.
-  ParsedItem();
+  new();
 
   /// The item `{[a]: aValue, [b]: bValue}` of the parse functions, in this
   /// key order (`{[iAxis]: ..., [vAxis]: ...}`). Two equal axes are one key
   /// with the second value. The axes [XAxis], [YAxis] and [RAxis] write
   /// their fields at once. Another axis class has no field: its value goes
   /// (row `adapt-axis-objects`).
-  ParsedItem.of(ScaleAxis a, Object? aValue, ScaleAxis b, Object? bValue) {
+  new of(ScaleAxis a, Object? aValue, ScaleAxis b, Object? bValue) {
     final aSlot = _axisSlot(a);
     final bSlot = _axisSlot(b);
     if (aSlot < 0 || bSlot < 0) {
@@ -195,9 +195,9 @@ final class ParsedItem extends TypedRecord {
 /// `item._stacks` (U `core.datasetController.js:152-175`): the stack
 /// object of each value axis of the item, by axis name. The axes `x`, `y`
 /// and `r` are fields; another axis name is an extra.
-final class ItemStacks extends TypedRecord {
+final class ItemStacks() extends TypedRecord {
   /// An object without own keys.
-  ItemStacks();
+  this;
 
   static const List<String> _fieldNames = ['x', 'y', 'r'];
 
@@ -256,9 +256,9 @@ final class ItemStacks extends TypedRecord {
 /// A name that is a canonical array index is a dataset index: it reads and
 /// writes [datasetValues]. `Object.keys` gives the indices first, in
 /// ascending order, as JS does.
-final class StackEntry extends TypedRecord {
+final class StackEntry() extends TypedRecord {
   /// An object without own keys.
-  StackEntry();
+  this;
 
   /// The value of each dataset index (`stack[datasetIndex]`).
   final IndexValues datasetValues = IndexValues();
@@ -403,9 +403,9 @@ final class StackEntry extends TypedRecord {
 /// `_visualValues`). The values are by `int` index. `Object.keys` gives the
 /// indices in ascending order. A key that is not an index is an extra
 /// after them.
-final class IndexValues implements JsObjectFace {
+final class IndexValues() implements JsObjectFace {
   /// An object without own keys.
-  IndexValues();
+  this;
 
   final SplayTreeMap<int, Object?> _values = SplayTreeMap<int, Object?>();
 
@@ -487,16 +487,16 @@ final class IndexValues implements JsObjectFace {
 
 /// `item._custom` of a floating bar (U `controller.bar.js:117-142`):
 /// `{barStart, barEnd, start, end, min, max}` in this key order.
-final class FloatingBar extends TypedRecord {
+final class FloatingBar({
+  required double barStart,
+  required double barEnd,
+  required Object? start,
+  required Object? end,
+  required double min,
+  required double max,
+}) extends TypedRecord {
   /// The object of `parseFloatBar`.
-  FloatingBar({
-    required double barStart,
-    required double barEnd,
-    required Object? start,
-    required Object? end,
-    required double min,
-    required double max,
-  }) {
+  this {
     this
       ..barStart = barStart
       ..barEnd = barEnd

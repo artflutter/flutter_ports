@@ -89,7 +89,7 @@ Map<String, double> readValueToProps(Object? value, Object props) {
 /// `toPadding` sets them throws, where JavaScript gives `undefined`.
 // DIVERGES(chartjs): adapt-options-typed-results, the TRBL object.
 final class _TRBLObject implements ChartArea {
-  _TRBLObject(Map<String, double> props)
+  new(Map<String, double> props)
     : top = props['top']!,
       right = props['right']!,
       bottom = props['bottom']!,
@@ -97,7 +97,7 @@ final class _TRBLObject implements ChartArea {
 
   /// The object for a [value] that is not an object: the same number for
   /// each key (see [toTRBL]).
-  _TRBLObject.all(double value)
+  new all(double value)
     : top = value,
       right = value,
       bottom = value,
@@ -153,7 +153,7 @@ TRBL toTRBL(Object? value) {
 /// [toTRBLCorners] returns.
 // DIVERGES(chartjs): adapt-options-typed-results, the corners object.
 final class _TRBLCornersObject implements TRBLCorners {
-  _TRBLCornersObject(Map<String, double> props)
+  new(Map<String, double> props)
     : topLeft = props['topLeft']!,
       topRight = props['topRight']!,
       bottomLeft = props['bottomLeft']!,
@@ -161,7 +161,7 @@ final class _TRBLCornersObject implements TRBLCorners {
 
   /// The object for a [value] that is not an object: the same number for
   /// each corner (see [toTRBLCorners]).
-  _TRBLCornersObject.all(double value)
+  new all(double value)
     : topLeft = value,
       topRight = value,
       bottomLeft = value,
@@ -390,9 +390,9 @@ Object? resolve(
 base class ContextObject implements JsObjectFace {
   /// `Object.create(prototype)`: an object without own properties. Dart
   /// `null` is the `null` prototype.
-  ContextObject(this.prototype) : _names = <String>[];
+  new(this.prototype) : _names = <String>[];
 
-  ContextObject._withNames(this.prototype, this._names) {
+  new _withNames(this.prototype, this._names) {
     for (final name in _names) {
       _presentNames |= _nameBit(name);
     }
@@ -570,15 +570,13 @@ base class ContextObject implements JsObjectFace {
 const Object _unset = _Unset();
 
 /// The type of [_unset].
-final class _Unset {
-  const _Unset();
-}
+final class const _Unset();
 
 /// index.d.ts:3252 `ScriptableChartContext`: the chart context `{chart,
 /// type: 'chart'}` (core.controller.js:856).
-final class ScriptableChartContext extends ContextObject {
+final class ScriptableChartContext(super.prototype) extends ContextObject {
   /// A chart context with the parent [prototype].
-  ScriptableChartContext(super.prototype);
+  this;
 
   Object? _chart = _unset;
   Object? _type = _unset;
@@ -613,12 +611,12 @@ final class ScriptableChartContext extends ContextObject {
 /// 'data'}` (core.datasetController.js:182-205).
 final class ScriptableContext extends ContextObject {
   /// A dataset or data context with the parent [prototype].
-  ScriptableContext(super.prototype);
+  new(super.prototype);
 
   /// core.datasetController.js:182 `createDatasetContext(parent, index)`:
   /// the keys `active` (false), `dataset` (undefined), `datasetIndex`,
   /// `index`, `mode` ('default') and `type` ('dataset'), in this order.
-  ScriptableContext.dataset(super.prototype, double index) {
+  new dataset(super.prototype, double index) {
     this
       ..active = false
       ..dataset = undefined
@@ -632,7 +630,7 @@ final class ScriptableContext extends ContextObject {
   /// element)`: the keys `active` (false), `dataIndex`, `parsed`
   /// (undefined), `raw` (undefined), `element`, `index`, `mode`
   /// ('default') and `type` ('data'), in this order.
-  ScriptableContext.data(super.prototype, double index, Object? element) {
+  new data(super.prototype, double index, Object? element) {
     this
       ..active = false
       ..dataIndex = index
@@ -869,11 +867,11 @@ final class ScriptableContext extends ContextObject {
 /// (core.scale.js:107-119).
 final class ScriptableScaleContext extends ContextObject {
   /// A scale or tick context with the parent [prototype].
-  ScriptableScaleContext(super.prototype);
+  new(super.prototype);
 
   /// The fresh tick context, with the upstream literal's own-key order.
   // DIVERGES(chartjs): adapt-tick-context-construction, direct typed fields.
-  ScriptableScaleContext.tick(Object? parent, Object tick, double index)
+  new tick(Object? parent, Object tick, double index)
     : _tick = tick,
       _index = index,
       _type = 'tick',
@@ -924,15 +922,12 @@ final class ScriptableScaleContext extends ContextObject {
 /// type: 'pointLabel'}` (scale.radialLinear.js:330-336).
 final class ScriptableScalePointLabelContext extends ContextObject {
   /// A point label context with the parent [prototype].
-  ScriptableScalePointLabelContext(super.prototype);
+  new(super.prototype);
 
   /// The fresh point label context, with the upstream literal's own-key order.
   // DIVERGES(chartjs): adapt-point-label-context-construction, typed fields.
-  ScriptableScalePointLabelContext.pointLabel(
-    Object? parent,
-    Object? label,
-    double index,
-  ) : _label = label,
+  new pointLabel(Object? parent, Object? label, double index)
+    : _label = label,
       _index = index,
       _type = 'pointLabel',
       super._withNames(parent, ['label', 'index', 'type']);
@@ -973,9 +968,9 @@ final class ScriptableScalePointLabelContext extends ContextObject {
 
 /// index.d.ts:2789 `ScriptableTooltipContext`: `{tooltip, tooltipItems,
 /// type: 'tooltip'}` (plugin.tooltip.js:348-354).
-final class ScriptableTooltipContext extends ContextObject {
+final class ScriptableTooltipContext(super.prototype) extends ContextObject {
   /// A tooltip context with the parent [prototype].
-  ScriptableTooltipContext(super.prototype);
+  this;
 
   Object? _tooltip = _unset;
   Object? _tooltipItems = _unset;
@@ -1013,9 +1008,10 @@ final class ScriptableTooltipContext extends ContextObject {
 
 /// index.d.ts:35 `ScriptableLineSegmentContext`: `{type: 'segment', p0, p1,
 /// p0DataIndex, p1DataIndex, datasetIndex}` (helpers.segment.js:315).
-final class ScriptableLineSegmentContext extends ContextObject {
+final class ScriptableLineSegmentContext(super.prototype)
+    extends ContextObject {
   /// A segment context with the parent [prototype].
-  ScriptableLineSegmentContext(super.prototype);
+  this;
 
   Object? _type = _unset;
   Object? _p0 = _unset;

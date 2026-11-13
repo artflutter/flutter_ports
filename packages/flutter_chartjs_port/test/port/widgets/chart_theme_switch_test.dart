@@ -294,17 +294,15 @@ List<Object?> _decimationInput() => <Object?>[
 
 /// A host whose state sets the config and the theme of its ChartView in one
 /// `setState`.
-class _Host extends StatefulWidget {
-  const _Host({required this.config, this.theme});
-
-  final Map<String, Object?> config;
-  final ChartThemeData? theme;
-
+class const _Host({
+  required final Map<String, Object?> config,
+  final ChartThemeData? theme,
+}) extends StatefulWidget {
   @override
   State<_Host> createState() => _HostState();
 }
 
-class _HostState extends State<_Host> {
+class _HostState() extends State<_Host> {
   late Map<String, Object?> config = widget.config;
   late ChartThemeData? theme = widget.theme;
   String? updateMode;
@@ -955,12 +953,7 @@ List<Object?> _datasetsOf(Map<String, Object?> config) =>
     (config['data']! as AnyObject)['datasets']! as List<Object?>;
 
 /// A chart for the unit case of `ChartThemeSwitch`: only [data].
-final class _FakeChart implements types.Chart {
-  _FakeChart(this.data);
-
-  @override
-  final AnyObject data;
-
+final class _FakeChart(@override final AnyObject data) implements types.Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

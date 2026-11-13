@@ -143,14 +143,11 @@ Debounced<T> debounce<T>(void Function(T args) fn, double delay) {
 /// function and never clears its timeout. `Chart.destroy()` calls
 /// [cancel], so that no `update()` reaches a destroyed chart and no [Timer]
 /// stays pending after the widget tree unmounts.
-final class Debounced<T> {
+final class Debounced<T>._(
+  final double Function(T args) _call,
+  final void Function() _cancel,
+) {
   // DIVERGES(chartjs): platform-debounce-cancel, a port-only class.
-  Debounced._(this._call, this._cancel);
-
-  final double Function(T args) _call;
-
-  final void Function() _cancel;
-
   /// helpers.extras.ts:52, the function that `debounce` returns.
   ///
   /// Calls `fn` with [args] at once, or after `delay` ms. A new call in the
@@ -323,26 +320,12 @@ Object? _parsedValue(Object? point, ScaleAxis axis) {
 
 /// helpers.extras.ts:146 `newRanges`, the object literal
 /// `{xmin, xmax, ymin, ymax}` of `_scaleRangesChanged`.
-final class _ScaleRanges implements ScaleRanges {
-  _ScaleRanges({
-    required this.xmin,
-    required this.xmax,
-    required this.ymin,
-    required this.ymax,
-  });
-
-  @override
-  double xmin;
-
-  @override
-  double xmax;
-
-  @override
-  double ymin;
-
-  @override
-  double ymax;
-}
+final class _ScaleRanges({
+  @override required var double xmin,
+  @override required var double xmax,
+  @override required var double ymin,
+  @override required var double ymax,
+}) implements ScaleRanges;
 
 /// helpers.extras.ts:144 `_scaleRangesChanged`.
 ///

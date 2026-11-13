@@ -24,9 +24,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 const Object _absent = _Absent();
 
 /// The type of [_absent].
-final class _Absent {
-  const _Absent();
-}
+final class const _Absent();
 
 /// The two dataset keys that the colors plugin writes
 /// (plugin.colors.ts:36-37, 43, 49).
@@ -78,15 +76,13 @@ void _write(Object object, OptionKey key, Object? value) {
 
 /// One palette key of a dataset that the colors plugin wrote: the value
 /// before the first write and the value of the last write.
-final class _Write {
-  _Write(this.original, this.written);
-
+final class _Write(
   /// The value before the first write, or [_absent].
-  final Object? original;
+  final Object? original,
 
   /// The value of the last write.
-  Object? written;
-}
+  var Object? written,
+);
 
 /// The theme state of the chart of one `ChartView` (Chart.js ADR 0050,
 /// "Runtime switch"). The widget and, later, the frameless benchmark use it.
@@ -96,7 +92,7 @@ final class _Write {
 /// colors plugin wrote (step 4). The inline plugin of the widget feeds the
 /// records in each update (`chart_view_plugin.dart`).
 @internal
-final class ChartThemeSwitch {
+final class ChartThemeSwitch() {
   /// The effective theme of the start or of the last switch.
   ChartThemeData? _applied;
 

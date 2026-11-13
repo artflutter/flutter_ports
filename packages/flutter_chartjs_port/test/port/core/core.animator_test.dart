@@ -33,10 +33,7 @@ import 'package:flutter_test/flutter_test.dart';
 // requestAnimationFrame that runs the promise jobs after each callback).
 
 /// A chart for the animator: it counts its draws. Its other members throw.
-final class _Chart implements types.Chart {
-  _Chart([this.name = 'chart']);
-
-  final String name;
+final class _Chart([final String name = 'chart']) implements types.Chart {
   int draws = 0;
 
   // The chart object of the test has no canvas: JS `undefined`. The

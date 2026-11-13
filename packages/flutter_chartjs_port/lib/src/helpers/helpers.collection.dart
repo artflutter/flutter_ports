@@ -225,7 +225,10 @@ const List<String> _arrayEvents = ['push', 'pop', 'shift', 'splice', 'unshift'];
 /// only when it is a function. Here each member has an empty default body,
 /// which gives the same result. Mix this class in and override the members
 /// that the listener needs.
-abstract mixin class ArrayListener<T> {
+abstract mixin class ArrayListener<T>() {
+  /// The constructor of a class that extends [ArrayListener].
+  this;
+
   /// helpers.collection.ts:103 `_onDataPush?(...item: T[])`.
   @internal
   void onDataPush(List<T> items) {}
@@ -250,12 +253,10 @@ abstract mixin class ArrayListener<T> {
 
 /// The `_chartjs` stub of helpers.collection.ts:125-127: the listeners of
 /// one array.
-final class _ChartjsStub {
-  _ChartjsStub(this.listeners);
-
+final class _ChartjsStub(
   /// The `listeners` array of the stub.
-  final List<_StubListener> listeners;
-}
+  final List<_StubListener> listeners,
+);
 
 /// One item of the `listeners` array of the `_chartjs` stub.
 ///
@@ -263,17 +264,15 @@ final class _ChartjsStub {
 /// Thus the item keeps the element type `T` of the [listenArrayEvents]
 /// call in [notify]. [notifyArrayListeners] calls [notify] and does no
 /// cast.
-final class _StubListener {
-  _StubListener(this.listener, this.notify);
-
+final class _StubListener(
   /// The listener object. [unlistenArrayEvents] compares it with
   /// [identical].
-  final Object listener;
+  final Object listener,
 
   /// Calls the `_onData*` member of [listener] for a method with its
   /// arguments.
-  final void Function(String method, List<Object?> args) notify;
-}
+  final void Function(String method, List<Object?> args) notify,
+);
 
 /// The [_StubListener] of [listener], with the element type `T`.
 _StubListener _stubListener<T>(ArrayListener<T> listener) => _StubListener(

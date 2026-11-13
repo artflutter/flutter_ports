@@ -24,9 +24,9 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// Upstream exports a plain class, which `Chart.platforms.BasePlatform`
 /// exposes and which a user can pass as `config.platform`. The Dart class is
 /// not abstract, so that `BasePlatform()` gives the same object.
-class BasePlatform implements types.BasePlatform {
+class BasePlatform() implements types.BasePlatform {
   /// platform.base.js:9 the implicit constructor.
-  BasePlatform();
+  this;
 
   /// platform.base.js:9 `class BasePlatform` as a value (Chart.js ADR 0020,
   /// section 3).

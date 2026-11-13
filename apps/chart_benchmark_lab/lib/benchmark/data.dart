@@ -5,39 +5,45 @@ import 'dart:math' as math;
 double bubbleRadius(double y) => 2 + y * .06;
 
 /// An immutable input value shared by every adapter.
-class Sample {
-  /// One item in the deterministic workload.
-  const Sample(this.index, this.x, this.y);
-
+class const Sample(
   /// Stable item identity.
-  final int index;
+  final int index,
 
   /// Numeric domain position, sorted for line charts.
-  final double x;
+  final double x,
 
   /// Positive value in the fixed 0–100 range.
-  final double y;
+  final double y,
+) {
+  /// One item in the deterministic workload.
+  this;
 
   /// Bubble radius in logical pixels, computed only by a bubble chart.
   double get r => bubbleRadius(y);
 }
 
 /// A frame and its workload step, independent of library throughput.
-class DatasetFrame {
-  /// A fresh public-widget input.
-  const DatasetFrame(this.values, this.step);
-
+class const DatasetFrame(
   /// All generated items.
-  final List<Sample> values;
+  final List<Sample> values,
 
   /// Completed update steps since reset.
-  final int step;
+  final int step,
+) {
+  /// A fresh public-widget input.
+  this;
 }
 
 /// Seeded phases use integer arithmetic that is exact on native and JavaScript.
-class DatasetGenerator {
+class DatasetGenerator(
+  /// Item count.
+  final int count,
+
+  /// Dataset seed.
+  final int seed,
+) {
   /// Prepare one phase per item; lower counts share the same prefix.
-  DatasetGenerator(this.count, this.seed) {
+  this {
     var state = seed & 0x7fffffff;
     _phases = List<double>.generate(count, (_) {
       state = (state * 1664525 + 1013904223) & 0x7fffffff;
@@ -45,11 +51,6 @@ class DatasetGenerator {
     }, growable: false);
   }
 
-  /// Item count.
-  final int count;
-
-  /// Dataset seed.
-  final int seed;
   late final List<double> _phases;
 
   /// Same step and configuration produce identical data for every library.

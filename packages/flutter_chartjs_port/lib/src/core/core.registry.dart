@@ -36,9 +36,9 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 /// Please use the module's default export which provides a singleton
 /// instance
 /// Note: class is exported for typedoc
-final class Registry {
+final class Registry() {
   /// core.registry.js:12 `constructor()`.
-  Registry();
+  this;
 
   /// core.registry.js:13 `controllers`: the dataset controllers, with the
   /// scope `datasets` and the overrides.

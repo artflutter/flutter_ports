@@ -77,43 +77,34 @@ String dartSpecOf(String spec) =>
 String _key(Iterable<String> path) => path.join('\u0000');
 
 /// One case of the upstream manifest.
-final class ManifestCase {
-  /// A case of [spec] with its [describe] names, [it] name and Dart [test]
-  /// name.
-  const ManifestCase({
-    required this.spec,
-    required this.describe,
-    required this.it,
-    required this.test,
-    required this.line,
-    required this.loop,
-    required this.chart,
-    required this.pending,
-  });
-
+final class const ManifestCase({
   /// The upstream spec file, for example `helpers.math.tests.js`.
-  final String spec;
+  required final String spec,
 
   /// The `describe` names, outermost first.
-  final List<String> describe;
+  required final List<String> describe,
 
   /// The `it` name.
-  final String it;
+  required final String it,
 
   /// The name of the Dart test: [it], or [it] with ` #2` or ` #3`.
-  final String test;
+  required final String test,
 
   /// The line of the `it` call in the upstream spec file.
-  final int? line;
+  required final int? line,
 
   /// Whether a loop made this case (its `it` call site made more cases).
-  final bool loop;
+  required final bool loop,
 
   /// Whether the case acquires a chart (`kind` `chart`).
-  final bool chart;
+  required final bool chart,
 
   /// Whether Jasmine skips the case upstream (`xit`, `xdescribe`).
-  final bool pending;
+  required final bool pending,
+}) {
+  /// A case of [spec] with its [describe] names, [it] name and Dart [test]
+  /// name.
+  this;
 
   /// The group names and the Dart test name.
   List<String> get path => [...describe, test];
@@ -123,23 +114,23 @@ final class ManifestCase {
 }
 
 /// A `describe` whose body is `jasmine.fixture.specs(prefix)`.
-final class FixtureGroup {
-  /// A fixture group at the [describe] path.
-  const FixtureGroup(this.describe, this.prefix, {this.fixtures, this.line});
-
+final class const FixtureGroup(
   /// The `describe` names of the group, outermost first.
-  final List<String> describe;
+  final List<String> describe,
 
   /// The fixture path prefix: a regular expression source, as
   /// chartjs-test-utils `src/fixture.js:74` uses it.
-  final String prefix;
+  final String prefix, {
 
   /// The number of fixtures that the group runs upstream, or null when the
   /// manifest does not give it.
-  final int? fixtures;
+  final int? fixtures,
 
   /// The line of the `describe` call in the upstream spec file.
-  final int? line;
+  final int? line,
+}) {
+  /// A fixture group at the [describe] path.
+  this;
 
   /// Whether the fixture [path] (relative to `test/fixtures/`) matches the
   /// prefix (`src/fixture.js:74`).
@@ -148,22 +139,22 @@ final class FixtureGroup {
 }
 
 /// One upstream spec file of the manifest.
-final class ManifestSpec {
-  /// The spec [file] with its [cases], [fixtureGroups] and [fixtures].
-  ManifestSpec(this.file, this.cases, this.fixtureGroups, this.fixtures);
-
+final class ManifestSpec(
   /// The file name in `test/specs/`, for example `helpers.math.tests.js`.
-  final String file;
+  final String file,
 
   /// The cases, in upstream order.
-  final List<ManifestCase> cases;
+  final List<ManifestCase> cases,
 
   /// The fixture groups.
-  final List<FixtureGroup> fixtureGroups;
+  final List<FixtureGroup> fixtureGroups,
 
   /// The paths (relative to `test/fixtures/`) of the fixtures that the
   /// fixture groups of this file run.
-  final Set<String> fixtures;
+  final Set<String> fixtures,
+) {
+  /// The spec [file] with its [cases], [fixtureGroups] and [fixtures].
+  this;
 
   late final Map<String, ManifestCase> _byKey = {
     for (final c in cases) _key(c.path): c,
@@ -191,13 +182,19 @@ final class ManifestSpec {
 const String fixtureUrlPrefix = '/base/test/fixtures/';
 
 /// The upstream manifest of tool 4.
-final class Manifest {
+final class const Manifest(
+  /// The Chart.js version of the checkout.
+  final String version,
+
+  /// The upstream spec files by file name.
+  final Map<String, ManifestSpec> specs,
+) {
   /// A manifest of the Chart.js [version] with its [specs] by file name.
-  const Manifest(this.version, this.specs);
+  this;
 
   /// Reads the manifest JSON [text]. Throws a [FormatException] when [text]
   /// is not JSON, or when a field is missing or has another type.
-  factory Manifest.parse(String text) {
+  factory parse(String text) {
     final json = _as<Map<String, Object?>>(jsonDecode(text), 'the manifest');
     final schema = json['schema'];
     if (schema != 1) {
@@ -245,12 +242,6 @@ final class Manifest {
     }
     return Manifest(_field<String>(source, 'version', 'source'), specs);
   }
-
-  /// The Chart.js version of the checkout.
-  final String version;
-
-  /// The upstream spec files by file name.
-  final Map<String, ManifestSpec> specs;
 }
 
 /// [value] as a [T], or a [FormatException] that names [what].
@@ -275,7 +266,7 @@ List<String> _strings(Object? value, String what) => [
 ];
 
 /// The result of a Dart test.
-enum TestResult {
+enum TestResult() {
   /// The test passed.
   success,
 
@@ -287,93 +278,75 @@ enum TestResult {
 }
 
 /// One Dart test of the JSON reporter.
-final class DartTest {
-  /// A test of the Dart spec [file] with its [groups] and [name].
-  const DartTest({
-    required this.file,
-    required this.groups,
-    required this.name,
-    required this.result,
-    this.line,
-    this.skipReason,
-    this.milliseconds,
-  });
-
+final class const DartTest({
   /// The spec file, as `test/specs/<base>_test.dart`, or a port-only test
   /// file, as `test/port/...`.
-  final String file;
+  required final String file,
 
   /// The group names, outermost first, without the root group.
-  final List<String> groups;
+  required final List<String> groups,
 
   /// The test name without the group names.
-  final String name;
+  required final String name,
 
   /// The result.
-  final TestResult result;
+  required final TestResult result,
 
   /// The line of the test in [file].
-  final int? line;
+  final int? line,
 
   /// The skip reason, when [result] is [TestResult.skipped].
-  final String? skipReason;
+  final String? skipReason,
 
   /// The time from the `testStart` event to the `testDone` event, when both
   /// events give it.
-  final int? milliseconds;
+  final int? milliseconds,
+}) {
+  /// A test of the Dart spec [file] with its [groups] and [name].
+  this;
 
   /// The full name: [groups] and [name], joined with spaces.
   String get fullName => [...groups, name].join(' ');
 }
 
 /// A `setUpAll` or `tearDownAll` of a group that did not pass.
-final class HookFailure {
-  /// The [hook] of the group [groups] in the spec [file] failed with [error].
-  const HookFailure({
-    required this.file,
-    required this.groups,
-    required this.hook,
-    required this.error,
-    this.line,
-  });
-
+final class const HookFailure({
   /// The spec file, as `test/specs/<base>_test.dart`.
-  final String file;
+  required final String file,
 
   /// The group names, outermost first, without the root group.
-  final List<String> groups;
+  required final List<String> groups,
 
   /// `setUpAll` or `tearDownAll`.
-  final String hook;
+  required final String hook,
 
   /// The error, or the result of the hook.
-  final String error;
+  required final String error,
 
   /// The line of the hook in [file].
-  final int? line;
+  final int? line,
+}) {
+  /// The [hook] of the group [groups] in the spec [file] failed with [error].
+  this;
 }
 
 /// The tests and the load errors of a JSON reporter output.
-final class ReporterOutput {
-  /// The [tests], the [loadErrors] (one message for each file) and the
-  /// [hookFailures].
-  const ReporterOutput(
-    this.tests,
-    this.loadErrors, [
-    this.hookFailures = const [],
-  ]);
-
+final class const ReporterOutput(
   /// The tests, in the order of their `testStart` events.
-  final List<DartTest> tests;
+  final List<DartTest> tests,
 
   /// The files that did not load, with the error.
-  final Map<String, String> loadErrors;
+  final Map<String, String> loadErrors, [
 
   /// The `setUpAll` and `tearDownAll` hooks that did not pass. The JSON
   /// reporter shows a failed hook as a test named `<group> (setUpAll)` or
   /// `<group> (tearDownAll)`. The tests of a group whose `setUpAll` failed
   /// do not run.
-  final List<HookFailure> hookFailures;
+  final List<HookFailure> hookFailures = const [],
+]) {
+  /// The [tests], the [loadErrors] (one message for each file) and the
+  /// [hookFailures].
+  this;
 }
 
 /// The names of the tests that the JSON reporter makes for group hooks.
@@ -522,7 +495,7 @@ String _strip(String full, String parent) =>
     : full;
 
 /// The status of one upstream case.
-enum CaseStatus {
+enum CaseStatus() {
   /// The Dart test passed.
   passed,
 
@@ -537,19 +510,19 @@ enum CaseStatus {
 }
 
 /// One upstream case and its Dart test.
-final class CaseResult {
-  /// The [status] of [upstream], from [test].
-  const CaseResult(this.upstream, this.status, this.test);
-
+final class const CaseResult(
   /// The upstream case.
-  final ManifestCase upstream;
+  final ManifestCase upstream,
 
   /// The status.
-  final CaseStatus status;
+  final CaseStatus status,
 
   /// The matching Dart test, or null when [status] is
   /// [CaseStatus.missing].
-  final DartTest? test;
+  final DartTest? test,
+) {
+  /// The [status] of [upstream], from [test].
+  this;
 
   /// `passed`, `failed`, `skipped(<reason>)` or `missing`.
   String get label => status == CaseStatus.skipped
@@ -558,34 +531,27 @@ final class CaseResult {
 }
 
 /// The cases of one upstream spec file.
-final class SpecReport {
-  /// The report of [spec].
-  const SpecReport({
-    required this.spec,
-    required this.results,
-    required this.hasDartFile,
-    required this.parityStatus,
-    required this.required,
-    required this.fixtureTests,
-  });
-
+final class const SpecReport({
   /// The upstream spec file.
-  final String spec;
+  required final String spec,
 
   /// The status of each case, in upstream order.
-  final List<CaseResult> results;
+  required final List<CaseResult> results,
 
   /// Whether `test/specs/<base>_test.dart` reported tests.
-  final bool hasDartFile;
+  required final bool hasDartFile,
 
   /// The `parity.md` status that applies, or null.
-  final String? parityStatus;
+  required final String? parityStatus,
 
   /// Whether a missing case is an error.
-  final bool required;
+  required final bool required,
 
   /// The number of fixture tests.
-  final int fixtureTests;
+  required final int fixtureTests,
+}) {
+  /// The report of [spec].
+  this;
 
   /// The number of cases with [status].
   int count(CaseStatus status) =>
@@ -769,15 +735,15 @@ bool isValidSkipReason(String? reason) =>
     reason != null && _skipReason.hasMatch(reason);
 
 /// The result of [compareCases].
-final class SpecCasesResult {
-  /// The [reports] of all upstream spec files and the [findings].
-  const SpecCasesResult(this.reports, this.findings);
-
+final class const SpecCasesResult(
   /// One report for each upstream spec file, in manifest order.
-  final List<SpecReport> reports;
+  final List<SpecReport> reports,
 
   /// The errors.
-  final List<Finding> findings;
+  final List<Finding> findings,
+) {
+  /// The [reports] of all upstream spec files and the [findings].
+  this;
 }
 
 /// Maps the Dart [output] onto the cases of [manifest]. [parity] holds the
@@ -1062,15 +1028,15 @@ FixtureSelection selectFixtureFiles(
 }
 
 /// The fixtures of one upstream spec file in the fixture mode.
-final class FixtureReport {
-  /// The report of [spec] with the [fixtures] of its groups.
-  FixtureReport(this.spec, this.fixtures);
-
+final class FixtureReport(
   /// The upstream spec file.
-  final String spec;
+  final String spec,
 
   /// The number of fixtures of the fixture groups.
-  final int fixtures;
+  final int fixtures,
+) {
+  /// The report of [spec] with the [fixtures] of its groups.
+  this;
 
   /// The number of passed fixtures.
   int passed = 0;
@@ -1089,30 +1055,24 @@ final class FixtureReport {
 }
 
 /// The result of [compareFixtures].
-final class FixturesResult {
-  /// The [reports], the counts of the port-only tests and the [findings].
-  const FixturesResult({
-    required this.reports,
-    required this.portPassed,
-    required this.portFailed,
-    required this.slowest,
-    required this.findings,
-  });
-
+final class const FixturesResult({
   /// One report for each selected spec file, in manifest order.
-  final List<FixtureReport> reports;
+  required final List<FixtureReport> reports,
 
   /// The passed and the failed port-only tests (outside `test/specs/`).
-  final int portPassed;
+  required final int portPassed,
 
   /// The failed port-only tests.
-  final int portFailed;
+  required final int portFailed,
 
   /// The 10 slowest tests, the slowest first. Not a gate.
-  final List<DartTest> slowest;
+  required final List<DartTest> slowest,
 
   /// The errors.
-  final List<Finding> findings;
+  required final List<Finding> findings,
+}) {
+  /// The [reports], the counts of the port-only tests and the [findings].
+  this;
 }
 
 /// Maps the Dart [output] of the fixture mode onto the fixtures of the

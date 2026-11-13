@@ -23,15 +23,8 @@ import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'harness.dart';
 
 /// A spline point `{x, y, skip}` with its control points.
-final class _SplinePoint implements SplinePoint {
-  _SplinePoint(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _SplinePoint(@override final double x, @override final double y)
+    implements SplinePoint {
   @override
   bool? get skip => null;
 
@@ -49,21 +42,12 @@ final class _SplinePoint implements SplinePoint {
 }
 
 /// A chart area `{left, top, right, bottom, width, height}`.
-final class _Area implements ChartArea {
-  const _Area(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-
+final class const _Area(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -73,18 +57,11 @@ final class _Area implements ChartArea {
 
 /// A point element `{x, y, skip, stop}`. The control points are NaN, which
 /// stands for JS `undefined` (`SplinePoint`).
-final class _PointElement implements PointElement {
-  _PointElement(this.x, this.y, {this.skip});
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final bool? skip;
-
+final class _PointElement(
+  @override final double x,
+  @override final double y, {
+  @override final bool? skip,
+}) implements PointElement {
   @override
   bool? get stop => null;
 
@@ -115,7 +92,7 @@ final class _PointElement implements PointElement {
 }
 
 /// A chart `{getContext}`.
-final class _Chart implements Chart {
+final class _Chart() implements Chart {
   final Map<String, Object?> _context = {'chart': 'chart', 'type': 'chart'};
 
   @override
@@ -126,18 +103,11 @@ final class _Chart implements Chart {
 }
 
 /// A line element `{points, options, _chart, _loop, _fullLoop, segments}`.
-final class _Line implements LineElement {
-  _Line(this.points, this.options, {this.chart});
-
-  @override
-  final List<PointElement> points;
-
-  @override
-  final Map<String, Object?> options;
-
-  @override
-  final Chart? chart;
-
+final class _Line(
+  @override final List<PointElement> points,
+  @override final Map<String, Object?> options, {
+  @override final Chart? chart,
+}) implements LineElement {
   @override
   bool? get loop => false;
 

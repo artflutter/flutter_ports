@@ -37,30 +37,13 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 typedef ContextCall = Map<String, Object?>;
 
 /// context.js:122 the result of the mock `measureText`.
-final class _MockTextMetrics implements TextMetrics {
-  const _MockTextMetrics({
-    required this.actualBoundingBoxAscent,
-    required this.actualBoundingBoxDescent,
-    required this.actualBoundingBoxLeft,
-    required this.actualBoundingBoxRight,
-    required this.width,
-  });
-
-  @override
-  final double actualBoundingBoxAscent;
-
-  @override
-  final double actualBoundingBoxDescent;
-
-  @override
-  final double actualBoundingBoxLeft;
-
-  @override
-  final double actualBoundingBoxRight;
-
-  @override
-  final double width;
-}
+final class const _MockTextMetrics({
+  @override required final double actualBoundingBoxAscent,
+  @override required final double actualBoundingBoxDescent,
+  @override required final double actualBoundingBoxLeft,
+  @override required final double actualBoundingBoxRight,
+  @override required final double width,
+}) implements TextMetrics;
 
 /// context.js:2 `Context`: a [CanvasRenderingContext2D] that records the
 /// calls of 24 methods and the writes of 9 properties.
@@ -71,9 +54,9 @@ final class _MockTextMetrics implements TextMetrics {
 /// `undefined`. Here such a method throws an [UnsupportedError]. A JS caller
 /// that writes another property creates it without a record. Here such a
 /// property stores the value and records nothing.
-class MockContext implements CanvasRenderingContext2D {
+class MockContext() implements CanvasRenderingContext2D {
   /// context.js:3 `constructor`.
-  MockContext();
+  this;
 
   // Port-only: the shadow attributes of Chart.js ADR 0106. The chart never
   // reads them, and the mock does not record them.

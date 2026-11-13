@@ -46,23 +46,21 @@ typedef DemoDraw = void Function(DemoChart chart, CanvasRenderingContext2D ctx);
 ///
 /// It has no scales, datasets, boxes, plugins or animations. The members
 /// of `types.Chart` for these parts give an empty result.
-final class DemoChart implements types.Chart {
+final class DemoChart(
+  Object? item, {
+  required DemoDraw draw,
+  bool maintainAspectRatio = false,
+  double aspectRatio = 2,
+  List<String> events = const [],
+
+  /// Called with each event that the platform delivers.
+  var void Function(types.ChartEvent event)? onEvent,
+
+  /// Called after each resize that changed the canvas.
+  var VoidCallback? onResize,
+}) implements types.Chart {
   /// `new Chart(item, {options})`: a responsive chart on [item].
-  DemoChart(
-    Object? item, {
-    required DemoDraw draw,
-    bool maintainAspectRatio = false,
-    double aspectRatio = 2,
-    List<String> events = const [],
-    this.onEvent,
-    this.onResize,
-  }) : drawFrame = draw,
-       options = {
-         'responsive': true,
-         'maintainAspectRatio': maintainAspectRatio,
-         'aspectRatio': aspectRatio,
-         'events': events,
-       } {
+  this {
     platform = detectPlatform(item)();
     final context = platform.acquireContext(item, aspectRatio);
     ctx = context;
@@ -81,13 +79,7 @@ final class DemoChart implements types.Chart {
   }
 
   /// Draws a frame.
-  DemoDraw drawFrame;
-
-  /// Called with each event that the platform delivers.
-  void Function(types.ChartEvent event)? onEvent;
-
-  /// Called after each resize that changed the canvas.
-  VoidCallback? onResize;
+  DemoDraw drawFrame = draw;
 
   @override
   late final BasePlatform platform;
@@ -130,7 +122,12 @@ final class DemoChart implements types.Chart {
   double currentDevicePixelRatio = double.nan;
 
   @override
-  final Map<String, Object?> options;
+  final Map<String, Object?> options = {
+    'responsive': true,
+    'maintainAspectRatio': maintainAspectRatio,
+    'aspectRatio': aspectRatio,
+    'events': events,
+  };
 
   /// The chart area: the whole canvas, until a caller sets another area.
   @override
@@ -419,15 +416,10 @@ final class DemoChart implements types.Chart {
 }
 
 /// The `config` of a [DemoChart]: its `options` and its `data`.
-final class _DemoConfiguration implements types.ChartConfiguration {
-  _DemoConfiguration(this.options, this.data);
-
-  @override
-  final Map<String, Object?> options;
-
-  @override
-  final Map<String, Object?> data;
-}
+final class _DemoConfiguration(
+  @override final Map<String, Object?> options,
+  @override final Map<String, Object?> data,
+) implements types.ChartConfiguration;
 
 /// A [ChartHost] that shows a [DemoChart].
 ///
@@ -438,50 +430,44 @@ final class _DemoConfiguration implements types.ChartConfiguration {
 ///
 /// With a [height], the host has that height and the chart fills its box.
 /// Without one, the chart keeps [aspectRatio] (`maintainAspectRatio`).
-class DemoCanvas extends StatefulWidget {
-  /// Creates a host for a chart that [draw] draws.
-  const DemoCanvas({
-    required this.draw,
-    this.height,
-    this.aspectRatio = 2,
-    this.events = const [],
-    this.onEvent,
-    this.onChart,
-    this.onResize,
-    this.onTickerModeChanged,
-    super.key,
-  });
-
+class const DemoCanvas({
   /// Draws a frame of the chart.
-  final DemoDraw draw;
+  required final DemoDraw draw,
 
   /// The height of the host, or `null` to keep [aspectRatio].
-  final double? height;
+  final double? height,
 
   /// The `aspectRatio` option.
-  final double aspectRatio;
+  final double aspectRatio = 2,
 
   /// The `events` option: the DOM event types that the chart listens to.
-  final List<String> events;
+  final List<String> events = const [],
 
   /// Called with each event that the platform delivers.
-  final void Function(types.ChartEvent event)? onEvent;
+  final void Function(types.ChartEvent event)? onEvent,
 
   /// Called once the chart exists.
-  final ValueChanged<DemoChart>? onChart;
+  final ValueChanged<DemoChart>? onChart,
 
   /// Called after each resize of the canvas.
-  final VoidCallback? onResize;
+  final VoidCallback? onResize,
 
   /// The `onTickerModeChanged` callback of the host.
-  final ValueChanged<bool>? onTickerModeChanged;
+  final ValueChanged<bool>? onTickerModeChanged,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates a host for a chart that [draw] draws.
+  this;
 
   @override
   State<DemoCanvas> createState() => DemoCanvasState();
 }
 
 /// The state of a [DemoCanvas]: it owns the canvas and the chart.
-class DemoCanvasState extends State<DemoCanvas> {
+class DemoCanvasState() extends State<DemoCanvas> {
+  /// A new state of [DemoCanvas].
+  this;
+
   final UiCanvasElement _canvas = UiCanvasElement();
   DemoChart? _chart;
 
@@ -544,44 +530,25 @@ class DemoCanvasState extends State<DemoCanvas> {
 
 /// The options of `drawPoint` and `drawPointLegend`: the resolved options
 /// of a point element.
-final class PointOptions implements DrawPointOptions {
+final class const PointOptions({
+  @override required final Object? pointStyle,
+  @override required final double radius,
+  @override final double borderWidth = 1,
+  @override final double? rotation,
+}) implements DrawPointOptions {
   /// Creates the options.
-  const PointOptions({
-    required this.pointStyle,
-    required this.radius,
-    this.borderWidth = 1,
-    this.rotation,
-  });
-
-  @override
-  final Object? pointStyle;
-
-  @override
-  final double radius;
-
-  @override
-  final double borderWidth;
-
-  @override
-  final double? rotation;
+  this;
 }
 
 /// A box `{left, top, right, bottom}`, the `TRBL` of `clipArea`.
-final class Box implements ChartArea {
+final class const Box(
+  @override final double left,
+  @override final double top,
+  @override final double right,
+  @override final double bottom,
+) implements ChartArea {
   /// Creates the box.
-  const Box(this.left, this.top, this.right, this.bottom);
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
+  this;
 
   @override
   double get width => right - left;
@@ -591,60 +558,34 @@ final class Box implements ChartArea {
 }
 
 /// The corner radii of a [RoundedBox].
-final class Corners implements TRBLCorners {
+final class const Corners({
+  @override required final double topLeft,
+  @override required final double topRight,
+  @override required final double bottomLeft,
+  @override required final double bottomRight,
+}) implements TRBLCorners {
   /// Creates the radii.
-  const Corners({
-    required this.topLeft,
-    required this.topRight,
-    required this.bottomLeft,
-    required this.bottomRight,
-  });
-
-  @override
-  final double topLeft;
-
-  @override
-  final double topRight;
-
-  @override
-  final double bottomLeft;
-
-  @override
-  final double bottomRight;
+  this;
 }
 
 /// The rectangle of `addRoundedRectPath`: a `RoundedRect` whose radius is a
 /// [Corners].
-final class RoundedBox implements RoundedRect {
+final class const RoundedBox(
+  @override final double x,
+  @override final double y,
+  @override final double w,
+  @override final double h,
+  @override final Corners radius,
+) implements RoundedRect {
   /// Creates the rectangle.
-  const RoundedBox(this.x, this.y, this.w, this.h, this.radius);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final double w;
-
-  @override
-  final double h;
-
-  @override
-  final Corners radius;
+  this;
 }
 
 /// A point `{x, y}` with the control points that `helpers.curve` writes.
-final class CurvePoint implements SplinePoint {
+final class CurvePoint(@override final double x, @override final double y)
+    implements SplinePoint {
   /// Creates the point.
-  CurvePoint(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
+  this;
 
   @override
   bool? get skip => null;

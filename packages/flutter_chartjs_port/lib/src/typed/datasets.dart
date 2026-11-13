@@ -83,24 +83,7 @@ import 'package:meta/meta.dart' show internal;
 /// resolvers in [backgroundColor] and [borderColor]: a new closure
 /// in each build is a new value, and the chart then updates.
 @immutable
-abstract final class Dataset with Diagnosticable {
-  /// The parameters of each dataset class.
-  const Dataset({
-    this.key,
-    this.label,
-    this.hidden,
-    this.order,
-    this.backgroundColor,
-    this.borderColor,
-    this.borderWidth,
-    this.hoverBackgroundColor,
-    this.hoverBorderColor,
-    this.hoverBorderWidth,
-    this.shadow,
-    this.tooltipCallbacks,
-    this.extra,
-  });
-
+abstract final class const Dataset({
   /// The identity of the dataset when the app gives a new config.
   ///
   /// The chart keeps the state of a dataset, for example its hidden state
@@ -108,13 +91,13 @@ abstract final class Dataset with Diagnosticable {
   /// dataset takes the state of the dataset of the same class at the same
   /// index. Give a key to each dataset when the app adds, removes or
   /// reorders datasets. The key is not a Chart.js option.
-  final Key? key;
+  final Key? key,
 
   /// The name of the dataset in the legend and in the tooltip: `label`.
-  final String? label;
+  final String? label,
 
   /// Whether the dataset is hidden: `hidden`.
-  final bool? hidden;
+  final bool? hidden,
 
   /// The draw order of the dataset: `order`.
   ///
@@ -122,29 +105,29 @@ abstract final class Dataset with Diagnosticable {
   /// with a lower order is on top of it. The order also sets the order of
   /// the stacks, of the tooltip items and of the legend items. The default
   /// is 0.
-  final int? order;
+  final int? order,
 
   /// The data-item fill: a constant, indexed list or typed callback.
   /// A null parameter inherits the default. This lowers to `backgroundColor`.
-  final ChartValue<ChartPaint>? backgroundColor;
+  final ChartValue<ChartPaint>? backgroundColor,
 
   /// The data-item border: a constant, indexed list or typed callback.
   /// A null parameter inherits the default. This lowers to `borderColor`.
-  final ChartValue<ChartPaint>? borderColor;
+  final ChartValue<ChartPaint>? borderColor,
 
   /// The border width in pixels: `borderWidth`.
-  final double? borderWidth;
+  final double? borderWidth,
 
   /// The fill color of a data item under the pointer:
   /// `hoverBackgroundColor`.
-  final ChartValue<ChartPaint>? hoverBackgroundColor;
+  final ChartValue<ChartPaint>? hoverBackgroundColor,
 
   /// The border color of a data item under the pointer: `hoverBorderColor`.
-  final ChartValue<ChartPaint>? hoverBorderColor;
+  final ChartValue<ChartPaint>? hoverBorderColor,
 
   /// The border width of a data item under the pointer, in pixels:
   /// `hoverBorderWidth`.
-  final double? hoverBorderWidth;
+  final double? hoverBorderWidth,
 
   /// The shadow of the dataset (Chart.js ADR 0107). It is not a Chart.js
   /// option.
@@ -153,10 +136,10 @@ abstract final class Dataset with Diagnosticable {
   /// the dataset. The area fill of a line has no shadow. The keys
   /// `shadowColor`, `shadowBlur`, `shadowOffsetX` and `shadowOffsetY` of the
   /// dataset carry it, so a `ChartView.raw` dataset can set them too.
-  final ChartShadow? shadow;
+  final ChartShadow? shadow,
 
   /// Native per-item tooltip callback overrides for this dataset.
-  final TooltipCallbacks? tooltipCallbacks;
+  final TooltipCallbacks? tooltipCallbacks,
 
   /// The Chart.js options of the dataset that have no parameter, for
   /// example `{'clip': 5}`.
@@ -166,7 +149,10 @@ abstract final class Dataset with Diagnosticable {
   /// key, a List or another value replaces it. Thus [extra] also gives a
   /// CSS string, a gradient or the Chart.js `null` of a key. The chart gets
   /// a copy of each Map and the Lists of the app.
-  final Map<String, Object?>? extra;
+  final Map<String, Object?>? extra,
+}) with Diagnosticable {
+  /// The parameters of each dataset class.
+  this;
 
   /// A copy of this dataset with the given parameters.
   ///
@@ -314,23 +300,19 @@ OptionScope lowerDataset(
 /// the Gaussian sigma of the blur is `blur / 2`, and [offset] is in logical
 /// pixels and does not follow the transform of the canvas.
 @immutable
-final class ChartShadow with Diagnosticable {
-  /// A shadow of [color], blurred by [blur] and moved by [offset].
-  const ChartShadow({
-    required this.color,
-    this.blur = 0,
-    this.offset = Offset.zero,
-  }) : assert(blur >= 0, 'The blur is not negative.');
-
+final class const ChartShadow({
   /// The color of the shadow: `shadowColor`. A transparent color draws no
   /// shadow.
-  final Color color;
+  required final Color color,
 
   /// The blur of the shadow: `shadowBlur`. 0 gives a sharp shadow.
-  final double blur;
+  final double blur = 0,
 
   /// The move of the shadow: `shadowOffsetX` and `shadowOffsetY`.
-  final Offset offset;
+  final Offset offset = Offset.zero,
+}) with Diagnosticable {
+  /// A shadow of [color], blurred by [blur] and moved by [offset].
+  this : assert(blur >= 0, 'The blur is not negative.');
 
   /// A copy of this shadow with the given values.
   ChartShadow copyWith({Color? color, double? blur, Offset? offset}) =>
@@ -382,36 +364,9 @@ OptionScope _datasetScopeOf(ChartKind kind) => switch (kind) {
 /// Give the values in [data], one for each label of the chart, or the
 /// items in [points]. A bar chart with `indexAxis: const YAxis()` has
 /// horizontal bars.
-final class BarDataset extends Dataset {
-  /// A bar dataset.
-  const BarDataset({
-    super.key,
-    super.label,
-    this.data,
-    this.points,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.xAxisID,
-    this.yAxisID,
-    this.stack,
-    this.indexAxis,
-    this.borderRadius,
-    this.barPercentage,
-    this.categoryPercentage,
-    this.barThickness,
-    this.maxBarThickness,
-    this.minBarLength,
-    this.grouped,
-    super.extra,
-  }) : assert(data == null || points == null, 'Give data or points.');
+final class const BarDataset({
+  super.key,
+  super.label,
 
   /// {@template flutter_chartjs_port.typed.data}
   /// The values of the dataset, one for each label of the chart: `data`.
@@ -421,7 +376,7 @@ final class BarDataset extends Dataset {
   /// values, give a new List in a new config. Or change this List and call
   /// `chart.update()`. Give [data] or [points], not both.
   /// {@endtemplate}
-  final List<num?>? data;
+  final List<num?>? data,
 
   /// {@template flutter_chartjs_port.typed.points}
   /// The data items in the object form `{x, y}`: `data` with objects
@@ -430,61 +385,75 @@ final class BarDataset extends Dataset {
   /// The chart reads this List: it goes to the chart with no copy. Give
   /// [data] or [points], not both.
   /// {@endtemplate}
-  final List<DataPoint>? points;
+  final List<DataPoint>? points,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@template flutter_chartjs_port.typed.xAxisID}
   /// The id of the x axis of the dataset, a key of `scales`: `xAxisID`.
   /// The default is the first x axis.
   /// {@endtemplate}
-  final String? xAxisID;
+  final String? xAxisID,
 
   /// {@template flutter_chartjs_port.typed.yAxisID}
   /// The id of the y axis of the dataset, a key of `scales`: `yAxisID`.
   /// The default is the first y axis.
   /// {@endtemplate}
-  final String? yAxisID;
+  final String? yAxisID,
 
   /// {@template flutter_chartjs_port.typed.stack}
   /// The id of the stack of the dataset: `stack`. On a stacked axis, the
   /// datasets with the same stack id stack on each other.
   /// {@endtemplate}
-  final String? stack;
+  final String? stack,
 
   /// {@template flutter_chartjs_port.typed.indexAxis}
   /// The index axis of the dataset: `indexAxis`. The default is the index
   /// axis of the chart.
   /// {@endtemplate}
-  final CartesianAxis? indexAxis;
+  final CartesianAxis? indexAxis,
 
   /// The radius of the bar corners in pixels: `borderRadius` as a number.
   ///
   /// The number rounds the corners that are not on the base of the bar, as
   /// in `docs/samples/bar/border-radius.md`. The object form goes through
   /// [extra].
-  final double? borderRadius;
+  final double? borderRadius,
 
   /// The part of the category width that each bar takes, from 0 to 1:
   /// `barPercentage`. The default is 0.9.
-  final double? barPercentage;
+  final double? barPercentage,
 
   /// The part of the sample width that each category takes, from 0 to 1:
   /// `categoryPercentage`. The default is 0.8.
-  final double? categoryPercentage;
+  final double? categoryPercentage,
 
   /// The width of each bar in pixels: `barThickness`. The default fits the
   /// bars to the category width. The value `'flex'` goes through [extra].
-  final double? barThickness;
+  final double? barThickness,
 
   /// The maximum width of each bar in pixels: `maxBarThickness`.
-  final double? maxBarThickness;
+  final double? maxBarThickness,
 
   /// The minimum length of each bar in pixels: `minBarLength`. A bar with a
   /// small value then stays visible.
-  final double? minBarLength;
+  final double? minBarLength,
 
   /// Whether the bars of the datasets at one index stand next to each
   /// other: `grouped`. The default is `true`.
-  final bool? grouped;
+  final bool? grouped,
+  super.extra,
+}) extends Dataset {
+  /// A bar dataset.
+  this : assert(data == null || points == null, 'Give data or points.');
 
   @override
   BarDataset copyWith({
@@ -665,121 +634,86 @@ base mixin _LineStyle on Dataset {
 /// Give the values in [data], one for each label of the chart, or the
 /// items in [points]. The line style parameters set the line, the fill and
 /// the points.
-final class LineDataset extends Dataset with _LineStyle {
-  /// A line dataset.
-  const LineDataset({
-    super.key,
-    super.label,
-    this.data,
-    this.points,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.xAxisID,
-    this.yAxisID,
-    this.stack,
-    this.indexAxis,
-    this.fill,
-    this.tension,
-    this.borderDash,
-    this.borderCapStyle,
-    this.borderJoinStyle,
-    this.spanGaps,
-    this.showLine,
-    this.stepped,
-    this.cubicInterpolationMode,
-    this.pointRadius,
-    this.pointHoverRadius,
-    this.pointStyle,
-    this.pointBackgroundColor,
-    this.pointBorderColor,
-    this.pointBorderWidth,
-    this.pointHoverBackgroundColor,
-    this.pointHoverBorderColor,
-    super.extra,
-  }) : assert(data == null || points == null, 'Give data or points.');
+final class const LineDataset({
+  super.key,
+  super.label,
 
   /// {@macro flutter_chartjs_port.typed.data}
-  final List<num?>? data;
+  final List<num?>? data,
 
   /// {@macro flutter_chartjs_port.typed.points}
-  final List<DataPoint>? points;
+  final List<DataPoint>? points,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@macro flutter_chartjs_port.typed.xAxisID}
-  final String? xAxisID;
+  final String? xAxisID,
 
   /// {@macro flutter_chartjs_port.typed.yAxisID}
-  final String? yAxisID;
+  final String? yAxisID,
 
   /// {@macro flutter_chartjs_port.typed.stack}
-  final String? stack;
+  final String? stack,
 
   /// {@macro flutter_chartjs_port.typed.indexAxis}
-  final CartesianAxis? indexAxis;
+  final CartesianAxis? indexAxis,
 
   /// {@template flutter_chartjs_port.typed.fill}
   /// The fill of the area under or between the lines: `fill`
   /// (`docs/charts/area.md`). The default is no fill. The colors plugin of
   /// Chart.js and the filler plugin read it.
   /// {@endtemplate}
-  @override
-  final ChartFill? fill;
+  @override final ChartFill? fill,
 
   /// {@template flutter_chartjs_port.typed.tension}
   /// The Bézier curve tension of the line, from 0 (straight lines) to 1:
   /// `tension`. The default is 0.
   /// {@endtemplate}
-  @override
-  final double? tension;
+  @override final double? tension,
 
   /// {@template flutter_chartjs_port.typed.borderDash}
   /// The dash pattern of the line, lengths of dashes and gaps in pixels:
   /// `borderDash`. The default is a solid line.
   /// {@endtemplate}
-  @override
-  final List<double>? borderDash;
+  @override final List<double>? borderDash,
 
   /// {@template flutter_chartjs_port.typed.borderCapStyle}
   /// The shape of the ends of the line: `borderCapStyle`, a Flutter
   /// [StrokeCap]. The default is [StrokeCap.butt].
   /// {@endtemplate}
-  @override
-  final StrokeCap? borderCapStyle;
+  @override final StrokeCap? borderCapStyle,
 
   /// {@template flutter_chartjs_port.typed.borderJoinStyle}
   /// The shape of the corners of the line: `borderJoinStyle`, a Flutter
   /// [StrokeJoin]. The default is [StrokeJoin.miter].
   /// {@endtemplate}
-  @override
-  final StrokeJoin? borderJoinStyle;
+  @override final StrokeJoin? borderJoinStyle,
 
   /// {@template flutter_chartjs_port.typed.spanGaps}
   /// Whether the line spans the gaps of `null` values: `spanGaps` as a
   /// boolean. The default is `false`. The number form goes through `extra`.
   /// {@endtemplate}
-  @override
-  final bool? spanGaps;
+  @override final bool? spanGaps,
 
   /// {@template flutter_chartjs_port.typed.showLine}
   /// Whether the chart draws the line: `showLine`. Without the line, the
   /// chart draws the points only.
   /// {@endtemplate}
-  @override
-  final bool? showLine;
+  @override final bool? showLine,
 
   /// {@template flutter_chartjs_port.typed.stepped}
   /// The form of a stepped line: `stepped`, a [SteppedLine] (row
   /// `adapt-stepped-line-enum`). Dart `null`, the default, draws no steps.
   /// {@endtemplate}
-  @override
-  final SteppedLine? stepped;
+  @override final SteppedLine? stepped,
 
   /// {@template flutter_chartjs_port.typed.cubicInterpolationMode}
   /// The mode of the control points of a curved line:
@@ -787,59 +721,54 @@ final class LineDataset extends Dataset with _LineStyle {
   /// `adapt-cubic-interpolation-mode-objects`). Dart `null` keeps the
   /// default, [DefaultCubicInterpolationMode].
   /// {@endtemplate}
-  @override
-  final CubicInterpolationMode? cubicInterpolationMode;
+  @override final CubicInterpolationMode? cubicInterpolationMode,
 
   /// {@template flutter_chartjs_port.typed.pointRadius}
   /// The radius of the points in pixels: `pointRadius`. 0 draws no points.
   /// {@endtemplate}
-  @override
-  final double? pointRadius;
+  @override final double? pointRadius,
 
   /// {@template flutter_chartjs_port.typed.pointHoverRadius}
   /// The radius of a point under the pointer, in pixels:
   /// `pointHoverRadius`.
   /// {@endtemplate}
-  @override
-  final double? pointHoverRadius;
+  @override final double? pointHoverRadius,
 
   /// {@template flutter_chartjs_port.typed.pointStyle}
   /// The style of the points: `pointStyle`, a [PointStyle] (row
   /// `adapt-point-style-objects`). `false`, no point, goes through `extra`.
   /// {@endtemplate}
-  @override
-  final PointStyle? pointStyle;
+  @override final PointStyle? pointStyle,
 
   /// {@template flutter_chartjs_port.typed.pointBackgroundColor}
   /// The fill color of the points: `pointBackgroundColor`.
   /// {@endtemplate}
-  @override
-  final ChartValue<ChartPaint>? pointBackgroundColor;
+  @override final ChartValue<ChartPaint>? pointBackgroundColor,
 
   /// {@template flutter_chartjs_port.typed.pointBorderColor}
   /// The border color of the points: `pointBorderColor`.
   /// {@endtemplate}
-  @override
-  final ChartValue<ChartPaint>? pointBorderColor;
+  @override final ChartValue<ChartPaint>? pointBorderColor,
 
   /// {@template flutter_chartjs_port.typed.pointBorderWidth}
   /// The border width of the points in pixels: `pointBorderWidth`.
   /// {@endtemplate}
-  @override
-  final double? pointBorderWidth;
+  @override final double? pointBorderWidth,
 
   /// {@template flutter_chartjs_port.typed.pointHoverBackgroundColor}
   /// The fill color of a point under the pointer:
   /// `pointHoverBackgroundColor`.
   /// {@endtemplate}
-  @override
-  final ChartValue<ChartPaint>? pointHoverBackgroundColor;
+  @override final ChartValue<ChartPaint>? pointHoverBackgroundColor,
 
   /// {@template flutter_chartjs_port.typed.pointHoverBorderColor}
   /// The border color of a point under the pointer: `pointHoverBorderColor`.
   /// {@endtemplate}
-  @override
-  final ChartValue<ChartPaint>? pointHoverBorderColor;
+  @override final ChartValue<ChartPaint>? pointHoverBorderColor,
+  super.extra,
+}) extends Dataset with _LineStyle {
+  /// A line dataset.
+  this : assert(data == null || points == null, 'Give data or points.');
 
   @override
   LineDataset copyWith({
@@ -956,130 +885,91 @@ final class LineDataset extends Dataset with _LineStyle {
 ///
 /// Give the items in [points], with a number `x`. A scatter chart draws the
 /// points with no line. Set [showLine] for a line.
-final class ScatterDataset extends Dataset with _LineStyle {
-  /// A scatter dataset.
-  const ScatterDataset({
-    super.key,
-    super.label,
-    this.data,
-    this.points,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.xAxisID,
-    this.yAxisID,
-    this.stack,
-    this.fill,
-    this.tension,
-    this.borderDash,
-    this.borderCapStyle,
-    this.borderJoinStyle,
-    this.spanGaps,
-    this.showLine,
-    this.stepped,
-    this.cubicInterpolationMode,
-    this.pointRadius,
-    this.pointHoverRadius,
-    this.pointStyle,
-    this.pointBackgroundColor,
-    this.pointBorderColor,
-    this.pointBorderWidth,
-    this.pointHoverBackgroundColor,
-    this.pointHoverBorderColor,
-    super.extra,
-  }) : assert(data == null || points == null, 'Give data or points.');
+final class const ScatterDataset({
+  super.key,
+  super.label,
 
   /// {@macro flutter_chartjs_port.typed.data}
-  final List<num?>? data;
+  final List<num?>? data,
 
   /// {@macro flutter_chartjs_port.typed.points}
-  final List<DataPoint>? points;
+  final List<DataPoint>? points,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@macro flutter_chartjs_port.typed.xAxisID}
-  final String? xAxisID;
+  final String? xAxisID,
 
   /// {@macro flutter_chartjs_port.typed.yAxisID}
-  final String? yAxisID;
+  final String? yAxisID,
 
   /// {@macro flutter_chartjs_port.typed.stack}
-  final String? stack;
+  final String? stack,
 
   /// {@macro flutter_chartjs_port.typed.fill}
-  @override
-  final ChartFill? fill;
+  @override final ChartFill? fill,
 
   /// {@macro flutter_chartjs_port.typed.tension}
-  @override
-  final double? tension;
+  @override final double? tension,
 
   /// {@macro flutter_chartjs_port.typed.borderDash}
-  @override
-  final List<double>? borderDash;
+  @override final List<double>? borderDash,
 
   /// {@macro flutter_chartjs_port.typed.borderCapStyle}
-  @override
-  final StrokeCap? borderCapStyle;
+  @override final StrokeCap? borderCapStyle,
 
   /// {@macro flutter_chartjs_port.typed.borderJoinStyle}
-  @override
-  final StrokeJoin? borderJoinStyle;
+  @override final StrokeJoin? borderJoinStyle,
 
   /// {@macro flutter_chartjs_port.typed.spanGaps}
-  @override
-  final bool? spanGaps;
+  @override final bool? spanGaps,
 
   /// {@macro flutter_chartjs_port.typed.showLine}
   ///
   /// The default of a scatter dataset is `false`.
-  @override
-  final bool? showLine;
+  @override final bool? showLine,
 
   /// {@macro flutter_chartjs_port.typed.stepped}
-  @override
-  final SteppedLine? stepped;
+  @override final SteppedLine? stepped,
 
   /// {@macro flutter_chartjs_port.typed.cubicInterpolationMode}
-  @override
-  final CubicInterpolationMode? cubicInterpolationMode;
+  @override final CubicInterpolationMode? cubicInterpolationMode,
 
   /// {@macro flutter_chartjs_port.typed.pointRadius}
-  @override
-  final double? pointRadius;
+  @override final double? pointRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverRadius}
-  @override
-  final double? pointHoverRadius;
+  @override final double? pointHoverRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointStyle}
-  @override
-  final PointStyle? pointStyle;
+  @override final PointStyle? pointStyle,
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
-  @override
-  final ChartValue<ChartPaint>? pointBackgroundColor;
+  @override final ChartValue<ChartPaint>? pointBackgroundColor,
 
   /// {@macro flutter_chartjs_port.typed.pointBorderColor}
-  @override
-  final ChartValue<ChartPaint>? pointBorderColor;
+  @override final ChartValue<ChartPaint>? pointBorderColor,
 
   /// {@macro flutter_chartjs_port.typed.pointBorderWidth}
-  @override
-  final double? pointBorderWidth;
+  @override final double? pointBorderWidth,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBackgroundColor}
-  @override
-  final ChartValue<ChartPaint>? pointHoverBackgroundColor;
+  @override final ChartValue<ChartPaint>? pointHoverBackgroundColor,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
-  @override
-  final ChartValue<ChartPaint>? pointHoverBorderColor;
+  @override final ChartValue<ChartPaint>? pointHoverBorderColor,
+  super.extra,
+}) extends Dataset with _LineStyle {
+  /// A scatter dataset.
+  this : assert(data == null || points == null, 'Give data or points.');
 
   @override
   ScatterDataset copyWith({
@@ -1191,52 +1081,46 @@ final class ScatterDataset extends Dataset with _LineStyle {
 /// (`docs/charts/bubble.md`).
 ///
 /// Give the items in [points], each a [DataPoint.bubble] with its radius.
-final class BubbleDataset extends Dataset {
-  /// A bubble dataset.
-  const BubbleDataset({
-    super.key,
-    super.label,
-    this.points,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.xAxisID,
-    this.yAxisID,
-    this.radius,
-    this.hoverRadius,
-    this.pointStyle,
-    super.extra,
-  });
+final class const BubbleDataset({
+  super.key,
+  super.label,
 
   /// The bubbles in the object form `{x, y, r}`: `data` with objects. Each
   /// item is a [DataPoint.bubble].
   ///
   /// The chart reads this List: it goes to the chart with no copy.
-  final List<DataPoint>? points;
+  final List<DataPoint>? points,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@macro flutter_chartjs_port.typed.xAxisID}
-  final String? xAxisID;
+  final String? xAxisID,
 
   /// {@macro flutter_chartjs_port.typed.yAxisID}
-  final String? yAxisID;
+  final String? yAxisID,
 
   /// The radius of a bubble without an `r` value, in pixels: `radius`.
-  final double? radius;
+  final double? radius,
 
   /// The radius that a bubble under the pointer adds, in pixels:
   /// `hoverRadius`.
-  final double? hoverRadius;
+  final double? hoverRadius,
 
   /// The style of the bubbles: `pointStyle`, a [PointStyle] (row
   /// `adapt-point-style-objects`).
-  final PointStyle? pointStyle;
+  final PointStyle? pointStyle,
+  super.extra,
+}) extends Dataset {
+  /// A bubble dataset.
+  this;
 
   @override
   BubbleDataset copyWith({
@@ -1354,32 +1238,9 @@ base mixin _ArcStyle on Dataset {
 ///
 /// A pie has no cutout. A [DoughnutDataset] in a pie chart is a doughnut
 /// with the doughnut cutout.
-final class PieDataset extends Dataset with _ArcStyle {
-  /// A pie dataset.
-  const PieDataset({
-    super.key,
-    super.label,
-    this.data,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.offset,
-    this.hoverOffset,
-    this.spacing,
-    this.weight,
-    this.circumference,
-    this.rotation,
-    this.cutout,
-    this.radius,
-    super.extra,
-  });
+final class const PieDataset({
+  super.key,
+  super.label,
 
   /// {@template flutter_chartjs_port.typed.arcData}
   /// The values of the dataset, one for each label of the chart: `data`.
@@ -1388,47 +1249,51 @@ final class PieDataset extends Dataset with _ArcStyle {
   /// values, give a new List in a new config. Or change this List and call
   /// `chart.update()`.
   /// {@endtemplate}
-  final List<num?>? data;
+  final List<num?>? data,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@template flutter_chartjs_port.typed.offset}
   /// The offset of each arc from the center, in pixels: `offset`.
   /// {@endtemplate}
-  @override
-  final double? offset;
+  @override final double? offset,
 
   /// {@template flutter_chartjs_port.typed.hoverOffset}
   /// The offset of an arc under the pointer, in pixels: `hoverOffset`.
   /// {@endtemplate}
-  @override
-  final double? hoverOffset;
+  @override final double? hoverOffset,
 
   /// {@template flutter_chartjs_port.typed.spacing}
   /// The space between the arcs, in pixels: `spacing`.
   /// {@endtemplate}
-  @override
-  final double? spacing;
+  @override final double? spacing,
 
   /// {@template flutter_chartjs_port.typed.weight}
   /// The weight of the dataset ring: `weight`. The rings of the datasets
   /// share the radius in the proportion of their weights. The default is
   /// 1.
   /// {@endtemplate}
-  @override
-  final double? weight;
+  @override final double? weight,
 
   /// {@template flutter_chartjs_port.typed.circumference}
   /// The sweep of the arcs in degrees: `circumference`. The default is
   /// 360.
   /// {@endtemplate}
-  @override
-  final double? circumference;
+  @override final double? circumference,
 
   /// {@template flutter_chartjs_port.typed.rotation}
   /// The start angle of the arcs in degrees, from the top, clockwise:
   /// `rotation`. The default is 0.
   /// {@endtemplate}
-  @override
-  final double? rotation;
+  @override final double? rotation,
 
   /// {@template flutter_chartjs_port.typed.cutout}
   /// The radius of the hole in the center: `cutout`, a [RadiusLength] (row
@@ -1437,16 +1302,18 @@ final class PieDataset extends Dataset with _ArcStyle {
   /// {@endtemplate}
   ///
   /// The default of a pie is 0, no hole.
-  @override
-  final RadiusLength? cutout;
+  @override final RadiusLength? cutout,
 
   /// {@template flutter_chartjs_port.typed.radius}
   /// The outer radius: `radius`, a [RadiusLength]: `PercentRadius(100)`, the
   /// default, is a part of the largest radius that fits the chart area,
   /// `PixelRadius(150)` pixels.
   /// {@endtemplate}
-  @override
-  final RadiusLength? radius;
+  @override final RadiusLength? radius,
+  super.extra,
+}) extends Dataset with _ArcStyle {
+  /// A pie dataset.
+  this;
 
   @override
   PieDataset copyWith({
@@ -1522,69 +1389,52 @@ final class PieDataset extends Dataset with _ArcStyle {
 ///
 /// A doughnut has a hole in the center: the default [cutout] is 50
 /// percent. A doughnut dataset in a pie chart keeps the doughnut cutout.
-final class DoughnutDataset extends Dataset with _ArcStyle {
-  /// A doughnut dataset.
-  const DoughnutDataset({
-    super.key,
-    super.label,
-    this.data,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.offset,
-    this.hoverOffset,
-    this.spacing,
-    this.weight,
-    this.circumference,
-    this.rotation,
-    this.cutout,
-    this.radius,
-    super.extra,
-  });
+final class const DoughnutDataset({
+  super.key,
+  super.label,
 
   /// {@macro flutter_chartjs_port.typed.arcData}
-  final List<num?>? data;
+  final List<num?>? data,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@macro flutter_chartjs_port.typed.offset}
-  @override
-  final double? offset;
+  @override final double? offset,
 
   /// {@macro flutter_chartjs_port.typed.hoverOffset}
-  @override
-  final double? hoverOffset;
+  @override final double? hoverOffset,
 
   /// {@macro flutter_chartjs_port.typed.spacing}
-  @override
-  final double? spacing;
+  @override final double? spacing,
 
   /// {@macro flutter_chartjs_port.typed.weight}
-  @override
-  final double? weight;
+  @override final double? weight,
 
   /// {@macro flutter_chartjs_port.typed.circumference}
-  @override
-  final double? circumference;
+  @override final double? circumference,
 
   /// {@macro flutter_chartjs_port.typed.rotation}
-  @override
-  final double? rotation;
+  @override final double? rotation,
 
   /// {@macro flutter_chartjs_port.typed.cutout}
   ///
   /// The default of a doughnut is 50 percent.
-  @override
-  final RadiusLength? cutout;
+  @override final RadiusLength? cutout,
 
   /// {@macro flutter_chartjs_port.typed.radius}
-  @override
-  final RadiusLength? radius;
+  @override final RadiusLength? radius,
+  super.extra,
+}) extends Dataset with _ArcStyle {
+  /// A doughnut dataset.
+  this;
 
   @override
   DoughnutDataset copyWith({
@@ -1660,39 +1510,35 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
 ///
 /// Each data item is an arc with the same angle and a radius of its value
 /// on the radial axis `r`.
-final class PolarAreaDataset extends Dataset {
-  /// A polar area dataset.
-  const PolarAreaDataset({
-    super.key,
-    super.label,
-    this.data,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.offset,
-    this.hoverOffset,
-    this.spacing,
-    super.extra,
-  });
+final class const PolarAreaDataset({
+  super.key,
+  super.label,
 
   /// {@macro flutter_chartjs_port.typed.arcData}
-  final List<num?>? data;
+  final List<num?>? data,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@macro flutter_chartjs_port.typed.offset}
-  final double? offset;
+  final double? offset,
 
   /// {@macro flutter_chartjs_port.typed.hoverOffset}
-  final double? hoverOffset;
+  final double? hoverOffset,
 
   /// {@macro flutter_chartjs_port.typed.spacing}
-  final double? spacing;
+  final double? spacing,
+  super.extra,
+}) extends Dataset {
+  /// A polar area dataset.
+  this;
 
   @override
   PolarAreaDataset copyWith({
@@ -1764,112 +1610,77 @@ final class PolarAreaDataset extends Dataset {
 /// Give the values in [data], one for each label of the chart. The values
 /// go on the radial axis `r`. The line style parameters set the line, the
 /// fill and the points.
-final class RadarDataset extends Dataset with _LineStyle {
-  /// A radar dataset.
-  const RadarDataset({
-    super.key,
-    super.label,
-    this.data,
-    super.hidden,
-    super.order,
-    super.backgroundColor,
-    super.borderColor,
-    super.borderWidth,
-    super.hoverBackgroundColor,
-    super.hoverBorderColor,
-    super.hoverBorderWidth,
-    super.shadow,
-    super.tooltipCallbacks,
-    this.fill,
-    this.tension,
-    this.borderDash,
-    this.borderCapStyle,
-    this.borderJoinStyle,
-    this.spanGaps,
-    this.showLine,
-    this.stepped,
-    this.cubicInterpolationMode,
-    this.pointRadius,
-    this.pointHoverRadius,
-    this.pointStyle,
-    this.pointBackgroundColor,
-    this.pointBorderColor,
-    this.pointBorderWidth,
-    this.pointHoverBackgroundColor,
-    this.pointHoverBorderColor,
-    super.extra,
-  });
+final class const RadarDataset({
+  super.key,
+  super.label,
 
   /// {@macro flutter_chartjs_port.typed.arcData}
-  final List<num?>? data;
+  final List<num?>? data,
+  super.hidden,
+  super.order,
+  super.backgroundColor,
+  super.borderColor,
+  super.borderWidth,
+  super.hoverBackgroundColor,
+  super.hoverBorderColor,
+  super.hoverBorderWidth,
+  super.shadow,
+  super.tooltipCallbacks,
 
   /// {@macro flutter_chartjs_port.typed.fill}
-  @override
-  final ChartFill? fill;
+  @override final ChartFill? fill,
 
   /// {@macro flutter_chartjs_port.typed.tension}
-  @override
-  final double? tension;
+  @override final double? tension,
 
   /// {@macro flutter_chartjs_port.typed.borderDash}
-  @override
-  final List<double>? borderDash;
+  @override final List<double>? borderDash,
 
   /// {@macro flutter_chartjs_port.typed.borderCapStyle}
-  @override
-  final StrokeCap? borderCapStyle;
+  @override final StrokeCap? borderCapStyle,
 
   /// {@macro flutter_chartjs_port.typed.borderJoinStyle}
-  @override
-  final StrokeJoin? borderJoinStyle;
+  @override final StrokeJoin? borderJoinStyle,
 
   /// {@macro flutter_chartjs_port.typed.spanGaps}
-  @override
-  final bool? spanGaps;
+  @override final bool? spanGaps,
 
   /// {@macro flutter_chartjs_port.typed.showLine}
-  @override
-  final bool? showLine;
+  @override final bool? showLine,
 
   /// {@macro flutter_chartjs_port.typed.stepped}
-  @override
-  final SteppedLine? stepped;
+  @override final SteppedLine? stepped,
 
   /// {@macro flutter_chartjs_port.typed.cubicInterpolationMode}
-  @override
-  final CubicInterpolationMode? cubicInterpolationMode;
+  @override final CubicInterpolationMode? cubicInterpolationMode,
 
   /// {@macro flutter_chartjs_port.typed.pointRadius}
-  @override
-  final double? pointRadius;
+  @override final double? pointRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverRadius}
-  @override
-  final double? pointHoverRadius;
+  @override final double? pointHoverRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointStyle}
-  @override
-  final PointStyle? pointStyle;
+  @override final PointStyle? pointStyle,
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
-  @override
-  final ChartValue<ChartPaint>? pointBackgroundColor;
+  @override final ChartValue<ChartPaint>? pointBackgroundColor,
 
   /// {@macro flutter_chartjs_port.typed.pointBorderColor}
-  @override
-  final ChartValue<ChartPaint>? pointBorderColor;
+  @override final ChartValue<ChartPaint>? pointBorderColor,
 
   /// {@macro flutter_chartjs_port.typed.pointBorderWidth}
-  @override
-  final double? pointBorderWidth;
+  @override final double? pointBorderWidth,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBackgroundColor}
-  @override
-  final ChartValue<ChartPaint>? pointHoverBackgroundColor;
+  @override final ChartValue<ChartPaint>? pointHoverBackgroundColor,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
-  @override
-  final ChartValue<ChartPaint>? pointHoverBorderColor;
+  @override final ChartValue<ChartPaint>? pointHoverBorderColor,
+  super.extra,
+}) extends Dataset with _LineStyle {
+  /// A radar dataset.
+  this;
 
   @override
   RadarDataset copyWith({
@@ -1990,25 +1801,25 @@ double _toDouble(num value) => value is double ? value : (value as int) * 1.0;
 final class DataPoint implements TypedDataItem {
   /// `{x, y}` with a number [x]: a value of a linear or a logarithmic x
   /// axis, or an index of a category x axis.
-  DataPoint(num x, num? y)
+  new(num x, num? y)
     : x = _toDouble(x),
       y = y == null ? null : _toDouble(y),
       r = null;
 
   /// `{x, y}` with a time [x], for a time or a time series x axis.
-  DataPoint.time(DateTime this.x, num? y)
+  new time(DateTime this.x, num? y)
     : y = y == null ? null : _toDouble(y),
       r = null;
 
   /// `{x, y}` with a label [x], for a category x axis. A label that is not
   /// in the labels of the chart becomes a new label: the category scale adds
   /// it to `data.labels`.
-  DataPoint.label(String this.x, num? y)
+  new label(String this.x, num? y)
     : y = y == null ? null : _toDouble(y),
       r = null;
 
   /// `{x, y, r}`: a bubble at ([x], [y]) with the radius [r] in pixels.
-  DataPoint.bubble(num x, num y, num r)
+  new bubble(num x, num y, num r)
     : x = _toDouble(x),
       y = _toDouble(y),
       r = _toDouble(r);

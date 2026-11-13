@@ -78,12 +78,8 @@ void _manyChunks(UiCanvasContext ctx) {
 
 /// The old form of the paint: `Canvas.drawPicture` on the recording canvas of
 /// the boundary.
-final class _CanvasPaint extends CustomPainter {
-  _CanvasPaint(this.ctx, this.scale);
-
-  final UiCanvasContext ctx;
-  final double scale;
-
+final class _CanvasPaint(final UiCanvasContext ctx, final double scale)
+    extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     ctx.paint(canvas, Offset.zero, scale, scale);
@@ -567,11 +563,7 @@ void main() {
   });
 }
 
-final class _StretchPaint extends CustomPainter {
-  _StretchPaint(this.ctx);
-
-  final UiCanvasContext ctx;
-
+final class _StretchPaint(final UiCanvasContext ctx) extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     ctx.paint(canvas, Offset.zero, 1.5, 1);

@@ -191,12 +191,11 @@ Future<bool> _key(WidgetTester tester, LogicalKeyboardKey key) async {
 
 /// Two charts of [type] in [_pair]: the keyboard chart, focused, and the
 /// oracle chart, with their legend logs.
-final class _Charts {
-  _Charts(this.type, {this.options = const {}, this.legend = const {}});
-
-  final String type;
-  final Map<String, Object?> options;
-  final Map<String, Object?> legend;
+final class _Charts(
+  final String type, {
+  final Map<String, Object?> options = const {},
+  final Map<String, Object?> legend = const {},
+}) {
   final FocusNode node = FocusNode(debugLabel: 'keys');
   final List<String> keysLog = [];
   final List<String> mouseLog = [];
@@ -1205,8 +1204,8 @@ void main() {
   });
 }
 
-class _KeyboardHitBox extends LegendHitBox {
-  _KeyboardHitBox(LegendHitBox source)
+class _KeyboardHitBox(LegendHitBox source) extends LegendHitBox {
+  this
     : super.row(
         left: source.left,
         top: source.top,

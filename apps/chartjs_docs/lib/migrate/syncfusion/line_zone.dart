@@ -172,9 +172,7 @@ final ChartConfig _config = ChartConfig(
   },
 );
 
-class SfLineZone extends StatelessWidget {
-  const SfLineZone({super.key});
-
+class const SfLineZone({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       SizedBox(height: 320, child: ChartView(config: _config));

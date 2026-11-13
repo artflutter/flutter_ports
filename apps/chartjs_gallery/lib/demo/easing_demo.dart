@@ -17,15 +17,16 @@ const double _yMax = 1.5;
 /// Each cell plots `effect(t)` for `t` in 0..1. A tap plays the effect: an
 /// [AnimationController] runs `t` from 0 to 1, and a dot moves with
 /// `effect(t)`, on the curve and on a track.
-class EasingDemo extends StatefulWidget {
+class const EasingDemo({super.key}) extends StatefulWidget {
   /// Creates the easing tab.
-  const EasingDemo({super.key});
+  this;
 
   @override
   State<EasingDemo> createState() => _EasingDemoState();
 }
 
-class _EasingDemoState extends State<EasingDemo>
+class _EasingDemoState()
+    extends State<EasingDemo>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
@@ -145,22 +146,14 @@ class _EasingDemoState extends State<EasingDemo>
   }
 }
 
-class _EffectCell extends StatelessWidget {
-  const _EffectCell({
-    required this.name,
-    required this.effect,
-    required this.selected,
-    required this.animation,
-    required this.onTap,
-    super.key,
-  });
-
-  final String name;
-  final double Function(double t) effect;
-  final bool selected;
-  final Animation<double> animation;
-  final VoidCallback onTap;
-
+class const _EffectCell({
+  required final String name,
+  required final double Function(double t) effect,
+  required final bool selected,
+  required final Animation<double> animation,
+  required final VoidCallback onTap,
+  super.key,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -207,21 +200,13 @@ class _EffectCell extends StatelessWidget {
 }
 
 /// Plots one effect over t = 0..1, with the unit box and an optional dot.
-class _CurvePainter extends CustomPainter {
-  _CurvePainter({
-    required this.effect,
-    required this.curve,
-    required this.grid,
-    required this.dot,
-    this.t,
-  });
-
-  final double Function(double t) effect;
-  final Color curve;
-  final Color grid;
-  final Color dot;
-  final double? t;
-
+class _CurvePainter({
+  required final double Function(double t) effect,
+  required final Color curve,
+  required final Color grid,
+  required final Color dot,
+  final double? t,
+}) extends CustomPainter {
   Offset _at(Size size, double t, double v) =>
       Offset(t * size.width, size.height * (_yMax - v) / (_yMax - _yMin));
 
@@ -263,13 +248,11 @@ class _CurvePainter extends CustomPainter {
 }
 
 /// A horizontal track with a dot at `value` (0 = left end, 1 = right end).
-class _TrackPainter extends CustomPainter {
-  _TrackPainter({required this.value, required this.track, required this.dot});
-
-  final double value;
-  final Color track;
-  final Color dot;
-
+class _TrackPainter({
+  required final double value,
+  required final Color track,
+  required final Color dot,
+}) extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     const r = 12.0;

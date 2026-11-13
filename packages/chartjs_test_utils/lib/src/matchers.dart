@@ -51,11 +51,7 @@ export 'package:chartjs_test_utils/src/matchers.options.dart'
 /// `-` do in JS. A NaN on either side fails.
 Matcher toBeCloseToPixel(Object? expected) => _ToBeCloseToPixel(expected);
 
-final class _ToBeCloseToPixel extends Matcher {
-  const _ToBeCloseToPixel(this.expected);
-
-  final Object? expected;
-
+final class const _ToBeCloseToPixel(final Object? expected) extends Matcher {
   @override
   bool matches(Object? actual, Map<Object?, Object?> matchState) {
     var result = false;
@@ -88,11 +84,7 @@ final class _ToBeCloseToPixel extends Matcher {
 /// other value: a Map `{'x': ..., 'y': ...}` stands for an object literal.
 Matcher toBeCloseToPoint(Object expected) => _ToBeCloseToPoint(expected);
 
-final class _ToBeCloseToPoint extends Matcher {
-  const _ToBeCloseToPoint(this.expected);
-
-  final Object expected;
-
+final class const _ToBeCloseToPoint(final Object expected) extends Matcher {
   static double _rnd(Object? v) {
     return jsRound(jsToNumber(v) * 100) / 100;
   }
@@ -122,11 +114,7 @@ final class _ToBeCloseToPoint extends Matcher {
 /// of [expecteds] ([strictEquals]).
 Matcher toEqualOneOf(List<Object?> expecteds) => _ToEqualOneOf(expecteds);
 
-final class _ToEqualOneOf extends Matcher {
-  const _ToEqualOneOf(this.expecteds);
-
-  final List<Object?> expecteds;
-
+final class const _ToEqualOneOf(final List<Object?> expecteds) extends Matcher {
   @override
   bool matches(Object? actual, Map<Object?, Object?> matchState) {
     var result = false;
@@ -154,9 +142,7 @@ final class _ToEqualOneOf extends Matcher {
 /// false for the `double` of `types.Chart`.
 Matcher toBeValidChart() => const _ToBeValidChart();
 
-final class _ToBeValidChart extends Matcher {
-  const _ToBeValidChart();
-
+final class const _ToBeValidChart() extends Matcher {
   /// The `message` of `compare` (matchers.js:108-121): Dart `null` for a
   /// pass.
   static String? messageOf(Object? actual) {
@@ -213,11 +199,8 @@ final class _ToBeValidChart extends Matcher {
 Matcher toBeChartOfSize(Map<String, Object?> expected) =>
     _ToBeChartOfSize(expected);
 
-final class _ToBeChartOfSize extends Matcher {
-  const _ToBeChartOfSize(this.expected);
-
-  final Map<String, Object?> expected;
-
+final class const _ToBeChartOfSize(final Map<String, Object?> expected)
+    extends Matcher {
   @override
   bool matches(Object? actual, Map<Object?, Object?> matchState) {
     final res = _ToBeValidChart.messageOf(actual);

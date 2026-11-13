@@ -39,7 +39,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 /// is not a `Map`: read it by name through this interface, for example
 /// `(context as JsObjectFace)['dataIndex']`. A `Map` of the port is a JS
 /// object of the user (a raw config) or a plain object that the port makes.
-abstract interface class JsObjectFace {
+abstract interface class JsObjectFace() {
   /// `object[name]` (`[[Get]]`): the value of [name], or [undefined] when
   /// the object has no such property.
   Object? jsRead(String name);
@@ -230,7 +230,7 @@ Object? jsGetIndex(Object? object, double index) {
 /// In the frozen state, the object behaves as a frozen object in strict
 /// mode, the mode of an ES module: a write throws a [TypeError]. The
 /// options objects of `lib/src/elements/element_options.dart` implement it.
-abstract interface class JsFreezable {
+abstract interface class JsFreezable() {
   /// `Object.isFrozen(this)`.
   bool get isFrozen;
 

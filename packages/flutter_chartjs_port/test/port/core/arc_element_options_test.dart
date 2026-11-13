@@ -25,7 +25,7 @@ const blue = Color(0xff0000ff);
 const green = Color(0xff00ff00);
 
 /// The ordinary path: the virtual call of a Config subclass.
-class _OrdinaryConfig extends Config;
+class _OrdinaryConfig() extends Config;
 
 /// The own keys of `defaults.elements.arc`, with its route in the last place.
 ArcOptionsScope _keySource() => ArcOptionsScope()
@@ -44,10 +44,8 @@ ArcOptionsScope _keySource() => ArcOptionsScope()
   ..selfJoin = false
   ..backgroundColor = const ChartPaint.solid(red);
 
-class _Fixture {
-  _Fixture({required bool ordinary})
-    : config = ordinary ? _OrdinaryConfig() : Config();
-  final Config config;
+class _Fixture({required bool ordinary}) {
+  final Config config = ordinary ? _OrdinaryConfig() : Config();
   final scope = <String, Object?>{
     '_scriptable': true,
     '_indexable': ArcElement.descriptors.jsRead('_indexable'),

@@ -18,12 +18,12 @@ LineElement _line(List<types.PointElement> points) => LineElement({
   'options': <String, Object?>{'tension': 0.0},
 });
 
-class _UnreadPoint extends PointElement {
+class _UnreadPoint() extends PointElement {
   @override
   double get x => throw StateError('custom point read');
 }
 
-class _UnreadLine extends LineElement {
+class _UnreadLine() extends LineElement {
   @override
   List<types.PointElement> get points => throw StateError('custom line read');
 }

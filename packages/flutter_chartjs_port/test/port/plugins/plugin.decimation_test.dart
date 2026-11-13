@@ -772,11 +772,7 @@ Object? _plain(Object? value) =>
     : value;
 
 /// An algorithm of a program: each [n]-th item.
-final class _EveryNth extends DecimationAlgorithm {
-  const _EveryNth(this.n);
-
-  final int n;
-
+final class const _EveryNth(final int n) extends DecimationAlgorithm {
   @override
   List<Object?> decimate(
     List<Object?> data,

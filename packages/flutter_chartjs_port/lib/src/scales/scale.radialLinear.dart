@@ -109,15 +109,13 @@ const _LabelSize _noLabelSize = (w: 0.0, h: 0.0);
 /// The object `itemOpts` of `buildPointLabelItems`
 /// (scale.radialLinear.js:181-184, :188-189): `extra`, `additionalAngle`,
 /// and the `padding` option and the label size of one index.
-final class _ItemOpts {
-  _ItemOpts({required this.extra, required this.additionalAngle});
-
+final class _ItemOpts({
   /// `extra`.
-  final double extra;
+  required final double extra,
 
   /// `additionalAngle`.
-  final double additionalAngle;
-
+  required final double additionalAngle,
+}) {
   /// `padding`, the raw option of the current index.
   Object? padding;
 
@@ -130,10 +128,10 @@ final class _ItemOpts {
 ///
 /// `updateLimits` writes the edges of `limits`.
 final class _Limits {
-  _Limits({required this.l, required this.r, required this.t, required this.b});
+  new({required this.l, required this.r, required this.t, required this.b});
 
   /// `Object.assign({}, orig)`: a copy of [orig].
-  _Limits.of(_Limits orig) : l = orig.l, r = orig.r, t = orig.t, b = orig.b;
+  new of(_Limits orig) : l = orig.l, r = orig.r, t = orig.t, b = orig.b;
 
   /// `l`, the left edge.
   double l;
@@ -150,42 +148,18 @@ final class _Limits {
 
 /// The object literal `{x, y}` of `isNotOverlapped`
 /// (scale.radialLinear.js:171-172), a corner of a label box.
-final class _Point implements types.Point {
-  _Point(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-}
+final class _Point(@override final double x, @override final double y)
+    implements types.Point;
 
 /// The object literal `{x, y, w, h, radius}` of `drawPointLabelBox`
 /// (scale.radialLinear.js:247-253).
-final class _RoundedRect implements types.RoundedRect {
-  _RoundedRect({
-    required this.x,
-    required this.y,
-    required this.w,
-    required this.h,
-    required this.radius,
-  });
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
-  @override
-  final double w;
-
-  @override
-  final double h;
-
-  @override
-  final types.TRBLCorners radius;
-}
+final class _RoundedRect({
+  @override required final double x,
+  @override required final double y,
+  @override required final double w,
+  @override required final double h,
+  @override required final types.TRBLCorners radius,
+}) implements types.RoundedRect;
 
 /// scale.radialLinear.js:9 `getTickBackdropHeight(opts)`.
 ///
@@ -875,50 +849,38 @@ ScriptableScalePointLabelContext _createPointLabelContext(
 /// (scale.radialLinear.tests.js:651-652), and `buildPointLabelItems` writes
 /// [visible] (Chart.js ADR 0025, section 6). `isNotOverlapped` gives it to
 /// `_isPointInArea` as the area. Thus it implements [types.TRBL].
-final class PointLabelItem implements types.TRBL {
+final class PointLabelItem({
+  /// scale.radialLinear.js:152 `x`, the text position.
+  required final double x,
+
+  /// scale.radialLinear.js:153 `y`, the text position: the top of the
+  /// first line.
+  required final double y,
+
+  /// scale.radialLinear.js:156 `textAlign`: `'left'`, `'right'` or
+  /// `'center'`.
+  required final TextAlign textAlign,
+
+  /// scale.radialLinear.js:159 `left`, the bounding box.
+  @override required final double left,
+
+  /// scale.radialLinear.js:160 `top`, the bounding box.
+  @override required final double top,
+
+  /// scale.radialLinear.js:161 `right`, the bounding box.
+  @override required final double right,
+
+  /// scale.radialLinear.js:162 `bottom`, the bounding box.
+  @override required final double bottom,
+}) implements types.TRBL {
   /// The item of a label at ([x], [y]) with the alignment [textAlign] and
   /// the box [left], [top], [right] and [bottom].
-  PointLabelItem({
-    required this.x,
-    required this.y,
-    required this.textAlign,
-    required this.left,
-    required this.top,
-    required this.right,
-    required this.bottom,
-  });
+  this;
 
   /// scale.radialLinear.js:149 `visible: true`, if to draw or overlapped.
   /// `buildPointLabelItems` writes it for the `display` option `'auto'`
   /// (scale.radialLinear.js:194).
   bool visible = true;
-
-  /// scale.radialLinear.js:152 `x`, the text position.
-  final double x;
-
-  /// scale.radialLinear.js:153 `y`, the text position: the top of the
-  /// first line.
-  final double y;
-
-  /// scale.radialLinear.js:156 `textAlign`: `'left'`, `'right'` or
-  /// `'center'`.
-  final TextAlign textAlign;
-
-  /// scale.radialLinear.js:159 `left`, the bounding box.
-  @override
-  final double left;
-
-  /// scale.radialLinear.js:160 `top`, the bounding box.
-  @override
-  final double top;
-
-  /// scale.radialLinear.js:161 `right`, the bounding box.
-  @override
-  final double right;
-
-  /// scale.radialLinear.js:162 `bottom`, the bounding box.
-  @override
-  final double bottom;
 }
 
 /// scale.radialLinear.js:338 `RadialLinearScale extends LinearScaleBase`.
@@ -926,7 +888,8 @@ final class PointLabelItem implements types.TRBL {
 /// It implements `types.RadialLinearScale` (index.d.ts:3676): the polar
 /// area and radar controllers read its members through that interface
 /// (Chart.js ADR 0028, section 1).
-class RadialLinearScale extends LinearScaleBase
+class RadialLinearScale(super.cfg)
+    extends LinearScaleBase
     implements
         types.RadialLinearScale,
         NativeArcScale,
@@ -934,10 +897,10 @@ class RadialLinearScale extends LinearScaleBase
         NativeRadialPositionScale {
   /// scale.radialLinear.js:412 `constructor(cfg)`.
   ///
-  /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new]. The fields
+  /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new]. The fields
   /// get their start values in their declarations
   /// (scale.radialLinear.js:415-423).
-  RadialLinearScale(super.cfg);
+  this;
 
   // scale.radialLinear.js:340 `static id = 'radialLinear'`. Scale has the
   // instance field `id`. Thus the value is only in the statics of jsClass.

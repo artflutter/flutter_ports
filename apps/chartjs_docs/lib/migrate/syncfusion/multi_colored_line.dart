@@ -162,9 +162,7 @@ final ChartConfig _config = ChartConfig(
 List<String> _noTitle(TooltipModel tooltip, List<ChartTooltipItem> items) =>
     const [];
 
-class SfMultiColoredLine extends StatelessWidget {
-  const SfMultiColoredLine({super.key});
-
+class const SfMultiColoredLine({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       SizedBox(height: 320, child: ChartView(config: _config));

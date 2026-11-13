@@ -48,9 +48,9 @@ import 'package:meta/meta.dart';
 /// }
 /// ```
 @immutable
-abstract class TooltipPositioner {
+abstract class const TooltipPositioner() {
   /// A positioner.
-  const TooltipPositioner();
+  this;
 
   /// The position of [tooltip] for the active [items], or Dart `null` for no
   /// position, the `false` of an upstream positioner (plugin.tooltip.js:23,
@@ -83,9 +83,9 @@ abstract class TooltipPositioner {
 /// position. `x` and `y` hold any JS value; `xAlign` and `yAlign` hold a
 /// [TooltipXAlign] and a [TooltipYAlign] (row `adapt-tooltip-align-enums`).
 /// A write by name of another value keeps it in the foreign slot.
-final class TooltipPosition extends TypedRecord {
+final class TooltipPosition() extends TypedRecord {
   /// An object without own keys.
-  TooltipPosition();
+  this;
 
   static const List<String> _fieldNames = ['x', 'y', 'xAlign', 'yAlign'];
 

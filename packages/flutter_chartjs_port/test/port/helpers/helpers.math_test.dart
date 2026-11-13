@@ -13,34 +13,15 @@ import 'package:test/test.dart';
 // chart.js 4.5.1 npm package (dist/chart.umd.js) in Node.js v24.12.0 on x64.
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements Point;
 
 /// A JavaScript object literal `{min, max}`, passed as a [math.MinMax].
-final class _Target implements math.MinMax {
-  _Target(this.min, this.max);
-
-  @override
-  double min;
-
-  @override
-  double max;
-}
+final class _Target(@override var double min, @override var double max)
+    implements math.MinMax;
 
 /// A tick `{value}` of a scale, passed as a [types.Tick].
-final class _Tick implements types.Tick {
-  _Tick(this.value);
-
-  @override
-  final double value;
-
+final class _Tick(@override final double value) implements types.Tick {
   @override
   double? get significand => null;
 }

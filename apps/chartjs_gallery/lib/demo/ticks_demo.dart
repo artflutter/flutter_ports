@@ -25,41 +25,27 @@ const List<Locale> tickLocales = [
 /// The `chart` of the `this` object: the formatters read only
 /// `chart.options.locale`. The same stand-in as the ported spec
 /// `test/specs/core.ticks_test.dart` uses, until `core.controller` lands.
-final class _DemoChart implements Chart {
-  _DemoChart(this.options);
-
-  @override
-  final Map<String, Object?> options;
-
+final class _DemoChart(@override final Map<String, Object?> options)
+    implements Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The scale that the formatters get as `this`: they read only `chart` and
 /// `options.ticks.format`.
-final class _DemoScale implements Scale {
-  _DemoScale(this.chart, this.options);
-
-  @override
-  final Chart chart;
-
-  @override
-  final Map<String, Object?> options;
-
+final class _DemoScale(
+  @override final Chart chart,
+  @override final Map<String, Object?> options,
+) implements Scale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A tick `{value, significand}`. Linear ticks have no significand.
-final class _DemoTick implements Tick {
-  const _DemoTick(this.value, [this.significand]);
-
-  @override
-  final double value;
-
-  @override
-  final double? significand;
-}
+final class const _DemoTick(
+  @override final double value, [
+  @override final double? significand,
+]) implements Tick;
 
 /// One tick range of the tab.
 typedef _Range = ({String title, String note, bool log, List<Tick> ticks});
@@ -138,15 +124,15 @@ final List<_Range> _ranges = [
 /// tab calls them with [jsCall] and a stand-in scale as `thisArg`, as
 /// `core.scale.js` calls the tick callback. The locale menu sets
 /// `chart.options.locale`.
-class TicksDemo extends StatefulWidget {
+class const TicksDemo({super.key}) extends StatefulWidget {
   /// Creates the tick labels tab.
-  const TicksDemo({super.key});
+  this;
 
   @override
   State<TicksDemo> createState() => _TicksDemoState();
 }
 
-class _TicksDemoState extends State<TicksDemo> {
+class _TicksDemoState() extends State<TicksDemo> {
   Locale _locale = const Locale('en', 'US');
 
   @override
@@ -199,12 +185,10 @@ class _TicksDemoState extends State<TicksDemo> {
 }
 
 /// The ticks of a range as chips `value → label`.
-class _TickLabels extends StatelessWidget {
-  const _TickLabels({required this.ticks, required this.label});
-
-  final List<Tick> ticks;
-  final Object? Function(int index) label;
-
+class const _TickLabels({
+  required final List<Tick> ticks,
+  required final Object? Function(int index) label,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

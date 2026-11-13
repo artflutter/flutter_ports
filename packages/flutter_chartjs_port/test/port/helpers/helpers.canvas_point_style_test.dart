@@ -3,24 +3,19 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:test/test.dart';
 
-final class _Options implements DrawPointOptions {
-  const _Options(this.pointStyle, this.borderWidth);
-
-  @override
-  final Object? pointStyle;
-
+final class const _Options(
+  @override final Object? pointStyle,
+  @override final double borderWidth,
+) implements DrawPointOptions {
   @override
   double? get rotation => 0;
 
   @override
   double get radius => 4;
-
-  @override
-  final double borderWidth;
 }
 
 /// The mock context of upstream has no `ellipse`.
-final class _Context extends MockContext {
+final class _Context() extends MockContext {
   final List<List<double>> ellipses = [];
 
   @override

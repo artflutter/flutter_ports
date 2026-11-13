@@ -51,16 +51,12 @@ List<Object?> _spyOnUpdates() {
 }
 
 /// A parent that builds a new [ChartConfig] in each build from its fields.
-class _Parent extends StatefulWidget {
-  const _Parent({required this.data});
-
-  final List<num?> data;
-
+class const _Parent({required final List<num?> data}) extends StatefulWidget {
   @override
   State<_Parent> createState() => _ParentState();
 }
 
-class _ParentState extends State<_Parent> {
+class _ParentState() extends State<_Parent> {
   late List<num?> data = widget.data;
   String? title;
   ValueChanged<ChartEventDetails>? onClick;

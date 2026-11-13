@@ -4,7 +4,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 
 /// Optional native fill of an equivalent compound path. The current Canvas 2D
 /// path remains unchanged. A false result draws nothing and calls no writer.
-abstract interface class PartitionedFillCanvas {
+abstract interface class PartitionedFillCanvas() {
   /// Whether [tryFillPartitionedPath] can draw on this context. The web
   /// declines it: one compound path takes the slow route of Skia there, and
   /// `fill` cuts a deferred path into pieces (Chart.js ADR 0113).

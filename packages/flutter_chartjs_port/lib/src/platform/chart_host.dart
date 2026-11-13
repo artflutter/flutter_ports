@@ -324,11 +324,8 @@ final Expando<_CanvasEventTarget> _canvasTargets = Expando(
 );
 
 /// A canvas element as a [NativeEventTarget].
-final class _CanvasEventTarget implements NativeEventTarget {
-  _CanvasEventTarget(this._canvas);
-
-  final HTMLCanvasElement _canvas;
-
+final class _CanvasEventTarget(final HTMLCanvasElement _canvas)
+    implements NativeEventTarget {
   @override
   void addEventListener(
     String type,
@@ -367,9 +364,7 @@ final class _CanvasEventTarget implements NativeEventTarget {
 ///
 /// [dispatchEvent] is the port of `document.documentElement.dispatchEvent`:
 /// it calls the document listeners only.
-final class CanvasDocument implements NativeEventTarget {
-  CanvasDocument._();
-
+final class CanvasDocument._() implements NativeEventTarget {
   /// The document of the isolate.
   static final CanvasDocument instance = CanvasDocument._();
 
@@ -589,12 +584,12 @@ final Expando<List<CanvasMutationObserver>> _mutationObservers = Expando(
 /// removed nodes contain the canvas. Here the host of the canvas reports the
 /// net change of its attached state: `true` when it shows the canvas in a
 /// laid-out render tree, `false` when it stops.
-final class CanvasMutationObserver {
-  /// Creates an observer that calls [callback] with the new attached state.
-  CanvasMutationObserver(this.callback);
-
+final class CanvasMutationObserver(
   /// The callback of the observer.
-  final void Function({required bool connected}) callback;
+  final void Function({required bool connected}) callback,
+) {
+  /// Creates an observer that calls [callback] with the new attached state.
+  this;
 
   HTMLCanvasElement? _canvas;
 
@@ -660,19 +655,16 @@ void flushCanvasMutations() {
 /// the next layout of the host (Chart.js ADR 0022). Then it gets each
 /// change. A [disconnect] before that layout gives no notification.
 /// [onDevicePixelRatio] gets the new device pixel ratio of the host.
-final class ContainerResizeObserver {
-  /// Creates an observer with the two callbacks.
-  ContainerResizeObserver({
-    required this.onResize,
-    required this.onDevicePixelRatio,
-  });
-
+final class ContainerResizeObserver({
   /// The `ResizeObserver` callback, with `contentRect.width` and
   /// `contentRect.height`.
-  final void Function(double width, double height) onResize;
+  required final void Function(double width, double height) onResize,
 
   /// The device pixel ratio callback.
-  final void Function(double devicePixelRatio) onDevicePixelRatio;
+  required final void Function(double devicePixelRatio) onDevicePixelRatio,
+}) {
+  /// Creates an observer with the two callbacks.
+  this;
 
   RenderChartHost? _host;
 
@@ -704,29 +696,25 @@ final class ContainerResizeObserver {
 /// `MediaQuery.maybeGestureSettingsOf` in [createRenderObject] and
 /// [updateRenderObject]. `View.of` does not rebuild on a change of the
 /// device pixel ratio.
-class ChartHost extends LeafRenderObjectWidget {
-  /// Creates a host for [canvas].
-  const ChartHost({
-    required this.canvas,
-    this.onTickerModeChanged,
-    this.onFirstLayout,
-    super.key,
-  });
-
+class const ChartHost({
   /// The canvas element that the host shows.
-  final UiCanvasElement canvas;
+  required final UiCanvasElement canvas,
 
   /// Called when the `TickerMode` of the host changes, with the new
   /// `enabled` value. `core.animator` mutes the chart while it is false
   /// (Chart.js ADR 0016, decision 7).
-  final ValueChanged<bool>? onTickerModeChanged;
+  final ValueChanged<bool>? onTickerModeChanged,
 
   /// Called in the first layout of the host, after the host is laid out and
   /// reports its attach, before the host takes its size. It is called again
   /// after a canvas swap. The owner starts its chart here: the chart then
   /// attaches in its constructor and takes its size in this layout. A
   /// listener must not call `setState` (Chart.js ADR 0016, ADR 0049).
-  final VoidCallback? onFirstLayout;
+  final VoidCallback? onFirstLayout,
+  super.key,
+}) extends LeafRenderObjectWidget {
+  /// Creates a host for [canvas].
+  this;
 
   static double _devicePixelRatio(BuildContext context) =>
       MediaQuery.maybeDevicePixelRatioOf(context) ??
@@ -770,7 +758,7 @@ class ChartHost extends LeafRenderObjectWidget {
 /// keeps its own reference to its picture. A clean layer is retained: the scene
 /// keeps what the last paint added.
 @internal
-final class ChartPicturesLayer extends Layer {
+final class ChartPicturesLayer() extends Layer {
   final Float64List _matrix = Float64List(16)
     ..[10] = 1
     ..[15] = 1;
@@ -831,29 +819,31 @@ final class ChartPicturesLayer extends Layer {
 /// The render object of [ChartHost].
 ///
 /// It is a repaint boundary: a chart frame repaints only the host layer.
-class RenderChartHost extends RenderBox
-    implements CanvasContainer, MouseTrackerAnnotation {
+class RenderChartHost({
+  required var UiCanvasElement _canvas,
+  required var double _devicePixelRatio,
+  var bool _tickerEnabled = true,
+
+  /// The gesture settings of the view. Their touch slop gives the slop limit
+  /// of a touch-like pointer (Chart.js ADR 0037, section 8): the slop, times
+  /// 1.5 for a stylus, plus 0.05. Null gives `kTouchSlop`.
+  var DeviceGestureSettings? gestureSettings,
+
+  /// Called when [tickerEnabled] changes.
+  var ValueChanged<bool>? onTickerModeChanged,
+
+  /// Called in the first layout of the host with its current canvas, after
+  /// the attach report and before the host takes its size (see
+  /// [ChartHost.onFirstLayout]).
+  var VoidCallback? onFirstLayout,
+}) extends RenderBox implements CanvasContainer, MouseTrackerAnnotation {
   /// Creates the render object of a host for [canvas].
-  RenderChartHost({
-    required UiCanvasElement canvas,
-    required double devicePixelRatio,
-    bool tickerEnabled = true,
-    this.gestureSettings,
-    this.onTickerModeChanged,
-    this.onFirstLayout,
-  }) : _canvas = canvas,
-       // The field has a setter with side effects.
-       // ignore: prefer_initializing_formals
-       _devicePixelRatio = devicePixelRatio,
-       // The field has a setter with side effects.
-       // ignore: prefer_initializing_formals
-       _tickerEnabled = tickerEnabled {
-    _show(canvas);
+  this {
+    _show(_canvas);
   }
 
   /// The canvas element that the host shows.
   UiCanvasElement get canvas => _canvas;
-  UiCanvasElement _canvas;
   set canvas(UiCanvasElement value) {
     if (identical(value, _canvas)) {
       return;
@@ -877,7 +867,6 @@ class RenderChartHost extends RenderBox
   /// `FlutterPlatform.getDevicePixelRatio` reads it, and paint snaps its
   /// scale to `1 / devicePixelRatio` (see [paint]).
   double get devicePixelRatio => _devicePixelRatio;
-  double _devicePixelRatio;
   set devicePixelRatio(double value) {
     if (value == _devicePixelRatio) {
       return;
@@ -893,7 +882,6 @@ class RenderChartHost extends RenderBox
 
   /// The `enabled` value of the `TickerMode` of the host.
   bool get tickerEnabled => _tickerEnabled;
-  bool _tickerEnabled;
   set tickerEnabled(bool value) {
     if (value == _tickerEnabled) {
       return;
@@ -901,14 +889,6 @@ class RenderChartHost extends RenderBox
     _tickerEnabled = value;
     onTickerModeChanged?.call(value);
   }
-
-  /// Called when [tickerEnabled] changes.
-  ValueChanged<bool>? onTickerModeChanged;
-
-  /// Called in the first layout of the host with its current canvas, after
-  /// the attach report and before the host takes its size (see
-  /// [ChartHost.onFirstLayout]).
-  VoidCallback? onFirstLayout;
 
   void _show(UiCanvasElement canvas) {
     final previous = canvas.parentNode;
@@ -1319,11 +1299,6 @@ class RenderChartHost extends RenderBox
 
   @override
   bool hitTestSelf(Offset position) => true;
-
-  /// The gesture settings of the view. Their touch slop gives the slop limit
-  /// of a touch-like pointer (Chart.js ADR 0037, section 8): the slop, times
-  /// 1.5 for a stylus, plus 0.05. Null gives `kTouchSlop`.
-  DeviceGestureSettings? gestureSettings;
 
   /// The touch-like pointers that are down on the host, by pointer id: the
   /// DOM `targetTouches` of the canvas.
@@ -2349,17 +2324,15 @@ _Modifiers _modifiers() {
 
 /// One touch-like pointer that is down on the host (Chart.js ADR 0037,
 /// section 8).
-final class _HostTouch {
-  _HostTouch(this.down, this.limitSquared) : last = down;
-
+final class _HostTouch(
   /// The down event.
-  final PointerDownEvent down;
+  final PointerDownEvent down,
 
   /// The square of the slop limit of the pointer.
-  final double limitSquared;
-
+  final double limitSquared,
+) {
   /// The last event of the pointer that gave DOM events: the down or a move.
-  PointerEvent last;
+  PointerEvent last = down;
 
   /// The entry of the host in the gesture arena of the pointer, in a
   /// sequence with `touch-action: none` (Chart.js ADR 0108). Null in the
@@ -2381,9 +2354,7 @@ final class _HostTouch {
 /// takes the taps of a `GestureDetector`, an `InkWell` or a `ListTile`
 /// ancestor. In the DOM, `touch-action` stops only the pan and the zoom of
 /// the browser.
-final class _TouchActionClaim implements GestureArenaMember {
-  const _TouchActionClaim();
-
+final class const _TouchActionClaim() implements GestureArenaMember {
   @override
   void acceptGesture(int pointer) {}
 
@@ -2398,12 +2369,17 @@ final class _TouchActionClaim implements GestureArenaMember {
 /// section 8). The host and the route of the compatibility mouse use the
 /// same rule: a move farther than the slop limit from the down ends the
 /// candidate, and a timer of `kLongPressTimeout` makes it a long press.
-final class _TouchTap {
-  _TouchTap(
-    this.down, {
-    required this.limitSquared,
-    required void Function(_TouchTap tap) onLongPress,
-  }) : pointer = down.pointer {
+final class _TouchTap(
+  /// The down event. A long press, and a tap of a kind other than the
+  /// stylus and the inverted stylus, give their compatibility events at its
+  /// position (device check P4, D4 and STN10; `RenderChartHost._tapPoint`).
+  final PointerDownEvent down, {
+
+  /// The square of the slop limit, in logical pixels.
+  required final double limitSquared,
+  required void Function(_TouchTap tap) onLongPress,
+}) {
+  this {
     _timer = Timer(kLongPressTimeout, () {
       longPressed = true;
       onLongPress(this);
@@ -2411,15 +2387,7 @@ final class _TouchTap {
   }
 
   /// The pointer id.
-  final int pointer;
-
-  /// The down event. A long press, and a tap of a kind other than the
-  /// stylus and the inverted stylus, give their compatibility events at its
-  /// position (device check P4, D4 and STN10; `RenderChartHost._tapPoint`).
-  final PointerDownEvent down;
-
-  /// The square of the slop limit, in logical pixels.
-  final double limitSquared;
+  final int pointer = down.pointer;
 
   /// Whether the pointer was held for `kLongPressTimeout`.
   bool longPressed = false;

@@ -36,16 +36,16 @@ import 'package:meta/meta.dart' show internal;
 extension type const ChartFill._(Object _value) {
   /// The fill to the dataset at the absolute [index] of `data.datasets`:
   /// the number.
-  const ChartFill.dataset(int index) : _value = index;
+  const new dataset(int index) : _value = index;
 
   /// The fill to the dataset at [offset] from this dataset: a
   /// [RelativeFill], the `'+1'` and `'-1'` of Chart.js (row
   /// `adapt-fill-target-objects`). Not `const`: the target object takes
   /// the offset at run time.
-  ChartFill.relative(int offset) : _value = RelativeFill(offset);
+  new relative(int offset) : _value = RelativeFill(offset);
 
   /// The fill to the line at [value] of the value axis: `{value: n}`.
-  const ChartFill.value(num value) : _value = (value: value);
+  const new value(num value) : _value = (value: value);
 
   /// [FillBoundary.origin]: the fill to the origin of the value axis.
   /// Chart.js gives it also for `fill: true`.

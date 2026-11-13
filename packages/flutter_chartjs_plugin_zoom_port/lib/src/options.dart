@@ -36,7 +36,13 @@ import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsTruthy;
 /// Upstream tests a direction with `mode.indexOf(dir)`. Each value here has
 /// the two directions as fields.
 // DIVERGES(zoom): adapt-zoom-option-enums, an enum of the modes.
-enum Mode {
+enum Mode({
+  /// Whether the mode has the direction `x`.
+  required final bool usesX,
+
+  /// Whether the mode has the direction `y`.
+  required final bool usesY,
+}) {
   /// `'x'`: the horizontal scales.
   x(usesX: true, usesY: false),
 
@@ -45,14 +51,6 @@ enum Mode {
 
   /// `'xy'`: both directions.
   xy(usesX: true, usesY: true);
-
-  Mode({required this.usesX, required this.usesY});
-
-  /// Whether the mode has the direction `x`.
-  final bool usesX;
-
-  /// Whether the mode has the direction `y`.
-  final bool usesY;
 
   /// Whether the mode has the direction of the scale axis [axis]: `'x'` or
   /// `'y'` (the `axis` of a scale of the host). Another axis has none.
@@ -92,7 +90,7 @@ typedef ModeFn = Mode Function(ZoomChartContext context);
 /// Upstream reads `event[key + 'Key']`. Each value here reads its own field
 /// of the event.
 // DIVERGES(zoom): adapt-zoom-option-enums, an enum of the keys.
-enum ModifierKey {
+enum ModifierKey() {
   /// `'ctrl'`: `ctrlKey`.
   ctrl,
 
@@ -127,7 +125,7 @@ enum ModifierKey {
 
 /// options.ts:9 `DrawTime`: the plugin hook that draws the drag rectangle.
 // DIVERGES(zoom): adapt-zoom-option-enums, an enum of the hooks.
-enum DrawTime {
+enum DrawTime() {
   /// `'afterDraw'`.
   afterDraw,
 
@@ -154,7 +152,7 @@ enum DrawTime {
 
 /// options.ts:10 `ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'`: what
 /// started a zoom. [name] is the upstream string.
-enum ZoomTrigger {
+enum ZoomTrigger() {
   /// `'api'`: a call of `zoom`, `zoomRect` or `zoomScale`.
   api,
 

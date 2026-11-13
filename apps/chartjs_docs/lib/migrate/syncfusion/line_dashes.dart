@@ -150,9 +150,7 @@ final ChartConfig _config = ChartConfig(
   },
 );
 
-class SfLineDashes extends StatelessWidget {
-  const SfLineDashes({super.key});
-
+class const SfLineDashes({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       SizedBox(height: 320, child: ChartView(config: _config));

@@ -12,16 +12,12 @@ import '../support/jasmine.dart';
 /// The object literal `{active: () => true, _to: 20}`. A
 /// `Map<String, Animation>` does not accept an object literal, so the spec
 /// passes a test [Animation] with the same members.
-final class _Animation implements Animation {
-  _Animation({required this._active, required this.to});
-
-  final bool Function() _active;
-
+final class _Animation({
+  required final bool Function() _active,
+  @override required final double to,
+}) implements Animation {
   @override
   bool active() => _active();
-
-  @override
-  final double to;
 }
 
 void main() {

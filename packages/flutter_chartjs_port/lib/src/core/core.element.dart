@@ -181,12 +181,12 @@ import 'package:meta/meta.dart';
 ///   // draw, inRange, inXRange, inYRange and getCenterPoint.
 /// }
 /// ```
-class Element implements types.Element, types.PropertyAccess, ElementProps {
+class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// core.element.ts:6 the implicit constructor of `Element`.
   ///
   /// [x], [y], [options] and [$animations] start in the `undefined` state.
   /// [active] starts false.
-  Element();
+  this;
 
   /// core.element.ts:8 `static defaults = {}`, an empty typed scope of the
   /// kind `GenericElementOptions` (Chart.js ADR 0054 §3).
@@ -663,9 +663,9 @@ AnyObject? elementCfgArg(List<Object?> args) {
 }
 
 /// The property `x` of an element: the typed field of [Element].
-final class ElementXProp extends AnimatedBy<XAnimation> {
+final class const ElementXProp() extends AnimatedBy<XAnimation> {
   /// The property `x`.
-  const ElementXProp() : super('x');
+  this : super('x');
 
   @override
   void write(Element element, double value) => element.x = value;
@@ -686,9 +686,9 @@ final class ElementXProp extends AnimatedBy<XAnimation> {
 }
 
 /// The property `y` of an element: the typed field of [Element].
-final class ElementYProp extends AnimatedBy<YAnimation> {
+final class const ElementYProp() extends AnimatedBy<YAnimation> {
   /// The property `y`.
-  const ElementYProp() : super('y');
+  this : super('y');
 
   @override
   void write(Element element, double value) => element.y = value;
@@ -714,7 +714,7 @@ final class ElementYProp extends AnimatedBy<YAnimation> {
 /// [Element] implements it, because `getProps` can return the element
 /// itself (core.element.ts:35-37). The other result is a new plain object
 /// (core.element.ts:39).
-abstract interface class ElementProps {
+abstract interface class ElementProps() {
   /// The JS property read `props[prop]`.
   ///
   /// It gives the [undefined] sentinel for a property that the object does
@@ -726,13 +726,11 @@ abstract interface class ElementProps {
 
 /// core.element.ts:39 `const ret = {}`, the new plain object of
 /// [Element.getProps].
-final class _PlainProps implements ElementProps {
-  _PlainProps(this._values);
-
+final class _PlainProps(
   /// The own properties. A value can be the [undefined] sentinel or Dart
   /// `null` for JS `null`.
-  final Map<String, Object?> _values;
-
+  final Map<String, Object?> _values,
+) implements ElementProps {
   @override
   Object? operator [](String prop) {
     final value = _values[prop];
@@ -749,19 +747,17 @@ final class _PlainProps implements ElementProps {
 /// with `equals`. NaN equals NaN, as in `toEqual`. 0 equals -0, as the Dart
 /// `==` of two numbers gives.
 @immutable
-final class ElementPoint implements Point {
-  /// The object literal `{x, y}`.
-  const ElementPoint(this.x, this.y);
-
+final class const ElementPoint(
   /// The `x` of the literal. NaN stands for a copied JS `undefined`
   /// ([Point.x]).
-  @override
-  final double x;
+  @override final double x,
 
   /// The `y` of the literal. NaN stands for a copied JS `undefined`
   /// ([Point.y]).
-  @override
-  final double y;
+  @override final double y,
+) implements Point {
+  /// The object literal `{x, y}`.
+  this;
 
   @override
   bool operator ==(Object other) =>

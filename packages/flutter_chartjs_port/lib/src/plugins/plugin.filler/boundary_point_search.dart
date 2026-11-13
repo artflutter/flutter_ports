@@ -20,11 +20,10 @@ bool boundarySegmentSearchEnabled = true;
 /// Only drawfill's origin/start/end targets qualify. They contain fresh points,
 /// have no user callbacks, and cannot be reached by user code during the draw.
 /// This index must not be retained on a chart or used for dataset targets.
-final class BoundaryPointSearch {
-  BoundaryPointSearch._(this._points, this._horizontal);
-
-  final List<types.PointElement> _points;
-  final bool _horizontal;
+final class BoundaryPointSearch._(
+  final List<types.PointElement> _points,
+  final bool _horizontal,
+) {
   int _boundCursor = 0;
   double _lastBound = double.negativeInfinity;
 

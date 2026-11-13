@@ -104,9 +104,7 @@ AnyObject _minMax(({double min, double max}) range) => <String, Object?>{
 /// `true` has no Dart form there. `getRelativePosition` tests only that the
 /// event has a `native` key, which each `types.ChartEvent` has. Thus Dart
 /// `null` stands for it.
-final class _PointEvent implements types.ChartEvent {
-  _PointEvent(types.Point point) : x = point.x, y = point.y;
-
+final class _PointEvent(types.Point point) implements types.ChartEvent {
   @override
   String get type => 'mousemove';
 
@@ -114,10 +112,10 @@ final class _PointEvent implements types.ChartEvent {
   NativeEvent? get native => null;
 
   @override
-  final double? x;
+  final double? x = point.x;
 
   @override
-  final double? y;
+  final double? y = point.y;
 
   @override
   types.Chart? get chart => null;

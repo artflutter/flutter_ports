@@ -55,18 +55,18 @@ import 'package:meta/meta.dart';
 base class AnimatedProp {
   /// A built-in property with the name [name].
   @internal
-  const AnimatedProp.builtIn(String name) : _name = name;
+  const new builtIn(String name) : _name = name;
 
   /// A built-in property that gives its own [name].
   @internal
-  const AnimatedProp.keyed() : _name = null;
+  const new keyed() : _name = null;
 
   /// A name that is not built in.
-  const AnimatedProp.custom(String name) : _name = name;
+  const new custom(String name) : _name = name;
 
   /// The instance of the name [name]: a built-in instance, or a new
   /// [AnimatedProp.custom].
-  factory AnimatedProp.of(String name) => switch (name) {
+  factory of(String name) => switch (name) {
     'x' => x,
     'y' => y,
     'borderWidth' => borderWidth,
@@ -252,12 +252,12 @@ base class AnimatedProp {
 base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
   /// A built-in property with the animation class [T].
   @internal
-  const AnimatedBy(super.name) : super.builtIn();
+  const new(super.name) : super.builtIn();
 
   /// A built-in property with the animation class [T] that gives its own
   /// name.
   @internal
-  const AnimatedBy.keyed() : super.keyed();
+  const new keyed() : super.keyed();
 
   @override
   PropertyAnimation? itemIn(List<PropertyAnimation>? items) {
@@ -272,13 +272,13 @@ base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
 /// A style property of an element: a key of its resolved options
 /// (`radius`, `borderColor`). An animation reads and writes the typed field
 /// of the options by the key, with no name.
-base class StyleProp<T extends PropertyAnimation> extends AnimatedBy<T> {
+base class const StyleProp<T extends PropertyAnimation>(
+  /// The key of the resolved options of an element.
+  final OptionKey key,
+) extends AnimatedBy<T> {
   /// The style property of the option [key].
   @internal
-  const StyleProp(this.key) : super.keyed();
-
-  /// The key of the resolved options of an element.
-  final OptionKey key;
+  this : super.keyed();
 
   /// The name of [key]: a style property has no name of its own.
   @override

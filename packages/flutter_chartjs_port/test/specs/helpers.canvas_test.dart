@@ -40,11 +40,8 @@ import '../support/jasmine.dart';
 /// forwards the other members that the case and the release of the chart
 /// call to the context of the chart: `canvas`, `save`, `restore` and
 /// `resetTransform`. Another member throws a `NoSuchMethodError`.
-final class _ClearRectSpy implements CanvasRenderingContext2D {
-  _ClearRectSpy(this._context);
-
-  final CanvasRenderingContext2D _context;
-
+final class _ClearRectSpy(final CanvasRenderingContext2D _context)
+    implements CanvasRenderingContext2D {
   /// `chart.ctx.clearRect.calls`.
   final JasmineCalls calls = JasmineCalls();
 
@@ -80,38 +77,17 @@ JasmineCalls _clearRectCalls(CanvasRenderingContext2D? ctx) =>
     (ctx! as _ClearRectSpy).calls;
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
-final class _Point implements Point {
-  const _Point(this.x, this.y);
-
-  @override
-  final double? x;
-
-  @override
-  final double? y;
-}
+final class const _Point(@override final double? x, @override final double? y)
+    implements Point;
 
 /// A JavaScript object literal `{left, top, right, bottom}`, passed as a
 /// [TRBL].
-final class _Area implements TRBL {
-  const _Area({
-    required this.left,
-    required this.top,
-    required this.right,
-    required this.bottom,
-  });
-
-  @override
-  final double left;
-
-  @override
-  final double top;
-
-  @override
-  final double right;
-
-  @override
-  final double bottom;
-}
+final class const _Area({
+  @override required final double left,
+  @override required final double top,
+  @override required final double right,
+  @override required final double bottom,
+}) implements TRBL;
 
 /// The font object `{string: '12px arial', lineHeight: 20}` of the spec, as
 /// a font (Chart.js ADR 0116, row `adapt-text-style-fonts`): its line height

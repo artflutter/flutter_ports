@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:test/test.dart';
 
-class _ObservedMap extends MapBase<String, Object?> {
+class _ObservedMap() extends MapBase<String, Object?> {
   int reads = 0;
   int typeReads = 0;
   bool throwsType = false;

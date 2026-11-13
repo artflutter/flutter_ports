@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 final double _negativeZero = double.parse('-0.0');
 
 /// A [CanvasPath] that records the calls, as `{name, args}` maps.
-final class _Recorder implements CanvasPath {
+final class _Recorder() implements CanvasPath {
   final List<Map<String, Object?>> calls = [];
 
   void Function(String)? onCall;
@@ -85,7 +85,7 @@ final class _Recorder implements CanvasPath {
 
 // Original public replay loop, used as an oracle for platform-specific list
 // iteration behavior when a callback changes the command count.
-final class _ReplayReference {
+final class _ReplayReference() {
   final List<PathCommand> commands = [];
 
   void moveTo(double x, double y) => commands.add(MoveToCommand(x, y));

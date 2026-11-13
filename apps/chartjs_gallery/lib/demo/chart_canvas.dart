@@ -36,35 +36,33 @@ typedef ChartFactory = Chart Function(UiCanvasElement canvas);
 ///
 /// With a [height], the host has that height. Without one, the host takes
 /// the height of its constraints.
-class ChartCanvas extends StatefulWidget {
-  /// Creates a host for the chart of [create].
-  const ChartCanvas({
-    required this.create,
-    this.height,
-    this.onChart,
-    this.onTickerModeChanged,
-    super.key,
-  });
-
+class const ChartCanvas({
   /// Makes the chart on the canvas of the widget.
-  final ChartFactory create;
+  required final ChartFactory create,
 
   /// The height of the host.
-  final double? height;
+  final double? height,
 
   /// Called once the chart exists.
-  final ValueChanged<Chart>? onChart;
+  final ValueChanged<Chart>? onChart,
 
   /// Called after the mute or the unmute, with the new `enabled` value of
   /// the `TickerMode` of the host.
-  final ValueChanged<bool>? onTickerModeChanged;
+  final ValueChanged<bool>? onTickerModeChanged,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates a host for the chart of [create].
+  this;
 
   @override
   State<ChartCanvas> createState() => ChartCanvasState();
 }
 
 /// The state of a [ChartCanvas]: it owns the canvas and the chart.
-class ChartCanvasState extends State<ChartCanvas> {
+class ChartCanvasState() extends State<ChartCanvas> {
+  /// A new state of [ChartCanvas].
+  this;
+
   final UiCanvasElement _canvas = UiCanvasElement();
   Chart? _chart;
   bool _tickerEnabled = true;

@@ -130,7 +130,11 @@ String _typeOf(Object? value) => switch (value) {
 ///
 /// The color is mutable. Each manipulation method changes this color and
 /// returns it.
-class Color {
+class Color._(
+  /// color.js:96 `_rgb`. The [RGBA] with `a` as a byte [0..255]. Dart `null`
+  /// stands for JS `undefined`: the input did not parse.
+  var RGBA? _rgb,
+) {
   /// color.js:81 `constructor`.
   ///
   /// [input] is a [Color], an RGBA object (an [RGBA] or a `Map` with the keys
@@ -142,7 +146,7 @@ class Color {
   /// Another input that is not an object or a string gives a color that is
   /// not [valid]. Dart `null` is JS `null`: as in JavaScript, it throws. Pass
   /// the `undefined` sentinel for JS `undefined`.
-  factory Color(Object? input) {
+  factory(Object? input) {
     if (input is Color) {
       return input;
     }
@@ -176,11 +180,9 @@ class Color {
     return Color._(v);
   }
 
-  Color._(this._rgb) : _valid = _rgb != null;
-
   /// Internal numerical construction with alpha in byte units. Native inputs
   /// do not require parsing or premature alpha rounding.
-  factory Color.fromRgbaBytes(RGBA value) =>
+  factory fromRgbaBytes(RGBA value) =>
       Color._(RGBA(r: value.r, g: value.g, b: value.b, a: value.a));
 
   /// A copy of the numerical channels, including the unrounded byte alpha.
@@ -191,12 +193,8 @@ class Color {
         : RGBA(r: value.r, g: value.g, b: value.b, a: value.a);
   }
 
-  /// color.js:96 `_rgb`. The [RGBA] with `a` as a byte [0..255]. Dart `null`
-  /// stands for JS `undefined`: the input did not parse.
-  RGBA? _rgb;
-
   /// color.js:98 `_valid`.
-  final bool _valid;
+  final bool _valid = _rgb != null;
 
   /// color.js:105 `valid`.
   ///

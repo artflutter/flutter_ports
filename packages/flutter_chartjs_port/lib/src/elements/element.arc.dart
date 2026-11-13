@@ -850,7 +850,7 @@ double _orTau(double value) => jsTruthy(value) ? value : tau;
 ///
 /// A number is a `double`. It is NaN in the `undefined` state of the
 /// element (Chart.js ADR 0017, section 4).
-abstract interface class ArcProps implements Point {
+abstract interface class ArcProps() implements Point {
   /// element.arc.ts:366 `startAngle: number`.
   double get startAngle;
 
@@ -897,7 +897,8 @@ abstract interface class ArcProps implements Point {
 /// implements `types.VisualElement`, which declares them (Chart.js ADR
 /// 0017, section 1). Thus [inXRange] and [inYRange] give false (the
 /// difference `adapt-arc-axis-range`).
-class ArcElement extends Element
+class ArcElement([AnyObject? cfg])
+    extends Element
     implements
         types.VisualElement,
         types.ArcElementWrites,
@@ -912,7 +913,7 @@ class ArcElement extends Element
   /// `Object.assign(this, cfg)` does: an `int` becomes a `double`, and a
   /// value outside the type of a property throws an [ArgumentError]. Dart
   /// `null` for [cfg] stands for JS `undefined`.
-  ArcElement([AnyObject? cfg]) {
+  this {
     pixelMargin = 0;
     fullCircles = 0;
     circular = false;
@@ -1533,9 +1534,10 @@ class ArcElement extends Element
 
 /// The property `circumference` of an arc: the typed field of [ArcElement]. An
 /// element of another class takes the access by name.
-final class ArcCircumferenceProp extends AnimatedBy<CircumferenceAnimation> {
+final class const ArcCircumferenceProp()
+    extends AnimatedBy<CircumferenceAnimation> {
   /// The property `circumference`.
-  const ArcCircumferenceProp() : super('circumference');
+  this : super('circumference');
 
   @override
   void write(Element element, double value) {
@@ -1567,9 +1569,9 @@ final class ArcCircumferenceProp extends AnimatedBy<CircumferenceAnimation> {
 
 /// The property `endAngle` of an arc: the typed field of [ArcElement]. An
 /// element of another class takes the access by name.
-final class ArcEndAngleProp extends AnimatedBy<EndAngleAnimation> {
+final class const ArcEndAngleProp() extends AnimatedBy<EndAngleAnimation> {
   /// The property `endAngle`.
-  const ArcEndAngleProp() : super('endAngle');
+  this : super('endAngle');
 
   @override
   void write(Element element, double value) {
@@ -1601,9 +1603,10 @@ final class ArcEndAngleProp extends AnimatedBy<EndAngleAnimation> {
 
 /// The property `innerRadius` of an arc: the typed field of [ArcElement]. An
 /// element of another class takes the access by name.
-final class ArcInnerRadiusProp extends AnimatedBy<InnerRadiusAnimation> {
+final class const ArcInnerRadiusProp()
+    extends AnimatedBy<InnerRadiusAnimation> {
   /// The property `innerRadius`.
-  const ArcInnerRadiusProp() : super('innerRadius');
+  this : super('innerRadius');
 
   @override
   void write(Element element, double value) {
@@ -1635,9 +1638,10 @@ final class ArcInnerRadiusProp extends AnimatedBy<InnerRadiusAnimation> {
 
 /// The property `outerRadius` of an arc: the typed field of [ArcElement]. An
 /// element of another class takes the access by name.
-final class ArcOuterRadiusProp extends AnimatedBy<OuterRadiusAnimation> {
+final class const ArcOuterRadiusProp()
+    extends AnimatedBy<OuterRadiusAnimation> {
   /// The property `outerRadius`.
-  const ArcOuterRadiusProp() : super('outerRadius');
+  this : super('outerRadius');
 
   @override
   void write(Element element, double value) {
@@ -1669,9 +1673,9 @@ final class ArcOuterRadiusProp extends AnimatedBy<OuterRadiusAnimation> {
 
 /// The property `startAngle` of an arc: the typed field of [ArcElement]. An
 /// element of another class takes the access by name.
-final class ArcStartAngleProp extends AnimatedBy<StartAngleAnimation> {
+final class const ArcStartAngleProp() extends AnimatedBy<StartAngleAnimation> {
   /// The property `startAngle`.
-  const ArcStartAngleProp() : super('startAngle');
+  this : super('startAngle');
 
   @override
   void write(Element element, double value) {

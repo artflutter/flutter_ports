@@ -65,7 +65,14 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
 /// core.animations.js:6 `Animations`.
-class Animations {
+class Animations(
+  /// core.animations.js:8 `_chart`.
+  final types.Chart _chart,
+  Object? config, {
+  List<PropertyAnimation>? items,
+  List<PropertyAnimation>? modeItems,
+  Object? base,
+}) {
   /// core.animations.js:7 `constructor(chart, config)`.
   ///
   /// [items] are the items of `ChartConfig.animations` of the chart, or Dart
@@ -74,13 +81,7 @@ class Animations {
   /// `animation` options of the resolver of [config]: the options of a
   /// property that has an item and no options of its own.
   // DIVERGES(chartjs): adapt-property-animations, the items of the app.
-  Animations(
-    types.Chart chart,
-    Object? config, {
-    List<PropertyAnimation>? items,
-    List<PropertyAnimation>? modeItems,
-    Object? base,
-  }) : _chart = chart {
+  this {
     configure(config);
     if (modeItems != null && modeItems.isNotEmpty) _modeItems = modeItems;
     if (items != null && items.isNotEmpty) _chartItems = items;
@@ -101,9 +102,6 @@ class Animations {
       args.length > 1 ? args[1] : undefined,
     ),
   );
-
-  /// core.animations.js:8 `_chart`.
-  final types.Chart _chart;
 
   /// core.animations.js:9 `_properties`, a JS `Map` from each property to
   /// its animation options, in the insertion order. The key of a name is

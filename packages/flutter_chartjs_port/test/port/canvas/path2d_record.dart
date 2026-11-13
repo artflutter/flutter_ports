@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 
 /// The ids of the Path2D objects of one record, in the order of the first
 /// sight, as the generators number them.
-final class PathIds {
+final class PathIds() {
   final Map<Path2D, int> _ids = {};
 
   /// The id of [path], or null for no path. A path that this object has not

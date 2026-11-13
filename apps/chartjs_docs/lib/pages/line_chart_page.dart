@@ -973,15 +973,15 @@ DocPageContent lineChartPage() => DocPageContent(
 );
 
 /// A chart of 1,000 points that changes in each frame while it runs.
-class LiveLineDemo extends StatefulWidget {
+class const LiveLineDemo({super.key}) extends StatefulWidget {
   /// Creates the demo.
-  const LiveLineDemo({super.key});
+  this;
 
   @override
   State<LiveLineDemo> createState() => _LiveLineDemoState();
 }
 
-class _LiveLineDemoState extends State<LiveLineDemo> {
+class _LiveLineDemoState() extends State<LiveLineDemo> {
   Timer? _timer;
   int _tick = 0;
 

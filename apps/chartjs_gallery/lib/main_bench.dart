@@ -122,37 +122,33 @@ void main() {
 }
 
 /// The app of the benchmark entry.
-class ChartBenchApp extends StatefulWidget {
+class const ChartBenchApp({
+  super.key,
+
+  /// The cases, or Dart `null` for [benchCases].
+  final List<ChartBenchCase>? cases,
+
+  /// The point counts of all cases, or Dart `null` for [benchCounts].
+  final List<int>? counts,
+
+  /// The timing, or Dart `null` for [benchSettings].
+  final ChartBenchSettings? settings,
+
+  /// Whether the app prints the marks of the timed windows, or Dart `null`
+  /// for [benchProfileMarks].
+  final bool? profileMarks,
+}) extends StatefulWidget {
   /// Creates the app. [cases], [counts], [settings] and [profileMarks]
   /// default to [benchCases], [benchCounts], [benchSettings] and
   /// [benchProfileMarks], the values of the defines. A test gives them.
   /// With no [counts] and no define `N`, each case runs its own counts.
-  const ChartBenchApp({
-    super.key,
-    this.cases,
-    this.counts,
-    this.settings,
-    this.profileMarks,
-  });
-
-  /// The cases, or Dart `null` for [benchCases].
-  final List<ChartBenchCase>? cases;
-
-  /// The point counts of all cases, or Dart `null` for [benchCounts].
-  final List<int>? counts;
-
-  /// The timing, or Dart `null` for [benchSettings].
-  final ChartBenchSettings? settings;
-
-  /// Whether the app prints the marks of the timed windows, or Dart `null`
-  /// for [benchProfileMarks].
-  final bool? profileMarks;
+  this;
 
   @override
   State<ChartBenchApp> createState() => _ChartBenchAppState();
 }
 
-class _ChartBenchAppState extends State<ChartBenchApp> {
+class _ChartBenchAppState() extends State<ChartBenchApp> {
   String _status = 'Waiting for the first frame';
 
   @override

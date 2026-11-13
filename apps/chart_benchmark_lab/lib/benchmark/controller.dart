@@ -55,57 +55,48 @@ String _workloadKey(BenchmarkConfig config, int durationSeconds) =>
     jsonEncode([config.toJson(), durationSeconds, benchmarkSdk]);
 
 /// Low-frequency UI readout; the chart has its own per-frame notifier.
-class RunReadout {
-  /// Current timings and session progress.
-  const RunReadout(this.timings, this.seconds, this.steps);
-
+class const RunReadout(
   /// Recent timings, or the complete finished capture.
-  final FrameMetrics timings;
+  final FrameMetrics timings,
 
   /// Time since starting, including warmup.
-  final double seconds;
+  final double seconds,
 
   /// Dataset update count.
-  final int steps;
+  final int steps,
+) {
+  /// Current timings and session progress.
+  this;
 }
 
 /// Completed, immutable benchmark evidence.
-class BenchmarkResult {
-  /// Settings and environment are frozen when the capture starts.
-  BenchmarkResult({
-    required this.library,
-    required this.config,
-    required this.viewport,
-    required this.dpr,
-    required this.refreshRate,
-    required this.metrics,
-    required this.durationSeconds,
-    required this.createdAt,
-  });
-
+class BenchmarkResult({
   /// Engine tested.
-  final ChartLibrary library;
+  required final ChartLibrary library,
 
   /// Effective feature settings.
-  final BenchmarkConfig config;
+  required final BenchmarkConfig config,
 
   /// Shared widget viewport in logical pixels.
-  final Size viewport;
+  required final Size viewport,
 
   /// Pixel ratio during measurement.
-  final double dpr;
+  required final double dpr,
 
   /// Display refresh rate, independent of the 60-FPS budget.
-  final double refreshRate;
+  required final double refreshRate,
 
   /// Warmup-filtered engine metrics.
-  final FrameMetrics metrics;
+  required final FrameMetrics metrics,
 
   /// Requested measured duration, excluding the two-second warmup.
-  final int durationSeconds;
+  required final int durationSeconds,
 
   /// Capture completion time for export.
-  final DateTime createdAt;
+  required final DateTime createdAt,
+}) {
+  /// Settings and environment are frozen when the capture starts.
+  this;
 
   /// Comparison identity excludes the engine but includes effective workload.
   late final String comparisonKey = _comparisonKey(
@@ -166,11 +157,11 @@ class BenchmarkResult {
 }
 
 /// Owns one active library and one isolated measurement session.
-class BenchmarkController extends ChangeNotifier {
+class BenchmarkController(TickerProvider vsync, {Random? random})
+    extends ChangeNotifier {
   /// Register the engine timing observer and a display-driven workload ticker.
   /// [random] orders each bulk capture pass; tests give it a fixed seed.
-  BenchmarkController(TickerProvider vsync, {Random? random})
-    : _random = random ?? Random() {
+  this {
     _generator = DatasetGenerator(config.count, config.seed);
     frames = ValueNotifier(_generator.frame(0));
     _ticker = vsync.createTicker(_tick);
@@ -239,7 +230,7 @@ class BenchmarkController extends ChangeNotifier {
   double _seconds = 0;
   int _step = 0;
   int _session = 0;
-  final Random _random;
+  final Random _random = random ?? Random();
   List<ChartLibrary> _batchOrder = const [];
   int? _batchIndex;
   bool _disposed = false;

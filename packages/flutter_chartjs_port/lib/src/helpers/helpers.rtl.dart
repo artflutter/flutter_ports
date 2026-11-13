@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 /// `'center' | 'left' | 'right'`, but `plugin.legend.js:370` passes
 /// `legendItem.textAlign`, which can be `undefined`, and `plugin.tooltip.js`
 /// passes resolved option values (Chart.js ADR 0043).
-abstract interface class RTLAdapter {
+abstract interface class RTLAdapter() {
   /// helpers.rtl.ts:2 `x`.
   double x(double x);
 
@@ -43,13 +43,8 @@ abstract interface class RTLAdapter {
 /// The object methods close over the parameters `rectX` and `width` of
 /// `getRightToLeftAdapter`. Here they are fields. `setWidth` writes [_width],
 /// as upstream writes the parameter `width`.
-final class _RightToLeftAdapter implements RTLAdapter {
-  _RightToLeftAdapter(this._rectX, this._width);
-
-  final double _rectX;
-
-  double _width;
-
+final class _RightToLeftAdapter(final double _rectX, var double _width)
+    implements RTLAdapter {
   /// helpers.rtl.ts:11 `x`.
   @override
   double x(double x) {
@@ -91,9 +86,7 @@ RTLAdapter _getRightToLeftAdapter(double rectX, double width) {
 }
 
 /// helpers.rtl.ts:33 the object literal of `getLeftToRightAdapter`.
-final class _LeftToRightAdapter implements RTLAdapter {
-  const _LeftToRightAdapter();
-
+final class const _LeftToRightAdapter() implements RTLAdapter {
   /// helpers.rtl.ts:34 `x`.
   @override
   double x(double x) {

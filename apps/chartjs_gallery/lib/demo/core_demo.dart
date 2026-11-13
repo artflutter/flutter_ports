@@ -123,16 +123,19 @@ const Map<String, ChartAxis> _unitAxes = {
 /// and the commands, `hover` and `update`. The readout and the help text come
 /// after the chart. Each segment has a `ValueKey` (`core.mode.index`,
 /// `core.hover.duration.400`, `core.data.randomize`, ...).
-class CoreDemo extends StatefulWidget {
+class const CoreDemo({super.key}) extends StatefulWidget {
   /// Creates the core tab.
-  const CoreDemo({super.key});
+  this;
 
   @override
   State<CoreDemo> createState() => CoreDemoState();
 }
 
 /// The state of [CoreDemo]: the configuration, the data and the chart.
-class CoreDemoState extends State<CoreDemo> {
+class CoreDemoState() extends State<CoreDemo> {
+  /// A new state of [CoreDemo].
+  this;
+
   final math.Random _random = math.Random(5);
   Chart? _chart;
 

@@ -15,12 +15,14 @@ import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 /// A chart below reads [maybeOf]: Dart `null` gives the Chart.js look.
 /// `const ChartThemeData()` themes nothing. The theme is not animated:
 /// Chart.js animates the element colors itself.
-class ChartTheme extends InheritedTheme {
-  /// Gives [data] to the charts of [child].
-  const ChartTheme({required this.data, required super.child, super.key});
-
+class const ChartTheme({
   /// The theme of the charts below.
-  final ChartThemeData data;
+  required final ChartThemeData data,
+  required super.child,
+  super.key,
+}) extends InheritedTheme {
+  /// Gives [data] to the charts of [child].
+  this;
 
   /// The nearest theme, or Dart `null` when no [ChartTheme] is above
   /// [context]. A chart reads this theme.

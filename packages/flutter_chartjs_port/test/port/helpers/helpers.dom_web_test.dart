@@ -17,24 +17,18 @@ import 'package:test/test.dart';
 
 /// A test container: the parent node of a canvas, with the content box
 /// [contentWidth] x [contentHeight].
-final class _Container implements CanvasContainer {
-  const _Container(this.contentWidth, this.contentHeight);
-
-  @override
-  final double contentWidth;
-
-  @override
-  final double contentHeight;
-
+final class const _Container(
+  @override final double contentWidth,
+  @override final double contentHeight,
+) implements CanvasContainer {
   @override
   bool get isConnected => true;
 }
 
 /// A map-backed inline style.
-final class _Style implements CSSStyleDeclaration {
-  _Style([Map<String, String>? values]) : values = {...?values};
-
-  final Map<String, String> values;
+final class _Style([Map<String, String>? values])
+    implements CSSStyleDeclaration {
+  final Map<String, String> values = {...?values};
 
   @override
   String getPropertyValue(String property) => values[property] ?? '';
@@ -53,12 +47,8 @@ final class _Style implements CSSStyleDeclaration {
 }
 
 /// A canvas element of 300 x 150 device pixels in [parentNode].
-final class _Canvas implements HTMLCanvasElement, CanvasNode {
-  _Canvas({this.parentNode, _Style? style}) : style = style ?? _Style();
-
-  @override
-  CanvasContainer? parentNode;
-
+final class _Canvas({@override var CanvasContainer? parentNode, _Style? style})
+    implements HTMLCanvasElement, CanvasNode {
   @override
   int width = 300;
 
@@ -66,7 +56,7 @@ final class _Canvas implements HTMLCanvasElement, CanvasNode {
   int height = 150;
 
   @override
-  final _Style style;
+  final _Style style = style ?? _Style();
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -78,7 +68,7 @@ final class _Canvas implements HTMLCanvasElement, CanvasNode {
 
 /// A context that records its `setTransform` calls as the mock context
 /// does.
-final class _Context implements CanvasRenderingContext2D {
+final class _Context() implements CanvasRenderingContext2D {
   final List<List<double>> transforms = [];
 
   @override
@@ -100,21 +90,16 @@ final class _Context implements CanvasRenderingContext2D {
 /// A chart of [width] x [height] with a [_Canvas] and a [_Context].
 /// `currentDevicePixelRatio` starts as NaN, the `ToNumber` of the
 /// `undefined` of a new chart.
-final class _Chart implements Chart {
-  _Chart(this.width, this.height, {_Style? style})
-    : canvas = _Canvas(style: style);
-
-  @override
-  double width;
-
-  @override
-  double height;
-
+final class _Chart(
+  @override var double width,
+  @override var double height, {
+  _Style? style,
+}) implements Chart {
   @override
   double currentDevicePixelRatio = double.nan;
 
   @override
-  final _Canvas canvas;
+  final _Canvas canvas = _Canvas(style: style);
 
   @override
   final _Context ctx = _Context();

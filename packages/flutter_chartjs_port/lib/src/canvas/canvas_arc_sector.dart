@@ -5,7 +5,7 @@
 ///
 /// A context that does not implement it gets the Canvas 2D calls of
 /// `ArcElement.draw`.
-abstract interface class ArcSectorCanvas {
+abstract interface class ArcSectorCanvas() {
   /// Whether `translate(0, 0)` changes nothing on this context, so that the
   /// element may skip the call and the angles of the call. A recording context
   /// gives false: the call is an observation.

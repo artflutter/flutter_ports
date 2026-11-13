@@ -155,11 +155,14 @@ Object _scopeObject(Object? node) =>
 /// (Chart.js ADR 0054 §3), in the upstream order of the constructor. The
 /// typed setters write them; the readers by name read them as Map entries,
 /// for example `defaults['color']`.
-base class Defaults extends ChartOptionsScope implements types.Defaults {
+base class Defaults(
+  Object? descriptorValues,
+  List<void Function(Defaults)> appliers,
+) extends ChartOptionsScope implements types.Defaults {
   /// core.defaults.js:39 `constructor(_descriptors, _appliers)`.
   ///
   /// [descriptorValues] is `_descriptors`. [appliers] is `_appliers`.
-  Defaults(Object? descriptorValues, List<void Function(Defaults)> appliers) {
+  this {
     animationCell = optUndefined;
     backgroundColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1));
     borderColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1));

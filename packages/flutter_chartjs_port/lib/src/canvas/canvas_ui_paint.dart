@@ -118,12 +118,12 @@ CanvasCompositeOperation compositeOperationOf(ui.BlendMode mode) =>
 
 /// A [CanvasImageSource] that wraps a `ui.Image`, for
 /// [CanvasRenderingContext2D.drawImage].
-final class UiImageSource implements CanvasImageSource {
-  /// Wraps [image]. Its size in CSS pixels is its size in pixels.
-  UiImageSource(this.image);
-
+final class UiImageSource(
   /// The image.
-  final ui.Image image;
+  final ui.Image image,
+) implements CanvasImageSource {
+  /// Wraps [image]. Its size in CSS pixels is its size in pixels.
+  this;
 
   @override
   double get width => image.width.toDouble();
@@ -133,7 +133,7 @@ final class UiImageSource implements CanvasImageSource {
 }
 
 /// The last shader of a [ChartShaderPaint], with the matrix of its draw.
-final class _ShaderCache {
+final class _ShaderCache() {
   Float64List? matrix;
   ui.Shader? shader;
   List<ui.Color>? colors;

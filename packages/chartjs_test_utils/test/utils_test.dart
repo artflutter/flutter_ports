@@ -43,15 +43,9 @@ import 'package:flutter_test/flutter_test.dart';
 // built-in component: the charts have no type and no dataset.
 
 /// A chart event of [type] at (10, 10).
-final class _Event implements types.ChartEvent {
-  _Event(this.type)
-    : native = NativeEvent(type: type, offsetX: 10, offsetY: 10);
-
+final class _Event(@override final String type) implements types.ChartEvent {
   @override
-  final String type;
-
-  @override
-  final NativeEvent native;
+  final NativeEvent native = NativeEvent(type: type, offsetX: 10, offsetY: 10);
 
   @override
   double? get x => 10;
@@ -1000,11 +994,12 @@ void main() {
 }
 
 /// A chart event of `type` with a native event of `nativeType`.
-final class _NativeEvent extends _Event {
-  _NativeEvent(super.type, String nativeType)
-    : _native = NativeEvent(type: nativeType, offsetX: 10, offsetY: 10);
-
-  final NativeEvent _native;
+final class _NativeEvent(super.type, String nativeType) extends _Event {
+  final NativeEvent _native = NativeEvent(
+    type: nativeType,
+    offsetX: 10,
+    offsetY: 10,
+  );
 
   @override
   NativeEvent get native => _native;

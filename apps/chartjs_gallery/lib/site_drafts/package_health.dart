@@ -5,19 +5,18 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// A checked public-metadata snapshot, shared across the cards of one page.
-class PackageHealthSnapshot {
+class PackageHealthSnapshot.fromJson(Map<String, Object?> json) {
   /// Creates a snapshot from the refresh tool's JSON.
-  PackageHealthSnapshot.fromJson(Map<String, Object?> json)
-    : checkedAt = DateTime.parse(json['checked_at']! as String),
-      packages = (json['packages']! as Map<String, Object?>).map(
-        (key, value) => MapEntry(key, value! as Map<String, Object?>),
-      );
+  this;
 
   /// When the source APIs were queried, in UTC.
-  final DateTime checkedAt;
+  final DateTime checkedAt = DateTime.parse(json['checked_at']! as String);
 
   /// Package-level activity and explicitly repository-level issue/PR counts.
-  final Map<String, Map<String, Object?>> packages;
+  final Map<String, Map<String, Object?>> packages =
+      (json['packages']! as Map<String, Object?>).map(
+        (key, value) => MapEntry(key, value! as Map<String, Object?>),
+      );
 
   /// Loads the bundled snapshot without making runtime API requests.
   static Future<PackageHealthSnapshot> load() async {
@@ -31,23 +30,20 @@ class PackageHealthSnapshot {
 }
 
 /// Compact, responsive project-health metrics with provenance and scope.
-class PackageHealth extends StatelessWidget {
-  /// Shows [package]'s metrics from the shared [snapshot].
-  const PackageHealth({
-    required this.package,
-    required this.snapshot,
-    required this.onSource,
-    super.key,
-  });
-
+class const PackageHealth({
   /// The pub.dev package name, including unpublished workspace package names.
-  final String package;
+  required final String package,
 
   /// The page's shared metadata load.
-  final Future<PackageHealthSnapshot> snapshot;
+  required final Future<PackageHealthSnapshot> snapshot,
 
   /// Opens a reviewable source destination.
-  final void Function(String title, String description, String url) onSource;
+  required final void Function(String title, String description, String url)
+  onSource,
+  super.key,
+}) extends StatelessWidget {
+  /// Shows [package]'s metrics from the shared [snapshot].
+  this;
 
   String _date(Object? value) {
     if (value is! String) return 'Unknown';

@@ -19,7 +19,7 @@ import 'date_table_zone.dart';
 // package:clock or Intl.defaultLocale are in date_adapter_vm_test.dart.
 
 /// The mismatches of one test, at most [_shown] of them in the report.
-final class _Mismatches {
+final class _Mismatches() {
   final List<String> _lines = [];
   int count = 0;
 

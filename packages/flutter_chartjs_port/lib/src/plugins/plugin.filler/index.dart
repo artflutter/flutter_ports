@@ -53,41 +53,33 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
 /// `jsGet` of a source gives `undefined` for each key, as for the typed
 /// elements. No reader at the pin reads a source by a dynamic key (Chart.js
 /// ADR 0040, section 6).
-final class FillerSource {
-  /// index.js:26 the object literal.
-  FillerSource({
-    required this.visible,
-    required this.index,
-    required this.fill,
-    required this.chart,
-    required this.axis,
-    required this.scale,
-    required this.line,
-  });
-
+final class FillerSource({
   /// index.js:27 `visible: chart.isDatasetVisible(i)`.
-  final bool visible;
+  required final bool visible,
 
   /// index.js:28 `index: i`, the dataset index.
-  final double index;
+  required final double index,
 
   /// index.js:29 `fill: _decodeFill(line, i, count)`: `false`, a `double`
   /// dataset index, a `String` mode or the option object `{value}`
   /// (filler.options.js:46-73). `_resolveTarget` writes it (index.js:47).
-  Object fill;
+  required var Object fill,
 
   /// index.js:30 `chart`.
-  final types.Chart chart;
+  required final types.Chart chart,
 
   /// index.js:31 `axis: meta.controller.options.indexAxis`: any option
   /// value.
-  final Object? axis;
+  required final Object? axis,
 
   /// index.js:32 `scale: meta.vScale`. Dart `null` is JS `undefined`.
-  final types.Scale? scale;
+  required final types.Scale? scale,
 
   /// index.js:33 `line`, a `LineElement` (index.js:25).
-  final types.LineElement line;
+  required final types.LineElement line,
+}) {
+  /// index.js:26 the object literal.
+  this;
 }
 
 /// The axis argument of `source.line.updateControlPoints(area, source.axis)`

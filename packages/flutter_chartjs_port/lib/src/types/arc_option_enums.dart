@@ -11,7 +11,7 @@ library;
 
 /// `borderAlign` of an arc (index.d.ts:1892 `'center' | 'inner'`): where
 /// the border of an arc lies.
-enum ArcBorderAlign {
+enum ArcBorderAlign() {
   /// `'center'`: the border lies on the edge of the arc, half inside.
   center,
 
@@ -35,7 +35,7 @@ enum ArcBorderAlign {
 /// `spacingMode` of an arc (index.d.ts:1880 `ArcSpacingMode`, `'angular' |
 /// 'proportional' | 'parallel'`): the geometry of the space between two
 /// arcs.
-enum ArcSpacingMode {
+enum ArcSpacingMode() {
   /// `'angular'`: the same angle at each radius.
   angular,
 

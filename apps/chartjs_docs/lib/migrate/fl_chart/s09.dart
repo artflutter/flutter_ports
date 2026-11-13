@@ -94,8 +94,7 @@ final ChartConfig _config = fills(
   ),
 );
 
-class Sample9 extends StatelessWidget {
-  const Sample9({super.key});
+class const Sample9({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(12, 20, 20, 12),

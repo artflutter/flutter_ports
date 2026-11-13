@@ -21,14 +21,10 @@ import 'bench.dart' as core;
 import 'src/harness.dart';
 
 /// A scale `{axis, getUserBounds, getPixelForValue}`.
-final class _Scale implements Scale {
-  _Scale(this.axis, this.bounds);
-
-  @override
-  final ScaleAxis axis;
-
-  final ({double min, double max, bool minDefined, bool maxDefined}) bounds;
-
+final class _Scale(
+  @override final ScaleAxis axis,
+  final ({double min, double max, bool minDefined, bool maxDefined}) bounds,
+) implements Scale {
   @override
   ({double min, double max, bool minDefined, bool maxDefined})
   getUserBounds() => bounds;
@@ -43,15 +39,8 @@ final class _Scale implements Scale {
 
 /// A point element `{x, y}`. The control points are NaN, which stands for
 /// JS `undefined` (`SplinePoint`).
-final class _Point implements PointElement {
-  _Point(this.x, this.y);
-
-  @override
-  final double x;
-
-  @override
-  final double y;
-
+final class _Point(@override final double x, @override final double y)
+    implements PointElement {
   @override
   Map<String, Object?>? get options => null;
 
@@ -85,20 +74,13 @@ final class _Point implements PointElement {
 }
 
 /// A dataset meta object.
-final class _Meta implements ChartMeta {
-  _Meta(this.iScale, this.vScale, this.parsed);
-
+final class _Meta(
+  @override final Scale? iScale,
+  @override final Scale? vScale,
+  @override final List<Map<String, Object?>> parsed,
+) implements ChartMeta {
   @override
   bool get sorted => true;
-
-  @override
-  final Scale? iScale;
-
-  @override
-  final Scale? vScale;
-
-  @override
-  final List<Map<String, Object?>> parsed;
 
   @override
   Element? get dataset => null;

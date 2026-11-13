@@ -11,85 +11,67 @@ import 'package:material_ui/material_ui.dart';
 
 /// A section of a page. A section of level 2 is one card, and its
 /// subsections are in that card.
-class DocSection {
-  /// Creates a section.
-  const DocSection({
-    required this.id,
-    required this.title,
-    required this.body,
-    this.subsections = const [],
-  });
-
+class const DocSection({
   /// The id of the links to the section.
-  final String id;
+  required final String id,
 
   /// The heading.
-  final String title;
+  required final String title,
 
   /// The blocks of the section.
-  final List<Widget> body;
+  required final List<Widget> body,
 
   /// The subsections.
-  final List<DocSection> subsections;
+  final List<DocSection> subsections = const [],
+}) {
+  /// Creates a section.
+  this;
 }
 
 /// The content of a page.
-class DocPageContent {
-  /// Creates a page.
-  const DocPageContent({
-    required this.title,
-    required this.navLabel,
-    required this.icon,
-    required this.intro,
-    required this.sections,
-    this.credit = 'The text follows the Chart.js documentation (MIT).',
-  });
-
+class const DocPageContent({
   /// The heading of the page.
-  final String title;
+  required final String title,
 
   /// The name of the page in the navigation.
-  final String navLabel;
+  required final String navLabel,
 
   /// The icon of the page in the navigation.
-  final IconData icon;
+  required final IconData icon,
 
   /// The blocks of the first card, below the heading.
-  final List<Widget> intro;
+  required final List<Widget> intro,
 
   /// The sections after the first card.
-  final List<DocSection> sections;
+  required final List<DocSection> sections,
 
   /// The line below the last card: the source of the text.
-  final String credit;
+  final String credit = 'The text follows the Chart.js documentation (MIT).',
+}) {
+  /// Creates a page.
+  this;
 }
 
 /// A page of the site in the navigation: its route, its group and how to
 /// build it.
-class DocPageLink {
-  /// Creates the link of a page.
-  const DocPageLink({
-    required this.route,
-    required this.group,
-    required this.navLabel,
-    required this.icon,
-    required this.build,
-  });
-
+class const DocPageLink({
   /// The route name of the page, for example `/migrate/fl_chart`.
-  final String route;
+  required final String route,
 
   /// The heading of the group of the page in the navigation.
-  final String group;
+  required final String group,
 
   /// The name of the page in the navigation.
-  final String navLabel;
+  required final String navLabel,
 
   /// The icon of the page in the navigation.
-  final IconData icon;
+  required final IconData icon,
 
   /// Builds the content of the page.
-  final DocPageContent Function() build;
+  required final DocPageContent Function() build,
+}) {
+  /// Creates the link of a page.
+  this;
 }
 
 /// The widest layout of the text and the charts.
@@ -102,34 +84,29 @@ const double _frameWidth = 292 + 20 + _contentWidth;
 const String _top = 'top';
 
 /// The frame of a docs page: the header, the navigation and the content.
-class DocPage extends StatefulWidget {
-  /// Creates the frame of [content], the page with the route [route] of
-  /// [pages].
-  const DocPage({
-    required this.content,
-    required this.snippets,
-    this.pages = const [],
-    this.route = '/',
-    super.key,
-  });
-
+class const DocPage({
   /// The content.
-  final DocPageContent content;
-
-  /// The pages of the site, in navigation order.
-  final List<DocPageLink> pages;
-
-  /// The route of this page.
-  final String route;
+  required final DocPageContent content,
 
   /// The code regions of the content.
-  final Snippets snippets;
+  required final Snippets snippets,
+
+  /// The pages of the site, in navigation order.
+  final List<DocPageLink> pages = const [],
+
+  /// The route of this page.
+  final String route = '/',
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the frame of [content], the page with the route [route] of
+  /// [pages].
+  this;
 
   @override
   State<DocPage> createState() => _DocPageState();
 }
 
-class _DocPageState extends State<DocPage> {
+class _DocPageState() extends State<DocPage> {
   final ScrollController _scroll = ScrollController();
   final Map<String, GlobalKey> _keys = {};
   final ValueNotifier<String> _active = ValueNotifier(_top);

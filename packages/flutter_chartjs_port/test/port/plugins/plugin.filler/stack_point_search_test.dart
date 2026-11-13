@@ -14,26 +14,22 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
-final class _Chart implements types.Chart {
+final class _Chart() implements types.Chart {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _Meta implements types.ChartMeta {
-  _Meta(this.index, this.dataset);
-  @override
-  final double index;
-  @override
-  final types.Element dataset;
+final class _Meta(
+  @override final double index,
+  @override final types.Element dataset,
+) implements types.ChartMeta {
   @override
   bool get hidden => false;
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _Scale implements types.Scale {
-  _Scale(this.metas);
-  final List<types.ChartMeta> metas;
+final class _Scale(final List<types.ChartMeta> metas) implements types.Scale {
   @override
   double get bottom => 100;
   @override
@@ -90,7 +86,7 @@ void _compare(List<LineElement> lines) {
   }
 }
 
-class _CustomLine extends LineElement {
+class _CustomLine() extends LineElement {
   int calls = 0;
   @override
   Object? interpolate(types.Point point, String property) {
@@ -99,7 +95,7 @@ class _CustomLine extends LineElement {
   }
 }
 
-class _UnreadLine extends LineElement {
+class _UnreadLine() extends LineElement {
   @override
   List<types.PointElement> get points =>
       throw StateError('unreachable line read');

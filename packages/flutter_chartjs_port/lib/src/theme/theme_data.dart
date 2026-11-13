@@ -28,27 +28,67 @@ import 'package:flutter_chartjs_port/src/theme/presets.dart';
 /// `overrides[type]` come before the theme, and `defaults` after it
 /// (theming.md §3.2).
 @immutable
-class ChartThemeData with Diagnosticable {
+class const ChartThemeData({
+  /// Replaces `Defaults.color` `'#666'` (`core.defaults.js:43`): the ticks,
+  /// the scale titles, the point labels, the legend, the title and the
+  /// subtitle.
+  final Color? color,
+
+  /// Replaces `Defaults.borderColor` (`core.defaults.js:42`): the grid, the
+  /// scale border, the angle lines and the borders of points, lines and
+  /// bars.
+  final Color? borderColor,
+
+  /// Replaces `Defaults.backgroundColor` (`core.defaults.js:41`) of the four
+  /// elements.
+  final Color? backgroundColor,
+
+  /// Replaces the arc border `'#fff'` (`element.arc.ts:379`) and, at alpha
+  /// 0.75, the tick backdrop (`core.scale.defaults.js:81`).
+  final Color? surface,
+
+  /// Replaces the tooltip background `'rgba(0,0,0,0.8)'`
+  /// (`plugin.tooltip.js:1279`).
+  final Color? inverseSurface,
+
+  /// Replaces the `'#fff'` of the tooltip texts and of `multiKeyBackground`
+  /// (`plugin.tooltip.js:1280, 1287, 1292, 1305`).
+  final Color? onInverseSurface,
+
+  /// Replaces `Defaults.font` (`core.defaults.js:54-60`).
+  ///
+  /// The chart takes the `TextStyle` itself (Chart.js ADR 0116): it lays out
+  /// the texts with it, and its line height in pixels is `fontSize *
+  /// height`. Thus an app can give a `TextStyle` of its text theme. The
+  /// color of the texts is [color], not the color of the `TextStyle`.
+  final TextStyle? font,
+
+  /// The point-label font of the radial linear scale, over [font] without
+  /// its size (`scale.radialLinear.js:383-385`, theming.md §3.4).
+  final TextStyle? pointLabelsFont,
+
+  /// The palette of the colors plugin (`plugin.colors.ts:14-22`).
+  ///
+  /// Null and an empty list keep the Chart.js palette. The plugin colors
+  /// only datasets with no colors (`plugin.colors.ts:102-125`). Do not
+  /// change the list after the construction: the compiled theme is kept for
+  /// each instance.
+  final List<Color>? palette,
+
+  /// The alpha of the background colors of [palette]
+  /// (`plugin.colors.ts:25`), from 0 to 1. No effect without [palette].
+  final double paletteBackgroundAlpha = 0.5,
+}) with Diagnosticable {
   /// A theme of the given tokens. `const ChartThemeData()` themes nothing:
   /// a chart with it equals an unthemed chart.
   ///
   /// [paletteBackgroundAlpha] is a number from 0 to 1. A debug assert
   /// checks it.
-  const ChartThemeData({
-    this.color,
-    this.borderColor,
-    this.backgroundColor,
-    this.surface,
-    this.inverseSurface,
-    this.onInverseSurface,
-    this.font,
-    this.pointLabelsFont,
-    this.palette,
-    this.paletteBackgroundAlpha = 0.5,
-  }) : assert(
-         paletteBackgroundAlpha >= 0 && paletteBackgroundAlpha <= 1,
-         'paletteBackgroundAlpha is a number from 0 to 1',
-       );
+  this
+    : assert(
+        paletteBackgroundAlpha >= 0 && paletteBackgroundAlpha <= 1,
+        'paletteBackgroundAlpha is a number from 0 to 1',
+      );
 
   /// The Chart.js v4.6.1 defaults and the 7 colors of
   /// `plugin.colors.ts:14-22`. A chart with it equals an unthemed chart.
@@ -62,7 +102,7 @@ class ChartThemeData with Diagnosticable {
   /// the size 10 (`scale.radialLinear.js:383-385`) and [palette] the colors
   /// of `BORDER_COLORS` at alpha 1 with the alpha 0.5 of `BACKGROUND_COLORS`
   /// (`plugin.colors.ts:14-25`).
-  const ChartThemeData.light()
+  const new light()
     : this(
         color: LightThemeTokens.color,
         borderColor: LightThemeTokens.borderColor,
@@ -84,7 +124,7 @@ class ChartThemeData with Diagnosticable {
   /// white at alpha 0.1, [surface] `#000000`, [inverseSurface] white at
   /// alpha 0.8 and [onInverseSurface] `#000000`. Set [surface] with
   /// [copyWith] for another background.
-  const ChartThemeData.dark()
+  const new dark()
     : this(
         color: const Color.from(
           alpha: 1,
@@ -102,56 +142,6 @@ class ChartThemeData with Diagnosticable {
         palette: LightThemeTokens.palette,
         paletteBackgroundAlpha: LightThemeTokens.paletteBackgroundAlpha,
       );
-
-  /// Replaces `Defaults.color` `'#666'` (`core.defaults.js:43`): the ticks,
-  /// the scale titles, the point labels, the legend, the title and the
-  /// subtitle.
-  final Color? color;
-
-  /// Replaces `Defaults.borderColor` (`core.defaults.js:42`): the grid, the
-  /// scale border, the angle lines and the borders of points, lines and
-  /// bars.
-  final Color? borderColor;
-
-  /// Replaces `Defaults.backgroundColor` (`core.defaults.js:41`) of the four
-  /// elements.
-  final Color? backgroundColor;
-
-  /// Replaces the arc border `'#fff'` (`element.arc.ts:379`) and, at alpha
-  /// 0.75, the tick backdrop (`core.scale.defaults.js:81`).
-  final Color? surface;
-
-  /// Replaces the tooltip background `'rgba(0,0,0,0.8)'`
-  /// (`plugin.tooltip.js:1279`).
-  final Color? inverseSurface;
-
-  /// Replaces the `'#fff'` of the tooltip texts and of `multiKeyBackground`
-  /// (`plugin.tooltip.js:1280, 1287, 1292, 1305`).
-  final Color? onInverseSurface;
-
-  /// Replaces `Defaults.font` (`core.defaults.js:54-60`).
-  ///
-  /// The chart takes the `TextStyle` itself (Chart.js ADR 0116): it lays out
-  /// the texts with it, and its line height in pixels is `fontSize *
-  /// height`. Thus an app can give a `TextStyle` of its text theme. The
-  /// color of the texts is [color], not the color of the `TextStyle`.
-  final TextStyle? font;
-
-  /// The point-label font of the radial linear scale, over [font] without
-  /// its size (`scale.radialLinear.js:383-385`, theming.md §3.4).
-  final TextStyle? pointLabelsFont;
-
-  /// The palette of the colors plugin (`plugin.colors.ts:14-22`).
-  ///
-  /// Null and an empty list keep the Chart.js palette. The plugin colors
-  /// only datasets with no colors (`plugin.colors.ts:102-125`). Do not
-  /// change the list after the construction: the compiled theme is kept for
-  /// each instance.
-  final List<Color>? palette;
-
-  /// The alpha of the background colors of [palette]
-  /// (`plugin.colors.ts:25`), from 0 to 1. No effect without [palette].
-  final double paletteBackgroundAlpha;
 
   /// A copy with the given tokens. A null argument keeps the token.
   ChartThemeData copyWith({
