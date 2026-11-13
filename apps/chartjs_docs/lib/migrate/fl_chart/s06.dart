@@ -26,8 +26,8 @@ LineDataset _line(List<num> ys, Color from, Color to, Color text) =>
       extra: {
         'borderColor': horizontalGradient([from, to]),
         'pointHitRadius': 12,
-        'clip': false,
       },
+      clip: ChartClip.none,
     );
 
 const Map<String, Map<String, Object>> _visibleBorder = {

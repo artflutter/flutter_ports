@@ -5,6 +5,7 @@ library;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
@@ -23,7 +24,8 @@ Map<String, Object?> fixture() {
       'data': <String, Object?>{
         'datasets': <Object?>[
           <String, Object?>{
-            'clip': false,
+            // DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
+            'clip': ChartClip.none,
             'radius': 8,
             'borderWidth': 0,
             'backgroundColor': (Object? ctx) =>

@@ -80,7 +80,7 @@ final class _FakeMeta({
   @override required var types.Scale? iScale,
 }) implements types.ChartMeta {
   @override
-  types.ChartClip clip = const types.ChartClip(disabled: true);
+  types.ChartClip clip = types.ChartClip.none;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

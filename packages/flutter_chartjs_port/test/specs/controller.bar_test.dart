@@ -1943,7 +1943,8 @@ void main() {
             'datasets': <Object?>[
               <String, Object?>{
                 'data': <Object?>[1, 2, 3],
-                'clip': false,
+                // DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
+                'clip': ChartClip.none,
               },
             ],
           },

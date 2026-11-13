@@ -522,7 +522,7 @@ void main() {
         expect(options['layout'], {'autoPadding': false});
         expect(options['scales'], unitScales(hideTicks: true));
         expect(dataset['showLine'], false);
-        expect(dataset['clip'], false);
+        expect(dataset['clip'], ChartClip.none);
         expect(dataset['pointStyle'], const CirclePointStyle());
         expect(dataset['radius'], 3.0);
       } else {

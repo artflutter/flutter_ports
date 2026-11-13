@@ -50,6 +50,7 @@ import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart' show ChartFill;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
@@ -107,6 +108,14 @@ abstract final class const Dataset({
   /// is 0.
   final int? order,
 
+  /// How the chart clips the drawing of the dataset: `clip`.
+  ///
+  /// [ChartClip.all] lets the drawing overflow the area of the dataset by its
+  /// pixels on each side, or clips inside the area for a negative value.
+  /// [ChartClip.none] draws with no clip area. The default lets the points at
+  /// the edge of the area draw whole.
+  final ChartClip? clip,
+
   /// The data-item fill: a constant, indexed list or typed callback.
   /// A null parameter inherits the default. This lowers to `backgroundColor`.
   final ChartValue<ChartPaint>? backgroundColor,
@@ -142,7 +151,7 @@ abstract final class const Dataset({
   final TooltipCallbacks? tooltipCallbacks,
 
   /// The Chart.js options of the dataset that have no parameter, for
-  /// example `{'clip': 5}`.
+  /// example `{'normalized': true}`.
   ///
   /// The entries go into the dataset Map last: an entry wins over a
   /// parameter with the same key. A Map value merges into the Map of the
@@ -163,6 +172,7 @@ abstract final class const Dataset({
     String? label,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -191,6 +201,7 @@ abstract final class const Dataset({
   List<TypedProperty> get _styleProps => [
     ('hidden', hidden),
     ('order', order),
+    ('clip', clip),
     ('backgroundColor', backgroundColor),
     ('borderColor', borderColor),
     ('borderWidth', borderWidth),
@@ -253,6 +264,7 @@ OptionScope lowerDataset(
   put(scope, OptionKey.data, dataset._data);
   put(scope, OptionKey.hidden, dataset.hidden);
   put(scope, OptionKey.order, dataset.order);
+  put(scope, OptionKey.clip, dataset.clip);
   if (dataset.backgroundColor case final value?) {
     // Preserve the public variant directly, without raw value classification.
     scope.store(OptionKey.backgroundColor, value.toOptionCell());
@@ -388,6 +400,7 @@ final class const BarDataset({
   final List<DataPoint>? points,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -463,6 +476,7 @@ final class const BarDataset({
     List<DataPoint>? points,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -490,6 +504,7 @@ final class const BarDataset({
     points: points ?? this.points,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -645,6 +660,7 @@ final class const LineDataset({
   final List<DataPoint>? points,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -778,6 +794,7 @@ final class const LineDataset({
     List<DataPoint>? points,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -815,6 +832,7 @@ final class const LineDataset({
     points: points ?? this.points,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -896,6 +914,7 @@ final class const ScatterDataset({
   final List<DataPoint>? points,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -979,6 +998,7 @@ final class const ScatterDataset({
     List<DataPoint>? points,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -1015,6 +1035,7 @@ final class const ScatterDataset({
     points: points ?? this.points,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -1092,6 +1113,7 @@ final class const BubbleDataset({
   final List<DataPoint>? points,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -1129,6 +1151,7 @@ final class const BubbleDataset({
     List<DataPoint>? points,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -1149,6 +1172,7 @@ final class const BubbleDataset({
     points: points ?? this.points,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -1252,6 +1276,7 @@ final class const PieDataset({
   final List<num?>? data,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -1322,6 +1347,7 @@ final class const PieDataset({
     List<num?>? data,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -1345,6 +1371,7 @@ final class const PieDataset({
     data: data ?? this.data,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -1397,6 +1424,7 @@ final class const DoughnutDataset({
   final List<num?>? data,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -1443,6 +1471,7 @@ final class const DoughnutDataset({
     List<num?>? data,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -1466,6 +1495,7 @@ final class const DoughnutDataset({
     data: data ?? this.data,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -1518,6 +1548,7 @@ final class const PolarAreaDataset({
   final List<num?>? data,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -1547,6 +1578,7 @@ final class const PolarAreaDataset({
     List<num?>? data,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -1565,6 +1597,7 @@ final class const PolarAreaDataset({
     data: data ?? this.data,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
@@ -1618,6 +1651,7 @@ final class const RadarDataset({
   final List<num?>? data,
   super.hidden,
   super.order,
+  super.clip,
   super.backgroundColor,
   super.borderColor,
   super.borderWidth,
@@ -1689,6 +1723,7 @@ final class const RadarDataset({
     List<num?>? data,
     bool? hidden,
     int? order,
+    ChartClip? clip,
     ChartValue<ChartPaint>? backgroundColor,
     ChartValue<ChartPaint>? borderColor,
     double? borderWidth,
@@ -1721,6 +1756,7 @@ final class const RadarDataset({
     data: data ?? this.data,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
+    clip: clip ?? this.clip,
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,

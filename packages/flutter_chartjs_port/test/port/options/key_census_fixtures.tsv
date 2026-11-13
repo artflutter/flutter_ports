@@ -50,13 +50,6 @@ init	data.datasets[].borderWidth[].right	int
 init	data.datasets[].borderWidth[].top	int
 init	data.datasets[].categoryPercentage	int
 init	data.datasets[].circumference	int
-init	data.datasets[].clip	bool
-init	data.datasets[].clip	int
-init	data.datasets[].clip	Map
-init	data.datasets[].clip.bottom	int
-init	data.datasets[].clip.left	bool
-init	data.datasets[].clip.right	int
-init	data.datasets[].clip.top	int
 init	data.datasets[].cubicInterpolationMode	fn
 init	data.datasets[].cubicInterpolationMode	String
 init	data.datasets[].data	List
@@ -193,7 +186,6 @@ init	options.borderWidth	int
 init	options.categoryPercentage	int
 init	options.circumference	double
 init	options.circumference	int
-init	options.clip	bool
 init	options.cubicInterpolationMode	String
 init	options.cutout	String
 init	options.datasets	Map
@@ -625,13 +617,6 @@ update	data.datasets[].borderWidth[].right	int
 update	data.datasets[].borderWidth[].top	int
 update	data.datasets[].categoryPercentage	int
 update	data.datasets[].circumference	int
-update	data.datasets[].clip	bool
-update	data.datasets[].clip	int
-update	data.datasets[].clip	Map
-update	data.datasets[].clip.bottom	int
-update	data.datasets[].clip.left	bool
-update	data.datasets[].clip.right	int
-update	data.datasets[].clip.top	int
 update	data.datasets[].cubicInterpolationMode	fn
 update	data.datasets[].cubicInterpolationMode	String
 update	data.datasets[].data	List
@@ -768,7 +753,6 @@ update	options.borderWidth	int
 update	options.categoryPercentage	int
 update	options.circumference	double
 update	options.circumference	int
-update	options.clip	bool
 update	options.cubicInterpolationMode	String
 update	options.cutout	String
 update	options.datasets	Map

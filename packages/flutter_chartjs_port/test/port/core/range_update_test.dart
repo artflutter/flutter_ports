@@ -37,6 +37,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
     show LttbDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -130,7 +131,7 @@ Object? Function(Object?) _padding(_Log log) => (ctx) {
 
 Object? Function(Object?) _clip(_Log log) => (ctx) {
   log.context('clip', ctx);
-  return 2.0;
+  return const ChartClip.all(2);
 };
 
 Map<String, Object?> _ticks(_Log log) => <String, Object?>{

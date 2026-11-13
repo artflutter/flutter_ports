@@ -29,6 +29,7 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -30257,11 +30258,11 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 2.0, 3.0],
-            'clip': false,
+            'clip': ChartClip.none,
           },
           <String, Object?>{
             'data': <Object?>[2.0, 3.0, 1.0],
-            'clip': 10.0,
+            'clip': ChartClip.all(10),
           },
         ],
       },

@@ -10,7 +10,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show CirclePointStyle;
+    show ChartClip, CirclePointStyle;
 // Not public: jsToNumber of case (c), kept for the series before phase 9.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 // Not public: jsGet of case (c), kept for the series before phase 9.
@@ -331,7 +331,7 @@ Map<String, Object?>? _stressScales(StressChartType type) => switch (type) {
 /// - [plugins]: the inline plugins.
 ///
 /// line and scatter have `parsing: false`, `layout.autoPadding: false`, the
-/// dataset option `clip: false` and two hidden linear scales of the
+/// dataset option `clip: ChartClip.none` and two hidden linear scales of the
 /// fractions 0 to 1 ([unitScales]). Thus each point is at the pixel of the
 /// phase 5 fraction path, the chart area is the canvas, and all points
 /// draw, also with the unsorted x of the field (Chart.js ADR 0031 section
@@ -390,7 +390,7 @@ Map<String, Object?> stressChartConfig({
             'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
             'showLine': showLine,
-            'clip': false,
+            'clip': ChartClip.none,
           },
         },
       ],

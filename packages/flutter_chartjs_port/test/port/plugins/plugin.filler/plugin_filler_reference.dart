@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -24228,7 +24229,7 @@ const List<PluginFillerReferenceCase> pluginFillerReference = [
             'borderColor': 'black',
             'backgroundColor': 'rgba(0, 0, 255, 0.3)',
             'fill': FillBoundary.origin,
-            'clip': false,
+            'clip': ChartClip.none,
           },
         ],
       },

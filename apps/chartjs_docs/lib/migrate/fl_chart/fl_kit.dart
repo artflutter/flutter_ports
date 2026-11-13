@@ -294,7 +294,7 @@ ChartConfig fills(ChartConfig config, {bool clip = false}) => config.copyWith(
       : {
           ...?config.extra,
           'datasets': {
-            'line': {'clip': false},
+            'line': {'clip': ChartClip.none},
           },
         },
 );

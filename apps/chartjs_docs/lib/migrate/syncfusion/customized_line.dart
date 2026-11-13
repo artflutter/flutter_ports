@@ -84,7 +84,8 @@ final ChartConfig _config = ChartConfig(
       borderWidth: 2,
       pointRadius: 0,
       pointHoverRadius: 0,
-      extra: const {'pointHitRadius': 0, 'clip': 0, 'animation': false},
+      clip: const ChartClip.all(0),
+      extra: const {'pointHitRadius': 0, 'animation': false},
     ),
     LineDataset(
       points: [

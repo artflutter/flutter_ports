@@ -145,7 +145,8 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
         'The custom series renderer is an inline plugin. It draws the dashed '
             'high and low lines and their labels in `afterDatasetsDraw`.',
         'The black series on the top and the right edges is a dataset with '
-            "`pointRadius: 0` and `'clip': 0`. It gets no tooltip.",
+            '`pointRadius: 0` and `clip: ChartClip.all(0)`. It gets no '
+            'tooltip.',
         "`TooltipBehavior(header: '')` is a `title` callback that returns "
             'no lines.',
       ],

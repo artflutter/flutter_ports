@@ -728,7 +728,7 @@ void main() {
           dataset: {
             'clip': (Object? context) {
               if (ready) seen.add(_state(chart));
-              return false;
+              return ChartClip.none;
             },
           },
         );
@@ -749,50 +749,13 @@ void main() {
     });
 
     test('a constant clip keeps the window and its result', () {
-      for (final clip in <Object?>[false, 4.0, 'x']) {
+      for (final clip in const [
+        ChartClip.none,
+        ChartClip.all(4),
+        ChartClip(left: 1, top: 2),
+      ]) {
         _expectTwin('scatter', dataset: {'clip': clip});
       }
-    });
-
-    test('a clip object declines and keeps its result', () {
-      _expectTwin(
-        'scatter',
-        dataset: {
-          'clip': <String, Object?>{'left': 1.0, 'top': 2.0},
-        },
-      );
-    });
-
-    test('the fallback of a clip object runs at the read of clip', () {
-      List<String> run(String id) {
-        final seen = <String>[];
-        late Chart chart;
-        var ready = false;
-        final config = _config(
-          'scatter',
-          id: id,
-          dataset: {
-            'clip': <String, Object?>{
-              'left': 1.0,
-              '_fallback': (Object? name, Object? value) {
-                if (ready) seen.add(_state(chart));
-                return false;
-              },
-            },
-          },
-        );
-        chart = _chart(config);
-        ready = true;
-        for (var round = 1; round <= 2; round++) {
-          _replaceData(config, 'scatter', round);
-          chart.update('none');
-        }
-        return seen..add(_results(chart));
-      }
-
-      final native = run('scatter');
-      expect(native.length, greaterThan(1));
-      expect(native, run('ref-scatter'));
     });
 
     test('a user Map scope keeps its reads of clip', () {

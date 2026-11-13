@@ -295,7 +295,8 @@ void main() {
           ),
           (
             'an extra entry',
-            (data) => BarDataset(data: data, extra: const {'clip': 5}),
+            (data) =>
+                BarDataset(data: data, extra: const {'clip': ChartClip.all(5)}),
           ),
         ]) {
       test('a dataset field that comes: $name', () {

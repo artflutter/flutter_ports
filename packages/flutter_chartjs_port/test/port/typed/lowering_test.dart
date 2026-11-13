@@ -126,7 +126,14 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
     (d) => d.copyWith(hoverBorderWidth: 3),
     {'hoverBorderWidth': 3},
   ),
-  'extra': ((d) => d.copyWith(extra: {'clip': 5}), {'clip': 5}),
+  'clip': (
+    (d) => d.copyWith(clip: const ChartClip.all(5)),
+    {'clip': const ChartClip.all(5)},
+  ),
+  'extra': (
+    (d) => d.copyWith(extra: {'normalized': true}),
+    {'normalized': true},
+  ),
 };
 
 /// A [LineDataset], a [ScatterDataset] and a [RadarDataset] with the same
@@ -1428,10 +1435,10 @@ void main() {
             const BarDataset(
               label: 'A',
               borderWidth: 2,
-              extra: {'borderWidth': 3, 'clip': 5},
+              extra: {'borderWidth': 3, 'clip': ChartClip.all(5)},
             ),
           ),
-          {'label': 'A', 'borderWidth': 3, 'clip': 5},
+          {'label': 'A', 'borderWidth': 3, 'clip': const ChartClip.all(5)},
         );
       });
 
@@ -1553,7 +1560,7 @@ void main() {
             maxBarThickness: 12,
             minBarLength: 2,
             grouped: false,
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1578,7 +1585,7 @@ void main() {
           'maxBarThickness': 12,
           'minBarLength': 2,
           'grouped': false,
-          'clip': 5,
+          'clip': const ChartClip.all(5),
         });
       });
 
@@ -1631,7 +1638,7 @@ void main() {
             pointBorderWidth: 1,
             pointHoverBackgroundColor: const .constant(.solid(_blue)),
             pointHoverBorderColor: const .constant(.solid(_red)),
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1650,7 +1657,7 @@ void main() {
           'stack': 's',
           'indexAxis': const XAxis(),
           ...lineStyleTwin,
-          'clip': 5,
+          'clip': const ChartClip.all(5),
         });
       });
 
@@ -1684,7 +1691,7 @@ void main() {
             pointBorderWidth: 1,
             pointHoverBackgroundColor: const .constant(.solid(_blue)),
             pointHoverBorderColor: const .constant(.solid(_red)),
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1702,7 +1709,7 @@ void main() {
           'yAxisID': 'y2',
           'stack': 's',
           ...lineStyleTwin,
-          'clip': 5,
+          'clip': const ChartClip.all(5),
         });
       });
 
@@ -1725,7 +1732,7 @@ void main() {
             radius: 7,
             hoverRadius: 2,
             pointStyle: const TrianglePointStyle(),
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1744,7 +1751,7 @@ void main() {
           'radius': 7,
           'hoverRadius': 2,
           'pointStyle': const TrianglePointStyle(),
-          'clip': 5,
+          'clip': const ChartClip.all(5),
         });
       });
 
@@ -1767,7 +1774,7 @@ void main() {
         'rotation': -90,
         'cutout': const PercentRadius(60),
         'radius': const PixelRadius(120),
-        'clip': 5,
+        'clip': const ChartClip.all(5),
       };
 
       test('PieDataset', () {
@@ -1794,7 +1801,7 @@ void main() {
             rotation: -90,
             cutout: const PercentRadius(60),
             radius: const PixelRadius(120),
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, arcTwin);
@@ -1824,7 +1831,7 @@ void main() {
             rotation: -90,
             cutout: const PercentRadius(60),
             radius: const PixelRadius(120),
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, arcTwin);
@@ -1846,7 +1853,7 @@ void main() {
             offset: 4,
             hoverOffset: 8,
             spacing: 2,
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1863,7 +1870,7 @@ void main() {
           'offset': 4,
           'hoverOffset': 8,
           'spacing': 2,
-          'clip': 5,
+          'clip': const ChartClip.all(5),
         });
       });
 
@@ -1894,7 +1901,7 @@ void main() {
             pointBorderWidth: 1,
             pointHoverBackgroundColor: const .constant(.solid(_blue)),
             pointHoverBorderColor: const .constant(.solid(_red)),
-            extra: const {'clip': 5},
+            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1909,7 +1916,7 @@ void main() {
           'hoverBorderColor': _redValue,
           'hoverBorderWidth': 3,
           ...lineStyleTwin,
-          'clip': 5,
+          'clip': const ChartClip.all(5),
         });
       });
     });

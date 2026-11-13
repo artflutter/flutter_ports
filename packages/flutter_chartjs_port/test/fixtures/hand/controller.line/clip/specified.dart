@@ -3,9 +3,11 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 
-/// The upstream config, with native padding values.
+/// The upstream config, with native padding and clip values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.
+// DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
 Map<String, Object?> fixture() => <String, Object?>{
   'config': <String, Object?>{
     'type': 'scatter',
@@ -18,7 +20,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': -4.0, 'y': -4.0},
             <String, Object?>{'x': 4.0, 'y': 4.0},
           ],
-          'clip': false,
+          'clip': ChartClip.none,
         },
         <String, Object?>{
           'showLine': true,
@@ -27,7 +29,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': -4.0, 'y': -5.0},
             <String, Object?>{'x': 4.0, 'y': 3.0},
           ],
-          'clip': 5.0,
+          'clip': const ChartClip.all(5),
         },
         <String, Object?>{
           'showLine': true,
@@ -36,7 +38,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': -4.0, 'y': -3.0},
             <String, Object?>{'x': 4.0, 'y': 5.0},
           ],
-          'clip': -5.0,
+          'clip': const ChartClip.all(-5),
         },
         <String, Object?>{
           'showLine': true,
@@ -47,12 +49,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': 1.0, 'y': -2.0},
             <String, Object?>{'x': 2.0, 'y': 3.0},
           ],
-          'clip': <String, Object?>{
-            'top': 8.0,
-            'left': false,
-            'right': -20.0,
-            'bottom': -20.0,
-          },
+          'clip': const ChartClip(top: 8, right: -20, bottom: -20),
         },
       ],
     },

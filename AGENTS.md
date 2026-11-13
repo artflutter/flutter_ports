@@ -2006,6 +2006,12 @@ Padding options hold `EdgeInsets` through raw and typed configs (Chart.js ADR 01
 four sides; omitted options inherit. Scalar label spacing remains numeric. `PaddingScope` and `toPadding` remain
 for border widths and internal minimum padding, not padding option conversion.
 
+The dataset option `clip` holds a `ChartClip` of `lib/src/types/chart_meta.dart` in raw and typed configs (row
+`adapt-chart-clip-option`): `ChartClip.all(5)` is `clip: 5`, `ChartClip.none` is `clip: false`, and
+`ChartClip(left: 5, right: -2)` sets sides; a null or omitted side has no clip. A number, a bool or a Map stops a debug
+build. The typed API has `Dataset.clip`. The scale option `clip` stays a bool. `getMaxOverflow` of a dataset
+controller gives a `double?`, where Dart `null` is the JS `false` (row `adapt-max-overflow`).
+
 ## Porting rules
 
 1. **Port from the pinned source.** Read the upstream file in `third_party/Chart.js` (check it out

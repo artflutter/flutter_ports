@@ -5,6 +5,7 @@
 // src/core/core.datasetController.js at the pinned Chart.js. 34 scenarios.
 
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
 
 /// The Node.js version that generated the data.
 const String datasetControllerReferenceNode = 'v24.22.1';
@@ -773,15 +774,15 @@ meta 1: {"xAxisID":"x1","yAxisID":"nope","rAxisID":"r1","iAxisID":"nope","vAxisI
         },
         <String, Object?>{
           'data': <Object?>[1.0],
-          'clip': 3.0,
+          'clip': ChartClip.all(3),
         },
         <String, Object?>{
           'data': <Object?>[1.0],
-          'clip': <String, Object?>{'top': 1.0, 'left': 2.0},
+          'clip': ChartClip(left: 2, top: 1),
         },
         <String, Object?>{
           'data': <Object?>[1.0],
-          'clip': false,
+          'clip': ChartClip.none,
         },
       ],
       'steps': <Object?>[
@@ -797,7 +798,7 @@ meta 1: {"xAxisID":"x1","yAxisID":"nope","rAxisID":"r1","iAxisID":"nope","vAxisI
     observations: '''
 clip 0: {"top":5,"right":5,"bottom":5,"left":0,"disabled":false}
 clip 1: {"top":3,"right":3,"bottom":3,"left":3,"disabled":false}
-clip 2: {"top":1,"right":undefined,"bottom":undefined,"left":2,"disabled":false}
+clip 2: {"top":1,"right":false,"bottom":false,"left":2,"disabled":false}
 clip 3: {"top":false,"right":false,"bottom":false,"left":false,"disabled":true}''',
   ),
   (
@@ -813,7 +814,7 @@ clip 3: {"top":false,"right":false,"bottom":false,"left":false,"disabled":true}'
         },
         <String, Object?>{
           'data': <Object?>[1.0],
-          'clip': 4.0,
+          'clip': ChartClip.all(4),
         },
       ],
       'steps': <Object?>[
