@@ -60,6 +60,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -799,7 +800,10 @@ Future<void> runStep(
       chart
         ..setActiveElements([
           for (final [d, i] in items.cast<List<Object?>>())
-            <String, Object?>{'datasetIndex': d, 'index': i},
+            ActiveElement(
+              datasetIndex: (d! as num).toInt(),
+              index: (i! as num).toInt(),
+            ),
         ])
         ..update();
     case ['push', final num d, ...final values]:
@@ -838,7 +842,10 @@ Future<void> runStep(
       chart.tooltip!.setActiveElements(
         [
           for (final [d, i] in items.cast<List<Object?>>())
-            <String, Object?>{'datasetIndex': d, 'index': i},
+            ActiveElement(
+              datasetIndex: (d! as num).toInt(),
+              index: (i! as num).toInt(),
+            ),
         ],
         <String, Object?>{'x': x, 'y': y},
       );

@@ -10,6 +10,7 @@ import 'package:chartjs_test_utils/flutter.dart' show testFontFamilies;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -113,8 +114,8 @@ Future<Chart> _pumpChart(WidgetTester tester, ChartThemeData theme) async {
   final area = chart.chartArea!;
   chart.tooltip!.setActiveElements(
     [
-      <String, Object?>{'datasetIndex': 0, 'index': 2},
-      <String, Object?>{'datasetIndex': 1, 'index': 2},
+      const ActiveElement(datasetIndex: 0, index: 2),
+      const ActiveElement(datasetIndex: 1, index: 2),
     ],
     <String, Object?>{
       'x': (area.left + area.right) / 2,

@@ -3565,7 +3565,7 @@ void main() {
       final routes = _globalRoutes(tester);
       await tester.tapAt(point(chartA, 0));
       await tester.pump();
-      expect(items(chartA.tooltip!.getActiveElements()), ['0.0:1.0']);
+      expect(items(chartA.tooltip!.getActiveElements()), ['0:1']);
       expect(_owner!.canvas, same(a));
       expect(_globalRoutes(tester), routes + 1);
 
@@ -3592,10 +3592,10 @@ void main() {
         ],
       );
       expect(log.last.source, isA<PointerHoverEvent>());
-      expect(items(chartB.getActiveElements()), ['0.0:1.0']);
-      expect(items(chartB.tooltip!.getActiveElements()), ['0.0:1.0']);
-      expect(items(chartA.getActiveElements()), ['0.0:1.0']);
-      expect(items(chartA.tooltip!.getActiveElements()), ['0.0:1.0']);
+      expect(items(chartB.getActiveElements()), ['0:1']);
+      expect(items(chartB.tooltip!.getActiveElements()), ['0:1']);
+      expect(items(chartA.getActiveElements()), ['0:1']);
+      expect(items(chartA.tooltip!.getActiveElements()), ['0:1']);
       expect(_owner!.canvas, same(a));
       expect(_globalRoutes(tester), routes + 1);
       chartA.destroy();

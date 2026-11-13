@@ -240,7 +240,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     and `CssStyleProperties`; and the option types of the rows `adapt-interaction-mode-objects`,
     `adapt-interaction-axis-enum`, `adapt-tooltip-positioner-objects` and
     `adapt-decimation-algorithm-objects`: `InteractionMode` with its six mode classes,
-    `InteractionAxis` and `InteractionItem`, `TooltipPositioner` with `AverageTooltipPositioner`,
+    `InteractionAxis` and `ActiveElement`, `TooltipPositioner` with `AverageTooltipPositioner`,
     `NearestTooltipPositioner` and `TooltipPosition`, and `DecimationAlgorithm` with
     `LttbDecimationAlgorithm` and `MinMaxDecimationAlgorithm`), `lib/helpers.dart` (the `chart.js/helpers`
     entry:
@@ -1145,7 +1145,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 71 names. 26 of them are the classes of
+    `typed.dart` is its export list of 70 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1814,6 +1814,13 @@ is a core view over the original item. Result paints/styles are native values; d
 rendered forms. The typed API uses `ChartTooltip.callbacks` and `Dataset.tooltipCallbacks`; the old `titleText`,
 `labelText` and `footerText` parameters are removed. Reference generators emit native expected values; no callback
 Map adapter is present in the runtime.
+
+An active element is the native extensible class `ActiveElement` of `lib/src/types/active_element.dart` (row
+`adapt-native-active-element`, doc/native-active-element-design-draft.md): `datasetIndex` and `index` are `int`,
+and `element` is nullable. The interaction modes make it, `getActiveElements` gives it, and `setActiveElements`
+of the chart and of the tooltip take a `List<ActiveElement>` with no element. `InteractionItem`,
+`ActiveDataPoint` and the typed view `ChartHit` are removed. The other index parameters of the chart keep their
+`num` and `double` types.
 
 A tick is the native extensible class `Tick` of `lib/src/types/tick.dart` (row `adapt-native-tick`,
 doc/native-tick-design-draft.md): `value` is a `double`, `label` is the `List<String>?` of its lines, `major` is a

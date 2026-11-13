@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 // Keep each step of a twin as its own statement.
 // ignore_for_file: cascade_invocations
@@ -361,12 +362,12 @@ void main() {
         steps: [
           (chart) => chart
             ..setActiveElements([
-              <String, Object?>{'datasetIndex': 0.0, 'index': 3.0},
+              const ActiveElement(datasetIndex: 0, index: 3),
             ])
             ..update('none'),
           (chart) => chart
             ..setActiveElements([
-              <String, Object?>{'datasetIndex': 0.0, 'index': 0.0},
+              const ActiveElement(datasetIndex: 0, index: 0),
             ])
             ..update('none'),
         ],

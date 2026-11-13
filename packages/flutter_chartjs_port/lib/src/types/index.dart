@@ -47,6 +47,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
@@ -60,6 +61,8 @@ import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/tick.dart';
 import 'package:meta/meta.dart';
 
+export 'package:flutter_chartjs_port/src/types/active_element.dart'
+    show ActiveElement;
 export 'package:flutter_chartjs_port/src/types/geometric.dart'
     show ChartArea, Point, TRBL;
 export 'package:flutter_chartjs_port/src/types/layout.dart' show LayoutItem;
@@ -288,32 +291,6 @@ abstract interface class ScaleRanges() {
 
   /// helpers.extras.ts:150 `ymax`.
   abstract double ymax;
-}
-
-/// index.d.ts:515 `ActiveDataPoint`.
-abstract interface class ActiveDataPoint() {
-  /// index.d.ts:516 `datasetIndex: number`.
-  double get datasetIndex;
-
-  /// index.d.ts:517 `index: number`.
-  double get index;
-}
-
-/// index.d.ts:520 `ActiveElement`, an item of `getActiveElements()`
-/// (index.d.ts:576).
-///
-/// The interaction modes give the `InteractionItem` of `core.interaction.js`
-/// (core.interaction.js:10), which has the same members.
-/// `setActiveElements` makes the object `{datasetIndex, element, index}`
-/// (core.controller.js:1104-1108).
-abstract interface class ActiveElement() implements ActiveDataPoint {
-  /// index.d.ts:521 `element: Element`.
-  ///
-  /// Dart `null` stands for JS `undefined`: `setActiveElements` copies
-  /// `meta.data[index]`, which is `undefined` for an index without an
-  /// element (core.controller.js:1106). A reader that calls a member of it
-  /// throws a `TypeError`, as in JavaScript.
-  Element? get element;
 }
 
 /// index.d.ts:524 `Chart`.
@@ -1483,12 +1460,16 @@ abstract interface class TooltipModel() implements Element {
 
   /// index.d.ts:2699 `setActiveElements(active, eventPosition)`.
   ///
-  /// Each item of [activeElements] is an [ActiveDataPoint] or a Map with
-  /// the keys `datasetIndex` and `index`, as for `Chart.setActiveElements`.
-  /// [eventPosition] is any JS value: the tooltip stores it
-  /// (plugin.tooltip.js:1126). The `Tooltip` class gives an absent
-  /// argument the `undefined` sentinel (Chart.js ADR 0039, section 12).
-  void setActiveElements(List<Object?> activeElements, [Object? eventPosition]);
+  /// Each item of [activeElements] is an [ActiveElement] with the two
+  /// indexes, as for `Chart.setActiveElements` (row
+  /// `adapt-native-active-element`). [eventPosition] is any JS value: the
+  /// tooltip stores it (plugin.tooltip.js:1126). The `Tooltip` class gives
+  /// an absent argument the `undefined` sentinel (Chart.js ADR 0039,
+  /// section 12).
+  void setActiveElements(
+    List<ActiveElement> activeElements, [
+    Object? eventPosition,
+  ]);
 }
 
 /// index.d.ts:2212 `BasePlatform`.

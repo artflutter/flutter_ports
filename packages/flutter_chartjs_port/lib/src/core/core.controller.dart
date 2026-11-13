@@ -600,16 +600,6 @@ final class ChartMeta._({
   }
 }
 
-/// core.controller.js:1104-1108 the object `{datasetIndex, element, index}`
-/// of `setActiveElements`.
-final class _ActiveElement({
-  @override required final double datasetIndex,
-
-  /// Dart `null` stands for the `undefined` of an index without an element.
-  @override required final types.Element? element,
-  @override required final double index,
-}) implements types.ActiveElement;
-
 Config _colorConfig(Object? userConfig) {
   validateChartColors(userConfig);
   return Config(userConfig);
@@ -2443,7 +2433,7 @@ class Chart(
   /// the upstream table. A mode needs the options as a Map or a view:
   /// another value throws a [TypeError].
   @override
-  List<InteractionItem> getElementsAtEventForMode(
+  List<types.ActiveElement> getElementsAtEventForMode(
     Object e,
     InteractionMode? mode,
     Object? options, [
@@ -2848,9 +2838,17 @@ class Chart(
       if (controller != null) {
         final element = item.element! as Element;
         if (prefix == 'set') {
-          controller.setHoverStyle(element, item.datasetIndex, item.index);
+          controller.setHoverStyle(
+            element,
+            item.datasetIndex.toDouble(),
+            item.index.toDouble(),
+          );
         } else {
-          controller.removeHoverStyle(element, item.datasetIndex, item.index);
+          controller.removeHoverStyle(
+            element,
+            item.datasetIndex.toDouble(),
+            item.index.toDouble(),
+          );
         }
       }
     }
@@ -2869,29 +2867,21 @@ class Chart(
   /// Set active (hovered) elements
   /// @param {array} activeElements New active data points
   ///
-  /// An item is a `types.ActiveDataPoint` or an object `{datasetIndex,
-  /// index}`, a Map (Chart.js ADR 0043). The destructuring reads the Map
-  /// with [jsGet] and gives the `ToNumber` of each value.
-  void setActiveElements(List<Object?> activeElements) {
+  /// An item is an `ActiveElement` with the two indexes (row
+  /// `adapt-native-active-element`). The chart does not read its `element`:
+  /// it takes the element of the meta.
+  void setActiveElements(List<types.ActiveElement> activeElements) {
     final lastActive = active;
     final newActive = activeElements.map((item) {
-      final double datasetIndex;
-      final double index;
-      if (item is types.ActiveDataPoint) {
-        datasetIndex = item.datasetIndex;
-        index = item.index;
-      } else {
-        // DIVERGES(chartjs): adapt-active-elements-number-index, a number.
-        datasetIndex = jsToNumber(jsGet(item, 'datasetIndex'));
-        index = jsToNumber(jsGet(item, 'index'));
-      }
+      // DIVERGES(chartjs): adapt-native-active-element, int indexes.
+      final types.ActiveElement(:datasetIndex, :index) = item;
       final meta = getDatasetMeta(datasetIndex);
       // `if (!meta) throw new Error('No dataset found at index ' + ...)`:
       // getDatasetMeta always gives a meta. Thus upstream never throws here.
 
-      return _ActiveElement(
+      return types.ActiveElement(
         datasetIndex: datasetIndex,
-        element: _elementAt(meta.data, index),
+        element: _elementAt(meta.data, index.toDouble()),
         index: index,
       );
     }).toList();

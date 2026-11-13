@@ -286,7 +286,7 @@ void each(
 /// @private
 ///
 /// A null list stands for a falsy JavaScript value: `null` or `undefined`.
-bool elementsEqual(List<ActiveDataPoint>? a0, List<ActiveDataPoint>? a1) {
+bool elementsEqual(List<ActiveElement>? a0, List<ActiveElement>? a1) {
   if (a0 == null || a1 == null || a0.length != a1.length) {
     return false;
   }

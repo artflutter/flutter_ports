@@ -878,7 +878,7 @@ Future<List<String>> _hover(String type) async {
       // The active element is the element of its index in the meta.
       expect(
         item.element,
-        same(chart.getDatasetMeta(item.datasetIndex).data[item.index.toInt()]),
+        same(chart.getDatasetMeta(item.datasetIndex).data[item.index]),
       );
     }
     observe('active', [

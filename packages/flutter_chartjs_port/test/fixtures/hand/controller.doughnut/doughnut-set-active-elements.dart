@@ -6,6 +6,7 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show PercentRadius;
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -37,9 +38,7 @@ Map<String, Object?> fixture() => <String, Object?>{
   'options': <String, Object?>{
     'run': (Chart chart) {
       chart
-        ..setActiveElements(<Object?>[
-          <String, Object?>{'datasetIndex': 0, 'index': 1},
-        ])
+        ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)])
         ..update();
     },
   },

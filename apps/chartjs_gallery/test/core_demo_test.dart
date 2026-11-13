@@ -804,7 +804,7 @@ void main() {
     expect(
       [
         for (final item in tooltip.getActiveElements())
-          'd${item.datasetIndex.toInt()}#${item.index.toInt()}',
+          'd${item.datasetIndex}#${item.index}',
       ],
       ['d0#7', 'd1#7'],
     );

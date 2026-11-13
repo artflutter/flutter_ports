@@ -1,5 +1,4 @@
 [lib/chartjs.dart]
-ActiveDataPoint
 ActiveElement
 Animation
 Animations
@@ -66,7 +65,6 @@ ImagePointStyle
 IndexInteractionMode
 Interaction
 InteractionAxis
-InteractionItem
 InteractionMode
 JsClass
 JsObjectFace
@@ -185,7 +183,6 @@ tooltip
 undefined
 
 [lib/flutter_chartjs_port.dart]
-ActiveDataPoint
 ActiveElement
 Animations
 ArcBorderAlign
@@ -237,7 +234,6 @@ ChartEventDetails
 ChartFill
 ChartFiller
 ChartGradient
-ChartHit
 ChartIndexed
 ChartInteraction
 ChartKind
@@ -298,7 +294,6 @@ IndexInteractionMode
 InnerRadiusAnimation
 Interaction
 InteractionAxis
-InteractionItem
 InteractionMode
 JsClass
 JsObjectFace

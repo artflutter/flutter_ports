@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -70,7 +71,7 @@ final class _Event(
 }
 
 /// `items.map(item => item.element)`.
-List<Object?> _elements(List<InteractionItem> items) => [
+List<Object?> _elements(List<ActiveElement> items) => [
   for (final item in items) item.element,
 ];
 

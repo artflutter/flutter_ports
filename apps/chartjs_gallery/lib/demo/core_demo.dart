@@ -174,10 +174,8 @@ class CoreDemoState() extends State<CoreDemo> {
   String get activeLabel {
     final active = _chart?.getActiveElements() ?? const [];
     if (active.isEmpty) return 'none';
-    return [
-      for (final item in active)
-        'd${item.datasetIndex.toInt()}#${item.index.toInt()}',
-    ].join(' ');
+    return [for (final item in active) 'd${item.datasetIndex}#${item.index}']
+        .join(' ');
   }
 
   @override

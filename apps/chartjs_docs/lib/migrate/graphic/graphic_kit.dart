@@ -326,7 +326,10 @@ final Map<String, Object?> polarCrosshair = {
     final element = active.first.element!;
     final pointer = _pointers[chart] ?? Offset(element.x, element.y);
     final radius = math.min((pointer - center).distance, scale.drawingArea);
-    final end = scale.getPointPosition(active.first.index, scale.drawingArea);
+    final end = scale.getPointPosition(
+      active.first.index.toDouble(),
+      scale.drawingArea,
+    );
     chart.ctx!
       ..save()
       ..strokeStyle = Gx.crosshair

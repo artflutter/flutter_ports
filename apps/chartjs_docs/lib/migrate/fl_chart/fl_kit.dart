@@ -116,9 +116,9 @@ Map<String, Object?> touchIndicator({
     final area = chart.chartArea!;
     final ctx = chart.ctx!;
     for (final hit in chart.getActiveElements()) {
-      if (when != null && !when(hit.index.toInt())) continue;
+      if (when != null && !when(hit.index)) continue;
       final element = hit.element!;
-      final dataset = chart.getDatasetMeta(hit.datasetIndex.toInt());
+      final dataset = chart.getDatasetMeta(hit.datasetIndex);
       final options = element.options;
       final stroke =
           color ??

@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -2942,8 +2943,8 @@ void main() {
           ),
         );
 
-        chart.setActiveElements(<Object?>[
-          <String, Object?>{'datasetIndex': 0, 'index': 0},
+        chart.setActiveElements([
+          const ActiveElement(datasetIndex: 0, index: 0),
         ]);
 
         props = arc0.getProps(const ['borderColor']);
@@ -3016,8 +3017,8 @@ void main() {
           ),
         );
 
-        chart.setActiveElements(<Object?>[
-          <String, Object?>{'datasetIndex': 0, 'index': 1},
+        chart.setActiveElements([
+          const ActiveElement(datasetIndex: 0, index: 1),
         ]);
         expect(
           _activeElements(chart),

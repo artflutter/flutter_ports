@@ -61,52 +61,6 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
-/// core.interaction.js:10 `InteractionItem`, the object
-/// `{element, datasetIndex, index}` of an interaction mode
-/// (index.d.ts:757).
-///
-/// It implements `types.ActiveElement`, because the chart keeps the items
-/// as its active elements (index.d.ts:520-521). TypeScript accepts them by
-/// structure. [datasetIndex] and [index] are numbers (Chart.js ADR 0045).
-///
-/// Two items are equal when their fields are equal, as the `toEqual` of a
-/// spec compares two object literals. The elements compare by identity: the
-/// specs compare an item with the elements of a meta.
-@immutable
-final class const InteractionItem({
-  /// core.interaction.js:10 `element`, the element of the item.
-  @override required final Element element,
-
-  /// core.interaction.js:10 `datasetIndex`, the index of the dataset.
-  @override required final double datasetIndex,
-
-  /// core.interaction.js:10 `index`, the index of the element in the data
-  /// of the dataset.
-  @override required final double index,
-}) implements types.ActiveElement {
-  /// The object literal `{element, datasetIndex, index}`
-  /// (core.interaction.js:126).
-  this;
-
-  @override
-  bool operator ==(Object other) =>
-      other is InteractionItem &&
-      identical(element, other.element) &&
-      datasetIndex == other.datasetIndex &&
-      index == other.index;
-
-  @override
-  int get hashCode =>
-      Object.hash(identityHashCode(element), datasetIndex, index);
-
-  /// The item as JavaScript prints its numbers, for test messages.
-  @override
-  String toString() =>
-      '{element: ${element.runtimeType}, '
-      'datasetIndex: ${jsNumberToString(datasetIndex)}, '
-      'index: ${jsNumberToString(index)}}';
-}
-
 /// index.d.ts:763 `InteractionModeFunction`, the type of the function of a
 /// mode ([InteractionMode.itemsAt]).
 ///
@@ -116,7 +70,7 @@ final class const InteractionItem({
 /// core.interaction.js:9: a view of the options or a plain object (Chart.js
 /// ADR 0054 §5). Dart `null`
 /// for [useFinalPosition] stands for an absent argument, JS `undefined`.
-typedef InteractionModeFunction = List<InteractionItem> Function(
+typedef InteractionModeFunction = List<types.ActiveElement> Function(
   types.Chart chart,
   Object e,
   Object options, [
@@ -331,15 +285,15 @@ double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
 ///   instead of current position
 /// @param {boolean} [includeInvisible] - include invisible points that are
 ///   outside of the chart area
-/// @return {InteractionItem[]} the nearest items
-List<InteractionItem> _getIntersectItems(
+/// @return {types.ActiveElement[]} the nearest items
+List<types.ActiveElement> _getIntersectItems(
   types.Chart chart,
   Point position,
   InteractionAxis axis,
   bool? useFinalPosition,
   bool includeInvisible,
 ) {
-  final items = <InteractionItem>[];
+  final items = <types.ActiveElement>[];
 
   if (!includeInvisible && !chart.isPointInArea(position)) {
     return items;
@@ -355,10 +309,10 @@ List<InteractionItem> _getIntersectItems(
       useFinalPosition,
     )) {
       items.add(
-        InteractionItem(
+        types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex,
-          index: index,
+          datasetIndex: datasetIndex.toInt(),
+          index: index.toInt(),
         ),
       );
     }
@@ -378,7 +332,7 @@ List<InteractionItem> _getIntersectItems(
 /// @param {string} axis - the axes along which to measure distance
 /// @param {boolean} [useFinalPosition] - use the element's animation target
 ///   instead of current position
-/// @return {InteractionItem[]} the nearest items
+/// @return {types.ActiveElement[]} the nearest items
 ///
 /// The literal `{x: position.x, y: position.y}` of :147 copies the two
 /// coordinates. `getAngleFromPoint` reads only them. Thus the port passes
@@ -389,13 +343,13 @@ List<InteractionItem> _getIntersectItems(
 /// [Element.numberOf] (Chart.js ADR 0054 §9): the `ToNumber` that the
 /// arithmetic of `_angleBetween` applies. An element without angles (a
 /// point of a radar) gives NaN, as the read of `undefined` does.
-List<InteractionItem> _getNearestRadialItems(
+List<types.ActiveElement> _getNearestRadialItems(
   types.Chart chart,
   Point position,
   InteractionAxis axis, [
   bool? useFinalPosition,
 ]) {
-  final items = <InteractionItem>[];
+  final items = <types.ActiveElement>[];
 
   void evaluationFunc(Element element, double datasetIndex, double index) {
     final startAngle = element.finalNumber(
@@ -412,10 +366,10 @@ List<InteractionItem> _getNearestRadialItems(
 
     if (angleBetween(angle, startAngle, endAngle)) {
       items.add(
-        InteractionItem(
+        types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex,
-          index: index,
+          datasetIndex: datasetIndex.toInt(),
+          index: index.toInt(),
         ),
       );
     }
@@ -439,8 +393,8 @@ List<InteractionItem> _getNearestRadialItems(
 ///   instead of current position
 /// @param {boolean} [includeInvisible] - include invisible points that are
 ///   outside of the chart area
-/// @return {InteractionItem[]} the nearest items
-List<InteractionItem> _getNearestCartesianItems(
+/// @return {types.ActiveElement[]} the nearest items
+List<types.ActiveElement> _getNearestCartesianItems(
   types.Chart chart,
   Point position,
   InteractionAxis axis,
@@ -448,7 +402,7 @@ List<InteractionItem> _getNearestCartesianItems(
   bool? useFinalPosition,
   bool includeInvisible,
 ) {
-  var items = <InteractionItem>[];
+  var items = <types.ActiveElement>[];
   final distanceMetric = _getDistanceMetricForAxis(axis);
   var minDistance = double.infinity;
 
@@ -468,10 +422,10 @@ List<InteractionItem> _getNearestCartesianItems(
     final distance = distanceMetric(position, center);
     if (distance < minDistance) {
       items = [
-        InteractionItem(
+        types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex,
-          index: index,
+          datasetIndex: datasetIndex.toInt(),
+          index: index.toInt(),
         ),
       ];
       minDistance = distance;
@@ -479,10 +433,10 @@ List<InteractionItem> _getNearestCartesianItems(
       // Can have multiple items at the same distance in which case we sort by
       // size
       items.add(
-        InteractionItem(
+        types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex,
-          index: index,
+          datasetIndex: datasetIndex.toInt(),
+          index: index.toInt(),
         ),
       );
     }
@@ -506,8 +460,8 @@ List<InteractionItem> _getNearestCartesianItems(
 ///   instead of current position
 /// @param {boolean} [includeInvisible] - include invisible points that are
 ///   outside of the chart area
-/// @return {InteractionItem[]} the nearest items
-List<InteractionItem> _getNearestItems(
+/// @return {types.ActiveElement[]} the nearest items
+List<types.ActiveElement> _getNearestItems(
   types.Chart chart,
   Point position,
   InteractionAxis axis,
@@ -542,21 +496,21 @@ List<InteractionItem> _getNearestItems(
 ///   the position
 /// @param {boolean} [useFinalPosition] - use the element's animation target
 ///   instead of current position
-/// @return {InteractionItem[]} the nearest items
+/// @return {types.ActiveElement[]} the nearest items
 ///
 /// The modes `x` and `y` pass [InteractionAxis.x] or [InteractionAxis.y].
 /// The test
 /// `element[rangeMethod] &&` of :234 is a test for `types.VisualElement`,
 /// which declares `inXRange` and `inYRange`. `ArcElement` gives false for
 /// both (`adapt-arc-axis-range`, differences.md).
-List<InteractionItem> _getAxisItems(
+List<types.ActiveElement> _getAxisItems(
   types.Chart chart,
   Point position,
   InteractionAxis axis,
   bool intersect, [
   bool? useFinalPosition,
 ]) {
-  final items = <InteractionItem>[];
+  final items = <types.ActiveElement>[];
   final rangeMethod = axis == InteractionAxis.x ? 'inXRange' : 'inYRange';
   var intersectsItem = false;
 
@@ -575,10 +529,10 @@ List<InteractionItem> _getAxisItems(
           useFinalPosition,
         )) {
       items.add(
-        InteractionItem(
+        types.ActiveElement(
           element: element,
-          datasetIndex: datasetIndex,
-          index: index,
+          datasetIndex: datasetIndex.toInt(),
+          index: index.toInt(),
         ),
       );
       intersectsItem =
@@ -644,8 +598,8 @@ Element? _dataAt(List<types.Element> data, double index) =>
 /// @param {InteractionOptions} options - options to use
 /// @param {boolean} [useFinalPosition] - use final element position (animation
 ///   target)
-/// @return {InteractionItem[]} - items that are found
-List<InteractionItem> _index(
+/// @return {types.ActiveElement[]} - items that are found
+List<types.ActiveElement> _index(
   types.Chart chart,
   Object e,
   Object options, [
@@ -671,7 +625,7 @@ List<InteractionItem> _index(
           useFinalPosition,
           includeInvisible,
         );
-  final elements = <InteractionItem>[];
+  final elements = <types.ActiveElement>[];
 
   if (items.isEmpty) {
     return [];
@@ -679,14 +633,14 @@ List<InteractionItem> _index(
 
   for (final meta in chart.getSortedVisibleDatasetMetas()) {
     final index = items[0].index;
-    final element = _dataAt(meta.data, index);
+    final element = _dataAt(meta.data, index.toDouble());
 
     // don't count items that are skipped (null data)
     if (element != null && !_skipped(element)) {
       elements.add(
-        InteractionItem(
+        types.ActiveElement(
           element: element,
-          datasetIndex: meta.index,
+          datasetIndex: meta.index.toInt(),
           index: index,
         ),
       );
@@ -708,8 +662,8 @@ List<InteractionItem> _index(
 /// @param {InteractionOptions} options - options to use
 /// @param {boolean} [useFinalPosition] - use final element position (animation
 ///   target)
-/// @return {InteractionItem[]} - items that are found
-List<InteractionItem> _dataset(
+/// @return {types.ActiveElement[]} - items that are found
+List<types.ActiveElement> _dataset(
   types.Chart chart,
   Object e,
   Object options, [
@@ -741,10 +695,10 @@ List<InteractionItem> _dataset(
     items = [];
     for (var i = 0; i < data.length; ++i) {
       items.add(
-        InteractionItem(
+        types.ActiveElement(
           element: data[i] as Element,
           datasetIndex: datasetIndex,
-          index: i * 1.0,
+          index: i,
         ),
       );
     }
@@ -763,8 +717,8 @@ List<InteractionItem> _dataset(
 /// @param {InteractionOptions} options - options to use
 /// @param {boolean} [useFinalPosition] - use final element position (animation
 ///   target)
-/// @return {InteractionItem[]} - items that are found
-List<InteractionItem> _point(
+/// @return {types.ActiveElement[]} - items that are found
+List<types.ActiveElement> _point(
   types.Chart chart,
   Object e,
   Object options, [
@@ -791,8 +745,8 @@ List<InteractionItem> _point(
 /// @param {InteractionOptions} options - options to use
 /// @param {boolean} [useFinalPosition] - use final element position (animation
 ///   target)
-/// @return {InteractionItem[]} - items that are found
-List<InteractionItem> _nearest(
+/// @return {types.ActiveElement[]} - items that are found
+List<types.ActiveElement> _nearest(
   types.Chart chart,
   Object e,
   Object options, [
@@ -820,8 +774,8 @@ List<InteractionItem> _nearest(
 /// @param {InteractionOptions} options - options to use
 /// @param {boolean} [useFinalPosition] - use final element position (animation
 ///   target)
-/// @return {InteractionItem[]} - items that are found
-List<InteractionItem> _x(
+/// @return {types.ActiveElement[]} - items that are found
+List<types.ActiveElement> _x(
   types.Chart chart,
   Object e,
   Object options, [
@@ -846,8 +800,8 @@ List<InteractionItem> _x(
 /// @param {InteractionOptions} options - options to use
 /// @param {boolean} [useFinalPosition] - use final element position (animation
 ///   target)
-/// @return {InteractionItem[]} - items that are found
-List<InteractionItem> _y(
+/// @return {types.ActiveElement[]} - items that are found
+List<types.ActiveElement> _y(
   types.Chart chart,
   Object e,
   Object options, [
@@ -923,7 +877,7 @@ enum InteractionAxis({
 ///   const FirstItemMode();
 ///
 ///   @override
-///   List<InteractionItem> itemsAt(
+///   List<types.ActiveElement> itemsAt(
 ///     Chart chart,
 ///     Object e,
 ///     Object options, [
@@ -945,7 +899,7 @@ abstract class const InteractionMode() {
   /// `types.ChartEvent` or a `NativeEvent`. [options] are the interaction
   /// options: a view of the options or a plain object. Dart `null` for
   /// [useFinalPosition] stands for an absent argument.
-  List<InteractionItem> itemsAt(
+  List<types.ActiveElement> itemsAt(
     covariant types.Chart chart,
     Object e,
     Object options, [
@@ -972,7 +926,7 @@ final class const IndexInteractionMode() extends InteractionMode {
   this;
 
   @override
-  List<InteractionItem> itemsAt(
+  List<types.ActiveElement> itemsAt(
     types.Chart chart,
     Object e,
     Object options, [
@@ -989,7 +943,7 @@ final class const DatasetInteractionMode() extends InteractionMode {
   this;
 
   @override
-  List<InteractionItem> itemsAt(
+  List<types.ActiveElement> itemsAt(
     types.Chart chart,
     Object e,
     Object options, [
@@ -1004,7 +958,7 @@ final class const PointInteractionMode() extends InteractionMode {
   this;
 
   @override
-  List<InteractionItem> itemsAt(
+  List<types.ActiveElement> itemsAt(
     types.Chart chart,
     Object e,
     Object options, [
@@ -1019,7 +973,7 @@ final class const NearestInteractionMode() extends InteractionMode {
   this;
 
   @override
-  List<InteractionItem> itemsAt(
+  List<types.ActiveElement> itemsAt(
     types.Chart chart,
     Object e,
     Object options, [
@@ -1034,7 +988,7 @@ final class const XInteractionMode() extends InteractionMode {
   this;
 
   @override
-  List<InteractionItem> itemsAt(
+  List<types.ActiveElement> itemsAt(
     types.Chart chart,
     Object e,
     Object options, [
@@ -1049,7 +1003,7 @@ final class const YInteractionMode() extends InteractionMode {
   this;
 
   @override
-  List<InteractionItem> itemsAt(
+  List<types.ActiveElement> itemsAt(
     types.Chart chart,
     Object e,
     Object options, [

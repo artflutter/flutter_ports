@@ -1209,11 +1209,11 @@ void main() {
           await tester.pump();
           await mouse.removePointer();
           await tester.pump();
-          _chart(tester).setActiveElements([
-            <String, Object?>{'datasetIndex': 0.0, 'index': 3.0},
-          ]);
+          _chart(
+            tester,
+          ).setActiveElements([const ActiveElement(datasetIndex: 0, index: 3)]);
           await tick(10, title: title);
-          _chart(tester).setActiveElements(const <Object?>[]);
+          _chart(tester).setActiveElements(const []);
 
           // A resize.
           await tester.pumpWidget(view(11, width: 240, title: title));

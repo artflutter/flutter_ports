@@ -92,9 +92,7 @@ final ChartConfig _config = ChartConfig(
 
 /// `selected: {'touchMove': {1}}`: the second point starts selected.
 void _preselect(Chart chart) {
-  const selected = [
-    {'datasetIndex': 0, 'index': 1},
-  ];
+  const selected = [ActiveElement(datasetIndex: 0, index: 1)];
   chart.setActiveElements(selected);
   chart.tooltip?.setActiveElements(selected);
   chart.update();

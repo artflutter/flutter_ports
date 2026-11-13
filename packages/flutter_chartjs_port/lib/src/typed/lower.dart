@@ -55,11 +55,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show
-        ChartAnimationDetails,
-        ChartEventDetails,
-        ChartHit,
-        ChartLegendEventDetails;
+    show ChartAnimationDetails, ChartEventDetails, ChartLegendEventDetails;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart'
@@ -79,7 +75,7 @@ import 'package:flutter_chartjs_port/src/typed/props.dart' show byEntries;
 import 'package:flutter_chartjs_port/src/types/animation.dart'
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/types/index.dart'
-    show ChartEvent, LegendElement;
+    show ActiveElement, ChartEvent, LegendElement;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
@@ -524,14 +520,14 @@ TooltipCallbacks tooltipCallbacksTrampoline(
 /// Chart.js calls it with the event, the active elements and the chart
 /// (`core.controller.js:1222-1226`). It calls the callback of the newest
 /// config with a [ChartEventDetails]. The active elements are the List of
-/// the chart, with no copy: a `ChartHit` is an `ActiveElement` at run time.
+/// the chart, with no copy.
 Object? Function(Object?, Object?, Object?) eventTrampoline(
   ValueChanged<ChartEventDetails>? Function() newest,
 ) => (event, active, chart) {
   newest()?.call(
     ChartEventDetails(
       event: event! as ChartEvent,
-      hits: active! as List<ChartHit>,
+      hits: active! as List<ActiveElement>,
       chart: chart! as Chart,
     ),
   );

@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, SolidChartPaint;
@@ -274,9 +275,7 @@ Future<Chart> _acquireWithTooltip(WidgetTester tester, AnyObject config) async {
 /// visible.
 Future<void> _showTooltip(WidgetTester tester, Chart chart) async {
   chart.tooltip!.setActiveElements(
-    [
-      <String, Object?>{'datasetIndex': 0, 'index': 1},
-    ],
+    [const ActiveElement(datasetIndex: 0, index: 1)],
     <String, Object?>{'x': 0, 'y': 0},
   );
   chart.update();
@@ -412,9 +411,7 @@ Iterable<(String, Object?)> _themeColors(
 Future<Chart> _acquireActive(WidgetTester tester, AnyObject config) async {
   final chart = acquireChart(config);
   await tester.pump();
-  final active = [
-    <String, Object?>{'datasetIndex': 0, 'index': 0},
-  ];
+  const active = [ActiveElement(datasetIndex: 0, index: 0)];
   final element = chart.getDatasetMeta(0).data[0] as Element;
   chart
     ..setActiveElements(active)

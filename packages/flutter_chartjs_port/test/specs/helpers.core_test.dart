@@ -14,12 +14,10 @@ import 'package:test/test.dart';
 // 0043). Jasmine `toBe` is `same` for objects and `equals` for primitives.
 // `not.toBeDefined()` and `toBe(undefined)` are `same(undefined)`.
 
-/// A JavaScript object literal `{datasetIndex, index}`, passed as an
-/// [ActiveDataPoint].
-final class const _Active(
-  @override final double datasetIndex,
-  @override final double index,
-) implements ActiveDataPoint;
+/// A JavaScript object literal `{datasetIndex, index}`, an [ActiveElement]
+/// with no element (row `adapt-native-active-element`).
+ActiveElement _active(int datasetIndex, int index) =>
+    ActiveElement(datasetIndex: datasetIndex, index: index);
 
 /// The marker of an argument that a call did not pass.
 const Object _none = Object();
@@ -331,16 +329,16 @@ void main() {
       test('should return true if arrays are the same', () {
         expect(
           helpers.elementsEqual(
-            [const _Active(0, 1), const _Active(0, 2)],
-            [const _Active(0, 1), const _Active(0, 2)],
+            [_active(0, 1), _active(0, 2)],
+            [_active(0, 1), _active(0, 2)],
           ),
           isTrue,
         );
       });
       test('should return false if arrays are not the same', () {
-        expect(helpers.elementsEqual([], [const _Active(0, 1)]), isFalse);
+        expect(helpers.elementsEqual([], [_active(0, 1)]), isFalse);
         expect(
-          helpers.elementsEqual([const _Active(0, 2)], [const _Active(0, 1)]),
+          helpers.elementsEqual([_active(0, 2)], [_active(0, 1)]),
           isFalse,
         );
       });

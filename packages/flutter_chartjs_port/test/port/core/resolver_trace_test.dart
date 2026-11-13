@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show ElementPropertyRead;
@@ -165,7 +166,10 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       chart
         ..setActiveElements([
           for (final [d, i] in items.cast<List<Object?>>())
-            <String, Object?>{'datasetIndex': d, 'index': i},
+            ActiveElement(
+              datasetIndex: (d! as num).toInt(),
+              index: (i! as num).toInt(),
+            ),
         ])
         ..update();
     case ['hide', final num d]:

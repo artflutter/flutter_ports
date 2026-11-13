@@ -20,9 +20,9 @@ import 'package:flutter_test/flutter_test.dart';
 // Chart.js ADR 0052, section 6: the views and the details objects of the
 // typed callbacks over the objects of a real chart. The raw callbacks of
 // these charts cast the arguments of the chart to the views, as the
-// lowering of the typed config does: `ChartHit`, `ChartContext`,
+// lowering of the typed config does: `ActiveElement`, `ChartContext`,
 // `ChartTooltipItem` and `LegendItem` give `int` indexes and the
-// values of the objects, and a `List<ActiveElement>` is a `List<ChartHit>`
+// values of the objects, and a `List<ActiveElement>` is a `List<ActiveElement>`
 // with no copy. The unit cases pin the rule for the JS `undefined`, an
 // absent key and a value of another type.
 //
@@ -66,12 +66,8 @@ Map<String, Object?> _legendBox(Chart chart, int index) {
   return <String, Object?>{'x': left + width / 2, 'y': top + height / 2};
 }
 
-/// [hits] as a `List<ActiveElement>`: this compiles because `ChartHit`
-/// implements `ActiveElement`.
-List<ActiveElement> _asActive(List<ChartHit> hits) => hits;
-
 void main() {
-  group('ChartHit and ChartEventDetails', () {
+  group('ActiveElement and ChartEventDetails', () {
     testWidgets('onClick gets the hits with int indexes and no copy', (
       tester,
     ) async {
@@ -83,7 +79,7 @@ void main() {
             active = elements;
             details = ChartEventDetails(
               event: event! as ChartEvent,
-              hits: elements! as List<ChartHit>,
+              hits: elements! as List<ActiveElement>,
               chart: chart! as Chart,
             );
           },
@@ -102,11 +98,11 @@ void main() {
     });
 
     testWidgets('the hits go back to setActiveElements', (tester) async {
-      List<ChartHit>? hits;
+      List<ActiveElement>? hits;
       final chart = acquireChart(
         _bar(<String, Object?>{
           'onHover': (Object? event, Object? elements, Object? chart) {
-            hits = elements! as List<ChartHit>;
+            hits = elements! as List<ActiveElement>;
           },
         }),
       );
@@ -115,10 +111,10 @@ void main() {
         'mousemove',
         chart.getDatasetMeta(0).data[1],
       );
-      final hovered = List<ChartHit>.of(hits!);
-      chart.setActiveElements(<Object?>[]);
+      final hovered = List<ActiveElement>.of(hits!);
+      chart.setActiveElements([]);
       expect(chart.getActiveElements(), isEmpty);
-      chart.setActiveElements(_asActive(hovered));
+      chart.setActiveElements(hovered);
       expect(
         [
           for (final element in chart.getActiveElements())
@@ -486,7 +482,7 @@ void main() {
     });
 
     testWidgets('onHover gets the hits of a move', (tester) async {
-      final hits = <List<ChartHit>>[];
+      final hits = <List<ActiveElement>>[];
       final chart = acquireChartRoot(
         ChartConfigLowering(
           typedBar(onHover: (details) => hits.add(details.hits)),

@@ -37,6 +37,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
+import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -503,11 +504,9 @@ Tooltip _tooltipOf(Chart chart) => chart.tooltip! as Tooltip;
 
 /// `setActiveElements([{datasetIndex: 0, index}], {x: 150, y: 100})` on the
 /// tooltip of [chart], the call of the probe.
-void _activate(Chart chart, [Object? index = 1]) => _tooltipOf(chart)
+void _activate(Chart chart, [int index = 1]) => _tooltipOf(chart)
     .setActiveElements(
-      [
-        <String, Object?>{'datasetIndex': 0, 'index': index},
-      ],
+      [ActiveElement(datasetIndex: 0, index: index)],
       <String, Object?>{'x': 150, 'y': 100},
     );
 
@@ -1074,7 +1073,7 @@ void main() {
       final t = _tooltipOf(chart);
       final element = chart.getDatasetMeta(0).data[2];
       final items = <types.ActiveElement>[
-        _Item(datasetIndex: 0, index: 2, element: element),
+        ActiveElement(datasetIndex: 0, index: 2, element: element),
       ];
       t['_active'] = items;
       expect(t.getActiveElements(), same(items));
@@ -1105,7 +1104,7 @@ void main() {
       chart.update();
       calls.add('after update');
       t.setActiveElements([
-        <String, Object?>{'datasetIndex': 0, 'index': 2},
+        const ActiveElement(datasetIndex: 0, index: 2),
       ], _point(10, 10));
       calls.add('after setActiveElements');
       chart.update();
@@ -1291,7 +1290,11 @@ void main() {
       TooltipPosition run(List<double> xs) =>
           const AverageTooltipPositioner().positionOf(tooltip, [
             for (final x in xs)
-              _Item(datasetIndex: 0, index: 0, element: _FakeElement(x)),
+              ActiveElement(
+                datasetIndex: 0,
+                index: 0,
+                element: _FakeElement(x),
+              ),
           ], null)!;
       final nan = run([double.nan, double.nan, 2]);
       expect(nan.x, isNaN);
@@ -1308,7 +1311,7 @@ void main() {
       // The probe output `averagePlain`: false.
       expect(
         const AverageTooltipPositioner().positionOf(_newTooltip(), [
-          _Item(datasetIndex: 0, index: 0),
+          const ActiveElement(datasetIndex: 0, index: 0),
         ], null),
         isNull,
       );
@@ -1415,8 +1418,8 @@ void main() {
       });
       final t = _tooltipOf(chart)
         ..setActiveElements([
-          <String, Object?>{'datasetIndex': 0, 'index': 0},
-          <String, Object?>{'datasetIndex': 0, 'index': 1},
+          const ActiveElement(datasetIndex: 0, index: 0),
+          const ActiveElement(datasetIndex: 0, index: 1),
         ], _point(150, 100));
       expect(t.title, ['d']);
       expect(_bodyLines(t), [
@@ -1474,8 +1477,8 @@ void main() {
       });
       final t = _tooltipOf(chart)
         ..setActiveElements([
-          <String, Object?>{'datasetIndex': 0, 'index': 1},
-          <String, Object?>{'datasetIndex': 1, 'index': 1},
+          const ActiveElement(datasetIndex: 0, index: 1),
+          const ActiveElement(datasetIndex: 1, index: 1),
         ], _point(150, 100));
       expect(t.title, ['B']);
       expect(_bodyLines(t), [
@@ -1711,7 +1714,7 @@ void main() {
       await triggerMouseEvent(chart, 'mousemove', point);
       chart.update();
       _tooltipOf(chart).setActiveElements([
-        <String, Object?>{'datasetIndex': 0, 'index': 2},
+        const ActiveElement(datasetIndex: 0, index: 2),
       ], _point(10, 10));
       expect(entries, [
         'undefined true chart,tooltip,replay',
@@ -1732,7 +1735,7 @@ void main() {
       final t = _tooltipOf(chart);
       expect(
         () => t.setActiveElements([
-          <String, Object?>{'datasetIndex': 0, 'index': 99},
+          const ActiveElement(datasetIndex: 0, index: 99),
         ], _point(1, 1)),
         throwsA(isA<TypeError>()),
       );
@@ -1740,54 +1743,6 @@ void main() {
       expect(active.length, 1);
       expect(active[0].index, 99);
       expect(active[0].element, isNull);
-    });
-  });
-
-  group('adapt-active-elements-number-index', () {
-    testWidgets('a string index becomes a number', (tester) async {
-      // The probe output `stringIndex`: upstream keeps the index '1' (and
-      // the dataIndex '1'), the title [B], the body [['D: 20']], one call
-      // of update; a later call with the number 1 counts as a change (two
-      // calls), and Chart.setActiveElements keeps '2'. The port reads the
-      // number: the lines are the same, and the later call is no change.
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['A', 'B', 'C'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'D',
-              'data': <Object?>[10, 20, 30],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false},
-        },
-      });
-      final t = _tooltipOf(chart);
-      var calls = 0;
-      final original = t.update;
-      t.update = ([changed = undefined, replay = undefined]) {
-        calls++;
-        original(changed, replay);
-      };
-      _activate(chart, '1');
-      final a = t.getActiveElements()[0];
-      expect(a.index, 1.0);
-      expect(jsGet(t.dataPoints![0], 'dataIndex'), 1.0);
-      expect(t.title, ['B']);
-      expect(_bodyLines(t), [
-        ['D: 20'],
-      ]);
-      expect(calls, 1);
-      _activate(chart);
-      expect(calls, 1);
-
-      chart.setActiveElements([
-        <String, Object?>{'datasetIndex': 0, 'index': '2'},
-      ]);
-      expect(chart.getActiveElements()[0].index, 2.0);
     });
   });
 
@@ -1811,8 +1766,8 @@ void main() {
 
     void activateBoth(Chart chart) => _tooltipOf(chart).setActiveElements(
       [
-        <String, Object?>{'datasetIndex': 0, 'index': 1},
-        <String, Object?>{'datasetIndex': 1, 'index': 1},
+        const ActiveElement(datasetIndex: 0, index: 1),
+        const ActiveElement(datasetIndex: 1, index: 1),
       ],
       <String, Object?>{'x': 150, 'y': 100},
     );
@@ -2034,13 +1989,6 @@ void main() {
     });
   });
 }
-
-/// An active item `{datasetIndex, index, element}` of a test.
-final class _Item({
-  @override required final double datasetIndex,
-  @override required final double index,
-  @override final types.Element? element,
-}) implements types.ActiveElement;
 
 /// A canvas style with the DOM rules of `setProperty` (as `_Style` of
 /// test/port/helpers/helpers.rtl_test.dart). It logs each call with its

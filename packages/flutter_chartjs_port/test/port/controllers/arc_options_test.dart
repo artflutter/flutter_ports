@@ -352,7 +352,7 @@ void _throwInActiveResolve(Chart chart, Map<String, Object?> cfg) {
 }
 
 void _activate(Chart chart, double index) => chart.setActiveElements([
-  {'datasetIndex': 0.0, 'index': index},
+  ActiveElement(datasetIndex: 0, index: index.toInt()),
 ]);
 
 /// The update steps of a twin in the modes of a live chart and of the others.
@@ -489,9 +489,7 @@ void main() {
       }),
     ]),
     prepare: (chart, _) {
-      chart.setActiveElements([
-        {'datasetIndex': 0.0, 'index': 4.0},
-      ]);
+      chart.setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)]);
     },
   );
 
@@ -504,9 +502,7 @@ void main() {
       }),
     ]),
     prepare: (chart, _) {
-      chart.setActiveElements([
-        {'datasetIndex': 0.0, 'index': 0.0},
-      ]);
+      chart.setActiveElements([const ActiveElement(datasetIndex: 0, index: 0)]);
     },
   );
 
