@@ -357,5 +357,12 @@ Future<void> main() async {
   cj.Chart.register([_timingPlugin()]);
   FlutterError.onError = (d) =>
       hostLine('MATRIX_ERROR ${d.exceptionAsString()}');
-  runApp(ChartBenchmarkApp(onControllerReady: (c) => unawaited(_run(c))));
+  // The note on the web mode would show between two cells: the rows have the
+  // mode (`webMode`).
+  runApp(
+    ChartBenchmarkApp(
+      showModeNote: false,
+      onControllerReady: (c) => unawaited(_run(c)),
+    ),
+  );
 }

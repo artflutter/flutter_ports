@@ -30,10 +30,25 @@ const String _labVersion = String.fromEnvironment(
 );
 const String _labBuild = String.fromEnvironment('FLUTTER_BUILD_NUMBER');
 
+/// The title and the text of the note on the web mode of the page, or null on a
+/// native build. A test replaces it to show the note on the VM.
+@visibleForTesting
+({String mode, String why})? Function() pageModeNote = _webModeNote;
+
+({String mode, String why})? _webModeNote() {
+  final mode = webMode();
+  final why = webModeWhy();
+  return mode == null || why == null ? null : (mode: mode, why: why);
+}
+
 /// Interactive, single-engine benchmark dashboard.
 class const BenchmarkPage({
   /// Allows an integration driver to use the same session controls as the UI.
   final ValueChanged<BenchmarkController>? onControllerReady,
+
+  /// Whether the page shows the note on its web mode until the first test
+  /// starts. A test driver turns it off: the header shows the mode too.
+  final bool showModeNote = true,
   super.key,
 }) extends StatefulWidget {
   /// Creates the test bed.
@@ -69,7 +84,9 @@ class _BenchmarkPageState()
     super.initState();
     controller = BenchmarkController(this);
     widget.onControllerReady?.call(controller);
-    controller.addListener(_scheduleViewportSync);
+    controller
+      ..addListener(_scheduleViewportSync)
+      ..addListener(_closeModeNoteOnTest);
     WidgetsBinding.instance.addObserver(this);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
       _window.setMethodCallHandler((call) async {
@@ -125,6 +142,7 @@ class _BenchmarkPageState()
     }
     controller
       ..removeListener(_scheduleViewportSync)
+      ..removeListener(_closeModeNoteOnTest)
       ..dispose();
     _matchingOnly.dispose();
     _webModeNoteClosed.dispose();
@@ -288,14 +306,22 @@ class _BenchmarkPageState()
         onClose: controller.clearStopReason,
       );
     }
-    final mode = webMode();
-    final why = webModeWhy();
-    if (mode == null || why == null || _webModeNoteClosed.value) return null;
+    if (!widget.showModeNote || _webModeNoteClosed.value) return null;
+    final note = pageModeNote();
+    if (note == null) return null;
     return PageNote(
-      title: mode,
-      text: '$why Figures of different modes do not compare.',
+      title: note.mode,
+      text: '${note.why} Figures of different modes do not compare.',
       onClose: () => _webModeNoteClosed.value = true,
     );
+  }
+
+  /// Closes the note on the web mode for good when a test starts, so that it
+  /// does not come back between two tests. The header keeps the mode.
+  void _closeModeNoteOnTest() {
+    if (controller.running || controller.batchCapturing) {
+      _webModeNoteClosed.value = true;
+    }
   }
 
   void _retryDisplay() {

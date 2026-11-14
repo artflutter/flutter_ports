@@ -2817,6 +2817,8 @@ sankey ADRs are proposed. The doc paths are relative to
   `--enable-blink-features=ExtendedTextMetrics`. `test:web` runs without that flag. The header of a
   web run shows its mode (`lib/benchmark/web_mode.dart`; `JAVASCRIPT · NATIVE TEXT` for that path). A note that does not scroll
   (`lib/ui/page_note.dart`) says why that mode applies, or why a scroll or another outside cause stopped a test.
+  The note on the mode goes away for good when the first test of the page starts, and `tool/perf_matrix.dart` does
+  not show it (`showModeNote: false`).
 - Toolchain: Flutter 3.50.0-0.4.pre (beta channel, Dart 3.14.0-315.3.beta), pinned in `.fvmrc`; CI reads the same file, and `.github/actions/setup/action.yaml` names its channel. All
   packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`
   (`packages/flutter_chartjs_port/doc/porting-flow.md` §2.12).
