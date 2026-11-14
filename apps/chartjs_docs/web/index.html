@@ -19,6 +19,8 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="The documentation of flutter_chartjs_port, with live charts.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f6fa">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -31,8 +33,45 @@
 
   <title>Chart.js for Flutter</title>
   <link rel="manifest" href="manifest.json">
+  <!-- The engine and the text font come from these hosts. -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    /* The color of the page, so that a load and a growing window show no white. */
+    html, body { margin: 0; height: 100%; background: #f4f6fa; }
+    #splash {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+      font: 14px/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      color: #64748b;
+    }
+    #splash strong { color: #17243b; font-size: 18px; font-weight: 600; }
+    /* Only a transform, so that it turns while the main thread compiles the app. */
+    #splash i {
+      width: 28px; height: 28px; border-radius: 50%; box-sizing: border-box;
+      border: 3px solid #dfe5ef; border-top-color: #4f46e5;
+      animation: splash-turn .9s linear infinite; will-change: transform;
+    }
+    #splash small { min-height: 1.4em; }
+    @keyframes splash-turn { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { #splash i { animation: none; } }
+  </style>
 </head>
 <body>
+  <!-- The first paint. The first frame of the app removes it. -->
+  <div id="splash" role="status">
+    <i></i>
+    <strong>Chart.js for Flutter</strong>
+    <small id="splash-hint"></small>
+  </div>
+  <script>
+    addEventListener('flutter-first-frame', () => document.getElementById('splash')?.remove());
+    // A failed load can reject nothing, so a timer is the only sign of it.
+    setTimeout(() => {
+      const hint = document.getElementById('splash-hint');
+      if (hint) hint.textContent = 'Still loading. Reload the page if this stays.';
+    }, 30000);
+  </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
