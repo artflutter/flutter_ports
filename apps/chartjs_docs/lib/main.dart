@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: the entry of the docs site.
 
 import 'package:chartjs_docs/examples/line_examples.dart';
+import 'package:chartjs_docs/pages/bar_chart_page.dart';
 import 'package:chartjs_docs/pages/line_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_fl_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_graphic_page.dart';
@@ -26,6 +27,13 @@ final List<DocPageLink> docPages = [
     navLabel: 'Line chart',
     icon: Icons.show_chart,
     build: lineChartPage,
+  ),
+  const DocPageLink(
+    route: '/charts/bar',
+    group: 'Chart types',
+    navLabel: 'Bar chart',
+    icon: Icons.bar_chart,
+    build: barChartPage,
   ),
   const DocPageLink(
     route: '/migrate/fl_chart',

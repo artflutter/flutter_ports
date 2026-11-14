@@ -486,9 +486,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   between `// #docregion <name>` and `// #enddocregion <name>`. Thus a panel shows the code that draws its
   chart. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
-  - `docPages` of `lib/main.dart` lists the pages with their routes (`/`, `/migrate/fl_chart`,
-    `/migrate/graphic`, `/migrate/syncfusion`) and their groups in the sidebar. The browser address
-    `#/<route>` opens a page.
+  - The bar chart page has the section structure of `docs/charts/bar.md`: `lib/pages/bar_chart_page.dart`
+    has the text and the table, and `lib/examples/bar_examples.dart` has the code of the charts. Each region
+    name of that file starts with `bar-`, because a region name is unique over all the source files.
+    `test/bar_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+    `BarDataset`.
+  - `docPages` of `lib/main.dart` lists the pages with their routes (`/`, `/charts/bar`,
+    `/migrate/fl_chart`, `/migrate/graphic`, `/migrate/syncfusion`) and their groups in the sidebar. The
+    browser address `#/<route>` opens a page. `test/migrate_pages_test.dart` runs on the pages of the
+    group "Migrate from".
   - The pages "Migrate from" rebuild the line chart demos of fl_chart 1.3.0 (13), Graphic 2.7.0 and
     Syncfusion 35.1.43 with the port. `migrationPage` of `lib/ui/replica_block.dart` gives the intro, a
     table of the names that map and one section for each demo: notes, the live replica and its code on

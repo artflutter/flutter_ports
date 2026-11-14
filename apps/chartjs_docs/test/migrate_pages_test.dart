@@ -46,7 +46,7 @@ void main() {
     }
   });
 
-  for (final page in docPages.skip(1)) {
+  for (final page in docPages.where((page) => page.group == 'Migrate from')) {
     group(page.route, () {
       test('each demo has its code region', () {
         final content = page.build();
