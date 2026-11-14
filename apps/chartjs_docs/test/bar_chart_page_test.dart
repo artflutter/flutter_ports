@@ -126,7 +126,10 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(DocsApp(snippets: _snippets));
     await tester.pump(const Duration(seconds: 1));
-    await tester.tap(find.byKey(const ValueKey('page./charts/bar')));
+    final link = find.byKey(const ValueKey('page./charts/bar'));
+    await tester.ensureVisible(link);
+    await tester.pump();
+    await tester.tap(link);
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Bar Chart'), findsWidgets);

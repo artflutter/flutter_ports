@@ -18,45 +18,54 @@ Future<void> main() async {
   runApp(DocsApp(snippets: snippets));
 }
 
-/// The pages of the site, in navigation order. The first page is the home
-/// page and the page of an unknown route.
+/// The pages of the site, in navigation order. Each chart type is a group:
+/// its docs page, then its migration pages. The first page is the home page
+/// and the page of an unknown route.
 final List<DocPageLink> docPages = [
   const DocPageLink(
-    route: '/',
-    group: 'Chart types',
+    route: '/charts/line',
+    group: 'Line chart',
     navLabel: 'Line chart',
     icon: Icons.show_chart,
     build: lineChartPage,
   ),
   const DocPageLink(
-    route: '/charts/bar',
-    group: 'Chart types',
-    navLabel: 'Bar chart',
-    icon: Icons.bar_chart,
-    build: barChartPage,
-  ),
-  const DocPageLink(
-    route: '/migrate/fl_chart',
-    group: 'Migrate from',
-    navLabel: 'fl_chart',
+    route: '/charts/line/migrate/fl_chart',
+    group: 'Line chart',
+    navLabel: 'From fl_chart',
     icon: Icons.swap_horiz,
     build: flChartMigrationPage,
   ),
   const DocPageLink(
-    route: '/migrate/graphic',
-    group: 'Migrate from',
-    navLabel: 'Graphic',
+    route: '/charts/line/migrate/graphic',
+    group: 'Line chart',
+    navLabel: 'From Graphic',
     icon: Icons.swap_horiz,
     build: graphicMigrationPage,
   ),
   const DocPageLink(
-    route: '/migrate/syncfusion',
-    group: 'Migrate from',
-    navLabel: 'Syncfusion',
+    route: '/charts/line/migrate/syncfusion',
+    group: 'Line chart',
+    navLabel: 'From Syncfusion',
     icon: Icons.swap_horiz,
     build: syncfusionMigrationPage,
   ),
+  const DocPageLink(
+    route: '/charts/bar',
+    group: 'Bar chart',
+    navLabel: 'Bar chart',
+    icon: Icons.bar_chart,
+    build: barChartPage,
+  ),
 ];
+
+/// The old addresses of the pages that moved, so that a saved link still
+/// opens its page.
+const Map<String, String> movedRoutes = {
+  '/migrate/fl_chart': '/charts/line/migrate/fl_chart',
+  '/migrate/graphic': '/charts/line/migrate/graphic',
+  '/migrate/syncfusion': '/charts/line/migrate/syncfusion',
+};
 
 /// The documentation site.
 class const DocsApp({
@@ -71,20 +80,22 @@ class const DocsApp({
   this;
 
   Route<void> _route(RouteSettings settings) {
+    final name = movedRoutes[settings.name] ?? settings.name;
     final page = docPages.firstWhere(
-      (page) => page.route == settings.name,
+      (page) => page.route == name,
       orElse: () => docPages.first,
     );
+    final content = page.build();
     return PageRouteBuilder<void>(
       settings: RouteSettings(name: page.route),
       transitionDuration: Duration.zero,
       reverseTransitionDuration: Duration.zero,
       pageBuilder: (context, _, _) => Title(
-        title: '${page.navLabel} · Chart.js for Flutter',
+        title: '${content.title} · Chart.js for Flutter',
         color: DocColors.primary,
         child: DocPage(
           key: ValueKey(page.route),
-          content: page.build(),
+          content: content,
           snippets: snippets,
           pages: docPages,
           route: page.route,
@@ -100,8 +111,8 @@ class const DocsApp({
     theme: docsTheme(),
     initialRoute: initialRoute,
     onGenerateRoute: _route,
-    // The address `#/migrate/fl_chart` opens that page alone, with no page
-    // below it.
+    // The address `#/charts/bar` opens that page alone, with no page below
+    // it.
     onGenerateInitialRoutes: (name) => [_route(RouteSettings(name: name))],
   );
 }

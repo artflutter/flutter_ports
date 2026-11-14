@@ -17,6 +17,7 @@ const String _gallery =
 
 /// The page "Migrate from Graphic": the line charts of the Graphic demos.
 DocPageContent graphicMigrationPage() => migrationPage(
+  chart: 'line',
   library: 'Graphic',
   version: '2.7.0',
   gallery: _gallery,

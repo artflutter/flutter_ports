@@ -46,7 +46,9 @@ void main() {
     }
   });
 
-  for (final page in docPages.where((page) => page.group == 'Migrate from')) {
+  for (final page in docPages.where(
+    (page) => page.route.contains('/migrate/'),
+  )) {
     group(page.route, () {
       test('each demo has its code region', () {
         final content = page.build();
@@ -93,17 +95,34 @@ void main() {
     });
   }
 
+  test('each migration page is in the group of its chart type', () {
+    for (final page in docPages) {
+      final type = docPages.firstWhere((other) => other.group == page.group);
+      expect(page.route, startsWith(type.route), reason: page.route);
+    }
+  });
+
   testWidgets('the sidebar opens another page', (tester) async {
     await _open(tester, '/');
-    await tester.tap(find.byKey(const ValueKey('page./migrate/fl_chart')));
+    await tester.tap(
+      find.byKey(const ValueKey('page./charts/line/migrate/fl_chart')),
+    );
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
-    expect(find.text('Migrate from fl_chart'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('page./')));
+    expect(find.text('Migrate line charts from fl_chart'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('page./charts/line')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Line Chart'), findsWidgets);
   });
+
+  for (final MapEntry(key: old, value: route) in movedRoutes.entries) {
+    testWidgets('the old address $old opens $route', (tester) async {
+      await _open(tester, old);
+      final page = docPages.firstWhere((page) => page.route == route);
+      expect(find.text(page.build().title), findsOneWidget);
+    });
+  }
 
   testWidgets('an unknown route opens the line chart page', (tester) async {
     await _open(tester, '/nothing');

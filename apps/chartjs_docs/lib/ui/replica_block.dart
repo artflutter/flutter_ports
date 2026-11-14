@@ -47,10 +47,12 @@ class const ReplicaFrame({
   this;
 }
 
-/// The page of a migration from another library: an introduction, a table
-/// of the names that map, one section for each demo, and the code region
-/// [kit] of the shared helpers when the replicas have one.
+/// The page of a migration of the [chart] charts of another library: an
+/// introduction, a table of the names that map, one section for each demo,
+/// and the code region [kit] of the shared helpers when the replicas have
+/// one.
 DocPageContent migrationPage({
+  required String chart,
   required String library,
   required String version,
   required String gallery,
@@ -62,13 +64,13 @@ DocPageContent migrationPage({
   required String credit,
   String? kit,
 }) => DocPageContent(
-  title: 'Migrate from $library',
-  navLabel: library,
+  title: 'Migrate $chart charts from $library',
+  navLabel: 'From $library',
   icon: icon,
   intro: [
     ...intro,
     DocParagraph(
-      'Each section below rebuilds one line chart demo of $library $version '
+      'Each section below rebuilds one $chart chart demo of $library $version '
       'with the port. The chart is live: hover and tap work as in the '
       'original. Open **Code** to see the code of the replica.',
     ),

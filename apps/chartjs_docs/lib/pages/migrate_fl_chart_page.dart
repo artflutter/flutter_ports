@@ -25,6 +25,7 @@ const String _gallery = 'https://app.flchart.dev/#/line';
 
 /// The page "Migrate from fl_chart": the 13 line samples of fl_chart 1.3.0.
 DocPageContent flChartMigrationPage() => migrationPage(
+  chart: 'line',
   library: 'fl_chart',
   version: '1.3.0',
   gallery: _gallery,
