@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#f4f6fa",
     "theme_color": "#f4f6fa",
-    "description": "The documentation of flutter_chartjs_port, with live charts.",
+    "description": "Guides and live examples for flutter_chartjs_port, the native Dart port of Chart.js for Flutter, with migration guides from fl_chart, Graphic and Syncfusion.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
