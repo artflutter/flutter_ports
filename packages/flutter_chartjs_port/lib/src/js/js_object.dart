@@ -211,8 +211,16 @@ Object? jsGetKey(Object? object, String key) {
 /// The `ToPropertyKey` of a number gives an array index only for a whole
 /// number in range. -0 gives the key `'0'`. NaN, a fraction, a negative
 /// number and a number past the end give [undefined].
+///
+/// An `int` index, the index of each ported loop (Chart.js ADR 0129), takes
+/// its own test first: the generic `num` compare and `toInt` of a call site
+/// with both `int` and `double` indexes made the read of each arc of a
+/// doughnut about 35 ns slower in a profile build.
 Object? jsGetIndex(Object? object, num index) {
   if (object is List<Object?>) {
+    if (index is int) {
+      return index >= 0 && index < object.length ? object[index] : undefined;
+    }
     if (index >= 0 && index < object.length) {
       final i = index.toInt();
       if (i == index) return object[i];

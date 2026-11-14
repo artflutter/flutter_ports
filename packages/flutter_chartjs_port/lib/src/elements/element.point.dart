@@ -100,6 +100,14 @@ double _numberField(PointOptions options, OptionKey key) => switch (key) {
   _ => options.borderWidth,
 };
 
+/// [rawOption] of the paint option [key] of [options], with its typed
+/// [field] first: a paint in the field is present and not foreign, so it is
+/// the raw value. Only an empty field takes the two bit tests. A scatter
+/// chart gives each point its own options, so the circle run reads the
+/// colors at each point, and dart2wasm keeps the bit tests as calls.
+Object? _paintOption(PointOptions options, OptionKey key, Object? field) =>
+    field ?? rawOption(options, key, null);
+
 /// `options[key]`, the raw JS value of the numeric option [key]: JS
 /// `undefined` for an absent key, a foreign value as it is.
 Object? _raw(Object? options, OptionKey key) => options is PointOptions
@@ -646,13 +654,13 @@ class PointElement([AnyObject? cfg])
       // which the canvas ignores as it ignores `undefined`.
       ctx
         ..strokeStyle = canvasStyle(
-          rawOption(opts, OptionKey.borderColor, opts.borderColor),
+          _paintOption(opts, OptionKey.borderColor, opts.borderColor),
         )
         ..lineWidth = plainOption(opts, OptionKey.borderWidth)
             ? opts.borderWidth
             : canvasNumber(_raw(opts, OptionKey.borderWidth))
         ..fillStyle = canvasStyle(
-          rawOption(opts, OptionKey.backgroundColor, opts.backgroundColor),
+          _paintOption(opts, OptionKey.backgroundColor, opts.backgroundColor),
         );
     } else {
       ctx
@@ -738,11 +746,11 @@ class PointElement([AnyObject? cfg])
           final o = options!;
           ctx
             ..strokeStyle = canvasStyle(
-              rawOption(o, OptionKey.borderColor, o.borderColor),
+              _paintOption(o, OptionKey.borderColor, o.borderColor),
             )
             ..lineWidth = borderWidth
             ..fillStyle = canvasStyle(
-              rawOption(o, OptionKey.backgroundColor, o.backgroundColor),
+              _paintOption(o, OptionKey.backgroundColor, o.backgroundColor),
             );
           if (!run.tryStartCircleRun(radius, stroke: borderWidth > 0)) break;
           styled = true;

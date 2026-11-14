@@ -890,7 +890,7 @@ class Legend(
   /// `this.lineWidths[row]` as a number: [undefined] gives NaN. Without
   /// line widths, the read throws a [TypeError], as upstream.
   double _lineWidthAt(int row) =>
-      jsToNumber(jsGetIndex(lineWidths ?? undefined, row.toDouble()));
+      jsToNumber(jsGetIndex(lineWidths ?? undefined, row));
 
   /// `this.columnSizes[col].height` as a number. An absent column throws the
   /// [TypeError] of the read of `height` of `undefined`, as upstream.

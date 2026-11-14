@@ -8538,3 +8538,44 @@ build. A horizontal chart, a dashed line, a loop and a line with a shadow get no
 skwasm, the fill of a merged path adds about 3 ms of raster time at 20,000 points (the curve alone 3.52 ms, the curve
 with a fill 6.61 ms): the cause was not examined. Files: `.handover/line-perf-2026-11-11/` (`report.md`,
 `proto/measure.md`, `proto/curve-merge/decision.md`, `proto/curve-merge/device/`), outside the repository.
+
+## 74. Three costs of the native migration of 2026-11-13
+
+**What was slow.** A drift run on 2026-11-14 compared `5c445bca` with `3857983d` (53 commits of the native API
+migration) in the lab matrix: macOS, Chrome, Safari and Firefox on the Mac, the Pixel 8a and the iPhone 17 Pro, two
+runs for each side in ABBA order (four on the iPhone). The totals stayed flat on native targets. Three costs came from
+two commits:
+
+- `52fc3f92` (int indexes): `jsGetIndex` took a `num`. The arc loop of the doughnut controller gave it `int` indexes,
+  and `calculateTotal` gave it a `double`. Thus the compiler kept the generic `num` compare and `toInt` at each read,
+  about 35 ns for each arc in a profile build on the Mac. A pie or doughnut update of the data-only path took 15-50%
+  longer on each target.
+- `52fc3f92` also wrote the `int` index into the two `Object?` fields of a context with no shared box. On dart2wasm
+  an `int` in an `Object?` field is a heap box, so each `ScriptableContext.refresh` allocated two boxes.
+- `118f5fa9` (native paint options): the circle run of `PointElement` read its two colors through `rawOption`, which
+  calls `isPresent` and `isForeign`. The scatter controller gives each point its own options, so the run reads the
+  colors at each point. dart2wasm keeps these calls, about 50 ns for each point: the scatter and bubble draw took
+  20-54% longer in Chrome, Safari and Firefox. Native builds inline the calls.
+
+**The change.** `jsGetIndex` tests `index is int` first, and the three callers with a `double` index give an `int`.
+`_writeIndexes` keeps one box for both keys and the box of the last write for the same index. The circle run and
+`draw` of `PointElement` read a color through `_paintOption`: a paint in the typed field is present and not foreign,
+so only an empty field takes the bit tests.
+
+**The figures.** 20,000 items, mean of two runs for each side in ABBA order (ms):
+
+| Cell | Before (`3857983d`) | After |
+| --- | ---: | ---: |
+| macOS, doughnut update, plain | 1.72 | 0.98 |
+| macOS, pie update, plain | 1.71 | 0.99 |
+| Chrome (dart2wasm), scatter draw, plain | 3.44 | 2.27 |
+| Chrome (dart2wasm), bubble draw, plain | 3.64 | 2.61 |
+| Chrome (dart2wasm), scatter update, full | 2.97 | 2.53 |
+| Chrome (dart2wasm), doughnut update, plain | 1.46 | 1.23 |
+
+Each value after the change is at or below the value at `5c445bca`. Over the whole Chrome matrix (48 cells), the sum
+of the update times fell 6.9% and the sum of the draw times 7.2%. The macOS cells ran behind the lock screen
+(`MATRIX_IGNORE_COVER=1`), both sides alike; the macOS build had the first two changes only, and the context box does
+not cost on native builds. A CPU profile of the Chrome cell scatter, 20,000 items, full preset, shows the context refresh at 365 ms of 8 s after the change (553 before, 403
+at `5c445bca`), and the idle time at 1126 ms (318 before, 792 at `5c445bca`). The raw data is in
+`.handover/drift-2026-11-14/`.

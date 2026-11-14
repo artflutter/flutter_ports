@@ -1692,7 +1692,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
     // Draw body lines now
     for (var i = 0, ilen = body!.length; i < ilen; ++i) {
       bodyItem = body[i];
-      textColor = jsGetIndex(_labelTextColors ?? undefined, i.toDouble());
+      textColor = jsGetIndex(_labelTextColors ?? undefined, i);
 
       ctx.fillStyle = textColor! as ChartPaint;
       bodyItem.before.forEach(fillLineOfText);

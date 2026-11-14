@@ -728,7 +728,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     int i;
 
     for (i = 0; i < metaData.length; i++) {
-      final value = jsGetIndex(meta.parsed, i * 1.0);
+      final value = jsGetIndex(meta.parsed, i);
       if (value != null &&
           !jsIsNaN(value) &&
           chart.getDataVisibility(i) &&
