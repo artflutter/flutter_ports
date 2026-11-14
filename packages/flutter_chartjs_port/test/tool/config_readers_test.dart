@@ -177,6 +177,11 @@ list:
       );
       expect(addOn.marker, 'zoom');
       expect(addOn.host, 'flutter_chartjs_port');
+      expect(plain.project, isNull);
+      expect(
+        parsePortSourcesFile(['project: D3', ...entry].join('\n')).project,
+        'D3',
+      );
       expect(parsePortSources([...entry, 'marker: x-1'].join('\n')), [
         isA<PortSource>(),
       ]);
@@ -186,7 +191,8 @@ list:
       expect(
         () => parsePortSourcesFile(['markers: zoom', ...entry].join('\n')),
         throwsMessage(
-          'the top-level key "markers" is not one of sources, marker, host',
+          'the top-level key "markers" is not one of sources, marker, host, '
+          'project',
         ),
       );
       for (final marker in ['Zoom', '1x', 'a_b', '"a b"']) {
@@ -205,6 +211,12 @@ list:
       expect(
         () => parsePortSourcesFile(['host:', '  - a', ...entry].join('\n')),
         throwsMessage('"host" is the name of a package'),
+      );
+      expect(
+        () => parsePortSourcesFile(['project: a b', ...entry].join('\n')),
+        throwsMessage(
+          '"project" is a project name of letters, digits, ".", "-" and "@"',
+        ),
       );
     });
 
@@ -377,6 +389,10 @@ list:
         const PortTarget('test/specs/', 't/').map('test/specs/a.b.spec.js'),
         't/a.b_test.dart',
       );
+      expect(
+        const PortTarget('test/', 't/').map('test/a-b-test.js'),
+        't/a-b_test.dart',
+      );
       // A unit test of src/ has a file target: the directory target maps
       // only the extension.
       expect(target.map('src/a.test.ts'), 'packages/p/lib/src/a.test.dart');
@@ -395,6 +411,10 @@ list:
       expect(
         const PortTarget('test/specs/', 't/').sourcesOf('t/a.b_test.dart'),
         containsAll(['test/specs/a.b.tests.js', 'test/specs/a.b.spec.js']),
+      );
+      expect(
+        const PortTarget('test/', 't/').sourcesOf('t/a-b_test.dart'),
+        contains('test/a-b-test.js'),
       );
       expect(target.sourcesOf('packages/p/lib/a.dart'), isEmpty);
       expect(target.sourcesOf('packages/p/lib/src/a.txt'), isEmpty);

@@ -10,7 +10,10 @@
 /// `flutter_chartjs_port`, chartjs-plugin-zoom for the add-on
 /// `flutter_chartjs_plugin_zoom_port`. The optional top-level key `marker`
 /// of the file gives the tag of the `DIVERGES(<tag>)` markers
-/// ([defaultMarker] when the key is absent).
+/// ([defaultMarker] when the key is absent). The optional top-level key
+/// `project` gives the project name of the port-only marker (the `header` of
+/// the primary project when the key is absent), for example `D3` for the
+/// primary project `d3`.
 ///
 /// For each Dart file under `lib/`, `test/` and `tool/` of the examined
 /// packages (the given packages, and each package that a `dart` target of
@@ -111,6 +114,9 @@ const String jsLanguage = 'js';
 final RegExp _markerCandidate = RegExp(r'^///?\s*DIVERGES\b');
 final RegExp _blockMarkerCandidate = RegExp(r'^/\*+\s*DIVERGES\b');
 final RegExp _markerTag = RegExp(r'^[a-z][a-z0-9-]*$');
+
+/// A project name of the top-level key `project`, for example `D3`.
+final RegExp _projectName = RegExp(r'^[A-Za-z0-9@][A-Za-z0-9@./-]*$');
 final RegExp _packageName = RegExp(r'^[a-z_][a-z0-9_]*$');
 
 /// The marker grammar of porting-flow.md 4 with the tag [tag].
@@ -150,6 +156,9 @@ final class const PortTarget(
       dartName = '${name.substring(0, name.length - 9)}_test.dart';
     } else if (name.endsWith('.spec.js')) {
       dartName = '${name.substring(0, name.length - 8)}_test.dart';
+    } else if (name.endsWith('-test.js')) {
+      // The D3 test files (D3 ADR 0002 section 1).
+      dartName = '${name.substring(0, name.length - 8)}_test.dart';
     } else if (name.endsWith('.d.ts')) {
       dartName = '${name.substring(0, name.length - 5)}.dart';
     } else if (name.contains('.')) {
@@ -164,7 +173,7 @@ final class const PortTarget(
   ///
   /// For a directory, these are the names with the extensions `.js`, `.ts`,
   /// `.d.ts` and `.json` (a hand port of a data fixture, Chart.js ADR 0115),
-  /// and `.tests.js` and `.spec.js` for a `_test.dart` file.
+  /// and `.tests.js`, `.spec.js` and `-test.js` for a `_test.dart` file.
   List<String> sourcesOf(String dartPath) {
     if (!isDirectory) return dartPath == dart ? [source] : const [];
     if (!dartPath.startsWith(dart) || !dartPath.endsWith('.dart')) {
@@ -177,6 +186,7 @@ final class const PortTarget(
       if (rest.endsWith('_test')) ...[
         '$source${rest.substring(0, rest.length - 5)}.tests.js',
         '$source${rest.substring(0, rest.length - 5)}.spec.js',
+        '$source${rest.substring(0, rest.length - 5)}-test.js',
       ],
     ].where((candidate) => map(candidate) == dartPath).toList();
   }
@@ -368,16 +378,23 @@ final class const PortSourcesFile({
   /// The host package of an add-on port (ADR 0009): the top-level key
   /// `host`, for example `flutter_chartjs_port`. Null for a host port.
   final String? host,
+
+  /// The project name of the port-only marker: the top-level key
+  /// `project`, for example `D3`. Null when the marker names the `header` of
+  /// the primary project.
+  final String? project,
 }) {
-  /// The [sources], the [marker] tag and the [host] package.
+  /// The [sources], the [marker] tag, the [host] package and the [project]
+  /// name.
   this;
 }
 
 /// The top-level keys of `tool/port_sources.yaml`.
-const List<String> portSourcesKeys = ['sources', 'marker', 'host'];
+const List<String> portSourcesKeys = ['sources', 'marker', 'host', 'project'];
 
 /// Reads `tool/port_sources.yaml` from [text]: the `sources` list and the
-/// optional top-level keys `marker` and `host`. Throws a [FormatException].
+/// optional top-level keys `marker`, `host` and `project`. Throws a
+/// [FormatException].
 PortSourcesFile parsePortSourcesFile(String text) {
   final document = parseYamlSubset(text);
   if (document is! Map<String, Object?> || document['sources'] is! List) {
@@ -400,6 +417,13 @@ PortSourcesFile parsePortSourcesFile(String text) {
   if (host != null && (host is! String || !_packageName.hasMatch(host))) {
     throw const FormatException('"host" is the name of a package');
   }
+  final project = document['project'];
+  if (project != null &&
+      (project is! String || !_projectName.hasMatch(project))) {
+    throw const FormatException(
+      '"project" is a project name of letters, digits, ".", "-" and "@"',
+    );
+  }
   final sources = [
     for (final entry in document['sources']! as List<Object?>)
       PortSource.fromYaml(entry),
@@ -414,6 +438,7 @@ PortSourcesFile parsePortSourcesFile(String text) {
     sources: sources,
     marker: marker,
     host: host as String?,
+    project: project as String?,
   );
 }
 
@@ -739,6 +764,7 @@ typedef _VersionPin = ({String constant, String? pinned});
     annotations: annotations,
     versions: versions,
     primary: primary,
+    portOnlyProject: sourcesList.project ?? primary?.header,
     markerTag: tag,
     findings: findings,
   );
@@ -933,6 +959,10 @@ final class _FileContext({
   /// `lib/src/upstream.dart` (a finding of the source list).
   required final PortSource? primary,
 
+  /// The project name of the port-only marker: the top-level key `project`,
+  /// else the `header` of [primary].
+  required final String? portOnlyProject,
+
   /// The tag of the `DIVERGES(<tag>)` markers.
   required final String markerTag,
   required final List<Finding> findings,
@@ -952,7 +982,7 @@ final class _FileContext({
 
     final source = DartSource(text);
     final header = Header.parse(source.lines);
-    final project = primary?.header;
+    final project = portOnlyProject;
     final repository = primary?.repository;
     // A backport line of another repository does not match the grammar of
     // the home package.
